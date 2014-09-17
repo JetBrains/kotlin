@@ -579,7 +579,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifne(ne);
                 }
                 else {
-                    StackValue value = genEqualsForExpressionsOnStack(iv, JetTokens.EQEQ, asmType, asmType);
+                    StackValue value = genEqualsForExpressionsOnStack(JetTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
                     value.put(Type.BOOLEAN_TYPE, iv);
                     iv.ifeq(ne);
                 }
@@ -802,7 +802,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             assert property != null : "Copy function doesn't correspond to any property: " + function;
                             codegen.v.load(0, thisDescriptorType);
                             Type propertyType = typeMapper.mapType(property);
-                            codegen.intermediateValueForProperty(property, false, null).put(propertyType, codegen.v);
+                            codegen.intermediateValueForProperty(property, false, null, StackValue.none())
+                                    .putNoReceiver(propertyType, codegen.v);
                         }
                     },
                     null
@@ -898,7 +899,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                     boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
                                          !isClassObject(bridge.getContainingDeclaration());
-                    StackValue property = codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR);
+                    StackValue property = codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR, StackValue.none());
 
                     InstructionAdapter iv = codegen.v;
 
@@ -1055,18 +1056,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (classObjectIndex == -1) {
             classObjectIndex = frameMap.enter(classObjectDescriptor, OBJECT_TYPE);
             StackValue classObject = StackValue.singleton(classObjectDescriptor, typeMapper);
-            classObject.put(classObject.type, codegen.v);
-            StackValue.local(classObjectIndex, classObject.type).store(classObject.type, codegen.v);
+            StackValue.local(classObjectIndex, classObject.type).store(classObject, codegen.v);
         }
         return classObjectIndex;
     }
 
     private void copyFieldFromClassObject(PropertyDescriptor propertyDescriptor) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
-        StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, false, null);
-        property.put(property.type, codegen.v);
-        StackValue.Field field = StackValue.field(property.type, classAsmType, propertyDescriptor.getName().asString(), true);
-        field.store(field.type, codegen.v);
+        StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, false, null, StackValue.none());
+        StackValue.Field field = StackValue.field(property.type, classAsmType, propertyDescriptor.getName().asString(), true, StackValue.none());
+        field.store(property, codegen.v);
     }
 
     private void generateClassObjectInitializer(@NotNull ClassDescriptor classObject) {
@@ -1136,8 +1135,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if (isObject(descriptor)) {
-            iv.load(0, classAsmType);
-            StackValue.singleton(descriptor, typeMapper).store(classAsmType, iv);
+            StackValue.singleton(descriptor, typeMapper).store(StackValue.local(0, classAsmType), iv);
         }
 
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
@@ -1210,7 +1208,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             @NotNull
             public StackValue getStackValue() {
-                return StackValue.field(type, classAsmType, name, false);
+                return StackValue.field(type, classAsmType, name, false, StackValue.none());
             }
         }
         private final Map<JetDelegatorByExpressionSpecifier, Field> fields = new HashMap<JetDelegatorByExpressionSpecifier, Field>();
@@ -1271,9 +1269,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         DelegationFieldsInfo.Field fieldInfo = fieldsInfo.getInfo(specifier);
         if (fieldInfo.generateField) {
             iv.load(0, classAsmType);
-            codegen.genToJVMStack(expression);
-
-            fieldInfo.getStackValue().store(fieldInfo.type, iv);
+            StackValue rightSide = codegen.genLazy(expression, codegen.expressionType(expression));
+            fieldInfo.getStackValue().store(rightSide, iv);
         }
     }
 
@@ -1304,7 +1301,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
                 else return;
 
-                constructorContext.lookupInContext(toLookup, null, state, true);
+                constructorContext.lookupInContext(toLookup, StackValue.local(0, OBJECT_TYPE), state, true);
             }
 
             @Override

@@ -194,8 +194,11 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
         StackValue stackValue =
                 new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this).gen(scriptDeclaration.getBlockExpression());
         if (stackValue.type != Type.VOID_TYPE) {
+            StackValue.Field resultValue = StackValue
+                    .field(blockType, classType, ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME, false, StackValue.local(0, classType));
+            resultValue.store(stackValue, iv);
+        } else {
             stackValue.put(blockType, iv);
-            iv.putfield(classType.getInternalName(), ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor());
         }
 
         iv.areturn(Type.VOID_TYPE);

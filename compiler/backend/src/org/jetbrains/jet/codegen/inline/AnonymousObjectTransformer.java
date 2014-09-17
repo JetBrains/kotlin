@@ -250,11 +250,11 @@ public class AnonymousObjectTransformer {
 
             if (fake.getLambda() != null) {
                 //set remap value to skip this fake (captured with lambda already skipped)
-                StackValue composed = StackValue.composed(StackValue.local(0, oldObjectType),
-                                                          StackValue.field(fake.getType(),
-                                                                           oldObjectType,
-                                                                           fake.getNewFieldName(), false)
-                );
+                StackValue composed = StackValue.field(fake.getType(),
+                                                       oldObjectType,
+                                                       fake.getNewFieldName(),
+                                                       false,
+                                                       StackValue.local(0, oldObjectType));
                 fake.setRemapValue(composed);
             }
         }
@@ -393,11 +393,11 @@ public class AnonymousObjectTransformer {
         for (LambdaInfo info : capturedLambdas) {
             for (CapturedParamDesc desc : info.getCapturedVars()) {
                 CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, getNewFieldName(desc.getFieldName()));
-                StackValue composed = StackValue.composed(StackValue.local(0, oldObjectType),
-                                                          StackValue.field(desc.getType(),
-                                                                           oldObjectType, /*TODO owner type*/
-                                                                           recapturedParamInfo.getNewFieldName(), false)
-                );
+                StackValue composed = StackValue.field(desc.getType(),
+                                                       oldObjectType, /*TODO owner type*/
+                                                       recapturedParamInfo.getNewFieldName(),
+                                                       false,
+                                                       StackValue.local(0, oldObjectType));
                 recapturedParamInfo.setRemapValue(composed);
                 allRecapturedParameters.add(desc);
 

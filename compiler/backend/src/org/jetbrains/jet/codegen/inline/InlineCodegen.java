@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen.inline;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.*;
@@ -336,16 +335,20 @@ public class InlineCodegen implements CallGenerator {
             return false;
         }
 
-        if (stackValue instanceof StackValue.Composed) {
-            //see: Method.isSpecialStackValue: go through aload 0
-            if (codegen.getContext().isInliningLambda() && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
-                if (descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor)) {
-                    //TODO: check type of context
-                    return false;
-                }
-            }
+        //skip direct capturing fields
+        StackValue receiver = null;
+        if (stackValue instanceof StackValue.Field) {
+            receiver = ((StackValue.Field) stackValue).receiver;
+        } else if(stackValue instanceof StackValue.FieldForSharedVar) {
+            receiver = ((StackValue.Field) ((StackValue.FieldForSharedVar) stackValue).receiver).receiver;
         }
-        return true;
+
+        if (!(receiver instanceof StackValue.Local)) {
+            return true;
+        }
+
+        //TODO: check type of context
+        return !(codegen.getContext().isInliningLambda() && descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor));
     }
 
     private void putParameterOnStack(ParameterInfo... infos) {
@@ -364,7 +367,7 @@ public class InlineCodegen implements CallGenerator {
             ParameterInfo info = infos[i];
             if (!info.isSkippedOrRemapped()) {
                 Type type = info.type;
-                StackValue.local(index[i], type).store(type, codegen.v);
+                StackValue.local(index[i], type).store(StackValue.onStack(type), codegen.v, true);
             }
         }
     }

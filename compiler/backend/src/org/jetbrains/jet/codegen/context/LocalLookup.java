@@ -24,6 +24,7 @@ import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -42,7 +43,7 @@ public interface LocalLookup {
             }
 
             @Override
-            public StackValue innerValue(
+            public StackValue.StackValueWithSimpleReceiver innerValue(
                     DeclarationDescriptor d,
                     LocalLookup localLookup,
                     GenerationState state,
@@ -59,9 +60,10 @@ public interface LocalLookup {
                 Type type = sharedVarType != null ? sharedVarType : localType;
 
                 String fieldName = "$" + vd.getName();
-                StackValue innerValue = sharedVarType != null
-                                        ? StackValue.fieldForSharedVar(localType, classType, fieldName)
-                                        : StackValue.field(type, classType, fieldName, false);
+                StackValue.Local thiz = StackValue.local(0, AsmTypeConstants.OBJECT_TYPE);
+                StackValue.StackValueWithSimpleReceiver innerValue = sharedVarType != null
+                                        ? StackValue.fieldForSharedVar(localType, classType, fieldName, thiz)
+                                        : StackValue.field(type, classType, fieldName, false, thiz);
 
                 closure.recordField(fieldName, type);
                 closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, type));
@@ -77,7 +79,7 @@ public interface LocalLookup {
             }
 
             @Override
-            public StackValue innerValue(
+            public StackValue.StackValueWithSimpleReceiver innerValue(
                     DeclarationDescriptor d,
                     LocalLookup localLookup,
                     GenerationState state,
@@ -96,11 +98,11 @@ public interface LocalLookup {
                 if (localFunClosure != null && JvmCodegenUtil.isConst(localFunClosure)) {
                     // This is an optimization: we can obtain an instance of a const closure simply by GETSTATIC ...$instance
                     // (instead of passing this instance to the constructor and storing as a field)
-                    return StackValue.field(localType, localType, JvmAbi.INSTANCE_FIELD, true);
+                    return StackValue.field(localType, localType, JvmAbi.INSTANCE_FIELD, true, StackValue.local(0, AsmTypeConstants.OBJECT_TYPE));
                 }
 
                 String fieldName = "$" + vd.getName();
-                StackValue innerValue = StackValue.field(localType, classType, fieldName, false);
+                StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(localType, classType, fieldName, false, StackValue.local(0, AsmTypeConstants.OBJECT_TYPE));
 
                 closure.recordField(fieldName, localType);
                 closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, localType));
@@ -116,7 +118,7 @@ public interface LocalLookup {
             }
 
             @Override
-            public StackValue innerValue(
+            public StackValue.StackValueWithSimpleReceiver innerValue(
                     DeclarationDescriptor d,
                     LocalLookup enclosingLocalLookup,
                     GenerationState state,
@@ -129,7 +131,7 @@ public interface LocalLookup {
 
                 JetType receiverType = closure.getEnclosingReceiverDescriptor().getType();
                 Type type = state.getTypeMapper().mapType(receiverType);
-                StackValue innerValue = StackValue.field(type, classType, CAPTURED_RECEIVER_FIELD, false);
+                StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(type, classType, CAPTURED_RECEIVER_FIELD, false, StackValue.local(0, AsmTypeConstants.OBJECT_TYPE));
                 closure.setCaptureReceiver();
 
                 return innerValue;
@@ -145,7 +147,7 @@ public interface LocalLookup {
 
         public abstract boolean isCase(DeclarationDescriptor d);
 
-        public abstract StackValue innerValue(
+        public abstract StackValue.StackValueWithSimpleReceiver innerValue(
                 DeclarationDescriptor d,
                 LocalLookup localLookup,
                 GenerationState state,

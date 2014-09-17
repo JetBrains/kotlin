@@ -45,18 +45,15 @@ public class Equals extends IntrinsicMethod {
         StackValue leftExpr;
         JetExpression rightExpr;
         if (element instanceof JetCallExpression) {
-            leftExpr = receiver;
+            leftExpr = StackValue.lazyCast(receiver, OBJECT_TYPE);
             rightExpr = arguments.get(0);
         }
         else {
-            leftExpr = codegen.gen(arguments.get(0));
+            leftExpr = codegen.genLazy(arguments.get(0), OBJECT_TYPE);
             rightExpr = arguments.get(1);
         }
 
-        leftExpr.put(OBJECT_TYPE, v);
-        codegen.gen(rightExpr).put(OBJECT_TYPE, v);
-
-        genEqualsForExpressionsOnStack(v, JetTokens.EQEQ, OBJECT_TYPE, OBJECT_TYPE).put(returnType, v);
+        genEqualsForExpressionsOnStack(JetTokens.EQEQ, leftExpr, codegen.genLazy(rightExpr, OBJECT_TYPE)).put(returnType, v);
         return returnType;
     }
 }

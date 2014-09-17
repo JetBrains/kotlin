@@ -26,13 +26,13 @@ import org.jetbrains.org.objectweb.asm.Type;
 public final class EnclosedValueDescriptor {
     private final String fieldName;
     private final DeclarationDescriptor descriptor;
-    private final StackValue innerValue;
+    private final StackValue.StackValueWithSimpleReceiver innerValue;
     private final Type type;
 
     public EnclosedValueDescriptor(
             @NotNull String fieldName,
             @Nullable DeclarationDescriptor descriptor,
-            @Nullable StackValue innerValue,
+            @NotNull StackValue.StackValueWithSimpleReceiver innerValue,
             @NotNull Type type
     ) {
         this.fieldName = fieldName;
@@ -51,8 +51,8 @@ public final class EnclosedValueDescriptor {
         return descriptor;
     }
 
-    @Nullable
-    public StackValue getInnerValue() {
+    @NotNull
+    public StackValue.StackValueWithSimpleReceiver getInnerValue() {
         return innerValue;
     }
 

@@ -38,7 +38,7 @@ public class NewArray extends IntrinsicMethod {
             List<JetExpression> arguments,
             StackValue receiver
     ) {
-        codegen.generateNewArray((JetCallExpression) element);
+        codegen.generateNewArray((JetCallExpression) element).put(returnType, v);
         return returnType;
     }
 }

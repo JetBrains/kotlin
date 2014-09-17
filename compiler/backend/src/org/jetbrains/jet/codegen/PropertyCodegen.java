@@ -380,14 +380,7 @@ public class PropertyCodegen {
         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             InstructionAdapter v = codegen.v;
             PropertyDescriptor propertyDescriptor = callableDescriptor.getCorrespondingProperty();
-
-            int paramCode = 0;
-            if (codegen.getContext().getContextKind() != OwnerKind.PACKAGE) {
-                v.load(0, OBJECT_TYPE);
-                paramCode = 1;
-            }
-
-            StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, true, null);
+            StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.local(0, OBJECT_TYPE));
 
             if (callableDescriptor instanceof PropertyGetterDescriptor) {
                 Type type = signature.getReturnType();
@@ -396,12 +389,13 @@ public class PropertyCodegen {
             }
             else if (callableDescriptor instanceof PropertySetterDescriptor) {
                 ReceiverParameterDescriptor receiverParameter = propertyDescriptor.getExtensionReceiverParameter();
+                int paramCode = codegen.getContext().getContextKind() != OwnerKind.PACKAGE ? 1 : 0;
                 if (receiverParameter != null) {
                     paramCode += codegen.typeMapper.mapType(receiverParameter.getType()).getSize();
                 }
                 Type type = codegen.typeMapper.mapType(propertyDescriptor);
-                v.load(paramCode, type);
-                property.store(type, v);
+                StackValue.Local value = StackValue.local(paramCode, type);
+                property.store(value, codegen.v);
                 v.visitInsn(RETURN);
             } else {
                 throw new IllegalStateException("Unknown property accessor: " + callableDescriptor);
@@ -417,10 +411,6 @@ public class PropertyCodegen {
             final int indexInPropertyMetadataArray,
             int propertyMetadataArgumentIndex
     ) {
-        if (codegen.getContext().getContextKind() != OwnerKind.PACKAGE) {
-            codegen.v.load(0, OBJECT_TYPE);
-        }
-
         CodegenContext<? extends ClassOrPackageFragmentDescriptor> ownerContext = codegen.getContext().getClassOrPackageParentContext();
         final Type owner;
         if (ownerContext instanceof ClassContext) {
@@ -435,17 +425,18 @@ public class PropertyCodegen {
 
         codegen.tempVariables.put(
                 resolvedCall.getCall().getValueArguments().get(propertyMetadataArgumentIndex).asElement(),
-                new StackValue(PROPERTY_METADATA_TYPE) {
+                new StackValue.StackValueWithoutReceiver(PROPERTY_METADATA_TYPE) {
                     @Override
-                    public void put(Type type, InstructionAdapter v) {
-                        v.getstatic(owner.getInternalName(), JvmAbi.PROPERTY_METADATA_ARRAY_NAME, "[" + PROPERTY_METADATA_TYPE);
-                        v.iconst(indexInPropertyMetadataArray);
-                        StackValue.arrayElement(PROPERTY_METADATA_TYPE).put(type, v);
+                    public void put(@NotNull Type type, @NotNull InstructionAdapter v) {
+                        Field array = StackValue
+                                .field(Type.getType("[" + PROPERTY_METADATA_TYPE), owner, JvmAbi.PROPERTY_METADATA_ARRAY_NAME, true,
+                                       StackValue.none());
+                        StackValue.arrayElement(PROPERTY_METADATA_TYPE, array, StackValue.constant(indexInPropertyMetadataArray, Type.INT_TYPE)).put(type, v);
                     }
                 }
         );
 
-        StackValue delegatedProperty = codegen.intermediateValueForProperty(propertyDescriptor, true, null);
+        StackValue delegatedProperty = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.local(0, OBJECT_TYPE));
         return codegen.invokeFunction(resolvedCall, delegatedProperty);
     }
 

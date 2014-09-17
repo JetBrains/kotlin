@@ -116,14 +116,4 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         return isInliningLambda;
     }
 
-    public boolean isSpecialStackValue(StackValue stackValue) {
-        if (isInliningLambda && stackValue instanceof StackValue.Composed) {
-            StackValue prefix = ((StackValue.Composed) stackValue).prefix;
-            StackValue suffix = ((StackValue.Composed) stackValue).suffix;
-            if (prefix instanceof StackValue.Local && ((StackValue.Local) prefix).index == 0) {
-                return suffix instanceof StackValue.Field;
-            }
-        }
-        return false;
-    }
 }

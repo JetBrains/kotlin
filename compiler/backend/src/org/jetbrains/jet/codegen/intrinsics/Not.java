@@ -44,8 +44,7 @@ public class Not extends IntrinsicMethod {
         else {
             stackValue = receiver;
         }
-        stackValue.put(Type.BOOLEAN_TYPE, v);
-        StackValue.not(StackValue.onStack(Type.BOOLEAN_TYPE)).put(returnType, v);
+        StackValue.not(StackValue.lazyCast(stackValue, Type.BOOLEAN_TYPE)).put(returnType, v);
         return returnType;
     }
 }

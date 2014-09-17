@@ -20,6 +20,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
@@ -431,11 +433,16 @@ public class AsmUtil {
         v.invokevirtual("java/lang/StringBuilder", "append", "(" + type.getDescriptor() + ")Ljava/lang/StringBuilder;", false);
     }
 
-    public static StackValue genToString(InstructionAdapter v, StackValue receiver, Type receiverType) {
-        Type type = stringValueOfType(receiverType);
-        receiver.put(type, v);
-        v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
-        return StackValue.onStack(JAVA_STRING_TYPE);
+    public static StackValue genToString(final InstructionAdapter v, final StackValue receiver, final Type receiverType) {
+        return StackValue.operation(JAVA_STRING_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter adapter) {
+                Type type = stringValueOfType(receiverType);
+                receiver.put(type, v);
+                v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
+                return null;
+            }
+        });
     }
 
     static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type) {
@@ -489,26 +496,33 @@ public class AsmUtil {
 
     @NotNull
     public static StackValue genEqualsForExpressionsOnStack(
-            @NotNull InstructionAdapter v,
-            @NotNull IElementType opToken,
-            @NotNull Type leftType,
-            @NotNull Type rightType
+            final @NotNull IElementType opToken,
+            final @NotNull StackValue left,
+            final @NotNull StackValue right
     ) {
+        final Type leftType = left.type;
+        final Type rightType = right.type;
         if (isPrimitive(leftType) && leftType == rightType) {
-            return StackValue.cmp(opToken, leftType);
+            return StackValue.cmp(opToken, leftType, left, right);
         }
 
         if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
-            return StackValue.cmp(opToken, leftType);
+            return StackValue.cmp(opToken, leftType, left, right);
         }
 
-        v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
+        return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter v) {
+                left.put(leftType, v);
+                right.put(rightType, v);
+                v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
 
-        if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
-            genInvertBoolean(v);
-        }
-
-        return StackValue.onStack(Type.BOOLEAN_TYPE);
+                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
+                    genInvertBoolean(v);
+                }
+                return Unit.INSTANCE$;
+            }
+        });
     }
 
     public static void genIncrement(Type expectedType, int myDelta, InstructionAdapter v) {
@@ -639,7 +653,7 @@ public class AsmUtil {
         if (!state.isCallAssertionsEnabled()) return stackValue;
         if (approximationInfo == null || !TypesPackage.assertNotNull(approximationInfo)) return stackValue;
 
-        return new StackValue(stackValue.type) {
+        return new StackValue.StackValueWithoutReceiver(stackValue.type) {
 
             @Override
             public void put(Type type, InstructionAdapter v) {

@@ -238,18 +238,14 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
         JetType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
 
-        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER);
-
-        if (!propValue.isStatic) {
-            codegen.v.load(0, OBJECT_TYPE);
-        }
+        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER, StackValue.local(0, OBJECT_TYPE));
 
         Type type = codegen.expressionType(initializer);
         if (jetType.isNullable()) {
             type = boxType(type);
         }
-        codegen.gen(initializer, type);
-        propValue.store(type, codegen.v);
+
+        propValue.store(codegen.genLazy(initializer, type), codegen.v);
 
         ResolvedCall<FunctionDescriptor> pdResolvedCall =
                 bindingContext.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, propertyDescriptor);

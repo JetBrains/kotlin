@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/box")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BlackBoxCodegenTestGenerated.Arrays.class, BlackBoxCodegenTestGenerated.BinaryOp.class, BlackBoxCodegenTestGenerated.Bridges.class, BlackBoxCodegenTestGenerated.BuiltinStubMethods.class, BlackBoxCodegenTestGenerated.Casts.class, BlackBoxCodegenTestGenerated.Classes.class, BlackBoxCodegenTestGenerated.Closures.class, BlackBoxCodegenTestGenerated.Constants.class, BlackBoxCodegenTestGenerated.ControlStructures.class, BlackBoxCodegenTestGenerated.DefaultArguments.class, BlackBoxCodegenTestGenerated.DelegatedProperty.class, BlackBoxCodegenTestGenerated.Elvis.class, BlackBoxCodegenTestGenerated.Enum.class, BlackBoxCodegenTestGenerated.ExclExcl.class, BlackBoxCodegenTestGenerated.ExtensionFunctions.class, BlackBoxCodegenTestGenerated.ExtensionProperties.class, BlackBoxCodegenTestGenerated.FakeOverride.class, BlackBoxCodegenTestGenerated.FieldRename.class, BlackBoxCodegenTestGenerated.Finally.class, BlackBoxCodegenTestGenerated.Functions.class, BlackBoxCodegenTestGenerated.InnerNested.class, BlackBoxCodegenTestGenerated.Instructions.class, BlackBoxCodegenTestGenerated.Intrinsics.class, BlackBoxCodegenTestGenerated.JavaInterop.class, BlackBoxCodegenTestGenerated.Labels.class, BlackBoxCodegenTestGenerated.LocalClasses.class, BlackBoxCodegenTestGenerated.MultiDecl.class, BlackBoxCodegenTestGenerated.Objects.class, BlackBoxCodegenTestGenerated.OperatorConventions.class, BlackBoxCodegenTestGenerated.Package.class, BlackBoxCodegenTestGenerated.PlatformTypes.class, BlackBoxCodegenTestGenerated.PrimitiveTypes.class, BlackBoxCodegenTestGenerated.Properties.class, BlackBoxCodegenTestGenerated.Reflection.class, BlackBoxCodegenTestGenerated.Regressions.class, BlackBoxCodegenTestGenerated.SafeCall.class, BlackBoxCodegenTestGenerated.SamConstructors.class, BlackBoxCodegenTestGenerated.Strings.class, BlackBoxCodegenTestGenerated.Super.class, BlackBoxCodegenTestGenerated.SuperConstructorCall.class, BlackBoxCodegenTestGenerated.ToArray.class, BlackBoxCodegenTestGenerated.Traits.class, BlackBoxCodegenTestGenerated.TypeInfo.class, BlackBoxCodegenTestGenerated.TypeMapping.class, BlackBoxCodegenTestGenerated.UnaryOp.class, BlackBoxCodegenTestGenerated.Unit.class, BlackBoxCodegenTestGenerated.Vararg.class, BlackBoxCodegenTestGenerated.When.class})
+@InnerTestClasses({BlackBoxCodegenTestGenerated.Arrays.class, BlackBoxCodegenTestGenerated.BinaryOp.class, BlackBoxCodegenTestGenerated.Bridges.class, BlackBoxCodegenTestGenerated.BuiltinStubMethods.class, BlackBoxCodegenTestGenerated.Casts.class, BlackBoxCodegenTestGenerated.Classes.class, BlackBoxCodegenTestGenerated.Closures.class, BlackBoxCodegenTestGenerated.Constants.class, BlackBoxCodegenTestGenerated.ControlStructures.class, BlackBoxCodegenTestGenerated.DefaultArguments.class, BlackBoxCodegenTestGenerated.DelegatedProperty.class, BlackBoxCodegenTestGenerated.Elvis.class, BlackBoxCodegenTestGenerated.Enum.class, BlackBoxCodegenTestGenerated.ExclExcl.class, BlackBoxCodegenTestGenerated.ExtensionFunctions.class, BlackBoxCodegenTestGenerated.ExtensionProperties.class, BlackBoxCodegenTestGenerated.FakeOverride.class, BlackBoxCodegenTestGenerated.FieldRename.class, BlackBoxCodegenTestGenerated.Finally.class, BlackBoxCodegenTestGenerated.Functions.class, BlackBoxCodegenTestGenerated.InnerNested.class, BlackBoxCodegenTestGenerated.Instructions.class, BlackBoxCodegenTestGenerated.Intrinsics.class, BlackBoxCodegenTestGenerated.JavaInterop.class, BlackBoxCodegenTestGenerated.Labels.class, BlackBoxCodegenTestGenerated.LocalClasses.class, BlackBoxCodegenTestGenerated.MultiDecl.class, BlackBoxCodegenTestGenerated.Objects.class, BlackBoxCodegenTestGenerated.OperatorConventions.class, BlackBoxCodegenTestGenerated.Package.class, BlackBoxCodegenTestGenerated.PlatformTypes.class, BlackBoxCodegenTestGenerated.PrimitiveTypes.class, BlackBoxCodegenTestGenerated.Properties.class, BlackBoxCodegenTestGenerated.Reflection.class, BlackBoxCodegenTestGenerated.Regressions.class, BlackBoxCodegenTestGenerated.SafeCall.class, BlackBoxCodegenTestGenerated.SamConstructors.class, BlackBoxCodegenTestGenerated.StaticFields.class, BlackBoxCodegenTestGenerated.Strings.class, BlackBoxCodegenTestGenerated.Super.class, BlackBoxCodegenTestGenerated.SuperConstructorCall.class, BlackBoxCodegenTestGenerated.ToArray.class, BlackBoxCodegenTestGenerated.Traits.class, BlackBoxCodegenTestGenerated.TypeInfo.class, BlackBoxCodegenTestGenerated.TypeMapping.class, BlackBoxCodegenTestGenerated.UnaryOp.class, BlackBoxCodegenTestGenerated.Unit.class, BlackBoxCodegenTestGenerated.Vararg.class, BlackBoxCodegenTestGenerated.When.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBox() throws Exception {
@@ -6161,6 +6161,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("syntheticVsReal.kt")
         public void testSyntheticVsReal() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/samConstructors/syntheticVsReal.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/box/staticFields")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StaticFields extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInStaticFields() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/staticFields"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("classObjectInc.kt")
+        public void testClassObjectInc() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/classObjectInc.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectInc.kt")
+        public void testObjectInc() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/objectInc.kt");
             doTest(fileName);
         }
     }

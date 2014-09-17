@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/bytecodeText")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BytecodeTextTestGenerated.BoxingOptimization.class, BytecodeTextTestGenerated.Constants.class, BytecodeTextTestGenerated.DirectInvoke.class, BytecodeTextTestGenerated.Inline.class, BytecodeTextTestGenerated.LineNumbers.class, BytecodeTextTestGenerated.Statements.class, BytecodeTextTestGenerated.StoreStackBeforeInline.class, BytecodeTextTestGenerated.When.class, BytecodeTextTestGenerated.WhenEnumOptimization.class, BytecodeTextTestGenerated.WhenStringOptimization.class})
+@InnerTestClasses({BytecodeTextTestGenerated.BoxingOptimization.class, BytecodeTextTestGenerated.Constants.class, BytecodeTextTestGenerated.DirectInvoke.class, BytecodeTextTestGenerated.Inline.class, BytecodeTextTestGenerated.LineNumbers.class, BytecodeTextTestGenerated.Statements.class, BytecodeTextTestGenerated.StaticFields.class, BytecodeTextTestGenerated.StoreStackBeforeInline.class, BytecodeTextTestGenerated.When.class, BytecodeTextTestGenerated.WhenEnumOptimization.class, BytecodeTextTestGenerated.WhenStringOptimization.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("accessorForProtected.kt")
@@ -429,6 +429,27 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("whenSubject.kt")
         public void testWhenSubject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/statements/whenSubject.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeText/staticFields")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StaticFields extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInStaticFields() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/staticFields"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("classObject.kt")
+        public void testClassObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/staticFields/classObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("classObjectSyntheticAccessor.kt")
+        public void testClassObjectSyntheticAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/staticFields/classObjectSyntheticAccessor.kt");
             doTest(fileName);
         }
     }

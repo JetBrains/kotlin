@@ -66,13 +66,13 @@ public class Increment extends IntrinsicMethod {
                 }
             }
             StackValue value = codegen.genQualified(receiver, operand);
-            value.dupReceiver(v);
-            value.dupReceiver(v);
+            value = StackValue.complexReceiver(value, StackValue.RECEIVER_READ, StackValue.RECEIVER_WRITE, StackValue.RECEIVER_READ);
+            //value.putReadWriteReadReceiver(v);
 
             value.put(returnType, v);
             genIncrement(returnType, myDelta, v);
             value.store(returnType, v);
-            value.put(returnType, v);
+            StackValue.putNoReceiver(value, returnType, v);
         }
         else {
             receiver.put(returnType, v);

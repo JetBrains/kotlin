@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxWithStdlib")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BlackBoxWithStdlibCodegenTestGenerated.Annotations.class, BlackBoxWithStdlibCodegenTestGenerated.Arrays.class, BlackBoxWithStdlibCodegenTestGenerated.BoxingOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.CallableReference.class, BlackBoxWithStdlibCodegenTestGenerated.Casts.class, BlackBoxWithStdlibCodegenTestGenerated.DataClasses.class, BlackBoxWithStdlibCodegenTestGenerated.DefaultArguments.class, BlackBoxWithStdlibCodegenTestGenerated.Enum.class, BlackBoxWithStdlibCodegenTestGenerated.Evaluate.class, BlackBoxWithStdlibCodegenTestGenerated.FullJdk.class, BlackBoxWithStdlibCodegenTestGenerated.HashPMap.class, BlackBoxWithStdlibCodegenTestGenerated.Intrinsics.class, BlackBoxWithStdlibCodegenTestGenerated.JdkAnnotations.class, BlackBoxWithStdlibCodegenTestGenerated.LocalFunInLambda.class, BlackBoxWithStdlibCodegenTestGenerated.NonLocalReturns.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformNames.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformStatic.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformTypes.class, BlackBoxWithStdlibCodegenTestGenerated.Ranges.class, BlackBoxWithStdlibCodegenTestGenerated.Reflection.class, BlackBoxWithStdlibCodegenTestGenerated.Regressions.class, BlackBoxWithStdlibCodegenTestGenerated.Reified.class, BlackBoxWithStdlibCodegenTestGenerated.StoreStackBeforeInline.class, BlackBoxWithStdlibCodegenTestGenerated.Strings.class, BlackBoxWithStdlibCodegenTestGenerated.ToArray.class, BlackBoxWithStdlibCodegenTestGenerated.Vararg.class, BlackBoxWithStdlibCodegenTestGenerated.When.class, BlackBoxWithStdlibCodegenTestGenerated.WhenEnumOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.WhenStringOptimization.class})
+@InnerTestClasses({BlackBoxWithStdlibCodegenTestGenerated.Annotations.class, BlackBoxWithStdlibCodegenTestGenerated.Arrays.class, BlackBoxWithStdlibCodegenTestGenerated.BoxingOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.CallableReference.class, BlackBoxWithStdlibCodegenTestGenerated.Casts.class, BlackBoxWithStdlibCodegenTestGenerated.DataClasses.class, BlackBoxWithStdlibCodegenTestGenerated.DefaultArguments.class, BlackBoxWithStdlibCodegenTestGenerated.Enum.class, BlackBoxWithStdlibCodegenTestGenerated.Evaluate.class, BlackBoxWithStdlibCodegenTestGenerated.FullJdk.class, BlackBoxWithStdlibCodegenTestGenerated.HashPMap.class, BlackBoxWithStdlibCodegenTestGenerated.Intrinsics.class, BlackBoxWithStdlibCodegenTestGenerated.JdkAnnotations.class, BlackBoxWithStdlibCodegenTestGenerated.LazyCodegen.class, BlackBoxWithStdlibCodegenTestGenerated.LocalFunInLambda.class, BlackBoxWithStdlibCodegenTestGenerated.NonLocalReturns.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformNames.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformStatic.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformTypes.class, BlackBoxWithStdlibCodegenTestGenerated.Ranges.class, BlackBoxWithStdlibCodegenTestGenerated.Reflection.class, BlackBoxWithStdlibCodegenTestGenerated.Regressions.class, BlackBoxWithStdlibCodegenTestGenerated.Reified.class, BlackBoxWithStdlibCodegenTestGenerated.StoreStackBeforeInline.class, BlackBoxWithStdlibCodegenTestGenerated.Strings.class, BlackBoxWithStdlibCodegenTestGenerated.ToArray.class, BlackBoxWithStdlibCodegenTestGenerated.Vararg.class, BlackBoxWithStdlibCodegenTestGenerated.When.class, BlackBoxWithStdlibCodegenTestGenerated.WhenEnumOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.WhenStringOptimization.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxWithStdlib() throws Exception {
@@ -1460,6 +1460,63 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("kt1397.kt")
         public void testKt1397() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jdkAnnotations/kt1397.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class LazyCodegen extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInLazyCodegen() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/lazyCodegen"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("exceptionInFieldInitializer.kt")
+        public void testExceptionInFieldInitializer() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/exceptionInFieldInitializer.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("ifElse.kt")
+        public void testIfElse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/ifElse.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("safeAssign.kt")
+        public void testSafeAssign() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/safeAssign.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("safeAssignComplex.kt")
+        public void testSafeAssignComplex() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/safeAssignComplex.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("safeCallAndArray.kt")
+        public void testSafeCallAndArray() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/safeCallAndArray.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("toString.kt")
+        public void testToString() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/toString.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("tryCatchExpression.kt")
+        public void testTryCatchExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/tryCatchExpression.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/when.kt");
             doTestWithStdlib(fileName);
         }
     }
