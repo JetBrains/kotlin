@@ -68,10 +68,17 @@ public class KotlinCacheService(val project: Project) {
             moduleFilter: (IdeaModuleInfo, modulesWithSyntheticFiles: Collection<IdeaModuleInfo>) -> Boolean,
             reuseDataFromCache: KotlinResolveCache? = null,
             syntheticFiles: Collection<JetFile> = listOf(),
+            logProcessCanceled: Boolean = false
     ): () -> CachedValueProvider.Result<ModuleResolverProvider> = {
         val analyzerFacade = AnalyzerFacadeProvider.getAnalyzerFacade(platform)
         val delegateResolverProvider = reuseDataFromCache?.moduleResolverProvider ?: EmptyModuleResolverProvider
-        val moduleResolverProvider = createModuleResolverProvider(project, analyzerFacade, syntheticFiles, delegateResolverProvider, moduleFilter)
+        val globalContext = (delegateResolverProvider as? ModuleResolverProviderImpl)?.globalContext
+                                    ?.withCompositeExceptionTrackerUnderSameLock()
+                            ?: GlobalContext(logProcessCanceled)
+
+        val moduleResolverProvider = createModuleResolverProvider(
+                project, globalContext, analyzerFacade, syntheticFiles, delegateResolverProvider, moduleFilter
+        )
         val allDependencies = dependencies + listOf(moduleResolverProvider.exceptionTracker)
         CachedValueProvider.Result.create(moduleResolverProvider, allDependencies)
     }
@@ -82,6 +89,7 @@ public class KotlinCacheService(val project: Project) {
         val librariesCache = KotlinResolveCache(
                 project, globalResolveSessionProvider(platform,
                                                       moduleFilter = { (module, _) -> module.isLibraryClasses() },
+                                                      logProcessCanceled = true,
                                                       dependencies = listOf(ProjectRootModificationTracker.getInstance(project)))
         )
 
