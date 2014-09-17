@@ -66,9 +66,16 @@ public class IDEAndroidResourceManager(project: Project, searchPath: String?) : 
         idToXmlAttributeCache.clear()
     }
 
-    override fun idToXmlAttribute(id: String): PsiElement? {
-        val element = idToXmlAttributeCache[id]
-        return element
+    override fun idToXmlAttribute(searchId: String): PsiElement? {
+//        val element = idToXmlAttributeCache[id]
+//        return element
+        var ret: PsiElement? = null
+        for (file in getLayoutXmlFiles()) {
+            file.accept(AndroidXmlVisitor(this, { id, wClass, valueElement ->
+                if (searchId == id) ret = valueElement
+            }))
+        }
+        return ret
     }
 
     override fun renameXmlAttr(elem: PsiElement, newName: String) {

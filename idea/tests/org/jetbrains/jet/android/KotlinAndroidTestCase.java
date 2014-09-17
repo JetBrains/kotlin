@@ -45,6 +45,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.testFramework.InspectionTestUtil;
+import com.intellij.testFramework.TestLogger;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
@@ -123,8 +124,11 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
 
         androidSdk = createAndroidSdk(getTestSdkPath(), getPlatformDir());
         myFacet = addAndroidFacet(myModule, sdkPath, getPlatformDir(), isToAddSdk());
-        myFixture.copyDirectoryToProject(getResDir(), "res");
-
+        if (new File(getResDir()).exists()) {
+            myFixture.copyDirectoryToProject(getResDir(), "res");
+        } else {
+            TestLogger.getInstance(this.getClass()).info("No res directory found in test");
+        }
         myAdditionalModules = new ArrayList<Module>();
 
         for (MyAdditionalModuleData data : modules) {
