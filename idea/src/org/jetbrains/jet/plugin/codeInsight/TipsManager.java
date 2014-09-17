@@ -101,7 +101,12 @@ public final class TipsManager {
 
                 for (ReceiverParameterDescriptor receiverDescriptor : result) {
                     JetType receiverType = receiverDescriptor.getType();
-                    descriptorsSet.addAll(receiverType.getMemberScope().getAllDescriptors());
+                    for (DeclarationDescriptor member : receiverType.getMemberScope().getAllDescriptors()) {
+                        // skip member extension functions&properties
+                        if (member instanceof CallableDescriptor && ((CallableDescriptor) member).getReceiverParameter() != null) continue;
+
+                        descriptorsSet.add(member);
+                    }
                 }
 
                 descriptorsSet.addAll(resolutionScope.getAllDescriptors());
