@@ -16,16 +16,14 @@
 
 package org.jetbrains.jet.plugin.k2jsrun;
 
+import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction;
-import com.intellij.execution.ui.ExecutionConsole;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
@@ -73,25 +71,10 @@ public final class K2JSRunConfiguration extends ModuleBasedConfiguration<RunConf
         return new MyProfileState();
     }
 
-    private final class MyProfileState implements RunProfileState {
+    private static final class MyProfileState implements RunProfileState {
         @Override
         public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
-            return new ExecutionResult() {
-                @Override
-                public ExecutionConsole getExecutionConsole() {
-                    return null;
-                }
-
-                @Override
-                public AnAction[] getActions() {
-                    return AnAction.EMPTY_ARRAY;
-                }
-
-                @Override
-                public ProcessHandler getProcessHandler() {
-                    return null;
-                }
-            };
+            return new DefaultExecutionResult();
         }
     }
 
