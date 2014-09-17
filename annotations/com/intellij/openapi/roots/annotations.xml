@@ -27,6 +27,10 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
     <item
+        name='com.intellij.openapi.roots.ProjectRootManager com.intellij.openapi.roots.ProjectRootManager getInstance(com.intellij.openapi.project.Project)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
         name='com.intellij.openapi.roots.ProjectRootModificationTracker com.intellij.openapi.roots.ProjectRootModificationTracker getInstance(com.intellij.openapi.project.Project)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>

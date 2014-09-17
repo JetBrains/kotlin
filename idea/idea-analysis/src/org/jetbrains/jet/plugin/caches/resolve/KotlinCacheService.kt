@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.psi.JetCodeFragment
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 import org.jetbrains.jet.utils.keysToMap
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import java.util.HashSet
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
@@ -106,16 +107,15 @@ public class KotlinCacheService(val project: Project) {
     private val syntheticFileCaches = object : SLRUCache<JetFile, KotlinResolveCache>(2, 3) {
         override fun createValue(file: JetFile?): KotlinResolveCache {
             val targetPlatform = TargetPlatformDetector.getPlatform(file!!)
+            val dependentModules = file.getModuleInfo().getDependentModules()
             return KotlinResolveCache(
                     project,
                     globalResolveSessionProvider(
                             targetPlatform,
                             syntheticFiles = listOf(file),
                             reuseDataFromCache = getGlobalCache(targetPlatform),
-                            moduleFilter = { (module, modulesWithSyntheticFiles) ->
-                                modulesWithSyntheticFiles.any {
-                                    moduleWithSyntheticFiles -> module.dependsOn(moduleWithSyntheticFiles)
-                                }
+                            moduleFilter = {(module, modulesWithSyntheticFiles) ->
+                                module in dependentModules
                             },
                             dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
                     )
