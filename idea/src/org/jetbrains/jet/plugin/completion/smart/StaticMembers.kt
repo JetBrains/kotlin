@@ -92,7 +92,9 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
 
         val classObject = classDescriptor.getClassObjectDescriptor()
         if (classObject != null) {
-            classObject.getDefaultType().getMemberScope().getAllDescriptors().forEach(::processMember)
+            classObject.getDefaultType().getMemberScope().getAllDescriptors()
+                    .filter { it !is CallableDescriptor || it.getReceiverParameter() == null }
+                    .forEach(::processMember)
         }
 
         var members = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()
