@@ -1,6 +1,6 @@
 // FILE: test/J.java
 
-package test
+package test;
 
 public class J {
     public static void foo(String s, Runnable r, Boolean z) {

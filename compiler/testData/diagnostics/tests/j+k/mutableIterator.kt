@@ -1,5 +1,5 @@
 //FILE:a/JC.java
-package a
+package a;
 
 import java.util.Iterator;
 

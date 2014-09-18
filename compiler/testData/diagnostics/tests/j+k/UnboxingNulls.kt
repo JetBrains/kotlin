@@ -1,5 +1,5 @@
 // FILE: a/Test.java
-package a
+package a;
 
 public class Test<T> {
   T t() {return null;}

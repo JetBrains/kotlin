@@ -1,5 +1,5 @@
 // FILE: aa/A.java
-package aa
+package aa;
 
 public class A {
     public void f() { }

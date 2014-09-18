@@ -1,12 +1,12 @@
 // FILE: a/M.java
-package a
+package a;
 
 public class M {
     int m;
 }
 
 // FILE: b/F.java
-package b
+package b;
 
 import a.M;
 

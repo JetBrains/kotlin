@@ -1,5 +1,5 @@
 // FILE: a/M.java
-package a
+package a;
 
 public class M {
     public class Inner {

@@ -2,7 +2,7 @@
 
 // FILE: javaPackage/Foo.java
 
-package javaPackage
+package javaPackage;
 
 public class Foo {
     private static class Bar {

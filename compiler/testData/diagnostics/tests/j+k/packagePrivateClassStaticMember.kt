@@ -2,7 +2,7 @@
 
 // FILE: foo/Bar.java
 
-package foo
+package foo;
 
 class Bar {
     static void baz() {}

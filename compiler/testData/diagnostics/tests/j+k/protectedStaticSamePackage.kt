@@ -1,6 +1,6 @@
 // FILE: test/JavaClass.java
 
-package test
+package test;
 
 public class JavaClass {
     protected static int field;

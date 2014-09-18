@@ -1,6 +1,6 @@
 //FILE:a/C.java
 //KT-1942 Package local members from Java are visible in subclasses
-package a
+package a;
 
 public class C {
     int myValue;

@@ -1,6 +1,6 @@
 //FILE: a/C.java
 // KT-1431 StackOverflowException in IDE when using JavaFX builders
-package a
+package a;
 
 public class C<B extends C<B>> {
     public static C<?> create() { return null; }
