@@ -87,6 +87,7 @@ class DelegatingFindMemberUsagesHandler(
                 for (field in fields) {
                     res.add(field)
                 }
+                res.add(declaration)
                 return res.copyToArray()
             }
         }
