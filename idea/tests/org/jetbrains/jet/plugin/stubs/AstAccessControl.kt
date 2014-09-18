@@ -23,15 +23,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.plugin.JetFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.jet.InTextDirectivesUtils
-import junit.framework.TestCase
 import kotlin.test.fail
 
-object AstAccessControl {
-    private val ALLOW_AST_ACCESS_DIRECTIVE = "ALLOW_AST_ACCESS"
+public object AstAccessControl {
+    public val ALLOW_AST_ACCESS_DIRECTIVE: String = "ALLOW_AST_ACCESS"
 
     // Please provide at least one test that fails ast switch check (shouldFail should be true for at least one test)
     // This kind of inconvenience is justified by the fact that the check can be invalidated by slight misconfiguration of the test

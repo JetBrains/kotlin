@@ -378,6 +378,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
         
+        @TestMetadata("InfixCall.kt")
+        public void testInfixCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InfixCall.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("JavaPackage.kt")
         public void testJavaPackage() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/JavaPackage.kt");

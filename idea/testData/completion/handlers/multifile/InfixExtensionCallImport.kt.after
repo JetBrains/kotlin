@@ -1,0 +1,5 @@
+import other.makePair
+
+fun foo() {
+    val pair = 1 makePair <caret>
+}

@@ -133,6 +133,7 @@ public class KotlinIndicesHelper(private val project: Project) {
                                      scope: GlobalSearchScope): Collection<CallableDescriptor> {
         val context = resolveSession.resolveToElement(expression)
         val receiverExpression = expression.getReceiverExpression() ?: return listOf()
+        val isInfixCall = expression.getParent() is JetBinaryExpression
         val expressionType = context.get<JetExpression, JetType>(BindingContext.EXPRESSION_TYPE, receiverExpression)
         val jetScope = context.get(BindingContext.RESOLUTION_SCOPE, receiverExpression)
 
@@ -147,7 +148,7 @@ public class KotlinIndicesHelper(private val project: Project) {
         return allFqNames
                 .filter { nameFilter(it.shortName().asString()) }
                 .toSet()
-                .flatMap { findSuitableExtensions(it, receiverExpression, expressionType, jetScope, resolveSession.getModuleDescriptor(), context) }
+                .flatMap { findSuitableExtensions(it, receiverExpression, expressionType, isInfixCall, jetScope, resolveSession.getModuleDescriptor(), context) }
     }
 
     /**
@@ -156,6 +157,7 @@ public class KotlinIndicesHelper(private val project: Project) {
     private fun findSuitableExtensions(callableFQN: FqName,
                                     receiverExpression: JetExpression,
                                     receiverType: JetType,
+                                    isInfixCall: Boolean,
                                     scope: JetScope,
                                     module: ModuleDescriptor,
                                     bindingContext: BindingContext): List<CallableDescriptor> {
@@ -167,7 +169,7 @@ public class KotlinIndicesHelper(private val project: Project) {
 
         return declarationDescriptors
                 .filterIsInstance(javaClass<CallableDescriptor>())
-                .filter { it.getReceiverParameter() != null && ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, it, bindingContext, dataFlowInfo) }
+                .filter { it.getReceiverParameter() != null && ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, it, isInfixCall, bindingContext, dataFlowInfo) }
     }
 
     public fun getClassDescriptors(nameFilter: (String) -> Boolean, analyzer: KotlinCodeAnalyzer, scope: GlobalSearchScope): Collection<ClassDescriptor> {

@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
+import org.jetbrains.jet.plugin.stubs.AstAccessControl;
 import org.junit.Assert;
 
 import java.util.*;
@@ -126,7 +127,8 @@ public class ExpectedCompletionUtils {
             NUMBER_JS_LINE_PREFIX,
             NUMBER_JAVA_LINE_PREFIX,
             INVOCATION_COUNT_PREFIX,
-            WITH_ORDER_PREFIX);
+            WITH_ORDER_PREFIX,
+            AstAccessControl.INSTANCE$.getALLOW_AST_ACCESS_DIRECTIVE());
 
     @NotNull
     public static CompletionProposal[] itemsShouldExist(String fileText, @Nullable TargetPlatform platform) {

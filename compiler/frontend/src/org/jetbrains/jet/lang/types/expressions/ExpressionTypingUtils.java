@@ -194,9 +194,15 @@ public class ExpressionTypingUtils {
     public static boolean checkIsExtensionCallable (
             @NotNull ReceiverValue receiverArgument,
             @NotNull CallableDescriptor callableDescriptor,
+            boolean isInfixCall,
             @NotNull BindingContext bindingContext,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
+        if (isInfixCall
+              && (!(callableDescriptor instanceof SimpleFunctionDescriptor) || callableDescriptor.getValueParameters().size() != 1)) {
+            return false;
+        }
+
         List<JetType> types = AutoCastUtils.getAutoCastVariants(receiverArgument, bindingContext, dataFlowInfo);
 
         for (JetType type : types) {
