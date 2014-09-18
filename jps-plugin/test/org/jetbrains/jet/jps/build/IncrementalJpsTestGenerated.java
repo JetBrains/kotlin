@@ -121,7 +121,8 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         
         @TestMetadata("compilationErrorThenFixed")
         public void testCompilationErrorThenFixed() throws Exception {
-            doTest("jps-plugin/testData/incremental/pureKotlin/compilationErrorThenFixed/");
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/compilationErrorThenFixed/");
+            doTest(fileName);
         }
         
         @TestMetadata("constantsUnchanged")
