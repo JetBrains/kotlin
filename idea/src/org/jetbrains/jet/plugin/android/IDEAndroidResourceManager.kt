@@ -31,10 +31,6 @@ public class IDEAndroidResourceManager(project: Project, searchPath: String?) : 
 
     private class NoAndroidFacetException: Exception("No android facet found in project")
 
-    // TODO: synchronize!
-    // TODO: invalidate on modification?
-    private val idToXmlAttributeCache = HashMap<String, PsiElement>()
-
     override fun getLayoutXmlFiles(): Collection<PsiFile> {
         try {
             val facet = getAndroidFacet()
@@ -45,7 +41,7 @@ public class IDEAndroidResourceManager(project: Project, searchPath: String?) : 
     }
 
     private fun getAndroidFacet(): AndroidFacet {
-        for (module in ModuleManager.getInstance(project)!!.getModules()) {
+        for (module in ModuleManager.getInstance(project).getModules()) {
             val facet = AndroidFacet.getInstance(module)
             if (facet != null) return facet
         }
@@ -58,35 +54,14 @@ public class IDEAndroidResourceManager(project: Project, searchPath: String?) : 
         return AndroidManifest(attributeValue!!.getRawText()!!)
     }
 
-    public fun addMapping(name: String, attr: XmlAttribute) {
-        idToXmlAttributeCache[name] = attr
-    }
-
-    public fun resetAttributeCache() {
-        idToXmlAttributeCache.clear()
-    }
-
-    override fun idToXmlAttribute(searchId: String): PsiElement? {
-//        val element = idToXmlAttributeCache[id]
-//        return element
+    override fun idToXmlAttribute(id: String): PsiElement? {
         var ret: PsiElement? = null
         for (file in getLayoutXmlFiles()) {
-            file.accept(AndroidXmlVisitor(this, { id, wClass, valueElement ->
-                if (searchId == id) ret = valueElement
+            file.accept(AndroidXmlVisitor(this, { retId, wClass, valueElement ->
+                if (retId == id) ret = valueElement
             }))
         }
         return ret
     }
 
-    override fun renameXmlAttr(elem: PsiElement, newName: String) {
-        val xmlAttr = elem as XmlAttribute
-        idToXmlAttributeCache.remove(xmlAttr.getName())
-        idToXmlAttributeCache[newName] = xmlAttr
-    }
-
-    override fun renameProperty(oldName: String, newName: String) {
-        val oldElem = idToXmlAttributeCache[oldName]
-        idToXmlAttributeCache.remove(oldName)
-        idToXmlAttributeCache[newName] = oldElem!!
-    }
 }

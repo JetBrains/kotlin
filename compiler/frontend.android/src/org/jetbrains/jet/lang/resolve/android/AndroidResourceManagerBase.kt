@@ -42,11 +42,4 @@ abstract class AndroidResourceManagerBase(project: Project, searchPath: String?)
     override fun idToXmlAttribute(id: String): PsiElement? {
         return null
     }
-
-    override fun renameXmlAttr(elem: PsiElement, newName: String) {
-    }
-
-    override fun renameProperty(oldName: String, newName: String) {
-    }
-
 }
