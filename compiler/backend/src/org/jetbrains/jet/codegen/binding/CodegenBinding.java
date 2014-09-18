@@ -142,8 +142,9 @@ public class CodegenBinding {
             @NotNull ScriptDescriptor scriptDescriptor,
             @NotNull Type asmType
     ) {
+        String simpleName = asmType.getInternalName().substring(asmType.getInternalName().lastIndexOf('/') + 1);
         ClassDescriptorImpl classDescriptor =
-                new ClassDescriptorImpl(scriptDescriptor, Name.special("<script-" + asmType.getInternalName() + ">"), Modality.FINAL,
+                new ClassDescriptorImpl(scriptDescriptor, Name.special("<script-" + simpleName + ">"), Modality.FINAL,
                                         Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()), SourceElement.NO_SOURCE);
         classDescriptor.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
 
