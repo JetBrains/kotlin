@@ -32,6 +32,7 @@ import org.jetbrains.jet.plugin.util.makeNullable
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,
@@ -79,16 +80,12 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         val asTypePositionResult = buildForAsTypePosition()
         if (asTypePositionResult != null) return asTypePositionResult
 
-        val parent = expression.getParent()
-        val expressionWithType: JetExpression
-        val receiver: JetExpression?
-        if (parent is JetQualifiedExpression) {
-            expressionWithType = parent
-            receiver = parent.getReceiverExpression()
+        val receiver = expression.getReceiverExpression()
+        val expressionWithType = if (receiver != null) {
+            expression.getParent() as? JetExpression ?: return null
         }
         else {
-            expressionWithType = expression
-            receiver = null
+            expression
         }
 
         val allExpectedInfos = calcExpectedInfos(expressionWithType) ?: return null
