@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.android.isRClassField
 
 public class AndroidRenameProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
-        // either renaming synthetic property, or value in ui xml, or R light class field
+        // either renaming synthetic property, or value in ui xml, or R class field
         return (element.namedUnwrappedElement is JetProperty &&
                 isAndroidSyntheticElement(element.namedUnwrappedElement)) || element is XmlAttributeValue ||
                 isRClassField(element)
@@ -61,7 +61,6 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
         for (resField in AndroidResourceUtil.findIdFields(attr)) {
             allRenames.put(resField, AndroidResourceUtil.getFieldNameByResourceName(name!!))
         }
-        resourceManager.renameProperty(oldName, newName)
     }
 
     private fun renameAttributeValue(attribute: XmlAttributeValue, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
@@ -79,7 +78,6 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
         for (prop in matchedProps) {
             allRenames[prop] = newPropName
         }
-        processor.resourceManager.renameProperty(oldPropName!!, newPropName)
     }
 
     private fun renameLightClassField(field: LightElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
