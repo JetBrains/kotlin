@@ -285,27 +285,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void writeInnerClass(@NotNull ClassDescriptor innerClass) {
-        // TODO: proper access
-        int innerClassAccess = getVisibilityAccessFlag(innerClass);
-        if (innerClass.getModality() == Modality.FINAL) {
-            innerClassAccess |= ACC_FINAL;
-        }
-        else if (innerClass.getModality() == Modality.ABSTRACT) {
-            innerClassAccess |= ACC_ABSTRACT;
-        }
-
-        if (innerClass.getKind() == ClassKind.TRAIT) {
-            innerClassAccess |= ACC_INTERFACE;
-        }
-        else if (innerClass.getKind() == ClassKind.ENUM_CLASS) {
-            innerClassAccess |= ACC_ENUM;
-        }
-
-        if (!innerClass.isInner()) {
-            innerClassAccess |= ACC_STATIC;
-        }
-
-        // TODO: cache internal names
         DeclarationDescriptor containing = innerClass.getContainingDeclaration();
         String outerClassInternalName = containing instanceof ClassDescriptor ? getInternalNameForImpl((ClassDescriptor) containing) : null;
 
@@ -321,7 +300,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             innerClassInternalName = getInternalNameForImpl(innerClass);
         }
 
-        v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, innerClassAccess);
+        v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, calculateInnerClassAccessFlags(innerClass));
     }
 
     @NotNull

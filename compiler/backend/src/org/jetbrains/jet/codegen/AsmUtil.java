@@ -240,7 +240,6 @@ public class AsmUtil {
         return NO_FLAG_PACKAGE_PRIVATE;
     }
 
-
     public static int getVisibilityAccessFlagForAnonymous(@NotNull ClassDescriptor descriptor) {
         if (isDeclarationInsideInlineFunction(descriptor)) {
             return ACC_PUBLIC;
@@ -248,7 +247,7 @@ public class AsmUtil {
         return NO_FLAG_PACKAGE_PRIVATE;
     }
 
-    public static boolean isDeclarationInsideInlineFunction(@NotNull ClassDescriptor descriptor) {
+    private static boolean isDeclarationInsideInlineFunction(@NotNull ClassDescriptor descriptor) {
         //NB: constructor context couldn't be inline
         DeclarationDescriptor parentDeclaration = descriptor.getContainingDeclaration();
         if (parentDeclaration instanceof SimpleFunctionDescriptor &&
@@ -256,6 +255,31 @@ public class AsmUtil {
             return true;
         }
         return false;
+    }
+
+    public static int calculateInnerClassAccessFlags(@NotNull ClassDescriptor innerClass) {
+        return getVisibilityAccessFlag(innerClass) |
+               innerAccessFlagsForModalityAndKind(innerClass) |
+               (innerClass.isInner() ? 0 : ACC_STATIC);
+    }
+
+    private static int innerAccessFlagsForModalityAndKind(@NotNull ClassDescriptor innerClass) {
+        switch (innerClass.getKind()) {
+            case TRAIT:
+                return ACC_ABSTRACT | ACC_INTERFACE;
+            case ENUM_CLASS:
+                return ACC_FINAL | ACC_ENUM;
+            case ANNOTATION_CLASS:
+                return ACC_ABSTRACT | ACC_ANNOTATION | ACC_INTERFACE;
+            default:
+                if (innerClass.getModality() == Modality.FINAL) {
+                    return ACC_FINAL;
+                }
+                else if (innerClass.getModality() == Modality.ABSTRACT) {
+                    return ACC_ABSTRACT;
+                }
+        }
+        return 0;
     }
 
     public static int getDeprecatedAccessFlag(@NotNull MemberDescriptor descriptor) {
