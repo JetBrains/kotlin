@@ -102,7 +102,6 @@ private fun generatorForTopDownAnalyzerForJs() =
 
 private fun generatorForTopDownAnalyzerForJvm() =
         generator("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm") {
-            implementInterface(javaClass<InjectorForTopDownAnalyzer>())
             commonForTopDownAnalyzer()
 
             publicField(javaClass<JavaDescriptorResolver>())
