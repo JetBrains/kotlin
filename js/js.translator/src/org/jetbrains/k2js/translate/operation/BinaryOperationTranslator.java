@@ -89,7 +89,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translate() {
         BinaryOperationIntrinsic intrinsic = getIntrinsicForExpression();
-        if (intrinsic != null) {
+        if (intrinsic.exists()) {
             return applyIntrinsic(intrinsic);
         }
         if (getOperationToken(expression).equals(JetTokens.ELVIS)) {
@@ -149,7 +149,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         return result;
     }
 
-    @Nullable
+    @NotNull
     private BinaryOperationIntrinsic getIntrinsicForExpression() {
         return context().intrinsics().getBinaryOperationIntrinsics().getIntrinsic(expression, context());
     }
