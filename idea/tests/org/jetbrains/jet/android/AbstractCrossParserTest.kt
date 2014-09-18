@@ -52,11 +52,6 @@ public abstract class AbstractCrossParserTest : KotlinAndroidTestCase() {
 
         assertEquals(cliResult, ideResult)
     }
-    override fun setUp() {
-        System.setProperty(KotlinAndroidTestCaseBase.SDK_PATH_PROPERTY, PathManager.getHomePath() + "/androidSDK/")
-        System.setProperty(KotlinAndroidTestCaseBase.PLATFORM_DIR_PROPERTY, "android-17")
-        super.setUp()
-    }
 
     private fun getEnvironment(testPath: String): JetCoreEnvironment {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
@@ -68,10 +63,4 @@ public abstract class AbstractCrossParserTest : KotlinAndroidTestCase() {
     override fun getTestDataPath(): String? {
         return PluginTestCaseBase.getTestDataPathBase() + "/android/crossParser/" + getTestName(true) + "/"
     }
-
-    override fun createManifest() {
-        myFixture!!.copyFileToProject("idea/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML)
-    }
-
-    override fun requireRecentSdk() = true
 }

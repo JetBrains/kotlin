@@ -137,7 +137,7 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
 
     /** Is the bundled (incomplete) SDK install adequate or do we need to find a valid install? */
     protected boolean requireRecentSdk() {
-        return false;
+        return true;
     }
 
     protected void addAndroidSdk(Module module, String sdkPath, String platformDir) {
