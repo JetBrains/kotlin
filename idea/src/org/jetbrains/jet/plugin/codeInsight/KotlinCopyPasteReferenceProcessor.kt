@@ -62,6 +62,7 @@ import org.jetbrains.jet.plugin.imports.*
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData>() {
