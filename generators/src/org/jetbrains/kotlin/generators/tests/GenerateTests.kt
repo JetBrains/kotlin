@@ -148,6 +148,7 @@ import org.jetbrains.jet.lang.resolve.android.AbstractAndroidBoxTest
 import org.jetbrains.jet.android.AbstractAndroidCompletionTest
 import org.jetbrains.jet.android.AbstractAndroidGotoTest
 import org.jetbrains.jet.jps.build.android.AbstractAndroidJpsTestCase
+import org.jetbrains.jet.android.AbstractAndroidRenameTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -720,6 +721,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractAndroidGotoTest>()) {
             model("android/goto", recursive = false, extension = null)
+        }
+
+        testClass(javaClass<AbstractAndroidRenameTest>()) {
+            model("android/rename", recursive = false, extension = null)
         }
     }
 
