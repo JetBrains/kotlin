@@ -1,0 +1,18 @@
+JetFile: HangOnLonelyModifier.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n')
+      PsiErrorElement:Expecting a statement
+        PsiElement(in)('in')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

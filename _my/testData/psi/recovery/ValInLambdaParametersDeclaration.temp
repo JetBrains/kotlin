@@ -1,0 +1,6 @@
+fun test() {
+    val list = listOf(1, 2)
+    list.filter {
+        (val a, val b)=some.test
+    }
+}

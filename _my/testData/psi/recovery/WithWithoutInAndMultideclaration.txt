@@ -1,0 +1,40 @@
+JetFile: WithWithoutInAndMultideclaration.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION
+          PsiElement(LPAR)('(')
+          MULTI_VARIABLE_DECLARATION_ENTRY
+            PsiElement(IDENTIFIER)('i')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          MULTI_VARIABLE_DECLARATION_ENTRY
+            PsiElement(IDENTIFIER)('j')
+          PsiElement(RPAR)(')')
+        PsiErrorElement:Expecting 'in'
+          <empty list>
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n\n    ')
+        BODY
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

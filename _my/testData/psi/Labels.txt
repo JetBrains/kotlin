@@ -1,0 +1,305 @@
+JetFile: Labels.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      RETURN
+        PsiElement(return)('return')
+      PsiWhiteSpace('\n  ')
+      RETURN
+        PsiElement(return)('return')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n  ')
+      RETURN
+        PsiElement(return)('return')
+        PsiWhiteSpace(' ')
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          LABELED_EXPRESSION
+            LABEL_QUALIFIER
+              LABEL
+                PsiElement(LABEL_IDENTIFIER)('@a')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n  ')
+      RETURN
+        PsiElement(return)('return')
+        PsiErrorElement:Label must be named
+          PsiElement(LABEL_IDENTIFIER)('@')
+      PsiWhiteSpace('\n  ')
+      RETURN
+        PsiElement(return)('return')
+        PsiErrorElement:Label must be named
+          PsiElement(LABEL_IDENTIFIER)('@')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n  ')
+      RETURN
+        PsiElement(return)('return')
+        PsiErrorElement:Label must be named
+          PsiElement(LABEL_IDENTIFIER)('@')
+        PsiWhiteSpace(' ')
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          LABELED_EXPRESSION
+            PsiErrorElement:Label must be named
+              PsiElement(LABEL_IDENTIFIER)('@')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n  ')
+      RETURN
+        PsiElement(return)('return')
+        PsiErrorElement:Label must be named
+          PsiElement(LABEL_IDENTIFIER)('@')
+        PsiWhiteSpace(' ')
+        LABELED_EXPRESSION
+          PsiErrorElement:Label must be named
+            PsiElement(LABEL_IDENTIFIER)('@')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n\n  ')
+      RETURN
+        PsiElement(return)('return')
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(LABEL_IDENTIFIER)('@a')
+      PsiWhiteSpace('\n  ')
+      RETURN
+        PsiElement(return)('return')
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(LABEL_IDENTIFIER)('@a')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n  ')
+      RETURN
+        PsiElement(return)('return')
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(LABEL_IDENTIFIER)('@a')
+        PsiWhiteSpace(' ')
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          LABELED_EXPRESSION
+            LABEL_QUALIFIER
+              LABEL
+                PsiElement(LABEL_IDENTIFIER)('@a')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n  ')
+      RETURN
+        PsiElement(return)('return')
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(LABEL_IDENTIFIER)('@a')
+        PsiWhiteSpace(' ')
+        LABELED_EXPRESSION
+          LABEL_QUALIFIER
+            LABEL
+              PsiElement(LABEL_IDENTIFIER)('@a')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n\n  ')
+      RETURN
+        PsiElement(return)('return')
+        PsiErrorElement:Label must be named
+          PsiElement(LABEL_IDENTIFIER)('@')
+        LABELED_EXPRESSION
+          PsiErrorElement:Label must be named
+            PsiElement(LABEL_IDENTIFIER)('@')
+          PsiWhiteSpace('\n  ')
+          RETURN
+            PsiElement(return)('return')
+            PsiErrorElement:Label must be named
+              PsiElement(LABEL_IDENTIFIER)('@')
+            LABELED_EXPRESSION
+              PsiErrorElement:Label must be named
+                PsiElement(LABEL_IDENTIFIER)('@')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n\n  ')
+      BREAK
+        PsiElement(break)('break')
+      PsiWhiteSpace('\n  ')
+      BREAK
+        PsiElement(break)('break')
+        PsiErrorElement:Label must be named
+          PsiElement(LABEL_IDENTIFIER)('@')
+      PsiWhiteSpace('\n  ')
+      BREAK
+        PsiElement(break)('break')
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(LABEL_IDENTIFIER)('@a')
+      PsiWhiteSpace('\n\n  ')
+      CONTINUE
+        PsiElement(continue)('continue')
+      PsiWhiteSpace('\n  ')
+      CONTINUE
+        PsiElement(continue)('continue')
+        PsiErrorElement:Label must be named
+          PsiElement(LABEL_IDENTIFIER)('@')
+      PsiWhiteSpace('\n  ')
+      CONTINUE
+        PsiElement(continue)('continue')
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(LABEL_IDENTIFIER)('@a')
+      PsiWhiteSpace('\n\n  ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          FUNCTION_LITERAL_ARGUMENT
+            LABELED_EXPRESSION
+              LABEL_QUALIFIER
+                LABEL
+                  PsiElement(LABEL_IDENTIFIER)('@f')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n      ')
+                  BLOCK
+                    IF
+                      PsiElement(if)('if')
+                      PsiWhiteSpace(' ')
+                      PsiElement(LPAR)('(')
+                      CONDITION
+                        INTEGER_CONSTANT
+                          PsiElement(INTEGER_LITERAL)('1')
+                      PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      THEN
+                        RETURN
+                          PsiElement(return)('return')
+                    PsiWhiteSpace('\n      ')
+                    RETURN
+                      PsiElement(return)('return')
+                      LABEL_QUALIFIER
+                        LABEL
+                          PsiElement(LABEL_IDENTIFIER)('@f')
+                      PsiWhiteSpace(' ')
+                      BOOLEAN_CONSTANT
+                        PsiElement(true)('true')
+                  PsiWhiteSpace('\n  ')
+                  PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n  ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          FUNCTION_LITERAL_ARGUMENT
+            LABELED_EXPRESSION
+              PsiErrorElement:Label must be named
+                PsiElement(LABEL_IDENTIFIER)('@')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n      ')
+                  BLOCK
+                    IF
+                      PsiElement(if)('if')
+                      PsiWhiteSpace(' ')
+                      PsiElement(LPAR)('(')
+                      CONDITION
+                        INTEGER_CONSTANT
+                          PsiElement(INTEGER_LITERAL)('1')
+                      PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      THEN
+                        RETURN
+                          PsiElement(return)('return')
+                    PsiWhiteSpace('\n      ')
+                    RETURN
+                      PsiElement(return)('return')
+                      PsiErrorElement:Label must be named
+                        PsiElement(LABEL_IDENTIFIER)('@')
+                      PsiWhiteSpace(' ')
+                      BOOLEAN_CONSTANT
+                        PsiElement(true)('true')
+                  PsiWhiteSpace('\n  ')
+                  PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n  ')
+      THIS_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(this)('this')
+      PsiWhiteSpace('\n  ')
+      THIS_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(this)('this')
+        PsiErrorElement:Label must be named
+          PsiElement(LABEL_IDENTIFIER)('@')
+      PsiWhiteSpace('\n  ')
+      THIS_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(this)('this')
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(LABEL_IDENTIFIER)('@a')
+      PsiWhiteSpace('\n\n  ')
+      SUPER_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(super)('super')
+        PsiElement(LT)('<')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('A')
+        PsiElement(GT)('>')
+      PsiWhiteSpace('\n  ')
+      SUPER_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(super)('super')
+        PsiElement(LT)('<')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('A')
+        PsiElement(GT)('>')
+        PsiErrorElement:Label must be named
+          PsiElement(LABEL_IDENTIFIER)('@')
+      PsiWhiteSpace('\n  ')
+      SUPER_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(super)('super')
+        PsiElement(LT)('<')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('A')
+        PsiElement(GT)('>')
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(LABEL_IDENTIFIER)('@a')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

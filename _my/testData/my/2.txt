@@ -1,0 +1,60 @@
+KT_FILE_TYPE
+  KtKotlinFileImpl(KOTLIN_FILE)
+    KtPreambleImpl(PREAMBLE)
+      <empty list>
+    KtToplevelObjectImpl(TOPLEVEL_OBJECT)
+      KtFunctionImpl(FUNCTION)
+        KtModifiersImpl(MODIFIERS)
+          <empty list>
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo1')
+        KtValueParametersImpl(VALUE_PARAMETERS)
+          PsiElement(()('(')
+          PsiElement())(')')
+        PsiWhiteSpace(' ')
+        KtTypeConstraintsImpl(TYPE_CONSTRAINTS)
+          <empty list>
+        KtFunctionBodyImpl(FUNCTION_BODY)
+          KtBlockImpl(BLOCK)
+            PsiElement({)('{')
+            PsiWhiteSpace('\n    ')
+            KtStatementsImpl(STATEMENTS)
+              KtMultisemiImpl(MULTISEMI)
+                <empty list>
+              KtStatementSEMIExtImpl(STATEMENT_SEMI_EXT)
+                KtStatementImpl(STATEMENT)
+                  KtDeclarationImpl(DECLARATION)
+                    KtPropertyImpl(PROPERTY)
+                      KtModifiersImpl(MODIFIERS)
+                        <empty list>
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      KtAnnotationsImpl(ANNOTATIONS)
+                        <empty list>
+                      KtVariableDeclarationEntryImpl(VARIABLE_DECLARATION_ENTRY)
+                        PsiElement(IDENTIFIER)('a')
+                      PsiWhiteSpace('\n    ')
+                      KtTypeConstraintsImpl(TYPE_CONSTRAINTS)
+                        <empty list>
+                KtMultisemiImpl(MULTISEMI)
+                  <empty list>
+                KtStatementImpl(STATEMENT)
+                  KtDeclarationImpl(DECLARATION)
+                    KtPropertyImpl(PROPERTY)
+                      KtModifiersImpl(MODIFIERS)
+                        <empty list>
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      KtAnnotationsImpl(ANNOTATIONS)
+                        <empty list>
+                      KtVariableDeclarationEntryImpl(VARIABLE_DECLARATION_ENTRY)
+                        PsiElement(IDENTIFIER)('b')
+                      PsiWhiteSpace('\n')
+                      KtTypeConstraintsImpl(TYPE_CONSTRAINTS)
+                        <empty list>
+                KtMultisemiImpl(MULTISEMI)
+                  <empty list>
+              KtMultisemiImpl(MULTISEMI)
+                <empty list>
+            PsiElement(})('}')

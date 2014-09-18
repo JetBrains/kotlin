@@ -1,0 +1,43 @@
+JetFile: DoWhileWithEmptyCondition.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Boolean')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      DO_WHILE
+        PsiElement(do)('do')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n\n    ')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        PsiElement(while)('while')
+        PsiElement(LPAR)('(')
+        CONDITION
+          PsiErrorElement:Expecting an expression
+            <empty list>
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      RETURN
+        PsiElement(return)('return')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

@@ -1,0 +1,9 @@
+KT_FILE_TYPE
+  PsiComment(shebang_comment)('#! shebang comment')
+  PsiWhiteSpace('\n')
+  PsiComment(eol_comment)('// eol comment')
+  PsiWhiteSpace('\n')
+  PsiComment(block_comment)('/*\nblock\ncomment\n */')
+  KtKotlinFileImpl(KOTLIN_FILE)
+    KtPreambleImpl(PREAMBLE)
+      <empty list>

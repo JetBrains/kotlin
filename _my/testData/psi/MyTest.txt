@@ -1,0 +1,88 @@
+JetFile: MyTest.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            BINARY_EXPRESSION
+              BINARY_EXPRESSION
+                BINARY_EXPRESSION
+                  BINARY_EXPRESSION
+                    BINARY_EXPRESSION
+                      BINARY_EXPRESSION
+                        BINARY_EXPRESSION
+                          INTEGER_CONSTANT
+                            PsiElement(INTEGER_LITERAL)('1')
+                          PsiWhiteSpace(' ')
+                          OPERATION_REFERENCE
+                            PsiElement(PLUS)('+')
+                          PsiWhiteSpace(' ')
+                          INTEGER_CONSTANT
+                            PsiElement(INTEGER_LITERAL)('2')
+                        PsiWhiteSpace(' ')
+                        OPERATION_REFERENCE
+                          PsiElement(PLUS)('+')
+                        PsiWhiteSpace(' ')
+                        INTEGER_CONSTANT
+                          PsiElement(INTEGER_LITERAL)('3')
+                      PsiWhiteSpace(' ')
+                      OPERATION_REFERENCE
+                        PsiElement(PLUS)('+')
+                      PsiWhiteSpace(' ')
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('4')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUS)('+')
+                    PsiWhiteSpace(' ')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('5')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('6')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(PLUS)('+')
+                PsiWhiteSpace(' ')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('7')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(PLUS)('+')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('8')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('9')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('10')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

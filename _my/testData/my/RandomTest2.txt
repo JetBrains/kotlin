@@ -1,0 +1,33 @@
+KT_FILE_TYPE
+  KtKotlinFileImpl(KOTLIN_FILE)
+    KtPreambleImpl(PREAMBLE)
+      <empty list>
+    KtToplevelObjectImpl(TOPLEVEL_OBJECT)
+      KtFunctionImpl(FUNCTION)
+        KtModifiersImpl(MODIFIERS)
+          <empty list>
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        KtValueParametersImpl(VALUE_PARAMETERS)
+          PsiElement(()('(')
+          PsiElement())(')')
+        PsiWhiteSpace(' ')
+        KtTypeConstraintsImpl(TYPE_CONSTRAINTS)
+          <empty list>
+  PsiElement({)('{')
+  PsiWhiteSpace('\n    ')
+  PsiElement(val)('val')
+  PsiWhiteSpace(' ')
+  PsiElement(IDENTIFIER)('f')
+  PsiWhiteSpace(' ')
+  PsiElement(=)('=')
+  PsiWhiteSpace(' ')
+  PsiElement(IDENTIFIER)('a')
+  PsiWhiteSpace(' ')
+  PsiElement(is)('is')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:'T' unexpected
+    PsiElement(IDENTIFIER)('T')
+  PsiWhiteSpace('\n')
+  PsiElement(})('}')

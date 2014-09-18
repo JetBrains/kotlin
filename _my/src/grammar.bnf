@@ -1,0 +1,1118 @@
+{
+  psiClassPrefix="Kt"
+  generateTokens=false
+  parserImports="static org.jetbrains.jet.lexer.JetTokens.*"
+
+  parserClass="generated.KotlinParser"
+  elementTypeHolderClass="generated.KotlinTypes"
+  elementTypeFactory="kt.KotlinParserDefinition.createType"
+  tokenTypeFactory="kt.KotlinParserDefinition.createTokenType"
+  parserUtilClass="kt.KotlinParserUtil"
+
+}
+
+// ----- Syntax -----
+
+root ::= kotlinFile
+
+// start
+private kotlinFile
+  ::= preamble toplevelObject*
+  ;
+
+// start
+//script
+//  ::= preamble expression*
+//  ;
+
+// [Used by script, kotlinFile]
+private preamble
+  ::= packageHeader importList?
+  ;
+
+importList
+  ::= importDirective+
+  ;
+
+// [Used by preamble]
+packageHeader
+  ::= (modifiersPlus? "package" IDENTIFIER_EXT SEMI?)?
+  ;
+
+// [Used by preamble, package]
+importDirective
+  ::= <<at IMPORT_KEYWORD>> "import" IDENTIFIER_EXT ("." "*" | "as" IDENTIFIER)? SEMI?
+  ;
+
+// [Used by package, kotlinFile]
+private toplevelObject
+  ::= packageDirective
+  | classDeclaration
+  | object
+  | function
+  | property
+  | typedef
+  ;
+
+// [Used by toplevelObject]
+packageDirective
+  ::= "package" IDENTIFIER_EXT "{"
+       importDirective*
+       toplevelObject*
+    "}"
+  ;
+
+// [Used by memberDeclaration, declaration, toplevelObject]
+typedef
+  ::= modifiersPlus? "type" IDENTIFIER (typeParameters typeConstraintsNoQ?)? "=" type SEMI?
+  ;
+
+// same as IDENTIFIER{"."}
+//IDENTIFIER_EXT ::= (IDENTIFIER ".")* IDENTIFIER
+
+private IDENTIFIER_EXT ::= referenceExpression DOT_IDENTIFIER*
+left DOT_IDENTIFIER ::= "." referenceExpression
+
+
+// ----- Classes ------
+
+
+// [Used by memberDeclaration, declaration, toplevelObject]
+classDeclaration
+  ::= modifiersPlus? ("class" | "trait") IDENTIFIER
+      typeParameters?
+      primaryConstructorModifierList? valueParameters?
+      (":" annotationsPlus? delegationSpecifierExt)?
+      typeConstraintsNoQ?
+      (enumClassBody | classBodyNoQ?)
+  ;
+
+// [Used by objectLiteral, enumEntry, class, object]
+classBody
+  ::= ("{" ENABLE_NEWLINES memberDeclaration* RESTORE_NEWLINES_STATE"}")?
+  ;
+
+classBodyNoQ
+  ::= ("{" ENABLE_NEWLINES memberDeclaration* RESTORE_NEWLINES_STATE"}")
+  ;
+
+
+// same as delegationSpecifier{","}
+delegationSpecifierExt ::= (delegationSpecifier ",")* delegationSpecifier
+
+// [Used by objectLiteral, class, object]
+private delegationSpecifier
+  ::= delegatorSuperCall
+  | explicitDelegation
+  | delegatorSuperClass
+  ;
+
+delegatorSuperClass
+  ::= userTypeReference
+  ;
+
+// [Used by delegationSpecifier]
+explicitDelegation
+  ::= userTypeReference <<at BY_KEYWORD>> "by" expression
+  ;
+
+// [Used by class, property, typedef, function]
+typeParameters
+  ::= "<" DISABLE_NEWLINES typeParameterExt RESTORE_NEWLINES_STATE">"
+  ;
+
+//same as typeParameter{","}
+private typeParameterExt ::= (typeParameter ",")* typeParameter
+
+// [Used by typeParameters]
+typeParameter
+  ::= modifiersPlusFollowedByIdentifier? IDENTIFIER_NEXT IDENTIFIER (":" userTypeReference)?
+  ;
+
+// [Used by class, property, typedef, function]
+typeConstraints
+  ::= ("where" typeConstraintExt)?
+  ;
+
+private typeConstraintsNoQ
+  ::= <<at WHERE_KEYWORD>> "where" typeConstraintExt
+  ;
+
+
+//same as typeConstraint{","}
+typeConstraintExt ::= (typeConstraint ",")* typeConstraint
+
+// [Used by typeConstraints]
+typeConstraint
+  ::= annotationsPlus? referenceExpression ":" type
+  | annotationsPlus? "class" "object" referenceExpression ":" type
+  ;
+
+
+// Class members
+
+
+// [Used by enumClassBody, classBody]
+private memberDeclaration
+  ::= classObject
+  | object
+  | function
+  | property
+  | classDeclaration
+  | typedef
+  | anonymousInitializer
+  ;
+
+// [Used by memberDeclaration]
+anonymousInitializer
+  ::= block
+  ;
+
+// [Used by memberDeclaration]
+classObject
+  ::= modifiers "class" object
+  ;
+
+// [Used by function]
+valueParameters
+  ::= "(" DISABLE_NEWLINES functionParameterExt? RESTORE_NEWLINES_STATE ")"
+  ;
+
+// same as functionParameter{","}
+private functionParameterExt ::= (functionParameter ",")* functionParameter
+
+//[Used by valueParameters, class]
+functionParameter
+  ::= modifiersPlus? ("val" | "var")? privateParameter ("=" expression)?
+  ;
+
+// same as initializer{","}
+initializerExt ::= (initializer ",")* initializer
+
+// [Used by enumEntry]
+private initializer
+  ::= annotationsPlus? "this" valueArguments
+  | annotationsPlus? delegatorSuperCall
+  ;
+
+// [Used by catchBlock, anonymousInitializer, functionBody, try, finallyBlock]
+block
+  ::= "{" ENABLE_NEWLINES statements RESTORE_NEWLINES_STATE"}"
+  ;
+
+// [Used by memberDeclaration, declaration, toplevelObject]
+function
+  ::= modifiersPlus? "fun" typeParameters?
+      (type ".")?// | annotations)?
+      IDENTIFIER
+      typeParameters? valueParameters (":" type)?
+      typeConstraintsNoQ?
+      functionBody?
+  ;
+
+// [Used by getter, setter, function]
+private functionBody
+  ::= block
+  | "=" expression
+  ;
+
+// same as variableDeclarationEntry{","}
+variableDeclarationEntryExt ::= (variableDeclarationEntry ",")* variableDeclarationEntry
+
+// [Used by for, property, multipleVariableDeclarations]
+private variableDeclarationEntry
+  ::= IDENTIFIER (":" type)?
+  ;
+
+// [Used by for, property]
+multipleVariableDeclarations
+  ::= "(" DISABLE_NEWLINES variableDeclarationEntryExt RESTORE_NEWLINES_STATE ")"
+  ;
+
+// [Used by memberDeclaration, declaration, toplevelObject]
+property
+  ::= modifiersPlus? ("val" | "var")
+      typeParameters? DISABLE_JOINING_COMPLEX_TOKENS (typeFollowedByDot "." | annotationsPlus?)?
+      (multipleVariableDeclarations | variableDeclarationEntry) RESTORE_JOINING_COMPLEX_TOKENS_STATE
+      typeConstraintsNoQ?
+      //("by" (getter setter | setter getter | setter | getter?)
+      //| "=" expression /*SEMI?*/ (getter setter | setter getter | setter | getter)
+      //| "=" expression)
+
+      ("by" | "=" expression SEMI?)?
+      //was: (getter? setter? | setter? getter?) SEMI?
+      (getter setter | setter getter | setter | getter?)// SEMI?
+  ;
+
+
+propertyLocal
+  ::= modifiersPlus? ("val" | "var")
+      typeParameters? DISABLE_JOINING_COMPLEX_TOKENS (typeFollowedByDot "." | annotationsPlus?)?
+      (multipleVariableDeclarations | variableDeclarationEntry) RESTORE_JOINING_COMPLEX_TOKENS_STATE
+      typeConstraintsNoQ?
+      ("by" | "=" expression)?
+  ;
+
+
+// [Used by property]
+getter
+  ::= modifiersPlus? <<at GET_KEYWORD>> "get"  "(" DISABLE_NEWLINES RESTORE_NEWLINES_STATE ")" (":" type)? functionBody
+  | modifiersPlus? <<at GET_KEYWORD>>  "get"
+  ;
+
+// [Used by property]
+setter
+  ::= modifiersPlus? <<at SET_KEYWORD>> "set" "(" DISABLE_NEWLINES modifiersPlus? singleValueParameterList RESTORE_NEWLINES_STATE")" functionBody
+  | modifiersPlus? <<at SET_KEYWORD>> "set"
+  ;
+
+// [Used by functionType, setter, functionParameter]
+singleValueParameterList
+  ::= parameter
+  ;
+
+private privateParameter
+  ::= IDENTIFIER (":" type)?
+  ;
+
+
+parameter
+  ::= IDENTIFIER (":" type)?
+  ;
+
+// [Used by memberDeclaration, declaration, toplevelObject, classObject]
+object
+  ::= "object" IDENTIFIER (":" delegationSpecifierExt)? classBody?
+  ;
+
+
+// Enum classes
+
+
+// [Used by class]
+enumClassBody
+  ::= "{" ENABLE_NEWLINES (enumEntry | memberDeclaration)* RESTORE_NEWLINES_STATE"}"
+  ;
+
+// [Used by enumClassBody]
+enumEntry
+  ::= modifiersPlus? objectDeclarationName (":" initializerExt)? classBodyNoQ?
+  ;
+
+objectDeclarationName
+  ::= IDENTIFIER
+  ;
+
+
+// ----- Types -----
+
+
+// [Used by isRHS, simpleUserType, getter, atomicExpression, property, typeArguments, typedef, function, functionLiteral, parameter, functionType, variableDeclarationEntry, typeConstraint]
+type
+  ::= annotationsPlusBeforeType? /*TYPE_START_NEXT*/ typeDescriptor
+  ;
+
+typeFollowedByDot
+  ::= annotationsPlus? typeDescriptorFollowedByDot
+  ;
+
+
+/*
+
+WAS:
+
+// [Used by nullableType, typeDescriptor, type]
+typeDescriptor
+  ::= "(" typeDescriptor ")"
+  | selfType
+  | functionType
+  | userType
+  | nullableType
+  ;
+
+// [Used by typeDescriptor]
+nullableType
+  ::= typeDescriptor "?"
+  ;
+
+PROBLEM: left recursion
+
+FIX:
+*/
+
+
+/*
+
+WAS AFTER FIX:  | selfType
+
+
+typeDescriptor
+  ::= (
+    "(" typeDescriptor ")"
+    | selfType
+    | functionType
+    | userType
+    ) "?"*
+  ;
+
+functionType
+  ::= (type ".")? "(" parameterModifiersTypeExt ")" "->" type?
+  ;
+
+
+
+PROBLEM: left recursion
+
+ */
+
+
+private typeDescriptor
+  ::= RETURN_TRUE typeDescriptorAfterRecursion (("." "(" DISABLE_NEWLINES parameterModifiersTypeExt? RESTORE_NEWLINES_STATE")" "->" type?) | nullableType)*
+  //{pin=1}
+  ;
+
+left nullableType
+  ::= "?"
+  ;
+
+private typeDescriptorFollowedByDot
+  ::= typeDescriptorAfterRecursion (("." "(" DISABLE_NEWLINES parameterModifiersTypeExt? RESTORE_NEWLINES_STATE")" "->" type?) | nullableType)+
+  | typeDescriptorAfterRecursionFollowedByDot
+  ;
+
+
+private typeDescriptorAfterRecursion
+  ::= "(" DISABLE_NEWLINES parameterModifiersTypeExt? RESTORE_NEWLINES_STATE")" "->" type?
+  | typeDescriptorInBrackets
+  | userType
+  | selfType
+  ;
+
+private typeDescriptorInBrackets
+  ::= "(" DISABLE_NEWLINES typeDescriptor RESTORE_NEWLINES_STATE ")"
+  //{pin=1}
+  //{pin=1 recoverWhile=NOT_RPAR}
+  ;
+
+private NOT_RPAR ::= !(")")
+
+private typeDescriptorAfterRecursionFollowedByDot
+  ::= "(" DISABLE_NEWLINES parameterModifiersTypeExt? RESTORE_NEWLINES_STATE")" "->" type?
+  | typeDescriptorInBrackets
+  | userTypeFollowedByDot
+  | selfType
+  ;
+
+
+// [Used by typeDescriptor]
+selfType
+  ::= "This"
+  ;
+
+// [Used by typeParameter, catchBlock, callableReference, typeDescriptor, delegationSpecifier, constructorInvocation, explicitDelegation]
+userType
+  ::= ("package" ".")? simpleUserTypeExt
+  ;
+
+userTypeFollowedByDot
+  ::= ("package" ".")? simpleUserTypeExtFollowedByDot
+  ;
+
+
+// same as simpleUserType{"."}
+private simpleUserTypeExt ::= simpleUserType ("." simpleUserType)*
+
+private simpleUserTypeExtFollowedByDot ::= simpleUserType ("." simpleUserType DOT_NEXT)*
+
+// [Used by userType]
+private simpleUserType
+  ::= referenceExpression typeArgumentList?
+  ;
+
+typeArgumentList
+  ::= ("<" DISABLE_NEWLINES optionalProjectionTypeExt RESTORE_NEWLINES_STATE">")
+  ;
+
+// same as (optionalProjection type | "*"){","}
+private optionalProjectionTypeExt ::= ((optionalProjection typeProjection | "*") ",")* (optionalProjection typeProjection | "*")
+
+typeProjection
+  ::= modifiersPlus? type
+  ;
+
+// [Used by simpleUserType]
+private optionalProjection
+  ::= varianceAnnotation?
+  ;
+
+// same as (parameter | modifiers  type){","}
+parameterModifiersTypeExt ::= ((parameter | modifiers  type) ",")* (parameter | modifiers  type)
+
+
+// ----- Control structures
+
+
+// [Used by atomicExpression]
+ifExpression
+  ::= "if" "(" expression ")" expression SEMI? ("else" expression)?
+  ;
+
+// [Used by atomicExpression]
+tryBlock
+  ::= "try" block catchBlock* finallyBlock?
+  ;
+
+// [Used by try]
+catchBlock
+  ::= "catch" "(" annotations IDENTIFIER ":" userType ")" block
+  ;
+
+// [Used by try]
+finallyBlock
+  ::= "finally" block
+  ;
+
+// [Used by atomicExpression]
+loop
+  ::= forLoop
+  | whileLoop
+  | doWhileLoop
+  ;
+
+// [Used by loop]
+forLoop
+  ::= "for" "(" annotations ("val" | "var")? (multipleVariableDeclarations | variableDeclarationEntry) "in" expression ")" expression
+  ;
+
+// [Used by loop]
+whileLoop
+  ::= "while" "(" expression ")" expression
+  ;
+
+// [Used by loop]
+doWhileLoop
+  ::= "do" expression "while" "(" expression ")"
+  ;
+
+
+// ------ Expressions ------
+
+
+// Rules
+
+
+// same as expression{","}
+private expressionExt ::= (expression ",")* expression
+
+// [Used by for, atomicExpression, longTemplate, whenCondition, functionBody, doWhile, property, script, explicitDelegation, jump, while, whenEntry, arrayAccess, statement, ifExpression, when, valueArguments, functionParameter]
+private expression
+  ::= assignmentExpression
+  | disjunction
+  ;
+
+assignmentExpression
+  ::= (disjunction !INTERRUPTED_WITH_NEWLINE assignmentOperator)+ disjunction
+  ;
+
+//private expression
+//  ::= disjunction (!INTERRUPTED_WITH_NEWLINE assignmentOperator disjunction)*
+//  ;
+
+// [Used by expression]
+private disjunction
+  ::= conjunction disjunctionPlus*
+  ;
+
+left disjunctionPlus
+  ::= !INTERRUPTED_WITH_NEWLINE OR_OPERATION conjunction
+  ;
+
+OR_OPERATION
+  ::= "||"
+  ;
+
+// [Used by disjunction]
+private conjunction
+  ::= equalityComparison conjunctionPlus*
+  ;
+
+AND_OPERATION
+  ::= "&&"
+  ;
+
+left conjunctionPlus
+  ::= !INTERRUPTED_WITH_NEWLINE AND_OPERATION equalityComparison
+  ;
+
+// [Used by conjunction]
+private equalityComparison
+  ::= comparison (!INTERRUPTED_WITH_NEWLINE equalityOperation comparison)*
+  ;
+
+// [Used by equalityComparison]
+private comparison
+  ::= namedInfix (!INTERRUPTED_WITH_NEWLINE comparisonOperation namedInfix)*
+  ;
+
+// [Used by comparison]
+private namedInfix
+  ::= namedInfixFirst
+  | elvisExpression namedInfixPlus*
+  ;
+
+left namedInfixPlus
+  ::= !INTERRUPTED_WITH_NEWLINE inOperation elvisExpression;
+
+namedInfixFirst
+  ::= elvisExpression !INTERRUPTED_WITH_NEWLINE isOperation isRHS
+  ;
+
+// [Used by namedInfix]
+private elvisExpression
+  ::= infixFunctionCall (!INTERRUPTED_WITH_NEWLINE "?:" infixFunctionCall)*
+  ;
+
+// [Used by elvisExpression]
+private infixFunctionCall
+  ::= rangeExpression (!INTERRUPTED_WITH_NEWLINE IDENTIFIER rangeExpression)*
+  ;
+
+// [Used by infixFunctionCall]
+private rangeExpression
+  ::= additiveExpression (!INTERRUPTED_WITH_NEWLINE ".." additiveExpression)*
+  ;
+
+
+private additiveExpression
+  ::= multiplicativeExpression additiveExpressionPlus*
+  ;
+
+left additiveExpressionPlus
+  ::= !INTERRUPTED_WITH_NEWLINE additiveOperation multiplicativeExpression
+  ;
+
+// [Used by rangeExpression]
+//private additiveExpression
+//  ::= multiplicativeExpression (!INTERRUPTED_WITH_NEWLINE additiveOperation multiplicativeExpression)*
+//  ;
+
+// [Used by additiveExpression]
+private multiplicativeExpression
+  ::= typeRHS (!INTERRUPTED_WITH_NEWLINE multiplicativeOperation typeRHS)*
+  ;
+
+// [Used by multiplicativeExpression]
+private typeRHS
+  ::= prefixUnaryExpression typeRHSPlus*
+  ;
+
+left typeRHSPlus
+  ::= typeOperation type
+  ;
+
+// [Used by typeRHS]
+private prefixUnaryExpression
+  ::= postfixUnaryExpression
+  | prefixUnaryOperation
+  | annotatedExpression
+  ;
+
+annotatedExpression
+  ::= annotation prefixUnaryExpression
+  ;
+
+// [Used by prefixUnaryExpression, postfixUnaryOperation]
+private postfixUnaryExpression
+  ::= postfixUnaryExpression2 dotQualifiedExpression*
+  ;
+
+left dotQualifiedExpression
+  ::= "." postfixUnaryExpression2
+  ;
+
+private postfixUnaryExpression2
+  ::= atomicOrCallable postfixUnaryOperation*
+  ;
+
+
+private atomicOrCallable
+  ::= atomicExpression | callableReference
+  ;
+
+// [Used by postfixUnaryExpression]
+callableReference
+  ::= userType? "::" IDENTIFIER
+  ;
+
+parenthesizedExpression
+  ::= "(" DISABLE_NEWLINES expression RESTORE_NEWLINES_STATE ")"
+  ;
+
+// [Used by postfixUnaryExpression]
+private atomicExpression
+  ::= parenthesizedExpression
+  | literalConstant
+  | functionLiteralExpression
+  | thisExpression label?
+  | "super" ("<" DISABLE_NEWLINES type RESTORE_NEWLINES_STATE ">")? label?
+  | ifExpression
+  | when
+  | tryBlock
+  | objectLiteral
+  | jump
+  | loop
+  | referenceExpression
+  | FIELD_IDENTIFIER
+  | "package"
+  ;
+
+thisExpression
+  ::= thisReference
+  ;
+
+thisReference
+  ::= "this"
+  ;
+
+referenceExpression
+  ::= IDENTIFIER
+  ;
+// [Used by callSuffix, prefixUnaryOperation, atomicExpression, jump]
+label
+  ::= "@"
+  | "@@"
+  | LABEL_IDENTIFIER
+  ;
+
+binaryConstant
+  ::= "true" | "false"
+  ;
+
+// [Used by atomicExpression]
+private literalConstant
+  ::= binaryConstant
+  | stringTemplate
+  //| NoEscapeString
+  | INTEGER_CONSTANT
+  | CHARACTER_LITERAL
+  | FLOAT_CONSTANT
+  | "null"
+  ;
+
+FLOAT_CONSTANT ::= FLOAT_LITERAL
+
+INTEGER_CONSTANT ::= INTEGER_LITERAL
+
+//[Used by literalConstant]
+stringTemplate
+  ::= "\"" stringTemplateElement* "\""
+  ;
+
+// [Used by stringTemplate]
+stringTemplateElement
+  ::= REGULAR_STRING_PART
+  | SHORT_TEMPLATE_ENTRY_START (IDENTIFIER | "this")
+  | ESCAPE_SEQUENCE
+  | longTemplate
+  ;
+
+// [Used by stringTemplateElement]
+longTemplate
+  ::= LONG_TEMPLATE_ENTRY_START expression LONG_TEMPLATE_ENTRY_END
+  ;
+
+// [Used by namedInfix, whenCondition]
+private isRHS
+  ::= type
+  ;
+
+// [Used by statement]
+private declaration
+  ::= function
+  | propertyLocal
+  | classDeclaration
+  | typedef
+  | object
+  ;
+
+// [Used by statements]
+private statement
+  ::= declaration
+  | expression
+  ;
+
+// [Used by multiplicativeExpression]
+multiplicativeOperation
+  ::= "*" | "/" | "%"
+  ;
+
+// [Used by additiveExpression]
+additiveOperation
+  ::= "+" | "-"
+  ;
+
+// [Used by namedInfix]
+inOperation
+  ::= "in" | "!in"
+  ;
+
+// [Used by typeRHS]
+typeOperation
+  ::= "as" | "as?" | ":"
+  ;
+
+// [Used by namedInfix]
+isOperation
+  ::= "is" | "!is"
+  ;
+
+// [Used by comparison]
+comparisonOperation
+  ::= "<" | ">" | ">=" | "<="
+  ;
+
+// [Used by equalityComparison]
+equalityOperation
+  ::= "!=" | "=="
+  ;
+
+// [Used by expression]
+assignmentOperator
+  ::= "="
+  | "+=" | "-=" | "*=" | "/=" | "%="
+  ;
+
+// [Used by prefixUnaryExpression]
+prefixUnaryOperation
+  ::= DISABLE_JOINING_COMPLEX_TOKENS (
+  prefixOperation
+  | label
+  )RESTORE_JOINING_COMPLEX_TOKENS_STATE prefixUnaryExpression
+  ;
+
+prefixOperation
+  ::= "-" | "+"
+  | "++" | "--"
+  | "!"
+  ;
+
+
+
+//annotatedExpression
+//  ::= annotation
+
+// [Used by postfixUnaryExpression]
+private postfixUnaryOperation
+  ::= "++" | "--" | "!!"
+  | callSuffix
+  | arrayAccess
+  | safeAccessExpression
+  | elvisAccessExpression
+  //| memberAccessOperation atomicOrCallable
+  ;
+
+left safeAccessExpression
+  ::= SAFE_ACCESS (atomicExpression | callableReference)
+  ;
+
+elvisOperation ::= ELVIS
+
+left elvisAccessExpression
+  ::= elvisOperation (atomicExpression | callableReference)
+  ;
+
+
+// [Used by constructorInvocation, postfixUnaryOperation]
+left callSuffix
+  ::= typeArguments? valueArguments (label? functionLiteral?)
+  | typeArguments (label? functionLiteral?)
+  ;
+
+// [Used by postfixUnaryOperation]
+private memberAccessOperation
+  ::= "." | SAFE_ACCESS | "?"
+  ;
+
+
+
+// [Used by callSuffix, annotationEntry]
+typeArguments
+  ::= "<" DISABLE_NEWLINES typeList ENABLE_NEWLINES ">"
+  ;
+
+typeList ::= type ("," type)*
+
+// [Used by callSuffix, annotationEntry, initializer]
+valueArguments
+  ::= "(" DISABLE_NEWLINES valueArgumentList? RESTORE_NEWLINES_STATE ")"
+  ;
+
+private valueArgumentList
+  ::= (valueArgument ",")* valueArgument
+
+valueArgument
+  ::= (valueArgumentName "=")? "*"? expression
+  ;
+
+valueArgumentName
+  ::= referenceExpression
+  ;
+
+// [Used by atomicExpression]
+private jump
+  ::= jumpThrow
+  | jumpReturn
+  | jumpContinue
+  | jumpBreak
+  ;
+
+jumpThrow
+ ::= "throw" expression
+ ;
+
+jumpReturn
+  ::= "return" label? expression?
+  ;
+
+jumpContinue
+  ::= "continue" label?
+  ;
+
+jumpBreak
+  ::= "break" label?
+  ;
+
+functionLiteralExpression
+ ::= functionLiteral
+ ;
+
+// [Used by callSuffix, atomicExpression]
+functionLiteral
+  ::= ENABLE_NEWLINES("{" statementsBlock "}"
+  | "{" modifiersIDENTIFIERExt "->" statements "}"
+  | "{" (type ".")? "(" DISABLE_NEWLINES modifiersIDENTIFIERTypeExt RESTORE_NEWLINES_STATE")" (":" type)? "->" statements "}") RESTORE_NEWLINES_STATE
+  ;
+
+// same as (modifiers IDENTIFIER){","}
+modifiersIDENTIFIERExt ::= ((modifiers IDENTIFIER) ",")* (modifiers IDENTIFIER)
+
+// same as (modifiers IDENTIFIER (":" type)?){","}
+modifiersIDENTIFIERTypeExt ::= ((modifiers IDENTIFIER (":" type)?) ",")* (modifiers IDENTIFIER (":" type)?)
+
+statementsBlock
+  ::= statements
+  ;
+
+// [Used by block, functionLiteral]
+private statements
+  ::= MULTISEMI? statementSEMIExt? MULTISEMI?
+  ;
+
+// same as statement{SEMI+}
+private statementSEMIExt ::= (statement MULTISEMI)* statement?
+
+// [Used by delegationSpecifier, initializer]
+private  constructorInvocation
+  ::= constructorCallee callSuffix2
+  ;
+delegatorSuperCall
+  ::= constructorInvocation
+  ;
+
+/*constructorInvocation
+  ::= userTypeReference constructorCallee
+  ;
+*/
+constructorCallee
+  ::= userTypeReference
+
+private callSuffix2
+  ::= typeArguments? valueArguments (label? )//functionLiteral?)
+  | typeArguments (label? functionLiteral?)
+  ;
+
+
+userTypeReference ::= userType
+
+
+
+// [Used by postfixUnaryOperation]
+left arrayAccess
+  ::= indices
+  ;
+
+indices
+ ::= !INTERRUPTED_WITH_NEWLINE "[" DISABLE_NEWLINES expressionExt RESTORE_NEWLINES_STATE "]"
+ ;
+
+
+objectDeclaration
+  ::= "object" (":" delegationSpecifierExt)? classBodyNoQ?
+  ;
+
+// [Used by atomicExpression]
+objectLiteral
+  ::= objectDeclaration
+  ;
+
+
+// Pattern matching
+
+
+// [Used by atomicExpression]
+when
+  ::= "when" ("(" DISABLE_NEWLINES (modifiers "val" IDENTIFIER "=")? expression RESTORE_NEWLINES_STATE ")")? "{"
+        ENABLE_NEWLINES whenEntry* RESTORE_NEWLINES_STATE
+    "}"
+  ;
+
+// [Used by when]
+whenEntry
+  ::= whenConditionExt "->" expression SEMI?
+  | "else" "->" expression SEMI?
+  ;
+
+// same as whenCondition{","}
+private whenConditionExt ::= (whenCondition ",")* whenCondition
+
+// [Used by whenEntry]
+private whenCondition
+  ::= DISABLE_NEWLINES (whenConditionExpression
+  | whenConditionInRange
+  | whenConditionIsPattern) RESTORE_NEWLINES_STATE
+  ;
+
+whenConditionExpression
+  ::= expression
+  ;
+
+whenConditionInRange
+  ::= inOperation expression
+  ;
+
+whenConditionIsPattern
+  ::= ("is" | "!is") isRHS
+  ;
+
+// ----- Modifiers -----
+
+// [Used by typeParameter, getter, packageHeader, class, property, typedef, function, functionLiteral, functionType, when, setter, enumEntry, classObject, functionParameter]
+modifiers
+  ::= modifier*
+  ;
+
+modifiersPlus
+  ::= modifier+
+  ;
+
+modifiersPlusFollowedByIdentifier
+  ::= (modifier IDENTIFIER_NEXT)+
+  ;
+
+
+primaryConstructorModifierList
+  ::= modifier+
+  ;
+
+
+
+// [Used by modifiers]
+private modifier
+  ::= classModifier
+  | accessModifier
+  | varianceAnnotation
+  | memberModifier
+  | parameterKind
+  | annotation
+  ;
+
+// [Used by modifier]
+private classModifier
+  ::= <<at ABSTRACT_KEYWORD>> "abstract"
+  | "final"
+  | <<at ENUM_KEYWORD>> "enum"
+  | "open"
+  | "attribute"
+  | <<at INNER_KEYWORD>> "inner"
+  ;
+
+// [Used by modifier]
+memberModifier
+  ::= "override"
+  | "open"
+  | "final"
+  | "abstract"
+  ;
+
+// [Used by modifier]
+private accessModifier
+  ::= <<at PRIVATE_KEYWORD>> "private"
+  | <<at PROTECTED_KEYWORD>> "protected"
+  | <<at PUBLIC_KEYWORD>> "public"
+  | <<at INTERNAL_KEYWORD>> "internal"
+  ;
+
+// [Used by modifier, optionalProjection]
+private varianceAnnotation
+  ::= "in"
+  | <<at OUT_KEYWORD>> "out"
+  ;
+
+// [Used by modifier]
+private parameterKind
+  ::= "lazy"
+  | "out"
+  | "ref"
+  ;
+
+
+// ----- Annotations -----
+
+
+// [Used by modifier, catchBlock, prefixUnaryOperation, for, class, property, type, typeConstraint, function, initializer]
+annotations
+  ::= annotation*
+  ;
+
+private annotationsPlus
+  ::= annotation+
+  ;
+
+private annotationsPlusBeforeType
+  ::= (annotationWithShort TYPE_START_NEXT)+
+  ;
+
+
+annotationWithShort
+  ::= "[" DISABLE_NEWLINES annotationEntry+ RESTORE_NEWLINES_STATE "]"
+  //| annotationEntry
+  ;
+
+
+// [Used by annotations]
+annotation
+  ::= "[" DISABLE_NEWLINES annotationEntry+ RESTORE_NEWLINES_STATE "]"
+  //| annotationEntry
+  ;
+
+// [Used by annotation]
+annotationEntry
+  ::= constructorCallee typeArguments? valueArguments?
+  ;
+
+
+private SEMI ::= ";" | NEWLINE_BEFORE_CURRENT_TOKEN
+private MULTISEMI ::= ";"+ | NEWLINE_BEFORE_CURRENT_TOKEN
+
+external NEWLINE_BEFORE_CURRENT_TOKEN ::= newlineBeforeCurrentToken
+external INTERRUPTED_WITH_NEWLINE ::= interruptedWithNewLine
+external ENABLE_NEWLINES ::= enableNewlines marker_
+external DISABLE_NEWLINES ::= disableNewlines marker_
+external RESTORE_NEWLINES_STATE ::= restoreNewlinesState
+external ENABLE_JOINING_COMPLEX_TOKENS ::= enableJoiningComplexTokens marker_
+external DISABLE_JOINING_COMPLEX_TOKENS ::= disableJoiningComplexTokens marker_
+external RESTORE_JOINING_COMPLEX_TOKENS_STATE ::= restoreJoiningComplexTokensState
+external DOT_NEXT ::= dotNext
+external IDENTIFIER_NEXT ::= identifierNext
+external TYPE_START_NEXT ::= typeStartNext
+external RETURN_TRUE ::= returnTrue

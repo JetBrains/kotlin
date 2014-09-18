@@ -1,0 +1,31 @@
+JetFile: IfWithEmptyCondition.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      IF
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          PsiErrorElement:Expecting an expression
+            <empty list>
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n\n    ')
+        THEN
+          RETURN
+            PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            BOOLEAN_CONSTANT
+              PsiElement(true)('true')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

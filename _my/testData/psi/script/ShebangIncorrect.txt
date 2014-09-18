@@ -1,0 +1,37 @@
+JetFile: ShebangIncorrect.kts
+  PACKAGE_DIRECTIVE
+    <empty list>
+  SCRIPT
+    BLOCK
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('println')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace(' ')
+      BINARY_EXPRESSION
+        PsiErrorElement:Tuples are not supported. Use data classes instead.
+          PsiElement(HASH)('#')
+          PsiElement(EXCL)('!')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+        OPERATION_REFERENCE
+          PsiElement(DIV)('/')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('usr')
+      PsiWhiteSpace('\n\n')
+      BINARY_EXPRESSION
+        PsiErrorElement:Tuples are not supported. Use data classes instead.
+          PsiElement(HASH)('#')
+          PsiElement(EXCL)('!')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+        OPERATION_REFERENCE
+          PsiElement(DIV)('/')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('hi')

@@ -1,0 +1,7 @@
+JetFile: DocCommentAtBeginningOfFile3.kt
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n\n')
+    PsiElement(KDOC_TEXT)('fooo')
+  PACKAGE_DIRECTIVE
+    <empty list>

@@ -1,0 +1,26 @@
+JetFile: test.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        MODIFIER_LIST
+          PsiElement(out)('out')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('abstract')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        MODIFIER_LIST
+          PsiElement(out)('out')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('out')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')

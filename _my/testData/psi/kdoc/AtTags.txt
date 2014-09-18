@@ -1,0 +1,17 @@
+JetFile: AtTags.kt
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_LEADING_ASTERISK)('*')
+    PsiElement(KDOC_TEXT)(' ')
+    PsiElement(KDOC_TAG_NAME)('@tag')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_LEADING_ASTERISK)('*')
+    PsiElement(KDOC_TEXT)(' text @notATag')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_LEADING_ASTERISK)('*')
+    PsiElement(KDOC_TEXT)(' @')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_END)('*/')
+  PACKAGE_DIRECTIVE
+    <empty list>

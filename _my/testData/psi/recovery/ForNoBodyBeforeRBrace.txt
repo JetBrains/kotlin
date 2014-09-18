@@ -1,0 +1,41 @@
+JetFile: ForNoBodyBeforeRBrace.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      WHILE
+        PsiElement(while)('while')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n        ')
+            FOR
+              PsiElement(for)('for')
+              PsiWhiteSpace(' ')
+              PsiElement(LPAR)('(')
+              PsiErrorElement:Expecting a variable name
+                <empty list>
+              PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n    ')
+              BODY
+                PsiErrorElement:Expecting an expression
+                  <empty list>
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

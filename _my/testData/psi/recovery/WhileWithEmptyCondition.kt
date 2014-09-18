@@ -1,0 +1,5 @@
+fun test() {
+    while ()
+
+    return
+}

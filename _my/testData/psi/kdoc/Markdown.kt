@@ -1,0 +1,4 @@
+/**
+ * [[WikiLink]]
+ * Just \[[ and \]]
+ */

@@ -1,0 +1,123 @@
+JetFile: RawStringsWithManyQuotes.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('"')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('""')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('"""')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('""""')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)(' ')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)(' ')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)(' ')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('"')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)(' ')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('""')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)(' ')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('"""')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)(' ')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('""""')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)(' ')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('"""""')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)(' ')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('"')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)(' ')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('""')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
