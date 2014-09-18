@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.editor;
 
+import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.codeInsight.highlighting.BraceMatcher;
@@ -31,6 +32,7 @@ import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -64,6 +66,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 jetLTTyped = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET &&
                              JetLtGtTypingUtils.shouldAutoCloseAngleBracket(editor.getCaretModel().getOffset(), editor);
                 return Result.CONTINUE;
+
             case '>':
                 if (CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
                     if (JetLtGtTypingUtils.handleJetGTInsert(editor)) {
@@ -71,6 +74,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                     }
                 }
                 return Result.CONTINUE;
+
             case '{':
                 // Returning Result.CONTINUE will cause inserting "{}" for unmatched '{'
 
@@ -107,9 +111,28 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 }
 
                 return Result.CONTINUE;
+
+            case '.':
+                autoPopupMemberLookup(project, editor);
+                return Result.CONTINUE;
         }
 
         return Result.CONTINUE;
+    }
+
+    private static void autoPopupMemberLookup(Project project, final Editor editor) {
+        AutoPopupController.getInstance(project).autoPopupMemberLookup(editor, new Condition<PsiFile>() {
+            @Override
+            public boolean value(PsiFile file) {
+                int offset = editor.getCaretModel().getOffset();
+
+                PsiElement lastElement = file.findElementAt(offset - 1);
+                if (lastElement == null) return false;
+
+                String text = lastElement.getText();
+                return ".".equals(text) || "?.".equals(text);
+            }
+        });
     }
 
     @Override
