@@ -28,6 +28,7 @@ import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -93,6 +94,10 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
 
     @Override
     protected void setUp() throws Exception {
+        // sdk path workaround, set real android sdk path and platform for android plugin to work
+        System.setProperty(KotlinAndroidTestCaseBase.SDK_PATH_PROPERTY, PathManager.getHomePath() + "/androidSDK/");
+        System.setProperty(KotlinAndroidTestCaseBase.PLATFORM_DIR_PROPERTY, "android-17");
+
         super.setUp();
 
         // this will throw an exception if we don't have a full Android SDK, so we need to do this first thing before any other setup
@@ -204,7 +209,8 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     }
 
     protected void createManifest() throws IOException {
-        myFixture.copyFileToProject(SdkConstants.FN_ANDROID_MANIFEST_XML, SdkConstants.FN_ANDROID_MANIFEST_XML);
+        myFixture.copyFileToProject("idea/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML);
+     //   myFixture.copyFileToProject(SdkConstants.FN_ANDROID_MANIFEST_XML, SdkConstants.FN_ANDROID_MANIFEST_XML);
     }
 
     protected void createProjectProperties() throws IOException {

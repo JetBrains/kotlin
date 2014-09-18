@@ -26,21 +26,9 @@ import org.jetbrains.jet.lang.psi.JetProperty
 
 public abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
 
-    override fun setUp() {
-        System.setProperty(KotlinAndroidTestCaseBase.SDK_PATH_PROPERTY, PathManager.getHomePath() + "/androidSDK/")
-        System.setProperty(KotlinAndroidTestCaseBase.PLATFORM_DIR_PROPERTY, "android-17")
-        super.setUp()
-    }
-
     override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/android/goto/" + getTestName(true) + "/"
     }
-
-    override fun createManifest() {
-        myFixture!!.copyFileToProject("idea/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML)
-    }
-
-    override fun requireRecentSdk() = true
 
     public fun doTest(path: String) {
         val f = myFixture!!
@@ -48,7 +36,7 @@ public abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
         f.configureByFile(path + getTestName(true) + ".kt");
 
         val resolved = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
-        if (f.getElementAtCaret() !is JetProperty) fail("resolved element must be a property, not a ${f.getElementAtCaret().javaClass}")
+        if (f.getElementAtCaret() !is JetProperty) fail("element at caret must be a property, not a ${f.getElementAtCaret().javaClass}")
         assertEquals("\"@+id/${(f.getElementAtCaret() as JetProperty).getName()}\"", resolved?.getText())
 
     }
