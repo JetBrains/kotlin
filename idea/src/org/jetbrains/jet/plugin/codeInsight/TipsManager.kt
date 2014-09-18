@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 
 import java.util.*
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 
 public object TipsManager{
 
@@ -60,7 +61,7 @@ public object TipsManager{
                 val dataFlowInfo = context.getDataFlowInfo(expression)
 
                 for (variant in AutoCastUtils.getAutoCastVariants(receiverValue, context, dataFlowInfo)) {
-                    variant.getMemberScope().getAllDescriptors().filterTo(descriptors, ::filterIfInfix)
+                    variant.getMemberScope().getAllDescriptors().filterTo(descriptors) { filterIfInfix(it) && !it.isExtension }
                 }
 
                 JetScopeUtils.getAllExtensions(resolutionScope).filterTo(descriptors) {
@@ -77,9 +78,7 @@ public object TipsManager{
             val descriptorsSet = HashSet<DeclarationDescriptor>()
 
             for (receiverDescriptor in resolutionScope.getImplicitReceiversHierarchy()) {
-                receiverDescriptor.getType().getMemberScope().getAllDescriptors().filterTo(descriptorsSet) {
-                    it !is CallableDescriptor || it.getReceiverParameter() == null/*skip member extension functions and properties*/
-                }
+                receiverDescriptor.getType().getMemberScope().getAllDescriptors().filterTo(descriptorsSet) { !it.isExtension }
             }
 
             descriptorsSet.addAll(resolutionScope.getAllDescriptors())
