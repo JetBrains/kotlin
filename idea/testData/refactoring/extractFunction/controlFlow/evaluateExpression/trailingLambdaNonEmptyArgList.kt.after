@@ -1,4 +1,4 @@
-fun <T> Array<T>.check(a: Int, b: Int f: (T) -> Boolean): Boolean = false
+fun <T> Array<T>.check(a: Int, b: Int, f: (T) -> Boolean): Boolean = false
 
 // SIBLING:
 fun foo(t: Array<Int>) {
