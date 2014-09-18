@@ -61,7 +61,15 @@ public class LazyTopDownAnalyzer {
 
     @SuppressWarnings("ConstantConditions")
     @NotNull
+    private KotlinCodeAnalyzer resolveSession = null;
+
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
     private BodyResolver bodyResolver = null;
+
+    public void setKotlinCodeAnalyzer(@NotNull KotlinCodeAnalyzer kotlinCodeAnalyzer) {
+        this.resolveSession = kotlinCodeAnalyzer;
+    }
 
     @Inject
     public void setTrace(@NotNull BindingTrace trace) {
@@ -95,7 +103,6 @@ public class LazyTopDownAnalyzer {
 
     @NotNull
     public TopDownAnalysisContext analyzeDeclarations(
-            final KotlinCodeAnalyzer resolveSession,
             @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull Collection<? extends PsiElement> declarations
     ) {
@@ -111,7 +118,6 @@ public class LazyTopDownAnalyzer {
         for (PsiElement declaration : declarations) {
             declaration.accept(
                     new JetVisitorVoid() {
-
                         private void registerDeclarations(@NotNull List<JetDeclaration> declarations) {
                             for (JetDeclaration jetDeclaration : declarations) {
                                 jetDeclaration.accept(this);
@@ -270,7 +276,6 @@ public class LazyTopDownAnalyzer {
 
         bodyResolver.resolveBodies(c);
 
-
         return c;
     }
 
@@ -351,7 +356,6 @@ public class LazyTopDownAnalyzer {
             }
         }
     }
-
 }
 
 

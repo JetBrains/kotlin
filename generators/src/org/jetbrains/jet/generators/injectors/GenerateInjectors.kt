@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.SingleModuleClassResolver
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.jet.lang.resolve.java.JavaFlexibleTypeCapabilitiesProvider
 import org.jetbrains.jet.context.LazyResolveToken
 
@@ -69,7 +70,8 @@ public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
                 generatorForMacro(),
                 generatorForTests(),
                 generatorForLazyResolve(),
-                generatorForBodyResolve()
+                generatorForBodyResolve(),
+                generatorForLazyBodyResolve()
         )
 
 private fun DependencyInjectorGenerator.commonForTopDownAnalyzer() {
@@ -90,6 +92,21 @@ private fun generatorForTopDownAnalyzerBasic() =
         generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic") {
             commonForTopDownAnalyzer()
             parameter(javaClass<AdditionalCheckerProvider>())
+        }
+
+private fun generatorForLazyBodyResolve() =
+        generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyBodyResolve") {
+            parameter(javaClass<Project>())
+            parameter(javaClass<GlobalContext>(), useAsContext = true)
+            parameter(javaClass<KotlinCodeAnalyzer>(), name = "analyzer")
+            parameter(javaClass<BindingTrace>())
+            parameter(javaClass<AdditionalCheckerProvider>())
+
+            field(javaClass<ModuleDescriptor>(), init = GivenExpression("analyzer.getModuleDescriptor()"), useAsContext = true)
+
+            publicFields(
+                    javaClass<LazyTopDownAnalyzer>()
+            )
         }
 
 private fun generatorForTopDownAnalyzerForJs() =

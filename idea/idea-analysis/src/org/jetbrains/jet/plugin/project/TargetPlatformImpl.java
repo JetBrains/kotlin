@@ -17,12 +17,25 @@
 package org.jetbrains.jet.plugin.project;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 
 public class TargetPlatformImpl implements TargetPlatform {
     @NotNull private final String platformName;
+    @NotNull private final AdditionalCheckerProvider additionalCheckerProvider;
 
     public TargetPlatformImpl(@NotNull String platformName) {
+        this(platformName, AdditionalCheckerProvider.Empty.INSTANCE$);
+    }
+
+    public TargetPlatformImpl(@NotNull String platformName, @NotNull AdditionalCheckerProvider additionalCheckerProvider) {
+        this.additionalCheckerProvider = additionalCheckerProvider;
         this.platformName = platformName;
+    }
+
+    @NotNull
+    @Override
+    public AdditionalCheckerProvider getAdditionalCheckerProvider() {
+        return additionalCheckerProvider;
     }
 
     @Override

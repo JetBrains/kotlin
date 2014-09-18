@@ -143,8 +143,9 @@ public class TopDownAnalyzer {
                     additionalCheckerProvider
             ).getResolveSession();
 
+            lazyTopDownAnalyzer.setKotlinCodeAnalyzer(resolveSession);
+
             lazyTopDownAnalyzer.analyzeDeclarations(
-                    resolveSession,
                     c.getTopDownAnalysisParameters(),
                     declarations
             );
