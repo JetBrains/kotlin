@@ -56,7 +56,6 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.types.ErrorUtils
 import com.intellij.lang.ASTNode
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.psi.JetCallableReferenceExpression
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.jet.lang.psi.JetThisExpression
@@ -88,6 +87,7 @@ import org.jetbrains.jet.lang.psi.JetReturnExpression
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier
+import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBody
 
 public trait UnificationResult {
     public enum class Status {
@@ -139,10 +139,18 @@ public class JetPsiUnifier(
             val originalTarget: JetPsiRange,
             val originalPattern: JetPsiRange
     ) {
+        val patternContext: BindingContext = originalPattern.getBindingContext()
+        val targetContext: BindingContext = originalTarget.getBindingContext()
         val substitution = HashMap<UnifierParameter, JetExpression>()
         val declarationPatternsToTargets = MultiMap<DeclarationDescriptor, DeclarationDescriptor>()
         val weakMatches = HashMap<JetElement, JetElement>()
         var checkEquivalence: Boolean = false
+
+        private fun JetPsiRange.getBindingContext(): BindingContext {
+            val element = (this as? JetPsiRange.ListRange)?.startElement as? JetElement
+            if ((element?.getContainingFile() as? JetFile)?.doNotAnalyze != null) return BindingContext.EMPTY
+            return element?.getContextForContainingDeclarationBody() ?: BindingContext.EMPTY
+        }
 
         private fun matchDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
             if (d1 == d2 || d2 in declarationPatternsToTargets[d1] || d1 in declarationPatternsToTargets[d2]) return true
@@ -275,10 +283,7 @@ public class JetPsiUnifier(
             }
         }
 
-        private val JetElement.bindingContext: BindingContext get() {
-            if ((getContainingFile() as? JetFile)?.doNotAnalyze != null) return BindingContext.EMPTY
-            return AnalyzerFacadeWithCache.getContextForElement(this)
-        }
+        private val JetElement.bindingContext: BindingContext get() = if (this in originalPattern) patternContext else targetContext
 
         private fun JetElement.getAdjustedResolvedCall(): ResolvedCall<*>? {
             val rc = getResolvedCall(bindingContext)?.let {

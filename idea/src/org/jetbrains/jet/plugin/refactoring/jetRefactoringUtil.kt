@@ -68,6 +68,10 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.ui.DialogWrapper
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
+import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -283,3 +287,20 @@ fun PsiElement.getLineCount(): Int {
 }
 
 fun PsiElement.isMultiLine(): Boolean = getLineCount() > 1
+
+public fun JetElement.getContextForContainingDeclarationBody(): BindingContext? {
+    val enclosingDeclaration = getParentByType(javaClass<JetDeclaration>(), true)
+    val bodyElement = when (enclosingDeclaration) {
+        is JetDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
+        is JetWithExpressionInitializer -> enclosingDeclaration.getInitializer()
+        is JetMultiDeclaration -> enclosingDeclaration.getInitializer()
+        is JetParameter -> enclosingDeclaration.getDefaultValue()
+        is JetClassInitializer -> enclosingDeclaration.getBody()
+        is JetClass -> {
+            val delegationSpecifierList = enclosingDeclaration.getDelegationSpecifierList()
+            if (delegationSpecifierList.isAncestor(this)) this else null
+        }
+        else -> null
+    }
+    return bodyElement?.let { getContainingJetFile().getLazyResolveSession().resolveToElement(it) }
+}

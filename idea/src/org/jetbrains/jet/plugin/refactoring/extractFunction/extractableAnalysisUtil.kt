@@ -58,7 +58,6 @@ import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
-import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.imports.importableFqNameSafe
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Initializer
@@ -67,6 +66,7 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Expressi
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Jump
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.traverseFollowingInstructions
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValueBoxer.AsList
+import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBody
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -655,21 +655,8 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val commonParent = PsiTreeUtil.findCommonParent(originalElements) as JetElement
 
-    val enclosingDeclaration = commonParent.getParentByType(javaClass<JetDeclaration>(), true)
-    val bodyElement = when (enclosingDeclaration) {
-        is JetDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
-        is JetWithExpressionInitializer -> enclosingDeclaration.getInitializer()
-        is JetMultiDeclaration -> enclosingDeclaration.getInitializer()
-        is JetParameter -> enclosingDeclaration.getDefaultValue()
-        is JetClassInitializer -> enclosingDeclaration.getBody()
-        is JetClass -> {
-            val delegationSpecifierList = enclosingDeclaration.getDelegationSpecifierList()
-            if (delegationSpecifierList.isAncestor(commonParent)) commonParent else return noContainerError
-        }
-        else -> return noContainerError
-    }
-    val resolveSession = originalFile.getLazyResolveSession()
-    val bindingContext = resolveSession.resolveToElement(bodyElement)
+    val bindingContext = commonParent.getContextForContainingDeclarationBody()
+    if (bindingContext == null) return noContainerError
 
     val pseudocodeDeclaration = PsiTreeUtil.getParentOfType(
             commonParent, javaClass<JetDeclarationWithBody>(), javaClass<JetClassOrObject>()
@@ -693,7 +680,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             analyzeControlFlow(
                     localInstructions,
                     pseudocode,
-                    resolveSession.getModuleDescriptor(),
+                    originalFile.getLazyResolveSession().getModuleDescriptor(),
                     bindingContext,
                     modifiedVarDescriptorsForControlFlow,
                     options,
@@ -712,7 +699,8 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         )
     }
 
-    checkDeclarationsMovingOutOfScope(enclosingDeclaration!!, controlFlow, bindingContext)?.let { messages.add(it) }
+    val enclosingDeclaration = commonParent.getParentByType(javaClass<JetDeclaration>(), true)!!
+    checkDeclarationsMovingOutOfScope(enclosingDeclaration, controlFlow, bindingContext)?.let { messages.add(it) }
 
     val functionNameValidator =
             JetNameValidatorImpl(
