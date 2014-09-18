@@ -33,7 +33,6 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
@@ -43,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
@@ -157,15 +157,13 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 false,
                 false
         );
-        InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
-                environment.getProject(),
-                parameters,
-                trace,
-                module);
 
-        injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(
-                parameters, environment.getSourceFiles(),
-                injectorForAnalyzer.getJavaDescriptorResolver().getPackageFragmentProvider()
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                environment.getProject(),
+                environment.getSourceFiles(),
+                trace,
+                parameters,
+                module
         );
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
