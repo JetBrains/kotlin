@@ -193,7 +193,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
 }
 
 private fun makeCall(
-        name: String,
+        extractableDescriptor: ExtractableCodeDescriptor,
         declaration: JetNamedDeclaration,
         controlFlow: ControlFlow,
         rangeToReplace: JetPsiRange,
@@ -202,8 +202,7 @@ private fun makeCall(
         val firstExpression = rangeToReplace.elements.firstOrNull { it is JetExpression } as? JetExpression
         if (firstExpression?.isFunctionLiteralOutsideParentheses() ?: false) {
             val functionLiteralArgument = PsiTreeUtil.getParentOfType(firstExpression, javaClass<JetFunctionLiteralArgument>())!!
-            //todo use the right binding context
-            functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, BindingContext.EMPTY)
+            functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, extractableDescriptor.originalContext)
             return
         }
         anchor.replace(wrappedCall)
@@ -223,8 +222,8 @@ private fun makeCall(
 
     val callText = when (declaration) {
         is JetNamedFunction ->
-            arguments.joinToString(separator = ", ", prefix = "${name}(", postfix = ")")
-        else -> name
+            arguments.joinToString(separator = ", ", prefix = "${extractableDescriptor.name}(", postfix = ")")
+        else -> extractableDescriptor.name
     }
 
     val anchorInBlock = stream(anchor) { it.getParent() }.firstOrNull { it.getParent() is JetBlockExpression }
@@ -512,9 +511,9 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
 
     if (options.inTempFile) return ExtractionResult(declaration, Collections.emptyMap(), nameByOffset)
 
-    makeCall(name, declaration, controlFlow, extractionData.originalRange, parameters.map { it.argumentText })
+    makeCall(this, declaration, controlFlow, extractionData.originalRange, parameters.map { it.argumentText })
     ShortenReferences.process(declaration)    
 
-    val duplicateReplacers = duplicates.map { it.range to { makeCall(name, declaration, it.controlFlow, it.range, it.arguments) } }.toMap()
+    val duplicateReplacers = duplicates.map { it.range to { makeCall(this, declaration, it.controlFlow, it.range, it.arguments) } }.toMap()
     return ExtractionResult(declaration, duplicateReplacers, nameByOffset)
 }

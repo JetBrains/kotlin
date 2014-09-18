@@ -665,6 +665,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
                 
+                @TestMetadata("trailingLambdaNonEmptyArgListWithNamedArgs.kt")
+                public void testTrailingLambdaNonEmptyArgListWithNamedArgs() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/evaluateExpression/trailingLambdaNonEmptyArgListWithNamedArgs.kt");
+                    doExtractFunctionTest(fileName);
+                }
+                
             }
             
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/initializer")

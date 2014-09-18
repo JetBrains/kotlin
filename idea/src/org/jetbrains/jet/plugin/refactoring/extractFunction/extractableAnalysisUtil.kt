@@ -729,6 +729,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     return AnalysisResult(
             ExtractableCodeDescriptor(
                     this,
+                    bindingContext,
                     functionName,
                     if (isVisibilityApplicable()) "private" else "",
                     adjustedParameters.sortBy { it.name },

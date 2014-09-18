@@ -258,6 +258,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
         return new ExtractableCodeDescriptor(
                 descriptor.getExtractionData(),
+                descriptor.getOriginalContext(),
                 getFunctionName(),
                 getVisibility(),
                 ContainerUtil.newArrayList(oldToNewParameters.values()),

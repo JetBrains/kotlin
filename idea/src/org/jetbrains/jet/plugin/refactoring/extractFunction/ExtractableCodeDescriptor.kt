@@ -305,6 +305,7 @@ fun ControlFlow.toDefault(): ControlFlow =
 
 data class ExtractableCodeDescriptor(
         val extractionData: ExtractionData,
+        val originalContext: BindingContext,
         val name: String,
         val visibility: String,
         val parameters: List<Parameter>,
