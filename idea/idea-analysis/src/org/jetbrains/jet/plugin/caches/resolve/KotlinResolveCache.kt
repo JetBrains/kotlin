@@ -172,7 +172,7 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
             return AnalyzeExhaust.EMPTY
         }
 
-        ApplicationUtils.warnTimeConsuming(LOG)
+//        ApplicationUtils.warnTimeConsuming(LOG)
 
         try {
             return KotlinResolveDataProvider.analyze(project, resolveSession, analyzableElement)

@@ -71,6 +71,10 @@
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift J"/>
       <add-to-group group-id="CodeMenu" anchor="last"/>
     </action>
+    <action id="ShowAllErrors" class="org.jetbrains.jet.plugin.actions.ShowAllErrors"
+            text="Show All Errors">
+      <add-to-group group-id="CodeMenu" anchor="last"/>
+    </action>
 
     <group id="EditorGutterKotlinPopupMenu">
       <action id="ShowKotlinSignatures" class="org.jetbrains.jet.plugin.ktSignature.ShowKotlinSignaturesAction"/>
