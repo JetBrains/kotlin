@@ -46,6 +46,7 @@ import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYP
 import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
+    private final Function1<JetType, JetType> typeNormalizer;
     private final boolean shortNames;
     private final boolean withDefinedIn;
     private final Set<DescriptorRenderer.Modifier> modifiers;
@@ -98,7 +99,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean withoutTypeParameters,
             boolean receiverAfterName,
             boolean renderClassObjectName,
-            boolean withoutSuperTypes
+            boolean withoutSuperTypes,
+            Function1<JetType, JetType> typeNormalizer
     ) {
         this.shortNames = shortNames;
         this.withDefinedIn = withDefinedIn;
@@ -123,6 +125,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.receiverAfterName = receiverAfterName;
         this.renderClassObjectName = renderClassObjectName;
         this.withoutSuperTypes = withoutSuperTypes;
+        this.typeNormalizer = typeNormalizer;
     }
 
     /* FORMATTING */
@@ -293,19 +296,24 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     @NotNull
     @Override
     public String renderType(@NotNull JetType type) {
+        return renderNormalizedType(typeNormalizer.invoke(type));
+    }
+
+    @NotNull
+    private String renderNormalizedType(@NotNull JetType type) {
         if (type.isFlexible()) {
             if (!debugMode) {
                 return renderFlexibleType(type);
             }
             else {
-                return "(" + renderType(type.getLowerBound()) + ".." + renderType(type.getUpperBound()) + ")";
+                return "(" + renderNormalizedType(type.getLowerBound()) + ".." + renderNormalizedType(type.getUpperBound()) + ")";
             }
         }
         return renderInflexibleType(type);
     }
 
     private String renderInflexibleType(@NotNull JetType type) {
-        assert !type.isFlexible() : "Flexible types not allowed here: " + renderType(type);
+        assert !type.isFlexible() : "Flexible types not allowed here: " + renderNormalizedType(type);
 
         if (type == CANT_INFER_LAMBDA_PARAM_TYPE || type == DONT_CARE) {
             return "???";
@@ -364,7 +372,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 kotlinPrefix + "Array<(out) "
         );
         if (array != null) return array;
-        return "(" + renderType(lower) + ".." + renderType(upper) + ")";
+        return "(" + renderNormalizedType(lower) + ".." + renderNormalizedType(upper) + ")";
     }
 
     @Nullable
@@ -438,7 +446,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             if (typeProjection.getProjectionKind() != Variance.INVARIANT) {
                 builder.append(typeProjection.getProjectionKind()).append(" ");
             }
-            builder.append(renderType(typeProjection.getType()));
+            builder.append(renderNormalizedType(typeProjection.getType()));
             if (iterator.hasNext()) {
                 builder.append(", ");
             }
@@ -451,14 +459,14 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         JetType receiverType = KotlinBuiltIns.getInstance().getReceiverType(type);
         if (receiverType != null) {
-            sb.append(renderType(receiverType));
+            sb.append(renderNormalizedType(receiverType));
             sb.append(".");
         }
 
         sb.append("(");
         appendTypeProjections(KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(type), sb);
         sb.append(") ").append(arrow()).append(" ");
-        sb.append(renderType(KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(type)));
+        sb.append(renderNormalizedType(KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(type)));
 
         if (type.isNullable()) {
             return "(" + sb + ")?";

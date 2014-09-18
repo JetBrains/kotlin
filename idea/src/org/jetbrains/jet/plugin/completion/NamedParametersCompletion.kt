@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.getCallNameExpression
 import com.intellij.psi.PsiElement
 import com.intellij.codeInsight.completion.InsertHandler
 import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 object NamedParametersCompletion {
     private val positionFilter = AndFilter(
@@ -109,7 +110,7 @@ object NamedParametersCompletion {
             }
 
             val editor = context.getEditor()
-            val text = DescriptorRenderer.SOURCE_CODE.renderName(parameterName) + " = "
+            val text = IdeDescriptorRenderers.SOURCE_CODE.renderName(parameterName) + " = "
             editor.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
             editor.getCaretModel().moveToOffset(context.getStartOffset() + text.length)
         }

@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.refactoring.extractFunction
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
 import org.jetbrains.jet.lang.psi.psiUtil.isInsideOf
@@ -67,16 +66,17 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Jump
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.traverseFollowingInstructions
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValueBoxer.AsList
 import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBody
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
 private val DEFAULT_PARAMETER_TYPE = KotlinBuiltIns.getInstance().getNullableAnyType()
 
 private fun DeclarationDescriptor.renderForMessage(): String =
-        DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(this)
+        IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(this)
 
 private fun JetType.renderForMessage(): String =
-        DescriptorRenderer.SOURCE_CODE.renderType(this)
+        IdeDescriptorRenderers.SOURCE_CODE.renderType(this)
 
 private fun JetDeclaration.renderForMessage(bindingContext: BindingContext): String? =
     bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]?.renderForMessage()

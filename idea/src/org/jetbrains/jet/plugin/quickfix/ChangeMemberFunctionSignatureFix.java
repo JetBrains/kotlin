@@ -50,6 +50,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
@@ -358,7 +359,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         }
 
         private void changeSignature(FunctionDescriptor patternDescriptor) {
-            final String signatureString = DescriptorRenderer.SOURCE_CODE.render(patternDescriptor);
+            final String signatureString = IdeDescriptorRenderers.SOURCE_CODE.render(patternDescriptor);
 
             PsiDocumentManager.getInstance(project).commitAllDocuments();
 

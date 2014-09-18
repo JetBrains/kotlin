@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
@@ -98,7 +99,7 @@ class KotlinOverridingDialog extends DialogWrapper {
                     return JetBundle.message(
                             "x.in.y",
                             DescriptorRenderer.COMPACT.render(declarationDescriptor),
-                            DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(containingDescriptor)
+                            IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(containingDescriptor)
                     );
                 }
             }

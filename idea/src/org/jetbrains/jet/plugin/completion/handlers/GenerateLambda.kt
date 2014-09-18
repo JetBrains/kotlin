@@ -18,8 +18,6 @@ package org.jetbrains.jet.plugin.completion.handlers
 
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.codeInsight.completion.InsertionContext
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.Computable
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.codeInsight.template.Template
@@ -43,6 +41,7 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: JetType) {
     val explicitParameterTypes = needExplicitParameterTypes(context, placeholderRange, lambdaType)
@@ -118,7 +117,7 @@ private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, 
         //TODO: check for names in scope
         template.addVariable(ParameterNameExpression(JetNameSuggester.suggestNames(parameterType, EmptyValidator, "p")), true)
         if (explicitParameterTypes) {
-            template.addTextSegment(": " + DescriptorRenderer.SOURCE_CODE.renderType(parameterType))
+            template.addTextSegment(": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(parameterType))
         }
     }
 

@@ -35,7 +35,7 @@ import org.jetbrains.jet.plugin.completion.handlers.CaretPosition
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.plugin.util.makeNotNullable
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
@@ -70,7 +70,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
         var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgs)
 
         val insertHandler: InsertHandler<LookupElement>
-        val typeText = qualifiedNameForSourceCode(classifier) + DescriptorRenderer.SOURCE_CODE.renderTypeArguments(typeArgs)
+        val typeText = qualifiedNameForSourceCode(classifier) + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgs)
         if (isAbstract) {
             val constructorParenthesis = if (classifier.getKind() != ClassKind.TRAIT) "()" else ""
             itemText += constructorParenthesis

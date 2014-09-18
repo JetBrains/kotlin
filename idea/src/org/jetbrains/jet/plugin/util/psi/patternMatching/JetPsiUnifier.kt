@@ -88,6 +88,7 @@ import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier
 import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBody
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 public trait UnificationResult {
     public enum class Status {
@@ -564,7 +565,7 @@ public class JetPsiUnifier(
             fun resolveAndSortDeclarationsByDescriptor(declarations: List<JetDeclaration>): List<Pair<JetDeclaration, DeclarationDescriptor?>> {
                 return declarations
                         .map { it to it.bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] }
-                        .sortBy { it.second?.let { DescriptorRenderer.SOURCE_CODE.render(it) } ?: "" }
+                        .sortBy { it.second?.let { IdeDescriptorRenderers.SOURCE_CODE.render(it) } ?: "" }
             }
 
             fun sortDeclarationsByElementType(declarations: List<JetDeclaration>): List<JetDeclaration> {

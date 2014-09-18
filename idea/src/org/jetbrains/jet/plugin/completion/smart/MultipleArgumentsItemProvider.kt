@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import com.intellij.ui.LayeredIcon
-import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.plugin.completion.Tail
 import org.jetbrains.jet.plugin.completion.ItemPriority
@@ -34,8 +33,9 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.plugin.completion.PositionalArgumentExpectedInfo
-import org.jetbrains.jet.plugin.completion.assignPriority
 import java.util.ArrayList
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.plugin.completion.assignPriority
 
 class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
                                     val typesWithAutoCasts: (DeclarationDescriptor) -> Iterable<JetType>) {
@@ -75,7 +75,7 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
         compoundIcon.setIcon(firstIcon, 1, 0, 0)
 
         return LookupElementBuilder
-                .create(variables.map { DescriptorRenderer.SOURCE_CODE.renderName(it.getName()) }.joinToString(", "))
+                .create(variables.map { IdeDescriptorRenderers.SOURCE_CODE.renderName(it.getName()) }.joinToString(", "))
                 .withIcon(compoundIcon)
                 .addTail(Tail.RPARENTH) //TODO: support square brackets
                 .assignPriority(ItemPriority.MULTIPLE_ARGUMENTS_ITEM)

@@ -20,11 +20,11 @@ import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(
         "make.type.explicit.in.lambda", javaClass()) {
@@ -61,7 +61,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
         // Step 1: make the parameters types explicit
         val valueParameters = func.getValueParameters()
         val parameterString = valueParameters.map({descriptor -> "" + descriptor.getName() +
-                                                      ": " + DescriptorRenderer.SOURCE_CODE.renderType(descriptor.getType())
+                                                      ": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(descriptor.getType())
                                                   }).makeString(", ", "(", ")")
         val psiFactory = JetPsiFactory(element)
         val newParameterList = psiFactory.createParameterList(parameterString)
@@ -87,7 +87,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
         if (hasImplicitReturnType(element) && expectedReturnType != null) {
             val paramList = functionLiteral.getValueParameterList()
             val returnTypeColon = psiFactory.createColon()
-            val returnTypeExpr = psiFactory.createType(DescriptorRenderer.SOURCE_CODE.renderType(expectedReturnType))
+            val returnTypeExpr = psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedReturnType))
             functionLiteral.addAfter(returnTypeExpr, paramList)
             functionLiteral.addAfter(returnTypeColon, paramList)
             ShortenReferences.process(functionLiteral.getTypeReference()!!)
@@ -96,7 +96,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
         // Step 3: make the receiver type explicit
         val expectedReceiverType = func.getExtensionReceiverParameter()?.getType()
         if (hasImplicitReceiverType(element) && expectedReceiverType != null) {
-            val receiverTypeString = DescriptorRenderer.SOURCE_CODE.renderType(expectedReceiverType)
+            val receiverTypeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedReceiverType)
             val dot = functionLiteral.addBefore(psiFactory.createDot(), functionLiteral.getValueParameterList())
             functionLiteral.addBefore(psiFactory.createType(receiverTypeString), dot)
             ShortenReferences.process(functionLiteral.getReceiverTypeReference()!!)

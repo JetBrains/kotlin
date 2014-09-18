@@ -608,7 +608,7 @@ public class SignaturesPropagationData {
             boolean annotatedAsNotNull = howThisTypeIsUsed != TYPE_ARGUMENT && !TypeUtils.isNullableType(autoType);
 
             if (annotatedAsNotNull && someSupersNotCovariantNullable) {
-                DescriptorRenderer renderer = DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES;
+                DescriptorRenderer renderer = DescriptorRenderer.SHORT_NAMES_IN_TYPES;
                 reportError("In superclass type is nullable: " + typesFromSuper + ", in subclass it is not: " + renderer.renderType(autoType));
                 return true;
             }

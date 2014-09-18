@@ -30,6 +30,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
 import java.util.List;

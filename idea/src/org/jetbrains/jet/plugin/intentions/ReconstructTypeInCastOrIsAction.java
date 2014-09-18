@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
@@ -45,7 +45,7 @@ public class ReconstructTypeInCastOrIsAction extends PsiElementBaseIntentionActi
         assert typeRef != null : "Must be checked by isAvailable(): " + element;
 
         JetType type = getReconstructedType(typeRef);
-        JetTypeReference newType = JetPsiFactory(typeRef).createType(DescriptorRenderer.SOURCE_CODE.renderType(type));
+        JetTypeReference newType = JetPsiFactory(typeRef).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
         JetTypeReference replaced = (JetTypeReference) typeRef.replace(newType);
         ShortenReferences.INSTANCE$.process(replaced);
     }

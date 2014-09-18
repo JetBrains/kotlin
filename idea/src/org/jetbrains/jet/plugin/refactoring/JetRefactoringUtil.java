@@ -54,6 +54,7 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.plugin.util.UtilPackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -94,7 +95,7 @@ public class JetRefactoringUtil {
 
     @NotNull
     public static String formatClassDescriptor(@NotNull DeclarationDescriptor classDescriptor) {
-        return DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(classDescriptor);
+        return IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(classDescriptor);
     }
 
     @NotNull
@@ -169,7 +170,7 @@ public class JetRefactoringUtil {
         String message = JetBundle.message(
                 "x.overrides.y.in.class.list",
                 DescriptorRenderer.COMPACT.render(declarationDescriptor),
-                DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(declarationDescriptor.getContainingDeclaration()),
+                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(declarationDescriptor.getContainingDeclaration()),
                 superClassesStr,
                 JetBundle.message(actionStringKey)
         );

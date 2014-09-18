@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.quickfix.QuickfixPackage;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
@@ -58,7 +59,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             .setWithDefinedIn(false)
             .setShortNames(false)
             .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE)
-            .setUnitReturnType(false).build();
+            .setUnitReturnType(false)
+            .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)
+            .build();
 
     private static final Logger LOG = Logger.getInstance(OverrideImplementMethodsHandler.class.getCanonicalName());
 

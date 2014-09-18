@@ -64,6 +64,7 @@ import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 import com.intellij.openapi.progress.ProcessCanceledException
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData>() {
@@ -332,7 +333,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         fun lengthenReference(expression: JetElement, fqName: FqName) {
             assert(canLengthenReferenceExpression(expression, fqName))
             val parent = expression.getParent()
-            val prefixToInsert = DescriptorRenderer.SOURCE_CODE.renderFqName(fqName.parent())
+            val prefixToInsert = IdeDescriptorRenderers.SOURCE_CODE.renderFqName(fqName.parent())
             val psiFactory = JetPsiFactory(expression)
             if (parent is JetCallExpression) {
                 val text = "$prefixToInsert.${parent.getText()}"
@@ -345,7 +346,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
                 typeReference!!.replace(psiFactory.createType("$prefixToInsert.${typeReference.getText()}"))
             }
             else {
-                expression.replace(createQualifiedExpression(psiFactory, DescriptorRenderer.SOURCE_CODE.renderFqName(fqName)))
+                expression.replace(createQualifiedExpression(psiFactory, IdeDescriptorRenderers.SOURCE_CODE.renderFqName(fqName)))
             }
         }
 

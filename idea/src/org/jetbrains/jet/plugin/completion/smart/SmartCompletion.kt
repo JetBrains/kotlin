@@ -33,6 +33,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,
@@ -296,7 +297,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
         val typeArgs = jetType.getArguments()
         var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgs)
-        val typeText = DescriptorUtils.getFqName(classifier).toString() + DescriptorRenderer.SOURCE_CODE.renderTypeArguments(typeArgs)
+        val typeText = DescriptorUtils.getFqName(classifier).toString() + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgs)
 
         val insertHandler: InsertHandler<LookupElement> = object : InsertHandler<LookupElement> {
             override fun handleInsert(context: InsertionContext, item: LookupElement) {
