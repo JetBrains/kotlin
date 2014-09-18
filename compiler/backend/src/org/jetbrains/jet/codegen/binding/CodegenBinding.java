@@ -43,6 +43,7 @@ import java.util.*;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
+import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
 
 public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, MutableClosure> CLOSURE = Slices.createSimpleSlice();
@@ -136,23 +137,6 @@ public class CodegenBinding {
         return getAsmType(bindingContext, anonymousClassForFunction(bindingContext, descriptor));
     }
 
-    // SCRIPT: register asmType for script descriptor, move to ScriptingUtil
-    public static void registerClassNameForScript(
-            BindingTrace bindingTrace,
-            @NotNull ScriptDescriptor scriptDescriptor,
-            @NotNull Type asmType
-    ) {
-        String simpleName = asmType.getInternalName().substring(asmType.getInternalName().lastIndexOf('/') + 1);
-        ClassDescriptorImpl classDescriptor =
-                new ClassDescriptorImpl(scriptDescriptor, Name.special("<script-" + simpleName + ">"), Modality.FINAL,
-                                        Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()), SourceElement.NO_SOURCE);
-        classDescriptor.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
-
-        recordClosure(bindingTrace, null, classDescriptor, null, asmType);
-
-        bindingTrace.record(CLASS_FOR_SCRIPT, scriptDescriptor, classDescriptor);
-    }
-
     public static boolean canHaveOuter(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
         if (classDescriptor.getKind() != ClassKind.CLASS) {
             return false;
@@ -168,7 +152,7 @@ public class CodegenBinding {
 
     static void recordClosure(
             @NotNull BindingTrace bindingTrace,
-            @Nullable JetElement element,
+            @NotNull JetElement element,
             @NotNull ClassDescriptor classDescriptor,
             @Nullable ClassDescriptor enclosing,
             @NotNull Type asmType
@@ -218,16 +202,21 @@ public class CodegenBinding {
     }
 
     // SCRIPT: register asmType for script, move to ScriptingUtil
-    public static void registerClassNameForScript(
-            BindingTrace bindingTrace,
-            @NotNull JetScript jetScript,
-            @NotNull Type asmType
-    ) {
-        ScriptDescriptor descriptor = bindingTrace.getBindingContext().get(SCRIPT, jetScript);
+    public static void registerClassNameForScript(@NotNull BindingTrace trace, @NotNull JetScript script, @NotNull Type asmType) {
+        ScriptDescriptor descriptor = trace.getBindingContext().get(SCRIPT, script);
         if (descriptor == null) {
-            throw new IllegalStateException("Descriptor is not found for PSI " + jetScript);
+            throw new IllegalStateException("Script descriptor is not found for PSI: " + JetPsiUtil.getElementTextWithContext(script));
         }
-        registerClassNameForScript(bindingTrace, descriptor, asmType);
+
+        String simpleName = asmType.getInternalName().substring(asmType.getInternalName().lastIndexOf('/') + 1);
+        ClassDescriptorImpl classDescriptor =
+                new ClassDescriptorImpl(descriptor, Name.special("<script-" + simpleName + ">"), Modality.FINAL,
+                                        Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()), toSourceElement(script));
+        classDescriptor.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
+
+        recordClosure(trace, script, classDescriptor, null, asmType);
+
+        trace.record(CLASS_FOR_SCRIPT, descriptor, classDescriptor);
     }
 
     @NotNull
@@ -294,7 +283,7 @@ public class CodegenBinding {
     @Nullable
     private static ResolvedCall<ConstructorDescriptor> findSuperCall(
             @NotNull BindingContext bindingContext,
-            @Nullable JetElement classOrObject
+            @NotNull JetElement classOrObject
     ) {
         if (!(classOrObject instanceof JetClassOrObject)) {
             return null;
