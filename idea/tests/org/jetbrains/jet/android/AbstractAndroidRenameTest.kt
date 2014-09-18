@@ -24,31 +24,40 @@ import com.intellij.refactoring.rename.RenameProcessor
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import kotlin.test.assertEquals
+import com.intellij.psi.PsiElement
+import org.jetbrains.jet.lang.psi.JetProperty
 
 public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
 
     private val NEW_NAME = "NEWNAME"
+    private val OLD_NAME = "OLDNAME"
 
     public fun doTest(path: String) {
         val f = myFixture!!
         f.copyDirectoryToProject(getResDir()!!, "res")
         f.configureByFile(path + getTestName(true) + ".kt")
-        renameElementWithTextOccurences(NEW_NAME)
+        val editor = f.getEditor()
+        val file = f.getFile()
+        val completionEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(editor, file)
+        val element = TargetElementUtilBase.findTargetElement(completionEditor, TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtilBase.ELEMENT_NAME_ACCEPTED)
+        assert(element != null)
+
+        // rename xml attribute by property
+        renameElementWithTextOccurences(element!!, NEW_NAME)
         val resolved = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
         assertEquals("\"@+id/$NEW_NAME\"", resolved?.getText())
+
+        // rename property by attribute
+        renameElementWithTextOccurences(resolved!!, "@+id/$OLD_NAME")
+        assertEquals(OLD_NAME, (f.getElementAtCaret() as JetProperty).getName())
     }
 
-    private fun renameElementWithTextOccurences(newName: String) {
+    private fun renameElementWithTextOccurences(element: PsiElement, newName: String) {
         val f = myFixture!!
         object : WriteCommandAction.Simple<Unit>(f.getProject()) {
             protected override fun run() {
                 val editor = f.getEditor()
-                val file = f.getFile()
-                val completionEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(editor, file)
-                val element = TargetElementUtilBase.findTargetElement(completionEditor, TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtilBase.ELEMENT_NAME_ACCEPTED)
-//                val element = TargetElementUtilBase.findReference(editor)?.getElement()
-                assert(element != null)
-                val substitution = RenamePsiElementProcessor.forElement(element!!).substituteElementToRename(element, editor)
+                val substitution = RenamePsiElementProcessor.forElement(element).substituteElementToRename(element, editor)
                 RenameProcessor(f.getProject(), substitution, newName, false, true).run()
             }
         }.execute().throwException()
