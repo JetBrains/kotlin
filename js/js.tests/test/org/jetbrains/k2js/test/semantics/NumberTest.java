@@ -70,6 +70,10 @@ public final class NumberTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testNumberIsCheck() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testConversionsWithoutTruncation() throws Exception {
         checkFooBoxIsOk();
     }

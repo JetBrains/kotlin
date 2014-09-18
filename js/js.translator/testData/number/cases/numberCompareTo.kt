@@ -10,6 +10,7 @@ fun id(s: String, value: Int): Int {
 fun box(): String {
 
     assertEquals(-1, 1.compareTo(2))
+    assertEquals(-1, (1: Comparable<Int>).compareTo(2))
 
     assertEquals(-1, 1 compareTo 2)
     assertEquals(-1, 1 compareTo (2:Short))
@@ -31,6 +32,7 @@ fun box(): String {
 
     assertEquals(-1, (1: Short) compareTo 2)
     assertEquals(-1, (1: Short) compareTo (2:Short))
+    assertEquals(-1, ((1: Short): Comparable<Short>) compareTo (2:Short))
     assertEquals(-1, (1: Short) compareTo (2:Byte))
     assertEquals(-1, (1: Short) compareTo 2.0)
     assertEquals(-1, (1: Short) compareTo 2.0f)
@@ -38,6 +40,7 @@ fun box(): String {
     assertEquals(1, (10: Byte) compareTo 2)
     assertEquals(1, (10: Byte) compareTo (2:Short))
     assertEquals(1, (10: Byte) compareTo (2:Byte))
+    assertEquals(1, ((10: Byte): Comparable<Byte>) compareTo (2:Byte))
     assertEquals(1, (10: Byte) compareTo 2.0)
     assertEquals(1, (10: Byte) compareTo 2.0f)
 
@@ -45,6 +48,7 @@ fun box(): String {
     assertEquals(0, 2.0 compareTo (2:Short))
     assertEquals(0, 2.0 compareTo (2:Byte))
     assertEquals(0, 2.0 compareTo 2.0)
+    assertEquals(0, (2.0: Comparable<Double>) compareTo 2.0)
     assertEquals(0, 2.0 compareTo 2.0f)
 
     assertEquals(1, 3.0f compareTo 2)
@@ -52,6 +56,7 @@ fun box(): String {
     assertEquals(1, 3.0f compareTo (2:Byte))
     assertEquals(1, 3.0f compareTo 2.0)
     assertEquals(1, 3.0f compareTo 2.0f)
+    assertEquals(1, (3.0f: Comparable<Float>) compareTo 2.0f)
 
     assertEquals(1, id("A", 10) compareTo id("B", 5))
     assertEquals("AB", global)
