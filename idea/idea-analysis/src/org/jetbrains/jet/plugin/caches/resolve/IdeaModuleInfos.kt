@@ -80,7 +80,11 @@ fun ideaModelDependencies(module: Module, productionOnly: Boolean): List<IdeaMod
     return result.toList()
 }
 
-public data class ModuleProductionSourceInfo(val module: Module) : IdeaModuleInfo() {
+public abstract class ModuleSourceInfo(): IdeaModuleInfo() {
+    abstract val module: Module
+}
+
+public data class ModuleProductionSourceInfo(override val module: Module) : ModuleSourceInfo() {
     override val name = Name.special("<production sources for module ${module.getName()}>")
 
     override fun contentScope() = module.getModuleScope(false)
@@ -91,13 +95,15 @@ public data class ModuleProductionSourceInfo(val module: Module) : IdeaModuleInf
 }
 
 //TODO: (module refactoring) do not create ModuleTestSourceInfo when there are no test roots for module
-public data class ModuleTestSourceInfo(val module: Module) : IdeaModuleInfo() {
+public data class ModuleTestSourceInfo(override val module: Module) : ModuleSourceInfo() {
     override val name = Name.special("<test sources for module ${module.getName()}>")
 
     override fun contentScope() = module.getModuleScope().intersectWith(GlobalSearchScope.notScope(module.getModuleScope(false)))
 
     override fun dependencies() = ideaModelDependencies(module, productionOnly = false)
 }
+
+private fun ModuleSourceInfo.isTests() = this is ModuleTestSourceInfo
 
 public fun Module.productionSourceInfo(): ModuleProductionSourceInfo = ModuleProductionSourceInfo(this)
 public fun Module.testSourceInfo(): ModuleTestSourceInfo = ModuleTestSourceInfo(this)
