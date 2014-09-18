@@ -38,14 +38,8 @@ public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
     private var kotlinInternalModeOriginalValue: Boolean = false
 
     override fun setUp() {
-        System.setProperty(KotlinAndroidTestCaseBase.SDK_PATH_PROPERTY, PathManager.getHomePath() + "/androidSDK/")
-        System.setProperty(KotlinAndroidTestCaseBase.PLATFORM_DIR_PROPERTY, "android-17")
         super.setUp()
         setAutoCompleteSetting(false)
-    }
-
-    override fun createManifest() {
-        myFixture!!.copyFileToProject("idea/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML)
     }
 
     private fun setAutoCompleteSetting(value: Boolean): Boolean {
@@ -77,7 +71,5 @@ public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
     override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/android/completion/" + getTestName(true) + "/"
     }
-
-    override fun requireRecentSdk() = true
 
 }
