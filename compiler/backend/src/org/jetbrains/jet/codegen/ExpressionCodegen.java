@@ -1754,8 +1754,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return StackValue.field(type, type, descriptor.getName().asString(), true);
             }
             ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-            assert classObjectDescriptor != null : "Class object is not found for " + descriptor;
-            return StackValue.singleton(classObjectDescriptor, typeMapper);
+            if (classObjectDescriptor != null) {
+                return StackValue.singleton(classObjectDescriptor, typeMapper);
+            }
+            return StackValue.none();
         }
 
         if (descriptor instanceof TypeParameterDescriptor) {
