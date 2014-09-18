@@ -31,8 +31,6 @@ abstract class AndroidResourceManager(protected val project: Project, protected 
 
     abstract fun getLayoutXmlFiles(): Collection<PsiFile>
     abstract fun idToXmlAttribute(id: String): PsiElement?
-    abstract fun renameXmlAttr(elem: PsiElement, newName: String)
-    abstract fun renameProperty(oldName: String, newName: String)
     public fun nameToIdDeclaration(name: String): String = idDeclarationPrefix + name
     public fun nameToIdUsage(name: String): String = idUsagePrefix + name
     public fun idToName(id: String?): String {
