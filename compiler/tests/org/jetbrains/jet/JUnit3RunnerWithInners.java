@@ -117,12 +117,11 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
                 return new TestSuite(klass.asSubclass(TestCase.class));
             }
         }
-        else {
-            assert unprocessedInnerClasses.size() == innerClasses.size() :
-                    String.format("Some inner classes left unprocessed during creating runner for %s: %s",
-                                  klass.getCanonicalName(), unprocessedInnerClasses);
-
+        else if (unprocessedInnerClasses.size() == innerClasses.size()) {
             return createTreeTestSuite(klass);
+        }
+        else {
+            return new TestSuite(klass.asSubclass(TestCase.class));
         }
     }
 
