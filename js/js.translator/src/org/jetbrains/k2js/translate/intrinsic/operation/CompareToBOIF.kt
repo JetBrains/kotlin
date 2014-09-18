@@ -16,18 +16,18 @@
 
 package org.jetbrains.k2js.translate.intrinsic.operation
 
+import com.google.common.collect.ImmutableSet
 import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import org.jetbrains.k2js.translate.context.TranslationContext
-import org.jetbrains.k2js.translate.operation.OperatorTable
-import org.jetbrains.k2js.translate.utils.JsDescriptorUtils
-
-import org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken
-
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lexer.JetToken
-import com.google.common.collect.ImmutableSet
+import org.jetbrains.k2js.translate.context.TranslationContext
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern
+import org.jetbrains.k2js.translate.operation.OperatorTable
+import org.jetbrains.k2js.translate.utils.JsAstUtils
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils
+import org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken
 
 
 object CompareToBOIF : BinaryOperationIntrinsicFactory {
@@ -39,9 +39,24 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
         }
     }
 
+    private object CompareToFunctionIntrinsic : AbstractBinaryOperationIntrinsic() {
+        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+            val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
+            val compareTo = JsAstUtils.compareTo(left, right)
+            return JsBinaryOperation(operator, compareTo, context.program().getNumberLiteral(0))
+        }
+    }
+
     override public fun getSupportTokens(): ImmutableSet<JetToken> = OperatorConventions.COMPARISON_OPERATIONS
 
     override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
-        return if (JsDescriptorUtils.isBuiltin(descriptor)) CompareToIntrinsic else null
+        if (JsDescriptorUtils.isBuiltin(descriptor))
+            when {
+                pattern("Int|Short|Byte|Double|Float|Char|String|Long.compareTo").apply(descriptor) ->
+                    return CompareToIntrinsic
+                else ->
+                    return CompareToFunctionIntrinsic
+            }
+        return null
     }
 }

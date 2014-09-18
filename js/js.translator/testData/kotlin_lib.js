@@ -86,7 +86,19 @@
     };
 
     Kotlin.compareTo = function(a, b) {
+        var type = typeof a;
+        if (type == "number" || type == "string") {
+            return a < b ? -1 : a > b ? 1 : 0;
+        }
+        return a.compareTo_za3rmp$(b);
+    };
+
+    Kotlin.primitiveCompareTo = function(a, b) {
         return a < b ? -1 : a > b ? 1 : 0;
+    };
+
+    Kotlin.isNumber = function (a) {
+        return typeof a == "number";
     };
 
     Kotlin.toShort = function(a) {

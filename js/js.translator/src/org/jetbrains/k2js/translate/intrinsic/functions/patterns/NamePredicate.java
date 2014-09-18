@@ -46,6 +46,9 @@ public final class NamePredicate implements Predicate<Name> {
     public static final NamePredicate STRING = new NamePredicate("String");
 
     @NotNull
+    public static final NamePredicate NUMBER = new NamePredicate("Number");
+
+    @NotNull
     private final Set<Name> validNames = Sets.newHashSet();
 
     public NamePredicate(@NotNull String... validNames) {

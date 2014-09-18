@@ -139,6 +139,16 @@ public final class JsAstUtils {
     }
 
     @NotNull
+    public static JsExpression primitiveCompareTo(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsInvocation(new JsNameRef("primitiveCompareTo", Namer.KOTLIN_OBJECT_REF), left, right);
+    }
+
+    @NotNull
+    public static JsExpression isNumber(@NotNull JsExpression expression) {
+        return new JsInvocation(new JsNameRef("isNumber", Namer.KOTLIN_OBJECT_REF), expression);
+    }
+
+    @NotNull
     public static JsPrefixOperation negated(@NotNull JsExpression expression) {
         return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
     }

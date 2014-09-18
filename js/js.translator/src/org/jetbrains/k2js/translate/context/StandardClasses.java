@@ -101,6 +101,8 @@ public final class StandardClasses {
                 .methods("iterator", "contains").properties("start", "end", "increment");
 
         standardClasses.declare().forFQ("kotlin.Enum").kotlinClass("Enum");
+
+        standardClasses.declare().forFQ("kotlin.Comparable").kotlinClass("Comparable");
     }
 
 

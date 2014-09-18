@@ -34,11 +34,12 @@ import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredi
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setArguments;
 
 public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     INSTANCE;
@@ -76,7 +77,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     };
 
     @NotNull
-    private static final FunctionIntrinsic NUMBER_COMPARE_TO_INTRINSIC = new FunctionIntrinsic() {
+    private static final FunctionIntrinsic BUILTINS_COMPARE_TO_INTRINSIC = new FunctionIntrinsic() {
         @NotNull
         @Override
         public JsExpression apply(
@@ -87,6 +88,21 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             assert receiver != null;
             assert arguments.size() == 1;
             return JsAstUtils.compareTo(receiver, arguments.get(0));
+        }
+    };
+
+    @NotNull
+    private static final FunctionIntrinsic PRIMITIVE_NUMBER_COMPARE_TO_INTRINSIC = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            assert receiver != null;
+            assert arguments.size() == 1;
+            return JsAstUtils.primitiveCompareTo(receiver, arguments.get(0));
         }
     };
 
@@ -115,13 +131,18 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     @Nullable
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
+        if (PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS.apply(descriptor)) {
+            return PRIMITIVE_NUMBER_COMPARE_TO_INTRINSIC;
+        }
+
+        if (JsDescriptorUtils.isBuiltin(descriptor) && descriptor.getName().equals(OperatorConventions.COMPARE_TO)) {
+            return BUILTINS_COMPARE_TO_INTRINSIC;
+        }
+
         if (!PREDICATE.apply(descriptor)) {
             return null;
         }
 
-        if (PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS.apply(descriptor)) {
-            return NUMBER_COMPARE_TO_INTRINSIC;
-        }
 
         if (pattern("Int|Short|Byte.div").apply(descriptor)) {
             JetType resultType = descriptor.getReturnType();

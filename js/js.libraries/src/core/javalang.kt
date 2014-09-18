@@ -32,11 +32,6 @@ public trait Runnable {
 }
 
 library
-public trait Comparable<T> {
-    public fun compareTo(that: T): Int
-}
-
-library
 public trait Appendable {
     public open fun append(csq: CharSequence?): Appendable
     public open fun append(csq: CharSequence?, start: Int, end: Int): Appendable
