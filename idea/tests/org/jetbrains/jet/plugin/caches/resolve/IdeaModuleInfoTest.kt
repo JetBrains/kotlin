@@ -21,10 +21,11 @@ import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.DependencyScope
-import junit.framework.Assert
+import org.junit.Assert
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.testFramework.UsefulTestCase
 
 class IdeaModuleInfoTest : ModuleTestCase() {
 
@@ -182,6 +183,43 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         c.test.assertDependenciesEqual(c.test, c.production, b.test, b.production, a.test, a.production)
     }
 
+    fun testDependents() {
+        //NOTE: we do not differ between dependency kinds
+        val (a, b, c) = modules(name1 = "a", name2 = "b", name3 = "c")
+        val (d, e, f) = modules(name1 = "d", name2 = "e", name3 = "f")
+
+        b.addDependency(a, exported = true)
+
+        c.addDependency(a)
+
+        d.addDependency(c, exported = true)
+
+        e.addDependency(b)
+
+        f.addDependency(d)
+        f.addDependency(e)
+
+
+        a.test.assertDependentsEqual(a.test, b.test, c.test, e.test)
+        a.production.assertDependentsEqual(a.production, a.test, b.production, b.test, c.production, c.test, e.production, e.test)
+
+        b.test.assertDependentsEqual(b.test, e.test)
+        b.production.assertDependentsEqual(b.production, b.test, e.production, e.test)
+
+
+        c.test.assertDependentsEqual(c.test, d.test, f.test)
+        c.production.assertDependentsEqual(c.production, c.test, d.production, d.test, f.production, f.test)
+
+        d.test.assertDependentsEqual(d.test, f.test)
+        d.production.assertDependentsEqual(d.production, d.test, f.production, f.test)
+
+        e.test.assertDependentsEqual(e.test, f.test)
+        e.production.assertDependentsEqual(e.production, e.test, f.production, f.test)
+
+        f.test.assertDependentsEqual(f.test)
+        f.production.assertDependentsEqual(f.production, f.test)
+    }
+
     private fun Module.addDependency(
             other: Module,
             dependencyScope: DependencyScope = DependencyScope.COMPILE,
@@ -189,13 +227,13 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
 
     private val Module.production: ModuleProductionSourceInfo
-            get() = productionSourceInfo()
+        get() = productionSourceInfo()
 
     private val Module.test: ModuleTestSourceInfo
-            get() = testSourceInfo()
+        get() = testSourceInfo()
 
     private val Library.classes: LibraryInfo
-            get() = LibraryInfo(getProject()!!, this)
+        get() = LibraryInfo(getProject()!!, this)
 
     private fun Module.addDependency(
             lib: Library,
@@ -211,6 +249,10 @@ class IdeaModuleInfoTest : ModuleTestCase() {
 
     private fun IdeaModuleInfo.assertDependenciesEqual(vararg dependencies: IdeaModuleInfo) {
         Assert.assertEquals(dependencies.toList(), this.dependencies())
+    }
+
+    private fun ModuleSourceInfo.assertDependentsEqual(vararg dependents: ModuleSourceInfo) {
+        UsefulTestCase.assertSameElements(this.getDependentModules(), dependents.toList())
     }
 
     private fun projectLibrary(name: String = "lib"): Library {
