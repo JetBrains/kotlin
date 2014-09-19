@@ -93,6 +93,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
     
+    @TestMetadata("DataClassCopy.kt")
+    public void testDataClassCopy() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DataClassCopy.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("DontImportRootScope.kt")
     public void testDontImportRootScope() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/DontImportRootScope.kt");

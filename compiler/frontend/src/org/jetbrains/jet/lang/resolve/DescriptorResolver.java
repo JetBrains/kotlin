@@ -421,7 +421,7 @@ public class DescriptorResolver {
                 Annotations.EMPTY,
                 COPY_METHOD_NAME,
                 CallableMemberDescriptor.Kind.SYNTHESIZED,
-                SourceElement.NO_SOURCE
+                classDescriptor.getSource()
         );
 
         List<ValueParameterDescriptor> parameterDescriptors = Lists.newArrayList();
