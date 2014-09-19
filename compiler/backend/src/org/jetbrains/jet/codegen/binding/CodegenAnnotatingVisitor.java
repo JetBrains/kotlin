@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
@@ -45,9 +46,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.source.SourcePackage;
@@ -56,7 +55,6 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
 
-import static org.jetbrains.jet.codegen.JvmCodegenUtil.peekFromStack;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.safeIdentifier;
@@ -401,14 +399,12 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             return peek + '$' + name;
         }
         else if (containingDeclaration instanceof PackageFragmentDescriptor) {
-            FqName qualifiedName = ((PackageFragmentDescriptor) containingDeclaration).getFqName();
-            String packageClassShortName = PackageClassUtils.getPackageClassName(qualifiedName);
-            String packageClassName = peek.isEmpty() ? packageClassShortName : peek + "/" + packageClassShortName;
-            return packageClassName + '$' + name;
+            JetFile containingFile = DescriptorToSourceUtils.getContainingFile(descriptor);
+            assert containingFile != null : "File not found for " + descriptor;
+            return PackagePartClassUtils.getPackagePartInternalName(containingFile) + '$' + name;
         }
-        else {
-            return null;
-        }
+
+        return null;
     }
 
     @Override
@@ -547,7 +543,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     @NotNull
     private String getCurrentTopLevelClassOrPackagePartInternalName(@NotNull JetFile file) {
         ListIterator<ClassDescriptorWithState> iterator = classStack.listIterator(classStack.size());
-        while(iterator.hasPrevious()) {
+        while (iterator.hasPrevious()) {
             ClassDescriptor previous = iterator.previous().getDescriptor();
             if (DescriptorUtils.isTopLevelOrInnerClass(previous)) {
                 return CodegenBinding.getAsmType(bindingContext, previous).getInternalName();
@@ -555,5 +551,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
 
         return PackagePartClassUtils.getPackagePartInternalName(file);
+    }
+
+    private static <T> T peekFromStack(@NotNull Stack<T> stack) {
+        return stack.empty() ? null : stack.peek();
     }
 }

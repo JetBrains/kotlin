@@ -8,8 +8,8 @@ fun box(): String {
     val enclosingMethod = classInLambda.javaClass.getEnclosingMethod()
     if (enclosingMethod?.getName() != "invoke") return "method: $enclosingMethod"
 
-    val enclosingClass = classInLambda.javaClass.getEnclosingClass()
-    if (enclosingClass?.getName() != "_DefaultPackage\$box\$classInLambda\$1") return "enclosing class: $enclosingClass"
+    val enclosingClass = classInLambda.javaClass.getEnclosingClass()!!.getName()
+    if (!enclosingClass.startsWith("_DefaultPackage\$") || !enclosingClass.endsWith("\$box\$classInLambda\$1")) return "enclosing class: $enclosingClass"
 
     //KT-5092
     //val declaringClass = classInLambda.javaClass.getDeclaringClass()

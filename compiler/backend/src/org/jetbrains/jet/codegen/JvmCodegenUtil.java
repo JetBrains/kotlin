@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.Stack;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -65,10 +64,6 @@ public class JvmCodegenUtil {
 
     public static boolean isConst(@NotNull CalculatedClosure closure) {
         return closure.getCaptureThis() == null && closure.getCaptureReceiverType() == null && closure.getCaptureVariables().isEmpty();
-    }
-
-    public static <T> T peekFromStack(Stack<T> stack) {
-        return stack.empty() ? null : stack.peek();
     }
 
     private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {

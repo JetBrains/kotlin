@@ -33,9 +33,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -82,14 +80,14 @@ public final class PsiCodegenPredictor {
             }
         }
         else {
-            FqName packageFqName = declaration.getContainingJetFile().getPackageFqName();
+            JetFile containingFile = declaration.getContainingJetFile();
 
             if (declaration instanceof JetNamedFunction) {
                 Name name = ((JetNamedFunction) declaration).getNameAsName();
-                return name == null ? null : PackageClassUtils.getPackageClassInternalName(packageFqName) + "$" + name.asString();
+                return name == null ? null : PackagePartClassUtils.getPackagePartInternalName(containingFile) + "$" + name.asString();
             }
 
-            parentInternalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(packageFqName);
+            parentInternalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(containingFile.getPackageFqName());
         }
 
         if (declaration instanceof JetClassObject) {

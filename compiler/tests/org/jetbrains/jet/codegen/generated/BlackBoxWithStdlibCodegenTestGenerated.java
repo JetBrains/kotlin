@@ -1891,6 +1891,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/enclosing"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("localClassInTopLevelFunction.kt")
+            public void testLocalClassInTopLevelFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/localClassInTopLevelFunction.kt");
+                doTestWithStdlib(fileName);
+            }
+            
             @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/insideLambda")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
