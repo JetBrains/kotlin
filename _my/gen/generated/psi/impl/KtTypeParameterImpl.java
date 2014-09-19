@@ -24,8 +24,8 @@ public class KtTypeParameterImpl extends ASTWrapperPsiElement implements KtTypeP
 
   @Override
   @Nullable
-  public KtModifiersPlusFollowedByIdentifier getModifiersPlusFollowedByIdentifier() {
-    return findChildByClass(KtModifiersPlusFollowedByIdentifier.class);
+  public KtModifierListFollowedByIdentifier getModifierListFollowedByIdentifier() {
+    return findChildByClass(KtModifierListFollowedByIdentifier.class);
   }
 
   @Override

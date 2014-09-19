@@ -168,8 +168,8 @@ public class KtSetterImpl extends ASTWrapperPsiElement implements KtSetter {
 
   @Override
   @NotNull
-  public List<KtModifiersPlus> getModifiersPlusList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtModifiersPlus.class);
+  public List<KtModifierList> getModifierListList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtModifierList.class);
   }
 
   @Override

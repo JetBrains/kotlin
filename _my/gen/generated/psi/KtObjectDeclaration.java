@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface KtObjectDeclaration extends PsiElement {
 
   @Nullable
-  KtClassBodyNoQ getClassBodyNoQ();
+  KtClassBody getClassBody();
 
   @Nullable
   KtDelegationSpecifierExt getDelegationSpecifierExt();

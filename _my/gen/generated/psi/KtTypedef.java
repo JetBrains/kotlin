@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface KtTypedef extends PsiElement {
 
   @Nullable
-  KtModifiersPlus getModifiersPlus();
+  KtModifierList getModifierList();
 
   @NotNull
   KtType getType();

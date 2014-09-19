@@ -27,7 +27,6 @@ public interface KotlinTypes {
   IElementType CALL_SUFFIX = KotlinParserDefinition.createType("CALL_SUFFIX");
   IElementType CATCH_BLOCK = KotlinParserDefinition.createType("CATCH_BLOCK");
   IElementType CLASS_BODY = KotlinParserDefinition.createType("CLASS_BODY");
-  IElementType CLASS_BODY_NO_Q = KotlinParserDefinition.createType("CLASS_BODY_NO_Q");
   IElementType CLASS_DECLARATION = KotlinParserDefinition.createType("CLASS_DECLARATION");
   IElementType CLASS_OBJECT = KotlinParserDefinition.createType("CLASS_OBJECT");
   IElementType COMPARISON_OPERATION = KotlinParserDefinition.createType("COMPARISON_OPERATION");
@@ -70,11 +69,10 @@ public interface KotlinTypes {
   IElementType LONG_TEMPLATE = KotlinParserDefinition.createType("LONG_TEMPLATE");
   IElementType LOOP = KotlinParserDefinition.createType("LOOP");
   IElementType MEMBER_MODIFIER = KotlinParserDefinition.createType("MEMBER_MODIFIER");
-  IElementType MODIFIERS = KotlinParserDefinition.createType("MODIFIERS");
   IElementType MODIFIERS_IDENTIFIER_EXT = KotlinParserDefinition.createType("MODIFIERS_IDENTIFIER_EXT");
   IElementType MODIFIERS_IDENTIFIER_TYPE_EXT = KotlinParserDefinition.createType("MODIFIERS_IDENTIFIER_TYPE_EXT");
-  IElementType MODIFIERS_PLUS = KotlinParserDefinition.createType("MODIFIERS_PLUS");
-  IElementType MODIFIERS_PLUS_FOLLOWED_BY_IDENTIFIER = KotlinParserDefinition.createType("MODIFIERS_PLUS_FOLLOWED_BY_IDENTIFIER");
+  IElementType MODIFIER_LIST = KotlinParserDefinition.createType("MODIFIER_LIST");
+  IElementType MODIFIER_LIST_FOLLOWED_BY_IDENTIFIER = KotlinParserDefinition.createType("MODIFIER_LIST_FOLLOWED_BY_IDENTIFIER");
   IElementType MULTIPLE_VARIABLE_DECLARATIONS = KotlinParserDefinition.createType("MULTIPLE_VARIABLE_DECLARATIONS");
   IElementType MULTIPLICATIVE_OPERATION = KotlinParserDefinition.createType("MULTIPLICATIVE_OPERATION");
   IElementType NAMED_INFIX_FIRST = KotlinParserDefinition.createType("NAMED_INFIX_FIRST");
@@ -111,7 +109,6 @@ public interface KotlinTypes {
   IElementType TYPE_ARGUMENTS = KotlinParserDefinition.createType("TYPE_ARGUMENTS");
   IElementType TYPE_ARGUMENT_LIST = KotlinParserDefinition.createType("TYPE_ARGUMENT_LIST");
   IElementType TYPE_CONSTRAINT = KotlinParserDefinition.createType("TYPE_CONSTRAINT");
-  IElementType TYPE_CONSTRAINTS = KotlinParserDefinition.createType("TYPE_CONSTRAINTS");
   IElementType TYPE_CONSTRAINT_EXT = KotlinParserDefinition.createType("TYPE_CONSTRAINT_EXT");
   IElementType TYPE_FOLLOWED_BY_DOT = KotlinParserDefinition.createType("TYPE_FOLLOWED_BY_DOT");
   IElementType TYPE_LIST = KotlinParserDefinition.createType("TYPE_LIST");
@@ -191,9 +188,6 @@ public interface KotlinTypes {
       }
       else if (type == CLASS_BODY) {
         return new KtClassBodyImpl(node);
-      }
-      else if (type == CLASS_BODY_NO_Q) {
-        return new KtClassBodyNoQImpl(node);
       }
       else if (type == CLASS_DECLARATION) {
         return new KtClassDeclarationImpl(node);
@@ -321,20 +315,17 @@ public interface KotlinTypes {
       else if (type == MEMBER_MODIFIER) {
         return new KtMemberModifierImpl(node);
       }
-      else if (type == MODIFIERS) {
-        return new KtModifiersImpl(node);
-      }
       else if (type == MODIFIERS_IDENTIFIER_EXT) {
         return new KtModifiersIDENTIFIERExtImpl(node);
       }
       else if (type == MODIFIERS_IDENTIFIER_TYPE_EXT) {
         return new KtModifiersIDENTIFIERTypeExtImpl(node);
       }
-      else if (type == MODIFIERS_PLUS) {
-        return new KtModifiersPlusImpl(node);
+      else if (type == MODIFIER_LIST) {
+        return new KtModifierListImpl(node);
       }
-      else if (type == MODIFIERS_PLUS_FOLLOWED_BY_IDENTIFIER) {
-        return new KtModifiersPlusFollowedByIdentifierImpl(node);
+      else if (type == MODIFIER_LIST_FOLLOWED_BY_IDENTIFIER) {
+        return new KtModifierListFollowedByIdentifierImpl(node);
       }
       else if (type == MULTIPLE_VARIABLE_DECLARATIONS) {
         return new KtMultipleVariableDeclarationsImpl(node);
@@ -443,9 +434,6 @@ public interface KotlinTypes {
       }
       else if (type == TYPE_CONSTRAINT) {
         return new KtTypeConstraintImpl(node);
-      }
-      else if (type == TYPE_CONSTRAINTS) {
-        return new KtTypeConstraintsImpl(node);
       }
       else if (type == TYPE_CONSTRAINT_EXT) {
         return new KtTypeConstraintExtImpl(node);

@@ -174,8 +174,8 @@ public class KtPropertyImpl extends ASTWrapperPsiElement implements KtProperty {
 
   @Override
   @Nullable
-  public KtModifiersPlus getModifiersPlus() {
-    return findChildByClass(KtModifiersPlus.class);
+  public KtModifierList getModifierList() {
+    return findChildByClass(KtModifierList.class);
   }
 
   @Override

@@ -36,7 +36,7 @@ importList
 
 // [Used by preamble]
 packageHeader
-  ::= (modifiersPlus? "package" IDENTIFIER_EXT SEMI?)?
+  ::= (modifierList? "package" IDENTIFIER_EXT SEMI?)?
   ;
 
 // [Used by preamble, package]
@@ -64,7 +64,7 @@ packageDirective
 
 // [Used by memberDeclaration, declaration, toplevelObject]
 typedef
-  ::= modifiersPlus? "type" IDENTIFIER (typeParameters typeConstraintsNoQ?)? "=" type SEMI?
+  ::= modifierList? "type" IDENTIFIER (typeParameters typeConstraints?)? "=" type SEMI?
   ;
 
 // same as IDENTIFIER{"."}
@@ -79,20 +79,16 @@ left DOT_IDENTIFIER ::= "." referenceExpression
 
 // [Used by memberDeclaration, declaration, toplevelObject]
 classDeclaration
-  ::= modifiersPlus? ("class" | "trait") IDENTIFIER
+  ::= modifierList? ("class" | "trait") IDENTIFIER
       typeParameters?
       primaryConstructorModifierList? valueParameters?
       (":" annotationsPlus? delegationSpecifierExt)?
-      typeConstraintsNoQ?
-      (enumClassBody | classBodyNoQ?)
+      typeConstraints?
+      (enumClassBody | classBody?)
   ;
 
 // [Used by objectLiteral, enumEntry, class, object]
 classBody
-  ::= ("{" ENABLE_NEWLINES memberDeclaration* RESTORE_NEWLINES_STATE"}")?
-  ;
-
-classBodyNoQ
   ::= ("{" ENABLE_NEWLINES memberDeclaration* RESTORE_NEWLINES_STATE"}")
   ;
 
@@ -126,15 +122,10 @@ private typeParameterExt ::= (typeParameter ",")* typeParameter
 
 // [Used by typeParameters]
 typeParameter
-  ::= modifiersPlusFollowedByIdentifier? IDENTIFIER_NEXT IDENTIFIER (":" userTypeReference)?
+  ::= modifierListFollowedByIdentifier? IDENTIFIER_NEXT IDENTIFIER (":" userTypeReference)?
   ;
 
-// [Used by class, property, typedef, function]
-typeConstraints
-  ::= ("where" typeConstraintExt)?
-  ;
-
-private typeConstraintsNoQ
+private typeConstraints
   ::= <<at WHERE_KEYWORD>> "where" typeConstraintExt
   ;
 
@@ -170,7 +161,7 @@ anonymousInitializer
 
 // [Used by memberDeclaration]
 classObject
-  ::= modifiers "class" object
+  ::= modifierList? "class" object
   ;
 
 // [Used by function]
@@ -183,7 +174,7 @@ private functionParameterExt ::= (functionParameter ",")* functionParameter
 
 //[Used by valueParameters, class]
 functionParameter
-  ::= modifiersPlus? ("val" | "var")? privateParameter ("=" expression)?
+  ::= modifierList? ("val" | "var")? privateParameter ("=" expression)?
   ;
 
 // same as initializer{","}
@@ -202,11 +193,11 @@ block
 
 // [Used by memberDeclaration, declaration, toplevelObject]
 function
-  ::= modifiersPlus? "fun" typeParameters?
+  ::= modifierList? "fun" typeParameters?
       (type ".")?// | annotations)?
       IDENTIFIER
       typeParameters? valueParameters (":" type)?
-      typeConstraintsNoQ?
+      typeConstraints?
       functionBody?
   ;
 
@@ -231,10 +222,10 @@ multipleVariableDeclarations
 
 // [Used by memberDeclaration, declaration, toplevelObject]
 property
-  ::= modifiersPlus? ("val" | "var")
+  ::= modifierList? ("val" | "var")
       typeParameters? DISABLE_JOINING_COMPLEX_TOKENS (typeFollowedByDot "." | annotationsPlus?)?
       (multipleVariableDeclarations | variableDeclarationEntry) RESTORE_JOINING_COMPLEX_TOKENS_STATE
-      typeConstraintsNoQ?
+      typeConstraints?
       //("by" (getter setter | setter getter | setter | getter?)
       //| "=" expression /*SEMI?*/ (getter setter | setter getter | setter | getter)
       //| "=" expression)
@@ -246,24 +237,24 @@ property
 
 
 propertyLocal
-  ::= modifiersPlus? ("val" | "var")
+  ::= modifierList? ("val" | "var")
       typeParameters? DISABLE_JOINING_COMPLEX_TOKENS (typeFollowedByDot "." | annotationsPlus?)?
       (multipleVariableDeclarations | variableDeclarationEntry) RESTORE_JOINING_COMPLEX_TOKENS_STATE
-      typeConstraintsNoQ?
+      typeConstraints?
       ("by" | "=" expression)?
   ;
 
 
 // [Used by property]
 getter
-  ::= modifiersPlus? <<at GET_KEYWORD>> "get"  "(" DISABLE_NEWLINES RESTORE_NEWLINES_STATE ")" (":" type)? functionBody
-  | modifiersPlus? <<at GET_KEYWORD>>  "get"
+  ::= modifierList? <<at GET_KEYWORD>> "get"  "(" DISABLE_NEWLINES RESTORE_NEWLINES_STATE ")" (":" type)? functionBody
+  | modifierList? <<at GET_KEYWORD>>  "get"
   ;
 
 // [Used by property]
 setter
-  ::= modifiersPlus? <<at SET_KEYWORD>> "set" "(" DISABLE_NEWLINES modifiersPlus? singleValueParameterList RESTORE_NEWLINES_STATE")" functionBody
-  | modifiersPlus? <<at SET_KEYWORD>> "set"
+  ::= modifierList? <<at SET_KEYWORD>> "set" "(" DISABLE_NEWLINES modifierList? singleValueParameterList RESTORE_NEWLINES_STATE")" functionBody
+  | modifierList? <<at SET_KEYWORD>> "set"
   ;
 
 // [Used by functionType, setter, functionParameter]
@@ -296,7 +287,7 @@ enumClassBody
 
 // [Used by enumClassBody]
 enumEntry
-  ::= modifiersPlus? objectDeclarationName (":" initializerExt)? classBodyNoQ?
+  ::= modifierList? objectDeclarationName (":" initializerExt)? classBody?
   ;
 
 objectDeclarationName
@@ -367,8 +358,7 @@ PROBLEM: left recursion
 
 
 private typeDescriptor
-  ::= RETURN_TRUE typeDescriptorAfterRecursion (("." "(" DISABLE_NEWLINES parameterModifiersTypeExt? RESTORE_NEWLINES_STATE")" "->" type?) | nullableType)*
-  //{pin=1}
+  ::= typeDescriptorAfterRecursion (("." "(" DISABLE_NEWLINES parameterModifiersTypeExt? RESTORE_NEWLINES_STATE")" "->" type?) | nullableType)*
   ;
 
 left nullableType
@@ -393,8 +383,6 @@ private typeDescriptorInBrackets
   //{pin=1}
   //{pin=1 recoverWhile=NOT_RPAR}
   ;
-
-private NOT_RPAR ::= !(")")
 
 private typeDescriptorAfterRecursionFollowedByDot
   ::= "(" DISABLE_NEWLINES parameterModifiersTypeExt? RESTORE_NEWLINES_STATE")" "->" type?
@@ -437,7 +425,7 @@ typeArgumentList
 private optionalProjectionTypeExt ::= ((optionalProjection typeProjection | "*") ",")* (optionalProjection typeProjection | "*")
 
 typeProjection
-  ::= modifiersPlus? type
+  ::= modifierList? type
   ;
 
 // [Used by simpleUserType]
@@ -446,7 +434,7 @@ private optionalProjection
   ;
 
 // same as (parameter | modifiers  type){","}
-parameterModifiersTypeExt ::= ((parameter | modifiers  type) ",")* (parameter | modifiers  type)
+parameterModifiersTypeExt ::= ((parameter | modifierList  type) ",")* (parameter | modifierList  type)
 
 
 // ----- Control structures
@@ -811,6 +799,11 @@ private postfixUnaryOperation
   //| memberAccessOperation atomicOrCallable
   ;
 
+// [Used by postfixUnaryOperation]
+//private memberAccessOperation
+//  ::= "." | SAFE_ACCESS | "?"
+//  ;
+
 left safeAccessExpression
   ::= SAFE_ACCESS (atomicExpression | callableReference)
   ;
@@ -827,12 +820,6 @@ left callSuffix
   ::= typeArguments? valueArguments (label? functionLiteral?)
   | typeArguments (label? functionLiteral?)
   ;
-
-// [Used by postfixUnaryOperation]
-private memberAccessOperation
-  ::= "." | SAFE_ACCESS | "?"
-  ;
-
 
 
 // [Used by callSuffix, annotationEntry]
@@ -894,10 +881,10 @@ functionLiteral
   ;
 
 // same as (modifiers IDENTIFIER){","}
-modifiersIDENTIFIERExt ::= ((modifiers IDENTIFIER) ",")* (modifiers IDENTIFIER)
+modifiersIDENTIFIERExt ::= ((modifierList IDENTIFIER) ",")* (modifierList IDENTIFIER)
 
 // same as (modifiers IDENTIFIER (":" type)?){","}
-modifiersIDENTIFIERTypeExt ::= ((modifiers IDENTIFIER (":" type)?) ",")* (modifiers IDENTIFIER (":" type)?)
+modifiersIDENTIFIERTypeExt ::= ((modifierList IDENTIFIER (":" type)?) ",")* (modifierList IDENTIFIER (":" type)?)
 
 statementsBlock
   ::= statements
@@ -947,7 +934,7 @@ indices
 
 
 objectDeclaration
-  ::= "object" (":" delegationSpecifierExt)? classBodyNoQ?
+  ::= "object" (":" delegationSpecifierExt)? classBody?
   ;
 
 // [Used by atomicExpression]
@@ -961,7 +948,7 @@ objectLiteral
 
 // [Used by atomicExpression]
 when
-  ::= "when" ("(" DISABLE_NEWLINES (modifiers "val" IDENTIFIER "=")? expression RESTORE_NEWLINES_STATE ")")? "{"
+  ::= "when" ("(" DISABLE_NEWLINES (modifierList "val" IDENTIFIER "=")? expression RESTORE_NEWLINES_STATE ")")? "{"
         ENABLE_NEWLINES whenEntry* RESTORE_NEWLINES_STATE
     "}"
   ;
@@ -997,15 +984,12 @@ whenConditionIsPattern
 // ----- Modifiers -----
 
 // [Used by typeParameter, getter, packageHeader, class, property, typedef, function, functionLiteral, functionType, when, setter, enumEntry, classObject, functionParameter]
-modifiers
-  ::= modifier*
-  ;
 
-modifiersPlus
+modifierList
   ::= modifier+
   ;
 
-modifiersPlusFollowedByIdentifier
+modifierListFollowedByIdentifier
   ::= (modifier IDENTIFIER_NEXT)+
   ;
 
@@ -1115,4 +1099,3 @@ external RESTORE_JOINING_COMPLEX_TOKENS_STATE ::= restoreJoiningComplexTokensSta
 external DOT_NEXT ::= dotNext
 external IDENTIFIER_NEXT ::= identifierNext
 external TYPE_START_NEXT ::= typeStartNext
-external RETURN_TRUE ::= returnTrue

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface KtTypeParameter extends PsiElement {
 
   @Nullable
-  KtModifiersPlusFollowedByIdentifier getModifiersPlusFollowedByIdentifier();
+  KtModifierListFollowedByIdentifier getModifierListFollowedByIdentifier();
 
   @Nullable
   KtUserTypeReference getUserTypeReference();

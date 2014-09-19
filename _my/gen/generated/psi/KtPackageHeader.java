@@ -11,7 +11,7 @@ public interface KtPackageHeader extends PsiElement {
   KtDotIdentifier getDotIdentifier();
 
   @Nullable
-  KtModifiersPlus getModifiersPlus();
+  KtModifierList getModifierList();
 
   @Nullable
   KtReferenceExpression getReferenceExpression();

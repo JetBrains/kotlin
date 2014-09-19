@@ -77,7 +77,7 @@ public interface KtWhen extends PsiElement {
   List<KtLoop> getLoopList();
 
   @Nullable
-  KtModifiers getModifiers();
+  KtModifierList getModifierList();
 
   @NotNull
   List<KtMultiplicativeOperation> getMultiplicativeOperationList();

@@ -162,8 +162,8 @@ public class KtWhenImpl extends ASTWrapperPsiElement implements KtWhen {
 
   @Override
   @Nullable
-  public KtModifiers getModifiers() {
-    return findChildByClass(KtModifiers.class);
+  public KtModifierList getModifierList() {
+    return findChildByClass(KtModifierList.class);
   }
 
   @Override

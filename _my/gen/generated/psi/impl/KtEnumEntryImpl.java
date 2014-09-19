@@ -24,8 +24,8 @@ public class KtEnumEntryImpl extends ASTWrapperPsiElement implements KtEnumEntry
 
   @Override
   @Nullable
-  public KtClassBodyNoQ getClassBodyNoQ() {
-    return findChildByClass(KtClassBodyNoQ.class);
+  public KtClassBody getClassBody() {
+    return findChildByClass(KtClassBody.class);
   }
 
   @Override
@@ -36,8 +36,8 @@ public class KtEnumEntryImpl extends ASTWrapperPsiElement implements KtEnumEntry
 
   @Override
   @Nullable
-  public KtModifiersPlus getModifiersPlus() {
-    return findChildByClass(KtModifiersPlus.class);
+  public KtModifierList getModifierList() {
+    return findChildByClass(KtModifierList.class);
   }
 
   @Override

@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface KtModifiersIDENTIFIERExt extends PsiElement {
 
   @NotNull
-  List<KtModifiers> getModifiersList();
+  List<KtModifierList> getModifierListList();
 
 }

@@ -24,8 +24,8 @@ public class KtObjectDeclarationImpl extends ASTWrapperPsiElement implements KtO
 
   @Override
   @Nullable
-  public KtClassBodyNoQ getClassBodyNoQ() {
-    return findChildByClass(KtClassBodyNoQ.class);
+  public KtClassBody getClassBody() {
+    return findChildByClass(KtClassBody.class);
   }
 
   @Override

@@ -80,7 +80,7 @@ public interface KtPropertyLocal extends PsiElement {
   List<KtLoop> getLoopList();
 
   @Nullable
-  KtModifiersPlus getModifiersPlus();
+  KtModifierList getModifierList();
 
   @Nullable
   KtMultipleVariableDeclarations getMultipleVariableDeclarations();

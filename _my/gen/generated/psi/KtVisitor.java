@@ -95,10 +95,6 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitClassBodyNoQ(@NotNull KtClassBodyNoQ o) {
-    visitPsiElement(o);
-  }
-
   public void visitClassDeclaration(@NotNull KtClassDeclaration o) {
     visitPsiElement(o);
   }
@@ -255,7 +251,11 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitModifiers(@NotNull KtModifiers o) {
+  public void visitModifierList(@NotNull KtModifierList o) {
+    visitPsiElement(o);
+  }
+
+  public void visitModifierListFollowedByIdentifier(@NotNull KtModifierListFollowedByIdentifier o) {
     visitPsiElement(o);
   }
 
@@ -264,14 +264,6 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitModifiersIDENTIFIERTypeExt(@NotNull KtModifiersIDENTIFIERTypeExt o) {
-    visitPsiElement(o);
-  }
-
-  public void visitModifiersPlus(@NotNull KtModifiersPlus o) {
-    visitPsiElement(o);
-  }
-
-  public void visitModifiersPlusFollowedByIdentifier(@NotNull KtModifiersPlusFollowedByIdentifier o) {
     visitPsiElement(o);
   }
 
@@ -412,10 +404,6 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitTypeConstraintExt(@NotNull KtTypeConstraintExt o) {
-    visitPsiElement(o);
-  }
-
-  public void visitTypeConstraints(@NotNull KtTypeConstraints o) {
     visitPsiElement(o);
   }
 

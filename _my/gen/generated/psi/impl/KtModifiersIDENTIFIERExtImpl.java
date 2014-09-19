@@ -24,8 +24,8 @@ public class KtModifiersIDENTIFIERExtImpl extends ASTWrapperPsiElement implement
 
   @Override
   @NotNull
-  public List<KtModifiers> getModifiersList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtModifiers.class);
+  public List<KtModifierList> getModifierListList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtModifierList.class);
   }
 
 }

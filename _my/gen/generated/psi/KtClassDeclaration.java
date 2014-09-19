@@ -11,7 +11,7 @@ public interface KtClassDeclaration extends PsiElement {
   List<KtAnnotation> getAnnotationList();
 
   @Nullable
-  KtClassBodyNoQ getClassBodyNoQ();
+  KtClassBody getClassBody();
 
   @Nullable
   KtDelegationSpecifierExt getDelegationSpecifierExt();
@@ -20,7 +20,7 @@ public interface KtClassDeclaration extends PsiElement {
   KtEnumClassBody getEnumClassBody();
 
   @Nullable
-  KtModifiersPlus getModifiersPlus();
+  KtModifierList getModifierList();
 
   @Nullable
   KtPrimaryConstructorModifierList getPrimaryConstructorModifierList();

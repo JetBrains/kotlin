@@ -80,7 +80,7 @@ public interface KtSetter extends PsiElement {
   List<KtLoop> getLoopList();
 
   @NotNull
-  List<KtModifiersPlus> getModifiersPlusList();
+  List<KtModifierList> getModifierListList();
 
   @NotNull
   List<KtMultiplicativeOperation> getMultiplicativeOperationList();

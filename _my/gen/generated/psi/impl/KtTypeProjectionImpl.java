@@ -24,8 +24,8 @@ public class KtTypeProjectionImpl extends ASTWrapperPsiElement implements KtType
 
   @Override
   @Nullable
-  public KtModifiersPlus getModifiersPlus() {
-    return findChildByClass(KtModifiersPlus.class);
+  public KtModifierList getModifierList() {
+    return findChildByClass(KtModifierList.class);
   }
 
   @Override

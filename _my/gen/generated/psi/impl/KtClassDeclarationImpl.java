@@ -30,8 +30,8 @@ public class KtClassDeclarationImpl extends ASTWrapperPsiElement implements KtCl
 
   @Override
   @Nullable
-  public KtClassBodyNoQ getClassBodyNoQ() {
-    return findChildByClass(KtClassBodyNoQ.class);
+  public KtClassBody getClassBody() {
+    return findChildByClass(KtClassBody.class);
   }
 
   @Override
@@ -48,8 +48,8 @@ public class KtClassDeclarationImpl extends ASTWrapperPsiElement implements KtCl
 
   @Override
   @Nullable
-  public KtModifiersPlus getModifiersPlus() {
-    return findChildByClass(KtModifiersPlus.class);
+  public KtModifierList getModifierList() {
+    return findChildByClass(KtModifierList.class);
   }
 
   @Override

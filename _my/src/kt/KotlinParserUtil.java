@@ -42,6 +42,9 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
         private final Stack<Boolean> newlinesEnabled = new Stack<Boolean>();
         private final Stack<Marker> newlinesEnabledMarkers = new Stack<Marker>();
 
+        private final Stack<Integer> stopAt = new Stack<Integer>();
+        private final Stack<Marker> stopAtMarkers = new Stack<Marker>();
+
         public SemanticWhitespaceAwarePsiBuilderImpl(PsiBuilder delegate, ErrorState state_, PsiParser parser_) {
             super(delegate, state_, parser_);
             Marker marker = new Marker() {
@@ -99,6 +102,8 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
             newlinesEnabledMarkers.push(marker);
             joinComplexTokens.push(true);
             joinComplexTokensMarkers.push(marker);
+            stopAt.push(Integer.MAX_VALUE);
+            stopAtMarkers.push(marker);
         }
 
         @Override
@@ -107,7 +112,7 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
 
             if (eof()) return true;
 
-            // TODO: maybe, memoize this somehow?
+            // TODO: maybe, memorize this somehow?
             for (int i = 1; i <= getCurrentOffset(); i++) {
                 IElementType previousToken = rawLookup(-i);
 
@@ -357,14 +362,17 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
     }
 
     public static boolean consumeToken(PsiBuilder builder_, String text) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
         boolean result = GeneratedParserUtilBase.consumeToken(builder_, text);
-        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl) builder_;
-        return result;
+        if (result && builder_.getCurrentOffset() < builder.stopAt.peek()) return true;
+        return false;
     }
 
     public static boolean consumeToken(PsiBuilder builder_, IElementType token) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
         boolean result = GeneratedParserUtilBase.consumeToken(builder_, token);
-        return result;
+        if (result && builder_.getCurrentOffset() < builder.stopAt.peek()) return true;
+        return false;
     }
 
     protected static boolean _at(SemanticWhitespaceAwarePsiBuilderImpl myBuilder, IElementType expectation) {

@@ -8,13 +8,13 @@ import com.intellij.psi.PsiElement;
 public interface KtEnumEntry extends PsiElement {
 
   @Nullable
-  KtClassBodyNoQ getClassBodyNoQ();
+  KtClassBody getClassBody();
 
   @Nullable
   KtInitializerExt getInitializerExt();
 
   @Nullable
-  KtModifiersPlus getModifiersPlus();
+  KtModifierList getModifierList();
 
   @NotNull
   KtObjectDeclarationName getObjectDeclarationName();

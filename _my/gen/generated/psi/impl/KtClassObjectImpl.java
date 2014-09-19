@@ -23,9 +23,9 @@ public class KtClassObjectImpl extends ASTWrapperPsiElement implements KtClassOb
   }
 
   @Override
-  @NotNull
-  public KtModifiers getModifiers() {
-    return findNotNullChildByClass(KtModifiers.class);
+  @Nullable
+  public KtModifierList getModifierList() {
+    return findChildByClass(KtModifierList.class);
   }
 
   @Override

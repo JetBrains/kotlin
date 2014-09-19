@@ -162,8 +162,8 @@ public class KtFunctionParameterImpl extends ASTWrapperPsiElement implements KtF
 
   @Override
   @Nullable
-  public KtModifiersPlus getModifiersPlus() {
-    return findChildByClass(KtModifiersPlus.class);
+  public KtModifierList getModifierList() {
+    return findChildByClass(KtModifierList.class);
   }
 
   @Override

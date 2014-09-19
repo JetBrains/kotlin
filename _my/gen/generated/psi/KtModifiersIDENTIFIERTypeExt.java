@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface KtModifiersIDENTIFIERTypeExt extends PsiElement {
 
   @NotNull
-  List<KtModifiers> getModifiersList();
+  List<KtModifierList> getModifierListList();
 
   @NotNull
   List<KtType> getTypeList();

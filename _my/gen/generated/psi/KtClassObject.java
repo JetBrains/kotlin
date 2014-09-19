@@ -7,8 +7,8 @@ import com.intellij.psi.PsiElement;
 
 public interface KtClassObject extends PsiElement {
 
-  @NotNull
-  KtModifiers getModifiers();
+  @Nullable
+  KtModifierList getModifierList();
 
   @NotNull
   KtObject getObject();

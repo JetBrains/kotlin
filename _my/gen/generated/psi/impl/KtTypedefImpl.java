@@ -24,8 +24,8 @@ public class KtTypedefImpl extends ASTWrapperPsiElement implements KtTypedef {
 
   @Override
   @Nullable
-  public KtModifiersPlus getModifiersPlus() {
-    return findChildByClass(KtModifiersPlus.class);
+  public KtModifierList getModifierList() {
+    return findChildByClass(KtModifierList.class);
   }
 
   @Override

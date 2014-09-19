@@ -109,9 +109,6 @@ public class KotlinParserDefinition implements ParserDefinition {
         if (str == "CLASS_BODY") {
             return JetNodeTypes.CLASS_BODY;
         }
-        if (str == "CLASS_BODY_NO_Q") {
-            return JetNodeTypes.CLASS_BODY;
-        }
         if (str == "ENUM_CLASS_BODY") {
             return JetNodeTypes.CLASS_BODY;
         }
@@ -196,7 +193,7 @@ public class KotlinParserDefinition implements ParserDefinition {
         if (str == "PARAMETER") {
             return JetNodeTypes.VALUE_PARAMETER;
         }
-        if (str == "MODIFIERS_PLUS") {
+        if (str == "MODIFIER_LIST") {
             return JetNodeTypes.MODIFIER_LIST;
         }
         if (str == "TYPE_OPERATION") {
@@ -334,7 +331,7 @@ public class KotlinParserDefinition implements ParserDefinition {
         if (str == "TYPE_CONSTRAINT") {
             return JetNodeTypes.TYPE_CONSTRAINT;
         }
-        if (str == "MODIFIERS_PLUS_FOLLOWED_BY_IDENTIFIER") {
+        if (str == "MODIFIER_LIST_FOLLOWED_BY_IDENTIFIER") {
             return JetNodeTypes.MODIFIER_LIST;
         }
         if (str == "ANNOTATION_WITH_SHORT") {
