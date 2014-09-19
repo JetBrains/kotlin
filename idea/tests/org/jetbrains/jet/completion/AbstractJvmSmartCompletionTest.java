@@ -17,6 +17,7 @@
 package org.jetbrains.jet.completion;
 
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
@@ -34,7 +35,8 @@ public abstract class AbstractJvmSmartCompletionTest extends JetFixtureCompletio
         return TargetPlatform.JVM;
     }
 
-    @NotNull
     @Override
-    protected CompletionType completionType() { return CompletionType.SMART; }
+    protected LookupElement[] complete(int invocationCount) {
+        return myFixture.complete(CompletionType.SMART, invocationCount);
+    }
 }

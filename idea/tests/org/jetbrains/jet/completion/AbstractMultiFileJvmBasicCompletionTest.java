@@ -42,7 +42,7 @@ public abstract class AbstractMultiFileJvmBasicCompletionTest extends KotlinComp
                                 complete(invocationCount);
                                 return myItems;
                             }
-                        });
+                        }, 0);
                         return Unit.INSTANCE$;
                     }
                 }

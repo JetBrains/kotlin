@@ -25,7 +25,6 @@ class TestSample() {
 // ABSENT: if
 // ABSENT: import
 // ABSENT: in
-// ABSENT: inline
 // ABSENT: internal
 // ABSENT: is
 // ABSENT: null

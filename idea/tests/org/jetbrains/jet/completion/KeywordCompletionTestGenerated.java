@@ -110,12 +110,6 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
     
-    @TestMetadata("InFunctionNoCompletionInValName.kt")
-    public void testInFunctionNoCompletionInValName() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InFunctionNoCompletionInValName.kt");
-        doTest(fileName);
-    }
-    
     @TestMetadata("InFunctionScope.kt")
     public void testInFunctionScope() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InFunctionScope.kt");
@@ -161,12 +155,6 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("InString.kt")
     public void testInString() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InString.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("InTopNoCompletionInVarName.kt")
-    public void testInTopNoCompletionInVarName() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InTopNoCompletionInVarName.kt");
         doTest(fileName);
     }
     

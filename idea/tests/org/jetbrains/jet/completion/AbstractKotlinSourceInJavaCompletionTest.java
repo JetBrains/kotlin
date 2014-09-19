@@ -17,6 +17,7 @@
 package org.jetbrains.jet.completion;
 
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.ArrayUtil;
@@ -55,9 +56,8 @@ public abstract class AbstractKotlinSourceInJavaCompletionTest extends JetFixtur
         return JAVA_LATEST;
     }
 
-    @NotNull
     @Override
-    protected CompletionType completionType() {
-        return CompletionType.BASIC;
+    protected LookupElement[] complete(int invocationCount) {
+        return myFixture.complete(CompletionType.BASIC, invocationCount);
     }
 }

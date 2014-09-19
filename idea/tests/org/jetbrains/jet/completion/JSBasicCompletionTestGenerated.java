@@ -17,13 +17,10 @@
 package org.jetbrains.jet.completion;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -447,6 +444,24 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("NoAutoPopupAfterNumberLiteral.kt")
         public void testNoAutoPopupAfterNumberLiteral() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoAutoPopupAfterNumberLiteral.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("NoAutoPopupInValName.kt")
+        public void testNoAutoPopupInValName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoAutoPopupInValName.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("NoAutopopupInFunName.kt")
+        public void testNoAutopopupInFunName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoAutopopupInFunName.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("NoAutopopupInVarName.kt")
+        public void testNoAutopopupInVarName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoAutopopupInVarName.kt");
             doTest(fileName);
         }
         
