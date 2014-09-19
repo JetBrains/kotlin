@@ -408,10 +408,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         StackValue conditionValue = gen(expression.getCondition());
         conditionValue.condJump(end, true, v);
 
-        JetExpression body = expression.getBody();
-        if (body != null) {
-            gen(body, Type.VOID_TYPE);
-        }
+        generateLoopBody(expression.getBody());
 
         v.goTo(condition);
 
@@ -633,10 +630,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         protected abstract void increment(@NotNull Label loopExit);
 
         public void body() {
-            JetExpression body = forExpression.getBody();
-            if (body != null) {
-                gen(body, Type.VOID_TYPE);
-            }
+            generateLoopBody(forExpression.getBody());
         }
 
         private void scheduleLeaveVariable(Runnable runnable) {
@@ -673,6 +667,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + boxedType.getDescriptor(), false);
             StackValue.coerce(boxedType, elementType, v);
             v.store(varToStore, elementType);
+        }
+    }
+
+    private void generateLoopBody(@Nullable JetExpression body) {
+        if (body != null) {
+            gen(body, Type.VOID_TYPE);
         }
     }
 
