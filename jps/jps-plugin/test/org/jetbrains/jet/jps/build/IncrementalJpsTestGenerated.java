@@ -275,6 +275,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
         
+        @TestMetadata("subpackage")
+        public void testSubpackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/subpackage/");
+            doTest(fileName);
+        }
+        
         @TestMetadata("topLevelFunctionSameSignature")
         public void testTopLevelFunctionSameSignature() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/topLevelFunctionSameSignature/");
