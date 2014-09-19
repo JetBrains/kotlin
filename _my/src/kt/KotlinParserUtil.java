@@ -19,7 +19,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 public class KotlinParserUtil extends GeneratedParserUtilBase {
 
 
-    public static interface SemanticWhitespaceAwarePsiBuilder extends PsiBuilder {
+    public interface SemanticWhitespaceAwarePsiBuilder extends PsiBuilder {
         // TODO: comments go to wrong place when an empty element is created, see IElementType.isLeftBound()
 
         boolean newlineBeforeCurrentToken();
@@ -264,69 +264,76 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
 
     public static boolean interruptedWithNewLine(PsiBuilder builder_, int level_) {
         return !ALLOW_NEWLINE_OPERATIONS.contains(builder_.getTokenType()) &&
-                ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlineBeforeCurrentToken();
+               ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlineBeforeCurrentToken();
     }
 
     public static boolean enableNewlines(PsiBuilder builder_, int level_, PsiBuilder.Marker marker) {
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabled.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.size();
-        ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).enableNewlines();
-        ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.push(marker);
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabled.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.size();
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        assert builder.newlinesEnabled.size() == builder.newlinesEnabledMarkers.size();
+        builder.enableNewlines();
+        builder.newlinesEnabledMarkers.push(marker);
+        assert builder.newlinesEnabled.size() == builder.newlinesEnabledMarkers.size();
         return true;
     }
 
     public static boolean disableNewlines(PsiBuilder builder_, int level_, PsiBuilder.Marker marker) {
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabled.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.size();
-        ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).disableNewlines();
-        ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.push(marker);
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabled.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.size();
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        assert builder.newlinesEnabled.size() == builder.newlinesEnabledMarkers.size();
+        builder.disableNewlines();
+        builder.newlinesEnabledMarkers.push(marker);
+        assert builder.newlinesEnabled.size() == builder.newlinesEnabledMarkers.size();
         return true;
     }
 
     public static boolean restoreNewlinesState(PsiBuilder builder_, int level_) {
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabled.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.size();
-        ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).restoreNewlinesState();
-        ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.pop();
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabled.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.size();
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        assert builder.newlinesEnabled.size() == builder.newlinesEnabledMarkers.size();
+        builder.restoreNewlinesState();
+        builder.newlinesEnabledMarkers.pop();
+        assert builder.newlinesEnabled.size() == builder.newlinesEnabledMarkers.size();
         return true;
     }
 
     public static boolean enableJoiningComplexTokens(PsiBuilder builder_, int level_, PsiBuilder.Marker marker) {
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokens.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.size();
-        ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).enableJoiningComplexTokens();
-        ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.push(marker);
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokens.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.size();
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        assert builder.joinComplexTokens.size() == builder.joinComplexTokensMarkers.size();
+        builder.enableJoiningComplexTokens();
+        builder.joinComplexTokensMarkers.push(marker);
+        assert builder.joinComplexTokens.size() == builder.joinComplexTokensMarkers.size();
         return true;
     }
 
     public static boolean disableJoiningComplexTokens(PsiBuilder builder_, int level_, PsiBuilder.Marker marker) {
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokens.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.size();
-        ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).disableJoiningComplexTokens();
-        ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.push(marker);
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokens.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.size();
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        assert builder.joinComplexTokens.size() == builder.joinComplexTokensMarkers.size();
+        builder.disableJoiningComplexTokens();
+        builder.joinComplexTokensMarkers.push(marker);
+        assert builder.joinComplexTokens.size() == builder.joinComplexTokensMarkers.size();
         return true;
     }
 
     public static boolean restoreJoiningComplexTokensState(PsiBuilder builder_, int level_) {
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokens.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.size();
-        ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).restoreJoiningComplexTokensState();
-        ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.pop();
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokens.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.size();
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        assert builder.joinComplexTokens.size() == builder.joinComplexTokensMarkers.size();
+        builder.restoreJoiningComplexTokensState();
+        builder.joinComplexTokensMarkers.pop();
+        assert builder.joinComplexTokens.size() == builder.joinComplexTokensMarkers.size();
         return true;
     }
 
     public static void restoreAll(PsiBuilder builder_, PsiBuilder.Marker marker) {
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabled.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.size();
-        assert ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokens.size() == ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.size();
-        while (((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.size() > 1 &&
-                ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.peek() == marker) {
-            ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).newlinesEnabledMarkers.pop();
-            ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).restoreNewlinesState();
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        assert builder.newlinesEnabled.size() == builder.newlinesEnabledMarkers.size();
+        assert builder.joinComplexTokens.size() == builder.joinComplexTokensMarkers.size();
+        while (builder.newlinesEnabledMarkers.size() > 1 &&
+                builder.newlinesEnabledMarkers.peek() == marker) {
+            builder.newlinesEnabledMarkers.pop();
+            builder.restoreNewlinesState();
         }
-        while (((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.size() > 1 &&
-                ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.peek() == marker) {
-            ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).joinComplexTokensMarkers.pop();
-            ((SemanticWhitespaceAwarePsiBuilderImpl)builder_).restoreJoiningComplexTokensState();
+        while (builder.joinComplexTokensMarkers.size() > 1 &&
+                builder.joinComplexTokensMarkers.peek() == marker) {
+            builder.joinComplexTokensMarkers.pop();
+            builder.restoreJoiningComplexTokensState();
         }
     }
 
@@ -347,6 +354,17 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
                                      boolean result) {
         GeneratedParserUtilBase.exit_section_(builder_, marker, elementType, result);
         restoreAll(builder_, marker);
+    }
+
+    public static boolean consumeToken(PsiBuilder builder_, String text) {
+        boolean result = GeneratedParserUtilBase.consumeToken(builder_, text);
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl) builder_;
+        return result;
+    }
+
+    public static boolean consumeToken(PsiBuilder builder_, IElementType token) {
+        boolean result = GeneratedParserUtilBase.consumeToken(builder_, token);
+        return result;
     }
 
     protected static boolean _at(SemanticWhitespaceAwarePsiBuilderImpl myBuilder, IElementType expectation) {
@@ -405,10 +423,6 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
         boolean isSoft = JetTokens.SOFT_KEYWORDS.contains(token);
         if (!isSoft) return false;
         builder_.remapCurrentToken(JetTokens.IDENTIFIER);
-        return true;
-    }
-
-    public static boolean returnTrue(PsiBuilder builder_, int level_) {
         return true;
     }
 
