@@ -61,6 +61,15 @@ import org.jetbrains.jet.codegen.AsmUtil
 import com.sun.jdi.InvalidStackFrameException
 import org.jetbrains.jet.plugin.refactoring.runReadAction
 import org.jetbrains.jet.lang.psi.analysisContext
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.resolve.java.JvmClassName
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
+import com.intellij.openapi.project.Project
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -295,8 +304,20 @@ private fun SuspendContext.getInvokePolicy(): Int {
 }
 
 fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkType: Boolean, failIfNotFound: Boolean): Value? {
+    val project = getDebugProcess().getProject()
     val frame = getFrameProxy()?.getStackFrame()
     if (frame == null) return null
+
+    fun isValueOfCorrectType(value: Value, asmType: Type?, shouldCheckType: Boolean): Boolean {
+        if (!shouldCheckType || asmType == null || value.asmType == asmType) return true
+        if (project == null) return false
+
+        val thisDesc = value.asmType.getClassDescriptor(project)
+        val expDesc = asmType.getClassDescriptor(project)
+        return thisDesc != null && expDesc != null && DescriptorUtils.isSubclass(thisDesc, expDesc)
+    }
+
+
     try {
         when (name) {
             THIS_NAME -> {
@@ -365,6 +386,23 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
     }
 }
 
+fun Type.getClassDescriptor(project: Project): ClassDescriptor? {
+    if (AsmUtil.isPrimitive(this)) return null
+
+    val jvmName = JvmClassName.byInternalName(getInternalName()).getFqNameForClassNameWithoutDollars()
+
+    val platformClasses = JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmName)
+    if (platformClasses.notEmpty) return platformClasses.first()
+
+    return runReadAction {
+        val classes = JavaPsiFacade.getInstance(project).findClasses(jvmName.asString(), GlobalSearchScope.allScope(project))
+        if (classes.isEmpty()) null else {
+            val clazz = classes.first()
+            JavaResolveExtension.getResolver(project, clazz).resolveClass(JavaClassImpl(clazz))
+        }
+    }
+}
+
 private fun getCapturedFieldName(name: String) = when (name) {
     RECEIVER_NAME -> AsmUtil.CAPTURED_RECEIVER_FIELD
     THIS_NAME -> AsmUtil.CAPTURED_THIS_FIELD
@@ -373,4 +411,3 @@ private fun getCapturedFieldName(name: String) = when (name) {
     else -> "$$name"
 }
 
-private fun isValueOfCorrectType(value: Value, asmType: Type?, shouldCheckType: Boolean) = !shouldCheckType || asmType == null || value.asmType == asmType
