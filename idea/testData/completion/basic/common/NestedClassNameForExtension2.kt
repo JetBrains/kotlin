@@ -5,4 +5,5 @@ class Test {
 fun Test.N<caret>
 }
 
+// INVOCATION_COUNT: 1
 // EXIST: Nested

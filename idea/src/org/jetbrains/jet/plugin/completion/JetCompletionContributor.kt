@@ -47,7 +47,6 @@ public class JetCompletionContributor : CompletionContributor() {
 
     private val AFTER_NUMBER_LITERAL = psiElement().afterLeafSkipping(psiElement().withText(""), psiElement().withElementType(elementType().oneOf(JetTokens.FLOAT_LITERAL, JetTokens.INTEGER_LITERAL)))
     private val AFTER_INTEGER_LITERAL_AND_DOT = psiElement().afterLeafSkipping(psiElement().withText("."), psiElement().withElementType(elementType().oneOf(JetTokens.INTEGER_LITERAL)))
-    private val EXTENSION_RECEIVER_TYPE_PATTERN = psiElement().afterLeaf(JetTokens.FUN_KEYWORD.toString(), JetTokens.VAL_KEYWORD.toString(), JetTokens.VAR_KEYWORD.toString())
 
     private val DEFAULT_DUMMY_IDENTIFIER = CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$" // add '$' to ignore context after the caret
 
@@ -199,10 +198,23 @@ public class JetCompletionContributor : CompletionContributor() {
         // no completion auto-popup after integer and dot
         if (invocationCount == 0 && prefixMatcher.getPrefix().isEmpty() && AFTER_INTEGER_LITERAL_AND_DOT.accepts(position)) return true
 
-        // no auto-popup on typing after "val", "var" and "fun"
-        if (invocationCount == 0 && EXTENSION_RECEIVER_TYPE_PATTERN.accepts(position)) return true
+        // no auto-popup on typing after "val", "var" and "fun" because it's likely the name of the declaration which is being typed by user
+        if (invocationCount == 0 && isInExtensionReceiver(position)) return true
 
         return false
+    }
+
+    private fun isInExtensionReceiver(position: PsiElement): Boolean {
+        val nameRef = position.getParent() as? JetNameReferenceExpression ?: return false
+        val userType = nameRef.getParent() as? JetUserType ?: return false
+        val typeRef = userType.getParent() as? JetTypeReference ?: return false
+        if (userType != typeRef.getTypeElement()) return false
+        val parent = typeRef.getParent()
+        return when (parent) {
+            is JetNamedFunction -> typeRef == parent.getReceiverTypeRef()
+            is JetProperty -> typeRef == parent.getReceiverTypeRef()
+            else -> false
+        }
     }
 
     private fun isAtEndOfLine(offset: Int, document: Document): Boolean {
