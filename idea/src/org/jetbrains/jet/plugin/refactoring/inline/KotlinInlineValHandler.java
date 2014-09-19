@@ -64,7 +64,6 @@ import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
-import org.jetbrains.jet.plugin.util.UtilPackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
@@ -358,7 +357,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         return StringUtil.join(typeArguments, new Function<JetType, String>() {
             @Override
             public String fun(JetType type) {
-                return IdeDescriptorRenderers.SOURCE_CODE.renderType(type);
+                return IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(type);
             }
         }, ", ");
     }

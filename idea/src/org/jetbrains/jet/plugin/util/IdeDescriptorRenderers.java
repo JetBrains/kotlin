@@ -30,23 +30,34 @@ public class IdeDescriptorRenderers {
         }
     };
 
-    public static final DescriptorRenderer SOURCE_CODE = new DescriptorRendererBuilder()
-            .setNormalizedVisibilities(true)
-            .setWithDefinedIn(false)
+    public static final Function1<JetType, JetType> APPROXIMATE_FLEXIBLE_TYPES_IN_ARGUMENTS = new Function1<JetType, JetType>() {
+        @Override
+        public JetType invoke(JetType type) {
+            return UtilPackage.approximateFlexibleTypes(type, false);
+        }
+    };
+
+    public static final DescriptorRenderer SOURCE_CODE = commonBuilder()
             .setShortNames(false)
-            .setShowInternalKeyword(false)
-            .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE)
-            .setUnitReturnType(false)
             .setTypeNormalizer(APPROXIMATE_FLEXIBLE_TYPES)
             .build();
 
-    public static final DescriptorRenderer SOURCE_CODE_SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder()
-            .setNormalizedVisibilities(true)
-            .setWithDefinedIn(false)
+    public static final DescriptorRenderer SOURCE_CODE_FOR_TYPE_ARGUMENTS = commonBuilder()
+            .setShortNames(false)
+            .setTypeNormalizer(APPROXIMATE_FLEXIBLE_TYPES_IN_ARGUMENTS)
+            .build();
+
+    public static final DescriptorRenderer SOURCE_CODE_SHORT_NAMES_IN_TYPES = commonBuilder()
             .setShortNames(true)
-            .setShowInternalKeyword(false)
-            .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE)
-            .setUnitReturnType(false)
             .setTypeNormalizer(APPROXIMATE_FLEXIBLE_TYPES)
             .build();
+
+    private static DescriptorRendererBuilder commonBuilder() {
+        return new DescriptorRendererBuilder()
+                .setNormalizedVisibilities(true)
+                .setWithDefinedIn(false)
+                .setShowInternalKeyword(false)
+                .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE)
+                .setUnitReturnType(false);
+    }
 }
