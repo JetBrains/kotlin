@@ -1,5 +1,5 @@
 public interface Primitives {
-    int $$int /* Real name is 'int' */(@jet.runtime.typeinfo.JetValueParameter(name = "x") int x);
+    int $$int /* Real name is 'int' */(int x);
 
     @org.jetbrains.annotations.Nullable
     java.lang.Boolean getNullableBool();

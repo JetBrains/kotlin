@@ -148,7 +148,9 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         generateParameterAnnotations(functionDescriptor, mv, jvmSignature);
 
-        generateJetValueParameterAnnotations(mv, functionDescriptor, jvmSignature);
+        if (state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
+            generateJetValueParameterAnnotations(mv, functionDescriptor, jvmSignature);
+        }
 
         generateBridges(functionDescriptor);
 
