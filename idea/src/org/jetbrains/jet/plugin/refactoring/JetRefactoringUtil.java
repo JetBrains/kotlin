@@ -136,10 +136,10 @@ public class JetRefactoringUtil {
 
         Project project = declaration.getProject();
         Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor = new HashMap<PsiElement, CallableDescriptor>();
-        for (CallableDescriptor overridenDescriptor : OverrideResolver.getAllOverriddenDescriptors(declarationDescriptor)) {
-            PsiElement overridenDeclaration = DescriptorToDeclarationUtil.getDeclaration(project, overridenDescriptor);
-            if (overridenDeclaration != null) {
-                overriddenElementsToDescriptor.put(overridenDeclaration, overridenDescriptor);
+        for (CallableDescriptor overriddenDescriptor : OverrideResolver.getAllOverriddenDescriptors(declarationDescriptor)) {
+            PsiElement overriddenDeclaration = DescriptorToDeclarationUtil.getDeclaration(project, overriddenDescriptor);
+            if (PsiTreeUtil.instanceOf(overriddenDeclaration, JetNamedFunction.class, JetProperty.class, PsiMethod.class)) {
+                overriddenElementsToDescriptor.put(overriddenDeclaration, overriddenDescriptor);
             }
         }
         if (ignore != null) {
