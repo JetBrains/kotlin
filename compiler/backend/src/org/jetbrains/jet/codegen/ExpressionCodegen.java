@@ -260,7 +260,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public void gen(JetElement expr, Type type) {
-        StackValue value = gen(expr);
+        StackValue value = Type.VOID_TYPE.equals(type) ? genStatement(expr) : gen(expr);
         value.put(type, v);
     }
 
