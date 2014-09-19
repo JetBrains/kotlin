@@ -417,6 +417,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
         
+        @TestMetadata("NoAutoPopupAfterNumberLiteral.kt")
+        public void testNoAutoPopupAfterNumberLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoAutoPopupAfterNumberLiteral.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("NoClassNameDuplication.kt")
         public void testNoClassNameDuplication() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoClassNameDuplication.kt");

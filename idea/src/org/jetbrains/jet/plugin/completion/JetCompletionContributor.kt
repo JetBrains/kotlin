@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.psi.JetTypeReference
 public class JetCompletionContributor : CompletionContributor() {
 
     private val AFTER_NUMBER_LITERAL = psiElement().afterLeafSkipping(psiElement().withText(""), psiElement().withElementType(elementType().oneOf(JetTokens.FLOAT_LITERAL, JetTokens.INTEGER_LITERAL)))
+    private val AFTER_INTEGER_LITERAL_AND_DOT = psiElement().afterLeafSkipping(psiElement().withText("."), psiElement().withElementType(elementType().oneOf(JetTokens.INTEGER_LITERAL)))
 
     private val EXTENSION_RECEIVER_TYPE_DUMMY_IDENTIFIER = "KotlinExtensionDummy.fake() {}" // A way to add reference into file at completion place
     private val EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN = psiElement().afterLeaf(JetTokens.FUN_KEYWORD.toString(), JetTokens.VAL_KEYWORD.toString(), JetTokens.VAR_KEYWORD.toString())
@@ -131,13 +132,7 @@ public class JetCompletionContributor : CompletionContributor() {
         val position = parameters.getPosition()
         if (position.getContainingFile() !is JetFile) return
 
-        if (AFTER_NUMBER_LITERAL.accepts(parameters.getPosition())) {
-            // First Kotlin completion contributors - stop here will stop all completion
-            result.stopHere()
-            return
-        }
-
-        if (EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN.accepts(position) && parameters.getInvocationCount() == 0) { // no auto-popup on typing after "val", "var" and "fun"
+        if (shouldSuppressCompletion(parameters, result.getPrefixMatcher())) {
             result.stopHere()
             return
         }
@@ -167,6 +162,22 @@ public class JetCompletionContributor : CompletionContributor() {
         catch (e: ProcessCanceledException) {
             throw rethrowWithCancelIndicator(e)
         }
+    }
+
+    private fun shouldSuppressCompletion(parameters: CompletionParameters, prefixMatcher: PrefixMatcher): Boolean {
+        val position = parameters.getPosition()
+        val invocationCount = parameters.getInvocationCount()
+
+        // no completion inside number literals
+        if (AFTER_NUMBER_LITERAL.accepts(position)) return true
+
+        // no completion auto-popup after integer and dot
+        if (invocationCount == 0 && prefixMatcher.getPrefix().isEmpty() && AFTER_INTEGER_LITERAL_AND_DOT.accepts(position)) return true
+
+        // no auto-popup on typing after "val", "var" and "fun"
+        if (EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN.accepts(position) && invocationCount == 0) return true
+
+        return false
     }
 
     private fun isAtEndOfLine(offset: Int, document: Document): Boolean {
