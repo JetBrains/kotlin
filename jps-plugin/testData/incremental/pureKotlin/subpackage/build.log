@@ -1,0 +1,8 @@
+Cleaning output files:
+out/production/module/outer/nested/NestedPackage$main$1.class
+out/production/module/outer/nested/NestedPackage-nested-*.class
+out/production/module/outer/nested/NestedPackage.class
+End of files
+Compiling files:
+src/nested.kt
+End of files
