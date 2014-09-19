@@ -58,14 +58,17 @@ fun PsiElement.getModuleInfo(): IdeaModuleInfo {
     val virtualFile = containingFile.getOriginalFile().getVirtualFile()
             ?: return logAndReturnDefault("Analyzing non-physical file $containingFile of type ${containingFile.javaClass}")
 
-    return getModuleInfoByVirtualFile(project, virtualFile)
+    return getModuleInfoByVirtualFile(project, virtualFile, (containingFile as? JetFile)?.isCompiled() ?: false)
 }
 
-private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile): IdeaModuleInfo {
+private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile, isDecompiledFile: Boolean): IdeaModuleInfo {
     val projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
 
     val module = projectFileIndex.getModuleForFile(virtualFile)
     if (module != null) {
+        if (isDecompiledFile) {
+            LOG.error("Decompiled file for ${virtualFile.getCanonicalPath()} is in content of $module")
+        }
         if (projectFileIndex.isInTestSourceContent(virtualFile)) {
             return module.testSourceInfo()
         }
@@ -80,10 +83,10 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
         when (orderEntry) {
             is LibraryOrderEntry -> {
                 val library = orderEntry.getLibrary() ?: continue @entries
-                if (projectFileIndex.isInLibraryClasses(virtualFile)) {
+                if (projectFileIndex.isInLibraryClasses(virtualFile) && !isDecompiledFile) {
                     return LibraryInfo(project, library)
                 }
-                else if (projectFileIndex.isInLibrarySource(virtualFile)) {
+                else if (projectFileIndex.isInLibrarySource(virtualFile) || isDecompiledFile) {
                     return LibrarySourceInfo(project, library)
                 }
             }
