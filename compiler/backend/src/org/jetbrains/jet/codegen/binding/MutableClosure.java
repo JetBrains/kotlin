@@ -27,6 +27,8 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
 
+import static org.jetbrains.jet.codegen.JvmCodegenUtil.getDirectMember;
+
 public final class MutableClosure implements CalculatedClosure {
     private final ResolvedCall<ConstructorDescriptor> superCall;
 
@@ -40,13 +42,25 @@ public final class MutableClosure implements CalculatedClosure {
     private List<Pair<String, Type>> recordedFields;
 
     MutableClosure(
+            @NotNull ClassDescriptor classDescriptor,
             @Nullable ResolvedCall<ConstructorDescriptor> superCall,
-            @Nullable ClassDescriptor enclosingClass,
-            @Nullable CallableDescriptor enclosingReceiverDescriptor
+            @Nullable ClassDescriptor enclosingClass
     ) {
-        this.superCall = superCall;
         this.enclosingClass = enclosingClass;
-        this.enclosingReceiverDescriptor = enclosingReceiverDescriptor;
+        this.superCall = superCall;
+        this.enclosingReceiverDescriptor = enclosingExtensionMemberForClass(classDescriptor);
+    }
+
+    @Nullable
+    private static CallableDescriptor enclosingExtensionMemberForClass(@NotNull ClassDescriptor classDescriptor) {
+        DeclarationDescriptor classContainer = classDescriptor.getContainingDeclaration();
+        if (classContainer instanceof CallableMemberDescriptor) {
+            CallableMemberDescriptor member = getDirectMember((CallableMemberDescriptor) classContainer);
+            if (member.getReceiverParameter() != null) {
+                return member;
+            }
+        }
+        return null;
     }
 
     @Nullable

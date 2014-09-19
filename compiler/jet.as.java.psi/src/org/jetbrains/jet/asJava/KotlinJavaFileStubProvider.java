@@ -169,8 +169,9 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
                         Map<JetClassOrObject, InnerKotlinClassLightClassData> innerClassesMap = ContainerUtil.newHashMap();
                         for (ClassDescriptor innerClassDescriptor : allInnerClasses) {
-                            JetClassOrObject innerClass = (JetClassOrObject) descriptorToDeclaration(innerClassDescriptor);
-                            if (innerClass == null) continue;
+                            PsiElement declaration = descriptorToDeclaration(innerClassDescriptor);
+                            if (!(declaration instanceof JetClassOrObject)) continue;
+                            JetClassOrObject innerClass = (JetClassOrObject) declaration;
 
                             InnerKotlinClassLightClassData innerLightClassData = new InnerKotlinClassLightClassData(
                                     predictClassFqName(bindingContext, innerClassDescriptor),

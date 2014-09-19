@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
@@ -42,6 +41,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
 
@@ -151,40 +151,28 @@ public class CodegenBinding {
     }
 
     static void recordClosure(
-            @NotNull BindingTrace bindingTrace,
-            @NotNull JetElement element,
+            @NotNull BindingTrace trace,
             @NotNull ClassDescriptor classDescriptor,
             @Nullable ClassDescriptor enclosing,
             @NotNull Type asmType
     ) {
-        ResolvedCall<ConstructorDescriptor> superCall = findSuperCall(bindingTrace.getBindingContext(), element);
+        JetElement element = (JetElement) descriptorToDeclaration(classDescriptor);
+        assert element != null : "No source element for " + classDescriptor;
 
-        CallableDescriptor enclosingReceiver = null;
-        if (classDescriptor.getContainingDeclaration() instanceof CallableDescriptor) {
-            enclosingReceiver = (CallableDescriptor) classDescriptor.getContainingDeclaration();
-            enclosingReceiver = enclosingReceiver instanceof PropertyAccessorDescriptor
-                                ? ((PropertyAccessorDescriptor) enclosingReceiver).getCorrespondingProperty()
-                                : enclosingReceiver;
-
-            if (enclosingReceiver.getReceiverParameter() == null) {
-                enclosingReceiver = null;
-            }
-        }
-
-        MutableClosure closure = new MutableClosure(superCall, enclosing, enclosingReceiver);
-
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(classDescriptor, asmType);
-        bindingTrace.record(ASM_TYPE, classDescriptor, asmType);
-        bindingTrace.record(CLOSURE, classDescriptor, closure);
+        MutableClosure closure = new MutableClosure(classDescriptor, findSuperCall(trace.getBindingContext(), element), enclosing);
 
         if (classDescriptor.isInner()) {
             closure.setCaptureThis();
         }
 
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(classDescriptor, asmType);
+        trace.record(ASM_TYPE, classDescriptor, asmType);
+        trace.record(CLOSURE, classDescriptor, closure);
+
         //TEMPORARY EAT INNER CLASS INFO FOR FUNCTION LITERALS
         //TODO: we should understand that lambda/closure would be inlined and don't generate inner class record
         if (enclosing != null && !(element instanceof JetFunctionLiteral)) {
-            recordInnerClass(bindingTrace, enclosing, classDescriptor);
+            recordInnerClass(trace, enclosing, classDescriptor);
         }
     }
 
@@ -214,7 +202,7 @@ public class CodegenBinding {
                                         Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()), toSourceElement(script));
         classDescriptor.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
 
-        recordClosure(trace, script, classDescriptor, null, asmType);
+        recordClosure(trace, classDescriptor, null, asmType);
 
         trace.record(CLASS_FOR_SCRIPT, descriptor, classDescriptor);
     }
@@ -285,28 +273,20 @@ public class CodegenBinding {
             @NotNull BindingContext bindingContext,
             @NotNull JetElement classOrObject
     ) {
-        if (!(classOrObject instanceof JetClassOrObject)) {
-            return null;
-        }
+        if (!(classOrObject instanceof JetClassOrObject)) return null;
 
-        if (classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait()) {
-            return null;
-        }
+        if (classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait()) return null;
 
         for (JetDelegationSpecifier specifier : ((JetClassOrObject) classOrObject).getDelegationSpecifiers()) {
-            if (specifier instanceof JetDelegatorToSuperCall) {
-                JetType supertype = bindingContext.get(TYPE, specifier.getTypeReference());
-                assert supertype != null : String.format(
-                        "No type in binding context for  \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(specifier));
+            if (!(specifier instanceof JetDelegatorToSuperCall)) continue;
 
-                ClassifierDescriptor superClass = supertype.getConstructor().getDeclarationDescriptor();
-                if (superClass != null && !isInterface(superClass)) {
-                    ResolvedCall<?> resolvedCall = getResolvedCall(specifier, bindingContext);
-                    if (resolvedCall != null && resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor) {
-                        //noinspection unchecked
-                        return (ResolvedCall<ConstructorDescriptor>) resolvedCall;
-                    }
-                }
+            ResolvedCall<?> resolvedCall = getResolvedCall(specifier, bindingContext);
+            if (resolvedCall == null) continue;
+
+            CallableDescriptor constructor = resolvedCall.getResultingDescriptor();
+            if (constructor instanceof ConstructorDescriptor && !isInterface(constructor.getContainingDeclaration())) {
+                //noinspection unchecked
+                return (ResolvedCall<ConstructorDescriptor>) resolvedCall;
             }
         }
 
