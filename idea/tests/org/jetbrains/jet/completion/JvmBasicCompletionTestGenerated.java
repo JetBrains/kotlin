@@ -225,6 +225,30 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
         
+        @TestMetadata("GenericExtensionFunReceiver1.kt")
+        public void testGenericExtensionFunReceiver1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/GenericExtensionFunReceiver1.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("GenericExtensionFunReceiver2.kt")
+        public void testGenericExtensionFunReceiver2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/GenericExtensionFunReceiver2.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("GenericExtensionFunTypeArgument.kt")
+        public void testGenericExtensionFunTypeArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/GenericExtensionFunTypeArgument.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("GenericExtensionFunTypeArgument2.kt")
+        public void testGenericExtensionFunTypeArgument2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/GenericExtensionFunTypeArgument2.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("HigherOrderFunction1.kt")
         public void testHigherOrderFunction1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/HigherOrderFunction1.kt");

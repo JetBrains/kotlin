@@ -31,17 +31,23 @@ import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
 import com.intellij.patterns.PsiJavaPatterns.elementType
 import com.intellij.patterns.PsiJavaPatterns.psiElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.TokenType
+import org.jetbrains.jet.lang.psi.JetNameReferenceExpression
+import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.psi.JetTypeReference
+import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.jet.lang.psi.JetPsiFactory
+import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.search.PsiElementProcessor
 
 public class JetCompletionContributor : CompletionContributor() {
 
     private val AFTER_NUMBER_LITERAL = psiElement().afterLeafSkipping(psiElement().withText(""), psiElement().withElementType(elementType().oneOf(JetTokens.FLOAT_LITERAL, JetTokens.INTEGER_LITERAL)))
     private val AFTER_INTEGER_LITERAL_AND_DOT = psiElement().afterLeafSkipping(psiElement().withText("."), psiElement().withElementType(elementType().oneOf(JetTokens.INTEGER_LITERAL)))
-
-    private val EXTENSION_RECEIVER_TYPE_DUMMY_IDENTIFIER = "KotlinExtensionDummy.fake() {}" // A way to add reference into file at completion place
-    private val EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN = psiElement().afterLeaf(JetTokens.FUN_KEYWORD.toString(), JetTokens.VAL_KEYWORD.toString(), JetTokens.VAR_KEYWORD.toString())
+    private val EXTENSION_RECEIVER_TYPE_PATTERN = psiElement().afterLeaf(JetTokens.FUN_KEYWORD.toString(), JetTokens.VAL_KEYWORD.toString(), JetTokens.VAR_KEYWORD.toString())
 
     private val DEFAULT_DUMMY_IDENTIFIER = CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$" // add '$' to ignore context after the caret
 
@@ -67,11 +73,7 @@ public class JetCompletionContributor : CompletionContributor() {
 
             PackageDirectiveCompletion.ACTIVATION_PATTERN.accepts(tokenBefore) -> PackageDirectiveCompletion.DUMMY_IDENTIFIER
 
-            EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN.accepts(tokenBefore) -> EXTENSION_RECEIVER_TYPE_DUMMY_IDENTIFIER
-
-            tokenBefore != null && isExtensionReceiverAfterDot(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "."
-
-            else -> DEFAULT_DUMMY_IDENTIFIER
+            else -> specialExtensionReceiverDummyIdentifier(tokenBefore) ?: DEFAULT_DUMMY_IDENTIFIER
         }
         context.setDummyIdentifier(dummyIdentifier)
 
@@ -109,23 +111,46 @@ public class JetCompletionContributor : CompletionContributor() {
         }
     }
 
-    private val declarationKeywords = setOf(JetTokens.FUN_KEYWORD, JetTokens.VAL_KEYWORD, JetTokens.VAR_KEYWORD)
+    private val declarationKeywords = TokenSet.create(JetTokens.FUN_KEYWORD, JetTokens.VAL_KEYWORD, JetTokens.VAR_KEYWORD)
+    private val declarationTokens = TokenSet.orSet(TokenSet.create(JetTokens.IDENTIFIER, JetTokens.LT, JetTokens.GT,
+                                                                   JetTokens.COMMA, JetTokens.DOT, JetTokens.QUEST, JetTokens.COLON,
+                                                                   JetTokens.IN_KEYWORD, JetTokens.OUT_KEYWORD,
+                                                                   JetTokens.LPAR, JetTokens.RPAR, JetTokens.ARROW,
+                                                                   TokenType.ERROR_ELEMENT),
+                                                   JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET)
 
-    private fun isExtensionReceiverAfterDot(tokenBefore: PsiElement): Boolean {
-        var prev = tokenBefore.getPrevSibling()
-        if (tokenBefore.getNode()!!.getElementType() != JetTokens.DOT) {
-            if (prev == null || prev!!.getNode()!!.getElementType() != JetTokens.DOT) return false
-            prev = prev!!.getPrevSibling()
-        }
+    private fun specialExtensionReceiverDummyIdentifier(tokenBefore: PsiElement?): String? {
+        var token = tokenBefore ?: return null
+        var ltCount = 0
+        var gtCount = 0
+        val builder = StringBuilder()
+        while (true) {
+            val tokenType = token.getNode()!!.getElementType()
+            if (tokenType in declarationKeywords) {
+                val balance = ltCount - gtCount
+                if (balance < 0) return null
+                builder.append(token.getText()!!.reverse())
+                builder.reverse()
 
-        while (prev != null) {
-            if (prev!!.getNode()!!.getElementType() in declarationKeywords) {
-                return true
+                var tail = "X" + ">".repeat(balance) + ".f"
+                if (tokenType == JetTokens.FUN_KEYWORD) {
+                    tail += "()"
+                }
+                builder append tail
+
+                val text = builder.toString()
+                val file = JetPsiFactory(tokenBefore.getProject()).createFile(text)
+                val declaration = file.getDeclarations().singleOrNull() ?: return null
+                if (declaration.getTextLength() != text.length) return null
+                val containsErrorElement = !PsiTreeUtil.processElements(file, PsiElementProcessor<PsiElement>{ it !is PsiErrorElement })
+                return if (containsErrorElement) null else tail + "$"
             }
-            if (prev !is PsiComment && prev !is PsiWhiteSpace && prev !is JetTypeReference) return false
-            prev = prev!!.getPrevSibling()
+            if (tokenType !in declarationTokens) return null
+            if (tokenType == JetTokens.LT) ltCount++
+            if (tokenType == JetTokens.GT) gtCount++
+            builder.append(token.getText()!!.reverse())
+            token = PsiTreeUtil.prevLeaf(token) ?: return null
         }
-        return false
     }
 
     private fun performCompletion(parameters: CompletionParameters, result: CompletionResultSet) {
@@ -175,7 +200,7 @@ public class JetCompletionContributor : CompletionContributor() {
         if (invocationCount == 0 && prefixMatcher.getPrefix().isEmpty() && AFTER_INTEGER_LITERAL_AND_DOT.accepts(position)) return true
 
         // no auto-popup on typing after "val", "var" and "fun"
-        if (EXTENSION_RECEIVER_TYPE_ACTIVATION_PATTERN.accepts(position) && invocationCount == 0) return true
+        if (invocationCount == 0 && EXTENSION_RECEIVER_TYPE_PATTERN.accepts(position)) return true
 
         return false
     }
