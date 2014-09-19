@@ -77,6 +77,7 @@ public class LazyTopDownAnalyzer {
     @NotNull
     private BodyResolver bodyResolver = null;
 
+    @Inject
     public void setKotlinCodeAnalyzer(@NotNull KotlinCodeAnalyzer kotlinCodeAnalyzer) {
         this.resolveSession = kotlinCodeAnalyzer;
     }
@@ -113,36 +114,23 @@ public class LazyTopDownAnalyzer {
 
     @NotNull
     public TopDownAnalysisContext analyzeFiles(
-            @NotNull Project project,
             @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull Collection<JetFile> files,
-            @NotNull List<? extends PackageFragmentProvider> additionalProviders,
-            AdditionalCheckerProvider additionalCheckerProvider
+            @NotNull List<? extends PackageFragmentProvider> additionalProviders
     ) {
-        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
+        PackageFragmentProvider provider;
+        if (additionalProviders.isEmpty()) {
+            provider = resolveSession.getPackageFragmentProvider();
+        }
+        else {
+            provider = new CompositePackageFragmentProvider(KotlinPackage.plus(
+                    Arrays.asList(resolveSession.getPackageFragmentProvider()),
+                    additionalProviders));
+        }
 
-        ResolveSession resolveSession = new InjectorForLazyResolve(
-                project,
-                new GlobalContextImpl((LockBasedStorageManager) c.getStorageManager(), c.getExceptionTracker()), // TODO
-                (ModuleDescriptorImpl) moduleDescriptor, // TODO
-                new FileBasedDeclarationProviderFactory(c.getStorageManager(), files),
-                trace,
-                additionalCheckerProvider
-        ).getResolveSession();
+        ((ModuleDescriptorImpl) resolveSession.getModuleDescriptor()).initialize(provider);
 
-        CompositePackageFragmentProvider provider =
-                new CompositePackageFragmentProvider(KotlinPackage.plus(Arrays.asList(resolveSession.getPackageFragmentProvider()), additionalProviders));
-
-        ((ModuleDescriptorImpl) moduleDescriptor).initialize(provider);
-
-        setKotlinCodeAnalyzer(resolveSession);
-
-        analyzeDeclarations(
-                c.getTopDownAnalysisParameters(),
-                files
-        );
-
-        return c;
+        return analyzeDeclarations(topDownAnalysisParameters, files);
     }
 
     @NotNull

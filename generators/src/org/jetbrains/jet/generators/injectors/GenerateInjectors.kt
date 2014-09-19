@@ -22,7 +22,8 @@ import org.jetbrains.jet.context.GlobalContextImpl
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.resolve.java.*
+import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 import org.jetbrains.jet.lang.resolve.java.resolver.*
 import org.jetbrains.jet.lang.resolve.java.sam.SamConversionResolverImpl
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder
@@ -39,8 +40,10 @@ import org.jetbrains.jet.lang.resolve.java.lazy.ModuleClassResolver
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializationComponentsForJava
 import org.jetbrains.jet.lang.resolve.java.lazy.SingleModuleClassResolver
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
+import org.jetbrains.jet.lang.resolve.java.JavaFlexibleTypeCapabilitiesProvider
 import org.jetbrains.jet.context.LazyResolveToken
 
 // NOTE: After making changes, you need to re-generate the injectors.
@@ -78,8 +81,7 @@ private fun DependencyInjectorGenerator.commonForTopDownAnalyzer() {
     publicParameter(javaClass<ModuleDescriptor>(), useAsContext = true)
 
     publicFields(
-            javaClass<TopDownAnalyzer>(),
-            javaClass<LazyTopDownAnalyzer>()
+            javaClass<TopDownAnalyzer>()
     )
 
     field(javaClass<MutablePackageFragmentProvider>())
@@ -116,30 +118,42 @@ private fun generatorForTopDownAnalyzerForJs() =
 
 private fun generatorForTopDownAnalyzerForJvm() =
         generator("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm") {
-            commonForTopDownAnalyzer()
+            parameter(javaClass<Project>())
+            parameter(javaClass<GlobalContext>(), useAsContext = true)
+            parameter(javaClass<BindingTrace>())
+            parameter(javaClass<ModuleDescriptorImpl>(), name = "module", useAsContext = true)
+            parameter(javaClass<GlobalSearchScope>(), name = "moduleContentScope")
+            parameter(javaClass<DeclarationProviderFactory>())
 
-            publicField(javaClass<JavaDescriptorResolver>())
-            publicField(javaClass<DeserializationComponentsForJava>())
+            publicFields(
+                    javaClass<LazyTopDownAnalyzer>(),
+                    javaClass<ResolveSession>(),
+                    javaClass<JavaDescriptorResolver>(),
+                    javaClass<DeserializationComponentsForJava>()
+            )
 
-            field(javaClass<AdditionalCheckerProvider>(),
-                  init = GivenExpression(javaClass<JavaDeclarationCheckerProvider>().getName() + ".INSTANCE$"))
-
-            field(javaClass <GlobalSearchScope>(),
-                  init = GivenExpression(javaClass<GlobalSearchScope>().getName() + ".allScope(project)"))
+            field(javaClass<VirtualFileFinder>(),
+                  init = GivenExpression(javaClass<VirtualFileFinderFactory>().getName()
+                                         + ".SERVICE.getInstance(project).create(moduleContentScope)")
+            )
             fields(
                     javaClass<JavaClassFinderImpl>(),
                     javaClass<TraceBasedExternalSignatureResolver>(),
-                    javaClass<TraceBasedJavaResolverCache>(),
+                    javaClass<LazyResolveBasedCache>(),
                     javaClass<TraceBasedErrorReporter>(),
                     javaClass<PsiBasedMethodSignatureChecker>(),
                     javaClass<PsiBasedExternalAnnotationResolver>(),
-                    javaClass<MutablePackageFragmentProvider>(),
                     javaClass<JavaPropertyInitializerEvaluatorImpl>(),
                     javaClass<SamConversionResolverImpl>(),
                     javaClass<JavaSourceElementFactoryImpl>(),
                     javaClass<SingleModuleClassResolver>(),
+                    javaClass<MutablePackageFragmentProvider>(),
                     javaClass<JavaFlexibleTypeCapabilitiesProvider>()
             )
+
+            field(javaClass<AdditionalCheckerProvider>(),
+                  init = GivenExpression(javaClass<JavaDeclarationCheckerProvider>().getName() + ".INSTANCE$"))
+
             field(javaClass<VirtualFileFinder>(), init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
         }
 

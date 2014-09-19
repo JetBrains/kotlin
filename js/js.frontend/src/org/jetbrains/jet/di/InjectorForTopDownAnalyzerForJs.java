@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
-import org.jetbrains.jet.lang.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.BodyResolver;
@@ -74,7 +73,6 @@ public class InjectorForTopDownAnalyzerForJs {
     private final ModuleDescriptor moduleDescriptor;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final TopDownAnalyzer topDownAnalyzer;
-    private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final AdditionalCheckerProvider additionalCheckerProvider;
     private final BodyResolver bodyResolver;
@@ -125,7 +123,6 @@ public class InjectorForTopDownAnalyzerForJs {
         this.moduleDescriptor = moduleDescriptor;
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.topDownAnalyzer = new TopDownAnalyzer();
-        this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
         this.additionalCheckerProvider = org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider.Empty.INSTANCE$;
         this.bodyResolver = new BodyResolver();
@@ -166,7 +163,6 @@ public class InjectorForTopDownAnalyzerForJs {
         this.topDownAnalyzer.setAdditionalCheckerProvider(additionalCheckerProvider);
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
         this.topDownAnalyzer.setDeclarationResolver(declarationResolver);
-        this.topDownAnalyzer.setLazyTopDownAnalyzer(lazyTopDownAnalyzer);
         this.topDownAnalyzer.setModuleDescriptor(moduleDescriptor);
         this.topDownAnalyzer.setOverloadResolver(overloadResolver);
         this.topDownAnalyzer.setOverrideResolver(overrideResolver);
@@ -174,13 +170,6 @@ public class InjectorForTopDownAnalyzerForJs {
         this.topDownAnalyzer.setProject(project);
         this.topDownAnalyzer.setTrace(bindingTrace);
         this.topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
-
-        this.lazyTopDownAnalyzer.setBodyResolver(bodyResolver);
-        this.lazyTopDownAnalyzer.setDeclarationResolver(declarationResolver);
-        this.lazyTopDownAnalyzer.setModuleDescriptor(moduleDescriptor);
-        this.lazyTopDownAnalyzer.setOverloadResolver(overloadResolver);
-        this.lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
-        this.lazyTopDownAnalyzer.setTrace(bindingTrace);
 
         bodyResolver.setAnnotationResolver(annotationResolver);
         bodyResolver.setCallResolver(callResolver);
@@ -289,10 +278,6 @@ public class InjectorForTopDownAnalyzerForJs {
 
     public TopDownAnalyzer getTopDownAnalyzer() {
         return this.topDownAnalyzer;
-    }
-
-    public LazyTopDownAnalyzer getLazyTopDownAnalyzer() {
-        return this.lazyTopDownAnalyzer;
     }
 
 }

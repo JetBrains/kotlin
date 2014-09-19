@@ -106,9 +106,11 @@ public class ReplInterpreter {
                 new ExceptionTracker(), // dummy
                 Predicates.<PsiFile>alwaysTrue()
         );
-        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
+
+        // FIXME: Make it work for lazy resolve
+        InjectorForTopDownAnalyzerForJvm injector = null;
         this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
-        this.topDownAnalyzer = injector.getTopDownAnalyzer();
+        this.topDownAnalyzer = null;
 
         module.initialize(new CompositePackageFragmentProvider(
                 Arrays.asList(

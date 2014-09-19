@@ -19,6 +19,7 @@ package org.jetbrains.jet.di;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -56,7 +57,6 @@ import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
-import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -67,6 +67,7 @@ public class InjectorForLazyBodyResolve {
     private final Project project;
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
+    private final KotlinCodeAnalyzer analyzer;
     private final BindingTrace bindingTrace;
     private final AdditionalCheckerProvider additionalCheckerProvider;
     private final ModuleDescriptor moduleDescriptor;
@@ -115,6 +116,7 @@ public class InjectorForLazyBodyResolve {
         this.project = project;
         this.globalContext = globalContext;
         this.storageManager = globalContext.getStorageManager();
+        this.analyzer = analyzer;
         this.bindingTrace = bindingTrace;
         this.additionalCheckerProvider = additionalCheckerProvider;
         this.moduleDescriptor = analyzer.getModuleDescriptor();
@@ -155,6 +157,7 @@ public class InjectorForLazyBodyResolve {
 
         this.lazyTopDownAnalyzer.setBodyResolver(bodyResolver);
         this.lazyTopDownAnalyzer.setDeclarationResolver(declarationResolver);
+        this.lazyTopDownAnalyzer.setKotlinCodeAnalyzer(analyzer);
         this.lazyTopDownAnalyzer.setModuleDescriptor(moduleDescriptor);
         this.lazyTopDownAnalyzer.setOverloadResolver(overloadResolver);
         this.lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);

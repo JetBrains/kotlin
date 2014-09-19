@@ -95,6 +95,8 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             @Override
             public void run() {
                 GlobalContextImpl globalContext = ContextPackage.GlobalContext();
+
+                // TODO built-ins and lazy resolve
                 TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
                         globalContext.getStorageManager(),
                         globalContext.getExceptionTracker(),

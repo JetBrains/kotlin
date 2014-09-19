@@ -19,10 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetScript;
@@ -64,4 +61,7 @@ public interface KotlinCodeAnalyzer {
      * Use this method when laziness plays against you, e.g. when lazy descriptors may be accessed in a multi-threaded setting
      */
     void forceResolveAll();
+
+    @NotNull
+    PackageFragmentProvider getPackageFragmentProvider();
 }

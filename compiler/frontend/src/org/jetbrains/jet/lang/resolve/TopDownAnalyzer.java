@@ -58,9 +58,6 @@ public class TopDownAnalyzer {
     @NotNull
     private Project project;
 
-    @NotNull
-    private LazyTopDownAnalyzer lazyTopDownAnalyzer;
-
     @Inject
     public void setTrace(@NotNull BindingTrace trace) {
         this.trace = trace;
@@ -104,11 +101,6 @@ public class TopDownAnalyzer {
     @Inject
     public void setProject(@NotNull Project project) {
         this.project = project;
-    }
-
-    @Inject
-    public void setLazyTopDownAnalyzer(@NotNull LazyTopDownAnalyzer lazyTopDownAnalyzer) {
-        this.lazyTopDownAnalyzer = lazyTopDownAnalyzer;
     }
 
     @Inject
@@ -185,10 +177,7 @@ public class TopDownAnalyzer {
             @NotNull Collection<JetFile> files,
             @NotNull List<PackageFragmentProvider> additionalProviders
     ) {
-        if (topDownAnalysisParameters.isLazy()) {
-            return lazyTopDownAnalyzer.analyzeFiles(
-                    project, topDownAnalysisParameters, files, additionalProviders, additionalCheckerProvider);
-        }
+        assert !topDownAnalysisParameters.isLazy() : "Lazy resolve must be disabled for this method";
 
         TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
         CompositePackageFragmentProvider provider =
@@ -208,7 +197,6 @@ public class TopDownAnalyzer {
     public MutablePackageFragmentProvider getPackageFragmentProvider() {
         return packageFragmentProvider;
     }
-
 }
 
 
