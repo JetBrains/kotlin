@@ -75,22 +75,19 @@ public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
                 generatorForLazyBodyResolve()
         )
 
-private fun DependencyInjectorGenerator.commonForTopDownAnalyzer() {
-    parameter(javaClass<Project>())
-    parameter(javaClass<GlobalContext>(), useAsContext = true)
-    parameter(javaClass<BindingTrace>())
-    publicParameter(javaClass<ModuleDescriptor>(), useAsContext = true)
-
-    publicFields(
-            javaClass<TopDownAnalyzer>()
-    )
-
-    field(javaClass<MutablePackageFragmentProvider>())
-}
-
 private fun generatorForTopDownAnalyzerBasic() =
         generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic") {
-            commonForTopDownAnalyzer()
+            parameter(javaClass<Project>())
+            parameter(javaClass<GlobalContext>(), useAsContext = true)
+            parameter(javaClass<BindingTrace>())
+            publicParameter(javaClass<ModuleDescriptor>(), useAsContext = true)
+
+            publicFields(
+                    javaClass<TopDownAnalyzer>()
+            )
+
+            field(javaClass<MutablePackageFragmentProvider>())
+
             parameter(javaClass<AdditionalCheckerProvider>())
         }
 
@@ -128,7 +125,18 @@ private fun generatorForLazyBodyResolve() =
 
 private fun generatorForTopDownAnalyzerForJs() =
         generator("js/js.frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs") {
-            commonForTopDownAnalyzer()
+            parameter(javaClass<Project>())
+            parameter(javaClass<GlobalContext>(), useAsContext = true)
+            parameter(javaClass<BindingTrace>())
+            parameter(javaClass<ModuleDescriptorImpl>(), name = "module", useAsContext = true)
+            parameter(javaClass<DeclarationProviderFactory>())
+
+            publicFields(
+                    javaClass<ResolveSession>(),
+                    javaClass<LazyTopDownAnalyzer>()
+            )
+
+            field(javaClass<MutablePackageFragmentProvider>())
 
             field(javaClass<AdditionalCheckerProvider>(),
                   init = GivenExpression(javaClass<AdditionalCheckerProvider.Empty>().getCanonicalName() + ".INSTANCE$"))
