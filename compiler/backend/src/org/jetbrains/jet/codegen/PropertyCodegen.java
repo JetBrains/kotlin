@@ -344,7 +344,7 @@ public class PropertyCodegen {
         functionCodegen.generateMethod(OtherOrigin(accessor != null ? accessor : p, accessorDescriptor), signature, accessorDescriptor, strategy);
     }
 
-    private static int indexOfDelegatedProperty(@NotNull JetProperty property) {
+    public static int indexOfDelegatedProperty(@NotNull JetProperty property) {
         PsiElement parent = property.getParent();
         JetDeclarationContainer container;
         if (parent instanceof JetClassBody) {
@@ -409,6 +409,46 @@ public class PropertyCodegen {
         }
     }
 
+    public static StackValue invokeDelegatedPropertyConventionMethod(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull ExpressionCodegen codegen,
+            @NotNull JetTypeMapper typeMapper,
+            @NotNull ResolvedCall<FunctionDescriptor> resolvedCall,
+            final int indexInPropertyMetadataArray,
+            int propertyMetadataArgumentIndex
+    ) {
+        if (codegen.getContext().getContextKind() != OwnerKind.PACKAGE) {
+            codegen.v.load(0, OBJECT_TYPE);
+        }
+
+        CodegenContext<? extends ClassOrPackageFragmentDescriptor> ownerContext = codegen.getContext().getClassOrPackageParentContext();
+        final Type owner;
+        if (ownerContext instanceof ClassContext) {
+            owner = typeMapper.mapClass(((ClassContext) ownerContext).getContextDescriptor());
+        }
+        else if (ownerContext instanceof PackageContext) {
+            owner = ((PackageContext) ownerContext).getPackagePartType();
+        }
+        else {
+            throw new UnsupportedOperationException("Unknown context: " + ownerContext);
+        }
+
+        codegen.tempVariables.put(
+                resolvedCall.getCall().getValueArguments().get(propertyMetadataArgumentIndex).asElement(),
+                new StackValue(PROPERTY_METADATA_TYPE) {
+                    @Override
+                    public void put(Type type, InstructionAdapter v) {
+                        v.getstatic(owner.getInternalName(), JvmAbi.PROPERTY_METADATA_ARRAY_NAME, "[" + PROPERTY_METADATA_TYPE);
+                        v.iconst(indexInPropertyMetadataArray);
+                        StackValue.arrayElement(PROPERTY_METADATA_TYPE).put(type, v);
+                    }
+                }
+        );
+
+        StackValue delegatedProperty = codegen.intermediateValueForProperty(propertyDescriptor, true, null);
+        return codegen.invokeFunction(resolvedCall, delegatedProperty);
+    }
+
     private static class DelegatedPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased<PropertyAccessorDescriptor> {
         private final int index;
 
@@ -426,37 +466,8 @@ public class PropertyCodegen {
                     bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, callableDescriptor);
             assert resolvedCall != null : "Resolve call should be recorded for delegate call " + signature.toString();
 
-            if (codegen.getContext().getContextKind() != OwnerKind.PACKAGE) {
-                v.load(0, OBJECT_TYPE);
-            }
-
-            CodegenContext<? extends ClassOrPackageFragmentDescriptor> ownerContext = codegen.getContext().getClassOrPackageParentContext();
-            final Type owner;
-            if (ownerContext instanceof ClassContext) {
-                owner = state.getTypeMapper().mapClass(((ClassContext) ownerContext).getContextDescriptor());
-            }
-            else if (ownerContext instanceof PackageContext) {
-                owner = ((PackageContext) ownerContext).getPackagePartType();
-            }
-            else {
-                throw new UnsupportedOperationException("Unknown context: " + ownerContext);
-            }
-
-            codegen.tempVariables.put(
-                    resolvedCall.getCall().getValueArguments().get(1).asElement(),
-                    new StackValue(PROPERTY_METADATA_TYPE) {
-                        @Override
-                        public void put(Type type, InstructionAdapter v) {
-                            v.getstatic(owner.getInternalName(), JvmAbi.PROPERTY_METADATA_ARRAY_NAME, "[" + PROPERTY_METADATA_TYPE);
-                            v.iconst(index);
-                            StackValue.arrayElement(PROPERTY_METADATA_TYPE).put(type, v);
-                        }
-                    }
-            );
-
-            StackValue delegatedProperty = codegen.intermediateValueForProperty(callableDescriptor.getCorrespondingProperty(), true, null);
-            StackValue lastValue = codegen.invokeFunction(resolvedCall, delegatedProperty);
-
+            StackValue lastValue = invokeDelegatedPropertyConventionMethod(callableDescriptor.getCorrespondingProperty(),
+                                                                           codegen, state.getTypeMapper(), resolvedCall, index, 1);
             Type asmType = signature.getReturnType();
             lastValue.put(asmType, v);
             v.areturn(asmType);
