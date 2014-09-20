@@ -5,6 +5,6 @@ package com.example.myapp;
  */
 public class Foo {
     public static void main(String[] args) {
-        System.out.println(R.id.LOL);
+        System.out.println(R.id.textField);
     }
 }
