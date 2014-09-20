@@ -17,17 +17,54 @@
 package org.jetbrains.jet.jps.build.android
 
 import org.jetbrains.jps.builders.JpsBuildTestCase
+import org.jetbrains.jps.android.model.JpsAndroidSdkProperties
+import org.jetbrains.jps.android.model.JpsAndroidSdkType
+import org.jetbrains.jps.model.library.JpsOrderRootType
+import org.jetbrains.jps.model.JpsSimpleElement
+import org.jetbrains.jps.model.library.sdk.JpsSdk
+import org.jetbrains.jps.model.impl.JpsSimpleElementImpl
+
+import java.io.File
 
 public abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
-    private val SDK_NAME = "Android_SDK"
+
+    private val SDK_NAME = "Android API 17 Platform"
+
     override fun setUp() {
         super.setUp()
         System.setProperty("kotlin.jps.tests", "true")
     }
+
     public fun doTest(path: String) {
-        addJdk(SDK_NAME, getHomePath() + "/androidSDK/platforms/android-17" + "/android.jar")
+        addJdkAndAndroidSdk()
         loadProject(path + getTestName(true) + ".ipr")
         rebuildAll()
         makeAll().assertSuccessful()
+        deleteDirectory(File(path + "/out"))
+    }
+
+    public fun deleteDirectory(path: File): Boolean {
+        if (path.exists() && path.isDirectory()) {
+            val files = path.listFiles()!!
+            for (i in files.indices) {
+                if (files[i].isDirectory()) {
+                    deleteDirectory(files[i])
+                }
+                else {
+                    files[i].delete()
+                }
+            }
+        }
+        return (path.delete())
+    }
+
+    private fun addJdkAndAndroidSdk(): JpsSdk<JpsSimpleElement<JpsAndroidSdkProperties>> {
+        val jdkName = "java_sdk"
+        addJdk(jdkName)
+        val properties = JpsAndroidSdkProperties("android-17", jdkName)
+        val sdkPath = getHomePath() + "/androidSDK/"
+        val library = myModel!!.getGlobal().addSdk<JpsSimpleElement<JpsAndroidSdkProperties>>(SDK_NAME, sdkPath, "", JpsAndroidSdkType.INSTANCE, JpsSimpleElementImpl(properties))
+        library!!.addRoot(File(sdkPath + "/platforms/android-17/android.jar"), JpsOrderRootType.COMPILED)
+        return library.getProperties()
     }
 }
