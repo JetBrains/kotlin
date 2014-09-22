@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.quickfix.createFromUsage
 
-import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.navigation.NavigationUtil
@@ -41,8 +40,6 @@ import com.intellij.ui.components.JBList
 import com.intellij.util.ArrayUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
@@ -58,7 +55,6 @@ import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import javax.swing.*
-import java.util.regex.Pattern
 import kotlin.properties.Delegates
 import java.util.LinkedHashSet
 import java.util.Collections
@@ -67,12 +63,7 @@ import java.util.HashMap
 import java.util.ArrayList
 import java.util.Properties
 import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
-import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
-import org.jetbrains.jet.lang.resolve.dataClassUtils.getComponentIndex
-import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
@@ -871,124 +862,5 @@ public class CreateFunctionFromUsageFix internal (
         val fullyQualifiedReceiverTypeRef = JetPsiFactory(typeRef).createType(theType.renderLong(typeParameterNameMap))
         typeRef.replace(fullyQualifiedReceiverTypeRef)
     }
-
-    class object {
-        public fun createCreateGetFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
-            return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                    val accessExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetArrayAccessExpression>()) ?: return null
-                    val arrayExpr = accessExpr.getArrayExpression() ?: return null
-                    val arrayType = TypeOrExpressionThereof(arrayExpr, Variance.IN_VARIANCE)
-
-                    val parameters = accessExpr.getIndexExpressions().map {
-                        Parameter(TypeOrExpressionThereof(it, Variance.IN_VARIANCE))
-                    }
-
-                    val returnType = TypeOrExpressionThereof(accessExpr, Variance.OUT_VARIANCE)
-                    return CreateFunctionFromUsageFix(accessExpr, arrayType, "get", returnType, parameters)
-                }
-            }
-        }
-
-        public fun createCreateSetFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
-            return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                    val accessExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetArrayAccessExpression>()) ?: return null
-                    val arrayExpr = accessExpr.getArrayExpression() ?: return null
-                    val arrayType = TypeOrExpressionThereof(arrayExpr, Variance.IN_VARIANCE)
-
-                    val parameters = accessExpr.getIndexExpressions().mapTo(ArrayList<Parameter>()) {
-                        Parameter(TypeOrExpressionThereof(it, Variance.IN_VARIANCE))
-                    }
-
-                    val assignmentExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetBinaryExpression>()) ?: return null
-                    val rhs = assignmentExpr.getRight() ?: return null
-                    val valType = TypeOrExpressionThereof(rhs, Variance.IN_VARIANCE)
-                    parameters.add(Parameter(valType, "value"))
-
-                    val returnType = TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getUnitType(), Variance.OUT_VARIANCE)
-                    return CreateFunctionFromUsageFix(accessExpr, arrayType, "set", returnType, parameters)
-                }
-            }
-        }
-
-        public fun createCreateHasNextFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
-            return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                    val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic, Errors.HAS_NEXT_MISSING, Errors.HAS_NEXT_FUNCTION_NONE_APPLICABLE)
-                    val ownerType = TypeOrExpressionThereof(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
-
-                    val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
-                    val returnType = TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getBooleanType(), Variance.OUT_VARIANCE)
-                    return CreateFunctionFromUsageFix(forExpr, ownerType, "hasNext", returnType)
-                }
-            }
-        }
-
-        public fun createCreateNextFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
-            return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                    val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic, Errors.NEXT_MISSING, Errors.NEXT_NONE_APPLICABLE)
-                    val ownerType = TypeOrExpressionThereof(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
-
-                    val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
-                    val variableExpr: JetExpression = ((forExpr.getLoopParameter() ?: forExpr.getMultiParameter()) ?: return null) as JetExpression
-                    val returnType = TypeOrExpressionThereof(variableExpr, Variance.OUT_VARIANCE)
-                    return CreateFunctionFromUsageFix(forExpr, ownerType, "next", returnType)
-                }
-            }
-        }
-
-        public fun createCreateIteratorFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
-            return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                    val file = diagnostic.getPsiFile() as? JetFile ?: return null
-                    val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
-                    val iterableExpr = forExpr.getLoopRange() ?: return null
-                    val variableExpr: JetExpression = ((forExpr.getLoopParameter() ?: forExpr.getMultiParameter()) ?: return null) as JetExpression
-                    val iterableType = TypeOrExpressionThereof(iterableExpr, Variance.IN_VARIANCE)
-                    val returnJetType = KotlinBuiltIns.getInstance().getIterator().getDefaultType()
-
-                    val context = file.getBindingContext()
-                    val returnJetTypeParameterTypes = variableExpr.guessTypes(context)
-                    if (returnJetTypeParameterTypes.size != 1) return null
-
-                    val returnJetTypeParameterType = TypeProjectionImpl(returnJetTypeParameterTypes[0])
-                    val returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType)
-                    val newReturnJetType = JetTypeImpl(returnJetType.getAnnotations(), returnJetType.getConstructor(), returnJetType.isNullable(), returnJetTypeArguments, returnJetType.getMemberScope())
-                    val returnType = TypeOrExpressionThereof(newReturnJetType, Variance.OUT_VARIANCE)
-                    return CreateFunctionFromUsageFix(forExpr, iterableType, "iterator", returnType)
-                }
-            }
-        }
-
-        public fun createCreateComponentFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
-            return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                    val diagnosticWithParameters = Errors.COMPONENT_FUNCTION_MISSING.cast(diagnostic)
-                    val name = diagnosticWithParameters.getA()
-                    if (!isComponentLike(name)) return null
-
-                    val componentNumber = getComponentIndex(name) - 1
-
-                    var multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetMultiDeclaration>())
-                    val ownerType = if (multiDeclaration == null) {
-                        val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>())!!
-                        multiDeclaration = forExpr.getMultiParameter()!!
-                        TypeOrExpressionThereof(diagnosticWithParameters.getB(), Variance.IN_VARIANCE)
-                    }
-                    else {
-                        val rhs = multiDeclaration!!.getInitializer() ?: return null
-                        TypeOrExpressionThereof(rhs, Variance.IN_VARIANCE)
-                    }
-                    val entries = multiDeclaration!!.getEntries()
-
-                    val entry = entries[componentNumber]
-                    val returnType = TypeOrExpressionThereof(entry, Variance.OUT_VARIANCE)
-
-                    return CreateFunctionFromUsageFix(multiDeclaration!!, ownerType, name.getIdentifier(), returnType)
-                }
-            }
-        }
-    }
 }
+
