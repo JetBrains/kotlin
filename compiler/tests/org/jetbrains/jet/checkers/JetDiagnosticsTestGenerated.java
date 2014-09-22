@@ -2572,6 +2572,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("tryFinallyNothing.kt")
+            public void testTryFinallyNothing() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/tryFinallyNothing.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("UnaryExpression.kt")
             public void testUnaryExpression() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/UnaryExpression.kt");
