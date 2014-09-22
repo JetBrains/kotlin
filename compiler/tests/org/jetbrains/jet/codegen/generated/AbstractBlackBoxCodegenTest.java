@@ -96,7 +96,13 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         inputFiles.add(firstFileName.substring(0, firstFileName.length() - "1.kt".length()) + "2.kt");
 
         doTestMultiFile(inputFiles);
-        InlineTestUtil.checkNoCallsToInline(initializedClassLoader.getAllGeneratedFiles());
+        try {
+            InlineTestUtil.checkNoCallsToInline(initializedClassLoader.getAllGeneratedFiles());
+        }
+        catch (Throwable e) {
+            System.out.println(generateToText());
+            throw UtilsPackage.rethrow(e);
+        }
     }
 
     private void blackBoxFileAgainstJavaByFullPath(@NotNull String ktFileFullPath) {
