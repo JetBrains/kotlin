@@ -40,6 +40,7 @@
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" filepath="$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" group="ide/jps" />
       <module fileurl="file://$PROJECT_DIR$/idea/kotlin-android-plugin/kotlin-android-plugin.iml" filepath="$PROJECT_DIR$/idea/kotlin-android-plugin/kotlin-android-plugin.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/light-classes/light-classes.iml" filepath="$PROJECT_DIR$/compiler/light-classes/light-classes.iml" group="compiler/java" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" filepath="$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/preloader.iml" filepath="$PROJECT_DIR$/compiler/preloader/preloader.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/core/reflection/reflection.iml" filepath="$PROJECT_DIR$/core/reflection/reflection.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" filepath="$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" group="core" />
