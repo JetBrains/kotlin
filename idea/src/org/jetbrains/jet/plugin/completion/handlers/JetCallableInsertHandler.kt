@@ -100,13 +100,12 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
         psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.getDocument())
 
         val startOffset = context.getStartOffset()
-        val element = context.getFile().findElementAt(startOffset)
+        val element = context.getFile().findElementAt(startOffset) ?: return
 
-        if (element != null) {
-            if (PsiTreeUtil.getParentOfType(element, javaClass<JetImportDirective>()) != null) return
-            val parent = element.getParent()
-            val grandParent = parent?.getParent()
-            if (parent is JetSimpleNameExpression && grandParent is JetBinaryExpression && parent == grandParent.getOperationReference()) { // infix call
+        when {
+            PsiTreeUtil.getParentOfType(element, javaClass<JetImportDirective>()) != null -> return
+
+            isInfixCall(element) -> {
                 if (context.getCompletionChar() == ' ') {
                     context.setAddCompletionChar(false)
                 }
@@ -115,10 +114,15 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
                 context.getDocument().insertString(tailOffset, " ")
                 context.getEditor().getCaretModel().moveToOffset(tailOffset + 1)
             }
-            else {
-                addBrackets(context, element)
-            }
+
+            else -> addBrackets(context, element)
         }
+    }
+
+    private fun isInfixCall(context: PsiElement): Boolean {
+        val parent = context.getParent()
+        val grandParent = parent?.getParent()
+        return parent is JetSimpleNameExpression && grandParent is JetBinaryExpression && parent == grandParent.getOperationReference()
     }
 
     private fun addBrackets(context : InsertionContext, offsetElement : PsiElement) {
