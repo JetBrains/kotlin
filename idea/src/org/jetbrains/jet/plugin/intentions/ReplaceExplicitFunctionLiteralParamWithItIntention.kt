@@ -98,7 +98,7 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
                                                                        false,
                                                                        false
     ) {
-        public override fun performRefactoring(usages: Array<out UsageInfo>?) {
+        public override fun performRefactoring(usages: Array<out UsageInfo>) {
             super.performRefactoring(usages)
             funcLiteral.deleteChildRange(funcLiteral.getValueParameterList(), funcLiteral.getArrowNode()!!.getPsi())
             if (cursorWasOverParameterList) {

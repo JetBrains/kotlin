@@ -219,7 +219,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
         return showConflicts(conflicts, refUsages.get())
     }
 
-    override fun performRefactoring(usages: Array<out UsageInfo>?) {
+    override fun performRefactoring(usages: Array<out UsageInfo>) {
         fun moveDeclaration(
                 declaration: JetNamedDeclaration,
                 moveTarget: KotlinMoveTarget,
