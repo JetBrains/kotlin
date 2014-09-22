@@ -85,7 +85,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
     class object {
         private val LOG: Logger = Logger.getInstance(javaClass<MoveKotlinTopLevelDeclarationsProcessor>())
 
-        private val REFACTORING_NAME: String = JetRefactoringBundle.message("refactoring.move.top.level.declarations")!!
+        private val REFACTORING_NAME: String = JetRefactoringBundle.message("refactoring.move.top.level.declarations")
     }
 
     private var nonCodeUsages: Array<NonCodeUsageInfo>? = null
@@ -203,7 +203,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
                                     "0.uses.package.private.1",
                                     RefactoringUIUtil.getDescription(declaration, true),
                                     RefactoringUIUtil.getDescription(refTarget, true)
-                            )!!.capitalize()
+                            ).capitalize()
                     )
                 }
             }
