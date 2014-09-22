@@ -166,6 +166,9 @@
     <projectService serviceInterface="org.jetbrains.jet.plugin.stubindex.SubpackagesIndexService"
                     serviceImplementation="org.jetbrains.jet.plugin.stubindex.SubpackagesIndexService"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.LibraryModificationTracker"
+                    serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.LibraryModificationTracker"/>
+
     <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>

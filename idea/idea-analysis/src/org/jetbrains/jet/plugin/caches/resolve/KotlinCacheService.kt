@@ -90,7 +90,9 @@ public class KotlinCacheService(val project: Project) {
                 project, globalResolveSessionProvider(platform,
                                                       logProcessCanceled = true,
                                                       moduleFilter = { it.isLibraryClasses() },
-                                                      dependencies = listOf(ProjectRootModificationTracker.getInstance(project)))
+                                                      dependencies = listOf(
+                                                              LibraryModificationTracker.getInstance(project),
+                                                              ProjectRootModificationTracker.getInstance(project)))
         )
 
         val modulesCache = KotlinResolveCache(
@@ -124,7 +126,10 @@ public class KotlinCacheService(val project: Project) {
                 }
                 else -> {
                     if (syntheticFileModule.isLibraryClasses()) {
-                        LOG.error("Creating cache with synthetic file ($file) in classes of library $syntheticFileModule")
+                        //NOTE: this code should not be called for sdk or library classes
+                        // currently the only known scenario is when we cannot determine that file is a library source
+                        // (file under both classes and sources root)
+                        LOG.warn("Creating cache with synthetic file ($file) in classes of library $syntheticFileModule")
                     }
                     KotlinResolveCache(
                             project,
