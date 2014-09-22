@@ -241,9 +241,11 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         override fun logLine(message: String?) {
 
             fun String.replaceHashWithStar(): String {
-                val lastHyphen = this.lastIndexOf('-')
-                if (lastHyphen != -1 && substring(lastHyphen + 1).matches("[0-9a-f]{1,8}\\.class")) {
-                    return substring(0, lastHyphen) + "-*.class"
+                if (this contains "Package$") {
+                    val lastDollar = this.lastIndexOf('$')
+                    if (lastDollar != -1 && substring(lastDollar + 1).matches("[0-9a-f]{1,8}\\.class")) {
+                        return substring(0, lastDollar) + "$*.class"
+                    }
                 }
                 return this
             }

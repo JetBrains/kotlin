@@ -6,8 +6,8 @@ fun box(): String {
     val enclosingMethod = l.javaClass.getEnclosingMethod()
     if (enclosingMethod?.getName() != "getL") return "method: $enclosingMethod"
 
-    val enclosingClass = l.javaClass.getEnclosingClass()
-    if (!enclosingClass!!.getName().startsWith("_DefaultPackage-lambdaInPropertyGetter-")) return "enclosing class: $enclosingClass"
+    val enclosingClass = l.javaClass.getEnclosingClass()!!.getName()
+    if (!enclosingClass.startsWith("_DefaultPackage") || !enclosingClass.contains("lambdaInPropertyGetter")) return "enclosing class: $enclosingClass"
 
     val declaringClass = l.javaClass.getDeclaringClass()
     if (declaringClass != null) return "anonymous function has a declaring class: $declaringClass"

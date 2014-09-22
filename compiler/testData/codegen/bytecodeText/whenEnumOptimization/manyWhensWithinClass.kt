@@ -33,4 +33,3 @@ class A {
 }
 
 // 2 TABLESWITCH
-// 1 @abc/foo/A\$WhenMappings\.class

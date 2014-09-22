@@ -24,7 +24,7 @@ import java.util.HashMap
 import java.io.File
 
 public fun IncrementalCache.getPackagesWithRemovedFiles(sourceFilesToCompile: Collection<JetFile>): Collection<FqName> {
-    return getRemovedPackageParts(sourceFilesToCompile).map { it.getFqNameForClassNameWithoutDollars().parent() }
+    return getRemovedPackageParts(sourceFilesToCompile).map { it.getPackageFqName() }
 }
 
 public fun IncrementalCache.getRemovedPackageParts(sourceFilesToCompile: Collection<JetFile>): Collection<JvmClassName> {

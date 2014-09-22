@@ -21,6 +21,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
@@ -96,16 +99,17 @@ public class InlineTestUtil {
                 public MethodVisitor visitMethod(
                         int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions
                 ) {
+                    FqName classFqName = JvmClassName.byInternalName(className.get()).getFqNameForClassNameWithoutDollars();
+                    if (PackageClassUtils.isPackageClassFqName(classFqName)) {
+                        return super.visitMethod(access, name, desc, signature, exceptions);
+                    }
+
                     return new MethodNode(Opcodes.ASM4, access, name, desc, signature, exceptions) {
                         @Override
                         public void visitMethodInsn(int opcode, @NotNull String owner, String name, @NotNull String desc, boolean itf) {
                             MethodInfo methodCall = new MethodInfo(owner, name, desc);
                             if (inlinedMethods.contains(methodCall)) {
                                 MethodInfo fromCall = new MethodInfo(className.get(), this.name, this.desc);
-                                //skip facades
-                                if (methodCall.owner.startsWith(fromCall.owner + "-")) {
-                                    return;
-                                }
 
                                 //skip delegation to trait impl from child class
                                 if (methodCall.owner.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX) && !fromCall.owner.equals(methodCall.owner)) {

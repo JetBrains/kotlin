@@ -44,7 +44,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
 
     public void testPackagePart() {
         doTest("fun foo() = 42",
-               "-",
+               "$",
                PACKAGE_PART);
     }
 
@@ -62,25 +62,25 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
 
     public void testSamLambda() {
         doTest("val foo = Thread { }",
-               "$",
+               "$1",
                SAM_LAMBDA);
     }
 
     public void testCallableReferenceWrapper() {
         doTest("val f = String::get",
-               "$",
+               "$1",
                CALLABLE_REFERENCE_WRAPPER);
     }
 
     public void testLocalFunction() {
         doTest("fun foo() { fun bar() {} }",
-               "$",
+               "$1",
                LOCAL_FUNCTION);
     }
 
     public void testAnonymousFunction() {
         doTest("val f = {}",
-               "$",
+               "$1",
                ANONYMOUS_FUNCTION);
     }
 
@@ -104,7 +104,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
 
     public void testAnonymousObject() {
         doTest("val o = object {}",
-               "$",
+               "$1",
                ANONYMOUS_OBJECT);
     }
 

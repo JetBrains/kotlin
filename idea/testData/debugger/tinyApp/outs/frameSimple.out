@@ -30,8 +30,8 @@ fun main(args: Array<String>) {
 
 // EXPRESSION: val1 + topVal1
 // RESULT: 2: I
- frame    = main():9, FrameSimplePackage-@packagePartHASH {frameSimple}
-   static   = static = frameSimple.FrameSimplePackage-@packagePartHASH
+ frame    = main():9, FrameSimplePackage$@packagePartHASH {frameSimple}
+   static   = static = frameSimple.FrameSimplePackage$@packagePartHASH
      field    = topVal1: int = 1
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID}
    local    = val1: int = 1

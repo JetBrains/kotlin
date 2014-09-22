@@ -19,4 +19,3 @@ fun box() : String {
 }
 
 // 1 LOOKUPSWITCH
-// 1 @_DefaultPackage-functionLiteralInTopLevel-[a-z0-9]+\$WhenMappings.class

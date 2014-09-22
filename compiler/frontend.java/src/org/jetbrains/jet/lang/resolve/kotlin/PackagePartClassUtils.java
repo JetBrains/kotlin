@@ -56,7 +56,7 @@ public class PackagePartClassUtils {
         String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
 
         // path hashCode to prevent same name / different path collision
-        String srcName = facadeFqName.shortName().asString() + "-" + replaceSpecialSymbols(fileName) + "-" + Integer.toHexString(
+        String srcName = facadeFqName.shortName().asString() + "$" + replaceSpecialSymbols(fileName) + "$" + Integer.toHexString(
                 getPathHashCode(file));
 
         return facadeFqName.parent().child(Name.identifier(srcName));

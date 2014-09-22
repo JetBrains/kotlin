@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClosureCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -541,10 +543,12 @@ public class MethodInliner {
             return type;
         }
 
-        int i = type.indexOf('-');
-        if (i >= 0) {
-            return type.substring(0, i);
+        JvmClassName name = JvmClassName.byInternalName(type);
+        String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(name.getPackageFqName());
+        if (type.startsWith(packageClassInternalName + '$')) {
+            return packageClassInternalName;
         }
+
         return type;
     }
 
@@ -552,7 +556,8 @@ public class MethodInliner {
     public RuntimeException wrapException(@NotNull Exception originalException, @NotNull MethodNode node, @NotNull String errorSuffix) {
         if (originalException instanceof InlineException) {
             return new InlineException(errorPrefix + ": " + errorSuffix, originalException);
-        } else {
+        }
+        else {
             return new InlineException(errorPrefix + ": " + errorSuffix + "\ncause: " +
                                        getNodeText(node), originalException);
         }

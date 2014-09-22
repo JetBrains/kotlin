@@ -228,7 +228,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             val descriptor: NodeDescriptorImpl = node.getDescriptor()!!
             if (descriptor is DefaultNodeDescriptor) return
 
-            val label = descriptor.getLabel()!!.replaceAll("-[\\w]*-[\\w|\\d]+", "-@packagePartHASH")
+            val label = descriptor.getLabel()!!.replaceAll("Package\\$[\\w]*\\$[0-9a-f]+", "Package\\$@packagePartHASH")
             if (label.endsWith(XDebuggerUIConstants.COLLECTING_DATA_MESSAGE)) return
 
             val curIndent = " ".repeat(indent)

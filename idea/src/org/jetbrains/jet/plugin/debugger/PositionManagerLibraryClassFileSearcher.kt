@@ -109,7 +109,7 @@ private fun findPackagePartFileNamesForElement(elementAt: JetElement): List<Stri
     val file = elementAt.getContainingJetFile()
 
     val packagePartName = PackagePartClassUtils.getPackagePartFqName(file).shortName().asString()
-    val packagePartNameWoHash = packagePartName.substring(0, packagePartName.lastIndexOf("-"))
+    val packagePartNameWoHash = packagePartName.substring(0, packagePartName.lastIndexOf("$"))
 
     val libraryEntry = LibraryUtil.findLibraryEntry(file.getVirtualFile(), project)
     val scope = if (libraryEntry is LibraryOrderEntry){
