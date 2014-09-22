@@ -5,7 +5,7 @@ Compiling files:
 src/class.kt
 End of files
 Cleaning output files:
-out/production/module/test/TestPackage-usage-*.class
+out/production/module/test/TestPackage$usage$*.class
 out/production/module/test/TestPackage.class
 End of files
 Compiling files:

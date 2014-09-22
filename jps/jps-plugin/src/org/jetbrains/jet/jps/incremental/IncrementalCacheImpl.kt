@@ -413,7 +413,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
                     result.add(packagePartClassName)
                 }
                 else {
-                    val previousPackageFqName = JvmClassName.byInternalName(packagePartClassName).getFqNameForClassNameWithoutDollars().parent()
+                    val previousPackageFqName = JvmClassName.byInternalName(packagePartClassName).getPackageFqName()
                     val currentPackageFqName = compiledSourceFilesToFqName[sourceFile]
                     if (currentPackageFqName != null && currentPackageFqName != previousPackageFqName.asString()) {
                         result.add(packagePartClassName)
@@ -432,7 +432,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
             map.processKeysWithExistingMapping { key ->
                 val packagePartClassName = map[key!!]!!
 
-                val packageFqName = JvmClassName.byInternalName(packagePartClassName).getFqNameForClassNameWithoutDollars().parent()
+                val packageFqName = JvmClassName.byInternalName(packagePartClassName).getPackageFqName()
 
                 result.add(packageFqName)
 
