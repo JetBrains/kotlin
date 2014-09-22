@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -39,9 +38,8 @@ public final class BackingFieldAccessTranslator extends AbstractTranslator imple
     private final PropertyDescriptor descriptor;
 
     /*package*/
-    static BackingFieldAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
+    public static BackingFieldAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
                                                     @NotNull TranslationContext context) {
-        assert JetPsiUtil.isBackingFieldReference(expression);
         DeclarationDescriptor referencedProperty = getDescriptorForReferenceExpression(context.bindingContext(), expression);
         assert referencedProperty instanceof PropertyDescriptor;
         return new BackingFieldAccessTranslator((PropertyDescriptor) referencedProperty, context);

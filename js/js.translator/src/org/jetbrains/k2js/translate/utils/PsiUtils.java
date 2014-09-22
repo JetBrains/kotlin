@@ -32,6 +32,19 @@ public final class PsiUtils {
     }
 
     @Nullable
+    public static JetSimpleNameExpression getSimpleName(@NotNull JetExpression expression) {
+        if (expression instanceof JetSimpleNameExpression) {
+            return (JetSimpleNameExpression) expression;
+        }
+
+        if (expression instanceof JetQualifiedExpression) {
+            return getSelectorAsSimpleName((JetQualifiedExpression) expression);
+        }
+
+        return null;
+    }
+
+    @Nullable
     public static JetSimpleNameExpression getSelectorAsSimpleName(@NotNull JetQualifiedExpression expression) {
         JetExpression selectorExpression = getSelector(expression);
         if (!(selectorExpression instanceof JetSimpleNameExpression)) {
