@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.quickfix;
+package org.jetbrains.jet.plugin.quickfix
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetBundle;
+import com.intellij.psi.PsiElement
+import org.jetbrains.jet.plugin.JetBundle
 
-public abstract class CreateFromUsageFixBase extends JetIntentionAction<PsiElement> {
-    public CreateFromUsageFixBase(@NotNull PsiElement element) {
-        super(element);
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return JetBundle.message("create.from.usage.family");
-    }
+public abstract class CreateFromUsageFixBase(element: PsiElement) : JetIntentionAction<PsiElement>(element) {
+    override fun getFamilyName(): String = JetBundle.message("create.from.usage.family")
 }
