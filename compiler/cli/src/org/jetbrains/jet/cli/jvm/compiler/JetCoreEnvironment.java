@@ -53,14 +53,13 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor;
-import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlProcessor;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.CliDeclarationProviderFactoryService;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -209,10 +208,12 @@ public class JetCoreEnvironment {
         JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(
                 configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
 
-        String androidResPath = configuration.get(JVMConfigurationKeys.ANDROID_RES_PATH);
-        String androidManifest = configuration.get(JVMConfigurationKeys.ANDROID_MANIFEST);
-        project.registerService(AndroidUIXmlProcessor.class, new CliAndroidUIXmlProcessor(project, androidResPath, androidManifest));
         project.registerService(VirtualFileFinderFactory.class, new CliVirtualFileFinderFactory(classPath));
+
+        for (ComponentRegistrar registrar : configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
+            registrar.registerProjectComponents(project, configuration);
+
+        }
     }
 
     // made public for Upsource

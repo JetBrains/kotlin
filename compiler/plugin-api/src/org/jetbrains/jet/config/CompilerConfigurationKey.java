@@ -27,6 +27,7 @@ public class CompilerConfigurationKey<T> {
         ideaKey = Key.create(name);
     }
 
+    @NotNull
     public static <T> CompilerConfigurationKey<T> create(@NotNull @NonNls String name) {
         return new CompilerConfigurationKey<T>(name);
     }
