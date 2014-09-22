@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.quickfix.createFromUsage
+package org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
@@ -65,6 +65,7 @@ import java.util.Properties
 import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -539,7 +540,7 @@ public class CreateFunctionFromUsageFix internal (
         else {
             // class selection
             val list = JBList(ownerTypeCandidates.map { ClassCandidate(it, currentFile) })
-            val renderer = QuickFixUtil.ClassCandidateListCellRenderer()
+            val renderer = ClassCandidateListCellRenderer()
             list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
             list.setCellRenderer(renderer)
             val builder = PopupChooserBuilder(list)

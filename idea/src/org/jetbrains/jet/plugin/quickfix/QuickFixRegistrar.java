@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
-import org.jetbrains.jet.plugin.quickfix.createFromUsage.*;
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
