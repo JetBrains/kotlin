@@ -66,4 +66,12 @@ public final class StandardClassesTest extends SingleFileTranslationTest {
     public void testStringBuilder() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testHashSetTypeOfElement() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testHashMapTypeOfElement() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

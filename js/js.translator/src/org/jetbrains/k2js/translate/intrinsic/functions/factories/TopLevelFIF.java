@@ -232,14 +232,20 @@ public final class TopLevelFIF extends CompositeFIF {
         ) {
             JetType keyType = callInfo.getResolvedCall().getTypeArguments().values().iterator().next();
             Name keyTypeName = JsDescriptorUtils.getNameIfStandardType(keyType);
-            String collectionClassName;
-            if (keyTypeName != null &&
-                (NamePredicate.PRIMITIVE_NUMBERS.apply(keyTypeName) ||
-                 keyTypeName.asString().equals("String") ||
-                 PrimitiveType.BOOLEAN.getTypeName().equals(keyTypeName))) {
-                collectionClassName = isSet ? "PrimitiveHashSet" : "PrimitiveHashMap";
+            String collectionClassName = null;
+            if (keyTypeName != null) {
+                if (NamePredicate.PRIMITIVE_NUMBERS.apply(keyTypeName)) {
+                    collectionClassName = isSet ? "PrimitiveNumberHashSet" : "PrimitiveNumberHashMap";
+                }
+                else if (PrimitiveType.BOOLEAN.getTypeName().equals(keyTypeName)) {
+                    collectionClassName = isSet ? "PrimitiveBooleanHashSet" : "PrimitiveBooleanHashMap";
+                }
+                else if (keyTypeName.asString().equals("String")) {
+                    collectionClassName = isSet ? "DefaultPrimitiveHashSet" : "DefaultPrimitiveHashMap";
+                }
             }
-            else {
+
+            if (collectionClassName == null ) {
                 collectionClassName = isSet ? "ComplexHashSet" : "ComplexHashMap";
             }
 

@@ -481,7 +481,7 @@
      * @constructor
      * @template Key, Value
      */
-    Kotlin.PrimitiveHashMap = Kotlin.createClassNow(Kotlin.Map,
+    Kotlin.AbstractPrimitiveHashMap = Kotlin.createClassNow(Kotlin.Map,
         function () {
             this.$size = 0;
             this.map = Object.create(null);
@@ -541,8 +541,11 @@
 
                 return result;
             },
+            getKeySetClass: function () {
+                throw new Error("Kotlin.AbstractPrimitiveHashMap.getKetSetClass is abstract");
+            },
             keySet: function () {
-                var result = new Kotlin.PrimitiveHashSet();
+                var result = new (this.getKeySetClass())();
                 var map = this.map;
                 for (var key in map) {
                     //noinspection JSUnfilteredForInLoop
@@ -556,6 +559,34 @@
             },
             toJSON: function () {
                 return this.map;
+            }
+    });
+
+    Kotlin.DefaultPrimitiveHashMap = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashMap,
+        function () {
+            Kotlin.AbstractPrimitiveHashMap.call(this);
+        }, {
+            getKeySetClass: function () {
+                return Kotlin.DefaultPrimitiveHashSet;
+            }
+    });
+
+    Kotlin.PrimitiveNumberHashMap = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashMap,
+        function () {
+            Kotlin.AbstractPrimitiveHashMap.call(this);
+            this.$keySetClass$ = Kotlin.PrimitiveNumberHashSet;
+        }, {
+            getKeySetClass: function () {
+                return Kotlin.PrimitiveNumberHashSet;
+            }
+    });
+
+    Kotlin.PrimitiveBooleanHashMap = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashMap,
+        function () {
+            Kotlin.AbstractPrimitiveHashMap.call(this);
+        }, {
+            getKeySetClass: function () {
+                return Kotlin.PrimitiveBooleanHashSet;
             }
     });
 
@@ -688,13 +719,13 @@ var SetIterator = Kotlin.createClassNow(Kotlin.Iterator,
  * @extends {Kotlin.Collection.<T>}
  * @template T
  */
-Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
+Kotlin.AbstractPrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
     /** @constructs */
     function () {
         this.$size = 0;
         this.map = {};
     },
-    /** @lends {Kotlin.PrimitiveHashSet.prototype} */
+    /** @lends {Kotlin.AbstractPrimitiveHashSet.prototype} */
     {
         size: function () {
             return this.$size;
@@ -730,8 +761,51 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
             this.$size = 0;
             this.map = {};
         },
+        convertKeyToKeyType: function (key) {
+            throw new Error("Kotlin.AbstractPrimitiveHashSet.convertKeyToKeyType is abstract");
+        },
+        toArray: function () {
+            var result = Object.keys(this.map);
+            for(var i=0; i<result.length; i++) {
+                result[i] = this.convertKeyToKeyType(result[i]);
+            }
+            return result;
+        }
+});
+
+Kotlin.DefaultPrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashSet,
+    /** @constructs */
+    function () {
+        Kotlin.AbstractPrimitiveHashSet.call(this);
+    },
+    {
+    /** @lends {Kotlin.DefaultPrimitiveHashSet.prototype} */
         toArray: function () {
             return Object.keys(this.map);
+        }
+});
+
+Kotlin.PrimitiveNumberHashSet = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashSet,
+    /** @constructs */
+    function () {
+        Kotlin.AbstractPrimitiveHashSet.call(this);
+    },
+    /** @lends {Kotlin.PrimitiveNumberHashSet.prototype} */
+    {
+        convertKeyToKeyType: function (key) {
+            return +key;
+        }
+});
+
+Kotlin.PrimitiveBooleanHashSet = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashSet,
+    /** @constructs */
+    function () {
+        Kotlin.AbstractPrimitiveHashSet.call(this);
+    },
+    /** @lends {Kotlin.PrimitiveBooleanHashSet.prototype} */
+    {
+        convertKeyToKeyType: function (key) {
+            return key == "true";
         }
 });
 
