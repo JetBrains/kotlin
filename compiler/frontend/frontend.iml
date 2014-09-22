@@ -13,5 +13,6 @@
     <orderEntry type="module" module-name="serialization" />
     <orderEntry type="module" module-name="descriptors" exported="" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="plugin-api" exported="" />
   </component>
 </module>
