@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.quickfix
+package org.jetbrains.jet.plugin.quickfix.createFromUsage
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.lookup.LookupElement
@@ -72,6 +72,8 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.jet.lang.resolve.dataClassUtils.getComponentIndex
+import org.jetbrains.jet.plugin.quickfix.JetSingleIntentionActionFactory
+import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"

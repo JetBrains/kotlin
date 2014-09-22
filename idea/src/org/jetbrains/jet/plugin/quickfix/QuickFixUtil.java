@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.presentation.JetClassPresenter;
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.ClassCandidate;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 
 import javax.swing.*;
@@ -200,7 +201,7 @@ public class QuickFixUtil {
         return usedParameters;
     }
 
-    static class ClassCandidateListCellRenderer extends PsiElementListCellRenderer<JetClass> {
+    public static class ClassCandidateListCellRenderer extends PsiElementListCellRenderer<JetClass> {
         private final JetClassPresenter presenter = new JetClassPresenter();
 
         @Override

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.quickfix
+package org.jetbrains.jet.plugin.quickfix.createFromUsage
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.jet.plugin.quickfix.JetIntentionAction
 
 public abstract class CreateFromUsageFixBase(element: PsiElement) : JetIntentionAction<PsiElement>(element) {
     override fun getFamilyName(): String = JetBundle.message("create.from.usage.family")
