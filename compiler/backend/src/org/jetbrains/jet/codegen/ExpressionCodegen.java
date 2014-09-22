@@ -443,7 +443,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             statements.addAll(doWhileStatements);
             statements.add(condition);
 
-            conditionValue = generateBlock(statements, true, continueLabel);
+            conditionValue = generateBlock(statements, false, continueLabel);
         }
         else {
             if (body != null) {
@@ -1277,10 +1277,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitBlockExpression(@NotNull JetBlockExpression expression, StackValue receiver) {
-        List<JetElement> statements = expression.getStatements();
-        JetType unitType = KotlinBuiltIns.getInstance().getUnitType();
-        boolean lastStatementIsExpression = !unitType.equals(bindingContext.get(EXPRESSION_TYPE, expression));
-        return generateBlock(statements, lastStatementIsExpression);
+        return generateBlock(expression, false);
     }
 
     @Override
@@ -1413,11 +1410,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private StackValue generateBlock(List<JetElement> statements, boolean lastStatementIsExpression) {
-        return generateBlock(statements, lastStatementIsExpression, null);
+    /* package */ StackValue generateBlock(@NotNull JetBlockExpression expression, boolean isStatement) {
+        return generateBlock(expression.getStatements(), isStatement, null);
     }
 
-    private StackValue generateBlock(List<JetElement> statements, boolean lastStatementIsExpression, Label labelBeforeLastExpression) {
+    private StackValue generateBlock(List<JetElement> statements, boolean isStatement, Label labelBeforeLastExpression) {
         Label blockEnd = new Label();
 
         List<Function<StackValue, Void>> leaveTasks = Lists.newArrayList();
@@ -1449,7 +1446,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 generateLocalFunctionDeclaration((JetNamedFunction) statement, leaveTasks);
             }
 
-            boolean isExpression = !iterator.hasNext() && lastStatementIsExpression;
+            boolean isExpression = !iterator.hasNext() && !isStatement;
             if (isExpression && labelBeforeLastExpression != null) {
                 v.mark(labelBeforeLastExpression);
             }
