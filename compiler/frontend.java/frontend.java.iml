@@ -15,7 +15,7 @@
     <orderEntry type="module" module-name="descriptor.loader.java" exported="" />
     <orderEntry type="module" module-name="util.runtime" />
     <orderEntry type="module" module-name="util" />
-    <orderEntry type="module" module-name="frontend.android" />
+    <orderEntry type="module" module-name="android-compiler-plugin" />
   </component>
 </module>
 
