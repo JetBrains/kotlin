@@ -161,6 +161,9 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                         val args = context.getArgumentsForEval4j(compiledData.parameters.getParameterNames(), Type.getArgumentTypes(desc))
                         return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
                             override fun visitEnd() {
+                                val breakpoints = virtualMachine.eventRequestManager().breakpointRequests()
+                                breakpoints?.forEach { it.disable() }
+
                                 resultValue = interpreterLoop(
                                         this,
                                         makeInitialFrame(this, args),
@@ -169,6 +172,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                                                 context.getSuspendContext().getThread()?.getThreadReference()!!,
                                                 context.getSuspendContext().getInvokePolicy())
                                 )
+
+                                breakpoints?.forEach { it.enable() }
                             }
                         }
                     }
