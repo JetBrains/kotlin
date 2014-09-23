@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.refactoring
 
 import java.util.HashSet
+import java.util.Collections
 
 public abstract class JetNameValidator {
     /**
@@ -41,10 +42,13 @@ public object EmptyValidator : JetNameValidator() {
     override fun validateInner(name: String): Boolean = true
 }
 
-public class CollectingValidator: JetNameValidator() {
-    private val suggestedSet = HashSet<String>()
+public open class CollectingValidator(
+        existingNames: Collection<String> = Collections.emptySet(),
+        val filter: (String) -> Boolean = { true }
+): JetNameValidator() {
+    private val suggestedSet = HashSet(existingNames)
 
-    override fun validateInner(name: String): Boolean = !suggestedSet.contains(name)
+    override fun validateInner(name: String): Boolean = name !in suggestedSet && filter(name)
 
     override fun validateName(name: String): String {
         val validatedName = super.validateName(name)
@@ -52,3 +56,6 @@ public class CollectingValidator: JetNameValidator() {
         return validatedName
     }
 }
+
+// TODO: To be used from Java
+public class SimpleCollectingValidator : CollectingValidator()

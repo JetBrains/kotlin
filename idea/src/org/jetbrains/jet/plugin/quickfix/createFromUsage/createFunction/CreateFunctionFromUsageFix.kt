@@ -67,6 +67,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
+import org.jetbrains.jet.plugin.refactoring.CollectingValidator
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -244,9 +245,8 @@ private class ParameterNameExpression(
         }
 
         // ensure there are no conflicts
-        return names.map { name ->
-            LookupElementBuilder.create(getNextAvailableName(name, parameterNames, null))
-        }.copyToArray()
+        val validator = CollectingValidator(parameterNames)
+        return names.map { LookupElementBuilder.create(validator.validateName(it)) }.copyToArray()
     }
 }
 
@@ -316,24 +316,6 @@ private class TypeParameterListExpression(private val typeParameterNamesFromRece
 
     // do not offer the user any choices
     override fun calculateLookupItems(context: ExpressionContext?) = array<LookupElement>()
-}
-
-/**
- * Returns the given <code>name</code>, appended with a number if it is one of the <code>existingNames</code> or already exists in
- * <code>scope</code>. For example, given <code>"foo"</code>, returns the next non-conflicting name in the list <code>"foo"</code>,
- * <code>"foo1"</code>, <code>"foo2"</code>, etc.
- */
-private fun getNextAvailableName(name: String, existingNames: Collection<String>, scope: JetScope?): String {
-    return if (isConflictingName(name, existingNames, scope)) {
-        "$name${stream(1) { it + 1 } first { !isConflictingName("$name$it", existingNames, scope) }}"
-    }
-    else {
-        name
-    }
-}
-
-private fun isConflictingName(name: String, existingNames: Collection<String>, scope: JetScope?): Boolean {
-    return name in existingNames || scope?.getClassifier(Name.identifier(name)) != null
 }
 
 public class CreateFunctionFromUsageFix internal (
@@ -552,10 +534,8 @@ public class CreateFunctionFromUsageFix internal (
             returnType.typeCandidates!!.stream().flatMapTo(allTypeParametersNotInScope) { it.typeParameters.stream() }
         }
 
-        val typeParameterNames = ArrayList<String>()
-        allTypeParametersNotInScope.mapTo(typeParameterNames) { typeParameter ->
-            getNextAvailableName(typeParameter.getName().asString(), typeParameterNames, scope)
-        }
+        val validator = CollectingValidator { scope.getClassifier(Name.identifier(it)) == null }
+        val typeParameterNames = allTypeParametersNotInScope.map { validator.validateName(it.getName().asString()) }
 
         val typeParameterNameMap = HashMap<TypeParameterDescriptor, String>()
         for ((key, value) in allTypeParametersNotInScope.zip(typeParameterNames)) {
