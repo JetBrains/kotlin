@@ -21,11 +21,10 @@ import java.io.File
 import java.io.FileInputStream
 import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor.NoAndroidManifestFound
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
-public class CliAndroidResourceManager(project: Project, searchPath: String?, private val manifestPath: String?) : AndroidResourceManagerBase(project, searchPath) {
+public class CliAndroidResourceManager(project: Project, searchPath: String?, private val manifestPath: String?) : org.jetbrains.jet.lang.resolve.android.AndroidResourceManagerBase(project, searchPath) {
 
     val saxParser: SAXParser = initSAX()
 
@@ -34,7 +33,7 @@ public class CliAndroidResourceManager(project: Project, searchPath: String?, pr
         saxFactory?.setNamespaceAware(true)
         return saxFactory!!.newSAXParser()
     }
-    override fun readManifest(): AndroidManifest {
+    override fun readManifest(): org.jetbrains.jet.lang.resolve.android.AndroidManifest {
         try {
             val manifestXml = File(manifestPath!!)
             var _package: String = ""
@@ -49,10 +48,10 @@ public class CliAndroidResourceManager(project: Project, searchPath: String?, pr
             catch (e: Exception) {
                 throw e
             }
-            return AndroidManifest(_package)
+            return org.jetbrains.jet.lang.resolve.android.AndroidManifest(_package)
         }
         catch (e: Exception) {
-            throw NoAndroidManifestFound()
+            throw org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor.NoAndroidManifestFound()
         }
     }
 }

@@ -22,5 +22,6 @@
     <orderEntry type="module" module-name="preloader" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="frontend.android" scope="TEST" />
+    <orderEntry type="module" module-name="android-compiler-plugin" />
   </component>
 </module>

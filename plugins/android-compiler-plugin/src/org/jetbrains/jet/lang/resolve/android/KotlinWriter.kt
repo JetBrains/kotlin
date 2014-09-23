@@ -22,7 +22,7 @@ trait KotlinWriter {
 
 class KotlinStringWriter : KotlinWriter {
 
-    private val ctx = Context()
+    private val ctx = org.jetbrains.jet.lang.resolve.android.Context()
     private val imports = ctx.fork()
     private val body = ctx.fork()
 
