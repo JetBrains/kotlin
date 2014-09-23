@@ -31,6 +31,7 @@ import org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken
 
 
 object CompareToBOIF : BinaryOperationIntrinsicFactory {
+    val PRIMITIVE_COMPARE_TO = pattern("Int|Short|Byte|Double|Float|Char|String.compareTo")
 
     private object CompareToIntrinsic : AbstractBinaryOperationIntrinsic() {
         override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
@@ -43,7 +44,7 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
         override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             val compareTo = JsAstUtils.compareTo(left, right)
-            return JsBinaryOperation(operator, compareTo, context.program().getNumberLiteral(0))
+            return JsBinaryOperation(operator, compareTo, JsNumberLiteral.ZERO)
         }
     }
 
@@ -52,7 +53,7 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
     override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
         if (JsDescriptorUtils.isBuiltin(descriptor))
             when {
-                pattern("Int|Short|Byte|Double|Float|Char|String|Long.compareTo").apply(descriptor) ->
+                PRIMITIVE_COMPARE_TO.apply(descriptor) ->
                     return CompareToIntrinsic
                 else ->
                     return CompareToFunctionIntrinsic

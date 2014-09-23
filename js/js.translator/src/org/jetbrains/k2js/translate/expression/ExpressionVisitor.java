@@ -77,6 +77,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (value instanceof Integer || value instanceof Short || value instanceof Byte) {
             return context.program().getNumberLiteral(((Number) value).intValue());
         }
+        else if (value instanceof Long) {
+            return JsAstUtils.newLong((Long) value, context);
+        }
         else if (value instanceof Number) {
             return context.program().getNumberLiteral(((Number) value).doubleValue());
         }

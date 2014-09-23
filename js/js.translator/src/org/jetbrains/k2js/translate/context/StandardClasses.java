@@ -98,7 +98,13 @@ public final class StandardClasses {
         standardClasses.declare().forFQ("kotlin.IntRange").kotlinClass("NumberRange")
                 .methods("iterator", "contains").properties("start", "end", "increment");
 
+        standardClasses.declare().forFQ("kotlin.LongRange").kotlinClass("LongRange")
+                .methods("iterator", "contains").properties("start", "end", "increment");
+
         standardClasses.declare().forFQ("kotlin.IntProgression").kotlinClass("NumberProgression")
+                .methods("iterator", "contains").properties("start", "end", "increment");
+
+        standardClasses.declare().forFQ("kotlin.LongProgression").kotlinClass("LongProgression")
                 .methods("iterator", "contains").properties("start", "end", "increment");
 
         standardClasses.declare().forFQ("kotlin.Enum").kotlinClass("Enum");

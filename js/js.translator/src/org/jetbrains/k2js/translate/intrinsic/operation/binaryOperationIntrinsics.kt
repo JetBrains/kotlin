@@ -38,7 +38,7 @@ public class BinaryOperationIntrinsics {
 
     private val intrinsicCache = THashMap<Pair<JetToken, FunctionDescriptor>, BinaryOperationIntrinsic>()
 
-    private val factories = listOf(EqualsBOIF, CompareToBOIF)
+    private val factories = listOf(LongCompareToBOIF, EqualsBOIF, CompareToBOIF)
 
     public fun getIntrinsic(expression: JetBinaryExpression, context: TranslationContext): BinaryOperationIntrinsic {
         val token = getOperationToken(expression)

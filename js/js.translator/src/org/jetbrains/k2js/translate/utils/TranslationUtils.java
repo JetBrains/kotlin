@@ -28,8 +28,10 @@ import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.translate.context.TemporaryConstVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -385,6 +387,10 @@ public final class TranslationUtils {
         CallableDescriptor operationDescriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
 
         if (operationDescriptor == null || !(operationDescriptor instanceof FunctionDescriptor)) return true;
+
+        JetType returnType = operationDescriptor.getReturnType();
+        if (returnType != null && returnType.equals(KotlinBuiltIns.getInstance().getLongType())) return false;
+
         if (context.intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) operationDescriptor).exists()) return true;
 
         return false;
@@ -421,6 +427,13 @@ public final class TranslationUtils {
         }
 
         return ensureNotNull;
+    }
+
+    @NotNull
+    public static String getStableMangledNameForDescriptor(@NotNull ClassDescriptor descriptor, @NotNull String functionName) {
+        Collection<FunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier(functionName));
+        assert functions.size() == 1 : "Can't select a single function: " + functionName + " in " + descriptor;
+        return getSuggestedName(functions.iterator().next());
     }
 
     @NotNull

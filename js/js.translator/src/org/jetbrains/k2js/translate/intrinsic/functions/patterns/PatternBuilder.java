@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.Arrays;
@@ -43,25 +44,25 @@ public final class PatternBuilder {
     @NotNull
     public static DescriptorPredicate pattern(@NotNull NamePredicate checker, @NotNull String stringWithPattern) {
         List<NamePredicate> checkers = Lists.newArrayList(checker);
-        checkers.addAll(parseStringAsCheckerList(stringWithPattern));
-        return pattern(checkers);
+        checkers.addAll(parseFqNamesFromString(stringWithPattern));
+        return pattern(checkers, parseArgumentsFromString(stringWithPattern));
     }
 
     @NotNull
     public static DescriptorPredicate pattern(@NotNull String stringWithPattern, @NotNull NamePredicate checker) {
-        List<NamePredicate> checkers = Lists.newArrayList(parseStringAsCheckerList(stringWithPattern));
+        List<NamePredicate> checkers = Lists.newArrayList(parseFqNamesFromString(stringWithPattern));
         checkers.add(checker);
         return pattern(checkers);
     }
 
     @NotNull
-    public static DescriptorPredicate pattern(@NotNull String string) {
-        List<NamePredicate> checkers = parseStringAsCheckerList(string);
-        return pattern(checkers);
+    public static DescriptorPredicate pattern(@NotNull String stringWithPattern) {
+        return pattern(parseFqNamesFromString(stringWithPattern), parseArgumentsFromString(stringWithPattern));
     }
 
     @NotNull
-    private static List<NamePredicate> parseStringAsCheckerList(@NotNull String stringWithPattern) {
+    private static List<NamePredicate> parseFqNamesFromString(@NotNull String stringWithPattern) {
+        stringWithPattern = getNamePatternFromString(stringWithPattern);
         String[] subPatterns = stringWithPattern.split("\\.");
         List<NamePredicate> checkers = Lists.newArrayList();
         for (String subPattern : subPatterns) {
@@ -71,8 +72,55 @@ public final class PatternBuilder {
         return checkers;
     }
 
+    @Nullable
+    private static List<NamePredicate> parseArgumentsFromString(@NotNull String stringWithPattern) {
+        stringWithPattern = getArgumentsPatternFromString(stringWithPattern);
+        if (stringWithPattern == null) return null;
+
+        List<NamePredicate> checkers = Lists.newArrayList();
+        if (stringWithPattern.isEmpty()) {
+            return checkers;
+        }
+
+        String[] subPatterns = stringWithPattern.split("\\,");
+        for (String subPattern : subPatterns) {
+            String[] validNames = subPattern.split("\\|");
+            checkers.add(new NamePredicate(validNames));
+        }
+        return checkers;
+    }
+
+    @NotNull
+    private static String getNamePatternFromString(@NotNull String stringWithPattern) {
+        int left = stringWithPattern.indexOf("(");
+        if (left < 0) {
+            return stringWithPattern;
+        }
+        else {
+            return stringWithPattern.substring(0, left);
+        }
+    }
+
+    @Nullable
+    private static String getArgumentsPatternFromString(@NotNull String stringWithPattern) {
+        int left = stringWithPattern.indexOf("(");
+        if (left < 0) {
+            return null;
+        }
+        else {
+            int right = stringWithPattern.indexOf(")");
+            assert right == stringWithPattern.length() - 1 : "expected ')' at the end: " + stringWithPattern;
+            return stringWithPattern.substring(left + 1, right);
+        }
+    }
+
     @NotNull
     private static DescriptorPredicate pattern(@NotNull List<NamePredicate> checkers) {
+        return pattern(checkers, null);
+    }
+
+    @NotNull
+    private static DescriptorPredicate pattern(@NotNull List<NamePredicate> checkers, @Nullable List<NamePredicate> arguments) {
         assert !checkers.isEmpty();
         final List<NamePredicate> checkersWithPrefixChecker = Lists.newArrayList();
         if (!checkers.get(0).apply(KOTLIN_NAME)) {
@@ -82,6 +130,8 @@ public final class PatternBuilder {
         checkersWithPrefixChecker.addAll(checkers);
 
         assert checkersWithPrefixChecker.size() > 1;
+
+        final List<NamePredicate> argumentCheckers = arguments != null ? Lists.newArrayList(arguments) : null;
 
         return new DescriptorPredicate() {
             @Override
@@ -98,10 +148,25 @@ public final class PatternBuilder {
 
             private boolean doApply(@NotNull FunctionDescriptor descriptor) {
                 List<Name> nameParts = DescriptorUtils.getFqName(descriptor).pathSegments();
-                if (nameParts.size() != checkersWithPrefixChecker.size()) {
-                    return false;
+                if (nameParts.size() != checkersWithPrefixChecker.size()) return false;
+
+                return allNamePartsValid(nameParts) && checkAllArgumentsValidIfNeeded(descriptor);
+            }
+
+            private boolean checkAllArgumentsValidIfNeeded(@NotNull FunctionDescriptor descriptor) {
+                if (argumentCheckers != null) {
+                    List<ValueParameterDescriptor> valueParameterDescriptors = descriptor.getValueParameters();
+                    if (valueParameterDescriptors.size() != argumentCheckers.size()) {
+                        return false;
+                    }
+                    for (int i = 0; i < valueParameterDescriptors.size(); i++) {
+                        ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
+                        Name name = JsDescriptorUtils.getNameIfStandardType(valueParameterDescriptor.getType());
+                        NamePredicate namePredicate = argumentCheckers.get(i);
+                        if (!namePredicate.apply(name)) return false;
+                    }
                 }
-                return allNamePartsValid(nameParts);
+                return true;
             }
 
             private boolean allNamePartsValid(@NotNull List<Name> nameParts) {

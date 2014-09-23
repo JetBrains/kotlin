@@ -5,6 +5,8 @@
 package com.google.dart.compiler.backend.js.ast;
 
 public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
+    public static final JsIntLiteral ZERO = new JsIntLiteral(0);
+
     public static final class JsDoubleLiteral extends JsNumberLiteral {
         public final double value;
 

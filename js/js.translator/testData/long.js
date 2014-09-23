@@ -826,4 +826,15 @@
     Kotlin.Long.prototype.valueOf = function() {
         return this.toNumber();
     };
+
+    Kotlin.Long.prototype.plus = function() {
+        return this;
+    };
+
+    Kotlin.Long.prototype.minus = Kotlin.Long.prototype.negate;
+    Kotlin.Long.prototype.inv = Kotlin.Long.prototype.not;
+
+    Kotlin.Long.prototype.rangeTo = function (other) {
+        return new Kotlin.LongRange(this, other);
+    };
 }(Kotlin));

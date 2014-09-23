@@ -40,6 +40,7 @@ public final class FunctionIntrinsics {
     }
 
     private void registerFactories() {
+        register(LongOperationFIF.INSTANCE$);
         register(PrimitiveUnaryOperationFIF.INSTANCE);
         register(PrimitiveBinaryOperationFIF.INSTANCE);
         register(StringOperationFIF.INSTANCE);

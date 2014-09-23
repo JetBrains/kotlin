@@ -85,7 +85,7 @@
         return "[" + a.join(", ") + "]";
     };
 
-    Kotlin.compareTo = function(a, b) {
+    Kotlin.compareTo = function (a, b) {
         var type = typeof a;
         if (type == "number" || type == "string") {
             return a < b ? -1 : a > b ? 1 : 0;
@@ -93,20 +93,44 @@
         return a.compareTo_za3rmp$(b);
     };
 
-    Kotlin.primitiveCompareTo = function(a, b) {
+    Kotlin.primitiveCompareTo = function (a, b) {
         return a < b ? -1 : a > b ? 1 : 0;
     };
 
     Kotlin.isNumber = function (a) {
-        return typeof a == "number";
+        return typeof a == "number" || a instanceof Kotlin.Long;
     };
 
-    Kotlin.toShort = function(a) {
+    Kotlin.toInt = function (a) {
+        return a | 0;
+    };
+
+    Kotlin.toShort = function (a) {
         return (a & 0xFFFF) << 16 >> 16;
     };
 
-    Kotlin.toByte = function(a) {
+    Kotlin.toByte = function (a) {
         return (a & 0xFF) << 24 >> 24;
+    };
+
+    Kotlin.numberToLong = function (a) {
+        return a instanceof Kotlin.Long ? a : Kotlin.Long.fromNumber(a);
+    };
+
+    Kotlin.numberToInt = function (a) {
+        return a instanceof Kotlin.Long ? a.toInt() : (a | 0);
+    };
+
+    Kotlin.numberToShort = function (a) {
+        return Kotlin.toShort(Kotlin.numberToInt(a));
+    };
+
+    Kotlin.numberToByte = function (a) {
+        return Kotlin.toByte(Kotlin.numberToInt(a));
+    };
+
+    Kotlin.numberToDouble = function (a) {
+        return +a;
     };
 
     Kotlin.intUpto = function (from, to) {
@@ -530,6 +554,15 @@
             }
     });
 
+    function isSameNotNullRanges(other) {
+        var classObject = this.constructor;
+        if (this instanceof classObject && other instanceof classObject) {
+            return this.isEmpty() && other.isEmpty() ||
+                (this.start === other.start && this.end === other.end && this.increment === other.increment);
+        }
+        return false;
+    }
+
     Kotlin.NumberRange = Kotlin.createClassNow(null,
         function (start, end) {
             this.start = start;
@@ -545,11 +578,7 @@
             isEmpty: function () {
                 return this.start > this.end;
             },
-            equals_za3rmp$: function(other) {
-                if (other == null)
-                    return false;
-                return this.start === other.start && this.end === other.end && this.increment === other.increment;
-            }
+            equals_za3rmp$: isSameNotNullRanges
     });
 
     Kotlin.NumberProgression = Kotlin.createClassNow(null,
@@ -565,6 +594,58 @@
             return this.increment > 0 ? this.start > this.end : this.start < this.end;
         }
     });
+
+    Kotlin.LongRangeIterator = Kotlin.createClassNow(Kotlin.Iterator,
+         function (start, end, increment) {
+             this.start = start;
+             this.end = end;
+             this.increment = increment;
+             this.i = start;
+         }, {
+             next: function () {
+                 var value = this.i;
+                 this.i = this.i.add(this.increment);
+                 return value;
+             },
+             hasNext: function () {
+                 if (this.increment.isNegative())
+                     return this.i.compare(this.end) >= 0;
+                 else
+                     return this.i.compare(this.end) <= 0;
+             }
+         });
+
+    Kotlin.LongRange = Kotlin.createClassNow(null,
+       function (start, end) {
+           this.start = start;
+           this.end = end;
+           this.increment = Kotlin.Long.ONE;
+       }, {
+           contains: function (number) {
+               return this.start.compare(number) <= 0 && number.compare(this.end) <= 0;
+           },
+           iterator: function () {
+               return new Kotlin.LongRangeIterator(this.start, this.end, this.increment);
+           },
+           isEmpty: function () {
+               return this.start.compare(this.end) > 0;
+           },
+           equals_za3rmp$: isSameNotNullRanges
+       });
+
+    Kotlin.LongProgression = Kotlin.createClassNow(null,
+         function (start, end, increment) {
+             this.start = start;
+             this.end = end;
+             this.increment = increment;
+         }, {
+             iterator: function () {
+                 return new Kotlin.LongRangeIterator(this.start, this.end, this.increment);
+             },
+             isEmpty: function() {
+                 return this.increment.isNegative() ? this.start.compare(this.end) < 0 : this.start.compare(this.end) > 0;
+             }
+         });
 
     /**
      * @interface
@@ -700,6 +781,12 @@
     Kotlin.booleanArrayOfSize = function (size) {
         return Kotlin.arrayFromFun(size, function () {
             return false;
+        });
+    };
+
+    Kotlin.longArrayOfSize = function (size) {
+        return Kotlin.arrayFromFun(size, function () {
+            return Kotlin.Long.ZERO;
         });
     };
 

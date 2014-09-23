@@ -33,8 +33,19 @@ import org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken
 import org.jetbrains.jet.lexer.JetToken
 import org.jetbrains.jet.lexer.JetTokens
 import com.google.common.collect.ImmutableSet
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
+
+    val LONG_EQUALS_ANY = pattern("Long.equals")
+
+    private object LONG_EQUALS_ANY_INTRINSIC : AbstractBinaryOperationIntrinsic() {
+        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+            val isNegated = getOperationToken(expression) == JetTokens.EXCLEQ
+            val invokeEquals = JsAstUtils.equalsForObject(left, right)
+            return if (isNegated) JsAstUtils.not(invokeEquals) else invokeEquals
+        }
+    }
 
     private object EqualsIntrinsic : AbstractBinaryOperationIntrinsic() {
         override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
@@ -54,7 +65,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             val left = expression.getLeft()
             assert(left != null) { "No left-hand side: " + expression.getText() }
             val typeName = JsDescriptorUtils.getNameIfStandardType(left!!, context)
-            return typeName != null && NamePredicate.PRIMITIVE_NUMBERS.apply(typeName)
+            return typeName != null && NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS.apply(typeName)
         }
     }
 
@@ -62,9 +73,8 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
     override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
         if (JsDescriptorUtils.isBuiltin(descriptor) || TopLevelFIF.EQUALS_IN_ANY.apply(descriptor)) {
-            return EqualsIntrinsic
+            return if (LONG_EQUALS_ANY.apply(descriptor)) LONG_EQUALS_ANY_INTRINSIC else EqualsIntrinsic
         }
         return null
     }
 }
-

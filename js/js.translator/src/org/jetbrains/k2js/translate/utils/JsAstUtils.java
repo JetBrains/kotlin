@@ -119,33 +119,103 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression toInt32(@NotNull JsExpression expression, @NotNull TranslationContext context) {
-        return new JsBinaryOperation(JsBinaryOperator.BIT_OR, expression, context.program().getNumberLiteral(0));
+    public static JsInvocation invokeKotlinFunction(@NotNull String name, @NotNull JsExpression... argument) {
+        return new JsInvocation(new JsNameRef(name, Namer.KOTLIN_OBJECT_REF), argument);
+    }
+
+    @NotNull
+    public static JsInvocation invokeMethod(@NotNull JsExpression thisObject, @NotNull String name, @NotNull JsExpression... arguments) {
+        return new JsInvocation(new JsNameRef(name, thisObject), arguments);
+    }
+
+    @NotNull
+    public static JsExpression toInt32(@NotNull JsExpression expression) {
+        return new JsBinaryOperation(JsBinaryOperator.BIT_OR, expression, JsNumberLiteral.ZERO);
     }
 
     @NotNull
     public static JsExpression toShort(@NotNull JsExpression expression) {
-        return new JsInvocation(new JsNameRef(OperatorConventions.SHORT.getIdentifier(), Namer.KOTLIN_OBJECT_REF), expression);
+        return invokeKotlinFunction(OperatorConventions.SHORT.getIdentifier(), expression);
     }
 
     @NotNull
     public static JsExpression toByte(@NotNull JsExpression expression) {
-        return new JsInvocation(new JsNameRef(OperatorConventions.BYTE.getIdentifier(), Namer.KOTLIN_OBJECT_REF), expression);
+        return invokeKotlinFunction(OperatorConventions.BYTE.getIdentifier(), expression);
+    }
+
+    @NotNull
+    public static JsExpression toLong(@NotNull JsExpression expression) {
+        return invokeKotlinFunction(OperatorConventions.LONG.getIdentifier(), expression);
     }
 
     @NotNull
     public static JsExpression compareTo(@NotNull JsExpression left, @NotNull JsExpression right) {
-        return new JsInvocation(new JsNameRef(OperatorConventions.COMPARE_TO.getIdentifier(), Namer.KOTLIN_OBJECT_REF), left, right);
+        return invokeKotlinFunction(OperatorConventions.COMPARE_TO.getIdentifier(), left, right);
     }
 
     @NotNull
     public static JsExpression primitiveCompareTo(@NotNull JsExpression left, @NotNull JsExpression right) {
-        return new JsInvocation(new JsNameRef("primitiveCompareTo", Namer.KOTLIN_OBJECT_REF), left, right);
+        return invokeKotlinFunction(Namer.PRIMITIVE_COMPARE_TO, left, right);
     }
 
     @NotNull
     public static JsExpression isNumber(@NotNull JsExpression expression) {
-        return new JsInvocation(new JsNameRef("isNumber", Namer.KOTLIN_OBJECT_REF), expression);
+        return invokeKotlinFunction(Namer.IS_NUMBER, expression);
+    }
+
+    @NotNull
+    private static JsExpression rangeTo(@NotNull String rangeClassName, @NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
+        JsNameRef expr = new JsNameRef(rangeClassName, Namer.KOTLIN_NAME);
+        JsNew numberRangeConstructorInvocation = new JsNew(expr);
+        setArguments(numberRangeConstructorInvocation, rangeStart, rangeEnd);
+        return numberRangeConstructorInvocation;
+    }
+
+    @NotNull
+    public static JsExpression numberRangeTo(@NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
+        return rangeTo(Namer.NUMBER_RANGE, rangeStart, rangeEnd);
+    }
+
+    @NotNull
+    public static final JsNameRef kotlinLongNameRef = new JsNameRef("Long", Namer.KOTLIN_OBJECT_REF);
+
+    @NotNull
+    public static JsExpression isLong(@NotNull JsExpression expression) {
+        return instanceOf(expression, kotlinLongNameRef);
+    }
+
+    public static JsExpression newLong(long value, @NotNull TranslationContext context) {
+        if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
+            int low = (int) value;
+            int high = (int) (value >> 32);
+            List<JsExpression> args = new SmartList<JsExpression>();
+            args.add(context.program().getNumberLiteral(low));
+            args.add(context.program().getNumberLiteral(high));
+            return new JsNew(kotlinLongNameRef, args);
+        }
+        else {
+            return longFromInt(context.program().getNumberLiteral((int) value));
+        }
+    }
+
+    @NotNull
+    public static JsExpression longFromInt(@NotNull JsExpression expression) {
+        return invokeMethod(kotlinLongNameRef, Namer.LONG_FROM_INT, expression);
+    }
+
+    @NotNull
+    public static JsExpression longFromNumber(@NotNull JsExpression expression) {
+        return invokeMethod(kotlinLongNameRef, Namer.LONG_FROM_NUMBER, expression);
+    }
+
+    @NotNull
+    public static JsExpression equalsForObject(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return invokeMethod(left, Namer.EQUALS_METHOD_NAME, right);
+    }
+
+    @NotNull
+    public static JsExpression compareForObject(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return invokeMethod(left, Namer.COMPARE_TO_METHOD_NAME, right);
     }
 
     @NotNull
@@ -161,6 +231,11 @@ public final class JsAstUtils {
     @NotNull
     public static JsBinaryOperation or(@NotNull JsExpression op1, @NotNull JsExpression op2) {
         return new JsBinaryOperation(JsBinaryOperator.OR, op1, op2);
+    }
+
+    @NotNull
+    public static JsBinaryOperation instanceOf(@NotNull JsExpression op1, @NotNull JsExpression op2) {
+        return new JsBinaryOperation(JsBinaryOperator.INSTANCEOF, op1, op2);
     }
 
     public static void setQualifier(@NotNull JsExpression selector, @Nullable JsExpression receiver) {
@@ -230,6 +305,16 @@ public final class JsAstUtils {
     @NotNull
     public static JsBinaryOperation mul(@NotNull JsExpression left, @NotNull JsExpression right) {
         return new JsBinaryOperation(JsBinaryOperator.MUL, left, right);
+    }
+
+    @NotNull
+    public static JsBinaryOperation div(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsBinaryOperation(JsBinaryOperator.DIV, left, right);
+    }
+
+    @NotNull
+    public static JsBinaryOperation mod(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsBinaryOperation(JsBinaryOperator.MOD, left, right);
     }
 
     @NotNull
