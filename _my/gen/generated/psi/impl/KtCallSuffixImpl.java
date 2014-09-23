@@ -36,6 +36,12 @@ public class KtCallSuffixImpl extends ASTWrapperPsiElement implements KtCallSuff
 
   @Override
   @Nullable
+  public KtNull getNull() {
+    return findChildByClass(KtNull.class);
+  }
+
+  @Override
+  @Nullable
   public KtArrayAccess getArrayAccess() {
     return findChildByClass(KtArrayAccess.class);
   }
@@ -128,6 +134,12 @@ public class KtCallSuffixImpl extends ASTWrapperPsiElement implements KtCallSuff
   @Nullable
   public KtParenthesizedExpression getParenthesizedExpression() {
     return findChildByClass(KtParenthesizedExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public KtPlusPlusAndOthersExpression getPlusPlusAndOthersExpression() {
+    return findChildByClass(KtPlusPlusAndOthersExpression.class);
   }
 
   @Override

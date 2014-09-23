@@ -13,6 +13,9 @@ public interface KtAdditiveExpressionPlus extends PsiElement {
   @NotNull
   List<KtIntegerConstant> getIntegerConstantList();
 
+  @NotNull
+  List<KtNull> getNullList();
+
   @Nullable
   KtAdditiveExpressionPlus getAdditiveExpressionPlus();
 
@@ -72,6 +75,9 @@ public interface KtAdditiveExpressionPlus extends PsiElement {
 
   @NotNull
   List<KtParenthesizedExpression> getParenthesizedExpressionList();
+
+  @NotNull
+  List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList();
 
   @NotNull
   List<KtPrefixUnaryOperation> getPrefixUnaryOperationList();

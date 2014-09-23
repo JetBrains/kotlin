@@ -13,7 +13,10 @@ public interface KtCatchBlock extends PsiElement {
   @NotNull
   KtBlock getBlock();
 
-  @NotNull
-  KtUserType getUserType();
+  @Nullable
+  KtSimpleUserType getSimpleUserType();
+
+  @Nullable
+  KtSimpleUserTypeAdd getSimpleUserTypeAdd();
 
 }

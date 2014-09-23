@@ -24,8 +24,26 @@ public class KtTypeImpl extends ASTWrapperPsiElement implements KtType {
 
   @Override
   @NotNull
-  public List<KtAnnotationWithShort> getAnnotationWithShortList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAnnotationWithShort.class);
+  public List<KtAnnotation> getAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAnnotation.class);
+  }
+
+  @Override
+  @Nullable
+  public KtFunctionType getFunctionType() {
+    return findChildByClass(KtFunctionType.class);
+  }
+
+  @Override
+  @Nullable
+  public KtFunctionTypeReceiverReference getFunctionTypeReceiverReference() {
+    return findChildByClass(KtFunctionTypeReceiverReference.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtLeftFunctionType> getLeftFunctionTypeList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLeftFunctionType.class);
   }
 
   @Override
@@ -36,14 +54,20 @@ public class KtTypeImpl extends ASTWrapperPsiElement implements KtType {
 
   @Override
   @Nullable
-  public KtParameterModifiersTypeExt getParameterModifiersTypeExt() {
-    return findChildByClass(KtParameterModifiersTypeExt.class);
+  public KtSelfType getSelfType() {
+    return findChildByClass(KtSelfType.class);
   }
 
   @Override
   @Nullable
-  public KtType getType() {
-    return findChildByClass(KtType.class);
+  public KtSimpleUserType getSimpleUserType() {
+    return findChildByClass(KtSimpleUserType.class);
+  }
+
+  @Override
+  @Nullable
+  public KtSimpleUserTypeAdd getSimpleUserTypeAdd() {
+    return findChildByClass(KtSimpleUserTypeAdd.class);
   }
 
 }

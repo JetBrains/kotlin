@@ -36,6 +36,12 @@ public class KtForLoopImpl extends ASTWrapperPsiElement implements KtForLoop {
 
   @Override
   @NotNull
+  public List<KtNull> getNullList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtNull.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtAdditiveExpressionPlus> getAdditiveExpressionPlusList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAdditiveExpressionPlus.class);
   }
@@ -114,8 +120,8 @@ public class KtForLoopImpl extends ASTWrapperPsiElement implements KtForLoop {
 
   @Override
   @NotNull
-  public List<KtEqualityOperation> getEqualityOperationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtEqualityOperation.class);
+  public List<KtEqualityComparisonExpression> getEqualityComparisonExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtEqualityComparisonExpression.class);
   }
 
   @Override
@@ -200,6 +206,12 @@ public class KtForLoopImpl extends ASTWrapperPsiElement implements KtForLoop {
   @NotNull
   public List<KtParenthesizedExpression> getParenthesizedExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtParenthesizedExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtPlusPlusAndOthersExpression.class);
   }
 
   @Override

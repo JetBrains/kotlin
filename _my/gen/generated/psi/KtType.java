@@ -8,15 +8,27 @@ import com.intellij.psi.PsiElement;
 public interface KtType extends PsiElement {
 
   @NotNull
-  List<KtAnnotationWithShort> getAnnotationWithShortList();
+  List<KtAnnotation> getAnnotationList();
+
+  @Nullable
+  KtFunctionType getFunctionType();
+
+  @Nullable
+  KtFunctionTypeReceiverReference getFunctionTypeReceiverReference();
+
+  @NotNull
+  List<KtLeftFunctionType> getLeftFunctionTypeList();
 
   @Nullable
   KtNullableType getNullableType();
 
   @Nullable
-  KtParameterModifiersTypeExt getParameterModifiersTypeExt();
+  KtSelfType getSelfType();
 
   @Nullable
-  KtType getType();
+  KtSimpleUserType getSimpleUserType();
+
+  @Nullable
+  KtSimpleUserTypeAdd getSimpleUserTypeAdd();
 
 }

@@ -8,8 +8,14 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.parsing.AbstractTokenStreamPredicate;
+import org.jetbrains.jet.lang.parsing.LastBefore;
+import org.jetbrains.jet.lang.parsing.TokenStreamPattern;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
@@ -235,6 +241,12 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
             }
             return getJoinedTokenType(super.lookAhead(steps), 2);
         }
+
+        /*@Override
+        public boolean eof() {
+            if (super.eof()) return true;
+            return getCurrentOffset() >= stopAt.peek();
+        }*/
     }
 
 
@@ -330,6 +342,7 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
         SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
         assert builder.newlinesEnabled.size() == builder.newlinesEnabledMarkers.size();
         assert builder.joinComplexTokens.size() == builder.joinComplexTokensMarkers.size();
+        assert builder.stopAt.size() == builder.stopAtMarkers.size();
         while (builder.newlinesEnabledMarkers.size() > 1 &&
                 builder.newlinesEnabledMarkers.peek() == marker) {
             builder.newlinesEnabledMarkers.pop();
@@ -339,6 +352,10 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
                 builder.joinComplexTokensMarkers.peek() == marker) {
             builder.joinComplexTokensMarkers.pop();
             builder.restoreJoiningComplexTokensState();
+        }
+        while (builder.stopAt.size() > 1 && builder.stopAtMarkers.peek() == marker) {
+            builder.stopAtMarkers.pop();
+            builder.stopAt.pop();
         }
     }
 
@@ -364,16 +381,171 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
     public static boolean consumeToken(PsiBuilder builder_, String text) {
         SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
         boolean result = GeneratedParserUtilBase.consumeToken(builder_, text);
-        if (result && builder_.getCurrentOffset() < builder.stopAt.peek()) return true;
+        if (result && builder_.getCurrentOffset() <= builder.stopAt.peek()) return true;
         return false;
     }
 
     public static boolean consumeToken(PsiBuilder builder_, IElementType token) {
         SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
         boolean result = GeneratedParserUtilBase.consumeToken(builder_, token);
-        if (result && builder_.getCurrentOffset() < builder.stopAt.peek()) return true;
+        if (result && builder_.getCurrentOffset() <= builder.stopAt.peek()) return true;
         return false;
     }
+
+    public static boolean stopAt(PsiBuilder builder_, int level_, PsiBuilder.Marker marker, int newEOF) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        builder.stopAt.push(newEOF);
+        builder.stopAtMarkers.push(marker);
+        return true;
+    }
+
+    public static boolean unStop(PsiBuilder builder_, int level_) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        assert builder.stopAt.size() > 1;
+        builder.stopAt.pop();
+        builder.stopAtMarkers.pop();
+        return true;
+    }
+
+    protected static class AtSet extends AbstractTokenStreamPredicate {
+        private final TokenSet lookFor;
+        private final TokenSet topLevelOnly;
+        private final SemanticWhitespaceAwarePsiBuilderImpl builder;
+
+        public AtSet(SemanticWhitespaceAwarePsiBuilderImpl builder, TokenSet lookFor, TokenSet topLevelOnly) {
+            this.lookFor = lookFor;
+            this.topLevelOnly = topLevelOnly;
+            this.builder = builder;
+        }
+
+        public AtSet(SemanticWhitespaceAwarePsiBuilderImpl builder, TokenSet lookFor) {
+            this(builder, lookFor, lookFor);
+        }
+
+        public AtSet(SemanticWhitespaceAwarePsiBuilderImpl builder, IElementType... lookFor) {
+            this(builder, TokenSet.create(lookFor), TokenSet.create(lookFor));
+        }
+
+        @Override
+        public boolean matching(boolean topLevel) {
+            return (topLevel || !atSet(builder, topLevelOnly)) && atSet(builder, lookFor);
+        }
+    }
+
+    protected static boolean _atSet(SemanticWhitespaceAwarePsiBuilder builder, TokenSet set) {
+        IElementType token = builder.getTokenType();
+        if (set.contains(token)) return true;
+        if (set.contains(EOL_OR_SEMICOLON)) {
+            if (builder.eof()) return true;
+            if (token == SEMICOLON) return true;
+            if (builder.newlineBeforeCurrentToken()) return true;
+        }
+        return false;
+    }
+
+    private static final Map<String, JetKeywordToken> SOFT_KEYWORD_TEXTS = new HashMap<String, JetKeywordToken>();
+    static {
+        for (IElementType type : JetTokens.SOFT_KEYWORDS.getTypes()) {
+            JetKeywordToken keywordToken = (JetKeywordToken) type;
+            assert keywordToken.isSoft();
+            SOFT_KEYWORD_TEXTS.put(keywordToken.getValue(), keywordToken);
+        }
+    }
+
+    protected static boolean atSet(SemanticWhitespaceAwarePsiBuilderImpl builder, TokenSet set) {
+        if (_atSet(builder, set)) return true;
+        IElementType token = builder.getTokenType();
+        if (token == IDENTIFIER) {
+            JetKeywordToken keywordToken = SOFT_KEYWORD_TEXTS.get(builder.getTokenText());
+            if (keywordToken != null && set.contains(keywordToken)) {
+                builder.remapCurrentToken(keywordToken);
+                return true;
+            }
+        }
+        else {
+            // We know at this point that <code>set</code> does not contain <code>token</code>
+            if (set.contains(IDENTIFIER) && token instanceof JetKeywordToken) {
+                if (((JetKeywordToken) token).isSoft()) {
+                    builder.remapCurrentToken(IDENTIFIER);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected static int matchTokenStreamPredicate(SemanticWhitespaceAwarePsiBuilderImpl builder, TokenStreamPattern pattern) {
+        PsiBuilder.Marker currentPosition = builder.mark();
+        Stack<IElementType> opens = new Stack<IElementType>();
+        int openAngleBrackets = 0;
+        int openBraces = 0;
+        int openParentheses = 0;
+        int openBrackets = 0;
+        while (!builder.eof()) {
+            if (pattern.processToken(
+                    builder.getCurrentOffset(),
+                    pattern.isTopLevel(openAngleBrackets, openBrackets, openBraces, openParentheses))) {
+                break;
+            }
+            if (at(builder, 0, JetTokens.LPAR)) {
+                openParentheses++;
+                opens.push(LPAR);
+            }
+            else if (at(builder, 0, JetTokens.LT)) {
+                openAngleBrackets++;
+                opens.push(LT);
+            }
+            else if (at(builder, 0, JetTokens.LBRACE)) {
+                openBraces++;
+                opens.push(LBRACE);
+            }
+            else if (at(builder, 0, JetTokens.LBRACKET)) {
+                openBrackets++;
+                opens.push(LBRACKET);
+            }
+            else if (at(builder, 0, JetTokens.RPAR)) {
+                openParentheses--;
+                if (opens.isEmpty() || opens.pop() != LPAR) {
+                    if (pattern.handleUnmatchedClosing(RPAR)) {
+                        break;
+                    }
+                }
+            }
+            else if (at(builder, 0, JetTokens.GT)) {
+                openAngleBrackets--;
+            }
+            else if (at(builder, 0, JetTokens.RBRACE)) {
+                openBraces--;
+            }
+            else if (at(builder, 0, JetTokens.RBRACKET)) {
+                openBrackets--;
+            }
+            builder.advanceLexer(); // skip token
+        }
+        currentPosition.rollbackTo();
+        return pattern.result();
+    }
+
+    public static boolean stopAtLastDot(final PsiBuilder builder_, final int level_, PsiBuilder.Marker marker) {
+        final SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        int lastDot = matchTokenStreamPredicate(builder, new LastBefore(
+                new AtSet(builder, DOT, SAFE_ACCESS),
+                new AbstractTokenStreamPredicate() {
+                    @Override
+                    public boolean matching(boolean topLevel) {
+                        if (topLevel && (at(builder_, level_, JetTokens.EQ) || at(builder_, level_, JetTokens.COLON))) return true;
+                        if (topLevel && at(builder_, level_, JetTokens.IDENTIFIER)) {
+                            IElementType lookahead = builder.lookAhead(1);
+                            return lookahead != LT && lookahead != DOT && lookahead != SAFE_ACCESS && lookahead != QUEST;
+                        }
+                        return false;
+                    }
+                }));
+        stopAt(builder_, level_, marker, lastDot);
+        return true;
+    }
+
+
 
     protected static boolean _at(SemanticWhitespaceAwarePsiBuilderImpl myBuilder, IElementType expectation) {
         IElementType token = myBuilder.getTokenType();

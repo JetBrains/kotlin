@@ -337,6 +337,57 @@ public class KotlinParserDefinition implements ParserDefinition {
         if (str == "ANNOTATION_WITH_SHORT") {
             return JetNodeTypes.ANNOTATION;
         }
+        if (str == "CONDITION") {
+            return JetNodeTypes.CONDITION;
+        }
+        if (str == "THEN_EXPRESSION") {
+            return JetNodeTypes.THEN;
+        }
+        if (str == "ELSE_EXPRESSION") {
+            return JetNodeTypes.ELSE;
+        }
+        if (str == "NULL") {
+            return JetNodeTypes.NULL;
+        }
+        if (str == "VALUE_PARAMETER_LIST") {
+            return JetNodeTypes.VALUE_PARAMETER_LIST;
+        }
+        if (str == "FUNCTION_TYPE") {
+            return JetNodeTypes.FUNCTION_TYPE;
+        }
+        if (str == "PARAMETER_OR_MODIFIER_TYPE") {
+            return JetNodeTypes.VALUE_PARAMETER;
+        }
+        if (str == "FUNCTION_TYPE_RECEIVER") {
+            return JetNodeTypes.TYPE_REFERENCE;
+        }
+        if (str == "FUNCTION_TYPE_RECEIVER_REFERENCE") {
+            return JetNodeTypes.FUNCTION_TYPE_RECEIVER;
+        }
+        if (str == "SIMPLE_USER_TYPE_ADD") {
+            return JetNodeTypes.USER_TYPE;
+        }
+        if (str == "LEFT_FUNCTION_TYPE") {
+            return JetNodeTypes.FUNCTION_TYPE;
+        }
+        if (str == "SIMPLE_USER_TYPE") {
+            return JetNodeTypes.USER_TYPE;
+        }
+        if (str == "PLUS_PLUS_AND_OTHERS_EXPRESSION") {
+            return JetNodeTypes.POSTFIX_EXPRESSION;
+        }
+        if (str == "PLUS_PLUS_AND_OTHERS_OPERATION") {
+            return JetNodeTypes.OPERATION_REFERENCE;
+        }
+        if (str == "EQUALITY_OPERATION") {
+            return JetNodeTypes.OPERATION_REFERENCE;
+        }
+        if (str == "EQUALITY_COMPARISON_EXPRESSION") {
+            return JetNodeTypes.BINARY_EXPRESSION;
+        }
+        if (str == "ASTERISK") {
+            return JetNodeTypes.TYPE_PROJECTION;
+        }
         return new IElementType(str, JetLanguage.INSTANCE);
     }
 

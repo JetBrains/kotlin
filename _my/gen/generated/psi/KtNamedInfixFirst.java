@@ -14,6 +14,9 @@ public interface KtNamedInfixFirst extends PsiElement {
   List<KtIntegerConstant> getIntegerConstantList();
 
   @NotNull
+  List<KtNull> getNullList();
+
+  @NotNull
   List<KtAdditiveExpressionPlus> getAdditiveExpressionPlusList();
 
   @NotNull
@@ -72,6 +75,9 @@ public interface KtNamedInfixFirst extends PsiElement {
 
   @NotNull
   List<KtParenthesizedExpression> getParenthesizedExpressionList();
+
+  @NotNull
+  List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList();
 
   @NotNull
   List<KtPrefixUnaryOperation> getPrefixUnaryOperationList();

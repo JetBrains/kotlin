@@ -35,6 +35,12 @@ public class KtAdditiveExpressionPlusImpl extends ASTWrapperPsiElement implement
   }
 
   @Override
+  @NotNull
+  public List<KtNull> getNullList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtNull.class);
+  }
+
+  @Override
   @Nullable
   public KtAdditiveExpressionPlus getAdditiveExpressionPlus() {
     return findChildByClass(KtAdditiveExpressionPlus.class);
@@ -152,6 +158,12 @@ public class KtAdditiveExpressionPlusImpl extends ASTWrapperPsiElement implement
   @NotNull
   public List<KtParenthesizedExpression> getParenthesizedExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtParenthesizedExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtPlusPlusAndOthersExpression.class);
   }
 
   @Override

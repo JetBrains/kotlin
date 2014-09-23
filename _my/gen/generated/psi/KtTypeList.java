@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtTypeList extends PsiElement {
 
   @NotNull
+  List<KtModifierList> getModifierListList();
+
+  @NotNull
   List<KtType> getTypeList();
 
 }

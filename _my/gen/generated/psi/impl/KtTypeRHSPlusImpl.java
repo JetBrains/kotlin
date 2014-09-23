@@ -36,6 +36,12 @@ public class KtTypeRHSPlusImpl extends ASTWrapperPsiElement implements KtTypeRHS
 
   @Override
   @Nullable
+  public KtNull getNull() {
+    return findChildByClass(KtNull.class);
+  }
+
+  @Override
+  @Nullable
   public KtAnnotatedExpression getAnnotatedExpression() {
     return findChildByClass(KtAnnotatedExpression.class);
   }
@@ -134,6 +140,12 @@ public class KtTypeRHSPlusImpl extends ASTWrapperPsiElement implements KtTypeRHS
   @Nullable
   public KtParenthesizedExpression getParenthesizedExpression() {
     return findChildByClass(KtParenthesizedExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public KtPlusPlusAndOthersExpression getPlusPlusAndOthersExpression() {
+    return findChildByClass(KtPlusPlusAndOthersExpression.class);
   }
 
   @Override

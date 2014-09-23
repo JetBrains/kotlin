@@ -36,6 +36,12 @@ public class KtDotQualifiedExpressionImpl extends ASTWrapperPsiElement implement
 
   @Override
   @NotNull
+  public List<KtNull> getNullList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtNull.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtArrayAccess> getArrayAccessList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtArrayAccess.class);
   }
@@ -128,6 +134,12 @@ public class KtDotQualifiedExpressionImpl extends ASTWrapperPsiElement implement
   @NotNull
   public List<KtParenthesizedExpression> getParenthesizedExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtParenthesizedExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtPlusPlusAndOthersExpression.class);
   }
 
   @Override

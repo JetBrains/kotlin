@@ -23,9 +23,15 @@ public class KtUserTypeReferenceImpl extends ASTWrapperPsiElement implements KtU
   }
 
   @Override
-  @NotNull
-  public KtUserType getUserType() {
-    return findNotNullChildByClass(KtUserType.class);
+  @Nullable
+  public KtSimpleUserType getSimpleUserType() {
+    return findChildByClass(KtSimpleUserType.class);
+  }
+
+  @Override
+  @Nullable
+  public KtSimpleUserTypeAdd getSimpleUserTypeAdd() {
+    return findChildByClass(KtSimpleUserTypeAdd.class);
   }
 
 }

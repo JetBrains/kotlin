@@ -14,6 +14,9 @@ public interface KtAssignmentExpression extends PsiElement {
   List<KtIntegerConstant> getIntegerConstantList();
 
   @NotNull
+  List<KtNull> getNullList();
+
+  @NotNull
   List<KtAdditiveExpressionPlus> getAdditiveExpressionPlusList();
 
   @NotNull
@@ -50,7 +53,7 @@ public interface KtAssignmentExpression extends PsiElement {
   List<KtElvisAccessExpression> getElvisAccessExpressionList();
 
   @NotNull
-  List<KtEqualityOperation> getEqualityOperationList();
+  List<KtEqualityComparisonExpression> getEqualityComparisonExpressionList();
 
   @NotNull
   List<KtFunctionLiteralExpression> getFunctionLiteralExpressionList();
@@ -90,6 +93,9 @@ public interface KtAssignmentExpression extends PsiElement {
 
   @NotNull
   List<KtParenthesizedExpression> getParenthesizedExpressionList();
+
+  @NotNull
+  List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList();
 
   @NotNull
   List<KtPrefixUnaryOperation> getPrefixUnaryOperationList();

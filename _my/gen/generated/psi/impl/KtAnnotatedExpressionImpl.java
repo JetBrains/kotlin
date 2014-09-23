@@ -36,6 +36,12 @@ public class KtAnnotatedExpressionImpl extends ASTWrapperPsiElement implements K
 
   @Override
   @Nullable
+  public KtNull getNull() {
+    return findChildByClass(KtNull.class);
+  }
+
+  @Override
+  @Nullable
   public KtAnnotatedExpression getAnnotatedExpression() {
     return findChildByClass(KtAnnotatedExpression.class);
   }
@@ -140,6 +146,12 @@ public class KtAnnotatedExpressionImpl extends ASTWrapperPsiElement implements K
   @Nullable
   public KtParenthesizedExpression getParenthesizedExpression() {
     return findChildByClass(KtParenthesizedExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public KtPlusPlusAndOthersExpression getPlusPlusAndOthersExpression() {
+    return findChildByClass(KtPlusPlusAndOthersExpression.class);
   }
 
   @Override

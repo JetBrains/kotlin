@@ -14,6 +14,9 @@ public interface KtArrayAccess extends PsiElement {
   KtIntegerConstant getIntegerConstant();
 
   @Nullable
+  KtNull getNull();
+
+  @Nullable
   KtArrayAccess getArrayAccess();
 
   @Nullable
@@ -60,6 +63,9 @@ public interface KtArrayAccess extends PsiElement {
 
   @Nullable
   KtParenthesizedExpression getParenthesizedExpression();
+
+  @Nullable
+  KtPlusPlusAndOthersExpression getPlusPlusAndOthersExpression();
 
   @Nullable
   KtReferenceExpression getReferenceExpression();

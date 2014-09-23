@@ -13,6 +13,9 @@ public interface KtElvisAccessExpression extends PsiElement {
   @NotNull
   List<KtIntegerConstant> getIntegerConstantList();
 
+  @NotNull
+  List<KtNull> getNullList();
+
   @Nullable
   KtArrayAccess getArrayAccess();
 
@@ -60,6 +63,9 @@ public interface KtElvisAccessExpression extends PsiElement {
 
   @NotNull
   List<KtParenthesizedExpression> getParenthesizedExpressionList();
+
+  @Nullable
+  KtPlusPlusAndOthersExpression getPlusPlusAndOthersExpression();
 
   @NotNull
   List<KtReferenceExpression> getReferenceExpressionList();

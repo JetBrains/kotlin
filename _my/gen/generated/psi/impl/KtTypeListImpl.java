@@ -24,6 +24,12 @@ public class KtTypeListImpl extends ASTWrapperPsiElement implements KtTypeList {
 
   @Override
   @NotNull
+  public List<KtModifierList> getModifierListList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtModifierList.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtType> getTypeList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtType.class);
   }

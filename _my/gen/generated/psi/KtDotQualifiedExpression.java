@@ -14,6 +14,9 @@ public interface KtDotQualifiedExpression extends PsiElement {
   List<KtIntegerConstant> getIntegerConstantList();
 
   @NotNull
+  List<KtNull> getNullList();
+
+  @NotNull
   List<KtArrayAccess> getArrayAccessList();
 
   @NotNull
@@ -60,6 +63,9 @@ public interface KtDotQualifiedExpression extends PsiElement {
 
   @NotNull
   List<KtParenthesizedExpression> getParenthesizedExpressionList();
+
+  @NotNull
+  List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList();
 
   @NotNull
   List<KtReferenceExpression> getReferenceExpressionList();

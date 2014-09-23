@@ -36,6 +36,12 @@ public class KtNamedInfixPlusImpl extends ASTWrapperPsiElement implements KtName
 
   @Override
   @NotNull
+  public List<KtNull> getNullList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtNull.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtAdditiveExpressionPlus> getAdditiveExpressionPlusList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAdditiveExpressionPlus.class);
   }
@@ -158,6 +164,12 @@ public class KtNamedInfixPlusImpl extends ASTWrapperPsiElement implements KtName
   @NotNull
   public List<KtParenthesizedExpression> getParenthesizedExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtParenthesizedExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtPlusPlusAndOthersExpression.class);
   }
 
   @Override

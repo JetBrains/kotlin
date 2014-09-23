@@ -36,6 +36,12 @@ public class KtDisjunctionPlusImpl extends ASTWrapperPsiElement implements KtDis
 
   @Override
   @NotNull
+  public List<KtNull> getNullList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtNull.class);
+  }
+
+  @Override
+  @NotNull
   public KtOrOperation getOrOperation() {
     return findNotNullChildByClass(KtOrOperation.class);
   }
@@ -108,8 +114,8 @@ public class KtDisjunctionPlusImpl extends ASTWrapperPsiElement implements KtDis
 
   @Override
   @NotNull
-  public List<KtEqualityOperation> getEqualityOperationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtEqualityOperation.class);
+  public List<KtEqualityComparisonExpression> getEqualityComparisonExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtEqualityComparisonExpression.class);
   }
 
   @Override
@@ -188,6 +194,12 @@ public class KtDisjunctionPlusImpl extends ASTWrapperPsiElement implements KtDis
   @NotNull
   public List<KtParenthesizedExpression> getParenthesizedExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtParenthesizedExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtPlusPlusAndOthersExpression.class);
   }
 
   @Override

@@ -24,6 +24,12 @@ public class KtTypeArgumentListImpl extends ASTWrapperPsiElement implements KtTy
 
   @Override
   @NotNull
+  public List<KtAsterisk> getAsteriskList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAsterisk.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtTypeProjection> getTypeProjectionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtTypeProjection.class);
   }

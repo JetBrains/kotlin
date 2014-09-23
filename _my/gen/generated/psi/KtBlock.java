@@ -14,6 +14,9 @@ public interface KtBlock extends PsiElement {
   List<KtIntegerConstant> getIntegerConstantList();
 
   @NotNull
+  List<KtNull> getNullList();
+
+  @NotNull
   List<KtAdditiveExpressionPlus> getAdditiveExpressionPlusList();
 
   @NotNull
@@ -53,7 +56,7 @@ public interface KtBlock extends PsiElement {
   List<KtElvisAccessExpression> getElvisAccessExpressionList();
 
   @NotNull
-  List<KtEqualityOperation> getEqualityOperationList();
+  List<KtEqualityComparisonExpression> getEqualityComparisonExpressionList();
 
   @NotNull
   List<KtFunction> getFunctionList();
@@ -99,6 +102,9 @@ public interface KtBlock extends PsiElement {
 
   @NotNull
   List<KtParenthesizedExpression> getParenthesizedExpressionList();
+
+  @NotNull
+  List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList();
 
   @NotNull
   List<KtPrefixUnaryOperation> getPrefixUnaryOperationList();

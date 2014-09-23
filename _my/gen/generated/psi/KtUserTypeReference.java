@@ -7,7 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface KtUserTypeReference extends PsiElement {
 
-  @NotNull
-  KtUserType getUserType();
+  @Nullable
+  KtSimpleUserType getSimpleUserType();
+
+  @Nullable
+  KtSimpleUserTypeAdd getSimpleUserTypeAdd();
 
 }

@@ -14,6 +14,9 @@ public interface KtPrefixUnaryOperation extends PsiElement {
   KtIntegerConstant getIntegerConstant();
 
   @Nullable
+  KtNull getNull();
+
+  @Nullable
   KtAnnotatedExpression getAnnotatedExpression();
 
   @Nullable
@@ -63,6 +66,9 @@ public interface KtPrefixUnaryOperation extends PsiElement {
 
   @Nullable
   KtParenthesizedExpression getParenthesizedExpression();
+
+  @Nullable
+  KtPlusPlusAndOthersExpression getPlusPlusAndOthersExpression();
 
   @Nullable
   KtPrefixOperation getPrefixOperation();

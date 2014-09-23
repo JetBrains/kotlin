@@ -35,6 +35,12 @@ public class KtElvisAccessExpressionImpl extends ASTWrapperPsiElement implements
   }
 
   @Override
+  @NotNull
+  public List<KtNull> getNullList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtNull.class);
+  }
+
+  @Override
   @Nullable
   public KtArrayAccess getArrayAccess() {
     return findChildByClass(KtArrayAccess.class);
@@ -128,6 +134,12 @@ public class KtElvisAccessExpressionImpl extends ASTWrapperPsiElement implements
   @NotNull
   public List<KtParenthesizedExpression> getParenthesizedExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtParenthesizedExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public KtPlusPlusAndOthersExpression getPlusPlusAndOthersExpression() {
+    return findChildByClass(KtPlusPlusAndOthersExpression.class);
   }
 
   @Override

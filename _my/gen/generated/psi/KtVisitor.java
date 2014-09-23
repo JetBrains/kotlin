@@ -23,6 +23,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitNull(@NotNull KtNull o) {
+    visitPsiElement(o);
+  }
+
   public void visitOrOperation(@NotNull KtOrOperation o) {
     visitPsiElement(o);
   }
@@ -71,6 +75,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitAsterisk(@NotNull KtAsterisk o) {
+    visitPsiElement(o);
+  }
+
   public void visitBinaryConstant(@NotNull KtBinaryConstant o) {
     visitPsiElement(o);
   }
@@ -107,6 +115,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitCondition(@NotNull KtCondition o) {
+    visitPsiElement(o);
+  }
+
   public void visitConjunctionPlus(@NotNull KtConjunctionPlus o) {
     visitPsiElement(o);
   }
@@ -139,6 +151,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitElseExpression(@NotNull KtElseExpression o) {
+    visitPsiElement(o);
+  }
+
   public void visitElvisAccessExpression(@NotNull KtElvisAccessExpression o) {
     visitPsiElement(o);
   }
@@ -152,6 +168,10 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitEnumEntry(@NotNull KtEnumEntry o) {
+    visitPsiElement(o);
+  }
+
+  public void visitEqualityComparisonExpression(@NotNull KtEqualityComparisonExpression o) {
     visitPsiElement(o);
   }
 
@@ -184,6 +204,18 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitFunctionParameter(@NotNull KtFunctionParameter o) {
+    visitPsiElement(o);
+  }
+
+  public void visitFunctionType(@NotNull KtFunctionType o) {
+    visitPsiElement(o);
+  }
+
+  public void visitFunctionTypeReceiver(@NotNull KtFunctionTypeReceiver o) {
+    visitPsiElement(o);
+  }
+
+  public void visitFunctionTypeReceiverReference(@NotNull KtFunctionTypeReceiverReference o) {
     visitPsiElement(o);
   }
 
@@ -236,6 +268,10 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitLabel(@NotNull KtLabel o) {
+    visitPsiElement(o);
+  }
+
+  public void visitLeftFunctionType(@NotNull KtLeftFunctionType o) {
     visitPsiElement(o);
   }
 
@@ -315,11 +351,19 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitParameterModifiersTypeExt(@NotNull KtParameterModifiersTypeExt o) {
+  public void visitParameterOrModifierType(@NotNull KtParameterOrModifierType o) {
     visitPsiElement(o);
   }
 
   public void visitParenthesizedExpression(@NotNull KtParenthesizedExpression o) {
+    visitPsiElement(o);
+  }
+
+  public void visitPlusPlusAndOthersExpression(@NotNull KtPlusPlusAndOthersExpression o) {
+    visitPsiElement(o);
+  }
+
+  public void visitPlusPlusAndOthersOperation(@NotNull KtPlusPlusAndOthersOperation o) {
     visitPsiElement(o);
   }
 
@@ -359,6 +403,14 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitSimpleUserType(@NotNull KtSimpleUserType o) {
+    visitPsiElement(o);
+  }
+
+  public void visitSimpleUserTypeAdd(@NotNull KtSimpleUserTypeAdd o) {
+    visitPsiElement(o);
+  }
+
   public void visitSingleValueParameterList(@NotNull KtSingleValueParameterList o) {
     visitPsiElement(o);
   }
@@ -372,6 +424,10 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitStringTemplateElement(@NotNull KtStringTemplateElement o) {
+    visitPsiElement(o);
+  }
+
+  public void visitThenExpression(@NotNull KtThenExpression o) {
     visitPsiElement(o);
   }
 
@@ -407,10 +463,6 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitTypeFollowedByDot(@NotNull KtTypeFollowedByDot o) {
-    visitPsiElement(o);
-  }
-
   public void visitTypeList(@NotNull KtTypeList o) {
     visitPsiElement(o);
   }
@@ -439,14 +491,6 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitUserType(@NotNull KtUserType o) {
-    visitPsiElement(o);
-  }
-
-  public void visitUserTypeFollowedByDot(@NotNull KtUserTypeFollowedByDot o) {
-    visitPsiElement(o);
-  }
-
   public void visitUserTypeReference(@NotNull KtUserTypeReference o) {
     visitPsiElement(o);
   }
@@ -460,6 +504,10 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitValueArguments(@NotNull KtValueArguments o) {
+    visitPsiElement(o);
+  }
+
+  public void visitValueParameterList(@NotNull KtValueParameterList o) {
     visitPsiElement(o);
   }
 

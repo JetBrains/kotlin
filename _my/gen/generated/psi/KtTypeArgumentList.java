@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtTypeArgumentList extends PsiElement {
 
   @NotNull
+  List<KtAsterisk> getAsteriskList();
+
+  @NotNull
   List<KtTypeProjection> getTypeProjectionList();
 
 }

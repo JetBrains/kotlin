@@ -14,6 +14,9 @@ public interface KtProperty extends PsiElement {
   List<KtIntegerConstant> getIntegerConstantList();
 
   @NotNull
+  List<KtNull> getNullList();
+
+  @NotNull
   List<KtAdditiveExpressionPlus> getAdditiveExpressionPlusList();
 
   @NotNull
@@ -52,8 +55,8 @@ public interface KtProperty extends PsiElement {
   @NotNull
   List<KtElvisAccessExpression> getElvisAccessExpressionList();
 
-  @NotNull
-  List<KtEqualityOperation> getEqualityOperationList();
+  @Nullable
+  KtEqualityComparisonExpression getEqualityComparisonExpression();
 
   @NotNull
   List<KtFunctionLiteralExpression> getFunctionLiteralExpressionList();
@@ -104,6 +107,9 @@ public interface KtProperty extends PsiElement {
   List<KtParenthesizedExpression> getParenthesizedExpressionList();
 
   @NotNull
+  List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList();
+
+  @NotNull
   List<KtPrefixUnaryOperation> getPrefixUnaryOperationList();
 
   @NotNull
@@ -129,9 +135,6 @@ public interface KtProperty extends PsiElement {
 
   @Nullable
   KtTypeConstraintExt getTypeConstraintExt();
-
-  @Nullable
-  KtTypeFollowedByDot getTypeFollowedByDot();
 
   @Nullable
   KtTypeParameters getTypeParameters();

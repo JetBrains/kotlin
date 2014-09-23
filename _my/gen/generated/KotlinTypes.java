@@ -21,6 +21,7 @@ public interface KotlinTypes {
   IElementType ARRAY_ACCESS = KotlinParserDefinition.createType("ARRAY_ACCESS");
   IElementType ASSIGNMENT_EXPRESSION = KotlinParserDefinition.createType("ASSIGNMENT_EXPRESSION");
   IElementType ASSIGNMENT_OPERATOR = KotlinParserDefinition.createType("ASSIGNMENT_OPERATOR");
+  IElementType ASTERISK = KotlinParserDefinition.createType("ASTERISK");
   IElementType BINARY_CONSTANT = KotlinParserDefinition.createType("BINARY_CONSTANT");
   IElementType BLOCK = KotlinParserDefinition.createType("BLOCK");
   IElementType CALLABLE_REFERENCE = KotlinParserDefinition.createType("CALLABLE_REFERENCE");
@@ -30,6 +31,7 @@ public interface KotlinTypes {
   IElementType CLASS_DECLARATION = KotlinParserDefinition.createType("CLASS_DECLARATION");
   IElementType CLASS_OBJECT = KotlinParserDefinition.createType("CLASS_OBJECT");
   IElementType COMPARISON_OPERATION = KotlinParserDefinition.createType("COMPARISON_OPERATION");
+  IElementType CONDITION = KotlinParserDefinition.createType("CONDITION");
   IElementType CONJUNCTION_PLUS = KotlinParserDefinition.createType("CONJUNCTION_PLUS");
   IElementType CONSTRUCTOR_CALLEE = KotlinParserDefinition.createType("CONSTRUCTOR_CALLEE");
   IElementType DELEGATION_SPECIFIER_EXT = KotlinParserDefinition.createType("DELEGATION_SPECIFIER_EXT");
@@ -39,10 +41,12 @@ public interface KotlinTypes {
   IElementType DOT_IDENTIFIER = KotlinParserDefinition.createType("DOT_IDENTIFIER");
   IElementType DOT_QUALIFIED_EXPRESSION = KotlinParserDefinition.createType("DOT_QUALIFIED_EXPRESSION");
   IElementType DO_WHILE_LOOP = KotlinParserDefinition.createType("DO_WHILE_LOOP");
+  IElementType ELSE_EXPRESSION = KotlinParserDefinition.createType("ELSE_EXPRESSION");
   IElementType ELVIS_ACCESS_EXPRESSION = KotlinParserDefinition.createType("ELVIS_ACCESS_EXPRESSION");
   IElementType ELVIS_OPERATION = KotlinParserDefinition.createType("ELVIS_OPERATION");
   IElementType ENUM_CLASS_BODY = KotlinParserDefinition.createType("ENUM_CLASS_BODY");
   IElementType ENUM_ENTRY = KotlinParserDefinition.createType("ENUM_ENTRY");
+  IElementType EQUALITY_COMPARISON_EXPRESSION = KotlinParserDefinition.createType("EQUALITY_COMPARISON_EXPRESSION");
   IElementType EQUALITY_OPERATION = KotlinParserDefinition.createType("EQUALITY_OPERATION");
   IElementType EXPLICIT_DELEGATION = KotlinParserDefinition.createType("EXPLICIT_DELEGATION");
   IElementType FINALLY_BLOCK = KotlinParserDefinition.createType("FINALLY_BLOCK");
@@ -52,6 +56,9 @@ public interface KotlinTypes {
   IElementType FUNCTION_LITERAL = KotlinParserDefinition.createType("FUNCTION_LITERAL");
   IElementType FUNCTION_LITERAL_EXPRESSION = KotlinParserDefinition.createType("FUNCTION_LITERAL_EXPRESSION");
   IElementType FUNCTION_PARAMETER = KotlinParserDefinition.createType("FUNCTION_PARAMETER");
+  IElementType FUNCTION_TYPE = KotlinParserDefinition.createType("FUNCTION_TYPE");
+  IElementType FUNCTION_TYPE_RECEIVER = KotlinParserDefinition.createType("FUNCTION_TYPE_RECEIVER");
+  IElementType FUNCTION_TYPE_RECEIVER_REFERENCE = KotlinParserDefinition.createType("FUNCTION_TYPE_RECEIVER_REFERENCE");
   IElementType GETTER = KotlinParserDefinition.createType("GETTER");
   IElementType IF_EXPRESSION = KotlinParserDefinition.createType("IF_EXPRESSION");
   IElementType IMPORT_DIRECTIVE = KotlinParserDefinition.createType("IMPORT_DIRECTIVE");
@@ -66,6 +73,7 @@ public interface KotlinTypes {
   IElementType JUMP_RETURN = KotlinParserDefinition.createType("JUMP_RETURN");
   IElementType JUMP_THROW = KotlinParserDefinition.createType("JUMP_THROW");
   IElementType LABEL = KotlinParserDefinition.createType("LABEL");
+  IElementType LEFT_FUNCTION_TYPE = KotlinParserDefinition.createType("LEFT_FUNCTION_TYPE");
   IElementType LONG_TEMPLATE = KotlinParserDefinition.createType("LONG_TEMPLATE");
   IElementType LOOP = KotlinParserDefinition.createType("LOOP");
   IElementType MEMBER_MODIFIER = KotlinParserDefinition.createType("MEMBER_MODIFIER");
@@ -77,6 +85,7 @@ public interface KotlinTypes {
   IElementType MULTIPLICATIVE_OPERATION = KotlinParserDefinition.createType("MULTIPLICATIVE_OPERATION");
   IElementType NAMED_INFIX_FIRST = KotlinParserDefinition.createType("NAMED_INFIX_FIRST");
   IElementType NAMED_INFIX_PLUS = KotlinParserDefinition.createType("NAMED_INFIX_PLUS");
+  IElementType NULL = KotlinParserDefinition.createType("NULL");
   IElementType NULLABLE_TYPE = KotlinParserDefinition.createType("NULLABLE_TYPE");
   IElementType OBJECT = KotlinParserDefinition.createType("OBJECT");
   IElementType OBJECT_DECLARATION = KotlinParserDefinition.createType("OBJECT_DECLARATION");
@@ -86,8 +95,10 @@ public interface KotlinTypes {
   IElementType PACKAGE_DIRECTIVE = KotlinParserDefinition.createType("PACKAGE_DIRECTIVE");
   IElementType PACKAGE_HEADER = KotlinParserDefinition.createType("PACKAGE_HEADER");
   IElementType PARAMETER = KotlinParserDefinition.createType("PARAMETER");
-  IElementType PARAMETER_MODIFIERS_TYPE_EXT = KotlinParserDefinition.createType("PARAMETER_MODIFIERS_TYPE_EXT");
+  IElementType PARAMETER_OR_MODIFIER_TYPE = KotlinParserDefinition.createType("PARAMETER_OR_MODIFIER_TYPE");
   IElementType PARENTHESIZED_EXPRESSION = KotlinParserDefinition.createType("PARENTHESIZED_EXPRESSION");
+  IElementType PLUS_PLUS_AND_OTHERS_EXPRESSION = KotlinParserDefinition.createType("PLUS_PLUS_AND_OTHERS_EXPRESSION");
+  IElementType PLUS_PLUS_AND_OTHERS_OPERATION = KotlinParserDefinition.createType("PLUS_PLUS_AND_OTHERS_OPERATION");
   IElementType PREFIX_OPERATION = KotlinParserDefinition.createType("PREFIX_OPERATION");
   IElementType PREFIX_UNARY_OPERATION = KotlinParserDefinition.createType("PREFIX_UNARY_OPERATION");
   IElementType PRIMARY_CONSTRUCTOR_MODIFIER_LIST = KotlinParserDefinition.createType("PRIMARY_CONSTRUCTOR_MODIFIER_LIST");
@@ -97,10 +108,13 @@ public interface KotlinTypes {
   IElementType SAFE_ACCESS_EXPRESSION = KotlinParserDefinition.createType("SAFE_ACCESS_EXPRESSION");
   IElementType SELF_TYPE = KotlinParserDefinition.createType("SELF_TYPE");
   IElementType SETTER = KotlinParserDefinition.createType("SETTER");
+  IElementType SIMPLE_USER_TYPE = KotlinParserDefinition.createType("SIMPLE_USER_TYPE");
+  IElementType SIMPLE_USER_TYPE_ADD = KotlinParserDefinition.createType("SIMPLE_USER_TYPE_ADD");
   IElementType SINGLE_VALUE_PARAMETER_LIST = KotlinParserDefinition.createType("SINGLE_VALUE_PARAMETER_LIST");
   IElementType STATEMENTS_BLOCK = KotlinParserDefinition.createType("STATEMENTS_BLOCK");
   IElementType STRING_TEMPLATE = KotlinParserDefinition.createType("STRING_TEMPLATE");
   IElementType STRING_TEMPLATE_ELEMENT = KotlinParserDefinition.createType("STRING_TEMPLATE_ELEMENT");
+  IElementType THEN_EXPRESSION = KotlinParserDefinition.createType("THEN_EXPRESSION");
   IElementType THIS_EXPRESSION = KotlinParserDefinition.createType("THIS_EXPRESSION");
   IElementType THIS_REFERENCE = KotlinParserDefinition.createType("THIS_REFERENCE");
   IElementType TRY_BLOCK = KotlinParserDefinition.createType("TRY_BLOCK");
@@ -110,20 +124,18 @@ public interface KotlinTypes {
   IElementType TYPE_ARGUMENT_LIST = KotlinParserDefinition.createType("TYPE_ARGUMENT_LIST");
   IElementType TYPE_CONSTRAINT = KotlinParserDefinition.createType("TYPE_CONSTRAINT");
   IElementType TYPE_CONSTRAINT_EXT = KotlinParserDefinition.createType("TYPE_CONSTRAINT_EXT");
-  IElementType TYPE_FOLLOWED_BY_DOT = KotlinParserDefinition.createType("TYPE_FOLLOWED_BY_DOT");
   IElementType TYPE_LIST = KotlinParserDefinition.createType("TYPE_LIST");
   IElementType TYPE_OPERATION = KotlinParserDefinition.createType("TYPE_OPERATION");
   IElementType TYPE_PARAMETER = KotlinParserDefinition.createType("TYPE_PARAMETER");
   IElementType TYPE_PARAMETERS = KotlinParserDefinition.createType("TYPE_PARAMETERS");
   IElementType TYPE_PROJECTION = KotlinParserDefinition.createType("TYPE_PROJECTION");
   IElementType TYPE_RHS_PLUS = KotlinParserDefinition.createType("TYPE_RHS_PLUS");
-  IElementType USER_TYPE = KotlinParserDefinition.createType("USER_TYPE");
-  IElementType USER_TYPE_FOLLOWED_BY_DOT = KotlinParserDefinition.createType("USER_TYPE_FOLLOWED_BY_DOT");
   IElementType USER_TYPE_REFERENCE = KotlinParserDefinition.createType("USER_TYPE_REFERENCE");
   IElementType VALUE_ARGUMENT = KotlinParserDefinition.createType("VALUE_ARGUMENT");
   IElementType VALUE_ARGUMENTS = KotlinParserDefinition.createType("VALUE_ARGUMENTS");
   IElementType VALUE_ARGUMENT_NAME = KotlinParserDefinition.createType("VALUE_ARGUMENT_NAME");
   IElementType VALUE_PARAMETERS = KotlinParserDefinition.createType("VALUE_PARAMETERS");
+  IElementType VALUE_PARAMETER_LIST = KotlinParserDefinition.createType("VALUE_PARAMETER_LIST");
   IElementType VARIABLE_DECLARATION_ENTRY_EXT = KotlinParserDefinition.createType("VARIABLE_DECLARATION_ENTRY_EXT");
   IElementType WHEN = KotlinParserDefinition.createType("WHEN");
   IElementType WHEN_CONDITION_EXPRESSION = KotlinParserDefinition.createType("WHEN_CONDITION_EXPRESSION");
@@ -171,6 +183,9 @@ public interface KotlinTypes {
       else if (type == ASSIGNMENT_OPERATOR) {
         return new KtAssignmentOperatorImpl(node);
       }
+      else if (type == ASTERISK) {
+        return new KtAsteriskImpl(node);
+      }
       else if (type == BINARY_CONSTANT) {
         return new KtBinaryConstantImpl(node);
       }
@@ -197,6 +212,9 @@ public interface KotlinTypes {
       }
       else if (type == COMPARISON_OPERATION) {
         return new KtComparisonOperationImpl(node);
+      }
+      else if (type == CONDITION) {
+        return new KtConditionImpl(node);
       }
       else if (type == CONJUNCTION_PLUS) {
         return new KtConjunctionPlusImpl(node);
@@ -225,6 +243,9 @@ public interface KotlinTypes {
       else if (type == DO_WHILE_LOOP) {
         return new KtDoWhileLoopImpl(node);
       }
+      else if (type == ELSE_EXPRESSION) {
+        return new KtElseExpressionImpl(node);
+      }
       else if (type == ELVIS_ACCESS_EXPRESSION) {
         return new KtElvisAccessExpressionImpl(node);
       }
@@ -236,6 +257,9 @@ public interface KotlinTypes {
       }
       else if (type == ENUM_ENTRY) {
         return new KtEnumEntryImpl(node);
+      }
+      else if (type == EQUALITY_COMPARISON_EXPRESSION) {
+        return new KtEqualityComparisonExpressionImpl(node);
       }
       else if (type == EQUALITY_OPERATION) {
         return new KtEqualityOperationImpl(node);
@@ -263,6 +287,15 @@ public interface KotlinTypes {
       }
       else if (type == FUNCTION_PARAMETER) {
         return new KtFunctionParameterImpl(node);
+      }
+      else if (type == FUNCTION_TYPE) {
+        return new KtFunctionTypeImpl(node);
+      }
+      else if (type == FUNCTION_TYPE_RECEIVER) {
+        return new KtFunctionTypeReceiverImpl(node);
+      }
+      else if (type == FUNCTION_TYPE_RECEIVER_REFERENCE) {
+        return new KtFunctionTypeReceiverReferenceImpl(node);
       }
       else if (type == GETTER) {
         return new KtGetterImpl(node);
@@ -306,6 +339,9 @@ public interface KotlinTypes {
       else if (type == LABEL) {
         return new KtLabelImpl(node);
       }
+      else if (type == LEFT_FUNCTION_TYPE) {
+        return new KtLeftFunctionTypeImpl(node);
+      }
       else if (type == LONG_TEMPLATE) {
         return new KtLongTemplateImpl(node);
       }
@@ -339,6 +375,9 @@ public interface KotlinTypes {
       else if (type == NAMED_INFIX_PLUS) {
         return new KtNamedInfixPlusImpl(node);
       }
+      else if (type == NULL) {
+        return new KtNullImpl(node);
+      }
       else if (type == NULLABLE_TYPE) {
         return new KtNullableTypeImpl(node);
       }
@@ -366,11 +405,17 @@ public interface KotlinTypes {
       else if (type == PARAMETER) {
         return new KtParameterImpl(node);
       }
-      else if (type == PARAMETER_MODIFIERS_TYPE_EXT) {
-        return new KtParameterModifiersTypeExtImpl(node);
+      else if (type == PARAMETER_OR_MODIFIER_TYPE) {
+        return new KtParameterOrModifierTypeImpl(node);
       }
       else if (type == PARENTHESIZED_EXPRESSION) {
         return new KtParenthesizedExpressionImpl(node);
+      }
+      else if (type == PLUS_PLUS_AND_OTHERS_EXPRESSION) {
+        return new KtPlusPlusAndOthersExpressionImpl(node);
+      }
+      else if (type == PLUS_PLUS_AND_OTHERS_OPERATION) {
+        return new KtPlusPlusAndOthersOperationImpl(node);
       }
       else if (type == PREFIX_OPERATION) {
         return new KtPrefixOperationImpl(node);
@@ -399,6 +444,12 @@ public interface KotlinTypes {
       else if (type == SETTER) {
         return new KtSetterImpl(node);
       }
+      else if (type == SIMPLE_USER_TYPE) {
+        return new KtSimpleUserTypeImpl(node);
+      }
+      else if (type == SIMPLE_USER_TYPE_ADD) {
+        return new KtSimpleUserTypeAddImpl(node);
+      }
       else if (type == SINGLE_VALUE_PARAMETER_LIST) {
         return new KtSingleValueParameterListImpl(node);
       }
@@ -410,6 +461,9 @@ public interface KotlinTypes {
       }
       else if (type == STRING_TEMPLATE_ELEMENT) {
         return new KtStringTemplateElementImpl(node);
+      }
+      else if (type == THEN_EXPRESSION) {
+        return new KtThenExpressionImpl(node);
       }
       else if (type == THIS_EXPRESSION) {
         return new KtThisExpressionImpl(node);
@@ -438,9 +492,6 @@ public interface KotlinTypes {
       else if (type == TYPE_CONSTRAINT_EXT) {
         return new KtTypeConstraintExtImpl(node);
       }
-      else if (type == TYPE_FOLLOWED_BY_DOT) {
-        return new KtTypeFollowedByDotImpl(node);
-      }
       else if (type == TYPE_LIST) {
         return new KtTypeListImpl(node);
       }
@@ -459,12 +510,6 @@ public interface KotlinTypes {
       else if (type == TYPE_RHS_PLUS) {
         return new KtTypeRHSPlusImpl(node);
       }
-      else if (type == USER_TYPE) {
-        return new KtUserTypeImpl(node);
-      }
-      else if (type == USER_TYPE_FOLLOWED_BY_DOT) {
-        return new KtUserTypeFollowedByDotImpl(node);
-      }
       else if (type == USER_TYPE_REFERENCE) {
         return new KtUserTypeReferenceImpl(node);
       }
@@ -479,6 +524,9 @@ public interface KotlinTypes {
       }
       else if (type == VALUE_PARAMETERS) {
         return new KtValueParametersImpl(node);
+      }
+      else if (type == VALUE_PARAMETER_LIST) {
+        return new KtValueParameterListImpl(node);
       }
       else if (type == VARIABLE_DECLARATION_ENTRY_EXT) {
         return new KtVariableDeclarationEntryExtImpl(node);

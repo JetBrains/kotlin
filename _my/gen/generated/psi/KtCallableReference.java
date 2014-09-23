@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtCallableReference extends PsiElement {
 
   @Nullable
-  KtUserType getUserType();
+  KtSimpleUserType getSimpleUserType();
+
+  @Nullable
+  KtSimpleUserTypeAdd getSimpleUserTypeAdd();
 
 }

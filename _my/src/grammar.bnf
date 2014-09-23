@@ -223,7 +223,8 @@ multipleVariableDeclarations
 // [Used by memberDeclaration, declaration, toplevelObject]
 property
   ::= modifierList? ("val" | "var")
-      typeParameters? DISABLE_JOINING_COMPLEX_TOKENS (typeFollowedByDot "." | annotationsPlus?)?
+      typeParameters? DISABLE_JOINING_COMPLEX_TOKENS
+      (<<stopAtLastDot marker_>> type <<unStop>> "." | annotationsPlus?)?
       (multipleVariableDeclarations | variableDeclarationEntry) RESTORE_JOINING_COMPLEX_TOKENS_STATE
       typeConstraints?
       //("by" (getter setter | setter getter | setter | getter?)
@@ -238,7 +239,8 @@ property
 
 propertyLocal
   ::= modifierList? ("val" | "var")
-      typeParameters? DISABLE_JOINING_COMPLEX_TOKENS (typeFollowedByDot "." | annotationsPlus?)?
+      typeParameters? DISABLE_JOINING_COMPLEX_TOKENS
+      (<<stopAtLastDot marker_>> type <<unStop>> "." | annotationsPlus?)?
       (multipleVariableDeclarations | variableDeclarationEntry) RESTORE_JOINING_COMPLEX_TOKENS_STATE
       typeConstraints?
       ("by" | "=" expression)?
@@ -264,6 +266,11 @@ singleValueParameterList
 
 private privateParameter
   ::= IDENTIFIER (":" type)?
+  ;
+
+private privateParameterReference
+  ::= IDENTIFIER (":" type)
+  | userTypeReference
   ;
 
 
@@ -300,79 +307,49 @@ objectDeclarationName
 
 // [Used by isRHS, simpleUserType, getter, atomicExpression, property, typeArguments, typedef, function, functionLiteral, parameter, functionType, variableDeclarationEntry, typeConstraint]
 type
-  ::= annotationsPlusBeforeType? /*TYPE_START_NEXT*/ typeDescriptor
+  ::= typeDescriptor
   ;
-
-typeFollowedByDot
-  ::= annotationsPlus? typeDescriptorFollowedByDot
-  ;
-
-
-/*
-
-WAS:
-
-// [Used by nullableType, typeDescriptor, type]
-typeDescriptor
-  ::= "(" typeDescriptor ")"
-  | selfType
-  | functionType
-  | userType
-  | nullableType
-  ;
-
-// [Used by typeDescriptor]
-nullableType
-  ::= typeDescriptor "?"
-  ;
-
-PROBLEM: left recursion
-
-FIX:
-*/
-
-
-/*
-
-WAS AFTER FIX:  | selfType
-
-
-typeDescriptor
-  ::= (
-    "(" typeDescriptor ")"
-    | selfType
-    | functionType
-    | userType
-    ) "?"*
-  ;
-
-functionType
-  ::= (type ".")? "(" parameterModifiersTypeExt ")" "->" type?
-  ;
-
-
-
-PROBLEM: left recursion
-
- */
 
 
 private typeDescriptor
-  ::= typeDescriptorAfterRecursion (("." "(" DISABLE_NEWLINES parameterModifiersTypeExt? RESTORE_NEWLINES_STATE")" "->" type?) | nullableType)*
+  ::= functionTypeReceiverReference ("." leftFunctionType)+
+  | annotationsPlus? typeDescriptor2
+  ;
+
+private typeDescriptor2
+  ::= typeDescriptorAfterRecursion nullableType*
+  ;
+
+functionTypeReceiverReference
+  ::= functionTypeReceiver
+  ;
+
+
+functionTypeReceiver
+  ::= (typeDescriptorInBrackets
+         | annotationsPlus? userType
+         | selfType) nullableType*
+  ;
+
+functionType
+  ::= valueParameterList "->" type
+  ;
+
+left leftFunctionType
+  ::= valueParameterList "->" type
+  ;
+
+
+valueParameterList
+  ::= "(" DISABLE_NEWLINES parameterModifiersTypeExt? RESTORE_NEWLINES_STATE")"
   ;
 
 left nullableType
   ::= "?"
   ;
 
-private typeDescriptorFollowedByDot
-  ::= typeDescriptorAfterRecursion (("." "(" DISABLE_NEWLINES parameterModifiersTypeExt? RESTORE_NEWLINES_STATE")" "->" type?) | nullableType)+
-  | typeDescriptorAfterRecursionFollowedByDot
-  ;
-
-
 private typeDescriptorAfterRecursion
-  ::= "(" DISABLE_NEWLINES parameterModifiersTypeExt? RESTORE_NEWLINES_STATE")" "->" type?
+  ::= functionType
   | typeDescriptorInBrackets
   | userType
   | selfType
@@ -384,13 +361,6 @@ private typeDescriptorInBrackets
   //{pin=1 recoverWhile=NOT_RPAR}
   ;
 
-private typeDescriptorAfterRecursionFollowedByDot
-  ::= "(" DISABLE_NEWLINES parameterModifiersTypeExt? RESTORE_NEWLINES_STATE")" "->" type?
-  | typeDescriptorInBrackets
-  | userTypeFollowedByDot
-  | selfType
-  ;
-
 
 // [Used by typeDescriptor]
 selfType
@@ -398,22 +368,21 @@ selfType
   ;
 
 // [Used by typeParameter, catchBlock, callableReference, typeDescriptor, delegationSpecifier, constructorInvocation, explicitDelegation]
-userType
+private userType
   ::= ("package" ".")? simpleUserTypeExt
   ;
 
-userTypeFollowedByDot
-  ::= ("package" ".")? simpleUserTypeExtFollowedByDot
-  ;
-
-
 // same as simpleUserType{"."}
-private simpleUserTypeExt ::= simpleUserType ("." simpleUserType)*
+private simpleUserTypeExt ::= simpleUserType simpleUserTypeAdd*
 
-private simpleUserTypeExtFollowedByDot ::= simpleUserType ("." simpleUserType DOT_NEXT)*
+left simpleUserTypeAdd ::= ("." privateSimpleUserType);
 
 // [Used by userType]
-private simpleUserType
+simpleUserType
+  ::= referenceExpression typeArgumentList?
+  ;
+
+private privateSimpleUserType
   ::= referenceExpression typeArgumentList?
   ;
 
@@ -421,8 +390,12 @@ typeArgumentList
   ::= ("<" DISABLE_NEWLINES optionalProjectionTypeExt RESTORE_NEWLINES_STATE">")
   ;
 
+asterisk
+  ::= "*"
+  ;
+
 // same as (optionalProjection type | "*"){","}
-private optionalProjectionTypeExt ::= ((optionalProjection typeProjection | "*") ",")* (optionalProjection typeProjection | "*")
+private optionalProjectionTypeExt ::= ((optionalProjection typeProjection | asterisk) ",")* (optionalProjection typeProjection | asterisk)
 
 typeProjection
   ::= modifierList? type
@@ -434,15 +407,30 @@ private optionalProjection
   ;
 
 // same as (parameter | modifiers  type){","}
-parameterModifiersTypeExt ::= ((parameter | modifierList  type) ",")* (parameter | modifierList  type)
+private parameterModifiersTypeExt ::= (parameterOrModifierType ",")* parameterOrModifierType
 
+parameterOrModifierType
+  ::= (privateParameterReference |  modifierList?  type)
+  ;
 
 // ----- Control structures
 
 
 // [Used by atomicExpression]
 ifExpression
-  ::= "if" "(" expression ")" expression SEMI? ("else" expression)?
+  ::= "if" "(" DISABLE_NEWLINES condition RESTORE_NEWLINES_STATE ")" thenExpression (SEMI? "else"  elseExpression)?
+  ;
+
+thenExpression
+  ::= block | expression
+  ;
+
+elseExpression
+  ::= (block |expression)
+  ;
+
+condition
+  ::= expression
   ;
 
 // [Used by atomicExpression]
@@ -534,7 +522,11 @@ left conjunctionPlus
 
 // [Used by conjunction]
 private equalityComparison
-  ::= comparison (!INTERRUPTED_WITH_NEWLINE equalityOperation comparison)*
+  ::= comparison equalityComparisonExpression*
+  ;
+
+left equalityComparisonExpression
+  ::= (!INTERRUPTED_WITH_NEWLINE equalityOperation comparison)
   ;
 
 // [Used by equalityComparison]
@@ -684,8 +676,10 @@ private literalConstant
   | INTEGER_CONSTANT
   | CHARACTER_LITERAL
   | FLOAT_CONSTANT
-  | "null"
+  | NULL
   ;
+
+NULL ::= "null";
 
 FLOAT_CONSTANT ::= FLOAT_LITERAL
 
@@ -789,9 +783,17 @@ prefixOperation
 //annotatedExpression
 //  ::= annotation
 
+plusPlusAndOthersOperation
+  ::= "++" | "--" | "!!"
+  ;
+
+left plusPlusAndOthersExpression
+  ::= plusPlusAndOthersOperation
+  ;
+
 // [Used by postfixUnaryExpression]
 private postfixUnaryOperation
-  ::= "++" | "--" | "!!"
+  ::= plusPlusAndOthersExpression
   | callSuffix
   | arrayAccess
   | safeAccessExpression
@@ -827,7 +829,7 @@ typeArguments
   ::= "<" DISABLE_NEWLINES typeList ENABLE_NEWLINES ">"
   ;
 
-typeList ::= type ("," type)*
+typeList ::= modifierList? type ("," modifierList? type)*
 
 // [Used by callSuffix, annotationEntry, initializer]
 valueArguments
@@ -1096,6 +1098,5 @@ external RESTORE_NEWLINES_STATE ::= restoreNewlinesState
 external ENABLE_JOINING_COMPLEX_TOKENS ::= enableJoiningComplexTokens marker_
 external DISABLE_JOINING_COMPLEX_TOKENS ::= disableJoiningComplexTokens marker_
 external RESTORE_JOINING_COMPLEX_TOKENS_STATE ::= restoreJoiningComplexTokensState
-external DOT_NEXT ::= dotNext
 external IDENTIFIER_NEXT ::= identifierNext
 external TYPE_START_NEXT ::= typeStartNext

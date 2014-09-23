@@ -24,8 +24,14 @@ public class KtCallableReferenceImpl extends ASTWrapperPsiElement implements KtC
 
   @Override
   @Nullable
-  public KtUserType getUserType() {
-    return findChildByClass(KtUserType.class);
+  public KtSimpleUserType getSimpleUserType() {
+    return findChildByClass(KtSimpleUserType.class);
+  }
+
+  @Override
+  @Nullable
+  public KtSimpleUserTypeAdd getSimpleUserTypeAdd() {
+    return findChildByClass(KtSimpleUserTypeAdd.class);
   }
 
 }
