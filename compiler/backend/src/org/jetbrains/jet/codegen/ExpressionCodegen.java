@@ -261,7 +261,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public void gen(JetElement expr, Type type) {
-        StackValue value = gen(expr);
+        StackValue value = Type.VOID_TYPE.equals(type) ? genStatement(expr) : gen(expr);
         value.put(type, v);
     }
 
@@ -408,10 +408,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         StackValue conditionValue = gen(expression.getCondition());
         conditionValue.condJump(end, true, v);
 
-        JetExpression body = expression.getBody();
-        if (body != null) {
-            gen(body, Type.VOID_TYPE);
-        }
+        generateLoopBody(expression.getBody());
 
         v.goTo(condition);
 
@@ -446,7 +443,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             statements.addAll(doWhileStatements);
             statements.add(condition);
 
-            conditionValue = generateBlock(statements, true, continueLabel);
+            conditionValue = generateBlock(statements, false, continueLabel);
         }
         else {
             if (body != null) {
@@ -633,10 +630,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         protected abstract void increment(@NotNull Label loopExit);
 
         public void body() {
-            JetExpression body = forExpression.getBody();
-            if (body != null) {
-                gen(body, Type.VOID_TYPE);
-            }
+            generateLoopBody(forExpression.getBody());
         }
 
         private void scheduleLeaveVariable(Runnable runnable) {
@@ -673,6 +667,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + boxedType.getDescriptor(), false);
             StackValue.coerce(boxedType, elementType, v);
             v.store(varToStore, elementType);
+        }
+    }
+
+    private void generateLoopBody(@Nullable JetExpression body) {
+        if (body != null) {
+            gen(body, Type.VOID_TYPE);
         }
     }
 
@@ -1277,10 +1277,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitBlockExpression(@NotNull JetBlockExpression expression, StackValue receiver) {
-        List<JetElement> statements = expression.getStatements();
-        JetType unitType = KotlinBuiltIns.getInstance().getUnitType();
-        boolean lastStatementIsExpression = !unitType.equals(bindingContext.get(EXPRESSION_TYPE, expression));
-        return generateBlock(statements, lastStatementIsExpression);
+        return generateBlock(expression, false);
     }
 
     @Override
@@ -1413,11 +1410,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private StackValue generateBlock(List<JetElement> statements, boolean lastStatementIsExpression) {
-        return generateBlock(statements, lastStatementIsExpression, null);
+    /* package */ StackValue generateBlock(@NotNull JetBlockExpression expression, boolean isStatement) {
+        return generateBlock(expression.getStatements(), isStatement, null);
     }
 
-    private StackValue generateBlock(List<JetElement> statements, boolean lastStatementIsExpression, Label labelBeforeLastExpression) {
+    private StackValue generateBlock(List<JetElement> statements, boolean isStatement, Label labelBeforeLastExpression) {
         Label blockEnd = new Label();
 
         List<Function<StackValue, Void>> leaveTasks = Lists.newArrayList();
@@ -1449,7 +1446,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 generateLocalFunctionDeclaration((JetNamedFunction) statement, leaveTasks);
             }
 
-            boolean isExpression = !iterator.hasNext() && lastStatementIsExpression;
+            boolean isExpression = !iterator.hasNext() && !isStatement;
             if (isExpression && labelBeforeLastExpression != null) {
                 v.mark(labelBeforeLastExpression);
             }
@@ -1671,10 +1668,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public void returnExpression(JetExpression expr) {
-        StackValue lastValue = gen(expr);
+        boolean isBlockedNamedFunction = expr instanceof JetBlockExpression && expr.getParent() instanceof JetNamedFunction;
 
+        // If generating body for named block-bodied function, generate it as sequence of statements
+        gen(expr, isBlockedNamedFunction ? Type.VOID_TYPE : returnType);
+
+        // If it does not ends with return we should return something
+        // because if we don't there can be VerifyError (specific cases with Nothing-typed expressions)
         if (!endsWithReturn(expr)) {
-            lastValue.put(returnType, v);
+            if (isBlockedNamedFunction && !Type.VOID_TYPE.equals(expressionType(expr))) {
+                StackValue.none().put(returnType, v);
+            }
+
             v.areturn(returnType);
         }
     }

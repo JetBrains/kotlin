@@ -404,12 +404,21 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
 
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
+        JetTypeInfo finallyBlockTypeInfo = null;
         if (finallyBlock != null) {
-            dataFlowInfo = facade.getTypeInfo(finallyBlock.getFinalExpression(),
-                                              context.replaceExpectedType(NO_EXPECTED_TYPE)).getDataFlowInfo();
+            finallyBlockTypeInfo = facade.getTypeInfo(finallyBlock.getFinalExpression(),
+                                              context.replaceExpectedType(NO_EXPECTED_TYPE));
+            dataFlowInfo = finallyBlockTypeInfo.getDataFlowInfo();
         }
 
         JetType type = facade.getTypeInfo(tryBlock, context).getType();
+
+        if (finallyBlockTypeInfo != null &&
+            finallyBlockTypeInfo.getType() != null &&
+            KotlinBuiltIns.getInstance().isNothing(finallyBlockTypeInfo.getType())) {
+            return JetTypeInfo.create(KotlinBuiltIns.getInstance().getNothingType(), dataFlowInfo);
+        }
+
         if (type != null) {
             types.add(type);
         }
