@@ -31,6 +31,7 @@ import com.intellij.util.Processor
 import org.jetbrains.jet.codegen.CodegenTestFiles
 import java.util.regex.Pattern
 import org.jetbrains.jet.config.CompilerConfiguration
+import org.jetbrains.kotlin.android.AndroidConfigurationKeys
 
 public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
 
@@ -43,8 +44,8 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
     }
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
-        configuration.put(JVMConfigurationKeys.ANDROID_RES_PATH, path + "layout/");
-        configuration.put(JVMConfigurationKeys.ANDROID_MANIFEST, path + "AndroidManifest.xml");
+        configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, path + "layout/");
+        configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, path + "AndroidManifest.xml");
         myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration);
     }
 
