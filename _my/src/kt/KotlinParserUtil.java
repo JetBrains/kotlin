@@ -51,6 +51,9 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
         private final Stack<Integer> stopAt = new Stack<Integer>();
         private final Stack<Marker> stopAtMarkers = new Stack<Marker>();
 
+        private final Stack<Boolean> shortAnnotations = new Stack<Boolean>();
+        private final Stack<Marker> shortAnnotationsMarkers = new Stack<Marker>();
+
         public SemanticWhitespaceAwarePsiBuilderImpl(PsiBuilder delegate, ErrorState state_, PsiParser parser_) {
             super(delegate, state_, parser_);
             Marker marker = new Marker() {
@@ -104,12 +107,18 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
 
                 }
             };
+
             newlinesEnabled.push(true);
             newlinesEnabledMarkers.push(marker);
+
             joinComplexTokens.push(true);
             joinComplexTokensMarkers.push(marker);
+
             stopAt.push(Integer.MAX_VALUE);
             stopAtMarkers.push(marker);
+
+            shortAnnotations.push(false);
+            shortAnnotationsMarkers.push(marker);
         }
 
         @Override
@@ -357,6 +366,10 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
             builder.stopAtMarkers.pop();
             builder.stopAt.pop();
         }
+        while (builder.shortAnnotations.size() > 1 && builder.shortAnnotationsMarkers.peek() == marker) {
+            builder.shortAnnotationsMarkers.pop();
+            builder.shortAnnotations.pop();
+        }
     }
 
     public static void exit_section_(PsiBuilder builder_,
@@ -404,6 +417,33 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
         assert builder.stopAt.size() > 1;
         builder.stopAt.pop();
         builder.stopAtMarkers.pop();
+        return true;
+    }
+
+    public static boolean allowShortAnnotations(PsiBuilder builder_, int level_, PsiBuilder.Marker marker) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        builder.shortAnnotations.push(true);
+        builder.shortAnnotationsMarkers.push(marker);
+        return true;
+    }
+
+    public static boolean forbidShortAnnotations(PsiBuilder builder_, int level_, PsiBuilder.Marker marker) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        builder.shortAnnotations.push(false);
+        builder.shortAnnotationsMarkers.push(marker);
+        return true;
+    }
+
+    public static boolean shortAnnotationsAvailable(PsiBuilder builder_, int level_) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        return builder.shortAnnotations.peek();
+    }
+
+    public static boolean restoreAnnotationsState(PsiBuilder builder_, int level_) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        assert builder.shortAnnotations.size() > 1;
+        builder.shortAnnotations.pop();
+        builder.shortAnnotationsMarkers.pop();
         return true;
     }
 
@@ -545,6 +585,16 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
         return true;
     }
 
+    protected static int findLastBefore(SemanticWhitespaceAwarePsiBuilderImpl builder, TokenSet lookFor, TokenSet stopAt, boolean dontStopRightAfterOccurrence) {
+        return matchTokenStreamPredicate(builder, new LastBefore(new AtSet(builder, lookFor), new AtSet(builder, stopAt), dontStopRightAfterOccurrence));
+    }
+
+    public static boolean stopInTypeParameter(PsiBuilder builder_, int level_, PsiBuilder.Marker marker) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        int whenToStop = findLastBefore(builder, TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, GT, COLON), false);
+        stopAt(builder_, level_, marker, whenToStop);
+        return true;
+    }
 
 
     protected static boolean _at(SemanticWhitespaceAwarePsiBuilderImpl myBuilder, IElementType expectation) {

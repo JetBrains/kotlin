@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface KtType extends PsiElement {
 
   @NotNull
-  List<KtAnnotation> getAnnotationList();
+  List<KtAnnotationEntry> getAnnotationEntryList();
 
   @Nullable
   KtFunctionType getFunctionType();
@@ -18,6 +18,9 @@ public interface KtType extends PsiElement {
 
   @NotNull
   List<KtLeftFunctionType> getLeftFunctionTypeList();
+
+  @NotNull
+  List<KtLongAnnotation> getLongAnnotationList();
 
   @Nullable
   KtNullableType getNullableType();

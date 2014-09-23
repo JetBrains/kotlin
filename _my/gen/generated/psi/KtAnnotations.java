@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtAnnotations extends PsiElement {
 
   @NotNull
-  List<KtAnnotation> getAnnotationList();
+  List<KtAnnotationEntry> getAnnotationEntryList();
+
+  @NotNull
+  List<KtLongAnnotation> getLongAnnotationList();
 
 }

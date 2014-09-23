@@ -8,9 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtPrimaryConstructorModifierList extends PsiElement {
 
   @NotNull
-  List<KtAnnotation> getAnnotationList();
+  List<KtAnnotationEntry> getAnnotationEntryList();
 
   @NotNull
-  List<KtMemberModifier> getMemberModifierList();
+  List<KtLongAnnotation> getLongAnnotationList();
 
 }

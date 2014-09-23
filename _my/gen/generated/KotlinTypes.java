@@ -13,10 +13,8 @@ public interface KotlinTypes {
   IElementType ADDITIVE_OPERATION = KotlinParserDefinition.createType("ADDITIVE_OPERATION");
   IElementType AND_OPERATION = KotlinParserDefinition.createType("AND_OPERATION");
   IElementType ANNOTATED_EXPRESSION = KotlinParserDefinition.createType("ANNOTATED_EXPRESSION");
-  IElementType ANNOTATION = KotlinParserDefinition.createType("ANNOTATION");
   IElementType ANNOTATIONS = KotlinParserDefinition.createType("ANNOTATIONS");
   IElementType ANNOTATION_ENTRY = KotlinParserDefinition.createType("ANNOTATION_ENTRY");
-  IElementType ANNOTATION_WITH_SHORT = KotlinParserDefinition.createType("ANNOTATION_WITH_SHORT");
   IElementType ANONYMOUS_INITIALIZER = KotlinParserDefinition.createType("ANONYMOUS_INITIALIZER");
   IElementType ARRAY_ACCESS = KotlinParserDefinition.createType("ARRAY_ACCESS");
   IElementType ASSIGNMENT_EXPRESSION = KotlinParserDefinition.createType("ASSIGNMENT_EXPRESSION");
@@ -74,13 +72,12 @@ public interface KotlinTypes {
   IElementType JUMP_THROW = KotlinParserDefinition.createType("JUMP_THROW");
   IElementType LABEL = KotlinParserDefinition.createType("LABEL");
   IElementType LEFT_FUNCTION_TYPE = KotlinParserDefinition.createType("LEFT_FUNCTION_TYPE");
+  IElementType LONG_ANNOTATION = KotlinParserDefinition.createType("LONG_ANNOTATION");
   IElementType LONG_TEMPLATE = KotlinParserDefinition.createType("LONG_TEMPLATE");
   IElementType LOOP = KotlinParserDefinition.createType("LOOP");
-  IElementType MEMBER_MODIFIER = KotlinParserDefinition.createType("MEMBER_MODIFIER");
   IElementType MODIFIERS_IDENTIFIER_EXT = KotlinParserDefinition.createType("MODIFIERS_IDENTIFIER_EXT");
   IElementType MODIFIERS_IDENTIFIER_TYPE_EXT = KotlinParserDefinition.createType("MODIFIERS_IDENTIFIER_TYPE_EXT");
   IElementType MODIFIER_LIST = KotlinParserDefinition.createType("MODIFIER_LIST");
-  IElementType MODIFIER_LIST_FOLLOWED_BY_IDENTIFIER = KotlinParserDefinition.createType("MODIFIER_LIST_FOLLOWED_BY_IDENTIFIER");
   IElementType MULTIPLE_VARIABLE_DECLARATIONS = KotlinParserDefinition.createType("MULTIPLE_VARIABLE_DECLARATIONS");
   IElementType MULTIPLICATIVE_OPERATION = KotlinParserDefinition.createType("MULTIPLICATIVE_OPERATION");
   IElementType NAMED_INFIX_FIRST = KotlinParserDefinition.createType("NAMED_INFIX_FIRST");
@@ -159,17 +156,11 @@ public interface KotlinTypes {
       else if (type == ANNOTATED_EXPRESSION) {
         return new KtAnnotatedExpressionImpl(node);
       }
-      else if (type == ANNOTATION) {
-        return new KtAnnotationImpl(node);
-      }
       else if (type == ANNOTATIONS) {
         return new KtAnnotationsImpl(node);
       }
       else if (type == ANNOTATION_ENTRY) {
         return new KtAnnotationEntryImpl(node);
-      }
-      else if (type == ANNOTATION_WITH_SHORT) {
-        return new KtAnnotationWithShortImpl(node);
       }
       else if (type == ANONYMOUS_INITIALIZER) {
         return new KtAnonymousInitializerImpl(node);
@@ -342,14 +333,14 @@ public interface KotlinTypes {
       else if (type == LEFT_FUNCTION_TYPE) {
         return new KtLeftFunctionTypeImpl(node);
       }
+      else if (type == LONG_ANNOTATION) {
+        return new KtLongAnnotationImpl(node);
+      }
       else if (type == LONG_TEMPLATE) {
         return new KtLongTemplateImpl(node);
       }
       else if (type == LOOP) {
         return new KtLoopImpl(node);
-      }
-      else if (type == MEMBER_MODIFIER) {
-        return new KtMemberModifierImpl(node);
       }
       else if (type == MODIFIERS_IDENTIFIER_EXT) {
         return new KtModifiersIDENTIFIERExtImpl(node);
@@ -359,9 +350,6 @@ public interface KotlinTypes {
       }
       else if (type == MODIFIER_LIST) {
         return new KtModifierListImpl(node);
-      }
-      else if (type == MODIFIER_LIST_FOLLOWED_BY_IDENTIFIER) {
-        return new KtModifierListFollowedByIdentifierImpl(node);
       }
       else if (type == MULTIPLE_VARIABLE_DECLARATIONS) {
         return new KtMultipleVariableDeclarationsImpl(node);

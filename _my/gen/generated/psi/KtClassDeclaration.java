@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface KtClassDeclaration extends PsiElement {
 
   @NotNull
-  List<KtAnnotation> getAnnotationList();
+  List<KtAnnotationEntry> getAnnotationEntryList();
 
   @Nullable
   KtClassBody getClassBody();
@@ -18,6 +18,9 @@ public interface KtClassDeclaration extends PsiElement {
 
   @Nullable
   KtEnumClassBody getEnumClassBody();
+
+  @NotNull
+  List<KtLongAnnotation> getLongAnnotationList();
 
   @Nullable
   KtModifierList getModifierList();

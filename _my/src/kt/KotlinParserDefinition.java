@@ -100,7 +100,7 @@ public class KotlinParserDefinition implements ParserDefinition {
         if (str == "ANNOTATED_EXPRESSION") {
             return JetNodeTypes.ANNOTATED_EXPRESSION;
         }
-        if (str == "ANNOTATION") {
+        if (str == "LONG_ANNOTATION") {
             return JetNodeTypes.ANNOTATION;
         }
         if (str == "ANNOTATION_ENTRY") {

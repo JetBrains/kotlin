@@ -8,10 +8,13 @@ import com.intellij.psi.PsiElement;
 public interface KtInitializerExt extends PsiElement {
 
   @NotNull
-  List<KtAnnotation> getAnnotationList();
+  List<KtAnnotationEntry> getAnnotationEntryList();
 
   @NotNull
   List<KtDelegatorSuperCall> getDelegatorSuperCallList();
+
+  @NotNull
+  List<KtLongAnnotation> getLongAnnotationList();
 
   @NotNull
   List<KtValueArguments> getValueArgumentsList();

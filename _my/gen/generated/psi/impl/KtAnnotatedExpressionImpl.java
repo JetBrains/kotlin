@@ -47,9 +47,9 @@ public class KtAnnotatedExpressionImpl extends ASTWrapperPsiElement implements K
   }
 
   @Override
-  @NotNull
-  public KtAnnotation getAnnotation() {
-    return findNotNullChildByClass(KtAnnotation.class);
+  @Nullable
+  public KtAnnotationEntry getAnnotationEntry() {
+    return findChildByClass(KtAnnotationEntry.class);
   }
 
   @Override
@@ -128,6 +128,12 @@ public class KtAnnotatedExpressionImpl extends ASTWrapperPsiElement implements K
   @Nullable
   public KtLabel getLabel() {
     return findChildByClass(KtLabel.class);
+  }
+
+  @Override
+  @Nullable
+  public KtLongAnnotation getLongAnnotation() {
+    return findChildByClass(KtLongAnnotation.class);
   }
 
   @Override

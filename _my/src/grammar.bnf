@@ -79,7 +79,7 @@ left DOT_IDENTIFIER ::= "." referenceExpression
 
 // [Used by memberDeclaration, declaration, toplevelObject]
 classDeclaration
-  ::= modifierList? ("class" | "trait") IDENTIFIER
+  ::= ALLOW_SHORT_ANNOTATIONS modifierList? RESTORE_ANNOTATIONS_STATE ("class" | "trait") IDENTIFIER
       typeParameters?
       primaryConstructorModifierList? valueParameters?
       (":" annotationsPlus? delegationSpecifierExt)?
@@ -122,7 +122,7 @@ private typeParameterExt ::= (typeParameter ",")* typeParameter
 
 // [Used by typeParameters]
 typeParameter
-  ::= modifierListFollowedByIdentifier? IDENTIFIER_NEXT IDENTIFIER (":" userTypeReference)?
+  ::= <<stopInTypeParameter marker_>> ALLOW_SHORT_ANNOTATIONS modifierList? RESTORE_ANNOTATIONS_STATE <<unStop>> IDENTIFIER_NEXT IDENTIFIER (":" userTypeReference)?
   ;
 
 private typeConstraints
@@ -194,7 +194,7 @@ block
 // [Used by memberDeclaration, declaration, toplevelObject]
 function
   ::= modifierList? "fun" typeParameters?
-      (type ".")?// | annotations)?
+      (<<stopAtLastDot marker_>> type <<unStop>> "." | annotationsPlus)?
       IDENTIFIER
       typeParameters? valueParameters (":" type)?
       typeConstraints?
@@ -655,7 +655,7 @@ thisReference
   ;
 
 referenceExpression
-  ::= IDENTIFIER
+  ::= IDENTIFIER_NEXT IDENTIFIER
   ;
 // [Used by callSuffix, prefixUnaryOperation, atomicExpression, jump]
 label
@@ -991,11 +991,6 @@ modifierList
   ::= modifier+
   ;
 
-modifierListFollowedByIdentifier
-  ::= (modifier IDENTIFIER_NEXT)+
-  ;
-
-
 primaryConstructorModifierList
   ::= modifier+
   ;
@@ -1008,26 +1003,26 @@ private modifier
   | accessModifier
   | varianceAnnotation
   | memberModifier
-  | parameterKind
+  //| parameterKind
   | annotation
   ;
 
 // [Used by modifier]
 private classModifier
   ::= <<at ABSTRACT_KEYWORD>> "abstract"
-  | "final"
+  | <<at FINAL_KEYWORD>> "final"
   | <<at ENUM_KEYWORD>> "enum"
-  | "open"
-  | "attribute"
+  | <<at OPEN_KEYWORD>> "open"
+  | <<at ANNOTATION_KEYWORD>> "annotation"
   | <<at INNER_KEYWORD>> "inner"
   ;
 
 // [Used by modifier]
-memberModifier
-  ::= "override"
-  | "open"
-  | "final"
-  | "abstract"
+private memberModifier
+  ::= <<at OVERRIDE_KEYWORD>> "override"
+  | <<at OPEN_KEYWORD>> "open"
+  | <<at FINAL_KEYWORD>> "final"
+  | <<at ABSTRACT_KEYWORD>> "abstract"
   ;
 
 // [Used by modifier]
@@ -1040,7 +1035,7 @@ private accessModifier
 
 // [Used by modifier, optionalProjection]
 private varianceAnnotation
-  ::= "in"
+  ::= <<at IN_KEYWORD>> "in"
   | <<at OUT_KEYWORD>> "out"
   ;
 
@@ -1064,21 +1059,15 @@ private annotationsPlus
   ::= annotation+
   ;
 
-private annotationsPlusBeforeType
-  ::= (annotationWithShort TYPE_START_NEXT)+
-  ;
-
-
-annotationWithShort
-  ::= "[" DISABLE_NEWLINES annotationEntry+ RESTORE_NEWLINES_STATE "]"
-  //| annotationEntry
-  ;
-
 
 // [Used by annotations]
-annotation
-  ::= "[" DISABLE_NEWLINES annotationEntry+ RESTORE_NEWLINES_STATE "]"
-  //| annotationEntry
+private annotation
+  ::= longAnnotation
+  | <<shortAnnotationsAvailable>> annotationEntry
+  ;
+
+longAnnotation
+  ::=  "["  FORBID_SHORT_ANNOTATIONS DISABLE_NEWLINES annotationEntry+ RESTORE_NEWLINES_STATE RESTORE_ANNOTATIONS_STATE "]"
   ;
 
 // [Used by annotation]
@@ -1099,4 +1088,6 @@ external ENABLE_JOINING_COMPLEX_TOKENS ::= enableJoiningComplexTokens marker_
 external DISABLE_JOINING_COMPLEX_TOKENS ::= disableJoiningComplexTokens marker_
 external RESTORE_JOINING_COMPLEX_TOKENS_STATE ::= restoreJoiningComplexTokensState
 external IDENTIFIER_NEXT ::= identifierNext
-external TYPE_START_NEXT ::= typeStartNext
+external ALLOW_SHORT_ANNOTATIONS ::= allowShortAnnotations marker_
+external FORBID_SHORT_ANNOTATIONS ::= forbidShortAnnotations marker_
+external RESTORE_ANNOTATIONS_STATE ::= restoreAnnotationsState

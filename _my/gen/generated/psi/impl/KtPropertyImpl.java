@@ -54,8 +54,8 @@ public class KtPropertyImpl extends ASTWrapperPsiElement implements KtProperty {
 
   @Override
   @NotNull
-  public List<KtAnnotation> getAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAnnotation.class);
+  public List<KtAnnotationEntry> getAnnotationEntryList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAnnotationEntry.class);
   }
 
   @Override
@@ -170,6 +170,12 @@ public class KtPropertyImpl extends ASTWrapperPsiElement implements KtProperty {
   @NotNull
   public List<KtLabel> getLabelList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLabel.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtLongAnnotation> getLongAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLongAnnotation.class);
   }
 
   @Override

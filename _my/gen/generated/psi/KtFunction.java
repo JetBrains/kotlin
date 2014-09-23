@@ -23,6 +23,9 @@ public interface KtFunction extends PsiElement {
   List<KtAnnotatedExpression> getAnnotatedExpressionList();
 
   @NotNull
+  List<KtAnnotationEntry> getAnnotationEntryList();
+
+  @NotNull
   List<KtArrayAccess> getArrayAccessList();
 
   @Nullable
@@ -78,6 +81,9 @@ public interface KtFunction extends PsiElement {
 
   @NotNull
   List<KtLabel> getLabelList();
+
+  @NotNull
+  List<KtLongAnnotation> getLongAnnotationList();
 
   @NotNull
   List<KtLoop> getLoopList();

@@ -24,8 +24,8 @@ public class KtClassDeclarationImpl extends ASTWrapperPsiElement implements KtCl
 
   @Override
   @NotNull
-  public List<KtAnnotation> getAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAnnotation.class);
+  public List<KtAnnotationEntry> getAnnotationEntryList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAnnotationEntry.class);
   }
 
   @Override
@@ -44,6 +44,12 @@ public class KtClassDeclarationImpl extends ASTWrapperPsiElement implements KtCl
   @Nullable
   public KtEnumClassBody getEnumClassBody() {
     return findChildByClass(KtEnumClassBody.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtLongAnnotation> getLongAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLongAnnotation.class);
   }
 
   @Override

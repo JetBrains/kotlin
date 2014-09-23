@@ -54,6 +54,12 @@ public class KtFunctionImpl extends ASTWrapperPsiElement implements KtFunction {
 
   @Override
   @NotNull
+  public List<KtAnnotationEntry> getAnnotationEntryList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAnnotationEntry.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtArrayAccess> getArrayAccessList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtArrayAccess.class);
   }
@@ -164,6 +170,12 @@ public class KtFunctionImpl extends ASTWrapperPsiElement implements KtFunction {
   @NotNull
   public List<KtLabel> getLabelList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLabel.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtLongAnnotation> getLongAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLongAnnotation.class);
   }
 
   @Override

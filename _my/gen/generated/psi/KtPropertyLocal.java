@@ -23,7 +23,7 @@ public interface KtPropertyLocal extends PsiElement {
   List<KtAnnotatedExpression> getAnnotatedExpressionList();
 
   @NotNull
-  List<KtAnnotation> getAnnotationList();
+  List<KtAnnotationEntry> getAnnotationEntryList();
 
   @NotNull
   List<KtArrayAccess> getArrayAccessList();
@@ -78,6 +78,9 @@ public interface KtPropertyLocal extends PsiElement {
 
   @NotNull
   List<KtLabel> getLabelList();
+
+  @NotNull
+  List<KtLongAnnotation> getLongAnnotationList();
 
   @NotNull
   List<KtLoop> getLoopList();

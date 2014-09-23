@@ -19,8 +19,8 @@ public interface KtAnnotatedExpression extends PsiElement {
   @Nullable
   KtAnnotatedExpression getAnnotatedExpression();
 
-  @NotNull
-  KtAnnotation getAnnotation();
+  @Nullable
+  KtAnnotationEntry getAnnotationEntry();
 
   @Nullable
   KtArrayAccess getArrayAccess();
@@ -60,6 +60,9 @@ public interface KtAnnotatedExpression extends PsiElement {
 
   @Nullable
   KtLabel getLabel();
+
+  @Nullable
+  KtLongAnnotation getLongAnnotation();
 
   @Nullable
   KtLoop getLoop();

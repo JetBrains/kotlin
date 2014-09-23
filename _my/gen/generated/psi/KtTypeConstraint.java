@@ -8,7 +8,10 @@ import com.intellij.psi.PsiElement;
 public interface KtTypeConstraint extends PsiElement {
 
   @NotNull
-  List<KtAnnotation> getAnnotationList();
+  List<KtAnnotationEntry> getAnnotationEntryList();
+
+  @NotNull
+  List<KtLongAnnotation> getLongAnnotationList();
 
   @NotNull
   KtReferenceExpression getReferenceExpression();

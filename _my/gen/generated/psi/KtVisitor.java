@@ -43,15 +43,7 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitAnnotation(@NotNull KtAnnotation o) {
-    visitPsiElement(o);
-  }
-
   public void visitAnnotationEntry(@NotNull KtAnnotationEntry o) {
-    visitPsiElement(o);
-  }
-
-  public void visitAnnotationWithShort(@NotNull KtAnnotationWithShort o) {
     visitPsiElement(o);
   }
 
@@ -275,6 +267,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitLongAnnotation(@NotNull KtLongAnnotation o) {
+    visitPsiElement(o);
+  }
+
   public void visitLongTemplate(@NotNull KtLongTemplate o) {
     visitPsiElement(o);
   }
@@ -283,15 +279,7 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitMemberModifier(@NotNull KtMemberModifier o) {
-    visitPsiElement(o);
-  }
-
   public void visitModifierList(@NotNull KtModifierList o) {
-    visitPsiElement(o);
-  }
-
-  public void visitModifierListFollowedByIdentifier(@NotNull KtModifierListFollowedByIdentifier o) {
     visitPsiElement(o);
   }
 

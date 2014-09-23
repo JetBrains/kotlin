@@ -24,14 +24,14 @@ public class KtPrimaryConstructorModifierListImpl extends ASTWrapperPsiElement i
 
   @Override
   @NotNull
-  public List<KtAnnotation> getAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAnnotation.class);
+  public List<KtAnnotationEntry> getAnnotationEntryList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAnnotationEntry.class);
   }
 
   @Override
   @NotNull
-  public List<KtMemberModifier> getMemberModifierList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtMemberModifier.class);
+  public List<KtLongAnnotation> getLongAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLongAnnotation.class);
   }
 
 }
