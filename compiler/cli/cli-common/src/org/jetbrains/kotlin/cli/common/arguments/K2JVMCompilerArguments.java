@@ -66,14 +66,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xno-optimize", description = "Disable optimizations")
     public boolean noOptimize;
 
-    @Argument(value = "androidRes", description = "Android resources path")
-    @ValueDescription("<path>")
-    public String androidRes;
-
-    @Argument(value = "androidManifest", description = "Android manifest file")
-    @ValueDescription("<path>")
-    public String androidManifest;
-
     @Override
     @NotNull
     public String executableScriptFileName() {

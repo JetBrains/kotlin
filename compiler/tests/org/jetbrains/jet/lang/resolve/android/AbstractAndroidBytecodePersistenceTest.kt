@@ -23,6 +23,7 @@ import org.jetbrains.jet.TestJdkKind
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.kotlin.android.AndroidConfigurationKeys
 
 public abstract class AbstractAndroidBytecodePersistenceTest : AbstractBytecodeTextTest() {
 
@@ -35,8 +36,8 @@ public abstract class AbstractAndroidBytecodePersistenceTest : AbstractBytecodeT
     }
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
-        configuration.put(JVMConfigurationKeys.ANDROID_RES_PATH, path + "res/layout/");
-        configuration.put(JVMConfigurationKeys.ANDROID_MANIFEST, path + "../AndroidManifest.xml");
+        configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, path + "res/layout/");
+        configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, path + "../AndroidManifest.xml");
         myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration);
     }
     public override fun doTest(path: String) {

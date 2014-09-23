@@ -51,10 +51,4 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<List<String>> MODULE_IDS =
             CompilerConfigurationKey.create("module id strings");
-
-    public static final CompilerConfigurationKey<String> ANDROID_RES_PATH =
-            CompilerConfigurationKey.create("android resources search path");
-
-    public static final CompilerConfigurationKey<String> ANDROID_MANIFEST =
-            CompilerConfigurationKey.create("android manifest file");
 }
