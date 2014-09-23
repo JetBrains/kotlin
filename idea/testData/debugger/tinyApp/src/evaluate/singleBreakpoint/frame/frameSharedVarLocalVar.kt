@@ -1,4 +1,4 @@
-package frameSharedVar
+package frameSharedVarLocalVar
 
 fun main(args: Array<String>) {
     var var1 = 1
@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
     }
 }
 
-fun foo(f: () -> Unit) {
+inline fun foo(f: () -> Unit) {
     f()
 }
 

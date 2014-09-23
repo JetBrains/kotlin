@@ -933,7 +933,8 @@ public abstract class StackValue {
         }
     }
 
-    public static Type sharedTypeForType(Type type) {
+    @NotNull
+    public static Type sharedTypeForType(@NotNull Type type) {
         switch (type.getSort()) {
             case Type.OBJECT:
             case Type.ARRAY:

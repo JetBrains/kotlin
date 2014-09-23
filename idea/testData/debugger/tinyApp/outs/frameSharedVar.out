@@ -2,6 +2,7 @@ LineBreakpoint created at frameSharedVar.kt:7
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameSharedVar.FrameSharedVarPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 frameSharedVar.kt:6
+Compile bytecode for var1
 package frameSharedVar
 
 fun main(args: Array<String>) {
@@ -17,6 +18,9 @@ fun foo(f: () -> Unit) {
 }
 
 // PRINT_FRAME
+
+// EXPRESSION: var1
+// RESULT: 1: I
  frame    = invoke():7, FrameSharedVarPackage$@packagePartHASH$main$1 {frameSharedVar}
    this     = this = {frameSharedVar.FrameSharedVarPackage$@packagePartHASH$main$1@uniqueID}kotlin.Function0<kotlin.Unit>
      field    = $var1: kotlin.jvm.internal.Ref$IntRef = {kotlin.jvm.internal.Ref$IntRef@uniqueID}1
