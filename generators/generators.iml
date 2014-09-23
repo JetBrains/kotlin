@@ -23,6 +23,7 @@
     <orderEntry type="module" module-name="j2k" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="kotlin-runtime" level="project" />
     <orderEntry type="library" scope="TEST" name="jps-test" level="project" />
+    <orderEntry type="module" module-name="js.dart-ast" />
   </component>
 </module>
 

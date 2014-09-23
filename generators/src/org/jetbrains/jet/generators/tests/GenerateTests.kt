@@ -120,6 +120,8 @@ import org.jetbrains.jet.plugin.parameterInfo.AbstractFunctionParameterInfoTest
 import org.jetbrains.jet.psi.patternMatching.AbstractJetPsiUnifierTest
 import org.jetbrains.jet.completion.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.jet.completion.weighers.AbstractSmartCompletionWeigherTest
+import org.jetbrains.jet.generators.tests.reservedWords.generateTestDataForReservedWords
+import org.jetbrains.k2js.test.semantics.AbstractReservedWordTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -615,6 +617,14 @@ fun main(args: Array<String>) {
     testGroup("jps-plugin/test", "jps-plugin/testData") {
         testClass(javaClass<AbstractIncrementalJpsTest>()) {
             model("incremental", extension = null, excludeParentDirs = true)
+        }
+    }
+
+    generateTestDataForReservedWords()
+
+    testGroup("js/js.tests/test", "js/js.translator/testData") {
+        testClass(javaClass<AbstractReservedWordTest>()) {
+            model("reservedWords/cases")
         }
     }
 }
