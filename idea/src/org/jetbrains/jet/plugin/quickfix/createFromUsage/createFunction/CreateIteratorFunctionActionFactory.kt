@@ -20,7 +20,7 @@ object CreateIteratorFunctionActionFactory : JetSingleIntentionActionFactory() {
         val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
         val iterableExpr = forExpr.getLoopRange() ?: return null
         val variableExpr: JetExpression = ((forExpr.getLoopParameter() ?: forExpr.getMultiParameter()) ?: return null) as JetExpression
-        val iterableType = TypeOrExpressionThereof(iterableExpr, Variance.IN_VARIANCE)
+        val iterableType = TypeInfo(iterableExpr, Variance.IN_VARIANCE)
         val returnJetType = KotlinBuiltIns.getInstance().getIterator().getDefaultType()
 
         val context = file.getBindingContext()
@@ -30,7 +30,7 @@ object CreateIteratorFunctionActionFactory : JetSingleIntentionActionFactory() {
         val returnJetTypeParameterType = TypeProjectionImpl(returnJetTypeParameterTypes[0])
         val returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType)
         val newReturnJetType = JetTypeImpl(returnJetType.getAnnotations(), returnJetType.getConstructor(), returnJetType.isNullable(), returnJetTypeArguments, returnJetType.getMemberScope())
-        val returnType = TypeOrExpressionThereof(newReturnJetType, Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(forExpr, iterableType, "iterator", returnType)
+        val returnType = TypeInfo(newReturnJetType, Variance.OUT_VARIANCE)
+        return CreateFunctionFromUsageFix(forExpr, FunctionInfo("iterator", iterableType, returnType))
     }
 }

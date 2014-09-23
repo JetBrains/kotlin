@@ -22,17 +22,17 @@ object CreateComponentFunctionActionFactory : JetSingleIntentionActionFactory() 
         val ownerType = if (multiDeclaration == null) {
             val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>())!!
             multiDeclaration = forExpr.getMultiParameter()!!
-            TypeOrExpressionThereof(diagnosticWithParameters.getB(), Variance.IN_VARIANCE)
+            TypeInfo(diagnosticWithParameters.getB(), Variance.IN_VARIANCE)
         }
         else {
             val rhs = multiDeclaration!!.getInitializer() ?: return null
-            TypeOrExpressionThereof(rhs, Variance.IN_VARIANCE)
+            TypeInfo(rhs, Variance.IN_VARIANCE)
         }
         val entries = multiDeclaration!!.getEntries()
 
         val entry = entries[componentNumber]
-        val returnType = TypeOrExpressionThereof(entry, Variance.OUT_VARIANCE)
+        val returnType = TypeInfo(entry, Variance.OUT_VARIANCE)
 
-        return CreateFunctionFromUsageFix(multiDeclaration!!, ownerType, name.getIdentifier(), returnType)
+        return CreateFunctionFromUsageFix(multiDeclaration!!, FunctionInfo(name.getIdentifier(), ownerType, returnType))
     }
 }

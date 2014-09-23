@@ -13,10 +13,10 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 object CreateHasNextFunctionActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic, Errors.HAS_NEXT_MISSING, Errors.HAS_NEXT_FUNCTION_NONE_APPLICABLE)
-        val ownerType = TypeOrExpressionThereof(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
+        val ownerType = TypeInfo(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
 
         val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
-        val returnType = TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getBooleanType(), Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(forExpr, ownerType, "hasNext", returnType)
+        val returnType = TypeInfo(KotlinBuiltIns.getInstance().getBooleanType(), Variance.OUT_VARIANCE)
+        return CreateFunctionFromUsageFix(forExpr, FunctionInfo("hasNext", ownerType, returnType))
     }
 }

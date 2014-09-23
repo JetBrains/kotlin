@@ -13,11 +13,11 @@ import org.jetbrains.jet.lang.psi.JetForExpression
 object CreateNextFunctionActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic, Errors.NEXT_MISSING, Errors.NEXT_NONE_APPLICABLE)
-        val ownerType = TypeOrExpressionThereof(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
+        val ownerType = TypeInfo(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
 
         val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
         val variableExpr: JetExpression = ((forExpr.getLoopParameter() ?: forExpr.getMultiParameter()) ?: return null) as JetExpression
-        val returnType = TypeOrExpressionThereof(variableExpr, Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(forExpr, ownerType, "next", returnType)
+        val returnType = TypeInfo(variableExpr, Variance.OUT_VARIANCE)
+        return CreateFunctionFromUsageFix(forExpr, FunctionInfo("next", ownerType, returnType))
     }
 }

@@ -11,13 +11,13 @@ object CreateGetFunctionActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val accessExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetArrayAccessExpression>()) ?: return null
         val arrayExpr = accessExpr.getArrayExpression() ?: return null
-        val arrayType = TypeOrExpressionThereof(arrayExpr, Variance.IN_VARIANCE)
+        val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)
 
         val parameters = accessExpr.getIndexExpressions().map {
-            Parameter(TypeOrExpressionThereof(it, Variance.IN_VARIANCE))
+            ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE))
         }
 
-        val returnType = TypeOrExpressionThereof(accessExpr, Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(accessExpr, arrayType, "get", returnType, parameters)
+        val returnType = TypeInfo(accessExpr, Variance.OUT_VARIANCE)
+        return CreateFunctionFromUsageFix(accessExpr, FunctionInfo("get", arrayType, returnType, parameters))
     }
 }

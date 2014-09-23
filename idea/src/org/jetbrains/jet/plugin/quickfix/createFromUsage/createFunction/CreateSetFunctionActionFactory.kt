@@ -14,18 +14,18 @@ object CreateSetFunctionActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val accessExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetArrayAccessExpression>()) ?: return null
         val arrayExpr = accessExpr.getArrayExpression() ?: return null
-        val arrayType = TypeOrExpressionThereof(arrayExpr, Variance.IN_VARIANCE)
+        val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)
 
-        val parameters = accessExpr.getIndexExpressions().mapTo(ArrayList<Parameter>()) {
-            Parameter(TypeOrExpressionThereof(it, Variance.IN_VARIANCE))
+        val parameters = accessExpr.getIndexExpressions().mapTo(ArrayList<ParameterInfo>()) {
+            ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE))
         }
 
         val assignmentExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetBinaryExpression>()) ?: return null
         val rhs = assignmentExpr.getRight() ?: return null
-        val valType = TypeOrExpressionThereof(rhs, Variance.IN_VARIANCE)
-        parameters.add(Parameter(valType, "value"))
+        val valType = TypeInfo(rhs, Variance.IN_VARIANCE)
+        parameters.add(ParameterInfo(valType, "value"))
 
-        val returnType = TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getUnitType(), Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(accessExpr, arrayType, "set", returnType, parameters)
+        val returnType = TypeInfo(KotlinBuiltIns.getInstance().getUnitType(), Variance.OUT_VARIANCE)
+        return CreateFunctionFromUsageFix(accessExpr, FunctionInfo("set", arrayType, returnType, parameters))
     }
 }
