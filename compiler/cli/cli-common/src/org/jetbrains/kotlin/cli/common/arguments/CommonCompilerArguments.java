@@ -23,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public abstract class CommonCompilerArguments {
+    public static final String PLUGIN_OPTION_FORMAT = "<pluginId>:<optionName>=<value>";
+
     @Argument(value = "nowarn", description = "Generate no warnings")
     public boolean suppressWarnings;
 
@@ -40,6 +42,14 @@ public abstract class CommonCompilerArguments {
 
     @Argument(value = "Xno-inline", description = "Disable method inlining")
     public boolean noInline;
+
+    @Argument(value = "Xplugin", description = "Load a plugin from the given classpath")
+    @ValueDescription("<path>")
+    public String[] pluginClasspaths;
+
+    @Argument(value = "P", description = "Pass an option to a plugin")
+    @ValueDescription(PLUGIN_OPTION_FORMAT)
+    public String[] pluginOptions;
 
     public List<String> freeArgs = new SmartList<String>();
 
