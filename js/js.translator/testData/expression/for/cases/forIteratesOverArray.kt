@@ -24,5 +24,11 @@ fun box(): Boolean {
         try { s += "A${i}:"} finally {}
     assertEquals("A0:A1:A2:", s)
 
+    var sLong = 0L
+    var aLong = longArray(1,2,3,4,5,6,7,8,9,10)
+    for(i in aLong)
+        sLong += i
+    assertEquals(55L, sLong)
+
     return true
 }

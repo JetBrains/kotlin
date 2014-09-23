@@ -8,6 +8,7 @@ fun testNum(numX: Number) {
 
     assertEquals(true, numX is Short, "numX is Short")
     assertEquals(true, numX is Byte, "numX is Byte")
+    assertEquals(false, numX is Long, "numX is Long")
 
     assertEquals(true, numX is Double, "numX is Double")
     assertEquals(true, numX is Float, "numX is Float")
@@ -19,6 +20,7 @@ fun testAny(anyX: Any) {
 
     assertEquals(true, anyX is Short, "anyX is Short")
     assertEquals(true, anyX is Byte, "anyX is Byte")
+    assertEquals(false, anyX is Long, "anyX is Long")
 
     assertEquals(true, anyX is Double, "anyX is Double")
     assertEquals(true, anyX is Float, "anyX is Float")
@@ -39,11 +41,11 @@ fun box(): String {
     testNum(100.0)
     testNum(100.0f)
 
-    testAny(100)
-    testAny(100: Short)
-    testAny(100: Byte)
-    testAny(100.0)
-    testAny(100.0f)
+    anyX = 100L
+    assertEquals(true, anyX is Number, "anyX is Number")
+    assertEquals(true, anyX is Long, "anyX is Long")
+    assertEquals(false, anyX is Int, "anyX is Int")
+
 
     return "OK"
 }

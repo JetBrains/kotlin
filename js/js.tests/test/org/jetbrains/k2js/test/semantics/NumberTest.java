@@ -85,4 +85,28 @@ public final class NumberTest extends SingleFileTranslationTest {
     public void testConversionsWithTruncation() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testLongEqualsIntrinsic() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testLongArray() throws Exception {
+       checkFooBoxIsOk();
+    }
+
+    public void testLongCompareToIntrinsic() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testLongBinaryOperations() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testLongUnaryOperations() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testLongBitOperations() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
