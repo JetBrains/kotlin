@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheP
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException;
 
 import java.io.File;
 import java.util.Collections;
@@ -87,12 +88,13 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             return INTERNAL_ERROR;
         }
 
-        if (arguments.androidRes != null) {
-            configuration.put(JVMConfigurationKeys.ANDROID_RES_PATH, arguments.androidRes);
+        try {
+            PluginCliParser.processPluginOptions(arguments, configuration);
         }
-
-        if (arguments.androidManifest != null) {
-            configuration.put(JVMConfigurationKeys.ANDROID_MANIFEST, arguments.androidManifest);
+        catch (CliOptionProcessingException e) {
+            // TODO Print usage?
+            messageCollector.report(CompilerMessageSeverity.ERROR, e.getMessage(), CompilerMessageLocation.NO_LOCATION);
+            return INTERNAL_ERROR;
         }
 
         if (!arguments.script &&
