@@ -68,6 +68,9 @@ import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
 import org.jetbrains.jet.plugin.refactoring.CollectingValidator
+import com.intellij.ide.util.PsiElementListCellRenderer
+import org.jetbrains.jet.plugin.presentation.JetClassPresenter
+import java.awt.Component
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -325,6 +328,23 @@ public class CreateFunctionFromUsageFix internal (
         private val returnType: TypeOrExpressionThereof,
         private val parameters: List<Parameter> = Collections.emptyList()
 ) : CreateFromUsageFixBase(element) {
+    private class ClassCandidateListCellRenderer : PsiElementListCellRenderer<JetClass>() {
+        private val presenter = JetClassPresenter()
+
+        override fun getElementText(element: JetClass): String? =
+                presenter.getPresentation(element)?.getPresentableText()
+
+        protected override fun getContainerText(element: JetClass?, name: String?): String? =
+                element?.let { presenter.getPresentation(it) }?.getLocationString()
+
+        override fun getIconFlags(): Int = 0
+
+        public override fun getListCellRendererComponent(
+                list: JList<out Any?>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean
+        ): Component? =
+                super.getListCellRendererComponent(list, (value as ClassCandidate).jetClass, index, isSelected, cellHasFocus)
+    }
+
     private var isUnit: Boolean = false
     private var isExtension: Boolean = false
     private var currentFile: JetFile by Delegates.notNull()
