@@ -128,7 +128,7 @@ private class TypeOrExpressionThereof(private val variance: Variance,
         else {
             JetNameSuggester.suggestNamesForExpression(
                     expressionOfType!!,
-                    JetNameValidator.getEmptyValidator(expressionOfType.getProject())
+                    JetNameValidator.getEmptyValidator()
             )
         }
     }
@@ -665,7 +665,7 @@ public class CreateFunctionFromUsageFix internal (
     private fun setupParameterTypeTemplates(builder: TemplateBuilder, parameterList: JetParameterList): List<TypeExpression> {
         val jetParameters = parameterList.getParameters()
         assert(jetParameters.size == parameters.size)
-        val dummyValidator = JetNameValidator.getEmptyValidator(parameterList.getProject())
+        val dummyValidator = JetNameValidator.getEmptyValidator()
 
         val typeParameters = ArrayList<TypeExpression>()
         for ((parameter, jetParameter) in parameters.zip(jetParameters)) {

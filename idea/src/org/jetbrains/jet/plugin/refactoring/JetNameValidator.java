@@ -16,32 +16,27 @@
 
 package org.jetbrains.jet.plugin.refactoring;
 
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class JetNameValidator {
-    private final Project project;
+    private static final JetNameValidator EMPTY_VALIDATOR = new JetNameValidator() {
+        @Override
+        protected boolean validateInner(String name) {
+            return true;
+        }
+    };
 
-    protected JetNameValidator(Project project) {
-        this.project = project;
+    @NotNull
+    public static JetNameValidator getEmptyValidator() {
+        return EMPTY_VALIDATOR;
     }
 
     @NotNull
-    public static JetNameValidator getEmptyValidator(final Project project) {
-        return new JetNameValidator(project) {
-            @Override
-            protected boolean validateInner(String name) {
-                return true;
-            }
-        };
-    }
-
-    @NotNull
-    public static JetNameValidator createCollectingValidator(final Project project) {
-        return new JetNameValidator(project) {
+    public static JetNameValidator createCollectingValidator() {
+        return new JetNameValidator() {
             private final Set<String> suggestedSet = new HashSet<String>();
 
             @Override
@@ -74,8 +69,4 @@ public abstract class JetNameValidator {
     }
 
     protected abstract boolean validateInner(String name);
-
-    public Project getProject() {
-        return project;
-    }
 }

@@ -41,7 +41,6 @@ public class JetNameValidatorImpl extends JetNameValidator {
     private final Target myTarget;
 
     public JetNameValidatorImpl(PsiElement container, PsiElement anchor, Target target) {
-        super(container.getProject());
         myContainer = container;
         myAnchor = anchor;
         myTarget = target;

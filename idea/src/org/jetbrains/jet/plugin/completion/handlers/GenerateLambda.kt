@@ -98,7 +98,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
 private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, project: Project): Template {
     val parameterTypes = functionParameterTypes(lambdaType)
 
-    val nameValidator = JetNameValidator.getEmptyValidator(project) //TODO: check for names in scope
+    val nameValidator = JetNameValidator.getEmptyValidator() //TODO: check for names in scope
 
     val useParenthesis = explicitParameterTypes || parameterTypes.size != 1
 
