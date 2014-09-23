@@ -20,6 +20,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.jvm.PluginCliParser;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.ExitCode;
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.jvm.compiler.*;
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.kotlin.codegen.CompilationException;
+import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
@@ -90,12 +92,13 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             return INTERNAL_ERROR;
         }
 
-        if (arguments.androidRes != null) {
-            configuration.put(JVMConfigurationKeys.ANDROID_RES_PATH, arguments.androidRes);
+        try {
+            PluginCliParser.processPluginOptions(arguments, configuration);
         }
-
-        if (arguments.androidManifest != null) {
-            configuration.put(JVMConfigurationKeys.ANDROID_MANIFEST, arguments.androidManifest);
+        catch (CliOptionProcessingException e) {
+            // TODO Print usage?
+            messageCollector.report(CompilerMessageSeverity.ERROR, e.getMessage(), CompilerMessageLocation.NO_LOCATION);
+            return INTERNAL_ERROR;
         }
 
         if (arguments.script) {
