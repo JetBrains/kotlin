@@ -43,6 +43,8 @@ public trait ConstraintPosition {
     val kind: ConstraintPositionKind
 
     fun isStrong(): Boolean = kind != TYPE_BOUND_POSITION
+
+    fun isCaptureAllowed(): Boolean = kind in setOf(VALUE_PARAMETER_POSITION, RECEIVER_POSITION)
 }
 
 private open data class ConstraintPositionImpl(override val kind: ConstraintPositionKind) : ConstraintPosition {
@@ -53,14 +55,11 @@ private data class ConstraintPositionWithIndex(override val kind: ConstraintPosi
 }
 
 class CompoundConstraintPosition(
-        val positions: Collection<ConstraintPosition>
+        vararg positions: ConstraintPosition
 ) : ConstraintPositionImpl(ConstraintPositionKind.COMPOUND_CONSTRAINT_POSITION) {
+    val positions: Collection<ConstraintPosition> = positions.toList()
 
     override fun isStrong() = positions.any { it.isStrong() }
 
     override fun toString() = "$kind(${positions.joinToString()}"
-}
-
-public fun getCompoundConstraintPosition(vararg positions: ConstraintPosition): ConstraintPosition {
-    return CompoundConstraintPosition(positions.toList())
 }

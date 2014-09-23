@@ -14286,15 +14286,15 @@ package java {
 
             private final inner class EntryIterator : java.util.HashMap.HashIterator<kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!> {
                 private constructor EntryIterator()
-                public/*package*/ final override /*1*/ /*fake_override*/ var current: java.util.HashMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var current: java.util.HashMap.Entry<K!, V!>!
                 public/*package*/ final override /*1*/ /*fake_override*/ var expectedModCount: kotlin.Int
                 public/*package*/ final override /*1*/ /*fake_override*/ var index: kotlin.Int
-                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.HashMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.HashMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public final override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ fun next(): kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!
-                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.HashMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.HashMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun remove(): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
@@ -14348,15 +14348,15 @@ package java {
 
             private final inner class KeyIterator : java.util.HashMap.HashIterator<K!> {
                 private constructor KeyIterator()
-                public/*package*/ final override /*1*/ /*fake_override*/ var current: java.util.HashMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var current: java.util.HashMap.Entry<K!, V!>!
                 public/*package*/ final override /*1*/ /*fake_override*/ var expectedModCount: kotlin.Int
                 public/*package*/ final override /*1*/ /*fake_override*/ var index: kotlin.Int
-                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.HashMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.HashMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public final override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ fun next(): K!
-                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.HashMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.HashMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun remove(): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
@@ -14383,15 +14383,15 @@ package java {
 
             private final inner class ValueIterator : java.util.HashMap.HashIterator<V!> {
                 private constructor ValueIterator()
-                public/*package*/ final override /*1*/ /*fake_override*/ var current: java.util.HashMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var current: java.util.HashMap.Entry<K!, V!>!
                 public/*package*/ final override /*1*/ /*fake_override*/ var expectedModCount: kotlin.Int
                 public/*package*/ final override /*1*/ /*fake_override*/ var index: kotlin.Int
-                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.HashMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.HashMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public final override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ fun next(): V!
-                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.HashMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.HashMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun remove(): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
@@ -15382,14 +15382,14 @@ package java {
             public/*package*/ final inner class DescendingKeyIterator : java.util.TreeMap.PrivateEntryIterator<K!> {
                 public/*package*/ constructor DescendingKeyIterator(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!)
                 public/*package*/ final override /*1*/ /*fake_override*/ var expectedModCount: kotlin.Int
-                public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K, V>!
-                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K!, V!>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public final override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ fun next(): K!
-                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K, V>!
-                public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K!, V!>!
+                public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun remove(): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
@@ -15516,14 +15516,14 @@ package java {
             public/*package*/ final inner class EntryIterator : java.util.TreeMap.PrivateEntryIterator<kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!> {
                 public/*package*/ constructor EntryIterator(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!)
                 public/*package*/ final override /*1*/ /*fake_override*/ var expectedModCount: kotlin.Int
-                public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K, V>!
-                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K!, V!>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public final override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ fun next(): kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!
-                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K, V>!
-                public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K!, V!>!
+                public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun remove(): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
@@ -15551,14 +15551,14 @@ package java {
             public/*package*/ final inner class KeyIterator : java.util.TreeMap.PrivateEntryIterator<K!> {
                 public/*package*/ constructor KeyIterator(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!)
                 public/*package*/ final override /*1*/ /*fake_override*/ var expectedModCount: kotlin.Int
-                public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K, V>!
-                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K!, V!>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public final override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ fun next(): K!
-                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K, V>!
-                public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K!, V!>!
+                public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun remove(): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
@@ -15676,14 +15676,14 @@ package java {
                     public/*package*/ constructor DescendingSubMapEntryIterator(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!, /*1*/ p1: java.util.TreeMap.Entry<K!, V!>!)
                     public/*package*/ final override /*1*/ /*fake_override*/ var expectedModCount: kotlin.Int
                     public/*package*/ final override /*1*/ /*fake_override*/ val fenceKey: kotlin.Any!
-                    public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K, V>!
-                    public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K, V>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K!, V!>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K!, V!>!
                     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                     public final override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                     public open override /*1*/ fun next(): kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!
-                    public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K, V>!
-                    public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K, V>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K!, V!>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K!, V!>!
                     public open override /*1*/ fun remove(): kotlin.Unit
                     public/*package*/ final override /*1*/ /*fake_override*/ fun removeAscending(): kotlin.Unit
                     public/*package*/ final override /*1*/ /*fake_override*/ fun removeDescending(): kotlin.Unit
@@ -15694,14 +15694,14 @@ package java {
                     public/*package*/ constructor DescendingSubMapKeyIterator(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!, /*1*/ p1: java.util.TreeMap.Entry<K!, V!>!)
                     public/*package*/ final override /*1*/ /*fake_override*/ var expectedModCount: kotlin.Int
                     public/*package*/ final override /*1*/ /*fake_override*/ val fenceKey: kotlin.Any!
-                    public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K, V>!
-                    public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K, V>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K!, V!>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K!, V!>!
                     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                     public final override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                     public open override /*1*/ fun next(): K!
-                    public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K, V>!
-                    public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K, V>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K!, V!>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K!, V!>!
                     public open override /*1*/ fun remove(): kotlin.Unit
                     public/*package*/ final override /*1*/ /*fake_override*/ fun removeAscending(): kotlin.Unit
                     public/*package*/ final override /*1*/ /*fake_override*/ fun removeDescending(): kotlin.Unit
@@ -15734,14 +15734,14 @@ package java {
                     public/*package*/ constructor SubMapEntryIterator(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!, /*1*/ p1: java.util.TreeMap.Entry<K!, V!>!)
                     public/*package*/ final override /*1*/ /*fake_override*/ var expectedModCount: kotlin.Int
                     public/*package*/ final override /*1*/ /*fake_override*/ val fenceKey: kotlin.Any!
-                    public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K, V>!
-                    public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K, V>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K!, V!>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K!, V!>!
                     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                     public final override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                     public open override /*1*/ fun next(): kotlin.(Mutable)Map.(Mutable)Entry<K!, V!>!
-                    public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K, V>!
-                    public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K, V>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K!, V!>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K!, V!>!
                     public open override /*1*/ fun remove(): kotlin.Unit
                     public/*package*/ final override /*1*/ /*fake_override*/ fun removeAscending(): kotlin.Unit
                     public/*package*/ final override /*1*/ /*fake_override*/ fun removeDescending(): kotlin.Unit
@@ -15770,14 +15770,14 @@ package java {
                     public/*package*/ constructor SubMapKeyIterator(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!, /*1*/ p1: java.util.TreeMap.Entry<K!, V!>!)
                     public/*package*/ final override /*1*/ /*fake_override*/ var expectedModCount: kotlin.Int
                     public/*package*/ final override /*1*/ /*fake_override*/ val fenceKey: kotlin.Any!
-                    public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K, V>!
-                    public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K, V>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K!, V!>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K!, V!>!
                     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                     public final override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                     public open override /*1*/ fun next(): K!
-                    public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K, V>!
-                    public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K, V>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K!, V!>!
+                    public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K!, V!>!
                     public open override /*1*/ fun remove(): kotlin.Unit
                     public/*package*/ final override /*1*/ /*fake_override*/ fun removeAscending(): kotlin.Unit
                     public/*package*/ final override /*1*/ /*fake_override*/ fun removeDescending(): kotlin.Unit
@@ -15839,14 +15839,14 @@ package java {
             public/*package*/ final inner class ValueIterator : java.util.TreeMap.PrivateEntryIterator<V!> {
                 public/*package*/ constructor ValueIterator(/*0*/ p0: java.util.TreeMap.Entry<K!, V!>!)
                 public/*package*/ final override /*1*/ /*fake_override*/ var expectedModCount: kotlin.Int
-                public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K, V>!
-                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var lastReturned: java.util.TreeMap.Entry<K!, V!>!
+                public/*package*/ final override /*1*/ /*fake_override*/ var next: java.util.TreeMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public final override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ fun next(): V!
-                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K, V>!
-                public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K, V>!
+                public/*package*/ final override /*1*/ /*fake_override*/ fun nextEntry(): java.util.TreeMap.Entry<K!, V!>!
+                public/*package*/ final override /*1*/ /*fake_override*/ fun prevEntry(): java.util.TreeMap.Entry<K!, V!>!
                 public open override /*1*/ /*fake_override*/ fun remove(): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }

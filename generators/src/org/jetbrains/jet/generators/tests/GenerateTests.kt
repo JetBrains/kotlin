@@ -116,6 +116,7 @@ import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.jet.codegen.AbstractScriptCodegenTest
 import org.jetbrains.jet.plugin.parameterInfo.AbstractFunctionParameterInfoTest
+import org.jetbrains.jet.resolve.typeApproximation.AbstractCapturedTypeApproximationTest
 import org.jetbrains.jet.psi.patternMatching.AbstractJetPsiUnifierTest
 import org.jetbrains.jet.completion.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.jet.completion.weighers.AbstractSmartCompletionWeigherTest
@@ -165,6 +166,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractConstraintSystemTest>()) {
             model("constraintSystem", extension = "bounds")
+        }
+
+        testClass(javaClass<AbstractCapturedTypeApproximationTest>()) {
+            model("capturedTypeApproximation")
         }
 
         testClass(javaClass<AbstractJetParsingTest>()) {

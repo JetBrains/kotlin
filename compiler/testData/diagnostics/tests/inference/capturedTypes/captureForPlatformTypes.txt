@@ -1,0 +1,15 @@
+package
+
+internal fun tes2t(/*0*/ clazz: java.lang.Class<in kotlin.Int>): kotlin.Unit
+internal fun test1(/*0*/ clazz: java.lang.Class<out kotlin.Int>): kotlin.Unit
+
+public open class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ T> bar(/*0*/ clazz: java.lang.Class<T!>!): java.lang.Class<java.lang.Class<T!>!>!
+    public open fun </*0*/ T> foo(/*0*/ clazz: java.lang.Class<T!>!): java.lang.Class<T!>!
+}

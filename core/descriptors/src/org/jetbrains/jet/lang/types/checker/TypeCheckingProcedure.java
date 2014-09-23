@@ -106,6 +106,9 @@ public class TypeCheckingProcedure {
             TypeProjection typeProjection1 = type1Arguments.get(i);
             TypeParameterDescriptor typeParameter2 = constructor2.getParameters().get(i);
             TypeProjection typeProjection2 = type2Arguments.get(i);
+            if (capture(typeProjection1, typeProjection2, typeParameter1)) {
+                continue;
+            }
             if (getEffectiveProjectionKind(typeParameter1, typeProjection1) != getEffectiveProjectionKind(typeParameter2, typeProjection2)) {
                 return false;
             }
@@ -225,6 +228,8 @@ public class TypeCheckingProcedure {
             JetType superIn = getInType(parameter, superArgument);
             JetType superOut = getOutType(parameter, superArgument);
 
+            if (capture(subArgument, superArgument, parameter)) continue;
+
             boolean argumentIsErrorType = subArgument.getType().isError() || superArgument.getType().isError();
             if (!argumentIsErrorType && parameter.getVariance() == INVARIANT
                     && subArgument.getProjectionKind() == INVARIANT && superArgument.getProjectionKind() == INVARIANT) {
@@ -236,5 +241,26 @@ public class TypeCheckingProcedure {
             }
         }
         return true;
+    }
+
+    private boolean capture(
+            @NotNull TypeProjection firstProjection,
+            @NotNull TypeProjection secondProjection,
+            @NotNull TypeParameterDescriptor parameter
+    ) {
+        // Capturing makes sense only for invariant classes
+        if (parameter.getVariance() != INVARIANT) return false;
+
+        // Now, both subtype and supertype relations transform to equality constraints on type arguments:
+        // Array<T> is a subtype, supertype or equal to Array<out Int> then T captures a type that extends Int: 'Captured(out Int)'
+        // Array<T> is a subtype, supertype or equal to Array<in Int> then T captures a type that extends Int: 'Captured(in Int)'
+
+        if (firstProjection.getProjectionKind() == INVARIANT && secondProjection.getProjectionKind() != INVARIANT) {
+            return constraints.capture(firstProjection.getType(), secondProjection);
+        }
+        if (firstProjection.getProjectionKind() != INVARIANT && secondProjection.getProjectionKind() == INVARIANT) {
+            return constraints.capture(secondProjection.getType(), firstProjection);
+        }
+        return false;
     }
 }

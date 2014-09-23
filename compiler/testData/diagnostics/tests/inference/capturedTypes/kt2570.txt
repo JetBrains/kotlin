@@ -1,0 +1,4 @@
+package
+
+internal fun </*0*/ T> foo(/*0*/ l: kotlin.MutableList<T>): kotlin.MutableList<T>
+internal fun test(/*0*/ l: kotlin.MutableList<out kotlin.Int>): kotlin.Unit

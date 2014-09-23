@@ -156,7 +156,8 @@ public class TypeBoundsImpl(
 
     private fun tryPossibleAnswer(possibleAnswer: JetType?): Boolean {
         if (possibleAnswer == null) return false
-        if (!possibleAnswer.getConstructor().isDenotable()) return false
+        // a captured type might be an answer
+        if (!possibleAnswer.getConstructor().isDenotable() && !possibleAnswer.isCaptured()) return false
 
         for (bound in bounds) {
             when (bound.kind) {

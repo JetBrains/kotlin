@@ -4899,7 +4899,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
 
         @TestMetadata("compiler/testData/diagnostics/tests/inference")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({Inference.Constraints.class, Inference.NestedCalls.class, Inference.Regressions.class, Inference.ReportingImprovements.class, Inference.Substitutions.class, Inference.UpperBounds.class, Inference.Varargs.class})
+        @InnerTestClasses({Inference.CapturedTypes.class, Inference.Constraints.class, Inference.NestedCalls.class, Inference.Regressions.class, Inference.ReportingImprovements.class, Inference.Substitutions.class, Inference.UpperBounds.class, Inference.Varargs.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Inference extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInInference() throws Exception {
@@ -5084,6 +5084,45 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             public void testUseFunctionLiteralsToInferType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/useFunctionLiteralsToInferType.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CapturedTypes extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInCapturedTypes() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/capturedTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("captureForPlatformTypes.kt")
+                public void testCaptureForPlatformTypes() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/captureForPlatformTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("capturedType.kt")
+                public void testCapturedType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("capturedTypeAndApproximation.kt")
+                public void testCapturedTypeAndApproximation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedTypeAndApproximation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt2570.kt")
+                public void testKt2570() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/kt2570.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt2872.kt")
+                public void testKt2872() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/kt2872.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/inference/constraints")

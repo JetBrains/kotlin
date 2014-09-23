@@ -235,7 +235,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
 
     public void testOutInProjection() throws Exception {
         doTest(
-                "C<out Any>",
+                "C<out Any?>",
                 "C<out T>",
                 map("T", "in String")
         );

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.types.checker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeProjection;
 
 /**
  * Methods of this class return true to continue type checking and false to fail
@@ -29,6 +30,8 @@ public interface TypingConstraints {
     boolean assertEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b);
 
     boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeCheckingProcedure typeCheckingProcedure);
+
+    boolean capture(@NotNull JetType type, @NotNull TypeProjection typeProjection);
 
     boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype);
 }

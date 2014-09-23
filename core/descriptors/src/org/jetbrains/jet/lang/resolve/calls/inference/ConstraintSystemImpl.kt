@@ -41,7 +41,6 @@ import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.Constra
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
-import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.getCompoundConstraintPosition
 import org.jetbrains.jet.lang.types.CustomTypeVariable
 import org.jetbrains.jet.lang.types.getCustomTypeVariable
 import org.jetbrains.jet.lang.types.isFlexible
@@ -226,6 +225,14 @@ public class ConstraintSystemImpl : ConstraintSystem {
                 return true
             }
 
+            override fun capture(typeVariable: JetType, typeProjection: TypeProjection): Boolean {
+                if (isMyTypeVariable(typeVariable) && constraintPosition.isCaptureAllowed()) {
+                    generateTypeParameterCaptureConstraint(typeVariable, typeProjection, constraintPosition)
+                    return true
+                }
+                return false
+            }
+
             override fun noCorrespondingSupertype(subtype: JetType, supertype: JetType): Boolean {
                 errorConstraintPositions.add(constraintPosition)
                 return true
@@ -303,9 +310,16 @@ public class ConstraintSystemImpl : ConstraintSystem {
                 generateTypeParameterConstraint(superType, subType, boundKind, constraintPosition)
                 return
             }
-            // if superType is nullable and subType is not nullable, unsafe call error will be generated later,
+            // if superType is nullable and subType is not nullable, unsafe call or type mismatch error will be generated later,
             // but constraint system should be solved anyway
-            typeCheckingProcedure.isSubtypeOf(TypeUtils.makeNotNullable(subType), TypeUtils.makeNotNullable(superType))
+            val subTypeNotNullable = TypeUtils.makeNotNullable(subType)
+            val superTypeNotNullable = TypeUtils.makeNotNullable(superType)
+            if (constraintKind == EQUAL) {
+                typeCheckingProcedure.equalTypes(subTypeNotNullable, superTypeNotNullable)
+            }
+            else {
+                typeCheckingProcedure.isSubtypeOf(subTypeNotNullable, superTypeNotNullable)
+            }
         }
         simplifyConstraint(newSubType, superType)
     }
@@ -352,6 +366,16 @@ public class ConstraintSystemImpl : ConstraintSystem {
         }
     }
 
+    private fun generateTypeParameterCaptureConstraint(
+            parameterType: JetType,
+            constrainingTypeProjection: TypeProjection,
+            constraintPosition: ConstraintPosition
+    ) {
+        val typeBounds = getTypeBounds(parameterType)
+        val capturedType = createCapturedType(constrainingTypeProjection)
+        typeBounds.addBound(EXACT_BOUND, capturedType, constraintPosition)
+    }
+
     public fun processDeclaredBoundConstraints() {
         for ((typeParameterDescriptor, typeBounds) in typeParameterBounds) {
             for (declaredUpperBound in typeParameterDescriptor.getUpperBounds()) {
@@ -359,7 +383,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
                 val bounds = ArrayList(typeBounds.bounds)
                 for (bound in bounds) {
                     if (bound.kind == LOWER_BOUND || bound.kind == EXACT_BOUND) {
-                        val position = getCompoundConstraintPosition(
+                        val position = CompoundConstraintPosition(
                                 TYPE_BOUND_POSITION.position(typeParameterDescriptor.getIndex()), bound.position)
                         addSubtypeConstraint(bound.constrainingType, declaredUpperBound, position)
                     }
@@ -368,7 +392,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
                     val typeBoundsForUpperBound = getTypeBounds(declaredUpperBound)
                     for (bound in typeBoundsForUpperBound.bounds) {
                         if (bound.kind == UPPER_BOUND || bound.kind == EXACT_BOUND) {
-                            val position = getCompoundConstraintPosition(
+                            val position = CompoundConstraintPosition(
                                     TYPE_BOUND_POSITION.position(typeParameterDescriptor.getIndex()), bound.position)
                             typeBounds.addBound(UPPER_BOUND, bound.constrainingType, position)
                         }

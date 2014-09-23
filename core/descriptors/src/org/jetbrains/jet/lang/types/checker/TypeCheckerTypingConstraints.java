@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.types.checker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeProjection;
 
 class TypeCheckerTypingConstraints implements TypingConstraints {
     @Override
@@ -34,6 +35,11 @@ class TypeCheckerTypingConstraints implements TypingConstraints {
     @Override
     public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
         return typeCheckingProcedure.isSubtypeOf(subtype, supertype);
+    }
+
+    @Override
+    public boolean capture(@NotNull JetType type, @NotNull TypeProjection typeProjection) {
+        return false;
     }
 
     @Override
