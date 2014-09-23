@@ -18,11 +18,9 @@ package org.jetbrains.jet.codegen.when;
 
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -43,16 +41,8 @@ public class MappingClassesForWhenByEnumCodegen {
         this.state = state;
     }
 
-    public void generate(
-            @NotNull List<WhenByEnumsMapping> mappings,
-            @NotNull Type mappingsClass,
-            @NotNull JetFile srcFile
-    ) {
-        ClassBuilder cb = state.getFactory().newVisitor(
-                JvmDeclarationOrigin.NO_ORIGIN,
-                mappingsClass,
-                srcFile
-        );
+    public void generate(@NotNull List<WhenByEnumsMapping> mappings, @NotNull Type mappingsClass, @NotNull JetFile srcFile) {
+        ClassBuilder cb = state.getFactory().newVisitor(JvmDeclarationOrigin.NO_ORIGIN, mappingsClass, srcFile);
         cb.defineClass(
                 srcFile,
                 V1_6,
@@ -69,10 +59,7 @@ public class MappingClassesForWhenByEnumCodegen {
         cb.done();
     }
 
-    private static void generateFields(
-            @NotNull ClassBuilder cb,
-            @NotNull List<WhenByEnumsMapping> mappings
-    ) {
+    private static void generateFields(@NotNull ClassBuilder cb, @NotNull List<WhenByEnumsMapping> mappings) {
         for (WhenByEnumsMapping mapping : mappings) {
             cb.newField(
                     JvmDeclarationOrigin.NO_ORIGIN,
@@ -84,10 +71,7 @@ public class MappingClassesForWhenByEnumCodegen {
         }
     }
 
-    private static void generateInitialization(
-            @NotNull ClassBuilder cb,
-            @NotNull List<WhenByEnumsMapping> mappings
-    ) {
+    private void generateInitialization(@NotNull ClassBuilder cb, @NotNull List<WhenByEnumsMapping> mappings) {
         MethodVisitor mv = cb.newMethod(
                 JvmDeclarationOrigin.NO_ORIGIN,
                 ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, ArrayUtil.EMPTY_STRING_ARRAY
@@ -107,40 +91,26 @@ public class MappingClassesForWhenByEnumCodegen {
         mv.visitEnd();
     }
 
-    private static void generateInitializationForMapping(
+    private void generateInitializationForMapping(
             @NotNull ClassBuilder cb,
             @NotNull InstructionAdapter v,
             @NotNull WhenByEnumsMapping mapping
     ) {
-        v.invokestatic(
-                mapping.getEnumClassInternalName(), "values",
-                Type.getMethodDescriptor(
-                        AsmUtil.getArrayOf(mapping.getEnumClassInternalName())
-                ),
-                false
-        );
+        Type enumType = state.getTypeMapper().mapClass(mapping.getEnumClassDescriptor());
+
+        v.invokestatic(enumType.getInternalName(), "values", Type.getMethodDescriptor(Type.getType("[" + enumType.getDescriptor())), false);
         v.arraylength();
 
         v.newarray(Type.INT_TYPE);
         v.putstatic(cb.getThisName(), mapping.getFieldName(), MAPPINGS_FIELD_DESCRIPTOR);
-
-        String enumClassDesc = Type.getObjectType(mapping.getEnumClassInternalName()).getDescriptor();
 
         for (Map.Entry<EnumValue, Integer> item : mapping.enumValuesToIntMapping()) {
             EnumValue enumEntry = item.getKey();
             int mappedValue = item.getValue();
 
             v.getstatic(cb.getThisName(), mapping.getFieldName(), MAPPINGS_FIELD_DESCRIPTOR);
-            v.getstatic(
-                    mapping.getEnumClassInternalName(),
-                    enumEntry.getValue().getName().asString(),
-                    enumClassDesc
-            );
-            v.invokevirtual(
-                    mapping.getEnumClassInternalName(), "ordinal",
-                    Type.getMethodDescriptor(Type.INT_TYPE),
-                    false
-            );
+            v.getstatic(enumType.getInternalName(), enumEntry.getValue().getName().asString(), enumType.getDescriptor());
+            v.invokevirtual(enumType.getInternalName(), "ordinal", Type.getMethodDescriptor(Type.INT_TYPE), false);
             v.iconst(mappedValue);
             v.astore(Type.INT_TYPE);
         }

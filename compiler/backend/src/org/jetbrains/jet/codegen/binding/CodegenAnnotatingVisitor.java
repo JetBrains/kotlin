@@ -500,60 +500,50 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     @Override
     public void visitWhenExpression(@NotNull JetWhenExpression expression) {
         super.visitWhenExpression(expression);
-        if (isWhenWithEnums(expression)) {
-            String currentClassName = getCurrentTopLevelClassOrPackagePartInternalName(expression.getContainingJetFile());
+        if (!isWhenWithEnums(expression)) return;
 
-            if (bindingContext.get(MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE, currentClassName) == null) {
-                bindingTrace.record(
-                        MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE,
-                        currentClassName,
-                        new ArrayList<WhenByEnumsMapping>()
-                );
-            }
+        String currentClassName = getCurrentTopLevelClassOrPackagePartInternalName(expression.getContainingJetFile());
 
-            List<WhenByEnumsMapping> mappings = bindingContext.get(MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE, currentClassName);
-            assert mappings != null : "guaranteed by contract";
-
-            int fieldNumber = mappings.size();
-
-            JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getSubjectExpression());
-            assert type != null : "should not be null in a valid when by enums";
-            ClassDescriptor classDescriptor = (ClassDescriptor) type.getConstructor().getDeclarationDescriptor();
-            assert classDescriptor != null : "because it's enum";
-
-            WhenByEnumsMapping mapping = new WhenByEnumsMapping(
-                    CodegenBinding.getAsmType(bindingContext, classDescriptor).getInternalName(),
-                    currentClassName,
-                    fieldNumber
-            );
-
-            for (CompileTimeConstant constant : SwitchCodegenUtil.getAllConstants(expression, bindingContext)) {
-                if (constant instanceof NullValue) continue;
-
-                assert constant instanceof EnumValue : "expression in when should be EnumValue";
-                mapping.putFirstTime((EnumValue) constant, mapping.size() + 1);
-            }
-
-            mappings.add(mapping);
-
-            bindingTrace.record(MAPPING_FOR_WHEN_BY_ENUM, expression, mapping);
+        if (bindingContext.get(MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE, currentClassName) == null) {
+            bindingTrace.record(MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE, currentClassName, new ArrayList<WhenByEnumsMapping>(1));
         }
+
+        List<WhenByEnumsMapping> mappings = bindingContext.get(MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE, currentClassName);
+        assert mappings != null : "guaranteed by contract";
+
+        int fieldNumber = mappings.size();
+
+        JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getSubjectExpression());
+        assert type != null : "should not be null in a valid when by enums";
+        ClassDescriptor classDescriptor = (ClassDescriptor) type.getConstructor().getDeclarationDescriptor();
+        assert classDescriptor != null : "because it's enum";
+
+        WhenByEnumsMapping mapping = new WhenByEnumsMapping(classDescriptor, currentClassName, fieldNumber);
+
+        for (CompileTimeConstant constant : SwitchCodegenUtil.getAllConstants(expression, bindingContext)) {
+            if (constant instanceof NullValue) continue;
+
+            assert constant instanceof EnumValue : "expression in when should be EnumValue";
+            mapping.putFirstTime((EnumValue) constant, mapping.size() + 1);
+        }
+
+        mappings.add(mapping);
+
+        bindingTrace.record(MAPPING_FOR_WHEN_BY_ENUM, expression, mapping);
     }
 
     private boolean isWhenWithEnums(@NotNull JetWhenExpression expression) {
         return WhenChecker.isWhenByEnum(expression, bindingContext) &&
-                SwitchCodegenUtil.checkAllItemsAreConstantsSatisfying(
-                    expression,
-                    bindingContext,
-                    new Function1<CompileTimeConstant, Boolean>() {
-                        @Override
-                        public Boolean invoke(
-                                @NotNull CompileTimeConstant constant
-                        ) {
-                            return constant instanceof EnumValue || constant instanceof NullValue;
-                        }
-                    }
-        );
+               SwitchCodegenUtil.checkAllItemsAreConstantsSatisfying(
+                       expression,
+                       bindingContext,
+                       new Function1<CompileTimeConstant, Boolean>() {
+                           @Override
+                           public Boolean invoke(@NotNull CompileTimeConstant constant) {
+                               return constant instanceof EnumValue || constant instanceof NullValue;
+                           }
+                       }
+               );
     }
 
     @NotNull

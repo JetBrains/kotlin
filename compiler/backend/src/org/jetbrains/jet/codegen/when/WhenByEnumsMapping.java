@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen.when;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 
 import java.util.HashMap;
@@ -27,13 +28,17 @@ public class WhenByEnumsMapping {
     private static final String MAPPINGS_CLASS_NAME_POSTFIX = "$WhenMappings";
 
     private final Map<EnumValue, Integer> map = new HashMap<EnumValue, Integer>();
-    private final String enumClassInternalName;
+    private final ClassDescriptor enumClassDescriptor;
     private final String outerClassInternalNameForExpression;
     private final String mappingsClassInternalName;
     private final int fieldNumber;
 
-    public WhenByEnumsMapping(String enumClassInternalName, String outerClassInternalNameForExpression, int fieldNumber) {
-        this.enumClassInternalName = enumClassInternalName;
+    public WhenByEnumsMapping(
+            @NotNull ClassDescriptor enumClassDescriptor,
+            @NotNull String outerClassInternalNameForExpression,
+            int fieldNumber
+    ) {
+        this.enumClassDescriptor = enumClassDescriptor;
         this.outerClassInternalNameForExpression = outerClassInternalNameForExpression;
         this.mappingsClassInternalName = outerClassInternalNameForExpression + MAPPINGS_CLASS_NAME_POSTFIX;
         this.fieldNumber = fieldNumber;
@@ -45,7 +50,7 @@ public class WhenByEnumsMapping {
         return result;
     }
 
-    public void putFirstTime(EnumValue value, int index) {
+    public void putFirstTime(@NotNull EnumValue value, int index) {
         if (!map.containsKey(value)) {
             map.put(value, index);
         }
@@ -55,22 +60,27 @@ public class WhenByEnumsMapping {
         return map.size();
     }
 
+    @NotNull
     public String getFieldName() {
         return MAPPING_ARRAY_FIELD_PREFIX + fieldNumber;
     }
 
-    public String getEnumClassInternalName() {
-        return enumClassInternalName;
+    @NotNull
+    public ClassDescriptor getEnumClassDescriptor() {
+        return enumClassDescriptor;
     }
 
+    @NotNull
     public String getOuterClassInternalNameForExpression() {
         return outerClassInternalNameForExpression;
     }
 
+    @NotNull
     public String getMappingsClassInternalName() {
         return mappingsClassInternalName;
     }
 
+    @NotNull
     public Iterable<Map.Entry<EnumValue, Integer>> enumValuesToIntMapping() {
         return map.entrySet();
     }

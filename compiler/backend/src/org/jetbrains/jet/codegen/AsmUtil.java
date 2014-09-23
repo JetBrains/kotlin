@@ -803,11 +803,6 @@ public class AsmUtil {
         }
     }
 
-    @NotNull
-    public static Type getArrayOf(@NotNull String internalClassName) {
-        return Type.getType("[L" + internalClassName + ";");
-    }
-
     public static int getReceiverIndex(@NotNull CodegenContext context, @NotNull CallableMemberDescriptor descriptor) {
         OwnerKind kind = context.getContextKind();
         //Trait always should have this descriptor

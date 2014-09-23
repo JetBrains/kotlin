@@ -52,20 +52,13 @@ public class EnumSwitchCodegen extends SwitchCodegen {
 
         v.swap();
 
-        v.invokevirtual(
-                mapping.getEnumClassInternalName(),
-                "ordinal",
-                Type.getMethodDescriptor(Type.INT_TYPE),
-                false
-        );
+        Type enumType = codegen.getState().getTypeMapper().mapClass(mapping.getEnumClassDescriptor());
+        v.invokevirtual(enumType.getInternalName(), "ordinal", Type.getMethodDescriptor(Type.INT_TYPE), false);
         v.aload(Type.INT_TYPE);
     }
 
     @Override
-    protected void processConstant(
-            @NotNull CompileTimeConstant constant,
-            @NotNull Label entryLabel
-    ) {
+    protected void processConstant(@NotNull CompileTimeConstant constant, @NotNull Label entryLabel) {
         assert constant instanceof EnumValue : "guaranteed by usage contract";
         putTransitionOnce(mapping.getIndexByEntry((EnumValue) constant), entryLabel);
     }
