@@ -18,6 +18,7 @@ package org.jetbrains.jet.compiler.android;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,7 @@ import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.compiler.PathManager;
 import org.jetbrains.jet.generators.tests.generator.TestGeneratorUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.Printer;
 import org.junit.Assert;
 
@@ -196,6 +198,9 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                 if (listFiles != null) {
                     processFiles(printer, listFiles, holderFull, holderMock);
                 }
+            }
+            else if (!FileUtilRt.getExtension(file.getName()).equals(JetFileType.INSTANCE.getDefaultExtension())) {
+                // skip non kotlin files
             }
             else {
                 String text = FileUtil.loadFile(file, true);
