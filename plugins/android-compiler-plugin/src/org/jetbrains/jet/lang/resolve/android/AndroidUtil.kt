@@ -45,7 +45,7 @@ class AndroidWidget(val id: String, val className: String) : AndroidResource
 class AndroidManifest(val _package: String) : AndroidResource
 
 fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
-    return f?.getUserData(AndroidConst.ANDROID_USER_PACKAGE) != null
+    return f?.getUserData(org.jetbrains.jet.lang.resolve.android.AndroidConst.ANDROID_USER_PACKAGE) != null
 }
 
 public fun isAndroidSyntheticElement(element: PsiElement?): Boolean {

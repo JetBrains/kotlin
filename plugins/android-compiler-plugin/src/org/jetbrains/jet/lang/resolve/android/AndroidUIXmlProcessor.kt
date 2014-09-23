@@ -50,7 +50,7 @@ import org.jetbrains.jet.lang.resolve.android.AndroidConst.*
 
 public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
-    class NoAndroidManifestFound : Exception("No android manifest file found in project root")
+    public class NoAndroidManifestFound : Exception("No android manifest file found in project root")
 
     private enum class CacheAction { HIT; MISS }
 
