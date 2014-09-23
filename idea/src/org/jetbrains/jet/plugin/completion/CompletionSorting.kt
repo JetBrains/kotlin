@@ -33,15 +33,21 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.name.isValidJavaFqName
 import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
+import com.intellij.codeInsight.completion.CompletionType
+import org.jetbrains.jet.plugin.completion.smart.NameSimilarityWeigher
 
 public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
 
     sorter = sorter.weighBefore("stats", PriorityWeigher, KindWeigher)
 
+    if (parameters.getCompletionType() == CompletionType.SMART) {
+        sorter = sorter.weighBefore("kotlin.kind", NameSimilarityWeigher)
+    }
+
     sorter = sorter.weighAfter(
             "stats",
-            JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile),
+            JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile)/*TODO: shouldn't it have bigger priority?*/,
             DeprecatedWeigher)
 
     sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)

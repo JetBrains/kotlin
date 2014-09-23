@@ -59,6 +59,8 @@ import org.jetbrains.jet.lang.psi.JetPrefixExpression
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
 
 enum class Tail {
     COMMA
@@ -66,7 +68,7 @@ enum class Tail {
     ELSE
 }
 
-data class ExpectedInfo(val `type`: JetType, val tail: Tail?)
+data class ExpectedInfo(val `type`: JetType, val name: String?, val tail: Tail?)
 
 class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: ModuleDescriptor) {
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
@@ -162,7 +164,9 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                 else
                     Tail.COMMA
 
-                expectedInfos.add(ExpectedInfo(parameters[argumentIndex].getType(), tail))
+                val parameter = parameters[argumentIndex]
+                val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
+                expectedInfos.add(ExpectedInfo(parameter.getType(), expectedName, tail))
             }
         }
         return expectedInfos
@@ -176,7 +180,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                 val otherOperand = if (expressionWithType == binaryExpression.getRight()) binaryExpression.getLeft() else binaryExpression.getRight()
                 if (otherOperand != null) {
                     val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, otherOperand] ?: return null
-                    return listOf(ExpectedInfo(expressionType, null))
+                    return listOf(ExpectedInfo(expressionType, expectedNameFromExpression(otherOperand), null))
                 }
             }
         }
@@ -186,9 +190,9 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
     private fun calculateForIf(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val ifExpression = (expressionWithType.getParent() as? JetContainerNode)?.getParent() as? JetIfExpression ?: return null
         return when (expressionWithType) {
-            ifExpression.getCondition() -> listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), Tail.RPARENTH))
+            ifExpression.getCondition() -> listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null, Tail.RPARENTH))
 
-            ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.`type`, Tail.ELSE) }
+            ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.`type`, it.name, Tail.ELSE) }
 
             ifExpression.getElse() -> {
                 val ifExpectedInfo = calculate(ifExpression)
@@ -219,7 +223,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                         expectedInfos
                 }
                 else if (leftTypeNotNullable != null) {
-                    return listOf(ExpectedInfo(leftTypeNotNullable, null))
+                    return listOf(ExpectedInfo(leftTypeNotNullable, null, null))
                 }
             }
         }
@@ -229,7 +233,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
     private fun calculateForBlockExpression(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val block = expressionWithType.getParent() as? JetBlockExpression ?: return null
         if (expressionWithType != block.getStatements().last()) return null
-        return calculate(block)?.map { ExpectedInfo(it.`type`, null) }
+        return calculate(block)?.map { ExpectedInfo(it.`type`, it.name, null) }
     }
 
     private fun calculateForWhenEntryValue(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
@@ -239,21 +243,34 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
         val subject = whenExpression.getSubjectExpression()
         if (subject != null) {
             val subjectType = bindingContext[BindingContext.EXPRESSION_TYPE, subject] ?: return null
-            return listOf(ExpectedInfo(subjectType, null))
+            return listOf(ExpectedInfo(subjectType, null, null))
         }
         else {
-            return listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null))
+            return listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null, null))
         }
     }
 
     private fun calculateForExclOperand(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val prefixExpression = expressionWithType.getParent() as? JetPrefixExpression ?: return null
         if (prefixExpression.getOperationToken() != JetTokens.EXCL) return null
-        return listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null))
+        return listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null, null))
     }
 
     private fun getFromBindingContext(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, expressionWithType] ?: return null
-        return listOf(ExpectedInfo(expectedType, null))
+        return listOf(ExpectedInfo(expectedType, null, null))
     }
+
+    private fun expectedNameFromExpression(expression: JetExpression?): String? {
+        return when (expression) {
+            is JetSimpleNameExpression -> expression.getReferencedName()
+            is JetQualifiedExpression -> expectedNameFromExpression(expression.getSelectorExpression())
+            is JetCallExpression -> expectedNameFromExpression(expression.getCalleeExpression())
+            is JetArrayAccessExpression -> expectedNameFromExpression(expression.getArrayExpression())?.fromPlural()
+            else -> null
+        }
+    }
+
+    private fun String.fromPlural()
+            = if (endsWith("s")) substring(0, length - 1) else this
 }

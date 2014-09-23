@@ -65,7 +65,6 @@ import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest
 import org.jetbrains.jet.safeDelete.AbstractJetSafeDeleteTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveWithLibTest
-import org.jetbrains.jet.completion.weighers.AbstractCompletionWeigherTest
 import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest
 import org.jetbrains.jet.plugin.configuration.AbstractConfigureProjectByChangingFileTest
 import org.jetbrains.jet.formatter.AbstractJetFormatterTest
@@ -119,6 +118,8 @@ import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.jet.codegen.AbstractScriptCodegenTest
 import org.jetbrains.jet.plugin.parameterInfo.AbstractFunctionParameterInfoTest
 import org.jetbrains.jet.psi.patternMatching.AbstractJetPsiUnifierTest
+import org.jetbrains.jet.completion.weighers.AbstractBasicCompletionWeigherTest
+import org.jetbrains.jet.completion.weighers.AbstractSmartCompletionWeigherTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -479,8 +480,11 @@ fun main(args: Array<String>) {
             model("refactoring/move", extension = "test", singleClass = true)
         }
 
-        testClass(javaClass<AbstractCompletionWeigherTest>()) {
-            model("completion/weighers", pattern = """^([^\.]+)\.kt$""")
+        testClass(javaClass<AbstractBasicCompletionWeigherTest>()) {
+            model("completion/weighers/basic", pattern = """^([^\.]+)\.kt$""")
+        }
+        testClass(javaClass<AbstractSmartCompletionWeigherTest>()) {
+            model("completion/weighers/smart", pattern = """^([^\.]+)\.kt$""")
         }
 
         testClass(javaClass<AbstractConfigureProjectByChangingFileTest>()) {

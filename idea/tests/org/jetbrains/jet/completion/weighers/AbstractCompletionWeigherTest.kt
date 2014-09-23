@@ -21,11 +21,12 @@ import org.jetbrains.jet.InTextDirectivesUtils
 import java.io.File
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.testng.Assert
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.test.util.configureWithExtraFile
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 
-public abstract class AbstractCompletionWeigherTest() : JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractCompletionWeigherTest(val completionType: CompletionType, val relativeTestDataPath: String) : JetLightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {
         myFixture.configureWithExtraFile(path)
 
@@ -34,12 +35,18 @@ public abstract class AbstractCompletionWeigherTest() : JetLightCodeInsightFixtu
         val items = InTextDirectivesUtils.findArrayWithPrefixes(text, "// ORDER:")
         Assert.assertTrue(!items.isEmpty(), """Some items should be defined with "// ORDER:" directive""")
 
-        myFixture.complete(CompletionType.BASIC, InTextDirectivesUtils.getPrefixedInt(text, "// INVOCATION_COUNT:") ?: 1)
+        myFixture.complete(completionType, InTextDirectivesUtils.getPrefixedInt(text, "// INVOCATION_COUNT:") ?: 1)
         myFixture.assertPreferredCompletionItems(InTextDirectivesUtils.getPrefixedInt(text, "// SELECTED:") ?: 0, *items)
     }
 
+    override fun getProjectDescriptor(): LightProjectDescriptor {
+        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    }
+
     protected override fun getTestDataPath() : String? {
-        return File(PluginTestCaseBase.getTestDataPathBase(), "/completion/weighers").getPath() + File.separator
+        return File(PluginTestCaseBase.getTestDataPathBase(), relativeTestDataPath).getPath() + File.separator
     }
 }
 
+public abstract class AbstractBasicCompletionWeigherTest() : AbstractCompletionWeigherTest(CompletionType.BASIC, "/completion/weighers/basic")
+public abstract class AbstractSmartCompletionWeigherTest() : AbstractCompletionWeigherTest(CompletionType.SMART, "/completion/weighers/smart")
