@@ -24,7 +24,7 @@ public abstract class CommonUnitTester extends JSTester {
     @Override
     public void constructTestMethodInvocation(@NotNull JsExpression functionToTestCall,
             @NotNull JsStringLiteral testName) {
-        JsFunction functionToTest = new JsFunction(getContext().scope());
+        JsFunction functionToTest = new JsFunction(getContext().scope(), "test function");
         functionToTest.setBody(new JsBlock(functionToTestCall.makeStmt()));
         getBlock().getStatements().add(new JsInvocation(getTestMethodRef(), testName, functionToTest).makeStmt());
     }

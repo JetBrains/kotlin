@@ -351,8 +351,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     }
 
     private static String getReferencedName(JetSimpleNameExpression expression) {
-        String name = expression.getReferencedName();
-        return name.charAt(0) == '@' ? name.substring(1) + '$' : name;
+        return expression.getReferencedName()
+                .replaceAll("^@", "")
+                .replaceAll("(?:^`(.*)`$)", "$1");
     }
 
     private static String getTargetLabel(JetExpressionWithLabel expression, TranslationContext context) {

@@ -354,7 +354,7 @@ public final class StaticContext {
                         return null;
                     }
                     if (getSuperclass((ClassDescriptor) descriptor) == null) {
-                        return getRootScope().innerScope("Scope for class " + descriptor.getName());
+                        return getRootScope().innerObjectScope("Scope for class " + descriptor.getName());
                     }
                     return null;
                 }
@@ -369,7 +369,7 @@ public final class StaticContext {
                     if (superclass == null) {
                         return null;
                     }
-                    return getScopeForDescriptor(superclass).innerScope("Scope for class " + descriptor.getName());
+                    return getScopeForDescriptor(superclass).innerObjectScope("Scope for class " + descriptor.getName());
                 }
             };
             Rule<JsScope> generateNewScopesForPackageDescriptors = new Rule<JsScope>() {
@@ -378,7 +378,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof PackageFragmentDescriptor)) {
                         return null;
                     }
-                    return getRootScope().innerScope("Package " + descriptor.getName());
+                    return getRootScope().innerObjectScope("Package " + descriptor.getName());
                 }
             };
             //TODO: never get there
@@ -386,7 +386,7 @@ public final class StaticContext {
                 @Override
                 public JsScope apply(@NotNull DeclarationDescriptor descriptor) {
                     JsScope enclosingScope = getEnclosingScope(descriptor);
-                    return enclosingScope.innerScope("Scope for member " + descriptor.getName());
+                    return enclosingScope.innerObjectScope("Scope for member " + descriptor.getName());
                 }
             };
             Rule<JsScope> createFunctionObjectsForCallableDescriptors = new Rule<JsScope>() {

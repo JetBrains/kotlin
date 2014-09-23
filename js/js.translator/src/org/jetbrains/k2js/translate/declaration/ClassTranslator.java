@@ -114,7 +114,7 @@ public final class ClassTranslator extends AbstractTranslator {
             if (!descriptor.getKind().isSingleton() && !isAnonymousObject(descriptor)) {
                 qualifiedReference = declarationContext.getQualifiedReference(descriptor);
                 JsScope scope = context().getScopeForDescriptor(descriptor);
-                definitionPlace = new DefinitionPlace(scope, qualifiedReference, staticProperties);
+                definitionPlace = new DefinitionPlace((JsObjectScope) scope, qualifiedReference, staticProperties);
             }
 
             declarationContext = declarationContext.newDeclaration(descriptor, definitionPlace);
@@ -240,7 +240,7 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translateObjectInsideClass(@NotNull TranslationContext outerClassContext) {
-        JsFunction fun = new JsFunction(outerClassContext.scope(), new JsBlock());
+        JsFunction fun = new JsFunction(outerClassContext.scope(), new JsBlock(), "initializer for " + descriptor.getName().asString());
         TranslationContext funContext = outerClassContext.newFunctionBodyWithUsageTracker(fun, descriptor);
 
         fun.getBody().getStatements().add(new JsReturn(translate(funContext)));

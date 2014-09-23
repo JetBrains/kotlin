@@ -14,13 +14,13 @@ public class JsCatchScope extends JsScope {
     private final JsName name;
 
     public JsCatchScope(JsScope parent, String ident) {
-        super(parent, "Catch scope");
+        super(parent, "Catch scope", null);
         name = new JsName(this, ident);
     }
 
     @Override
     @NotNull
-    public JsName declareName(String identifier) {
+    public JsName declareName(@NotNull String identifier) {
         // Declare into parent scope!
         return getParent().declareName(identifier);
     }
@@ -31,7 +31,7 @@ public class JsCatchScope extends JsScope {
     }
 
     @Override
-    protected JsName findOwnName(String ident) {
+    protected JsName findOwnName(@NotNull String ident) {
         return name.getIdent().equals(ident) ? name : null;
     }
 }

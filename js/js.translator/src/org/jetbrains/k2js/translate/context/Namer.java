@@ -23,6 +23,8 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetLanguage;
 
+import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;
+
 /**
  * Encapuslates different types of constants and naming conventions.
  */
@@ -171,7 +173,7 @@ public final class Namer {
     @NotNull
     private final JsName kotlinName;
     @NotNull
-    private final JsScope kotlinScope;
+    private final JsObjectScope kotlinScope;
     @NotNull
     private final JsName className;
     @NotNull
@@ -208,7 +210,7 @@ public final class Namer {
 
     private Namer(@NotNull JsScope rootScope) {
         kotlinName = rootScope.declareName(KOTLIN_NAME);
-        kotlinScope = new JsScope(rootScope, "Kotlin standard object");
+        kotlinScope = JsObjectScope(rootScope, "Kotlin standard object");
         traitName = kotlinScope.declareName(TRAIT_OBJECT_NAME);
 
         definePackage = kotlin("definePackage");
@@ -318,7 +320,7 @@ public final class Namer {
     }
 
     @NotNull
-    /*package*/ JsScope getKotlinScope() {
+    /*package*/ JsObjectScope getKotlinScope() {
         return kotlinScope;
     }
 

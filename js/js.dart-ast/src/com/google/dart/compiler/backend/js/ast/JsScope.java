@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Map;
 
+import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;
+
 /**
  * A scope is a factory for creating and allocating
  * {@link JsName}s. A JavaScript AST is
@@ -37,38 +39,30 @@ import java.util.Map;
  * with a qualifier and could therefore never be confused with the global scope
  * hierarchy.
  */
-public class JsScope {
-    @Nullable
+public abstract class JsScope {
+    @NotNull
     private final String description;
     private Map<String, JsName> names = Collections.emptyMap();
     private final JsScope parent;
     protected int tempIndex = 0;
     private final String scopeId;
 
-    public JsScope(JsScope parent, @Nullable String description) {
-        this(parent, description, null);
-    }
-
-    public JsScope(JsScope parent) {
-        this(parent, null);
-    }
-
-    public JsScope(JsScope parent, @Nullable String description, @Nullable String scopeId) {
+    public JsScope(JsScope parent, @NotNull String description, @Nullable String scopeId) {
         assert (parent != null);
         this.scopeId = scopeId;
         this.description = description;
         this.parent = parent;
     }
 
-    @NotNull
-    public JsScope innerScope(@Nullable String scopeName) {
-        return new JsScope(this, scopeName);
-    }
-
-    protected JsScope(@Nullable String description) {
+    protected JsScope(@NotNull String description) {
         this.description = description;
         parent = null;
         scopeId = null;
+    }
+
+    @NotNull
+    public JsScope innerObjectScope(@NotNull String scopeName) {
+        return JsObjectScope(this, scopeName);
     }
 
     /**
@@ -81,7 +75,7 @@ public class JsScope {
      * @param identifier An identifier that is unique within this scope.
      */
     @NotNull
-    public JsName declareName(String identifier) {
+    public JsName declareName(@NotNull String identifier) {
         JsName name = findOwnName(identifier);
         return name != null ? name : doCreateName(identifier);
     }
@@ -93,7 +87,7 @@ public class JsScope {
      * (unless they use this function).
      */
     @NotNull
-    public JsName declareFreshName(String suggestedName) {
+    public JsName declareFreshName(@NotNull String suggestedName) {
         String name = suggestedName;
         int counter = 0;
         while (hasOwnName(name)) {
@@ -173,7 +167,7 @@ public class JsScope {
      *
      * @return <code>null</code> if the identifier has no associated name
      */
-    protected JsName findOwnName(String ident) {
+    protected JsName findOwnName(@NotNull String ident) {
         return names.get(ident);
     }
 }

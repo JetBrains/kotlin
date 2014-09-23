@@ -109,6 +109,7 @@ public class DelegationTranslator(
         val propertyName: String = descriptor.getName().asString()
 
         fun generateDelegateGetterFunction(getterDescriptor: PropertyGetterDescriptor): JsFunction {
+            // TODO review: used wrong scope?
             val delegateRefName = context().getScopeForDescriptor(getterDescriptor).declareName(delegateName)
             val delegateRef = JsNameRef(delegateRefName, JsLiteral.THIS)
 
@@ -130,7 +131,8 @@ public class DelegationTranslator(
         }
 
         fun generateDelegateSetterFunction(setterDescriptor: PropertySetterDescriptor): JsFunction {
-            val jsFunction = JsFunction(context().getScopeForDescriptor(setterDescriptor.getContainingDeclaration()))
+            val jsFunction = JsFunction(context().getScopeForDescriptor(setterDescriptor.getContainingDeclaration()),
+                                        "setter for " + setterDescriptor.getName().asString())
 
             assert(setterDescriptor.getValueParameters().size() == 1, "Setter must have 1 parameter")
             val defaultParameter = JsParameter(jsFunction.getScope().declareTemporary())
@@ -169,8 +171,7 @@ public class DelegationTranslator(
             return generateDelegateAccessor(setterDescriptor, generateDelegateSetterFunction(setterDescriptor))
         }
 
-        properties.addGetterAndSetter(descriptor, context(), ::generateDelegateGetter, ::generateDelegateSetter
-        )
+        properties.addGetterAndSetter(descriptor, context(), ::generateDelegateGetter, ::generateDelegateSetter)
     }
 
 
