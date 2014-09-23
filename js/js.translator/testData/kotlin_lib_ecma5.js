@@ -227,34 +227,39 @@ var Kotlin = {};
      * @param {?=} constructor
      * @param {function():Object} enumEntries
      * @param {Object=} properties
+     * @param {Object=} staticProperties
      * @returns {*}
      */
-    Kotlin.createEnumClass = function (basesFun, constructor, enumEntries, properties) {
-        return Kotlin.createClass(
-            basesFun, constructor, properties, {
-            object_initializer$: function () {
-                var enumEntryList = enumEntries()
-                var i = 0;
-                var values = [];
-                for (var entryName in enumEntryList) {
-                    if (enumEntryList.hasOwnProperty(entryName)) {
-                        var entryObject = enumEntryList[entryName];
-                        values[i] = entryObject;
-                        entryObject.ordinal$ = i;
-                        entryObject.name$ = entryName;
-                        i++;
-                    }
+    Kotlin.createEnumClass = function (basesFun, constructor, enumEntries, properties, staticProperties) {
+        staticProperties = staticProperties || {};
+
+        // TODO use Object.assign
+        staticProperties.object_initializer$ = function () {
+            var enumEntryList = enumEntries();
+            var i = 0;
+            var values = [];
+            for (var entryName in enumEntryList) {
+                if (enumEntryList.hasOwnProperty(entryName)) {
+                    var entryObject = enumEntryList[entryName];
+                    values[i] = entryObject;
+                    entryObject.ordinal$ = i;
+                    entryObject.name$ = entryName;
+                    i++;
                 }
-                enumEntryList.values$ = values;
-                return enumEntryList;
-            },
-            values: function() {
-                return this.object.values$;
-            },
-            valueOf_61zpoe$: function(name) {
-                return this.object[name];
             }
-        })
+            enumEntryList.values$ = values;
+            return enumEntryList;
+        };
+
+        staticProperties.values = function () {
+            return this.object.values$;
+        };
+
+        staticProperties.valueOf_61zpoe$ = function (name) {
+            return this.object[name];
+        };
+
+        return Kotlin.createClass(basesFun, constructor, properties, staticProperties)
     };
 
     /**
