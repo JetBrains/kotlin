@@ -1667,10 +1667,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public void returnExpression(JetExpression expr) {
-        StackValue lastValue = gen(expr);
+        boolean isBlockedNamedFunction = expr instanceof JetBlockExpression && expr.getParent() instanceof JetNamedFunction;
 
+        // If generating body for named block-bodied function, generate it as sequence of statements
+        gen(expr, isBlockedNamedFunction ? Type.VOID_TYPE : returnType);
+
+        // If it does not ends with return we should return something
+        // because if we don't there can be VerifyError (specific cases with Nothing-typed expressions)
         if (!endsWithReturn(expr)) {
-            lastValue.put(returnType, v);
+            if (isBlockedNamedFunction && !Type.VOID_TYPE.equals(expressionType(expr))) {
+                StackValue.none().put(returnType, v);
+            }
+
             v.areturn(returnType);
         }
     }
