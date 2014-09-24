@@ -169,7 +169,7 @@ data class Edges<T>(val incoming: T, val outgoing: T)
 
 
 // returns false when interrupted by handler
-fun traverseFollowingInstructions(
+public fun traverseFollowingInstructions(
         rootInstruction: Instruction,
         visited: MutableSet<Instruction>,
         order: TraversalOrder,
