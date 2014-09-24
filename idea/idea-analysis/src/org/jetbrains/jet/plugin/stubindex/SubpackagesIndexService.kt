@@ -55,7 +55,7 @@ public class SubpackagesIndexService(private val project: Project) {
 
         public fun hasSubpackages(fqName: FqName, scope: GlobalSearchScope): Boolean {
             return fqNameByPrefix[fqName].any { packageWithFilesFqName ->
-                PackageIndexUtil.containsAny(packageWithFilesFqName, scope, project, JetExactPackagesIndex.getInstance().getKey())
+                PackageIndexUtil.containsFilesWithExactPackage(packageWithFilesFqName, scope, project)
             }
         }
 
@@ -68,9 +68,7 @@ public class SubpackagesIndexService(private val project: Project) {
                 if (candidateSubPackageShortName in existingSubPackagesShortNames) {
                     continue
                 }
-                val existsInThisScope = PackageIndexUtil.containsAny(
-                        filesFqName, scope, project, JetExactPackagesIndex.getInstance().getKey()
-                )
+                val existsInThisScope = PackageIndexUtil.containsFilesWithExactPackage(filesFqName, scope, project)
                 if (existsInThisScope) {
                     existingSubPackagesShortNames.add(candidateSubPackageShortName)
                 }

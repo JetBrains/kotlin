@@ -48,18 +48,19 @@ public object PackageIndexUtil {
             searchScope: GlobalSearchScope,
             project: Project
     ): Boolean {
-        return containsAny(packageFqName, searchScope, project, JetExactPackagesIndex.getInstance().getKey()) ||
+        return containsFilesWithExactPackage(packageFqName, searchScope, project) ||
                SubpackagesIndexService.getInstance(project).hasSubpackages(packageFqName, searchScope)
     }
 
-    platformStatic public fun containsAny(
+    platformStatic public fun containsFilesWithExactPackage(
             packageFqName: FqName,
             searchScope: GlobalSearchScope,
-            project: Project,
-            key: StubIndexKey<String, JetFile>
+            project: Project
     ): Boolean {
         var result = false
-        StubIndex.getInstance().processElements<String, JetFile>(key, packageFqName.asString(), project, searchScope, javaClass<JetFile>()) {
+        StubIndex.getInstance().processElements<String, JetFile>(
+                JetExactPackagesIndex.getInstance().getKey(), packageFqName.asString(), project, searchScope, javaClass<JetFile>()
+        ) {
             result = true
             false
         }
