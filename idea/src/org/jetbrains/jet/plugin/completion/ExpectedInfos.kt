@@ -61,6 +61,17 @@ import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
+import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.jet.lang.psi.JetFunction
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
+import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.jet.lang.psi.JetReturnExpression
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescriptor
+import org.jetbrains.jet.plugin.completion.smart.toList
+import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 
 enum class Tail {
     COMMA
@@ -74,12 +85,15 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         return calculateForArgument(expressionWithType)
             ?: calculateForFunctionLiteralArgument(expressionWithType)
-            ?: calculateForEq(expressionWithType)
+            ?: calculateForEqAndAssignment(expressionWithType)
             ?: calculateForIf(expressionWithType)
             ?: calculateForElvis(expressionWithType)
             ?: calculateForBlockExpression(expressionWithType)
             ?: calculateForWhenEntryValue(expressionWithType)
             ?: calculateForExclOperand(expressionWithType)
+            ?: calculateForInitializer(expressionWithType)
+            ?: calculateForExpressionBody(expressionWithType)
+            ?: calculateForReturn(expressionWithType)
             ?: getFromBindingContext(expressionWithType)
     }
 
@@ -172,11 +186,11 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
         return expectedInfos
     }
 
-    private fun calculateForEq(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+    private fun calculateForEqAndAssignment(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val binaryExpression = expressionWithType.getParent() as? JetBinaryExpression
         if (binaryExpression != null) {
             val operationToken = binaryExpression.getOperationToken()
-            if (operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ) {
+            if (operationToken == JetTokens.EQ || operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ) {
                 val otherOperand = if (expressionWithType == binaryExpression.getRight()) binaryExpression.getLeft() else binaryExpression.getRight()
                 if (otherOperand != null) {
                     val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, otherOperand] ?: return null
@@ -254,6 +268,40 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
         val prefixExpression = expressionWithType.getParent() as? JetPrefixExpression ?: return null
         if (prefixExpression.getOperationToken() != JetTokens.EXCL) return null
         return listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null, null))
+    }
+
+    private fun calculateForInitializer(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val property = expressionWithType.getParent() as? JetProperty ?: return null
+        if (expressionWithType != property.getInitializer()) return null
+        val propertyDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptor ?: return null
+        return listOf(ExpectedInfo(propertyDescriptor.getType(), propertyDescriptor.getName().asString(), null))
+    }
+
+    private fun calculateForExpressionBody(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val declaration = expressionWithType.getParent() as? JetDeclarationWithBody ?: return null
+        if (expressionWithType != declaration.getBodyExpression() || declaration.hasBlockBody()) return null
+        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? FunctionDescriptor ?: return null
+        return functionReturnValueExpectedInfo(descriptor).toList()
+    }
+
+    private fun calculateForReturn(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val returnExpression = expressionWithType.getParent() as? JetReturnExpression ?: return null
+        val descriptor = returnExpression.getTargetFunctionDescriptor(bindingContext) ?: return null
+        return functionReturnValueExpectedInfo(descriptor).toList()
+    }
+
+    private fun functionReturnValueExpectedInfo(descriptor: FunctionDescriptor): ExpectedInfo? {
+        return when (descriptor) {
+            is SimpleFunctionDescriptor -> ExpectedInfo(descriptor.getReturnType() ?: return null, descriptor.getName().asString(), null)
+
+            is PropertyGetterDescriptor -> {
+                if (descriptor !is PropertyGetterDescriptor) return null
+                val property = descriptor.getCorrespondingProperty()
+                ExpectedInfo(property.getType(),  property.getName().asString(), null)
+            }
+
+            else -> null
+        }
     }
 
     private fun getFromBindingContext(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
