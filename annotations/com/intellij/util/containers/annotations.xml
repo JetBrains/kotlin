@@ -5,4 +5,8 @@
     <item name='com.intellij.util.containers.MultiMap java.util.Set&lt;K&gt; keySet()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item
+        name='com.intellij.util.containers.MultiMap java.util.Set&lt;java.util.Map.Entry&lt;K,java.util.Collection&lt;V&gt;&gt;&gt; entrySet()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
 </root>

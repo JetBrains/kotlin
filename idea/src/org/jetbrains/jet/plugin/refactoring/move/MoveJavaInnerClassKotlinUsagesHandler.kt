@@ -16,6 +16,9 @@
 
 /*
 Disabled until MoveInnerClassUsagesHandler will be backported to IDEA 13
+Don't forget to rename files:
+    moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance.test_disabled
+    moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda.test_disabled
 
 package org.jetbrains.jet.plugin.refactoring.move
 

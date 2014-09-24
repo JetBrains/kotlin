@@ -33,9 +33,9 @@ class MyDelegateThrowsException {
      field    = prop$delegate: delegatedPropertyInClass.MyDelegate = {delegatedPropertyInClass.MyDelegate@uniqueID}
      field    = prop: int = 1
      field    = propEx$delegate: delegatedPropertyInClass.MyDelegateThrowsException = {delegatedPropertyInClass.MyDelegateThrowsException@uniqueID}
-     field    = propEx: java.lang.IllegalStateException = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException
+     field    = propEx: java.lang.IllegalStateException = {java.lang.IllegalStateException@uniqueID}"java.lang.IllegalStateException"
        field    = detailMessage: java.lang.String = null
-       field    = cause: java.lang.Throwable = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException
+       field    = cause: java.lang.Throwable = {java.lang.IllegalStateException@uniqueID}"java.lang.IllegalStateException"
        field    = stackTrace: java.lang.StackTraceElement[] = null
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 

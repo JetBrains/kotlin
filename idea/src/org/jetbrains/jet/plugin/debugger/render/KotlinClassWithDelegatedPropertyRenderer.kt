@@ -26,7 +26,7 @@ import org.jetbrains.org.objectweb.asm.Type as AsmType
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
 import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl
 import com.sun.jdi.ObjectReference
-import com.intellij.xdebugger.settings.XDebuggerSettingsManager
+import com.intellij.xdebugger.impl.settings.XDebuggerSettingsManager
 import com.intellij.debugger.ui.impl.watch.NodeManagerImpl
 import com.intellij.debugger.ui.impl.watch.MessageDescriptor
 import java.util.ArrayList
@@ -49,7 +49,7 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
 
         if (jdiType !is ReferenceType) return false
 
-        return jdiType.allFields().any { it.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) }
+        return jdiType.allFields()?.any { it.name()?.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) ?: false } ?: false
     }
 
     override fun buildChildren(value: Value?, builder: ChildrenBuilder, context: EvaluationContext) {
@@ -60,8 +60,8 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
         val nodeManager = builder.getNodeManager()!!
         val nodeDescriptorFactory = builder.getDescriptorManager()!!
 
-        val fields = value.referenceType().allFields()
-        if (fields.isEmpty()) {
+        val fields = value.referenceType()?.allFields()
+        if (fields == null || fields.isEmpty()) {
             builder.setChildren(listOf(nodeManager.createMessageNode(MessageDescriptor.CLASS_HAS_NO_FIELDS.getLabel())))
             return
         }
@@ -75,7 +75,7 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
             val fieldDescriptor = nodeDescriptorFactory.getFieldDescriptor(builder.getParentDescriptor(), value, field)
             children.add(nodeManager.createNode(fieldDescriptor, context))
 
-            if (field.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)) {
+            if (field.name()?.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) ?: false) {
                 val method = findGetterForDelegatedProperty(value, field)
                 val threadReference = context.getSuspendContext().getThread()?.getThreadReference()
                 if (method != null && threadReference != null) {
@@ -94,7 +94,7 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
             }
         }
 
-        if (XDebuggerSettingsManager.getInstance()!!.getDataViewSettings().isSortValues()) {
+        if (XDebuggerSettingsManager.getInstance()!!.getDataViewSettings()?.isSortValues() ?: false) {
             children.sortBy(NodeManagerImpl.getNodeComparator())
         }
 
@@ -102,9 +102,9 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
     }
 
     private fun findGetterForDelegatedProperty(objRef: ObjectReference, delegate: Field): Method? {
-        val fieldName = delegate.name().trimTrailing(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)
+        val fieldName = delegate.name()?.trimTrailing(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) ?: return null
         val getterName = PropertyCodegen.getterName(Name.identifier(fieldName))
-        return objRef.referenceType().methodsByName(getterName)?.firstOrNull()
+        return objRef.referenceType()?.methodsByName(getterName)?.firstOrNull()
     }
 
     private fun shouldDisplay(context: EvaluationContext, objInstance: ObjectReference, field: Field): Boolean {
@@ -121,7 +121,7 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
                         if (location != null &&
                             objInstance == context.getThisObject() &&
                             objInstance.referenceType() == location.declaringType() &&
-                            field.name().startsWith(FieldDescriptorImpl.OUTER_LOCAL_VAR_FIELD_PREFIX)
+                            field.name()?.startsWith(FieldDescriptorImpl.OUTER_LOCAL_VAR_FIELD_PREFIX) ?: false
                         ) {
                             return false
                         }

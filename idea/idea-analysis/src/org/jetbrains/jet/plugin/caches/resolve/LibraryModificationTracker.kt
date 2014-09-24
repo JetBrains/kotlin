@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.caches.resolve
 
-import com.intellij.openapi.util.SimpleModificationTracker
+import com.intellij.openapi.util.DefaultModificationTracker
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -27,7 +27,7 @@ import com.intellij.openapi.vfs.VirtualFileMoveEvent
 import com.intellij.openapi.roots.ProjectFileIndex
 import kotlin.platform.platformStatic
 
-class LibraryModificationTracker(project: Project) : SimpleModificationTracker() {
+class LibraryModificationTracker(project: Project) : DefaultModificationTracker() {
     class object {
         platformStatic fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<LibraryModificationTracker>())!!
     }
