@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+/*
+Disabled until MoveInnerClassUsagesHandler will be backported to IDEA 13
+
 package org.jetbrains.jet.plugin.refactoring.move
 
 import com.intellij.refactoring.move.moveInner.MoveInnerClassUsagesHandler
@@ -65,3 +68,4 @@ public class MoveJavaInnerClassKotlinUsagesHandler: MoveInnerClassUsagesHandler 
         }
     }
 }
+*/
