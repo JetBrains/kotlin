@@ -107,7 +107,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
     }
 
     fun computeTypeCandidates(typeInfo: TypeInfo): List<TypeCandidate> =
-            typeCandidates.getOrPut(typeInfo) { typeInfo.getPossibleTypes(currentFileContext).map { TypeCandidate(it) } }
+            typeCandidates.getOrPut(typeInfo) { typeInfo.getPossibleTypes(this).map { TypeCandidate(it) } }
 
     fun computeTypeCandidates(
             typeInfo: TypeInfo,
@@ -115,7 +115,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
             scope: JetScope): List<TypeCandidate> {
         if (typeInfo is TypeInfo.ByType && typeInfo.keepUnsubstituted) return computeTypeCandidates(typeInfo)
         return typeCandidates.getOrPut(typeInfo) {
-            val types = typeInfo.getPossibleTypes(currentFileContext).reverse()
+            val types = typeInfo.getPossibleTypes(this).reverse()
 
             val newTypes = LinkedHashSet<JetType>(types)
             for (substitution in substitutions) {

@@ -20,20 +20,22 @@ abstract class TypeInfo(val variance: Variance) {
             JetNameSuggester.suggestNamesForExpression(expression, EmptyValidator)
         }
 
-        override fun getPossibleTypes(context: BindingContext): List<JetType> =
-                expression.guessTypes(context).flatMap { it.getPossibleSupertypes(variance) }
+        override fun getPossibleTypes(builder: FunctionBuilder): List<JetType> =
+                expression.guessTypes(builder.currentFileContext).flatMap { it.getPossibleSupertypes(variance) }
     }
 
     class ByType(val theType: JetType, variance: Variance, val keepUnsubstituted: Boolean = false): TypeInfo(variance) {
-        override val possibleNamesFromExpression: Array<String> =
-                ArrayUtil.EMPTY_STRING_ARRAY
-
-        override fun getPossibleTypes(context: BindingContext): List<JetType> =
+        override fun getPossibleTypes(builder: FunctionBuilder): List<JetType> =
                 theType.getPossibleSupertypes(variance)
     }
 
-    abstract val possibleNamesFromExpression: Array<String>
-    abstract fun getPossibleTypes(context: BindingContext): List<JetType>
+    class ByReceiverType(variance: Variance): TypeInfo(variance) {
+        override fun getPossibleTypes(builder: FunctionBuilder): List<JetType> =
+                builder.receiverTypeCandidate.theType.getPossibleSupertypes(variance)
+    }
+
+    open val possibleNamesFromExpression: Array<String> get() = ArrayUtil.EMPTY_STRING_ARRAY
+    abstract fun getPossibleTypes(builder: FunctionBuilder): List<JetType>
 
     protected fun JetType.getPossibleSupertypes(variance: Variance): List<JetType> {
         val single = Collections.singletonList(this)
