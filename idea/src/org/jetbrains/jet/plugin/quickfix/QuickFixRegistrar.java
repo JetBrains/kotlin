@@ -232,6 +232,8 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateBinaryOperationActionFactory.INSTANCE$);
         QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateBinaryOperationActionFactory.INSTANCE$);
 
+        QuickFixes.factories.put(FUNCTION_EXPECTED, CreateInvokeFunctionActionFactory.INSTANCE$);
+
         QuickFixes.factories.put(TYPE_MISMATCH, new QuickFixFactoryForTypeMismatchError());
 
         QuickFixes.factories.put(AUTOCAST_IMPOSSIBLE, CastExpressionFix.createFactoryForAutoCastImpossible());
