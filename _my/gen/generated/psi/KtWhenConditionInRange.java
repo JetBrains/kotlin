@@ -50,6 +50,9 @@ public interface KtWhenConditionInRange extends PsiElement {
   KtDisjunctionPlus getDisjunctionPlus();
 
   @NotNull
+  List<KtDoWhileLoop> getDoWhileLoopList();
+
+  @NotNull
   List<KtDotQualifiedExpression> getDotQualifiedExpressionList();
 
   @NotNull
@@ -57,6 +60,9 @@ public interface KtWhenConditionInRange extends PsiElement {
 
   @Nullable
   KtEqualityComparisonExpression getEqualityComparisonExpression();
+
+  @NotNull
+  List<KtForLoop> getForLoopList();
 
   @NotNull
   List<KtFunctionLiteralExpression> getFunctionLiteralExpressionList();
@@ -84,9 +90,6 @@ public interface KtWhenConditionInRange extends PsiElement {
 
   @NotNull
   List<KtLabelExpression> getLabelExpressionList();
-
-  @NotNull
-  List<KtLoop> getLoopList();
 
   @NotNull
   List<KtMultiplicativeExpressionPlus> getMultiplicativeExpressionPlusList();
@@ -132,5 +135,8 @@ public interface KtWhenConditionInRange extends PsiElement {
 
   @NotNull
   List<KtWhen> getWhenList();
+
+  @NotNull
+  List<KtWhileLoop> getWhileLoopList();
 
 }

@@ -22,6 +22,7 @@ public interface KotlinTypes {
   IElementType ASTERISK = KotlinParserDefinition.createType("ASTERISK");
   IElementType BINARY_CONSTANT = KotlinParserDefinition.createType("BINARY_CONSTANT");
   IElementType BLOCK = KotlinParserDefinition.createType("BLOCK");
+  IElementType BODY = KotlinParserDefinition.createType("BODY");
   IElementType CALLABLE_REFERENCE = KotlinParserDefinition.createType("CALLABLE_REFERENCE");
   IElementType CALL_SUFFIX = KotlinParserDefinition.createType("CALL_SUFFIX");
   IElementType CATCH_BLOCK = KotlinParserDefinition.createType("CATCH_BLOCK");
@@ -52,6 +53,7 @@ public interface KotlinTypes {
   IElementType FINALLY_BLOCK = KotlinParserDefinition.createType("FINALLY_BLOCK");
   IElementType FLOAT_CONSTANT = KotlinParserDefinition.createType("FLOAT_CONSTANT");
   IElementType FOR_LOOP = KotlinParserDefinition.createType("FOR_LOOP");
+  IElementType FOR_VALUE_PARAMETER = KotlinParserDefinition.createType("FOR_VALUE_PARAMETER");
   IElementType FUNCTION = KotlinParserDefinition.createType("FUNCTION");
   IElementType FUNCTION_LITERAL = KotlinParserDefinition.createType("FUNCTION_LITERAL");
   IElementType FUNCTION_LITERAL_ARGUMENT = KotlinParserDefinition.createType("FUNCTION_LITERAL_ARGUMENT");
@@ -81,7 +83,7 @@ public interface KotlinTypes {
   IElementType LEFT_FUNCTION_TYPE = KotlinParserDefinition.createType("LEFT_FUNCTION_TYPE");
   IElementType LONG_ANNOTATION = KotlinParserDefinition.createType("LONG_ANNOTATION");
   IElementType LONG_TEMPLATE = KotlinParserDefinition.createType("LONG_TEMPLATE");
-  IElementType LOOP = KotlinParserDefinition.createType("LOOP");
+  IElementType LOOP_RANGE = KotlinParserDefinition.createType("LOOP_RANGE");
   IElementType MODIFIERS_IDENTIFIER_EXT = KotlinParserDefinition.createType("MODIFIERS_IDENTIFIER_EXT");
   IElementType MODIFIERS_IDENTIFIER_TYPE_EXT = KotlinParserDefinition.createType("MODIFIERS_IDENTIFIER_TYPE_EXT");
   IElementType MODIFIER_LIST = KotlinParserDefinition.createType("MODIFIER_LIST");
@@ -118,12 +120,14 @@ public interface KotlinTypes {
   IElementType SIMPLE_USER_TYPE = KotlinParserDefinition.createType("SIMPLE_USER_TYPE");
   IElementType SIMPLE_USER_TYPE_ADD = KotlinParserDefinition.createType("SIMPLE_USER_TYPE_ADD");
   IElementType SINGLE_VALUE_PARAMETER_LIST = KotlinParserDefinition.createType("SINGLE_VALUE_PARAMETER_LIST");
+  IElementType SINGLE_VALUE_PARAMETER_LIST_WITH_BRACKETS = KotlinParserDefinition.createType("SINGLE_VALUE_PARAMETER_LIST_WITH_BRACKETS");
   IElementType STATEMENTS_BLOCK = KotlinParserDefinition.createType("STATEMENTS_BLOCK");
   IElementType STRING_TEMPLATE = KotlinParserDefinition.createType("STRING_TEMPLATE");
   IElementType STRING_TEMPLATE_ELEMENT = KotlinParserDefinition.createType("STRING_TEMPLATE_ELEMENT");
   IElementType SUPER_EXPRESSION = KotlinParserDefinition.createType("SUPER_EXPRESSION");
   IElementType SUPER_REFERENCE = KotlinParserDefinition.createType("SUPER_REFERENCE");
   IElementType THEN_EXPRESSION = KotlinParserDefinition.createType("THEN_EXPRESSION");
+  IElementType THEN_EXPRESSION_WITH_SEMI = KotlinParserDefinition.createType("THEN_EXPRESSION_WITH_SEMI");
   IElementType THIS_EXPRESSION = KotlinParserDefinition.createType("THIS_EXPRESSION");
   IElementType THIS_REFERENCE = KotlinParserDefinition.createType("THIS_REFERENCE");
   IElementType TRY_BLOCK = KotlinParserDefinition.createType("TRY_BLOCK");
@@ -195,6 +199,9 @@ public interface KotlinTypes {
       }
       else if (type == BLOCK) {
         return new KtBlockImpl(node);
+      }
+      else if (type == BODY) {
+        return new KtBodyImpl(node);
       }
       else if (type == CALLABLE_REFERENCE) {
         return new KtCallableReferenceImpl(node);
@@ -286,6 +293,9 @@ public interface KotlinTypes {
       else if (type == FOR_LOOP) {
         return new KtForLoopImpl(node);
       }
+      else if (type == FOR_VALUE_PARAMETER) {
+        return new KtForValueParameterImpl(node);
+      }
       else if (type == FUNCTION) {
         return new KtFunctionImpl(node);
       }
@@ -373,8 +383,8 @@ public interface KotlinTypes {
       else if (type == LONG_TEMPLATE) {
         return new KtLongTemplateImpl(node);
       }
-      else if (type == LOOP) {
-        return new KtLoopImpl(node);
+      else if (type == LOOP_RANGE) {
+        return new KtLoopRangeImpl(node);
       }
       else if (type == MODIFIERS_IDENTIFIER_EXT) {
         return new KtModifiersIDENTIFIERExtImpl(node);
@@ -484,6 +494,9 @@ public interface KotlinTypes {
       else if (type == SINGLE_VALUE_PARAMETER_LIST) {
         return new KtSingleValueParameterListImpl(node);
       }
+      else if (type == SINGLE_VALUE_PARAMETER_LIST_WITH_BRACKETS) {
+        return new KtSingleValueParameterListWithBracketsImpl(node);
+      }
       else if (type == STATEMENTS_BLOCK) {
         return new KtStatementsBlockImpl(node);
       }
@@ -501,6 +514,9 @@ public interface KotlinTypes {
       }
       else if (type == THEN_EXPRESSION) {
         return new KtThenExpressionImpl(node);
+      }
+      else if (type == THEN_EXPRESSION_WITH_SEMI) {
+        return new KtThenExpressionWithSemiImpl(node);
       }
       else if (type == THIS_EXPRESSION) {
         return new KtThisExpressionImpl(node);

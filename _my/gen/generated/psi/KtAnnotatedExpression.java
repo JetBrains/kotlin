@@ -38,10 +38,16 @@ public interface KtAnnotatedExpression extends PsiElement {
   KtCallableReference getCallableReference();
 
   @Nullable
+  KtDoWhileLoop getDoWhileLoop();
+
+  @Nullable
   KtDotQualifiedExpression getDotQualifiedExpression();
 
   @Nullable
   KtElvisAccessExpression getElvisAccessExpression();
+
+  @Nullable
+  KtForLoop getForLoop();
 
   @Nullable
   KtFunctionLiteralExpression getFunctionLiteralExpression();
@@ -69,9 +75,6 @@ public interface KtAnnotatedExpression extends PsiElement {
 
   @Nullable
   KtLongAnnotation getLongAnnotation();
-
-  @Nullable
-  KtLoop getLoop();
 
   @Nullable
   KtObjectLiteral getObjectLiteral();
@@ -105,5 +108,8 @@ public interface KtAnnotatedExpression extends PsiElement {
 
   @Nullable
   KtWhen getWhen();
+
+  @Nullable
+  KtWhileLoop getWhileLoop();
 
 }

@@ -621,6 +621,13 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
         return true;
     }
 
+    public static boolean stopInFunctionParameter(PsiBuilder builder_, int level_, PsiBuilder.Marker marker) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        int whenToStop = findLastBefore(builder, TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON), false);
+        stopAt(builder_, level_, marker, whenToStop);
+        return true;
+    }
+
 
     protected static boolean _at(SemanticWhitespaceAwarePsiBuilderImpl myBuilder, IElementType expectation) {
         IElementType token = myBuilder.getTokenType();
@@ -679,6 +686,10 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
         if (!isSoft) return false;
         builder_.remapCurrentToken(JetTokens.IDENTIFIER);
         return true;
+    }
+
+    public static boolean next(PsiBuilder builder_, int level_, IElementType token) {
+        return builder_.getTokenType() == token;
     }
 
     public static boolean availableCallWithClosure(PsiBuilder builder_, int level_) {

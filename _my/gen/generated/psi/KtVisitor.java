@@ -83,6 +83,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitBody(@NotNull KtBody o) {
+    visitPsiElement(o);
+  }
+
   public void visitCallSuffix(@NotNull KtCallSuffix o) {
     visitPsiElement(o);
   }
@@ -188,6 +192,10 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitForLoop(@NotNull KtForLoop o) {
+    visitPsiElement(o);
+  }
+
+  public void visitForValueParameter(@NotNull KtForValueParameter o) {
     visitPsiElement(o);
   }
 
@@ -303,7 +311,7 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitLoop(@NotNull KtLoop o) {
+  public void visitLoopRange(@NotNull KtLoopRange o) {
     visitPsiElement(o);
   }
 
@@ -443,6 +451,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitSingleValueParameterListWithBrackets(@NotNull KtSingleValueParameterListWithBrackets o) {
+    visitPsiElement(o);
+  }
+
   public void visitStatementsBlock(@NotNull KtStatementsBlock o) {
     visitPsiElement(o);
   }
@@ -464,6 +476,10 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitThenExpression(@NotNull KtThenExpression o) {
+    visitPsiElement(o);
+  }
+
+  public void visitThenExpressionWithSemi(@NotNull KtThenExpressionWithSemi o) {
     visitPsiElement(o);
   }
 

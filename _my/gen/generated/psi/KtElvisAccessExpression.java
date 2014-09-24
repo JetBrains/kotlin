@@ -31,11 +31,17 @@ public interface KtElvisAccessExpression extends PsiElement {
   @NotNull
   List<KtCallableReference> getCallableReferenceList();
 
+  @NotNull
+  List<KtDoWhileLoop> getDoWhileLoopList();
+
   @Nullable
   KtElvisAccessExpression getElvisAccessExpression();
 
   @NotNull
   KtElvisOperation getElvisOperation();
+
+  @NotNull
+  List<KtForLoop> getForLoopList();
 
   @NotNull
   List<KtFunctionLiteralExpression> getFunctionLiteralExpressionList();
@@ -57,9 +63,6 @@ public interface KtElvisAccessExpression extends PsiElement {
 
   @NotNull
   List<KtLabel> getLabelList();
-
-  @NotNull
-  List<KtLoop> getLoopList();
 
   @NotNull
   List<KtObjectLiteral> getObjectLiteralList();
@@ -90,5 +93,8 @@ public interface KtElvisAccessExpression extends PsiElement {
 
   @NotNull
   List<KtWhen> getWhenList();
+
+  @NotNull
+  List<KtWhileLoop> getWhileLoopList();
 
 }

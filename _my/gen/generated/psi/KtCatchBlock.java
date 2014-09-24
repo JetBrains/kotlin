@@ -8,15 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtCatchBlock extends PsiElement {
 
   @NotNull
-  KtAnnotations getAnnotations();
-
-  @NotNull
   KtBlock getBlock();
 
-  @Nullable
-  KtSimpleUserType getSimpleUserType();
-
-  @Nullable
-  KtSimpleUserTypeAdd getSimpleUserTypeAdd();
+  @NotNull
+  KtSingleValueParameterListWithBrackets getSingleValueParameterListWithBrackets();
 
 }

@@ -38,10 +38,16 @@ public interface KtNamedInfixPlus extends PsiElement {
   List<KtCallableReference> getCallableReferenceList();
 
   @NotNull
+  List<KtDoWhileLoop> getDoWhileLoopList();
+
+  @NotNull
   List<KtDotQualifiedExpression> getDotQualifiedExpressionList();
 
   @NotNull
   List<KtElvisAccessExpression> getElvisAccessExpressionList();
+
+  @NotNull
+  List<KtForLoop> getForLoopList();
 
   @NotNull
   List<KtFunctionLiteralExpression> getFunctionLiteralExpressionList();
@@ -69,9 +75,6 @@ public interface KtNamedInfixPlus extends PsiElement {
 
   @NotNull
   List<KtLabelExpression> getLabelExpressionList();
-
-  @NotNull
-  List<KtLoop> getLoopList();
 
   @NotNull
   List<KtMultiplicativeExpressionPlus> getMultiplicativeExpressionPlusList();
@@ -114,5 +117,8 @@ public interface KtNamedInfixPlus extends PsiElement {
 
   @NotNull
   List<KtWhen> getWhenList();
+
+  @NotNull
+  List<KtWhileLoop> getWhileLoopList();
 
 }

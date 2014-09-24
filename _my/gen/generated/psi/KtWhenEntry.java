@@ -50,6 +50,9 @@ public interface KtWhenEntry extends PsiElement {
   KtDisjunctionPlus getDisjunctionPlus();
 
   @NotNull
+  List<KtDoWhileLoop> getDoWhileLoopList();
+
+  @NotNull
   List<KtDotQualifiedExpression> getDotQualifiedExpressionList();
 
   @NotNull
@@ -57,6 +60,9 @@ public interface KtWhenEntry extends PsiElement {
 
   @Nullable
   KtEqualityComparisonExpression getEqualityComparisonExpression();
+
+  @NotNull
+  List<KtForLoop> getForLoopList();
 
   @NotNull
   List<KtFunctionLiteralExpression> getFunctionLiteralExpressionList();
@@ -81,9 +87,6 @@ public interface KtWhenEntry extends PsiElement {
 
   @NotNull
   List<KtLabelExpression> getLabelExpressionList();
-
-  @NotNull
-  List<KtLoop> getLoopList();
 
   @NotNull
   List<KtMultiplicativeExpressionPlus> getMultiplicativeExpressionPlusList();
@@ -138,5 +141,8 @@ public interface KtWhenEntry extends PsiElement {
 
   @NotNull
   List<KtWhenConditionIsPattern> getWhenConditionIsPatternList();
+
+  @NotNull
+  List<KtWhileLoop> getWhileLoopList();
 
 }

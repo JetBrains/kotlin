@@ -24,26 +24,14 @@ public class KtCatchBlockImpl extends ASTWrapperPsiElement implements KtCatchBlo
 
   @Override
   @NotNull
-  public KtAnnotations getAnnotations() {
-    return findNotNullChildByClass(KtAnnotations.class);
-  }
-
-  @Override
-  @NotNull
   public KtBlock getBlock() {
     return findNotNullChildByClass(KtBlock.class);
   }
 
   @Override
-  @Nullable
-  public KtSimpleUserType getSimpleUserType() {
-    return findChildByClass(KtSimpleUserType.class);
-  }
-
-  @Override
-  @Nullable
-  public KtSimpleUserTypeAdd getSimpleUserTypeAdd() {
-    return findChildByClass(KtSimpleUserTypeAdd.class);
+  @NotNull
+  public KtSingleValueParameterListWithBrackets getSingleValueParameterListWithBrackets() {
+    return findNotNullChildByClass(KtSingleValueParameterListWithBrackets.class);
   }
 
 }

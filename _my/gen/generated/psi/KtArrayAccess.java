@@ -32,7 +32,13 @@ public interface KtArrayAccess extends PsiElement {
   KtCallableReference getCallableReference();
 
   @Nullable
+  KtDoWhileLoop getDoWhileLoop();
+
+  @Nullable
   KtElvisAccessExpression getElvisAccessExpression();
+
+  @Nullable
+  KtForLoop getForLoop();
 
   @Nullable
   KtFunctionLiteralExpression getFunctionLiteralExpression();
@@ -57,9 +63,6 @@ public interface KtArrayAccess extends PsiElement {
 
   @Nullable
   KtLabel getLabel();
-
-  @Nullable
-  KtLoop getLoop();
 
   @Nullable
   KtObjectLiteral getObjectLiteral();
@@ -90,5 +93,8 @@ public interface KtArrayAccess extends PsiElement {
 
   @Nullable
   KtWhen getWhen();
+
+  @Nullable
+  KtWhileLoop getWhileLoop();
 
 }

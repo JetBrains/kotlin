@@ -35,9 +35,15 @@ public class KtIfExpressionImpl extends ASTWrapperPsiElement implements KtIfExpr
   }
 
   @Override
-  @NotNull
+  @Nullable
   public KtThenExpression getThenExpression() {
-    return findNotNullChildByClass(KtThenExpression.class);
+    return findChildByClass(KtThenExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public KtThenExpressionWithSemi getThenExpressionWithSemi() {
+    return findChildByClass(KtThenExpressionWithSemi.class);
   }
 
 }

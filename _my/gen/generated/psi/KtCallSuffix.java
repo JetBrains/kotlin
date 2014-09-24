@@ -32,7 +32,13 @@ public interface KtCallSuffix extends PsiElement {
   KtCallableReference getCallableReference();
 
   @Nullable
+  KtDoWhileLoop getDoWhileLoop();
+
+  @Nullable
   KtElvisAccessExpression getElvisAccessExpression();
+
+  @Nullable
+  KtForLoop getForLoop();
 
   @NotNull
   List<KtFunctionLiteralArgument> getFunctionLiteralArgumentList();
@@ -57,9 +63,6 @@ public interface KtCallSuffix extends PsiElement {
 
   @NotNull
   List<KtLabel> getLabelList();
-
-  @Nullable
-  KtLoop getLoop();
 
   @Nullable
   KtObjectLiteral getObjectLiteral();
@@ -96,5 +99,8 @@ public interface KtCallSuffix extends PsiElement {
 
   @Nullable
   KtWhen getWhen();
+
+  @Nullable
+  KtWhileLoop getWhileLoop();
 
 }

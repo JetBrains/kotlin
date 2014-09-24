@@ -114,6 +114,12 @@ public class KtGetterImpl extends ASTWrapperPsiElement implements KtGetter {
 
   @Override
   @NotNull
+  public List<KtDoWhileLoop> getDoWhileLoopList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtDoWhileLoop.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtDotQualifiedExpression> getDotQualifiedExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtDotQualifiedExpression.class);
   }
@@ -128,6 +134,12 @@ public class KtGetterImpl extends ASTWrapperPsiElement implements KtGetter {
   @Nullable
   public KtEqualityComparisonExpression getEqualityComparisonExpression() {
     return findChildByClass(KtEqualityComparisonExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtForLoop> getForLoopList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtForLoop.class);
   }
 
   @Override
@@ -176,12 +188,6 @@ public class KtGetterImpl extends ASTWrapperPsiElement implements KtGetter {
   @NotNull
   public List<KtLabelExpression> getLabelExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLabelExpression.class);
-  }
-
-  @Override
-  @NotNull
-  public List<KtLoop> getLoopList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLoop.class);
   }
 
   @Override
@@ -284,6 +290,12 @@ public class KtGetterImpl extends ASTWrapperPsiElement implements KtGetter {
   @NotNull
   public List<KtWhen> getWhenList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtWhen.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtWhileLoop> getWhileLoopList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtWhileLoop.class);
   }
 
 }

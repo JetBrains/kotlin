@@ -31,8 +31,14 @@ public interface KtSafeAccessExpression extends PsiElement {
   @NotNull
   List<KtCallableReference> getCallableReferenceList();
 
+  @NotNull
+  List<KtDoWhileLoop> getDoWhileLoopList();
+
   @Nullable
   KtElvisAccessExpression getElvisAccessExpression();
+
+  @NotNull
+  List<KtForLoop> getForLoopList();
 
   @NotNull
   List<KtFunctionLiteralExpression> getFunctionLiteralExpressionList();
@@ -54,9 +60,6 @@ public interface KtSafeAccessExpression extends PsiElement {
 
   @NotNull
   List<KtLabel> getLabelList();
-
-  @NotNull
-  List<KtLoop> getLoopList();
 
   @NotNull
   List<KtObjectLiteral> getObjectLiteralList();
@@ -87,5 +90,8 @@ public interface KtSafeAccessExpression extends PsiElement {
 
   @NotNull
   List<KtWhen> getWhenList();
+
+  @NotNull
+  List<KtWhileLoop> getWhileLoopList();
 
 }

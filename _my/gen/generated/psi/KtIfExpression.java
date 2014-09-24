@@ -13,7 +13,10 @@ public interface KtIfExpression extends PsiElement {
   @Nullable
   KtElseExpression getElseExpression();
 
-  @NotNull
+  @Nullable
   KtThenExpression getThenExpression();
+
+  @Nullable
+  KtThenExpressionWithSemi getThenExpressionWithSemi();
 
 }

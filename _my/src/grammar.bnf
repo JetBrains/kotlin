@@ -178,7 +178,7 @@ private functionParameterExt ::= (functionParameter ",")* functionParameter
 
 //[Used by valueParameters, class]
 functionParameter
-  ::= modifierList? ("val" | "var")? privateParameter ("=" expression)?
+  ::= <<stopInFunctionParameter marker_>> modifierList? <<unStop>> ("val" | "var")? privateParameter ("=" expression)?
   ;
 
 // same as initializer{","}
@@ -271,8 +271,13 @@ singleValueParameterList
   ::= parameter
   ;
 
+singleValueParameterListWithBrackets
+  ::= "(" annotationsPlus? parameter ")"
+  ;
+
+
 private privateParameter
-  ::= IDENTIFIER (":" type)?
+  ::= IDENTIFIER_NEXT IDENTIFIER (":" type)?
   ;
 
 private privateParameterReference
@@ -434,15 +439,24 @@ parameterOrModifierType
 
 // [Used by atomicExpression]
 ifExpression
-  ::= "if" "(" DISABLE_NEWLINES condition RESTORE_NEWLINES_STATE ")" thenExpression (SEMI? "else"  elseExpression)?
+  ::= "if" "(" DISABLE_NEWLINES condition RESTORE_NEWLINES_STATE ")"
+      (
+          thenExpressionWithSemi "else"  elseExpression
+          | thenExpression
+      )
   ;
 
 thenExpression
-  ::= block | expression
+  ::= (block | expression)?
   ;
 
+thenExpressionWithSemi
+  ::= (block | expression)? SEMI?
+  ;
+
+
 elseExpression
-  ::= (block |expression)
+  ::= (block |expression)?
   ;
 
 condition
@@ -456,34 +470,49 @@ tryBlock
 
 // [Used by try]
 catchBlock
-  ::= "catch" "(" annotations IDENTIFIER ":" userType ")" block
+  ::= <<at CATCH_KEYWORD>> "catch"
+  //"(" annotationsPlus? IDENTIFIER ":" userType ")" block
+  singleValueParameterListWithBrackets block
   ;
 
 // [Used by try]
 finallyBlock
-  ::= "finally" block
+  ::= <<at FINALLY_KEYWORD>> "finally" block
   ;
 
 // [Used by atomicExpression]
-loop
+private loop
   ::= forLoop
   | whileLoop
   | doWhileLoop
   ;
 
+
+forValueParameter
+  ::= annotationsPlus? ("val" | "var")? (multipleVariableDeclarations | variableDeclarationEntry)
+  ;
+
 // [Used by loop]
 forLoop
-  ::= "for" "(" annotations ("val" | "var")? (multipleVariableDeclarations | variableDeclarationEntry) "in" expression ")" expression
+  ::= "for" "(" forValueParameter "in" loopRange ")" body
+  ;
+
+loopRange
+  ::= expression
+  ;
+
+body
+  ::= (block | expression)?
   ;
 
 // [Used by loop]
 whileLoop
-  ::= "while" "(" expression ")" expression
+  ::= "while" "(" condition ")" body
   ;
 
 // [Used by loop]
 doWhileLoop
-  ::= "do" expression "while" "(" expression ")"
+  ::= "do" (!<<next WHILE_KEYWORD>> body)? "while" "(" condition ")"
   ;
 
 

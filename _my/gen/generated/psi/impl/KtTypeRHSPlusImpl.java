@@ -78,6 +78,12 @@ public class KtTypeRHSPlusImpl extends ASTWrapperPsiElement implements KtTypeRHS
 
   @Override
   @Nullable
+  public KtDoWhileLoop getDoWhileLoop() {
+    return findChildByClass(KtDoWhileLoop.class);
+  }
+
+  @Override
+  @Nullable
   public KtDotQualifiedExpression getDotQualifiedExpression() {
     return findChildByClass(KtDotQualifiedExpression.class);
   }
@@ -86,6 +92,12 @@ public class KtTypeRHSPlusImpl extends ASTWrapperPsiElement implements KtTypeRHS
   @Nullable
   public KtElvisAccessExpression getElvisAccessExpression() {
     return findChildByClass(KtElvisAccessExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public KtForLoop getForLoop() {
+    return findChildByClass(KtForLoop.class);
   }
 
   @Override
@@ -134,12 +146,6 @@ public class KtTypeRHSPlusImpl extends ASTWrapperPsiElement implements KtTypeRHS
   @Nullable
   public KtLabelExpression getLabelExpression() {
     return findChildByClass(KtLabelExpression.class);
-  }
-
-  @Override
-  @Nullable
-  public KtLoop getLoop() {
-    return findChildByClass(KtLoop.class);
   }
 
   @Override
@@ -224,6 +230,12 @@ public class KtTypeRHSPlusImpl extends ASTWrapperPsiElement implements KtTypeRHS
   @Nullable
   public KtWhen getWhen() {
     return findChildByClass(KtWhen.class);
+  }
+
+  @Override
+  @Nullable
+  public KtWhileLoop getWhileLoop() {
+    return findChildByClass(KtWhileLoop.class);
   }
 
 }

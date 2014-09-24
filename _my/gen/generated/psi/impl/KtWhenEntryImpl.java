@@ -108,6 +108,12 @@ public class KtWhenEntryImpl extends ASTWrapperPsiElement implements KtWhenEntry
 
   @Override
   @NotNull
+  public List<KtDoWhileLoop> getDoWhileLoopList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtDoWhileLoop.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtDotQualifiedExpression> getDotQualifiedExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtDotQualifiedExpression.class);
   }
@@ -122,6 +128,12 @@ public class KtWhenEntryImpl extends ASTWrapperPsiElement implements KtWhenEntry
   @Nullable
   public KtEqualityComparisonExpression getEqualityComparisonExpression() {
     return findChildByClass(KtEqualityComparisonExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtForLoop> getForLoopList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtForLoop.class);
   }
 
   @Override
@@ -170,12 +182,6 @@ public class KtWhenEntryImpl extends ASTWrapperPsiElement implements KtWhenEntry
   @NotNull
   public List<KtLabelExpression> getLabelExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLabelExpression.class);
-  }
-
-  @Override
-  @NotNull
-  public List<KtLoop> getLoopList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLoop.class);
   }
 
   @Override
@@ -284,6 +290,12 @@ public class KtWhenEntryImpl extends ASTWrapperPsiElement implements KtWhenEntry
   @NotNull
   public List<KtWhenConditionIsPattern> getWhenConditionIsPatternList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtWhenConditionIsPattern.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtWhileLoop> getWhileLoopList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtWhileLoop.class);
   }
 
 }

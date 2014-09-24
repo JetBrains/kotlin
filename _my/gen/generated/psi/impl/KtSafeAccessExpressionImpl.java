@@ -71,9 +71,21 @@ public class KtSafeAccessExpressionImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
+  @NotNull
+  public List<KtDoWhileLoop> getDoWhileLoopList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtDoWhileLoop.class);
+  }
+
+  @Override
   @Nullable
   public KtElvisAccessExpression getElvisAccessExpression() {
     return findChildByClass(KtElvisAccessExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtForLoop> getForLoopList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtForLoop.class);
   }
 
   @Override
@@ -116,12 +128,6 @@ public class KtSafeAccessExpressionImpl extends ASTWrapperPsiElement implements 
   @NotNull
   public List<KtLabel> getLabelList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLabel.class);
-  }
-
-  @Override
-  @NotNull
-  public List<KtLoop> getLoopList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLoop.class);
   }
 
   @Override
@@ -182,6 +188,12 @@ public class KtSafeAccessExpressionImpl extends ASTWrapperPsiElement implements 
   @NotNull
   public List<KtWhen> getWhenList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtWhen.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtWhileLoop> getWhileLoopList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtWhileLoop.class);
   }
 
 }

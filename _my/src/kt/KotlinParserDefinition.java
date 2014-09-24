@@ -445,6 +445,27 @@ public class KotlinParserDefinition implements ParserDefinition {
         if (str == "WHEN_PROPERTY") {
             return JetNodeTypes.PROPERTY;
         }
+        if (str == "TRY_BLOCK") {
+            return JetNodeTypes.TRY;
+        }
+        if (str == "SINGLE_VALUE_PARAMETER_LIST_WITH_BRACKETS") {
+            return JetNodeTypes.VALUE_PARAMETER_LIST;
+        }
+        if (str == "FINALLY_BLOCK") {
+            return JetNodeTypes.FINALLY;
+        }
+        if (str == "FOR_VALUE_PARAMETER") {
+            return JetNodeTypes.VALUE_PARAMETER;
+        }
+        if (str == "LOOP_RANGE") {
+            return JetNodeTypes.LOOP_RANGE;
+        }
+        if (str == "BODY") {
+            return JetNodeTypes.BODY;
+        }
+        if (str == "THEN_EXPRESSION_WITH_SEMI") {
+            return JetNodeTypes.THEN;
+        }
         return new IElementType(str, JetLanguage.INSTANCE);
     }
 
