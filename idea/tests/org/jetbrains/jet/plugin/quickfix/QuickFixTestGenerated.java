@@ -618,7 +618,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     
     @TestMetadata("idea/testData/quickfix/createFromUsage")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({CreateFromUsage.BinaryOperations.class, CreateFromUsage.Component.class, CreateFromUsage.Get.class, CreateFromUsage.HasNext.class, CreateFromUsage.Invoke.class, CreateFromUsage.Iterator.class, CreateFromUsage.Next.class, CreateFromUsage.Set.class, CreateFromUsage.UnaryOperations.class})
+    @InnerTestClasses({CreateFromUsage.BinaryOperations.class, CreateFromUsage.Call.class, CreateFromUsage.Component.class, CreateFromUsage.Get.class, CreateFromUsage.HasNext.class, CreateFromUsage.Invoke.class, CreateFromUsage.Iterator.class, CreateFromUsage.Next.class, CreateFromUsage.Set.class, CreateFromUsage.UnaryOperations.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class CreateFromUsage extends AbstractQuickFixTest {
         public void testAllFilesPresentInCreateFromUsage() throws Exception {
@@ -714,6 +714,142 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("beforeWhenNotInOnUserType.kt")
             public void testWhenNotInOnUserType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforeWhenNotInOnUserType.kt");
+                doTest(fileName);
+            }
+            
+        }
+        
+        @TestMetadata("idea/testData/quickfix/createFromUsage/call")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class Call extends AbstractQuickFixTest {
+            public void testAllFilesPresentInCall() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/call"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("beforeCallWithLambdaArg.kt")
+            public void testCallWithLambdaArg() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeCallWithLambdaArg.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeCallWithLambdaArgOnly.kt")
+            public void testCallWithLambdaArgOnly() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeCallWithLambdaArgOnly.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeFunExtraArgs.kt")
+            public void testFunExtraArgs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeFunExtraArgs.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeFunMissingArgs.kt")
+            public void testFunMissingArgs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeFunMissingArgs.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeFunOnClassObject.kt")
+            public void testFunOnClassObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeFunOnClassObject.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeFunOnLibObject.kt")
+            public void testFunOnLibObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeFunOnLibObject.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeFunOnLibType.kt")
+            public void testFunOnLibType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeFunOnLibType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeFunOnUserObject.kt")
+            public void testFunOnUserObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeFunOnUserObject.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeFunOnUserType.kt")
+            public void testFunOnUserType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeFunOnUserType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeFunOnUserTypeWithTypeParams.kt")
+            public void testFunOnUserTypeWithTypeParams() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeFunOnUserTypeWithTypeParams.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeFunWithExplicitParamNamesOnUserType.kt")
+            public void testFunWithExplicitParamNamesOnUserType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeFunWithExplicitParamNamesOnUserType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeInconsistentTypes.kt")
+            public void testInconsistentTypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeInconsistentTypes.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeLocalFunNoReceiver.kt")
+            public void testLocalFunNoReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeLocalFunNoReceiver.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeMemberFunNoReceiver.kt")
+            public void testMemberFunNoReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeMemberFunNoReceiver.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeObjectMemberFunNoReceiver.kt")
+            public void testObjectMemberFunNoReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeObjectMemberFunNoReceiver.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeThisInClass.kt")
+            public void testThisInClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeThisInClass.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeThisInExtension.kt")
+            public void testThisInExtension() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeThisInExtension.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeThisInNestedClass1.kt")
+            public void testThisInNestedClass1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeThisInNestedClass1.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeThisInNestedClass2.kt")
+            public void testThisInNestedClass2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeThisInNestedClass2.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeTopLevelFunNoReceiver.kt")
+            public void testTopLevelFunNoReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeTopLevelFunNoReceiver.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeUnknownType.kt")
+            public void testUnknownType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/call/beforeUnknownType.kt");
                 doTest(fileName);
             }
             

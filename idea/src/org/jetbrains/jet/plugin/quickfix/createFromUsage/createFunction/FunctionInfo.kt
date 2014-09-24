@@ -15,6 +15,10 @@ import org.jetbrains.jet.plugin.util.supertypes
  * Represents a concrete type or a set of types yet to be inferred from an expression.
  */
 abstract class TypeInfo(val variance: Variance) {
+    object Empty: TypeInfo(Variance.INVARIANT) {
+        override fun getPossibleTypes(builder: FunctionBuilder): List<JetType> = Collections.emptyList()
+    }
+
     class ByExpression(val expression: JetExpression, variance: Variance): TypeInfo(variance) {
         override val possibleNamesFromExpression: Array<String> by Delegates.lazy {
             JetNameSuggester.suggestNamesForExpression(expression, EmptyValidator)
@@ -31,7 +35,7 @@ abstract class TypeInfo(val variance: Variance) {
 
     class ByReceiverType(variance: Variance): TypeInfo(variance) {
         override fun getPossibleTypes(builder: FunctionBuilder): List<JetType> =
-                builder.receiverTypeCandidate.theType.getPossibleSupertypes(variance)
+                (builder.placement as FunctionPlacement.WithReceiver).receiverTypeCandidate.theType.getPossibleSupertypes(variance)
     }
 
     open val possibleNamesFromExpression: Array<String> get() = ArrayUtil.EMPTY_STRING_ARRAY

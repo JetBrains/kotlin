@@ -52,6 +52,7 @@ import org.jetbrains.jet.plugin.refactoring.EmptyValidator
 import org.jetbrains.jet.plugin.refactoring.CollectingValidator
 import org.jetbrains.jet.plugin.util.isUnit
 import org.jetbrains.jet.plugin.refactoring.runWriteAction
+import com.intellij.util.ArrayUtil
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -90,13 +91,16 @@ class FunctionBuilderConfiguration(
         val currentEditor: Editor
 )
 
+trait FunctionPlacement {
+    class WithReceiver(val receiverTypeCandidate: TypeCandidate): FunctionPlacement
+    class NoReceiver(val containingElement: JetElement): FunctionPlacement
+}
+
 class FunctionBuilder(val config: FunctionBuilderConfiguration) {
     private var finished: Boolean = false
 
     val currentFileContext: BindingContext
     val currentFileModule: ModuleDescriptor
-
-    public var receiverTypeCandidate: TypeCandidate by Delegates.notNull()
 
     private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>();
 
@@ -105,6 +109,8 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
         currentFileContext = exhaust.getBindingContext()
         currentFileModule = exhaust.getModuleDescriptor()
     }
+
+    public var placement: FunctionPlacement by Delegates.notNull()
 
     fun computeTypeCandidates(typeInfo: TypeInfo): List<TypeCandidate> =
             typeCandidates.getOrPut(typeInfo) { typeInfo.getPossibleTypes(this).map { TypeCandidate(it) } }
@@ -136,44 +142,48 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
         }
     }
 
-    private inner class Context {
+    private inner class Context() {
         val isUnit: Boolean
         val isExtension: Boolean
         val containingFile: JetFile
         val containingFileEditor: Editor
-        val receiverClass: JetClass?
-        val receiverClassDescriptor: ClassDescriptor
+        val containingElement: JetElement
+        val receiverClassDescriptor: ClassDescriptor?
         val typeParameterNameMap: Map<TypeParameterDescriptor, String>
+        val receiverTypeCandidate: TypeCandidate?
 
         {
             // gather relevant information
 
-            receiverClassDescriptor = DescriptorUtils.getClassDescriptorForType(receiverTypeCandidate.theType)
-            val receiverType = receiverClassDescriptor.getDefaultType()
-            val classDeclaration = DescriptorToSourceUtils.classDescriptorToDeclaration(receiverClassDescriptor)
-            if (classDeclaration is JetClass) {
-                receiverClass = classDeclaration
-                isExtension = !classDeclaration.isWritable()
+            val placement = placement
+            when {
+                placement is FunctionPlacement.NoReceiver -> {
+                    receiverClassDescriptor = null
+                    isExtension = false
+                    containingElement = placement.containingElement
+                }
+                placement is FunctionPlacement.WithReceiver -> {
+                    receiverClassDescriptor = DescriptorUtils.getClassDescriptorForType(placement.receiverTypeCandidate.theType)
+                    val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.classDescriptorToDeclaration(it) }
+                    isExtension = !(classDeclaration is JetClassOrObject && classDeclaration.isWritable())
+                    containingElement = if (isExtension) config.currentFile else classDeclaration as JetElement
+                }
+                else -> throw IllegalArgumentException("Unexpected function kind: $placement")
             }
-            else {
-                receiverClass = null
-                isExtension = true
+            val receiverType = receiverClassDescriptor?.getDefaultType()
 
-            }
-
-            if (isExtension) {
-                containingFile = config.currentFile
-                containingFileEditor = config.currentEditor
-            }
-            else {
-                containingFile = receiverClass!!.getContainingJetFile()
-                NavigationUtil.activateFileWithPsiElement(containingFile)
+            containingFile = containingElement.getContainingJetFile()
+            if (containingFile != config.currentFile) {
+                NavigationUtil.activateFileWithPsiElement(containingElement)
                 containingFileEditor = FileEditorManager.getInstance(config.currentFile.getProject())!!.getSelectedTextEditor()!!
+            }
+            else {
+                containingFileEditor = config.currentEditor
             }
 
             isUnit = config.functionInfo.returnTypeInfo.let { it is TypeInfo.ByType && it.theType.isUnit() }
 
-            val scope = if (isExtension) {
+            val scope = if (isExtension || receiverClassDescriptor == null) {
                 currentFileModule.getPackage(config.currentFile.getPackageFqName())!!.getMemberScope()
             }
             else {
@@ -181,8 +191,9 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
             }
 
             // figure out type substitutions for type parameters
-            val classTypeParameters = receiverType.getArguments()
-            val ownerTypeArguments = receiverTypeCandidate.theType.getArguments()
+            val classTypeParameters = receiverType?.getArguments() ?: Collections.emptyList()
+            val ownerTypeArguments = (placement as? FunctionPlacement.WithReceiver)?.receiverTypeCandidate?.theType?.getArguments()
+                                     ?: Collections.emptyList()
             assert(ownerTypeArguments.size == classTypeParameters.size)
             val substitutions = ownerTypeArguments.zip(classTypeParameters).map {
                 JetTypeSubstitution(it.first.getType(), it.second.getType())
@@ -193,7 +204,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
             }
 
             // now that we have done substitutions, we can throw it away
-            receiverTypeCandidate = TypeCandidate(receiverType, scope)
+            receiverTypeCandidate = receiverType?.let { TypeCandidate(it, scope) }
 
             // figure out type parameter renames to avoid conflicts
             typeParameterNameMap = getTypeParameterRenames(scope)
@@ -201,7 +212,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
             if (!isUnit) {
                 renderTypeCandidates(config.functionInfo.returnTypeInfo, typeParameterNameMap)
             }
-            receiverTypeCandidate.render(typeParameterNameMap)
+            receiverTypeCandidate?.render(typeParameterNameMap)
         }
 
         private fun renderTypeCandidates(
@@ -218,25 +229,39 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
                 val psiFactory = JetPsiFactory(currentFile)
                 if (isExtension) {
                     // create as extension function
-                    val ownerTypeString = receiverTypeCandidate.renderedType!!
+                    val ownerTypeString = receiverTypeCandidate!!.renderedType!!
                     val func = psiFactory.createFunction(
                             "fun $ownerTypeString.${functionInfo.name}($parametersString)$returnTypeString { }"
                     )
                     return currentFile.add(func) as JetNamedFunction
                 }
                 else {
-                    receiverClass!!
-
                     // create as regular function
+
                     val func = psiFactory.createFunction("fun ${functionInfo.name}($parametersString)$returnTypeString { }")
-                    var classBody = receiverClass.getBody()
-                    if (classBody == null) {
-                        classBody = receiverClass.add(psiFactory.createEmptyClassBody()) as JetClassBody
-                        receiverClass.addBefore(psiFactory.createWhiteSpace(), classBody)
+                    when (containingElement) {
+                        is JetFile -> {
+                            return currentFile.add(func) as JetNamedFunction
+                        }
+
+                        is JetClassOrObject -> {
+                            var classBody = containingElement.getBody()
+                            if (classBody == null) {
+                                classBody = containingElement.add(psiFactory.createEmptyClassBody()) as JetClassBody
+                                containingElement.addBefore(psiFactory.createWhiteSpace(), classBody)
+                            }
+                            val rBrace = classBody!!.getRBrace()
+
+                            //TODO: Assert rbrace not null? It can be if the class isn't closed.
+                            return classBody!!.addBefore(func, rBrace) as JetNamedFunction
+                        }
+
+                        is JetBlockExpression -> {
+                            return containingElement.addAfter(func, containingElement.getLBrace()) as JetNamedFunction
+                        }
+
+                        else -> throw AssertionError("Invalid containing element: ${containingElement.getText()}")
                     }
-                    val rBrace = classBody!!.getRBrace()
-                    //TODO: Assert rbrace not null? It can be if the class isn't closed.
-                    return classBody!!.addBefore(func, rBrace) as JetNamedFunction
                 }
             }
         }
@@ -244,7 +269,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
         private fun getTypeParameterRenames(scope: JetScope): Map<TypeParameterDescriptor, String> {
             val allTypeParametersNotInScope = LinkedHashSet<TypeParameterDescriptor>()
 
-            allTypeParametersNotInScope.addAll(receiverTypeCandidate.typeParameters.toList())
+            allTypeParametersNotInScope.addAll(receiverTypeCandidate?.typeParameters?.toList() ?: Collections.emptyList())
 
             config.functionInfo.parameterInfos.stream()
                     .flatMap { typeCandidates[it.typeInfo]!!.stream() }
@@ -266,7 +291,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
                 typeRefsToShorten: MutableList<JetTypeReference>, parameterTypeExpressions: List<TypeExpression>,
                 returnTypeExpression: TypeExpression?) {
             if (isExtension) {
-                val receiverTypeRef = JetPsiFactory(func).createType(receiverTypeCandidate.theType.renderLong(typeParameterNameMap))
+                val receiverTypeRef = JetPsiFactory(func).createType(receiverTypeCandidate!!.theType.renderLong(typeParameterNameMap))
                 replaceWithLongerName(receiverTypeRef, receiverTypeCandidate.theType)
 
                 val funcReceiverTypeRef = func.getReceiverTypeRef()
@@ -310,8 +335,10 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
             val fileTemplate = FileTemplateManager.getInstance()!!.getCodeTemplate(TEMPLATE_FROM_USAGE_FUNCTION_BODY)
             val properties = Properties()
             properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, if (isUnit) "Unit" else func.getReturnTypeRef()!!.getText())
-            properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFqName(receiverClassDescriptor).asString())
-            properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, receiverClassDescriptor.getName().asString())
+            receiverClassDescriptor?.let {
+                properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFqName(it).asString())
+                properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, it.getName().asString())
+            }
             properties.setProperty(ATTRIBUTE_FUNCTION_NAME, config.functionInfo.name)
 
             val bodyText = try {
@@ -339,7 +366,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
 
         private fun setupTypeParameterListTemplate(builder: TemplateBuilderImpl, func: JetNamedFunction): TypeParameterListExpression {
             val typeParameterMap = HashMap<String, Array<String>>()
-            val receiverTypeParameterNames = receiverTypeCandidate.typeParameterNames
+            val receiverTypeParameterNames = receiverTypeCandidate?.let { it.typeParameterNames!! } ?: ArrayUtil.EMPTY_STRING_ARRAY
 
             config.functionInfo.parameterInfos.stream().flatMap { typeCandidates[it.typeInfo]!!.stream() }.forEach {
                 typeParameterMap[it.renderedType!!] = it.typeParameterNames!!
@@ -352,7 +379,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
             }
             // ((3, 3) is after "fun")
             builder.replaceElement(func, TextRange.create(3, 3), TYPE_PARAMETER_LIST_VARIABLE_NAME, null, false)
-            return TypeParameterListExpression(receiverTypeParameterNames!!, typeParameterMap)
+            return TypeParameterListExpression(receiverTypeParameterNames, typeParameterMap)
         }
 
         private fun setupParameterTypeTemplates(builder: TemplateBuilder, parameterList: JetParameterList): List<TypeExpression> {
