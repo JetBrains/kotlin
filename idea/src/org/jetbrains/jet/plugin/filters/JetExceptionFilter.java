@@ -23,6 +23,8 @@ import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -35,11 +37,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class JetExceptionFilter implements Filter {
-    @NotNull private final ExceptionFilter exceptionFilter;
-    @NotNull private final GlobalSearchScope searchScope;
+    private final ExceptionFilter exceptionFilter;
+    private final GlobalSearchScope searchScope;
 
     public JetExceptionFilter(@NotNull GlobalSearchScope searchScope) {
-        exceptionFilter = new ExceptionFilter(searchScope);
+        this.exceptionFilter = new ExceptionFilter(searchScope);
         this.searchScope = searchScope;
     }
 
@@ -56,7 +58,7 @@ public class JetExceptionFilter implements Filter {
         // fullyQualifiedName is of format "package.Class$Inner"
         String fullyQualifiedName = element.getClassName();
 
-        // All classes except package classes and its inner classes are handled correctly in the default ExceptionFilter
+        // All classes except package classes and package parts are handled correctly in the default ExceptionFilter
         if (!isPackageClassOrSubClass(fullyQualifiedName)) {
             return null;
         }
@@ -73,7 +75,7 @@ public class JetExceptionFilter implements Filter {
         return new OpenFileHyperlinkInfo(project, virtualFile, element.getLineNumber() - 1);
     }
 
-    private boolean isPackageClassOrSubClass(String fqName) {
+    private static boolean isPackageClassOrSubClass(String fqName) {
         if (fqName.equals(PackageClassUtils.getPackageClassName(FqName.ROOT))) {
             return true;
         }
@@ -91,23 +93,31 @@ public class JetExceptionFilter implements Filter {
     private static final Pattern STACK_TRACE_ELEMENT_PATTERN = Pattern.compile("^\\s*at\\s+(.+)\\.(.+)\\((.+):(\\d+)\\)\\s*$");
 
     @Nullable
-    private StackTraceElement parseStackTraceLine(@NotNull String line) {
+    private static StackTraceElement parseStackTraceLine(@NotNull String line) {
         Matcher matcher = STACK_TRACE_ELEMENT_PATTERN.matcher(line);
         if (matcher.matches()) {
             String declaringClass = matcher.group(1);
             String methodName = matcher.group(2);
             String fileName = matcher.group(3);
-            int lineNumber = Integer.parseInt(matcher.group(4));
-            return new StackTraceElement(declaringClass, methodName, fileName, lineNumber);
+            String lineNumber = matcher.group(4);
+            //noinspection ConstantConditions
+            return new StackTraceElement(declaringClass, methodName, fileName, Integer.parseInt(lineNumber));
         }
         return null;
     }
 
     @NotNull
     private Result patchResult(@NotNull Result result, @NotNull String line) {
-        HyperlinkInfo newHyperlinkInfo = createHyperlinkInfo(line);
-        return newHyperlinkInfo == null ? result :
-               new Result(result.highlightStartOffset, result.highlightEndOffset, newHyperlinkInfo, result.highlightAttributes);
+        final HyperlinkInfo newHyperlinkInfo = createHyperlinkInfo(line);
+        if (newHyperlinkInfo == null) return result;
+
+        return new Result(KotlinPackage.map(result.getResultItems(), new Function1<ResultItem, ResultItem>() {
+            @Override
+            public ResultItem invoke(ResultItem item) {
+                return new ResultItem(item.getHighlightStartOffset(), item.getHighlightEndOffset(), newHyperlinkInfo,
+                                      item.getHighlightAttributes());
+            }
+        }));
     }
 
     @Nullable

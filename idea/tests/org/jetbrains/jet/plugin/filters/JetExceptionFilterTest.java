@@ -17,11 +17,12 @@
 package org.jetbrains.jet.plugin.filters;
 
 import com.intellij.execution.filters.Filter;
+import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -36,9 +37,13 @@ import org.jetbrains.jet.utils.UtilsPackage;
 import java.io.File;
 
 public class JetExceptionFilterTest extends MultiFileTestCase {
-    private final JetExceptionFilterFactory jetExceptionFilterFactory = new JetExceptionFilterFactory();
-
     private VirtualFile rootDir;
+
+    @Override
+    protected void tearDown() throws Exception {
+        rootDir = null;
+        super.tearDown();
+    }
 
     @Override
     @NotNull
@@ -61,12 +66,12 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
             PsiDocumentManager.getInstance(myProject).commitAllDocuments();
         }
         catch (Exception e) {
-            UtilsPackage.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 
     @NotNull
-    private String createStackTraceElementLine(@NotNull String fileName, @NotNull String className, int lineNumber) {
+    private static String createStackTraceElementLine(@NotNull String fileName, @NotNull String className, int lineNumber) {
         // Method name doesn't matter
         String methodName = "foo";
 
@@ -83,18 +88,19 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
         }
         assert rootDir != null;
 
-        Filter filter = jetExceptionFilterFactory.create(GlobalSearchScope.allScope(myProject));
+        Filter filter = new JetExceptionFilterFactory().create(GlobalSearchScope.allScope(myProject));
 
         String line = createStackTraceElementLine(fileName, className, lineNumber);
         Filter.Result result = filter.applyFilter(line, 0);
 
         assertNotNull(result);
-        assertInstanceOf(result.hyperlinkInfo, OpenFileHyperlinkInfo.class);
-        OpenFileHyperlinkInfo info = (OpenFileHyperlinkInfo) result.hyperlinkInfo;
-        OpenFileDescriptor descriptor = info.getDescriptor();
+        HyperlinkInfo info = result.getFirstHyperlinkInfo();
+        assertNotNull(info);
+        assertInstanceOf(info, OpenFileHyperlinkInfo.class);
+        OpenFileDescriptor descriptor = ((OpenFileHyperlinkInfo) info).getDescriptor();
         assertNotNull(descriptor);
 
-        VirtualFile expectedFile = VfsUtil.findRelativeFile(fileName, rootDir);
+        VirtualFile expectedFile = VfsUtilCore.findRelativeFile(fileName, rootDir);
         assertNotNull(expectedFile);
         assertEquals(expectedFile, descriptor.getFile());
 
