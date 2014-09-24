@@ -51,6 +51,7 @@ import org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JvmCompiler
 import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.jet.lang.resolve.java.JvmAbi
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -83,6 +84,16 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val representativeTarget = chunk.representativeTarget()
 
+        val outputDir = representativeTarget.getOutputDir()
+
+        val dataManager = context.getProjectDescriptor().dataManager
+        val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getStorage(it, IncrementalCacheStorageProvider) }
+
+        if (incrementalCaches.values().any { it -> it.isCacheVersionIncompatible() }) {
+            incrementalCaches.values().forEach { it.clean() }
+            return CHUNK_REBUILD_REQUIRED
+        }
+
         // For non-incremental build: take all sources
         if (!dirtyFilesHolder.hasDirtyFiles() && !dirtyFilesHolder.hasRemovedFiles()) {
             return NOTHING_DONE
@@ -93,11 +104,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, NO_LOCATION)
-
-        val outputDir = representativeTarget.getOutputDir()
-
-        val dataManager = context.getProjectDescriptor().dataManager
-        val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getStorage(it, IncrementalCacheStorageProvider) }
 
         val compilerServices = Services.Builder()
                 .register(javaClass<IncrementalCacheProvider>(), IncrementalCacheProviderImpl(incrementalCaches))
