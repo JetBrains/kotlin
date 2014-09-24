@@ -96,7 +96,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         return DO_NOTHING
     }
 
-    public fun clearCacheForRemovedFiles(removedSourceFiles: Collection<String>, outDirectory: File, compilationSuccessful: Boolean) {
+    public fun clearCacheForRemovedFiles(removedSourceFiles: Collection<File>, outDirectory: File, compilationSuccessful: Boolean) {
         removedSourceFiles.forEach { packagePartMap.remove(it) }
 
         if (compilationSuccessful) {
@@ -398,8 +398,8 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
             map.put(sourceFile.getAbsolutePath(), className.getInternalName())
         }
 
-        public fun remove(sourceFile: String) {
-            map.remove(sourceFile)
+        public fun remove(sourceFile: File) {
+            map.remove(sourceFile.getAbsolutePath())
         }
 
         public fun getRemovedPackageParts(compiledSourceFilesToFqName: Map<File, String>): Collection<String> {

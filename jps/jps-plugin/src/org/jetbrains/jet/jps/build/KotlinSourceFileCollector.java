@@ -64,16 +64,22 @@ public class KotlinSourceFileCollector {
     }
 
     @NotNull
-    public static List<String> getRemovedKotlinFiles(
+    public static List<File> getRemovedKotlinFiles(
             @NotNull DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder,
             @NotNull ModuleBuildTarget target
     ) throws IOException {
-        return ContainerUtil.filter(dirtyFilesHolder.getRemovedFiles(target), new Condition<String>() {
-            @Override
-            public boolean value(String s) {
-                return FileUtilRt.extensionEquals(s, "kt");
-            }
-        });
+        return ContainerUtil.map(ContainerUtil.filter(dirtyFilesHolder.getRemovedFiles(target), new Condition<String>() {
+                                     @Override
+                                     public boolean value(String s) {
+                                         return FileUtilRt.extensionEquals(s, "kt");
+                                     }
+                                 }),
+                                 new Function<String, File>() {
+                                     @Override
+                                     public File fun(String s) {
+                                         return new File(s);
+                                     }
+                                 });
     }
 
     @NotNull
