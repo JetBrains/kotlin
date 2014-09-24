@@ -1,7 +1,7 @@
 class A {
     fun foo() {
         {
-            ""   // A$foo$1
+            ""   // A\$foo\$1
         }()
     }
 }

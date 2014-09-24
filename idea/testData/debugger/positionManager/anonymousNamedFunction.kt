@@ -2,6 +2,6 @@ package insertInBlock
 
 fun foo() {
     val lambda = {
-        val a = 1 // insertInBlock/InsertInBlockPackage$foo$lambda$1
+        val a = 1 // insertInBlock/InsertInBlockPackage\$anonymousNamedFunction\$.+\$foo\$lambda\$1
     }()
 }

@@ -2,7 +2,7 @@ class A {
     fun foo() {
         {
             fun innerFoo() {
-                ""   // A$foo$1$1
+                ""   // A\$foo\$1\$1
             }
             innerFoo()
         }()

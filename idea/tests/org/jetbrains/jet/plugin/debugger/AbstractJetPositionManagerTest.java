@@ -52,9 +52,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class AbstractJetPositionManagerTest extends MultiFileTestCase {
-    // Breakpoint is given as a line comment on a specific line, containing the name of the class, where that line can be found.
-    // This pattern matches against these line comments and saves the class name in the first group
-    private static final Pattern BREAKPOINT_PATTERN = Pattern.compile("^.*//\\s*([a-zA-Z0-9._/$]*)\\s*$");
+    // Breakpoint is given as a line comment on a specific line, containing the regexp to match the name of the class where that line
+    // can be found. This pattern matches against these line comments and saves the class name in the first group
+    private static final Pattern BREAKPOINT_PATTERN = Pattern.compile("^.*//\\s*(.+)\\s*$");
 
     @NotNull
     @Override
@@ -175,10 +175,8 @@ public abstract class AbstractJetPositionManagerTest extends MultiFileTestCase {
         assertNotNull(classes);
         assertEquals(1, classes.size());
         ReferenceType type = classes.get(0);
-        if (!breakpoint.className.contains("$src$")) // don't want to deal with hashCodes in test
-            assertEquals(breakpoint.className, type.name());
-        else
-            assertTrue(type.name().startsWith(breakpoint.className));
+        assertTrue("Type name " + type.name() + " doesn't match " + breakpoint.classNameRegexp,
+                   type.name().matches(breakpoint.classNameRegexp));
 
         // JDI names are of form "package.Class$InnerClass"
         ReferenceType typeWithFqName = new MockReferenceType(type.name().replace('/', '.'));
@@ -193,12 +191,12 @@ public abstract class AbstractJetPositionManagerTest extends MultiFileTestCase {
     private static class Breakpoint {
         private final JetFile file;
         private final int lineNumber; // 0-based
-        private final String className;
+        private final String classNameRegexp;
 
-        private Breakpoint(JetFile file, int lineNumber, String className) {
+        private Breakpoint(JetFile file, int lineNumber, String classNameRegexp) {
             this.file = file;
             this.lineNumber = lineNumber;
-            this.className = className;
+            this.classNameRegexp = classNameRegexp;
         }
     }
 
