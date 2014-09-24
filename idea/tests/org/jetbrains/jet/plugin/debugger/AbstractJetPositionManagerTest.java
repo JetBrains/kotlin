@@ -33,52 +33,68 @@ import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
 import org.jetbrains.jet.utils.UtilsPackage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class PositionManagerTestCase extends MultiFileTestCase {
-
+public abstract class AbstractJetPositionManagerTest extends MultiFileTestCase {
     // Breakpoint is given as a line comment on a specific line, containing the name of the class, where that line can be found.
     // This pattern matches against these line comments and saves the class name in the first group
     private static final Pattern BREAKPOINT_PATTERN = Pattern.compile("^.*//\\s*([a-zA-Z0-9._/$]*)\\s*$");
 
     @NotNull
-    protected abstract String getTestDataPath();
-
-    @NotNull
-    protected abstract PositionManager createPositionManager(DebugProcess process, List<JetFile> files, GenerationState state);
-
-    protected void doTest() {
-        String path = getTestRoot() + getTestName(true) + ".kt";
-        try {
-            configureByFile(path);
-        }
-        catch (Exception e) {
-            UtilsPackage.rethrow(e);
-        }
-        performTest();
+    @Override
+    protected String getTestDataPath() {
+        return PluginTestCaseBase.getTestDataPathBase();
     }
 
-    protected void doMultiTest() {
-        String path = getTestDataPath() + getTestRoot() + getTestName(true);
-        try {
-            VirtualFile rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, myFilesToDelete, false);
+    @NotNull
+    @Override
+    protected String getTestRoot() {
+        return "/debugger/positionManager/";
+    }
+
+    @NotNull
+    private static JetPositionManager createPositionManager(
+            @NotNull DebugProcess process,
+            @NotNull List<JetFile> files,
+            @NotNull GenerationState state
+    ) {
+        JetPositionManager positionManager = (JetPositionManager) new JetPositionManagerFactory().createPositionManager(process);
+        assertNotNull(positionManager);
+
+        for (JetFile file : files) {
+            positionManager.addTypeMapper(file, state.getTypeMapper());
+        }
+
+        return positionManager;
+    }
+
+    protected void doTest(@NotNull String fileName) throws Exception {
+        if (fileName.endsWith(".kt")) {
+            String path = KotlinPackage.substringAfter(fileName, PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE.substring(1), fileName);
+            configureByFile(path);
+        }
+        else {
+            VirtualFile rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, fileName, myFilesToDelete, false);
             prepareProject(rootDir);
             PsiDocumentManager.getInstance(myProject).commitAllDocuments();
         }
-        catch (Exception e) {
-            UtilsPackage.rethrow(e);
-        }
+
         performTest();
     }
 
@@ -100,6 +116,7 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
         final PositionManager positionManager = createPositionManager(debugProcess, files, state);
 
         ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
             public void run() {
                 try {
                     for (Breakpoint breakpoint : breakpoints) {
@@ -107,7 +124,7 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
                     }
                 }
                 catch (NoDataException e) {
-                    UtilsPackage.rethrow(e);
+                    throw UtilsPackage.rethrow(e);
                 }
             }
         });
@@ -138,9 +155,10 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
     }
 
     private DebugProcessEvents createDebugProcess(final Map<String, ReferenceType> referencesByName) {
-        DebugProcessEvents events = new DebugProcessEvents(getProject()) {
+        return new DebugProcessEvents(getProject()) {
             private VirtualMachineProxyImpl virtualMachineProxy;
 
+            @NotNull
             @Override
             public VirtualMachineProxyImpl getVirtualMachineProxy() {
                 if (virtualMachineProxy == null) {
@@ -149,8 +167,6 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
                 return virtualMachineProxy;
             }
         };
-
-        return events;
     }
 
     private static void assertBreakpointIsHandledCorrectly(Breakpoint breakpoint, PositionManager positionManager) throws NoDataException {
@@ -201,13 +217,7 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
 
         @Override
         public List<ReferenceType> classesByName(String name) {
-            ReferenceType ref = referencesByName.get(name);
-            if (ref == null) {
-                return Collections.emptyList();
-            }
-            else {
-                return Collections.singletonList(ref);
-            }
+            return UtilsPackage.emptyOrSingletonList(referencesByName.get(name));
         }
     }
 }

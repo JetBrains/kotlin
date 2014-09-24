@@ -99,6 +99,7 @@ import org.jetbrains.jet.plugin.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.jet.plugin.stubs.AbstractStubBuilderTest
 import org.jetbrains.jet.plugin.codeInsight.AbstractJetInspectionTest
 import org.jetbrains.jet.plugin.debugger.AbstractKotlinSteppingTest
+import org.jetbrains.jet.plugin.debugger.AbstractJetPositionManagerTest
 import org.jetbrains.jet.completion.AbstractMultiFileJvmBasicCompletionTest
 import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.AbstractJetExtractionTest
 import org.jetbrains.jet.formatter.AbstractJetTypingIndentationTestBase
@@ -565,6 +566,11 @@ fun main(args: Array<String>) {
             model("editor/optimizeImports", extension = null, recursive = false)
         }
 
+        testClass(javaClass<AbstractJetPositionManagerTest>()) {
+            model("debugger/positionManager", recursive = false, extension = "kt", testClassName = "SingleFile")
+            model("debugger/positionManager", recursive = false, extension = null, testClassName = "MultiFile")
+        }
+
         testClass(javaClass<AbstractSmartStepIntoTest>()) {
             model("debugger/smartStepInto")
         }
@@ -576,8 +582,8 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractKotlinEvaluateExpressionTest>()) {
-            model("debugger/tinyApp/src/evaluate/singleBreakpoint", testMethod = "doSingleBreakpointTest", recursive = true)
-            model("debugger/tinyApp/src/evaluate/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest", recursive = true)
+            model("debugger/tinyApp/src/evaluate/singleBreakpoint", testMethod = "doSingleBreakpointTest")
+            model("debugger/tinyApp/src/evaluate/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
         }
 
         testClass(javaClass<AbstractStubBuilderTest>()) {
