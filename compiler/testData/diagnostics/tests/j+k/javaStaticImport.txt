@@ -1,0 +1,43 @@
+package
+
+package backend {
+
+    public open class ECallable {
+        public constructor ECallable()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    package backend.asmutil {
+
+        public open class AsmUtil {
+            public constructor AsmUtil()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            // Static members
+            org.jetbrains.annotations.NotNull() public open fun doSmth(/*0*/ s: kotlin.String!): kotlin.String!
+        }
+    }
+}
+
+package frontend {
+
+    public final class JvmDeclarationOrigin {
+        public constructor JvmDeclarationOrigin()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public class object <class-object-for-JvmDeclarationOrigin> {
+            private constructor <class-object-for-JvmDeclarationOrigin>()
+            public final val NO_ORIGIN: frontend.JvmDeclarationOrigin
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
