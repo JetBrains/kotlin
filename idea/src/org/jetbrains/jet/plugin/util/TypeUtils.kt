@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.CollectionClassMapping
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
+import org.jetbrains.jet.lang.types.isFlexible
+import org.jetbrains.jet.lang.types.flexibility
 
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
 fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
@@ -35,7 +37,8 @@ fun JetType.isUnit(): Boolean = KotlinBuiltIns.getInstance().isUnit(this)
 
 public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true): JetType {
     if (jetType.isFlexible()) {
-        val lowerClass = jetType.getLowerBound().getConstructor().getDeclarationDescriptor() as? ClassDescriptor?
+        val flexible = jetType.flexibility()
+        val lowerClass = flexible.getLowerBound().getConstructor().getDeclarationDescriptor() as? ClassDescriptor?
         val isCollection = lowerClass != null && CollectionClassMapping.getInstance().isMutableCollection(lowerClass)
         // (Mutable)Collection<T>! -> MutableCollection<T>?
         // Foo<(Mutable)Collection<T>!>! -> Foo<Collection<T>>?
@@ -43,9 +46,9 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
         // Foo<Bar!>! -> Foo<Bar>?
         val approximation =
                 if (isCollection)
-                    TypeUtils.makeNullableAsSpecified(if (jetType.isMarkedReadOnly()) jetType.getUpperBound() else jetType.getLowerBound(), outermost)
+                    TypeUtils.makeNullableAsSpecified(if (jetType.isMarkedReadOnly()) flexible.getUpperBound() else flexible.getLowerBound(), outermost)
                 else
-                    if (outermost) jetType.getUpperBound() else jetType.getLowerBound()
+                    if (outermost) flexible.getUpperBound() else flexible.getLowerBound()
         val approximated = approximateFlexibleTypes(approximation)
         return if (jetType.isMarkedNotNull()) approximated.makeNotNullable() else approximated
     }

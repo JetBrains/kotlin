@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.TypesPackage;
 
 import java.util.Collection;
 
@@ -86,9 +87,9 @@ public class ForceResolveUtil {
     public static JetType forceResolveAllContents(@Nullable JetType type) {
         if (type == null) return null;
 
-        if (type.isFlexible()) {
-            forceResolveAllContents(type.getLowerBound());
-            forceResolveAllContents(type.getUpperBound());
+        if (TypesPackage.isFlexible(type)) {
+            forceResolveAllContents(TypesPackage.flexibility(type).getLowerBound());
+            forceResolveAllContents(TypesPackage.flexibility(type).getUpperBound());
         }
         else {
             forceResolveAllContents(type.getConstructor());

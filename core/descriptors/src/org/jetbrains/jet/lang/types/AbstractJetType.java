@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class AbstractJetType extends InflexibleType {
+public abstract class AbstractJetType implements JetType {
     @Nullable
     @Override
     public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {

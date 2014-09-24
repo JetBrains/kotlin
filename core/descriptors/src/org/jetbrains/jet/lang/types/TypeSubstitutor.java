@@ -155,11 +155,11 @@ public class TypeSubstitutor {
         // The type is within the substitution range, i.e. T or T?
         JetType type = originalProjection.getType();
         Variance originalProjectionKind = originalProjection.getProjectionKind();
-        if (type.isFlexible() && !TypesPackage.isCustomTypeVariable(type)) {
+        if (TypesPackage.isFlexible(type) && !TypesPackage.isCustomTypeVariable(type)) {
             TypeProjection substitutedLower =
-                    unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, type.getLowerBound()), recursionDepth + 1);
+                    unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, TypesPackage.flexibility(type).getLowerBound()), recursionDepth + 1);
             TypeProjection substitutedUpper =
-                    unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, type.getUpperBound()), recursionDepth + 1);
+                    unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, TypesPackage.flexibility(type).getUpperBound()), recursionDepth + 1);
             // todo: projection kind is neglected
             return new TypeProjectionImpl(originalProjectionKind,
                                           DelegatingFlexibleType.OBJECT$.create(
@@ -186,7 +186,8 @@ public class TypeSubstitutor {
                 case NO_CONFLICT:
                     JetType substitutedType;
                     if (TypesPackage.isCustomTypeVariable(type)) {
-                        CustomTypeVariable typeVariable = (CustomTypeVariable) type;
+                        CustomTypeVariable typeVariable = type.getCapability(CustomTypeVariable.class);
+                        assert typeVariable != null;
                         substitutedType = typeVariable.substitutionResult(replacement.getType());
                     }
                     else {

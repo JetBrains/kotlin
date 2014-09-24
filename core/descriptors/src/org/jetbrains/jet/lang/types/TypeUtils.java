@@ -44,7 +44,7 @@ public class TypeUtils {
 
     public static final JetType CANT_INFER_LAMBDA_PARAM_TYPE = ErrorUtils.createErrorType("Cannot be inferred");
 
-    public static class SpecialType extends InflexibleType implements JetType {
+    public static class SpecialType implements JetType {
         private final String name;
 
         public SpecialType(String name) {
@@ -117,8 +117,9 @@ public class TypeUtils {
 
     @NotNull
     public static JetType makeNullableAsSpecified(@NotNull JetType type, boolean nullable) {
-        if (type instanceof NullAwareType) {
-            return ((NullAwareType) type).makeNullableAsSpecified(nullable);
+        NullAwareness nullAwareness = type.getCapability(NullAwareness.class);
+        if (nullAwareness != null) {
+            return nullAwareness.makeNullableAsSpecified(nullable);
         }
 
         // Wrapping serves two purposes here
@@ -430,7 +431,7 @@ public class TypeUtils {
         if (type.isNullable()) {
             return true;
         }
-        if (type.isFlexible() && isNullableType(type.getUpperBound())) {
+        if (TypesPackage.isFlexible(type) && isNullableType(TypesPackage.flexibility(type).getUpperBound())) {
             return true;
         }
         if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {

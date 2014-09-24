@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.types
 
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+
 public trait TypeCapability
 
 public trait Specificity : TypeCapability {
@@ -30,3 +32,18 @@ public trait Specificity : TypeCapability {
 }
 
 fun JetType.getSpecificityRelationTo(otherType: JetType) = this.getCapability(javaClass<Specificity>())?.getSpecificityRelationTo(otherType) ?: Specificity.Relation.DONT_KNOW
+
+// To facilitate laziness, any JetType implementation may inherit from this trait,
+// even if it turns out that the type an instance represents is not actually a type variable
+// (i.e. it is not derived from a type parameter), see isTypeVariable
+public trait CustomTypeVariable : TypeCapability {
+    public val isTypeVariable: Boolean
+
+    // If typeParameterDescriptor != null <=> isTypeVariable == true, this is not a type variable
+    public val typeParameterDescriptor: TypeParameterDescriptor?
+
+    // Throws an exception when isTypeVariable == false
+    public fun substitutionResult(replacement: JetType): JetType
+}
+
+public fun JetType.isCustomTypeVariable(): Boolean = this.getCapability(javaClass<CustomTypeVariable>())?.isTypeVariable ?: false

@@ -301,19 +301,20 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     @NotNull
     private String renderNormalizedType(@NotNull JetType type) {
-        if (type.isFlexible()) {
+        if (TypesPackage.isFlexible(type)) {
             if (!debugMode) {
                 return renderFlexibleType(type);
             }
             else {
-                return "(" + renderNormalizedType(type.getLowerBound()) + ".." + renderNormalizedType(type.getUpperBound()) + ")";
+                return "(" + renderNormalizedType(TypesPackage.flexibility(type).getLowerBound()) + ".." +
+                             renderNormalizedType(TypesPackage.flexibility(type).getUpperBound()) + ")";
             }
         }
         return renderInflexibleType(type);
     }
 
     private String renderInflexibleType(@NotNull JetType type) {
-        assert !type.isFlexible() : "Flexible types not allowed here: " + renderNormalizedType(type);
+        assert !TypesPackage.isFlexible(type) : "Flexible types not allowed here: " + renderNormalizedType(type);
 
         if (type == CANT_INFER_LAMBDA_PARAM_TYPE || type == DONT_CARE) {
             return "???";
@@ -338,8 +339,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     @NotNull
     private String renderFlexibleType(@NotNull JetType type) {
-        JetType lower = type.getLowerBound();
-        JetType upper = type.getUpperBound();
+        JetType lower = TypesPackage.flexibility(type).getLowerBound();
+        JetType upper = TypesPackage.flexibility(type).getUpperBound();
 
         String lowerRendered = renderInflexibleType(lower);
         String upperRendered = renderInflexibleType(upper);
