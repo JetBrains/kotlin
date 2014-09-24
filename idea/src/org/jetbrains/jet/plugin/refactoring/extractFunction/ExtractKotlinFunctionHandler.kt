@@ -31,15 +31,12 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.ui.KotlinExtractFunc
 import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.plugin.refactoring.getAllExtractionContainers
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.lang.psi.psiUtil.getOutermostParentContainedIn
 import org.jetbrains.jet.plugin.refactoring.checkConflictsInteractively
 import org.jetbrains.jet.plugin.refactoring.executeWriteCommand
 import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.lang.psi.JetClassBody
 import kotlin.test.fail
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.MessageType
@@ -47,27 +44,10 @@ import javax.swing.event.HyperlinkEvent
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.openapi.ui.popup.Balloon.Position
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import java.util.Collections
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetParameterList
-import org.jetbrains.jet.lang.psi.JetClassInitializer
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
-import com.intellij.ide.util.PsiElementListCellRenderer
-import com.intellij.openapi.util.text.StringUtil
-import javax.swing.Icon
-import org.jetbrains.jet.plugin.refactoring.getPsiElementPopup
-import com.intellij.psi.PsiNamedElement
-import org.jetbrains.jet.plugin.util.collapseSpaces
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
-import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
-import org.jetbrains.jet.lang.psi.JetMultiDeclaration
+import org.jetbrains.jet.plugin.refactoring.chooseContainerElementIfNecessary
+import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
 
 public open class ExtractKotlinFunctionHandlerHelper {
     open fun adjustExtractionData(data: ExtractionData): ExtractionData = data
@@ -212,108 +192,24 @@ fun selectElements(
         continuation(elements, outermostParent)
     }
 
-    fun getContainers(element: PsiElement, strict: Boolean): List<JetElement> {
-        if (allContainersEnabled) return element.getAllExtractionContainers(strict)
-
-        val declaration = element.getParentByType(javaClass<JetDeclaration>(), strict)?.let { declaration ->
-            stream(declaration) { it.getParentByType(javaClass<JetDeclaration>(), true) }.firstOrNull { it !is JetFunctionLiteral }
-        } ?: return Collections.emptyList()
-
-        val parent = declaration.getParent()?.let {
-            when (it) {
-                is JetProperty, is JetMultiDeclaration -> it.getParent()
-                is JetParameterList -> it.getParent()?.getParent()
-                else -> it
-            }
-        }
-        return when (parent) {
-            is JetFile -> Collections.singletonList(parent)
-            is JetClassBody -> {
-                element.getAllExtractionContainers(strict).filterIsInstance(javaClass<JetClassBody>())
-            }
-            else -> {
-                val enclosingDeclaration =
-                        PsiTreeUtil.getNonStrictParentOfType(parent, javaClass<JetDeclarationWithBody>(), javaClass<JetClassInitializer>())
-                val targetContainer = when (enclosingDeclaration) {
-                    is JetDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
-                    is JetClassInitializer -> enclosingDeclaration.getBody()
-                    else -> null
-                }
-                if (targetContainer is JetBlockExpression) Collections.singletonList(targetContainer) else Collections.emptyList()
-            }
-        }
-    }
-
     fun selectTargetContainer(elements: List<PsiElement>) {
         val parent = PsiTreeUtil.findCommonParent(elements)
             ?: throw AssertionError("Should have at least one parent: ${elements.makeString("\n")}")
 
-        val containers = getContainers(parent, elements.size == 1)
+        val containers = parent.getExtractionContainers(elements.size == 1, allContainersEnabled)
         if (containers.empty) {
             noContainerError()
             return
         }
 
-        if (containers.size == 1 || ApplicationManager.getApplication()!!.isUnitTestMode()) {
-            onSelectionComplete(parent, elements, containers[0])
-            return
-        }
-
-        getPsiElementPopup(
+        chooseContainerElementIfNecessary(
+                containers,
                 editor,
-                containers.copyToArray(),
-                object: PsiElementListCellRenderer<JetElement>() {
-                    private fun JetElement.renderName(): String? {
-                        if (this is JetPropertyAccessor) {
-                            return (getParent() as JetProperty).renderName() + if (isGetter()) ".get" else ".set"
-                        }
-                        return (this as? PsiNamedElement)?.getName() ?: "<anonymous>"
-                    }
-
-                    private fun JetElement.renderDeclaration(): String? {
-                        val name = renderName()
-                        val descriptor = AnalyzerFacadeWithCache.getContextForElement(this)[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
-                        val params = (descriptor as? FunctionDescriptor)?.let { descriptor ->
-                            descriptor.getValueParameters()
-                                    .map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it.getType()) }
-                                    .joinToString(", ", "(", ")")
-                        } ?: ""
-                        return "$name$params"
-                    }
-
-                    private fun JetElement.renderText(): String {
-                        return StringUtil.shortenTextWithEllipsis(getText()!!.collapseSpaces(), 53, 0)
-                    }
-
-                    private fun JetElement.getRepresentativeElement(): JetElement {
-                        return when (this) {
-                            is JetBlockExpression -> (getParent() as? JetDeclarationWithBody) ?: this
-                            is JetClassBody -> getParent() as JetClassOrObject
-                            else -> this
-                        }
-                    }
-
-                    override fun getElementText(element: JetElement): String? {
-                        val representativeElement = element.getRepresentativeElement()
-                        return when (representativeElement) {
-                            is JetFile, is JetDeclarationWithBody, is JetClassOrObject -> representativeElement.renderDeclaration()
-                            else -> representativeElement.renderText()
-                        }
-                    }
-
-                    override fun getContainerText(element: JetElement?, name: String?): String? = null
-
-                    override fun getIconFlags(): Int = 0
-
-                    override fun getIcon(element: PsiElement?): Icon? =
-                            super.getIcon((element as? JetElement)?.getRepresentativeElement())
-                },
                 "Select target code block",
-                {
-                    onSelectionComplete(parent, elements, it)
-                    true
-                }
-        ).showInBestPositionFor(editor)
+                true,
+                { it },
+                { onSelectionComplete(parent, elements, it) }
+        )
     }
 
     fun selectMultipleExpressions() {
