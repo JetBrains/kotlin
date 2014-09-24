@@ -49,4 +49,8 @@ public final class RangeTest extends SingleFileTranslationTest {
     public void testRangeToDoesNotIterate() throws Exception {
         fooBoxTest();
     }
+
+    public void testRangeEquals() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
