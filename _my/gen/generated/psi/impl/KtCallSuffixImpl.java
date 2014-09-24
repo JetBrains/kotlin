@@ -24,6 +24,12 @@ public class KtCallSuffixImpl extends ASTWrapperPsiElement implements KtCallSuff
 
   @Override
   @Nullable
+  public KtCharacterConstant getCharacterConstant() {
+    return findChildByClass(KtCharacterConstant.class);
+  }
+
+  @Override
+  @Nullable
   public KtFloatConstant getFloatConstant() {
     return findChildByClass(KtFloatConstant.class);
   }
@@ -71,9 +77,9 @@ public class KtCallSuffixImpl extends ASTWrapperPsiElement implements KtCallSuff
   }
 
   @Override
-  @Nullable
-  public KtFunctionLiteral getFunctionLiteral() {
-    return findChildByClass(KtFunctionLiteral.class);
+  @NotNull
+  public List<KtFunctionLiteralArgument> getFunctionLiteralArgumentList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtFunctionLiteralArgument.class);
   }
 
   @Override
@@ -162,6 +168,12 @@ public class KtCallSuffixImpl extends ASTWrapperPsiElement implements KtCallSuff
 
   @Override
   @Nullable
+  public KtSuperExpression getSuperExpression() {
+    return findChildByClass(KtSuperExpression.class);
+  }
+
+  @Override
+  @Nullable
   public KtThisExpression getThisExpression() {
     return findChildByClass(KtThisExpression.class);
   }
@@ -174,8 +186,8 @@ public class KtCallSuffixImpl extends ASTWrapperPsiElement implements KtCallSuff
 
   @Override
   @Nullable
-  public KtTypeArguments getTypeArguments() {
-    return findChildByClass(KtTypeArguments.class);
+  public KtTypeArgumentList getTypeArgumentList() {
+    return findChildByClass(KtTypeArgumentList.class);
   }
 
   @Override

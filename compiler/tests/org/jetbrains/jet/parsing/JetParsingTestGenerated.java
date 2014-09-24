@@ -40,7 +40,13 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         public void testAllFilesPresentInPsi() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi"), Pattern.compile("^(.*)\\.kts?$"), true);
         }
-        
+
+        @TestMetadata("MyTest.kt")
+        public void testMyTest() throws Exception {
+            doParsingTest("compiler/testData/psi/MyTest.kt");
+        }
+
+
         @TestMetadata("AnnotatedExpressions.kt")
         public void testAnnotatedExpressions() throws Exception {
             doParsingTest("compiler/testData/psi/AnnotatedExpressions.kt");

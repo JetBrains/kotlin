@@ -24,6 +24,9 @@ public class KotlinParser implements PsiParser {
     if (root_ == AND_OPERATION) {
       result_ = AND_OPERATION(builder_, 0);
     }
+    else if (root_ == CHARACTER_CONSTANT) {
+      result_ = CHARACTER_CONSTANT(builder_, 0);
+    }
     else if (root_ == DOT_IDENTIFIER) {
       result_ = DOT_IDENTIFIER(builder_, 0);
     }
@@ -93,6 +96,9 @@ public class KotlinParser implements PsiParser {
     else if (root_ == CLASS_OBJECT) {
       result_ = classObject(builder_, 0);
     }
+    else if (root_ == COMPARISON_EXPRESSION) {
+      result_ = comparisonExpression(builder_, 0);
+    }
     else if (root_ == COMPARISON_OPERATION) {
       result_ = comparisonOperation(builder_, 0);
     }
@@ -159,8 +165,17 @@ public class KotlinParser implements PsiParser {
     else if (root_ == FUNCTION_LITERAL) {
       result_ = functionLiteral(builder_, 0);
     }
+    else if (root_ == FUNCTION_LITERAL_ARGUMENT) {
+      result_ = functionLiteralArgument(builder_, 0);
+    }
     else if (root_ == FUNCTION_LITERAL_EXPRESSION) {
       result_ = functionLiteralExpression(builder_, 0);
+    }
+    else if (root_ == FUNCTION_LITERAL_VALUE_PARAMETER_LIST_1) {
+      result_ = functionLiteralValueParameterList1(builder_, 0);
+    }
+    else if (root_ == FUNCTION_LITERAL_VALUE_PARAMETER_LIST_2) {
+      result_ = functionLiteralValueParameterList2(builder_, 0);
     }
     else if (root_ == FUNCTION_PARAMETER) {
       result_ = functionParameter(builder_, 0);
@@ -213,6 +228,12 @@ public class KotlinParser implements PsiParser {
     else if (root_ == LABEL) {
       result_ = label(builder_, 0);
     }
+    else if (root_ == LABEL_EXPRESSION) {
+      result_ = labelExpression(builder_, 0);
+    }
+    else if (root_ == LABEL_LABEL) {
+      result_ = labelLabel(builder_, 0);
+    }
     else if (root_ == LEFT_FUNCTION_TYPE) {
       result_ = leftFunctionType(builder_, 0);
     }
@@ -236,6 +257,9 @@ public class KotlinParser implements PsiParser {
     }
     else if (root_ == MULTIPLE_VARIABLE_DECLARATIONS) {
       result_ = multipleVariableDeclarations(builder_, 0);
+    }
+    else if (root_ == MULTIPLICATIVE_EXPRESSION_PLUS) {
+      result_ = multiplicativeExpressionPlus(builder_, 0);
     }
     else if (root_ == MULTIPLICATIVE_OPERATION) {
       result_ = multiplicativeOperation(builder_, 0);
@@ -261,6 +285,12 @@ public class KotlinParser implements PsiParser {
     else if (root_ == OBJECT_LITERAL) {
       result_ = objectLiteral(builder_, 0);
     }
+    else if (root_ == OBJECT_NAME) {
+      result_ = objectName(builder_, 0);
+    }
+    else if (root_ == OBJECT_UNNAMED) {
+      result_ = objectUnnamed(builder_, 0);
+    }
     else if (root_ == PACKAGE_DIRECTIVE) {
       result_ = packageDirective(builder_, 0);
     }
@@ -285,8 +315,8 @@ public class KotlinParser implements PsiParser {
     else if (root_ == PREFIX_OPERATION) {
       result_ = prefixOperation(builder_, 0);
     }
-    else if (root_ == PREFIX_UNARY_OPERATION) {
-      result_ = prefixUnaryOperation(builder_, 0);
+    else if (root_ == PREFIX_OPERATION_EXPRESSION) {
+      result_ = prefixOperationExpression(builder_, 0);
     }
     else if (root_ == PRIMARY_CONSTRUCTOR_MODIFIER_LIST) {
       result_ = primaryConstructorModifierList(builder_, 0);
@@ -326,6 +356,12 @@ public class KotlinParser implements PsiParser {
     }
     else if (root_ == STRING_TEMPLATE_ELEMENT) {
       result_ = stringTemplateElement(builder_, 0);
+    }
+    else if (root_ == SUPER_EXPRESSION) {
+      result_ = superExpression(builder_, 0);
+    }
+    else if (root_ == SUPER_REFERENCE) {
+      result_ = superReference(builder_, 0);
     }
     else if (root_ == THEN_EXPRESSION) {
       result_ = thenExpression(builder_, 0);
@@ -411,6 +447,9 @@ public class KotlinParser implements PsiParser {
     else if (root_ == WHEN_ENTRY) {
       result_ = whenEntry(builder_, 0);
     }
+    else if (root_ == WHEN_PROPERTY) {
+      result_ = whenProperty(builder_, 0);
+    }
     else if (root_ == WHILE_LOOP) {
       result_ = whileLoop(builder_, 0);
     }
@@ -433,6 +472,18 @@ public class KotlinParser implements PsiParser {
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<and operation>");
     result_ = consumeToken(builder_, "&&");
     exit_section_(builder_, level_, marker_, AND_OPERATION, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // CHARACTER_LITERAL
+  public static boolean CHARACTER_CONSTANT(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "CHARACTER_CONSTANT")) return false;
+    if (!nextTokenIs(builder_, CHARACTER_LITERAL)) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, CHARACTER_LITERAL);
+    exit_section_(builder_, marker_, CHARACTER_CONSTANT, result_);
     return result_;
   }
 
@@ -715,28 +766,30 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // constructorCallee typeArguments? valueArguments?
+  // FORBID_SHORT_ANNOTATIONS constructorCallee typeArguments? valueArguments? RESTORE_ANNOTATIONS_STATE
   public static boolean annotationEntry(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "annotationEntry")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<annotation entry>");
-    result_ = constructorCallee(builder_, level_ + 1);
-    result_ = result_ && annotationEntry_1(builder_, level_ + 1);
+    result_ = forbidShortAnnotations(builder_, level_ + 1, marker_);
+    result_ = result_ && constructorCallee(builder_, level_ + 1);
     result_ = result_ && annotationEntry_2(builder_, level_ + 1);
+    result_ = result_ && annotationEntry_3(builder_, level_ + 1);
+    result_ = result_ && restoreAnnotationsState(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, ANNOTATION_ENTRY, result_, false, null);
     return result_;
   }
 
   // typeArguments?
-  private static boolean annotationEntry_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "annotationEntry_1")) return false;
+  private static boolean annotationEntry_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "annotationEntry_2")) return false;
     typeArguments(builder_, level_ + 1);
     return true;
   }
 
   // valueArguments?
-  private static boolean annotationEntry_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "annotationEntry_2")) return false;
+  private static boolean annotationEntry_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "annotationEntry_3")) return false;
     valueArguments(builder_, level_ + 1);
     return true;
   }
@@ -774,14 +827,22 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // block
+  // modifierListWithShortAnnotations? block
   public static boolean anonymousInitializer(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "anonymousInitializer")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<anonymous initializer>");
-    result_ = block(builder_, level_ + 1);
+    result_ = anonymousInitializer_0(builder_, level_ + 1);
+    result_ = result_ && block(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, ANONYMOUS_INITIALIZER, result_, false, null);
     return result_;
+  }
+
+  // modifierListWithShortAnnotations?
+  private static boolean anonymousInitializer_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "anonymousInitializer_0")) return false;
+    modifierListWithShortAnnotations(builder_, level_ + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -878,7 +939,7 @@ public class KotlinParser implements PsiParser {
   //   | literalConstant
   //   | functionLiteralExpression
   //   | thisExpression label?
-  //   | "super" ("<" DISABLE_NEWLINES type RESTORE_NEWLINES_STATE ">")? label?
+  //   | superExpression
   //   | ifExpression
   //   | when
   //   | tryBlock
@@ -896,7 +957,7 @@ public class KotlinParser implements PsiParser {
     if (!result_) result_ = literalConstant(builder_, level_ + 1);
     if (!result_) result_ = functionLiteralExpression(builder_, level_ + 1);
     if (!result_) result_ = atomicExpression_3(builder_, level_ + 1);
-    if (!result_) result_ = atomicExpression_4(builder_, level_ + 1);
+    if (!result_) result_ = superExpression(builder_, level_ + 1);
     if (!result_) result_ = ifExpression(builder_, level_ + 1);
     if (!result_) result_ = when(builder_, level_ + 1);
     if (!result_) result_ = tryBlock(builder_, level_ + 1);
@@ -924,46 +985,6 @@ public class KotlinParser implements PsiParser {
   // label?
   private static boolean atomicExpression_3_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "atomicExpression_3_1")) return false;
-    label(builder_, level_ + 1);
-    return true;
-  }
-
-  // "super" ("<" DISABLE_NEWLINES type RESTORE_NEWLINES_STATE ">")? label?
-  private static boolean atomicExpression_4(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "atomicExpression_4")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, "super");
-    result_ = result_ && atomicExpression_4_1(builder_, level_ + 1);
-    result_ = result_ && atomicExpression_4_2(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // ("<" DISABLE_NEWLINES type RESTORE_NEWLINES_STATE ">")?
-  private static boolean atomicExpression_4_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "atomicExpression_4_1")) return false;
-    atomicExpression_4_1_0(builder_, level_ + 1);
-    return true;
-  }
-
-  // "<" DISABLE_NEWLINES type RESTORE_NEWLINES_STATE ">"
-  private static boolean atomicExpression_4_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "atomicExpression_4_1_0")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, "<");
-    result_ = result_ && disableNewlines(builder_, level_ + 1, marker_);
-    result_ = result_ && type(builder_, level_ + 1);
-    result_ = result_ && restoreNewlinesState(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, ">");
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // label?
-  private static boolean atomicExpression_4_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "atomicExpression_4_2")) return false;
     label(builder_, level_ + 1);
     return true;
   }
@@ -1008,95 +1029,108 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // typeArguments? valueArguments (label? functionLiteral?)
-  //   | typeArguments (label? functionLiteral?)
+  // callWithClosure+
+  //   | typeArgumentList (!INTERRUPTED_WITH_NEWLINE valueArguments)? callWithClosure*
+  //   | valueArguments callWithClosure*
   public static boolean callSuffix(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "callSuffix")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<call suffix>");
     result_ = callSuffix_0(builder_, level_ + 1);
     if (!result_) result_ = callSuffix_1(builder_, level_ + 1);
+    if (!result_) result_ = callSuffix_2(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, CALL_SUFFIX, result_, false, null);
     return result_;
   }
 
-  // typeArguments? valueArguments (label? functionLiteral?)
+  // callWithClosure+
   private static boolean callSuffix_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "callSuffix_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = callSuffix_0_0(builder_, level_ + 1);
-    result_ = result_ && valueArguments(builder_, level_ + 1);
-    result_ = result_ && callSuffix_0_2(builder_, level_ + 1);
+    result_ = callWithClosure(builder_, level_ + 1);
+    int pos_ = current_position_(builder_);
+    while (result_) {
+      if (!callWithClosure(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "callSuffix_0", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
-  // typeArguments?
-  private static boolean callSuffix_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "callSuffix_0_0")) return false;
-    typeArguments(builder_, level_ + 1);
-    return true;
-  }
-
-  // label? functionLiteral?
-  private static boolean callSuffix_0_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "callSuffix_0_2")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = callSuffix_0_2_0(builder_, level_ + 1);
-    result_ = result_ && callSuffix_0_2_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // label?
-  private static boolean callSuffix_0_2_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "callSuffix_0_2_0")) return false;
-    label(builder_, level_ + 1);
-    return true;
-  }
-
-  // functionLiteral?
-  private static boolean callSuffix_0_2_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "callSuffix_0_2_1")) return false;
-    functionLiteral(builder_, level_ + 1);
-    return true;
-  }
-
-  // typeArguments (label? functionLiteral?)
+  // typeArgumentList (!INTERRUPTED_WITH_NEWLINE valueArguments)? callWithClosure*
   private static boolean callSuffix_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "callSuffix_1")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = typeArguments(builder_, level_ + 1);
+    result_ = typeArgumentList(builder_, level_ + 1);
     result_ = result_ && callSuffix_1_1(builder_, level_ + 1);
+    result_ = result_ && callSuffix_1_2(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
-  // label? functionLiteral?
+  // (!INTERRUPTED_WITH_NEWLINE valueArguments)?
   private static boolean callSuffix_1_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "callSuffix_1_1")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = callSuffix_1_1_0(builder_, level_ + 1);
-    result_ = result_ && callSuffix_1_1_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // label?
-  private static boolean callSuffix_1_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "callSuffix_1_1_0")) return false;
-    label(builder_, level_ + 1);
+    callSuffix_1_1_0(builder_, level_ + 1);
     return true;
   }
 
-  // functionLiteral?
-  private static boolean callSuffix_1_1_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "callSuffix_1_1_1")) return false;
-    functionLiteral(builder_, level_ + 1);
+  // !INTERRUPTED_WITH_NEWLINE valueArguments
+  private static boolean callSuffix_1_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "callSuffix_1_1_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = callSuffix_1_1_0_0(builder_, level_ + 1);
+    result_ = result_ && valueArguments(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // !INTERRUPTED_WITH_NEWLINE
+  private static boolean callSuffix_1_1_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "callSuffix_1_1_0_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
+    result_ = !interruptedWithNewLine(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, null, result_, false, null);
+    return result_;
+  }
+
+  // callWithClosure*
+  private static boolean callSuffix_1_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "callSuffix_1_2")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!callWithClosure(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "callSuffix_1_2", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
+  }
+
+  // valueArguments callWithClosure*
+  private static boolean callSuffix_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "callSuffix_2")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = valueArguments(builder_, level_ + 1);
+    result_ = result_ && callSuffix_2_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // callWithClosure*
+  private static boolean callSuffix_2_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "callSuffix_2_1")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!callWithClosure(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "callSuffix_2_1", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
     return true;
   }
 
@@ -1176,6 +1210,30 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // <<availableCallWithClosure>>
+  //   (label | functionLiteralArgument)
+  static boolean callWithClosure(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "callWithClosure")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = availableCallWithClosure(builder_, level_ + 1);
+    result_ = result_ && callWithClosure_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // label | functionLiteralArgument
+  private static boolean callWithClosure_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "callWithClosure_1")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = label(builder_, level_ + 1);
+    if (!result_) result_ = functionLiteralArgument(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
   // userType? "::" IDENTIFIER
   public static boolean callableReference(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "callableReference")) return false;
@@ -1241,7 +1299,7 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // ALLOW_SHORT_ANNOTATIONS modifierList? RESTORE_ANNOTATIONS_STATE ("class" | "trait") IDENTIFIER
+  // modifierListWithShortAnnotations? ("class" | "trait") IDENTIFIER
   //       typeParameters?
   //       primaryConstructorModifierList? valueParameters?
   //       (":" annotationsPlus? delegationSpecifierExt)?
@@ -1251,31 +1309,29 @@ public class KotlinParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "classDeclaration")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<class declaration>");
-    result_ = allowShortAnnotations(builder_, level_ + 1, marker_);
+    result_ = classDeclaration_0(builder_, level_ + 1);
     result_ = result_ && classDeclaration_1(builder_, level_ + 1);
-    result_ = result_ && restoreAnnotationsState(builder_, level_ + 1);
-    result_ = result_ && classDeclaration_3(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, IDENTIFIER);
+    result_ = result_ && classDeclaration_3(builder_, level_ + 1);
+    result_ = result_ && classDeclaration_4(builder_, level_ + 1);
     result_ = result_ && classDeclaration_5(builder_, level_ + 1);
     result_ = result_ && classDeclaration_6(builder_, level_ + 1);
     result_ = result_ && classDeclaration_7(builder_, level_ + 1);
     result_ = result_ && classDeclaration_8(builder_, level_ + 1);
-    result_ = result_ && classDeclaration_9(builder_, level_ + 1);
-    result_ = result_ && classDeclaration_10(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, CLASS_DECLARATION, result_, false, null);
     return result_;
   }
 
-  // modifierList?
-  private static boolean classDeclaration_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDeclaration_1")) return false;
-    modifierList(builder_, level_ + 1);
+  // modifierListWithShortAnnotations?
+  private static boolean classDeclaration_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDeclaration_0")) return false;
+    modifierListWithShortAnnotations(builder_, level_ + 1);
     return true;
   }
 
   // "class" | "trait"
-  private static boolean classDeclaration_3(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDeclaration_3")) return false;
+  private static boolean classDeclaration_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDeclaration_1")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, "class");
@@ -1285,73 +1341,73 @@ public class KotlinParser implements PsiParser {
   }
 
   // typeParameters?
-  private static boolean classDeclaration_5(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDeclaration_5")) return false;
+  private static boolean classDeclaration_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDeclaration_3")) return false;
     typeParameters(builder_, level_ + 1);
     return true;
   }
 
   // primaryConstructorModifierList?
-  private static boolean classDeclaration_6(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDeclaration_6")) return false;
+  private static boolean classDeclaration_4(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDeclaration_4")) return false;
     primaryConstructorModifierList(builder_, level_ + 1);
     return true;
   }
 
   // valueParameters?
-  private static boolean classDeclaration_7(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDeclaration_7")) return false;
+  private static boolean classDeclaration_5(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDeclaration_5")) return false;
     valueParameters(builder_, level_ + 1);
     return true;
   }
 
   // (":" annotationsPlus? delegationSpecifierExt)?
-  private static boolean classDeclaration_8(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDeclaration_8")) return false;
-    classDeclaration_8_0(builder_, level_ + 1);
+  private static boolean classDeclaration_6(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDeclaration_6")) return false;
+    classDeclaration_6_0(builder_, level_ + 1);
     return true;
   }
 
   // ":" annotationsPlus? delegationSpecifierExt
-  private static boolean classDeclaration_8_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDeclaration_8_0")) return false;
+  private static boolean classDeclaration_6_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDeclaration_6_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, ":");
-    result_ = result_ && classDeclaration_8_0_1(builder_, level_ + 1);
+    result_ = result_ && classDeclaration_6_0_1(builder_, level_ + 1);
     result_ = result_ && delegationSpecifierExt(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // annotationsPlus?
-  private static boolean classDeclaration_8_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDeclaration_8_0_1")) return false;
+  private static boolean classDeclaration_6_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDeclaration_6_0_1")) return false;
     annotationsPlus(builder_, level_ + 1);
     return true;
   }
 
   // typeConstraints?
-  private static boolean classDeclaration_9(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDeclaration_9")) return false;
+  private static boolean classDeclaration_7(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDeclaration_7")) return false;
     typeConstraints(builder_, level_ + 1);
     return true;
   }
 
   // enumClassBody | classBody?
-  private static boolean classDeclaration_10(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDeclaration_10")) return false;
+  private static boolean classDeclaration_8(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDeclaration_8")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = enumClassBody(builder_, level_ + 1);
-    if (!result_) result_ = classDeclaration_10_1(builder_, level_ + 1);
+    if (!result_) result_ = classDeclaration_8_1(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // classBody?
-  private static boolean classDeclaration_10_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDeclaration_10_1")) return false;
+  private static boolean classDeclaration_8_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDeclaration_8_1")) return false;
     classBody(builder_, level_ + 1);
     return true;
   }
@@ -1444,27 +1500,27 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // modifierList? "class" object
+  // modifierListWithShortAnnotations? "class" objectUnnamed
   public static boolean classObject(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classObject")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<class object>");
     result_ = classObject_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, "class");
-    result_ = result_ && object(builder_, level_ + 1);
+    result_ = result_ && objectUnnamed(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, CLASS_OBJECT, result_, false, null);
     return result_;
   }
 
-  // modifierList?
+  // modifierListWithShortAnnotations?
   private static boolean classObject_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classObject_0")) return false;
-    modifierList(builder_, level_ + 1);
+    modifierListWithShortAnnotations(builder_, level_ + 1);
     return true;
   }
 
   /* ********************************************************** */
-  // namedInfix (!INTERRUPTED_WITH_NEWLINE comparisonOperation namedInfix)*
+  // namedInfix comparisonExpression*
   static boolean comparison(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "comparison")) return false;
     boolean result_;
@@ -1475,33 +1531,34 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // (!INTERRUPTED_WITH_NEWLINE comparisonOperation namedInfix)*
+  // comparisonExpression*
   private static boolean comparison_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "comparison_1")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
-      if (!comparison_1_0(builder_, level_ + 1)) break;
+      if (!comparisonExpression(builder_, level_ + 1)) break;
       if (!empty_element_parsed_guard_(builder_, "comparison_1", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;
   }
 
+  /* ********************************************************** */
   // !INTERRUPTED_WITH_NEWLINE comparisonOperation namedInfix
-  private static boolean comparison_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "comparison_1_0")) return false;
+  public static boolean comparisonExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "comparisonExpression")) return false;
     boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = comparison_1_0_0(builder_, level_ + 1);
+    Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<comparison expression>");
+    result_ = comparisonExpression_0(builder_, level_ + 1);
     result_ = result_ && comparisonOperation(builder_, level_ + 1);
     result_ = result_ && namedInfix(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
+    exit_section_(builder_, level_, marker_, COMPARISON_EXPRESSION, result_, false, null);
     return result_;
   }
 
   // !INTERRUPTED_WITH_NEWLINE
-  private static boolean comparison_1_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "comparison_1_0_0")) return false;
+  private static boolean comparisonExpression_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "comparisonExpression_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !interruptedWithNewLine(builder_, level_ + 1);
@@ -1759,14 +1816,25 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // "." postfixUnaryExpression2
+  // !INTERRUPTED_WITH_NEWLINE "." postfixUnaryExpression2
   public static boolean dotQualifiedExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "dotQualifiedExpression")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<dot qualified expression>");
-    result_ = consumeToken(builder_, ".");
+    result_ = dotQualifiedExpression_0(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, ".");
     result_ = result_ && postfixUnaryExpression2(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, DOT_QUALIFIED_EXPRESSION, result_, false, null);
+    return result_;
+  }
+
+  // !INTERRUPTED_WITH_NEWLINE
+  private static boolean dotQualifiedExpression_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "dotQualifiedExpression_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
+    result_ = !interruptedWithNewLine(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, null, result_, false, null);
     return result_;
   }
 
@@ -2008,7 +2076,10 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // userTypeReference <<at BY_KEYWORD>> "by" expression
+  // userTypeReference <<at BY_KEYWORD>> "by"
+  //   ADD_NEW_CALL_WITH_CLOSURE_COUNTER
+  //   expression
+  //   DELETE_CALL_WITH_CLOSURE_COUNTER
   public static boolean explicitDelegation(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "explicitDelegation")) return false;
     boolean result_;
@@ -2016,7 +2087,9 @@ public class KotlinParser implements PsiParser {
     result_ = userTypeReference(builder_, level_ + 1);
     result_ = result_ && at(builder_, level_ + 1, BY_KEYWORD);
     result_ = result_ && consumeToken(builder_, "by");
+    result_ = result_ && addNewCallWithClosureCounter(builder_, level_ + 1, marker_);
     result_ = result_ && expression(builder_, level_ + 1);
+    result_ = result_ && deleteCallWithClosureCounter(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, EXPLICIT_DELEGATION, result_, false, null);
     return result_;
   }
@@ -2130,12 +2203,14 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // modifierList? "fun" typeParameters?
-  //       (<<stopAtLastDot marker_>> type <<unStop>> "." | annotationsPlus)?
+  // modifierListWithShortAnnotations? "fun" typeParameters?
+  //       ( DISABLE_JOINING_COMPLEX_TOKENS <<stopAtLastDot marker_>>
+  //       type <<unStop>> "." RESTORE_JOINING_COMPLEX_TOKENS_STATE
+  //       | annotationsPlus)?
   //       IDENTIFIER
   //       typeParameters? valueParameters (":" type)?
   //       typeConstraints?
-  //       functionBody?
+  //       functionBody? SEMI?
   public static boolean function(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "function")) return false;
     boolean result_;
@@ -2150,14 +2225,15 @@ public class KotlinParser implements PsiParser {
     result_ = result_ && function_7(builder_, level_ + 1);
     result_ = result_ && function_8(builder_, level_ + 1);
     result_ = result_ && function_9(builder_, level_ + 1);
+    result_ = result_ && function_10(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, FUNCTION, result_, false, null);
     return result_;
   }
 
-  // modifierList?
+  // modifierListWithShortAnnotations?
   private static boolean function_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "function_0")) return false;
-    modifierList(builder_, level_ + 1);
+    modifierListWithShortAnnotations(builder_, level_ + 1);
     return true;
   }
 
@@ -2168,14 +2244,18 @@ public class KotlinParser implements PsiParser {
     return true;
   }
 
-  // (<<stopAtLastDot marker_>> type <<unStop>> "." | annotationsPlus)?
+  // ( DISABLE_JOINING_COMPLEX_TOKENS <<stopAtLastDot marker_>>
+  //       type <<unStop>> "." RESTORE_JOINING_COMPLEX_TOKENS_STATE
+  //       | annotationsPlus)?
   private static boolean function_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "function_3")) return false;
     function_3_0(builder_, level_ + 1);
     return true;
   }
 
-  // <<stopAtLastDot marker_>> type <<unStop>> "." | annotationsPlus
+  // DISABLE_JOINING_COMPLEX_TOKENS <<stopAtLastDot marker_>>
+  //       type <<unStop>> "." RESTORE_JOINING_COMPLEX_TOKENS_STATE
+  //       | annotationsPlus
   private static boolean function_3_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "function_3_0")) return false;
     boolean result_;
@@ -2186,15 +2266,18 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // <<stopAtLastDot marker_>> type <<unStop>> "."
+  // DISABLE_JOINING_COMPLEX_TOKENS <<stopAtLastDot marker_>>
+  //       type <<unStop>> "." RESTORE_JOINING_COMPLEX_TOKENS_STATE
   private static boolean function_3_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "function_3_0_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = stopAtLastDot(builder_, level_ + 1, marker_);
+    result_ = disableJoiningComplexTokens(builder_, level_ + 1, marker_);
+    result_ = result_ && stopAtLastDot(builder_, level_ + 1, marker_);
     result_ = result_ && type(builder_, level_ + 1);
     result_ = result_ && unStop(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, ".");
+    result_ = result_ && restoreJoiningComplexTokensState(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -2238,6 +2321,13 @@ public class KotlinParser implements PsiParser {
     return true;
   }
 
+  // SEMI?
+  private static boolean function_10(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "function_10")) return false;
+    SEMI(builder_, level_ + 1);
+    return true;
+  }
+
   /* ********************************************************** */
   // block
   //   | "=" expression
@@ -2263,9 +2353,11 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // ENABLE_NEWLINES("{" statementsBlock "}"
-  //   | "{" modifiersIDENTIFIERExt "->" statements "}"
-  //   | "{" (type ".")? "(" DISABLE_NEWLINES modifiersIDENTIFIERTypeExt RESTORE_NEWLINES_STATE")" (":" type)? "->" statements "}") RESTORE_NEWLINES_STATE
+  // ENABLE_NEWLINES(
+  //   "{" functionLiteralValueParameterList1 "->" statementsBlock "}"
+  //   | "{" (type ".")? functionLiteralValueParameterList2 (":" type)? "->" statementsBlock "}"
+  //   | "{" statementsBlock "}"
+  //   ) RESTORE_NEWLINES_STATE
   public static boolean functionLiteral(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionLiteral")) return false;
     boolean result_;
@@ -2277,9 +2369,9 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // "{" statementsBlock "}"
-  //   | "{" modifiersIDENTIFIERExt "->" statements "}"
-  //   | "{" (type ".")? "(" DISABLE_NEWLINES modifiersIDENTIFIERTypeExt RESTORE_NEWLINES_STATE")" (":" type)? "->" statements "}"
+  // "{" functionLiteralValueParameterList1 "->" statementsBlock "}"
+  //   | "{" (type ".")? functionLiteralValueParameterList2 (":" type)? "->" statementsBlock "}"
+  //   | "{" statementsBlock "}"
   private static boolean functionLiteral_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionLiteral_1")) return false;
     boolean result_;
@@ -2291,62 +2383,46 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // "{" statementsBlock "}"
+  // "{" functionLiteralValueParameterList1 "->" statementsBlock "}"
   private static boolean functionLiteral_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionLiteral_1_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, "{");
+    result_ = result_ && functionLiteralValueParameterList1(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, "->");
     result_ = result_ && statementsBlock(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, "}");
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
-  // "{" modifiersIDENTIFIERExt "->" statements "}"
+  // "{" (type ".")? functionLiteralValueParameterList2 (":" type)? "->" statementsBlock "}"
   private static boolean functionLiteral_1_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionLiteral_1_1")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, "{");
-    result_ = result_ && modifiersIDENTIFIERExt(builder_, level_ + 1);
+    result_ = result_ && functionLiteral_1_1_1(builder_, level_ + 1);
+    result_ = result_ && functionLiteralValueParameterList2(builder_, level_ + 1);
+    result_ = result_ && functionLiteral_1_1_3(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, "->");
-    result_ = result_ && statements(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, "}");
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // "{" (type ".")? "(" DISABLE_NEWLINES modifiersIDENTIFIERTypeExt RESTORE_NEWLINES_STATE")" (":" type)? "->" statements "}"
-  private static boolean functionLiteral_1_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "functionLiteral_1_2")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, "{");
-    result_ = result_ && functionLiteral_1_2_1(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, "(");
-    result_ = result_ && disableNewlines(builder_, level_ + 1, marker_);
-    result_ = result_ && modifiersIDENTIFIERTypeExt(builder_, level_ + 1);
-    result_ = result_ && restoreNewlinesState(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, ")");
-    result_ = result_ && functionLiteral_1_2_7(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, "->");
-    result_ = result_ && statements(builder_, level_ + 1);
+    result_ = result_ && statementsBlock(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, "}");
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // (type ".")?
-  private static boolean functionLiteral_1_2_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "functionLiteral_1_2_1")) return false;
-    functionLiteral_1_2_1_0(builder_, level_ + 1);
+  private static boolean functionLiteral_1_1_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "functionLiteral_1_1_1")) return false;
+    functionLiteral_1_1_1_0(builder_, level_ + 1);
     return true;
   }
 
   // type "."
-  private static boolean functionLiteral_1_2_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "functionLiteral_1_2_1_0")) return false;
+  private static boolean functionLiteral_1_1_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "functionLiteral_1_1_1_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = type(builder_, level_ + 1);
@@ -2356,20 +2432,43 @@ public class KotlinParser implements PsiParser {
   }
 
   // (":" type)?
-  private static boolean functionLiteral_1_2_7(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "functionLiteral_1_2_7")) return false;
-    functionLiteral_1_2_7_0(builder_, level_ + 1);
+  private static boolean functionLiteral_1_1_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "functionLiteral_1_1_3")) return false;
+    functionLiteral_1_1_3_0(builder_, level_ + 1);
     return true;
   }
 
   // ":" type
-  private static boolean functionLiteral_1_2_7_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "functionLiteral_1_2_7_0")) return false;
+  private static boolean functionLiteral_1_1_3_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "functionLiteral_1_1_3_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, ":");
     result_ = result_ && type(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // "{" statementsBlock "}"
+  private static boolean functionLiteral_1_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "functionLiteral_1_2")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, "{");
+    result_ = result_ && statementsBlock(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, "}");
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // functionLiteralExpression
+  public static boolean functionLiteralArgument(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "functionLiteralArgument")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function literal argument>");
+    result_ = functionLiteralExpression(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, FUNCTION_LITERAL_ARGUMENT, result_, false, null);
     return result_;
   }
 
@@ -2382,6 +2481,38 @@ public class KotlinParser implements PsiParser {
     result_ = functionLiteral(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, FUNCTION_LITERAL_EXPRESSION, result_, false, null);
     return result_;
+  }
+
+  /* ********************************************************** */
+  // modifiersIDENTIFIERExt?
+  public static boolean functionLiteralValueParameterList1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "functionLiteralValueParameterList1")) return false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function literal value parameter list 1>");
+    modifiersIDENTIFIERExt(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, FUNCTION_LITERAL_VALUE_PARAMETER_LIST_1, true, false, null);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // "(" DISABLE_NEWLINES modifiersIDENTIFIERTypeExt? RESTORE_NEWLINES_STATE")"
+  public static boolean functionLiteralValueParameterList2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "functionLiteralValueParameterList2")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function literal value parameter list 2>");
+    result_ = consumeToken(builder_, "(");
+    result_ = result_ && disableNewlines(builder_, level_ + 1, marker_);
+    result_ = result_ && functionLiteralValueParameterList2_2(builder_, level_ + 1);
+    result_ = result_ && restoreNewlinesState(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, ")");
+    exit_section_(builder_, level_, marker_, FUNCTION_LITERAL_VALUE_PARAMETER_LIST_2, result_, false, null);
+    return result_;
+  }
+
+  // modifiersIDENTIFIERTypeExt?
+  private static boolean functionLiteralValueParameterList2_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "functionLiteralValueParameterList2_2")) return false;
+    modifiersIDENTIFIERTypeExt(builder_, level_ + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -2961,7 +3092,7 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // "break" label?
+  // "break" (!INTERRUPTED_WITH_NEWLINE label)?
   public static boolean jumpBreak(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "jumpBreak")) return false;
     boolean result_;
@@ -2972,15 +3103,36 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // label?
+  // (!INTERRUPTED_WITH_NEWLINE label)?
   private static boolean jumpBreak_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "jumpBreak_1")) return false;
-    label(builder_, level_ + 1);
+    jumpBreak_1_0(builder_, level_ + 1);
     return true;
   }
 
+  // !INTERRUPTED_WITH_NEWLINE label
+  private static boolean jumpBreak_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "jumpBreak_1_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = jumpBreak_1_0_0(builder_, level_ + 1);
+    result_ = result_ && label(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // !INTERRUPTED_WITH_NEWLINE
+  private static boolean jumpBreak_1_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "jumpBreak_1_0_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
+    result_ = !interruptedWithNewLine(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, null, result_, false, null);
+    return result_;
+  }
+
   /* ********************************************************** */
-  // "continue" label?
+  // "continue" (!INTERRUPTED_WITH_NEWLINE label)?
   public static boolean jumpContinue(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "jumpContinue")) return false;
     boolean result_;
@@ -2991,15 +3143,36 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // label?
+  // (!INTERRUPTED_WITH_NEWLINE label)?
   private static boolean jumpContinue_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "jumpContinue_1")) return false;
-    label(builder_, level_ + 1);
+    jumpContinue_1_0(builder_, level_ + 1);
     return true;
   }
 
+  // !INTERRUPTED_WITH_NEWLINE label
+  private static boolean jumpContinue_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "jumpContinue_1_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = jumpContinue_1_0_0(builder_, level_ + 1);
+    result_ = result_ && label(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // !INTERRUPTED_WITH_NEWLINE
+  private static boolean jumpContinue_1_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "jumpContinue_1_0_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
+    result_ = !interruptedWithNewLine(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, null, result_, false, null);
+    return result_;
+  }
+
   /* ********************************************************** */
-  // "return" label? expression?
+  // "return" (!INTERRUPTED_WITH_NEWLINE label)? (!INTERRUPTED_WITH_NEWLINE expression)?
   public static boolean jumpReturn(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "jumpReturn")) return false;
     boolean result_;
@@ -3011,18 +3184,60 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // label?
+  // (!INTERRUPTED_WITH_NEWLINE label)?
   private static boolean jumpReturn_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "jumpReturn_1")) return false;
-    label(builder_, level_ + 1);
+    jumpReturn_1_0(builder_, level_ + 1);
     return true;
   }
 
-  // expression?
+  // !INTERRUPTED_WITH_NEWLINE label
+  private static boolean jumpReturn_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "jumpReturn_1_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = jumpReturn_1_0_0(builder_, level_ + 1);
+    result_ = result_ && label(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // !INTERRUPTED_WITH_NEWLINE
+  private static boolean jumpReturn_1_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "jumpReturn_1_0_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
+    result_ = !interruptedWithNewLine(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, null, result_, false, null);
+    return result_;
+  }
+
+  // (!INTERRUPTED_WITH_NEWLINE expression)?
   private static boolean jumpReturn_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "jumpReturn_2")) return false;
-    expression(builder_, level_ + 1);
+    jumpReturn_2_0(builder_, level_ + 1);
     return true;
+  }
+
+  // !INTERRUPTED_WITH_NEWLINE expression
+  private static boolean jumpReturn_2_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "jumpReturn_2_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = jumpReturn_2_0_0(builder_, level_ + 1);
+    result_ = result_ && expression(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // !INTERRUPTED_WITH_NEWLINE
+  private static boolean jumpReturn_2_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "jumpReturn_2_0_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
+    result_ = !interruptedWithNewLine(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, null, result_, false, null);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -3038,7 +3253,7 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // preamble toplevelObject*
+  // preamble (toplevelObject)*
   static boolean kotlinFile(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "kotlinFile")) return false;
     boolean result_;
@@ -3049,30 +3264,67 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // toplevelObject*
+  // (toplevelObject)*
   private static boolean kotlinFile_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "kotlinFile_1")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
-      if (!toplevelObject(builder_, level_ + 1)) break;
+      if (!kotlinFile_1_0(builder_, level_ + 1)) break;
       if (!empty_element_parsed_guard_(builder_, "kotlinFile_1", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;
   }
 
+  // (toplevelObject)
+  private static boolean kotlinFile_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "kotlinFile_1_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = toplevelObject(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
   /* ********************************************************** */
-  // "@"
-  //   | "@@"
-  //   | LABEL_IDENTIFIER
+  // labelLabel
   public static boolean label(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "label")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<label>");
+    result_ = labelLabel(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, LABEL, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // DISABLE_JOINING_COMPLEX_TOKENS
+  //       label
+  //       RESTORE_JOINING_COMPLEX_TOKENS_STATE prefixUnaryExpression
+  public static boolean labelExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "labelExpression")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<label expression>");
+    result_ = disableJoiningComplexTokens(builder_, level_ + 1, marker_);
+    result_ = result_ && label(builder_, level_ + 1);
+    result_ = result_ && restoreJoiningComplexTokensState(builder_, level_ + 1);
+    result_ = result_ && prefixUnaryExpression(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, LABEL_EXPRESSION, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // "@"
+  //   | "@@"
+  //   | LABEL_IDENTIFIER
+  public static boolean labelLabel(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "labelLabel")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<label label>");
     result_ = consumeToken(builder_, "@");
     if (!result_) result_ = consumeToken(builder_, "@@");
     if (!result_) result_ = consumeToken(builder_, LABEL_IDENTIFIER);
-    exit_section_(builder_, level_, marker_, LABEL, result_, false, null);
+    exit_section_(builder_, level_, marker_, LABEL_LABEL, result_, false, null);
     return result_;
   }
 
@@ -3094,7 +3346,7 @@ public class KotlinParser implements PsiParser {
   //   | stringTemplate
   //   //| NoEscapeString
   //   | INTEGER_CONSTANT
-  //   | CHARACTER_LITERAL
+  //   | CHARACTER_CONSTANT
   //   | FLOAT_CONSTANT
   //   | NULL
   static boolean literalConstant(PsiBuilder builder_, int level_) {
@@ -3104,7 +3356,7 @@ public class KotlinParser implements PsiParser {
     result_ = binaryConstant(builder_, level_ + 1);
     if (!result_) result_ = stringTemplate(builder_, level_ + 1);
     if (!result_) result_ = INTEGER_CONSTANT(builder_, level_ + 1);
-    if (!result_) result_ = consumeToken(builder_, CHARACTER_LITERAL);
+    if (!result_) result_ = CHARACTER_CONSTANT(builder_, level_ + 1);
     if (!result_) result_ = FLOAT_CONSTANT(builder_, level_ + 1);
     if (!result_) result_ = NULL(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
@@ -3295,6 +3547,19 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // ALLOW_SHORT_ANNOTATIONS modifierList FORBID_SHORT_ANNOTATIONS
+  static boolean modifierListWithShortAnnotations(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "modifierListWithShortAnnotations")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = allowShortAnnotations(builder_, level_ + 1, marker_);
+    result_ = result_ && modifierList(builder_, level_ + 1);
+    result_ = result_ && forbidShortAnnotations(builder_, level_ + 1, marker_);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
   // ((modifierList IDENTIFIER) ",")* (modifierList IDENTIFIER)
   public static boolean modifiersIDENTIFIERExt(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "modifiersIDENTIFIERExt")) return false;
@@ -3462,7 +3727,7 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // typeRHS (!INTERRUPTED_WITH_NEWLINE multiplicativeOperation typeRHS)*
+  // typeRHS multiplicativeExpressionPlus*
   static boolean multiplicativeExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "multiplicativeExpression")) return false;
     boolean result_;
@@ -3473,33 +3738,34 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // (!INTERRUPTED_WITH_NEWLINE multiplicativeOperation typeRHS)*
+  // multiplicativeExpressionPlus*
   private static boolean multiplicativeExpression_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "multiplicativeExpression_1")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
-      if (!multiplicativeExpression_1_0(builder_, level_ + 1)) break;
+      if (!multiplicativeExpressionPlus(builder_, level_ + 1)) break;
       if (!empty_element_parsed_guard_(builder_, "multiplicativeExpression_1", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;
   }
 
+  /* ********************************************************** */
   // !INTERRUPTED_WITH_NEWLINE multiplicativeOperation typeRHS
-  private static boolean multiplicativeExpression_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "multiplicativeExpression_1_0")) return false;
+  public static boolean multiplicativeExpressionPlus(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "multiplicativeExpressionPlus")) return false;
     boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = multiplicativeExpression_1_0_0(builder_, level_ + 1);
+    Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<multiplicative expression plus>");
+    result_ = multiplicativeExpressionPlus_0(builder_, level_ + 1);
     result_ = result_ && multiplicativeOperation(builder_, level_ + 1);
     result_ = result_ && typeRHS(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
+    exit_section_(builder_, level_, marker_, MULTIPLICATIVE_EXPRESSION_PLUS, result_, false, null);
     return result_;
   }
 
   // !INTERRUPTED_WITH_NEWLINE
-  private static boolean multiplicativeExpression_1_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "multiplicativeExpression_1_0_0")) return false;
+  private static boolean multiplicativeExpressionPlus_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "multiplicativeExpressionPlus_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !interruptedWithNewLine(builder_, level_ + 1);
@@ -3615,29 +3881,37 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // "object" IDENTIFIER (":" delegationSpecifierExt)? classBody?
+  // modifierListWithShortAnnotations? "object" objectName (":" delegationSpecifierExt)? classBody?
   public static boolean object(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "object")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<object>");
-    result_ = consumeToken(builder_, "object");
-    result_ = result_ && consumeToken(builder_, IDENTIFIER);
-    result_ = result_ && object_2(builder_, level_ + 1);
+    result_ = object_0(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, "object");
+    result_ = result_ && objectName(builder_, level_ + 1);
     result_ = result_ && object_3(builder_, level_ + 1);
+    result_ = result_ && object_4(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, OBJECT, result_, false, null);
     return result_;
   }
 
+  // modifierListWithShortAnnotations?
+  private static boolean object_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "object_0")) return false;
+    modifierListWithShortAnnotations(builder_, level_ + 1);
+    return true;
+  }
+
   // (":" delegationSpecifierExt)?
-  private static boolean object_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "object_2")) return false;
-    object_2_0(builder_, level_ + 1);
+  private static boolean object_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "object_3")) return false;
+    object_3_0(builder_, level_ + 1);
     return true;
   }
 
   // ":" delegationSpecifierExt
-  private static boolean object_2_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "object_2_0")) return false;
+  private static boolean object_3_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "object_3_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, ":");
@@ -3647,8 +3921,8 @@ public class KotlinParser implements PsiParser {
   }
 
   // classBody?
-  private static boolean object_3(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "object_3")) return false;
+  private static boolean object_4(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "object_4")) return false;
     classBody(builder_, level_ + 1);
     return true;
   }
@@ -3715,15 +3989,57 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // varianceAnnotation?
-  static boolean optionalProjection(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "optionalProjection")) return false;
-    varianceAnnotation(builder_, level_ + 1);
+  // IDENTIFIER
+  public static boolean objectName(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "objectName")) return false;
+    if (!nextTokenIs(builder_, IDENTIFIER)) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, IDENTIFIER);
+    exit_section_(builder_, marker_, OBJECT_NAME, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // "object" (":" delegationSpecifierExt)? classBody?
+  public static boolean objectUnnamed(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "objectUnnamed")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<object unnamed>");
+    result_ = consumeToken(builder_, "object");
+    result_ = result_ && objectUnnamed_1(builder_, level_ + 1);
+    result_ = result_ && objectUnnamed_2(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, OBJECT_UNNAMED, result_, false, null);
+    return result_;
+  }
+
+  // (":" delegationSpecifierExt)?
+  private static boolean objectUnnamed_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "objectUnnamed_1")) return false;
+    objectUnnamed_1_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // ":" delegationSpecifierExt
+  private static boolean objectUnnamed_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "objectUnnamed_1_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, ":");
+    result_ = result_ && delegationSpecifierExt(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // classBody?
+  private static boolean objectUnnamed_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "objectUnnamed_2")) return false;
+    classBody(builder_, level_ + 1);
     return true;
   }
 
   /* ********************************************************** */
-  // ((optionalProjection typeProjection | asterisk) ",")* (optionalProjection typeProjection | asterisk)
+  // ((/*optionalProjection*/ typeProjection | asterisk) ",")* (/*optionalProjection*/ typeProjection | asterisk)
   static boolean optionalProjectionTypeExt(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "optionalProjectionTypeExt")) return false;
     boolean result_;
@@ -3734,7 +4050,7 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // ((optionalProjection typeProjection | asterisk) ",")*
+  // ((/*optionalProjection*/ typeProjection | asterisk) ",")*
   private static boolean optionalProjectionTypeExt_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "optionalProjectionTypeExt_0")) return false;
     int pos_ = current_position_(builder_);
@@ -3746,7 +4062,7 @@ public class KotlinParser implements PsiParser {
     return true;
   }
 
-  // (optionalProjection typeProjection | asterisk) ","
+  // (/*optionalProjection*/ typeProjection | asterisk) ","
   private static boolean optionalProjectionTypeExt_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "optionalProjectionTypeExt_0_0")) return false;
     boolean result_;
@@ -3757,46 +4073,24 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // optionalProjection typeProjection | asterisk
+  // typeProjection | asterisk
   private static boolean optionalProjectionTypeExt_0_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "optionalProjectionTypeExt_0_0_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = optionalProjectionTypeExt_0_0_0_0(builder_, level_ + 1);
+    result_ = typeProjection(builder_, level_ + 1);
     if (!result_) result_ = asterisk(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
-  // optionalProjection typeProjection
-  private static boolean optionalProjectionTypeExt_0_0_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "optionalProjectionTypeExt_0_0_0_0")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = optionalProjection(builder_, level_ + 1);
-    result_ = result_ && typeProjection(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // optionalProjection typeProjection | asterisk
+  // typeProjection | asterisk
   private static boolean optionalProjectionTypeExt_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "optionalProjectionTypeExt_1")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = optionalProjectionTypeExt_1_0(builder_, level_ + 1);
+    result_ = typeProjection(builder_, level_ + 1);
     if (!result_) result_ = asterisk(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // optionalProjection typeProjection
-  private static boolean optionalProjectionTypeExt_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "optionalProjectionTypeExt_1_0")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = optionalProjection(builder_, level_ + 1);
-    result_ = result_ && typeProjection(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -3845,7 +4139,8 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (modifierList? "package" IDENTIFIER_EXT SEMI?)?
+  // (ALLOW_SHORT_ANNOTATIONS modifierList? RESTORE_ANNOTATIONS_STATE
+  //   "package" IDENTIFIER_EXT SEMI?)?
   public static boolean packageHeader(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "packageHeader")) return false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<package header>");
@@ -3854,29 +4149,32 @@ public class KotlinParser implements PsiParser {
     return true;
   }
 
-  // modifierList? "package" IDENTIFIER_EXT SEMI?
+  // ALLOW_SHORT_ANNOTATIONS modifierList? RESTORE_ANNOTATIONS_STATE
+  //   "package" IDENTIFIER_EXT SEMI?
   private static boolean packageHeader_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "packageHeader_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = packageHeader_0_0(builder_, level_ + 1);
+    result_ = allowShortAnnotations(builder_, level_ + 1, marker_);
+    result_ = result_ && packageHeader_0_1(builder_, level_ + 1);
+    result_ = result_ && restoreAnnotationsState(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, "package");
     result_ = result_ && IDENTIFIER_EXT(builder_, level_ + 1);
-    result_ = result_ && packageHeader_0_3(builder_, level_ + 1);
+    result_ = result_ && packageHeader_0_5(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // modifierList?
-  private static boolean packageHeader_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "packageHeader_0_0")) return false;
+  private static boolean packageHeader_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "packageHeader_0_1")) return false;
     modifierList(builder_, level_ + 1);
     return true;
   }
 
   // SEMI?
-  private static boolean packageHeader_0_3(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "packageHeader_0_3")) return false;
+  private static boolean packageHeader_0_5(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "packageHeader_0_5")) return false;
     SEMI(builder_, level_ + 1);
     return true;
   }
@@ -4080,13 +4378,40 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // !INTERRUPTED_WITH_NEWLINE (
+  //     plusPlusAndOthersExpression
+  //   | callSuffix
+  //   | arrayAccess
+  //   | safeAccessExpression
+  //   | elvisAccessExpression
+  //   )
+  static boolean postfixUnaryOperation(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "postfixUnaryOperation")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = postfixUnaryOperation_0(builder_, level_ + 1);
+    result_ = result_ && postfixUnaryOperation_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // !INTERRUPTED_WITH_NEWLINE
+  private static boolean postfixUnaryOperation_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "postfixUnaryOperation_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
+    result_ = !interruptedWithNewLine(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, null, result_, false, null);
+    return result_;
+  }
+
   // plusPlusAndOthersExpression
   //   | callSuffix
   //   | arrayAccess
   //   | safeAccessExpression
   //   | elvisAccessExpression
-  static boolean postfixUnaryOperation(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "postfixUnaryOperation")) return false;
+  private static boolean postfixUnaryOperation_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "postfixUnaryOperation_1")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = plusPlusAndOthersExpression(builder_, level_ + 1);
@@ -4135,6 +4460,22 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // DISABLE_JOINING_COMPLEX_TOKENS
+  //       prefixOperation
+  //       RESTORE_JOINING_COMPLEX_TOKENS_STATE prefixUnaryExpression
+  public static boolean prefixOperationExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "prefixOperationExpression")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<prefix operation expression>");
+    result_ = disableJoiningComplexTokens(builder_, level_ + 1, marker_);
+    result_ = result_ && prefixOperation(builder_, level_ + 1);
+    result_ = result_ && restoreJoiningComplexTokensState(builder_, level_ + 1);
+    result_ = result_ && prefixUnaryExpression(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, PREFIX_OPERATION_EXPRESSION, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
   // postfixUnaryExpression
   //   | prefixUnaryOperation
   //   | annotatedExpression
@@ -4150,30 +4491,13 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // DISABLE_JOINING_COMPLEX_TOKENS (
-  //   prefixOperation
-  //   | label
-  //   )RESTORE_JOINING_COMPLEX_TOKENS_STATE prefixUnaryExpression
-  public static boolean prefixUnaryOperation(PsiBuilder builder_, int level_) {
+  // prefixOperationExpression | labelExpression
+  static boolean prefixUnaryOperation(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "prefixUnaryOperation")) return false;
     boolean result_;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<prefix unary operation>");
-    result_ = disableJoiningComplexTokens(builder_, level_ + 1, marker_);
-    result_ = result_ && prefixUnaryOperation_1(builder_, level_ + 1);
-    result_ = result_ && restoreJoiningComplexTokensState(builder_, level_ + 1);
-    result_ = result_ && prefixUnaryExpression(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, PREFIX_UNARY_OPERATION, result_, false, null);
-    return result_;
-  }
-
-  // prefixOperation
-  //   | label
-  private static boolean prefixUnaryOperation_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "prefixUnaryOperation_1")) return false;
-    boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = prefixOperation(builder_, level_ + 1);
-    if (!result_) result_ = label(builder_, level_ + 1);
+    result_ = prefixOperationExpression(builder_, level_ + 1);
+    if (!result_) result_ = labelExpression(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -4281,7 +4605,7 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // modifierList? ("val" | "var")
+  // modifierListWithShortAnnotations? ("val" | "var")
   //       typeParameters? DISABLE_JOINING_COMPLEX_TOKENS
   //       (<<stopAtLastDot marker_>> type <<unStop>> "." | annotationsPlus?)?
   //       (multipleVariableDeclarations | variableDeclarationEntry) RESTORE_JOINING_COMPLEX_TOKENS_STATE
@@ -4310,10 +4634,10 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // modifierList?
+  // modifierListWithShortAnnotations?
   private static boolean property_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "property_0")) return false;
-    modifierList(builder_, level_ + 1);
+    modifierListWithShortAnnotations(builder_, level_ + 1);
     return true;
   }
 
@@ -4936,25 +5260,61 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // "\"" stringTemplateElement* "\""
+  // "\"\"\"" stringTemplateElement* "\"\"\""
+  //   | "\"" stringTemplateElement* "\""
   public static boolean stringTemplate(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "stringTemplate")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<string template>");
-    result_ = consumeToken(builder_, "\"");
-    result_ = result_ && stringTemplate_1(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, "\"");
+    result_ = stringTemplate_0(builder_, level_ + 1);
+    if (!result_) result_ = stringTemplate_1(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, STRING_TEMPLATE, result_, false, null);
     return result_;
   }
 
+  // "\"\"\"" stringTemplateElement* "\"\"\""
+  private static boolean stringTemplate_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "stringTemplate_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, "\"\"\"");
+    result_ = result_ && stringTemplate_0_1(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, "\"\"\"");
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
   // stringTemplateElement*
-  private static boolean stringTemplate_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "stringTemplate_1")) return false;
+  private static boolean stringTemplate_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "stringTemplate_0_1")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
       if (!stringTemplateElement(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "stringTemplate_1", pos_)) break;
+      if (!empty_element_parsed_guard_(builder_, "stringTemplate_0_1", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
+  }
+
+  // "\"" stringTemplateElement* "\""
+  private static boolean stringTemplate_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "stringTemplate_1")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, "\"");
+    result_ = result_ && stringTemplate_1_1(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, "\"");
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // stringTemplateElement*
+  private static boolean stringTemplate_1_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "stringTemplate_1_1")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!stringTemplateElement(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "stringTemplate_1_1", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;
@@ -4996,6 +5356,58 @@ public class KotlinParser implements PsiParser {
     result_ = consumeToken(builder_, IDENTIFIER);
     if (!result_) result_ = consumeToken(builder_, "this");
     exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // superReference ("<" DISABLE_NEWLINES type RESTORE_NEWLINES_STATE ">")? label?
+  public static boolean superExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "superExpression")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<super expression>");
+    result_ = superReference(builder_, level_ + 1);
+    result_ = result_ && superExpression_1(builder_, level_ + 1);
+    result_ = result_ && superExpression_2(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, SUPER_EXPRESSION, result_, false, null);
+    return result_;
+  }
+
+  // ("<" DISABLE_NEWLINES type RESTORE_NEWLINES_STATE ">")?
+  private static boolean superExpression_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "superExpression_1")) return false;
+    superExpression_1_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // "<" DISABLE_NEWLINES type RESTORE_NEWLINES_STATE ">"
+  private static boolean superExpression_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "superExpression_1_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, "<");
+    result_ = result_ && disableNewlines(builder_, level_ + 1, marker_);
+    result_ = result_ && type(builder_, level_ + 1);
+    result_ = result_ && restoreNewlinesState(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, ">");
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // label?
+  private static boolean superExpression_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "superExpression_2")) return false;
+    label(builder_, level_ + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // "super"
+  public static boolean superReference(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "superReference")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<super reference>");
+    result_ = consumeToken(builder_, "super");
+    exit_section_(builder_, level_, marker_, SUPER_REFERENCE, result_, false, null);
     return result_;
   }
 
@@ -5421,7 +5833,7 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // <<stopInTypeParameter marker_>> ALLOW_SHORT_ANNOTATIONS modifierList? RESTORE_ANNOTATIONS_STATE <<unStop>> IDENTIFIER_NEXT IDENTIFIER (":" userTypeReference)?
+  // <<stopInTypeParameter marker_>> ALLOW_SHORT_ANNOTATIONS modifierList? RESTORE_ANNOTATIONS_STATE <<unStop>> IDENTIFIER_NEXT IDENTIFIER (":" type)?
   public static boolean typeParameter(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typeParameter")) return false;
     boolean result_;
@@ -5445,20 +5857,20 @@ public class KotlinParser implements PsiParser {
     return true;
   }
 
-  // (":" userTypeReference)?
+  // (":" type)?
   private static boolean typeParameter_7(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typeParameter_7")) return false;
     typeParameter_7_0(builder_, level_ + 1);
     return true;
   }
 
-  // ":" userTypeReference
+  // ":" type
   private static boolean typeParameter_7_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typeParameter_7_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, ":");
-    result_ = result_ && userTypeReference(builder_, level_ + 1);
+    result_ = result_ && type(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -5569,7 +5981,7 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // modifierList? "type" IDENTIFIER (typeParameters typeConstraints?)? "=" type SEMI?
+  // modifierListWithShortAnnotations? "type" IDENTIFIER (typeParameters typeConstraints?)? "=" type SEMI?
   public static boolean typedef(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typedef")) return false;
     boolean result_;
@@ -5585,10 +5997,10 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // modifierList?
+  // modifierListWithShortAnnotations?
   private static boolean typedef_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typedef_0")) return false;
-    modifierList(builder_, level_ + 1);
+    modifierListWithShortAnnotations(builder_, level_ + 1);
     return true;
   }
 
@@ -5918,7 +6330,11 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // "when" ("(" DISABLE_NEWLINES (modifierList "val" IDENTIFIER "=")? expression RESTORE_NEWLINES_STATE ")")? "{"
+  // "when"
+  //   //("(" DISABLE_NEWLINES (modifierListWithShortAnnotations? "val" IDENTIFIER "=")? expression RESTORE_NEWLINES_STATE ")")?
+  //   ("(" DISABLE_NEWLINES (whenProperty | expression) RESTORE_NEWLINES_STATE ")")?
+  //       //("(" expression | propertyLocal ")")?
+  //     "{"
   //         ENABLE_NEWLINES whenEntry* RESTORE_NEWLINES_STATE
   //     "}"
   public static boolean when(PsiBuilder builder_, int level_) {
@@ -5936,14 +6352,14 @@ public class KotlinParser implements PsiParser {
     return result_;
   }
 
-  // ("(" DISABLE_NEWLINES (modifierList "val" IDENTIFIER "=")? expression RESTORE_NEWLINES_STATE ")")?
+  // ("(" DISABLE_NEWLINES (whenProperty | expression) RESTORE_NEWLINES_STATE ")")?
   private static boolean when_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "when_1")) return false;
     when_1_0(builder_, level_ + 1);
     return true;
   }
 
-  // "(" DISABLE_NEWLINES (modifierList "val" IDENTIFIER "=")? expression RESTORE_NEWLINES_STATE ")"
+  // "(" DISABLE_NEWLINES (whenProperty | expression) RESTORE_NEWLINES_STATE ")"
   private static boolean when_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "when_1_0")) return false;
     boolean result_;
@@ -5951,29 +6367,19 @@ public class KotlinParser implements PsiParser {
     result_ = consumeToken(builder_, "(");
     result_ = result_ && disableNewlines(builder_, level_ + 1, marker_);
     result_ = result_ && when_1_0_2(builder_, level_ + 1);
-    result_ = result_ && expression(builder_, level_ + 1);
     result_ = result_ && restoreNewlinesState(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, ")");
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
-  // (modifierList "val" IDENTIFIER "=")?
+  // whenProperty | expression
   private static boolean when_1_0_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "when_1_0_2")) return false;
-    when_1_0_2_0(builder_, level_ + 1);
-    return true;
-  }
-
-  // modifierList "val" IDENTIFIER "="
-  private static boolean when_1_0_2_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "when_1_0_2_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = modifierList(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, "val");
-    result_ = result_ && consumeToken(builder_, IDENTIFIER);
-    result_ = result_ && consumeToken(builder_, "=");
+    result_ = whenProperty(builder_, level_ + 1);
+    if (!result_) result_ = expression(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -6150,6 +6556,28 @@ public class KotlinParser implements PsiParser {
   private static boolean whenEntry_1_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "whenEntry_1_3")) return false;
     SEMI(builder_, level_ + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // modifierListWithShortAnnotations? "val" IDENTIFIER "=" expression
+  public static boolean whenProperty(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "whenProperty")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<when property>");
+    result_ = whenProperty_0(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, "val");
+    result_ = result_ && consumeToken(builder_, IDENTIFIER);
+    result_ = result_ && consumeToken(builder_, "=");
+    result_ = result_ && expression(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, WHEN_PROPERTY, result_, false, null);
+    return result_;
+  }
+
+  // modifierListWithShortAnnotations?
+  private static boolean whenProperty_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "whenProperty_0")) return false;
+    modifierListWithShortAnnotations(builder_, level_ + 1);
     return true;
   }
 

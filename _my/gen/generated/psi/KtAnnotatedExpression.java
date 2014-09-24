@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtAnnotatedExpression extends PsiElement {
 
   @Nullable
+  KtCharacterConstant getCharacterConstant();
+
+  @Nullable
   KtFloatConstant getFloatConstant();
 
   @Nullable
@@ -62,6 +65,9 @@ public interface KtAnnotatedExpression extends PsiElement {
   KtLabel getLabel();
 
   @Nullable
+  KtLabelExpression getLabelExpression();
+
+  @Nullable
   KtLongAnnotation getLongAnnotation();
 
   @Nullable
@@ -77,7 +83,7 @@ public interface KtAnnotatedExpression extends PsiElement {
   KtPlusPlusAndOthersExpression getPlusPlusAndOthersExpression();
 
   @Nullable
-  KtPrefixUnaryOperation getPrefixUnaryOperation();
+  KtPrefixOperationExpression getPrefixOperationExpression();
 
   @Nullable
   KtReferenceExpression getReferenceExpression();
@@ -89,13 +95,13 @@ public interface KtAnnotatedExpression extends PsiElement {
   KtStringTemplate getStringTemplate();
 
   @Nullable
+  KtSuperExpression getSuperExpression();
+
+  @Nullable
   KtThisExpression getThisExpression();
 
   @Nullable
   KtTryBlock getTryBlock();
-
-  @Nullable
-  KtType getType();
 
   @Nullable
   KtWhen getWhen();

@@ -17,7 +17,7 @@ root ::= kotlinFile
 
 // start
 private kotlinFile
-  ::= preamble toplevelObject*
+  ::= preamble (toplevelObject)*
   ;
 
 // start
@@ -36,7 +36,8 @@ importList
 
 // [Used by preamble]
 packageHeader
-  ::= (modifierList? "package" IDENTIFIER_EXT SEMI?)?
+  ::= (ALLOW_SHORT_ANNOTATIONS modifierList? RESTORE_ANNOTATIONS_STATE
+  "package" IDENTIFIER_EXT SEMI?)?
   ;
 
 // [Used by preamble, package]
@@ -64,7 +65,7 @@ packageDirective
 
 // [Used by memberDeclaration, declaration, toplevelObject]
 typedef
-  ::= modifierList? "type" IDENTIFIER (typeParameters typeConstraints?)? "=" type SEMI?
+  ::= modifierListWithShortAnnotations? "type" IDENTIFIER (typeParameters typeConstraints?)? "=" type SEMI?
   ;
 
 // same as IDENTIFIER{"."}
@@ -79,7 +80,7 @@ left DOT_IDENTIFIER ::= "." referenceExpression
 
 // [Used by memberDeclaration, declaration, toplevelObject]
 classDeclaration
-  ::= ALLOW_SHORT_ANNOTATIONS modifierList? RESTORE_ANNOTATIONS_STATE ("class" | "trait") IDENTIFIER
+  ::= modifierListWithShortAnnotations? ("class" | "trait") IDENTIFIER
       typeParameters?
       primaryConstructorModifierList? valueParameters?
       (":" annotationsPlus? delegationSpecifierExt)?
@@ -109,7 +110,10 @@ delegatorSuperClass
 
 // [Used by delegationSpecifier]
 explicitDelegation
-  ::= userTypeReference <<at BY_KEYWORD>> "by" expression
+  ::= userTypeReference <<at BY_KEYWORD>> "by"
+  ADD_NEW_CALL_WITH_CLOSURE_COUNTER
+  expression
+  DELETE_CALL_WITH_CLOSURE_COUNTER
   ;
 
 // [Used by class, property, typedef, function]
@@ -122,7 +126,7 @@ private typeParameterExt ::= (typeParameter ",")* typeParameter
 
 // [Used by typeParameters]
 typeParameter
-  ::= <<stopInTypeParameter marker_>> ALLOW_SHORT_ANNOTATIONS modifierList? RESTORE_ANNOTATIONS_STATE <<unStop>> IDENTIFIER_NEXT IDENTIFIER (":" userTypeReference)?
+  ::= <<stopInTypeParameter marker_>> ALLOW_SHORT_ANNOTATIONS modifierList? RESTORE_ANNOTATIONS_STATE <<unStop>> IDENTIFIER_NEXT IDENTIFIER (":" type)?
   ;
 
 private typeConstraints
@@ -156,12 +160,12 @@ private memberDeclaration
 
 // [Used by memberDeclaration]
 anonymousInitializer
-  ::= block
+  ::= modifierListWithShortAnnotations? block
   ;
 
 // [Used by memberDeclaration]
 classObject
-  ::= modifierList? "class" object
+  ::= modifierListWithShortAnnotations? "class" objectUnnamed
   ;
 
 // [Used by function]
@@ -193,12 +197,15 @@ block
 
 // [Used by memberDeclaration, declaration, toplevelObject]
 function
-  ::= modifierList? "fun" typeParameters?
-      (<<stopAtLastDot marker_>> type <<unStop>> "." | annotationsPlus)?
+  ::= modifierListWithShortAnnotations? "fun" typeParameters?
+      ( DISABLE_JOINING_COMPLEX_TOKENS <<stopAtLastDot marker_>>
+      type <<unStop>> "." RESTORE_JOINING_COMPLEX_TOKENS_STATE
+      | annotationsPlus)?
       IDENTIFIER
       typeParameters? valueParameters (":" type)?
       typeConstraints?
-      functionBody?
+      functionBody? SEMI?
+      //((!";") functionBody)?
   ;
 
 // [Used by getter, setter, function]
@@ -222,7 +229,7 @@ multipleVariableDeclarations
 
 // [Used by memberDeclaration, declaration, toplevelObject]
 property
-  ::= modifierList? ("val" | "var")
+  ::= modifierListWithShortAnnotations? ("val" | "var")
       typeParameters? DISABLE_JOINING_COMPLEX_TOKENS
       (<<stopAtLastDot marker_>> type <<unStop>> "." | annotationsPlus?)?
       (multipleVariableDeclarations | variableDeclarationEntry) RESTORE_JOINING_COMPLEX_TOKENS_STATE
@@ -280,7 +287,15 @@ parameter
 
 // [Used by memberDeclaration, declaration, toplevelObject, classObject]
 object
-  ::= "object" IDENTIFIER (":" delegationSpecifierExt)? classBody?
+  ::= modifierListWithShortAnnotations? "object" objectName (":" delegationSpecifierExt)? classBody?
+  ;
+
+objectName
+  ::= IDENTIFIER
+  ;
+
+objectUnnamed
+  ::= "object" (":" delegationSpecifierExt)? classBody?
   ;
 
 
@@ -395,16 +410,17 @@ asterisk
   ;
 
 // same as (optionalProjection type | "*"){","}
-private optionalProjectionTypeExt ::= ((optionalProjection typeProjection | asterisk) ",")* (optionalProjection typeProjection | asterisk)
+private optionalProjectionTypeExt ::= ((/*optionalProjection*/ typeProjection | asterisk) ",")* (/*optionalProjection*/ typeProjection | asterisk)
 
 typeProjection
   ::= modifierList? type
   ;
 
 // [Used by simpleUserType]
-private optionalProjection
+/*private optionalProjection
   ::= varianceAnnotation?
   ;
+*/
 
 // same as (parameter | modifiers  type){","}
 private parameterModifiersTypeExt ::= (parameterOrModifierType ",")* parameterOrModifierType
@@ -531,7 +547,11 @@ left equalityComparisonExpression
 
 // [Used by equalityComparison]
 private comparison
-  ::= namedInfix (!INTERRUPTED_WITH_NEWLINE comparisonOperation namedInfix)*
+  ::= namedInfix comparisonExpression*
+  ;
+
+left comparisonExpression
+  ::= (!INTERRUPTED_WITH_NEWLINE comparisonOperation namedInfix)
   ;
 
 // [Used by comparison]
@@ -578,7 +598,11 @@ left additiveExpressionPlus
 
 // [Used by additiveExpression]
 private multiplicativeExpression
-  ::= typeRHS (!INTERRUPTED_WITH_NEWLINE multiplicativeOperation typeRHS)*
+  ::= typeRHS multiplicativeExpressionPlus*
+  ;
+
+left multiplicativeExpressionPlus
+  ::= (!INTERRUPTED_WITH_NEWLINE multiplicativeOperation typeRHS)
   ;
 
 // [Used by multiplicativeExpression]
@@ -607,7 +631,7 @@ private postfixUnaryExpression
   ;
 
 left dotQualifiedExpression
-  ::= "." postfixUnaryExpression2
+  ::= !INTERRUPTED_WITH_NEWLINE "." postfixUnaryExpression2
   ;
 
 private postfixUnaryExpression2
@@ -634,7 +658,7 @@ private atomicExpression
   | literalConstant
   | functionLiteralExpression
   | thisExpression label?
-  | "super" ("<" DISABLE_NEWLINES type RESTORE_NEWLINES_STATE ">")? label?
+  | superExpression
   | ifExpression
   | when
   | tryBlock
@@ -644,6 +668,14 @@ private atomicExpression
   | referenceExpression
   | FIELD_IDENTIFIER
   | "package"
+  ;
+
+superReference
+  ::= "super"
+  ;
+
+superExpression
+  ::= superReference ("<" DISABLE_NEWLINES type RESTORE_NEWLINES_STATE ">")? label?
   ;
 
 thisExpression
@@ -659,6 +691,10 @@ referenceExpression
   ;
 // [Used by callSuffix, prefixUnaryOperation, atomicExpression, jump]
 label
+  ::= labelLabel
+  ;
+
+labelLabel
   ::= "@"
   | "@@"
   | LABEL_IDENTIFIER
@@ -674,10 +710,12 @@ private literalConstant
   | stringTemplate
   //| NoEscapeString
   | INTEGER_CONSTANT
-  | CHARACTER_LITERAL
+  | CHARACTER_CONSTANT
   | FLOAT_CONSTANT
   | NULL
   ;
+
+CHARACTER_CONSTANT ::= CHARACTER_LITERAL
 
 NULL ::= "null";
 
@@ -687,7 +725,8 @@ INTEGER_CONSTANT ::= INTEGER_LITERAL
 
 //[Used by literalConstant]
 stringTemplate
-  ::= "\"" stringTemplateElement* "\""
+  ::= "\"\"\"" stringTemplateElement* "\"\"\""
+  | "\"" stringTemplateElement* "\""
   ;
 
 // [Used by stringTemplate]
@@ -765,11 +804,20 @@ assignmentOperator
   ;
 
 // [Used by prefixUnaryExpression]
-prefixUnaryOperation
-  ::= DISABLE_JOINING_COMPLEX_TOKENS (
-  prefixOperation
-  | label
-  )RESTORE_JOINING_COMPLEX_TOKENS_STATE prefixUnaryExpression
+private prefixUnaryOperation
+  ::= prefixOperationExpression | labelExpression
+  ;
+
+prefixOperationExpression
+  ::= DISABLE_JOINING_COMPLEX_TOKENS
+      prefixOperation
+      RESTORE_JOINING_COMPLEX_TOKENS_STATE prefixUnaryExpression
+  ;
+
+labelExpression
+  ::= DISABLE_JOINING_COMPLEX_TOKENS
+      label
+      RESTORE_JOINING_COMPLEX_TOKENS_STATE prefixUnaryExpression
   ;
 
 prefixOperation
@@ -793,11 +841,13 @@ left plusPlusAndOthersExpression
 
 // [Used by postfixUnaryExpression]
 private postfixUnaryOperation
-  ::= plusPlusAndOthersExpression
+  ::= !INTERRUPTED_WITH_NEWLINE (
+    plusPlusAndOthersExpression
   | callSuffix
   | arrayAccess
   | safeAccessExpression
   | elvisAccessExpression
+  )
   //| memberAccessOperation atomicOrCallable
   ;
 
@@ -817,10 +867,20 @@ left elvisAccessExpression
   ;
 
 
+private callWithClosure
+  ::= <<availableCallWithClosure>>
+  (label | functionLiteralArgument)
+  ;
+
+functionLiteralArgument
+  ::= functionLiteralExpression
+  ;
+
 // [Used by constructorInvocation, postfixUnaryOperation]
 left callSuffix
-  ::= typeArguments? valueArguments (label? functionLiteral?)
-  | typeArguments (label? functionLiteral?)
+  ::= callWithClosure+
+  | typeArgumentList (!INTERRUPTED_WITH_NEWLINE valueArguments)? callWithClosure*
+  | valueArguments callWithClosure*
   ;
 
 
@@ -860,15 +920,15 @@ jumpThrow
  ;
 
 jumpReturn
-  ::= "return" label? expression?
+  ::= "return" (!INTERRUPTED_WITH_NEWLINE label)? (!INTERRUPTED_WITH_NEWLINE expression)?
   ;
 
 jumpContinue
-  ::= "continue" label?
+  ::= "continue" (!INTERRUPTED_WITH_NEWLINE label)?
   ;
 
 jumpBreak
-  ::= "break" label?
+  ::= "break" (!INTERRUPTED_WITH_NEWLINE label)?
   ;
 
 functionLiteralExpression
@@ -877,10 +937,21 @@ functionLiteralExpression
 
 // [Used by callSuffix, atomicExpression]
 functionLiteral
-  ::= ENABLE_NEWLINES("{" statementsBlock "}"
-  | "{" modifiersIDENTIFIERExt "->" statements "}"
-  | "{" (type ".")? "(" DISABLE_NEWLINES modifiersIDENTIFIERTypeExt RESTORE_NEWLINES_STATE")" (":" type)? "->" statements "}") RESTORE_NEWLINES_STATE
+  ::= ENABLE_NEWLINES(
+  "{" functionLiteralValueParameterList1 "->" statementsBlock "}"
+  | "{" (type ".")? functionLiteralValueParameterList2 (":" type)? "->" statementsBlock "}"
+  | "{" statementsBlock "}"
+  ) RESTORE_NEWLINES_STATE
   ;
+
+functionLiteralValueParameterList1
+  ::= modifiersIDENTIFIERExt?
+  ;
+
+functionLiteralValueParameterList2
+  ::= "(" DISABLE_NEWLINES modifiersIDENTIFIERTypeExt? RESTORE_NEWLINES_STATE")"
+  ;
+
 
 // same as (modifiers IDENTIFIER){","}
 modifiersIDENTIFIERExt ::= ((modifierList IDENTIFIER) ",")* (modifierList IDENTIFIER)
@@ -948,9 +1019,17 @@ objectLiteral
 // Pattern matching
 
 
+whenProperty
+  ::= modifierListWithShortAnnotations? "val" IDENTIFIER "=" expression
+  ;
+
 // [Used by atomicExpression]
 when
-  ::= "when" ("(" DISABLE_NEWLINES (modifierList "val" IDENTIFIER "=")? expression RESTORE_NEWLINES_STATE ")")? "{"
+  ::= "when"
+  //("(" DISABLE_NEWLINES (modifierListWithShortAnnotations? "val" IDENTIFIER "=")? expression RESTORE_NEWLINES_STATE ")")?
+  ("(" DISABLE_NEWLINES (whenProperty | expression) RESTORE_NEWLINES_STATE ")")?
+      //("(" expression | propertyLocal ")")?
+    "{"
         ENABLE_NEWLINES whenEntry* RESTORE_NEWLINES_STATE
     "}"
   ;
@@ -989,6 +1068,10 @@ whenConditionIsPattern
 
 modifierList
   ::= modifier+
+  ;
+
+private modifierListWithShortAnnotations
+  ::= ALLOW_SHORT_ANNOTATIONS modifierList FORBID_SHORT_ANNOTATIONS
   ;
 
 primaryConstructorModifierList
@@ -1072,7 +1155,7 @@ longAnnotation
 
 // [Used by annotation]
 annotationEntry
-  ::= constructorCallee typeArguments? valueArguments?
+  ::= FORBID_SHORT_ANNOTATIONS constructorCallee typeArguments? valueArguments? RESTORE_ANNOTATIONS_STATE
   ;
 
 
@@ -1091,3 +1174,5 @@ external IDENTIFIER_NEXT ::= identifierNext
 external ALLOW_SHORT_ANNOTATIONS ::= allowShortAnnotations marker_
 external FORBID_SHORT_ANNOTATIONS ::= forbidShortAnnotations marker_
 external RESTORE_ANNOTATIONS_STATE ::= restoreAnnotationsState
+external ADD_NEW_CALL_WITH_CLOSURE_COUNTER ::= addNewCallWithClosureCounter marker_
+external DELETE_CALL_WITH_CLOSURE_COUNTER ::= deleteCallWithClosureCounter

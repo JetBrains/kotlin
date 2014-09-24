@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtElvisAccessExpression extends PsiElement {
 
   @NotNull
+  List<KtCharacterConstant> getCharacterConstantList();
+
+  @NotNull
   List<KtFloatConstant> getFloatConstantList();
 
   @NotNull
@@ -77,13 +80,13 @@ public interface KtElvisAccessExpression extends PsiElement {
   List<KtStringTemplate> getStringTemplateList();
 
   @NotNull
+  List<KtSuperExpression> getSuperExpressionList();
+
+  @NotNull
   List<KtThisExpression> getThisExpressionList();
 
   @NotNull
   List<KtTryBlock> getTryBlockList();
-
-  @Nullable
-  KtType getType();
 
   @NotNull
   List<KtWhen> getWhenList();

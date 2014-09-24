@@ -30,8 +30,8 @@ public class KtClassObjectImpl extends ASTWrapperPsiElement implements KtClassOb
 
   @Override
   @NotNull
-  public KtObject getObject() {
-    return findNotNullChildByClass(KtObject.class);
+  public KtObjectUnnamed getObjectUnnamed() {
+    return findNotNullChildByClass(KtObjectUnnamed.class);
   }
 
 }

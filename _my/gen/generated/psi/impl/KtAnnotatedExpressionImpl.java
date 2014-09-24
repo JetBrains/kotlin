@@ -24,6 +24,12 @@ public class KtAnnotatedExpressionImpl extends ASTWrapperPsiElement implements K
 
   @Override
   @Nullable
+  public KtCharacterConstant getCharacterConstant() {
+    return findChildByClass(KtCharacterConstant.class);
+  }
+
+  @Override
+  @Nullable
   public KtFloatConstant getFloatConstant() {
     return findChildByClass(KtFloatConstant.class);
   }
@@ -132,6 +138,12 @@ public class KtAnnotatedExpressionImpl extends ASTWrapperPsiElement implements K
 
   @Override
   @Nullable
+  public KtLabelExpression getLabelExpression() {
+    return findChildByClass(KtLabelExpression.class);
+  }
+
+  @Override
+  @Nullable
   public KtLongAnnotation getLongAnnotation() {
     return findChildByClass(KtLongAnnotation.class);
   }
@@ -162,8 +174,8 @@ public class KtAnnotatedExpressionImpl extends ASTWrapperPsiElement implements K
 
   @Override
   @Nullable
-  public KtPrefixUnaryOperation getPrefixUnaryOperation() {
-    return findChildByClass(KtPrefixUnaryOperation.class);
+  public KtPrefixOperationExpression getPrefixOperationExpression() {
+    return findChildByClass(KtPrefixOperationExpression.class);
   }
 
   @Override
@@ -186,6 +198,12 @@ public class KtAnnotatedExpressionImpl extends ASTWrapperPsiElement implements K
 
   @Override
   @Nullable
+  public KtSuperExpression getSuperExpression() {
+    return findChildByClass(KtSuperExpression.class);
+  }
+
+  @Override
+  @Nullable
   public KtThisExpression getThisExpression() {
     return findChildByClass(KtThisExpression.class);
   }
@@ -194,12 +212,6 @@ public class KtAnnotatedExpressionImpl extends ASTWrapperPsiElement implements K
   @Nullable
   public KtTryBlock getTryBlock() {
     return findChildByClass(KtTryBlock.class);
-  }
-
-  @Override
-  @Nullable
-  public KtType getType() {
-    return findChildByClass(KtType.class);
   }
 
   @Override

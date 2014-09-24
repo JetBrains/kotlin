@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtForLoop extends PsiElement {
 
   @NotNull
+  List<KtCharacterConstant> getCharacterConstantList();
+
+  @NotNull
   List<KtFloatConstant> getFloatConstantList();
 
   @NotNull
@@ -41,7 +44,7 @@ public interface KtForLoop extends PsiElement {
   List<KtCallableReference> getCallableReferenceList();
 
   @NotNull
-  List<KtComparisonOperation> getComparisonOperationList();
+  List<KtComparisonExpression> getComparisonExpressionList();
 
   @NotNull
   List<KtConjunctionPlus> getConjunctionPlusList();
@@ -80,13 +83,16 @@ public interface KtForLoop extends PsiElement {
   List<KtLabel> getLabelList();
 
   @NotNull
+  List<KtLabelExpression> getLabelExpressionList();
+
+  @NotNull
   List<KtLoop> getLoopList();
 
   @Nullable
   KtMultipleVariableDeclarations getMultipleVariableDeclarations();
 
   @NotNull
-  List<KtMultiplicativeOperation> getMultiplicativeOperationList();
+  List<KtMultiplicativeExpressionPlus> getMultiplicativeExpressionPlusList();
 
   @NotNull
   List<KtNamedInfixFirst> getNamedInfixFirstList();
@@ -104,7 +110,7 @@ public interface KtForLoop extends PsiElement {
   List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList();
 
   @NotNull
-  List<KtPrefixUnaryOperation> getPrefixUnaryOperationList();
+  List<KtPrefixOperationExpression> getPrefixOperationExpressionList();
 
   @NotNull
   List<KtReferenceExpression> getReferenceExpressionList();
@@ -116,13 +122,16 @@ public interface KtForLoop extends PsiElement {
   List<KtStringTemplate> getStringTemplateList();
 
   @NotNull
+  List<KtSuperExpression> getSuperExpressionList();
+
+  @NotNull
   List<KtThisExpression> getThisExpressionList();
 
   @NotNull
   List<KtTryBlock> getTryBlockList();
 
-  @NotNull
-  List<KtType> getTypeList();
+  @Nullable
+  KtType getType();
 
   @NotNull
   List<KtTypeRHSPlus> getTypeRHSPlusList();

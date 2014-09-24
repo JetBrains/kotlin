@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.parsing.TokenStreamPattern;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,6 +54,9 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
 
         private final Stack<Boolean> shortAnnotations = new Stack<Boolean>();
         private final Stack<Marker> shortAnnotationsMarkers = new Stack<Marker>();
+
+        private final ArrayList<Integer> callWithClosureStackSize = new ArrayList<Integer>();
+        private final ArrayList<Marker> callWithClosureStackSizeMarkers = new ArrayList<Marker>();
 
         public SemanticWhitespaceAwarePsiBuilderImpl(PsiBuilder delegate, ErrorState state_, PsiParser parser_) {
             super(delegate, state_, parser_);
@@ -119,6 +123,10 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
 
             shortAnnotations.push(false);
             shortAnnotationsMarkers.push(marker);
+
+            callWithClosureStackSize.add(Integer.MAX_VALUE / 2);
+            callWithClosureStackSizeMarkers.add(marker);
+
         }
 
         @Override
@@ -161,17 +169,29 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
         @Override
         public void disableNewlines() {
             newlinesEnabled.push(false);
+            for (int i = 0; i < callWithClosureStackSize.size(); ++i) {
+                int value = callWithClosureStackSize.get(i);
+                callWithClosureStackSize.set(i, value + 1);
+            }
         }
 
         @Override
         public void enableNewlines() {
             newlinesEnabled.push(true);
+            for (int i = 0; i < callWithClosureStackSize.size(); ++i) {
+                int value = callWithClosureStackSize.get(i);
+                callWithClosureStackSize.set(i, value + 1);
+            }
         }
 
         @Override
         public void restoreNewlinesState() {
             assert newlinesEnabled.size() > 1;
             newlinesEnabled.pop();
+            for (int i = 0; i < callWithClosureStackSize.size(); ++i) {
+                int value = callWithClosureStackSize.get(i);
+                callWithClosureStackSize.set(i, value - 1);
+            }
         }
 
         private boolean joinComplexTokens() {
@@ -369,6 +389,11 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
         while (builder.shortAnnotations.size() > 1 && builder.shortAnnotationsMarkers.peek() == marker) {
             builder.shortAnnotationsMarkers.pop();
             builder.shortAnnotations.pop();
+        }
+        while (builder.callWithClosureStackSize.size() > 1 &&
+               builder.callWithClosureStackSizeMarkers.get(builder.callWithClosureStackSize.size() - 1) == marker) {
+            builder.callWithClosureStackSize.remove(builder.callWithClosureStackSize.size() - 1);
+            builder.callWithClosureStackSizeMarkers.remove(builder.callWithClosureStackSizeMarkers.size() - 1);
         }
     }
 
@@ -655,5 +680,25 @@ public class KotlinParserUtil extends GeneratedParserUtilBase {
         builder_.remapCurrentToken(JetTokens.IDENTIFIER);
         return true;
     }
+
+    public static boolean availableCallWithClosure(PsiBuilder builder_, int level_) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        return builder.callWithClosureStackSize.get(builder.callWithClosureStackSize.size() - 1) > 0;
+    }
+
+    public static boolean deleteCallWithClosureCounter(PsiBuilder builder_, int level_) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        builder.callWithClosureStackSize.remove(builder.callWithClosureStackSize.size() - 1);
+        builder.callWithClosureStackSizeMarkers.remove(builder.callWithClosureStackSizeMarkers.size() - 1);
+        return true;
+    }
+
+    public static boolean addNewCallWithClosureCounter(PsiBuilder builder_, int level_, PsiBuilder.Marker marker) {
+        SemanticWhitespaceAwarePsiBuilderImpl builder = (SemanticWhitespaceAwarePsiBuilderImpl)builder_;
+        builder.callWithClosureStackSize.add(0);
+        builder.callWithClosureStackSizeMarkers.add(marker);
+        return true;
+    }
+
 
 }

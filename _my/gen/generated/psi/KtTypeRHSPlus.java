@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtTypeRHSPlus extends PsiElement {
 
   @Nullable
+  KtCharacterConstant getCharacterConstant();
+
+  @Nullable
   KtFloatConstant getFloatConstant();
 
   @Nullable
@@ -59,6 +62,9 @@ public interface KtTypeRHSPlus extends PsiElement {
   KtLabel getLabel();
 
   @Nullable
+  KtLabelExpression getLabelExpression();
+
+  @Nullable
   KtLoop getLoop();
 
   @Nullable
@@ -71,7 +77,7 @@ public interface KtTypeRHSPlus extends PsiElement {
   KtPlusPlusAndOthersExpression getPlusPlusAndOthersExpression();
 
   @Nullable
-  KtPrefixUnaryOperation getPrefixUnaryOperation();
+  KtPrefixOperationExpression getPrefixOperationExpression();
 
   @Nullable
   KtReferenceExpression getReferenceExpression();
@@ -81,6 +87,9 @@ public interface KtTypeRHSPlus extends PsiElement {
 
   @Nullable
   KtStringTemplate getStringTemplate();
+
+  @Nullable
+  KtSuperExpression getSuperExpression();
 
   @Nullable
   KtThisExpression getThisExpression();

@@ -30,8 +30,8 @@ public class KtTypeParameterImpl extends ASTWrapperPsiElement implements KtTypeP
 
   @Override
   @Nullable
-  public KtUserTypeReference getUserTypeReference() {
-    return findChildByClass(KtUserTypeReference.class);
+  public KtType getType() {
+    return findChildByClass(KtType.class);
   }
 
 }

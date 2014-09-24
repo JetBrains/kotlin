@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtIndices extends PsiElement {
 
   @NotNull
+  List<KtCharacterConstant> getCharacterConstantList();
+
+  @NotNull
   List<KtFloatConstant> getFloatConstantList();
 
   @NotNull
@@ -38,7 +41,7 @@ public interface KtIndices extends PsiElement {
   List<KtCallableReference> getCallableReferenceList();
 
   @NotNull
-  List<KtComparisonOperation> getComparisonOperationList();
+  List<KtComparisonExpression> getComparisonExpressionList();
 
   @NotNull
   List<KtConjunctionPlus> getConjunctionPlusList();
@@ -77,10 +80,13 @@ public interface KtIndices extends PsiElement {
   List<KtLabel> getLabelList();
 
   @NotNull
+  List<KtLabelExpression> getLabelExpressionList();
+
+  @NotNull
   List<KtLoop> getLoopList();
 
   @NotNull
-  List<KtMultiplicativeOperation> getMultiplicativeOperationList();
+  List<KtMultiplicativeExpressionPlus> getMultiplicativeExpressionPlusList();
 
   @NotNull
   List<KtNamedInfixFirst> getNamedInfixFirstList();
@@ -98,7 +104,7 @@ public interface KtIndices extends PsiElement {
   List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList();
 
   @NotNull
-  List<KtPrefixUnaryOperation> getPrefixUnaryOperationList();
+  List<KtPrefixOperationExpression> getPrefixOperationExpressionList();
 
   @NotNull
   List<KtReferenceExpression> getReferenceExpressionList();
@@ -110,13 +116,13 @@ public interface KtIndices extends PsiElement {
   List<KtStringTemplate> getStringTemplateList();
 
   @NotNull
+  List<KtSuperExpression> getSuperExpressionList();
+
+  @NotNull
   List<KtThisExpression> getThisExpressionList();
 
   @NotNull
   List<KtTryBlock> getTryBlockList();
-
-  @NotNull
-  List<KtType> getTypeList();
 
   @NotNull
   List<KtTypeRHSPlus> getTypeRHSPlusList();

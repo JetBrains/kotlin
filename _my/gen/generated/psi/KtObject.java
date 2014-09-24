@@ -13,4 +13,10 @@ public interface KtObject extends PsiElement {
   @Nullable
   KtDelegationSpecifierExt getDelegationSpecifierExt();
 
+  @Nullable
+  KtModifierList getModifierList();
+
+  @NotNull
+  KtObjectName getObjectName();
+
 }

@@ -24,6 +24,12 @@ public class KtTypeRHSPlusImpl extends ASTWrapperPsiElement implements KtTypeRHS
 
   @Override
   @Nullable
+  public KtCharacterConstant getCharacterConstant() {
+    return findChildByClass(KtCharacterConstant.class);
+  }
+
+  @Override
+  @Nullable
   public KtFloatConstant getFloatConstant() {
     return findChildByClass(KtFloatConstant.class);
   }
@@ -126,6 +132,12 @@ public class KtTypeRHSPlusImpl extends ASTWrapperPsiElement implements KtTypeRHS
 
   @Override
   @Nullable
+  public KtLabelExpression getLabelExpression() {
+    return findChildByClass(KtLabelExpression.class);
+  }
+
+  @Override
+  @Nullable
   public KtLoop getLoop() {
     return findChildByClass(KtLoop.class);
   }
@@ -150,8 +162,8 @@ public class KtTypeRHSPlusImpl extends ASTWrapperPsiElement implements KtTypeRHS
 
   @Override
   @Nullable
-  public KtPrefixUnaryOperation getPrefixUnaryOperation() {
-    return findChildByClass(KtPrefixUnaryOperation.class);
+  public KtPrefixOperationExpression getPrefixOperationExpression() {
+    return findChildByClass(KtPrefixOperationExpression.class);
   }
 
   @Override
@@ -170,6 +182,12 @@ public class KtTypeRHSPlusImpl extends ASTWrapperPsiElement implements KtTypeRHS
   @Nullable
   public KtStringTemplate getStringTemplate() {
     return findChildByClass(KtStringTemplate.class);
+  }
+
+  @Override
+  @Nullable
+  public KtSuperExpression getSuperExpression() {
+    return findChildByClass(KtSuperExpression.class);
   }
 
   @Override

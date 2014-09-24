@@ -11,6 +11,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitCharacterConstant(@NotNull KtCharacterConstant o) {
+    visitPsiElement(o);
+  }
+
   public void visitDotIdentifier(@NotNull KtDotIdentifier o) {
     visitPsiElement(o);
   }
@@ -103,6 +107,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitComparisonExpression(@NotNull KtComparisonExpression o) {
+    visitPsiElement(o);
+  }
+
   public void visitComparisonOperation(@NotNull KtComparisonOperation o) {
     visitPsiElement(o);
   }
@@ -191,7 +199,19 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitFunctionLiteralArgument(@NotNull KtFunctionLiteralArgument o) {
+    visitPsiElement(o);
+  }
+
   public void visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression o) {
+    visitPsiElement(o);
+  }
+
+  public void visitFunctionLiteralValueParameterList1(@NotNull KtFunctionLiteralValueParameterList1 o) {
+    visitPsiElement(o);
+  }
+
+  public void visitFunctionLiteralValueParameterList2(@NotNull KtFunctionLiteralValueParameterList2 o) {
     visitPsiElement(o);
   }
 
@@ -263,6 +283,14 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitLabelExpression(@NotNull KtLabelExpression o) {
+    visitPsiElement(o);
+  }
+
+  public void visitLabelLabel(@NotNull KtLabelLabel o) {
+    visitPsiElement(o);
+  }
+
   public void visitLeftFunctionType(@NotNull KtLeftFunctionType o) {
     visitPsiElement(o);
   }
@@ -292,6 +320,10 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitMultipleVariableDeclarations(@NotNull KtMultipleVariableDeclarations o) {
+    visitPsiElement(o);
+  }
+
+  public void visitMultiplicativeExpressionPlus(@NotNull KtMultiplicativeExpressionPlus o) {
     visitPsiElement(o);
   }
 
@@ -327,6 +359,14 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitObjectName(@NotNull KtObjectName o) {
+    visitPsiElement(o);
+  }
+
+  public void visitObjectUnnamed(@NotNull KtObjectUnnamed o) {
+    visitPsiElement(o);
+  }
+
   public void visitPackageDirective(@NotNull KtPackageDirective o) {
     visitPsiElement(o);
   }
@@ -359,7 +399,7 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitPrefixUnaryOperation(@NotNull KtPrefixUnaryOperation o) {
+  public void visitPrefixOperationExpression(@NotNull KtPrefixOperationExpression o) {
     visitPsiElement(o);
   }
 
@@ -412,6 +452,14 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitStringTemplateElement(@NotNull KtStringTemplateElement o) {
+    visitPsiElement(o);
+  }
+
+  public void visitSuperExpression(@NotNull KtSuperExpression o) {
+    visitPsiElement(o);
+  }
+
+  public void visitSuperReference(@NotNull KtSuperReference o) {
     visitPsiElement(o);
   }
 
@@ -524,6 +572,10 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitWhenEntry(@NotNull KtWhenEntry o) {
+    visitPsiElement(o);
+  }
+
+  public void visitWhenProperty(@NotNull KtWhenProperty o) {
     visitPsiElement(o);
   }
 

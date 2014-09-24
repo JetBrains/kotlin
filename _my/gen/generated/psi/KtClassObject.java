@@ -11,6 +11,6 @@ public interface KtClassObject extends PsiElement {
   KtModifierList getModifierList();
 
   @NotNull
-  KtObject getObject();
+  KtObjectUnnamed getObjectUnnamed();
 
 }

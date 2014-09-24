@@ -7,4 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface KtLabel extends PsiElement {
 
+  @NotNull
+  KtLabelLabel getLabelLabel();
+
 }

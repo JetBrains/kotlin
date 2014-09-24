@@ -24,6 +24,12 @@ public class KtSafeAccessExpressionImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @NotNull
+  public List<KtCharacterConstant> getCharacterConstantList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtCharacterConstant.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtFloatConstant> getFloatConstantList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtFloatConstant.class);
   }
@@ -156,6 +162,12 @@ public class KtSafeAccessExpressionImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @NotNull
+  public List<KtSuperExpression> getSuperExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtSuperExpression.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtThisExpression> getThisExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtThisExpression.class);
   }
@@ -164,12 +176,6 @@ public class KtSafeAccessExpressionImpl extends ASTWrapperPsiElement implements 
   @NotNull
   public List<KtTryBlock> getTryBlockList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtTryBlock.class);
-  }
-
-  @Override
-  @Nullable
-  public KtType getType() {
-    return findChildByClass(KtType.class);
   }
 
   @Override

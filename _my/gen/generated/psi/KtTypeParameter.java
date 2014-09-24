@@ -11,6 +11,6 @@ public interface KtTypeParameter extends PsiElement {
   KtModifierList getModifierList();
 
   @Nullable
-  KtUserTypeReference getUserTypeReference();
+  KtType getType();
 
 }

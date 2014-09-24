@@ -24,6 +24,12 @@ public class KtStatementsBlockImpl extends ASTWrapperPsiElement implements KtSta
 
   @Override
   @NotNull
+  public List<KtCharacterConstant> getCharacterConstantList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtCharacterConstant.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtFloatConstant> getFloatConstantList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtFloatConstant.class);
   }
@@ -90,8 +96,8 @@ public class KtStatementsBlockImpl extends ASTWrapperPsiElement implements KtSta
 
   @Override
   @NotNull
-  public List<KtComparisonOperation> getComparisonOperationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtComparisonOperation.class);
+  public List<KtComparisonExpression> getComparisonExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtComparisonExpression.class);
   }
 
   @Override
@@ -174,14 +180,20 @@ public class KtStatementsBlockImpl extends ASTWrapperPsiElement implements KtSta
 
   @Override
   @NotNull
+  public List<KtLabelExpression> getLabelExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLabelExpression.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtLoop> getLoopList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLoop.class);
   }
 
   @Override
   @NotNull
-  public List<KtMultiplicativeOperation> getMultiplicativeOperationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtMultiplicativeOperation.class);
+  public List<KtMultiplicativeExpressionPlus> getMultiplicativeExpressionPlusList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtMultiplicativeExpressionPlus.class);
   }
 
   @Override
@@ -222,8 +234,8 @@ public class KtStatementsBlockImpl extends ASTWrapperPsiElement implements KtSta
 
   @Override
   @NotNull
-  public List<KtPrefixUnaryOperation> getPrefixUnaryOperationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtPrefixUnaryOperation.class);
+  public List<KtPrefixOperationExpression> getPrefixOperationExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtPrefixOperationExpression.class);
   }
 
   @Override
@@ -252,6 +264,12 @@ public class KtStatementsBlockImpl extends ASTWrapperPsiElement implements KtSta
 
   @Override
   @NotNull
+  public List<KtSuperExpression> getSuperExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtSuperExpression.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtThisExpression> getThisExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtThisExpression.class);
   }
@@ -260,12 +278,6 @@ public class KtStatementsBlockImpl extends ASTWrapperPsiElement implements KtSta
   @NotNull
   public List<KtTryBlock> getTryBlockList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtTryBlock.class);
-  }
-
-  @Override
-  @NotNull
-  public List<KtType> getTypeList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtType.class);
   }
 
   @Override

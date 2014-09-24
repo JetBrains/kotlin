@@ -34,4 +34,16 @@ public class KtObjectImpl extends ASTWrapperPsiElement implements KtObject {
     return findChildByClass(KtDelegationSpecifierExt.class);
   }
 
+  @Override
+  @Nullable
+  public KtModifierList getModifierList() {
+    return findChildByClass(KtModifierList.class);
+  }
+
+  @Override
+  @NotNull
+  public KtObjectName getObjectName() {
+    return findNotNullChildByClass(KtObjectName.class);
+  }
+
 }

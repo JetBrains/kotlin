@@ -35,19 +35,19 @@ public class JDIEval(
 ) : Eval {
 
     private val primitiveTypes = mapOf(
-            Type.BOOLEAN_TYPE.getClassName() to vm.mirrorOf(true).`type`(),
-            Type.BYTE_TYPE.getClassName() to vm.mirrorOf(1.toByte()).`type`(),
-            Type.SHORT_TYPE.getClassName() to vm.mirrorOf(1.toShort()).`type`(),
-            Type.INT_TYPE.getClassName() to vm.mirrorOf(1.toInt()).`type`(),
-            Type.CHAR_TYPE.getClassName() to vm.mirrorOf('1').`type`(),
-            Type.LONG_TYPE.getClassName() to vm.mirrorOf(1L).`type`(),
-            Type.FLOAT_TYPE.getClassName() to vm.mirrorOf(1.0f).`type`(),
-            Type.DOUBLE_TYPE.getClassName() to vm.mirrorOf(1.0).`type`()
+            Type.BOOLEAN_TYPE.getClassName() to vm.mirrorOf(true)!!.`type`(),
+            Type.BYTE_TYPE.getClassName() to vm.mirrorOf(1.toByte())!!.`type`(),
+            Type.SHORT_TYPE.getClassName() to vm.mirrorOf(1.toShort())!!.`type`(),
+            Type.INT_TYPE.getClassName() to vm.mirrorOf(1.toInt())!!.`type`(),
+            Type.CHAR_TYPE.getClassName() to vm.mirrorOf('1')!!.`type`(),
+            Type.LONG_TYPE.getClassName() to vm.mirrorOf(1L)!!.`type`(),
+            Type.FLOAT_TYPE.getClassName() to vm.mirrorOf(1.0f)!!.`type`(),
+            Type.DOUBLE_TYPE.getClassName() to vm.mirrorOf(1.0)!!.`type`()
     )
 
     override fun loadClass(classType: Type): Value {
         val loadedClasses = vm.classesByName(classType.getInternalName())
-        if (!loadedClasses.isEmpty()) {
+        if (!loadedClasses!!.isEmpty()) {
             val loadedClass = loadedClasses[0]
             if (classType.getDescriptor() in BOOTSTRAP_CLASS_DESCRIPTORS || loadedClass.classLoader() == classLoader) {
                 return loadedClass.classObject().asValue()
@@ -89,7 +89,7 @@ public class JDIEval(
                 listOf(value)).boolean
     }
 
-    fun Type.asReferenceType(): jdi.ReferenceType = loadClass(this).jdiClass!!.reflectedType()
+    fun Type.asReferenceType(): jdi.ReferenceType = loadClass(this).jdiClass!!.reflectedType()!!
     fun Type.asArrayType(): jdi.ArrayType = asReferenceType() as jdi.ArrayType
 
     override fun newArray(arrayType: Type, size: Int): Value {
@@ -163,7 +163,7 @@ public class JDIEval(
 
     override fun getStaticField(fieldDesc: FieldDescription): Value {
         val field = findStaticField(fieldDesc)
-        return mayThrow { field.declaringType().getValue(field) }.asValue()
+        return mayThrow { field.declaringType()!!.getValue(field) }.asValue()
     }
 
     override fun setStaticField(fieldDesc: FieldDescription, newValue: Value) {
@@ -178,7 +178,7 @@ public class JDIEval(
             throwBrokenCodeException(NoSuchFieldError("Can't a field in a non-class: $field"))
         }
 
-        val jdiValue = newValue.asJdiValue(vm, field.`type`().asType())
+        val jdiValue = newValue.asJdiValue(vm, field.`type`()!!.asType())
         mayThrow { _class.setValue(field, jdiValue) }
     }
 
@@ -190,7 +190,7 @@ public class JDIEval(
             }
             else -> _class.methodsByName(methodDesc.name, methodDesc.desc)
         }
-        if (method.isEmpty()) {
+        if (method!!.isEmpty()) {
             throwBrokenCodeException(NoSuchMethodError("Method not found: $methodDesc"))
         }
         return method[0]
@@ -220,7 +220,7 @@ public class JDIEval(
         val field = findField(fieldDesc)
         val obj = instance.jdiObj.checkNull()
 
-        val jdiValue = newValue.asJdiValue(vm, field.`type`().asType())
+        val jdiValue = newValue.asJdiValue(vm, field.`type`()!!.asType())
         mayThrow { obj.setValue(field, jdiValue) }
     }
 
@@ -261,7 +261,7 @@ public class JDIEval(
 
     private fun jdi.Method.safeArgumentTypes(): List<jdi.Type> {
         try {
-            return argumentTypes()
+            return argumentTypes()!!
         }
         catch (e: ClassNotLoadedException) {
             return argumentTypeNames()!!.map {

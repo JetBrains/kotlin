@@ -238,8 +238,11 @@ public class KotlinParserDefinition implements ParserDefinition {
         if (str == "INITIALIZER_EXT") {
             return JetNodeTypes.INITIALIZER_LIST;
         }
-        if (str == "PREFIX_UNARY_OPERATION") {
+        if (str == "PREFIX_OPERATION_EXPRESSION") {
             return JetNodeTypes.PREFIX_EXPRESSION;
+        }
+        if (str == "LABEL_EXPRESSION") {
+            return JetNodeTypes.LABELED_EXPRESSION;
         }
         if (str == "PREFIX_OPERATION") {
             return JetNodeTypes.OPERATION_REFERENCE;
@@ -387,6 +390,60 @@ public class KotlinParserDefinition implements ParserDefinition {
         }
         if (str == "ASTERISK") {
             return JetNodeTypes.TYPE_PROJECTION;
+        }
+        if (str == "CLASS_OBJECT") {
+            return JetNodeTypes.CLASS_OBJECT;
+        }
+        if (str == "OBJECT_UNNAMED") {
+            return JetNodeTypes.OBJECT_DECLARATION;
+        }
+        if (str == "MULTIPLICATIVE_OPERATION") {
+            return JetNodeTypes.OPERATION_REFERENCE;
+        }
+        if (str == "MULTIPLICATIVE_EXPRESSION_PLUS") {
+            return JetNodeTypes.BINARY_EXPRESSION;
+        }
+        if (str == "FUNCTION_LITERAL_ARGUMENT") {
+            return JetNodeTypes.FUNCTION_LITERAL_ARGUMENT;
+        }
+        if (str == "FUNCTION_LITERAL_VALUE_PARAMETER_LIST_1") {
+            return JetNodeTypes.VALUE_PARAMETER_LIST;
+        }
+        if (str == "FUNCTION_LITERAL_VALUE_PARAMETER_LIST_2") {
+            return JetNodeTypes.VALUE_PARAMETER_LIST;
+        }
+        if (str == "OBJECT") {
+            return JetNodeTypes.OBJECT_DECLARATION;
+        }
+        if (str == "OBJECT_NAME") {
+            return JetNodeTypes.OBJECT_DECLARATION_NAME;
+        }
+        if (str == "COMPARISON_EXPRESSION") {
+            return JetNodeTypes.BINARY_EXPRESSION;
+        }
+        if (str == "COMPARISON_OPERATION") {
+            return JetNodeTypes.OPERATION_REFERENCE;
+        }
+        if (str == "CHARACTER_CONSTANT") {
+            return JetNodeTypes.CHARACTER_CONSTANT;
+        }
+        if (str == "STRING_TEMPLATE_ELEMENT") {
+            return JetNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY;
+        }
+        if (str == "SUPER_REFERENCE") {
+            return JetNodeTypes.REFERENCE_EXPRESSION;
+        }
+        if (str == "SUPER_EXPRESSION") {
+            return JetNodeTypes.SUPER_EXPRESSION;
+        }
+        if (str == "LABEL") {
+            return JetNodeTypes.LABEL_QUALIFIER;
+        }
+        if (str == "LABEL_LABEL") {
+            return JetNodeTypes.LABEL;
+        }
+        if (str == "WHEN_PROPERTY") {
+            return JetNodeTypes.PROPERTY;
         }
         return new IElementType(str, JetLanguage.INSTANCE);
     }

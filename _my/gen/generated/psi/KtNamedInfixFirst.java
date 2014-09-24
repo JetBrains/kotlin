@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtNamedInfixFirst extends PsiElement {
 
   @NotNull
+  List<KtCharacterConstant> getCharacterConstantList();
+
+  @NotNull
   List<KtFloatConstant> getFloatConstantList();
 
   @NotNull
@@ -65,10 +68,13 @@ public interface KtNamedInfixFirst extends PsiElement {
   List<KtLabel> getLabelList();
 
   @NotNull
+  List<KtLabelExpression> getLabelExpressionList();
+
+  @NotNull
   List<KtLoop> getLoopList();
 
   @NotNull
-  List<KtMultiplicativeOperation> getMultiplicativeOperationList();
+  List<KtMultiplicativeExpressionPlus> getMultiplicativeExpressionPlusList();
 
   @NotNull
   List<KtObjectLiteral> getObjectLiteralList();
@@ -80,7 +86,7 @@ public interface KtNamedInfixFirst extends PsiElement {
   List<KtPlusPlusAndOthersExpression> getPlusPlusAndOthersExpressionList();
 
   @NotNull
-  List<KtPrefixUnaryOperation> getPrefixUnaryOperationList();
+  List<KtPrefixOperationExpression> getPrefixOperationExpressionList();
 
   @NotNull
   List<KtReferenceExpression> getReferenceExpressionList();
@@ -92,13 +98,16 @@ public interface KtNamedInfixFirst extends PsiElement {
   List<KtStringTemplate> getStringTemplateList();
 
   @NotNull
+  List<KtSuperExpression> getSuperExpressionList();
+
+  @NotNull
   List<KtThisExpression> getThisExpressionList();
 
   @NotNull
   List<KtTryBlock> getTryBlockList();
 
   @NotNull
-  List<KtType> getTypeList();
+  KtType getType();
 
   @NotNull
   List<KtTypeRHSPlus> getTypeRHSPlusList();

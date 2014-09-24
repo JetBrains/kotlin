@@ -10,4 +10,7 @@ public interface KtAnonymousInitializer extends PsiElement {
   @NotNull
   KtBlock getBlock();
 
+  @Nullable
+  KtModifierList getModifierList();
+
 }

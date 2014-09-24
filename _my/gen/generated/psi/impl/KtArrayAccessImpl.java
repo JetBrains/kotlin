@@ -24,6 +24,12 @@ public class KtArrayAccessImpl extends ASTWrapperPsiElement implements KtArrayAc
 
   @Override
   @Nullable
+  public KtCharacterConstant getCharacterConstant() {
+    return findChildByClass(KtCharacterConstant.class);
+  }
+
+  @Override
+  @Nullable
   public KtFloatConstant getFloatConstant() {
     return findChildByClass(KtFloatConstant.class);
   }
@@ -158,6 +164,12 @@ public class KtArrayAccessImpl extends ASTWrapperPsiElement implements KtArrayAc
   @Nullable
   public KtStringTemplate getStringTemplate() {
     return findChildByClass(KtStringTemplate.class);
+  }
+
+  @Override
+  @Nullable
+  public KtSuperExpression getSuperExpression() {
+    return findChildByClass(KtSuperExpression.class);
   }
 
   @Override

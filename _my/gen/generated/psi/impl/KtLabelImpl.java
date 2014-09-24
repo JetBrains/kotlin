@@ -22,4 +22,10 @@ public class KtLabelImpl extends ASTWrapperPsiElement implements KtLabel {
     else super.accept(visitor);
   }
 
+  @Override
+  @NotNull
+  public KtLabelLabel getLabelLabel() {
+    return findNotNullChildByClass(KtLabelLabel.class);
+  }
+
 }

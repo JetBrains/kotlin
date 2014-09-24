@@ -28,4 +28,10 @@ public class KtAnonymousInitializerImpl extends ASTWrapperPsiElement implements 
     return findNotNullChildByClass(KtBlock.class);
   }
 
+  @Override
+  @Nullable
+  public KtModifierList getModifierList() {
+    return findChildByClass(KtModifierList.class);
+  }
+
 }

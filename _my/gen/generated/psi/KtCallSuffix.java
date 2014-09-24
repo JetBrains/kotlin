@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtCallSuffix extends PsiElement {
 
   @Nullable
+  KtCharacterConstant getCharacterConstant();
+
+  @Nullable
   KtFloatConstant getFloatConstant();
 
   @Nullable
@@ -31,8 +34,8 @@ public interface KtCallSuffix extends PsiElement {
   @Nullable
   KtElvisAccessExpression getElvisAccessExpression();
 
-  @Nullable
-  KtFunctionLiteral getFunctionLiteral();
+  @NotNull
+  List<KtFunctionLiteralArgument> getFunctionLiteralArgumentList();
 
   @Nullable
   KtFunctionLiteralExpression getFunctionLiteralExpression();
@@ -77,13 +80,16 @@ public interface KtCallSuffix extends PsiElement {
   KtStringTemplate getStringTemplate();
 
   @Nullable
+  KtSuperExpression getSuperExpression();
+
+  @Nullable
   KtThisExpression getThisExpression();
 
   @Nullable
   KtTryBlock getTryBlock();
 
   @Nullable
-  KtTypeArguments getTypeArguments();
+  KtTypeArgumentList getTypeArgumentList();
 
   @Nullable
   KtValueArguments getValueArguments();

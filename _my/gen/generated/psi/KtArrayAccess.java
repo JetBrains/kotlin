@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface KtArrayAccess extends PsiElement {
 
   @Nullable
+  KtCharacterConstant getCharacterConstant();
+
+  @Nullable
   KtFloatConstant getFloatConstant();
 
   @Nullable
@@ -75,6 +78,9 @@ public interface KtArrayAccess extends PsiElement {
 
   @Nullable
   KtStringTemplate getStringTemplate();
+
+  @Nullable
+  KtSuperExpression getSuperExpression();
 
   @Nullable
   KtThisExpression getThisExpression();
