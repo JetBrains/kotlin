@@ -6,6 +6,6 @@ public open class Test {
     public constructor Test()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public/*package*/ open fun number(/*0*/ n: kotlin.Number?): kotlin.Unit
+    public/*package*/ open fun number(/*0*/ n: kotlin.Number!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

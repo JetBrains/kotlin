@@ -62,7 +62,7 @@ internal final enum class MyEnum2 : kotlin.Enum<MyEnum2> {
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum2>
 }
 
-public final enum class MyJavaEnum : kotlin.Enum<MyJavaEnum> {
+public final enum class MyJavaEnum : kotlin.Enum<MyJavaEnum!> {
     public constructor MyJavaEnum()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

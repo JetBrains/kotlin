@@ -2,7 +2,7 @@ package
 
 internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 
-public final enum class Type : kotlin.Enum<Type> {
+public final enum class Type : kotlin.Enum<Type!> {
     public constructor Type()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
