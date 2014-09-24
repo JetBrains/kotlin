@@ -174,15 +174,42 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         testDataDir = File(testDataPath)
         workDir = FileUtil.createTempDirectory("jps-build", null)
 
+        val moduleNames = configureModules()
+        initialMake()
+
+        val log = performModificationsAndMake(moduleNames)
+        UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), log)
+
+        rebuildAndCheckOutput()
+        clearCachesRebuildAndCheckOutput()
+    }
+
+    private fun performModificationsAndMake(moduleNames: Set<String>?): String {
+        val logs = ArrayList<String>()
+
+        val modifications = getModificationsToPerform(moduleNames)
+        for (step in modifications) {
+            step.forEach { it.perform(workDir) }
+            performAdditionalModifications()
+
+            val log = make()
+            logs.add(log)
+        }
+
+        return logs.join("\n\n")
+    }
+
+    protected open fun performAdditionalModifications() {
+    }
+
+    // null means one module
+    private fun configureModules(): Set<String>? {
+        var moduleNames: Set<String>?
         JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject)
                 .setOutputUrl(JpsPathUtil.pathToUrl(getAbsolutePath("out")))
 
         val jdk = addJdk("my jdk")
-
         val moduleDependencies = readModuleDependencies()
-
-        val moduleNames: Set<String>? // null means one module
-
         if (moduleDependencies == null) {
             addModule("module", array(getAbsolutePath("src")), null, null, jdk)
 
@@ -211,23 +238,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
             moduleNames = nameToModule.keySet()
         }
         AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject)
-
-        initialMake()
-
-        val modifications = getModificationsToPerform(moduleNames)
-        val logs = ArrayList<String>()
-
-        for (step in modifications) {
-            step.forEach { it.perform(workDir) }
-
-            val log = make()
-            logs.add(log)
-        }
-
-        UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), logs.join("\n\n"))
-
-        rebuildAndCheckOutput()
-        clearCachesRebuildAndCheckOutput()
+        return moduleNames
     }
 
     override fun doGetProjectDir(): File? = workDir
