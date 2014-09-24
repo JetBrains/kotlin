@@ -75,7 +75,7 @@ public class InlineCodegenUtil {
 
     @Nullable
     public static MethodNode getMethodNode(
-            InputStream classData,
+            byte[] classData,
             final String methodName,
             final String methodDescriptor
     ) throws ClassNotFoundException, IOException {
