@@ -50,6 +50,9 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         super.tearDown()
     }
 
+    protected open val customTest: Boolean
+        get() = false
+
     fun buildGetLog(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all()): String {
         val logger = MyLogger(FileUtil.toSystemIndependentName(workDir.getAbsolutePath()))
         val descriptor = createProjectDescriptor(BuildLoggingManager(logger))
@@ -119,7 +122,12 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
             fail("Bad test data format: files ending with both unnumbered and numbered \".new\"/\".delete\" were found")
         }
         if (!haveFilesWithoutNumbers && !haveFilesWithNumbers) {
-            fail("Bad test data format: no files ending with \".new\" or \".delete\" found")
+            if (customTest) {
+                return listOf(listOf())
+            }
+            else {
+                fail("Bad test data format: no files ending with \".new\" or \".delete\" found")
+            }
         }
 
         if (haveFilesWithoutNumbers) {
