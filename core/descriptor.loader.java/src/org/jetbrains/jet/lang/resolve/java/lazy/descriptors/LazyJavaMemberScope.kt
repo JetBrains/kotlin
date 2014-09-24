@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.utils.*
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
@@ -78,6 +79,8 @@ public abstract class LazyJavaMemberScope(
         val methods = memberIndex().findMethodsByName(name)
         val functions = LinkedHashSet<SimpleFunctionDescriptor>(
                 methods.stream()
+                        // values() and valueOf() are added manually below
+                        .filter{ m -> !DescriptorResolverUtils.shouldBeInEnumClassObject(m) }
                         .flatMap {
                             m ->
                             val function = resolveMethodToFunctionDescriptor(m, true)

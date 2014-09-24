@@ -24,7 +24,6 @@ import com.intellij.psi.impl.light.LightField;
 import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.impl.source.ClassInnerStuffCache;
 import com.intellij.psi.impl.source.PsiExtensibleClass;
-import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -134,17 +133,6 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
                        : new LightMethod(myManager, method, KotlinWrappingLightClass.this);
             }
         });
-    }
-
-    @Override
-    public boolean processDeclarations(
-            @NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place
-    ) {
-        if (isEnum()) {
-            if (!PsiClassImplUtil.processDeclarationsInEnum(processor, state, myInnersCache)) return false;
-        }
-
-        return super.processDeclarations(processor, state, lastParent, place);
     }
 
     @Override

@@ -87,6 +87,23 @@ public final class DescriptorResolverUtils {
         return null;
     }
 
+    /**
+     * @return true if {@code method} is a static method of enum class, which is to be put into its class object (and not into the
+     *         corresponding package). This applies to values() and valueOf(String) methods
+     */
+    public static boolean shouldBeInEnumClassObject(@NotNull JavaMethod method) {
+        if (!method.getContainingClass().isEnum()) return false;
+
+        String name = method.getName().asString();
+        if (name.equals("values")) {
+            return method.getValueParameters().isEmpty();
+        }
+        else if (name.equals("valueOf")) {
+            return isMethodWithOneParameterWithFqName(method, "java.lang.String");
+        }
+        return false;
+    }
+
     public static boolean isObjectMethodInInterface(@NotNull JavaMember member) {
         return member.getContainingClass().isInterface() && member instanceof JavaMethod && isObjectMethod((JavaMethod) member);
     }
