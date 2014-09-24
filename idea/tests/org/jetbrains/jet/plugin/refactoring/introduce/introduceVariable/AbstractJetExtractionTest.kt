@@ -41,6 +41,11 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandlerHelper
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionGeneratorOptions
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractableCodeDescriptor
+import com.intellij.testFramework.LightPlatformTestCase
+import org.jetbrains.jet.testing.ConfigLibraryUtil
+import org.jetbrains.jet.plugin.PluginTestCaseBase
+import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionData
+import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions
 
 public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
@@ -76,12 +81,20 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                     }
             )
 
-            val fileText = file.getText()
+            val fileText = file.getText() ?: ""
             val expectedDescriptors =
                     InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_DESCRIPTOR: ").joinToString()
             val expectedTypes =
                     InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_TYPES: ").map { "[$it]" }.joinToString()
             val extractAsProperty = InTextDirectivesUtils.isDirectiveDefined(fileText, "// EXTRACT_AS_PROPERTY")
+
+            val extractionOptions = InTextDirectivesUtils.findListWithPrefixes(fileText, "// OPTIONS: ").let {
+                if (it.isNotEmpty()) {
+                    [suppress("CAST_NEVER_SUCCEEDS")]
+                    val args = it.map { it.toBoolean() }.copyToArray() as Array<Any?>
+                    javaClass<ExtractionOptions>().getConstructors()[0].newInstance(*args) as ExtractionOptions
+                } else ExtractionOptions.DEFAULT
+            }
 
             val renderer = DescriptorRenderer.DEBUG_TEXT
 
@@ -89,6 +102,10 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
             selectElements(editor, file) {(elements, previousSibling) ->
                 ExtractKotlinFunctionHandler(
                         helper = object : ExtractKotlinFunctionHandlerHelper() {
+                            override fun adjustExtractionData(data: ExtractionData): ExtractionData {
+                                return data.copy(options = extractionOptions)
+                            }
+
                             override fun adjustGeneratorOptions(options: ExtractionGeneratorOptions): ExtractionGeneratorOptions {
                                 return options.copy(extractAsProperty = extractAsProperty)
                             }
@@ -119,6 +136,10 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
         fixture.setTestDataPath("${JetTestCaseBuilder.getHomeDirectory()}/${mainFile.getParent()}")
 
         val file = fixture.configureByFile(mainFile.getName()) as JetFile
+
+        if (InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null) {
+            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
+        }
 
         try {
             action(file)

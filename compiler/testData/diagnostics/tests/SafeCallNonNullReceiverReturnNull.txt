@@ -1,0 +1,4 @@
+package
+
+internal fun ff(): kotlin.Unit
+internal fun kotlin.Int.gg(): kotlin.Nothing?

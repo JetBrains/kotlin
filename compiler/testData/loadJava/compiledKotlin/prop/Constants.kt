@@ -13,5 +13,7 @@ val f: Float = 3.14f
 val d: Double = 3.14
 val bb: Boolean = true
 val c: Char = '\u03c0' // pi symbol
+val MAX_HIGH_SURROGATE: Char = '\uDBFF'
+val nl = '\n'
 
 val str: String = ":)"

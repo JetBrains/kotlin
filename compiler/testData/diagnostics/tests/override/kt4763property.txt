@@ -1,0 +1,27 @@
+package
+
+internal val s: Q
+
+internal trait P {
+    internal abstract var f: kotlin.Number
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal open class Q {
+    public constructor Q()
+    internal final val x: kotlin.Int = 42
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class R : P, Q {
+    public constructor R()
+    internal abstract override /*1*/ /*fake_override*/ var f: kotlin.Number
+    internal final override /*1*/ /*fake_override*/ val x: kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}

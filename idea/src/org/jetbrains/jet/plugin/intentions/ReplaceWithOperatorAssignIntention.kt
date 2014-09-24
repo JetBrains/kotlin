@@ -23,9 +23,11 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.plugin.util.JetPsiMatcher
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiUnifier
+import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult
+import org.jetbrains.jet.plugin.util.psi.patternMatching.matches
 
 public class ReplaceWithOperatorAssignIntention : JetSelfTargetingIntention<JetBinaryExpression>("replace.with.operator.assign.intention", javaClass()) {
 
@@ -46,33 +48,38 @@ public class ReplaceWithOperatorAssignIntention : JetSelfTargetingIntention<JetB
             val descriptor = context[BindingContext.REFERENCE_TARGET, expression.getOperationReference()]?.getContainingDeclaration()
             val isPrimitiveOperation = descriptor is ClassDescriptor && KotlinBuiltIns.getInstance().isPrimitiveType(descriptor.getDefaultType())
 
-            when {
-                JetPsiMatcher.checkElementMatch(variableExpression, expression.getLeft()) -> {
+            return when {
+                variableExpression.matches(expression.getLeft()) -> {
                     val validity = expression.getOperationToken() == JetTokens.PLUS ||
-                    expression.getOperationToken() == JetTokens.MINUS ||
-                    expression.getOperationToken() == JetTokens.MUL ||
-                    expression.getOperationToken() == JetTokens.DIV ||
-                    expression.getOperationToken() == JetTokens.PERC
+                            expression.getOperationToken() == JetTokens.MINUS ||
+                            expression.getOperationToken() == JetTokens.MUL ||
+                            expression.getOperationToken() == JetTokens.DIV ||
+                            expression.getOperationToken() == JetTokens.PERC
 
                     if (validity) {
                         setText("Replace with ${expression.getOperationReference().getText()}= Expression")
                     }
 
-                    return validity
+                    validity
                 }
-                JetPsiMatcher.checkElementMatch(variableExpression, expression.getRight()) -> {
+
+                variableExpression.matches(expression.getRight()) -> {
                     val validity = (expression.getOperationToken() == JetTokens.PLUS ||
-                    expression.getOperationToken() == JetTokens.MUL) &&
-                    isPrimitiveOperation
+                            expression.getOperationToken() == JetTokens.MUL) &&
+                            isPrimitiveOperation
 
                     if (validity) {
                         setText("Replace with ${expression.getOperationReference().getText()}= Expression")
                     }
 
-                    return validity
+                    validity
                 }
-                expression.getLeft() is JetBinaryExpression -> return isPrimitiveOperation && checkExpressionRepeat(variableExpression, expression.getLeft() as JetBinaryExpression)
-                else -> return false
+
+                expression.getLeft() is JetBinaryExpression ->
+                    isPrimitiveOperation && checkExpressionRepeat(variableExpression, expression.getLeft() as JetBinaryExpression)
+
+                else ->
+                    false
             }
         }
 
@@ -87,21 +94,29 @@ public class ReplaceWithOperatorAssignIntention : JetSelfTargetingIntention<JetB
         [tailRecursive]
         fun buildReplacement(variableExpression: JetSimpleNameExpression, expression: JetBinaryExpression, replacementBuilder: StringBuilder): String {
             when {
-                JetPsiMatcher.checkElementMatch(variableExpression, expression.getLeft()) -> {
+                variableExpression.matches(expression.getLeft()) -> {
                     return "${variableExpression.getText()} ${expression.getOperationReference().getText()}= ${expression.getRight()!!.getText()} ${replacementBuilder.toString()}"
                 }
-                JetPsiMatcher.checkElementMatch(variableExpression, expression.getRight()) -> {
+
+                variableExpression.matches(expression.getRight()) -> {
                     return "${variableExpression.getText()} ${expression.getOperationReference().getText()}= ${expression.getLeft()!!.getText()} ${replacementBuilder.toString()}"
                 }
+
                 expression.getLeft() is JetBinaryExpression -> {
                     return buildReplacement(variableExpression, expression.getLeft() as JetBinaryExpression, StringBuilder("${expression.getOperationReference().getText()} ${expression.getRight()!!.getText()} ${replacementBuilder.toString()}"))
                 }
+
                 else -> {
                     return replacementBuilder.toString()
                 }
             }
         }
 
-        element.replace(JetPsiFactory(element).createExpression(buildReplacement(element.getLeft() as JetSimpleNameExpression, element.getRight() as JetBinaryExpression, StringBuilder())))
+        val replacement = buildReplacement(
+                (element.getLeft() as JetSimpleNameExpression),
+                element.getRight() as JetBinaryExpression,
+                StringBuilder()
+        )
+        element.replace(JetPsiFactory(element).createExpression(replacement))
     }
 }

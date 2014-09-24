@@ -1,0 +1,4 @@
+package
+
+internal val a1: kotlin.Int = 1694498816
+internal val a2: kotlin.Int = 0

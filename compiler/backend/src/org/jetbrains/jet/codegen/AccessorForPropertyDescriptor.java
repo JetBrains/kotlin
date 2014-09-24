@@ -30,7 +30,9 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
 
-public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
+public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implements AccessorForCallableDescriptor<PropertyDescriptor> {
+    private final PropertyDescriptor calleeDescriptor;
+
     public AccessorForPropertyDescriptor(@NotNull PropertyDescriptor pd, @NotNull DeclarationDescriptor containingDeclaration, int index) {
         this(pd, pd.getType(), DescriptorUtils.getReceiverParameterType(pd.getReceiverParameter()), pd.getExpectedThisObject(), containingDeclaration, index);
     }
@@ -47,23 +49,44 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
               original.isVar(), Name.identifier(original.getName() + "$b$" + index),
               Kind.DECLARATION, SourceElement.NO_SOURCE);
 
+        this.calleeDescriptor = original;
         setType(propertyType, Collections.<TypeParameterDescriptorImpl>emptyList(), expectedThisObject, receiverType);
         initialize(new Getter(this), new Setter(this));
     }
 
-    public static class Getter extends PropertyGetterDescriptorImpl {
+    public static class Getter extends PropertyGetterDescriptorImpl implements AccessorForCallableDescriptor<PropertyGetterDescriptor> {
         public Getter(AccessorForPropertyDescriptor property) {
             super(property, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
                   false, false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
             initialize(property.getType());
         }
+
+        @NotNull
+        @Override
+        public PropertyGetterDescriptor getCalleeDescriptor() {
+            //noinspection ConstantConditions
+            return ((AccessorForPropertyDescriptor) getCorrespondingProperty()).getCalleeDescriptor().getGetter();
+        }
     }
 
-    public static class Setter extends PropertySetterDescriptorImpl {
+    public static class Setter extends PropertySetterDescriptorImpl implements AccessorForCallableDescriptor<PropertySetterDescriptor>{
         public Setter(AccessorForPropertyDescriptor property) {
             super(property, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
                   false, false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
             initializeDefault();
         }
+
+        @NotNull
+        @Override
+        public PropertySetterDescriptor getCalleeDescriptor() {
+            //noinspection ConstantConditions
+            return ((AccessorForPropertyDescriptor) getCorrespondingProperty()).getCalleeDescriptor().getSetter();
+        }
+    }
+
+    @NotNull
+    @Override
+    public PropertyDescriptor getCalleeDescriptor() {
+        return calleeDescriptor;
     }
 }

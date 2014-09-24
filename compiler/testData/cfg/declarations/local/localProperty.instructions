@@ -16,7 +16,7 @@ L0:
     jmp?(L2)                                                          NEXT:[<END>, d(get() { val b: Int return b })]
     d(get() { val b: Int return b })                                  NEXT:[<SINK>]
 L1:
-L2:
+L2 [after local declaration]:
   1 <END>                                                             NEXT:[<SINK>]                                                            PREV:[jmp?(L2)]
 error:
     <ERROR>                                                           PREV:[]

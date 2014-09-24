@@ -1,0 +1,11 @@
+super@B.foo()
+
+super<Z>@B.foo()
+
+super.foo()
+
+super@B.foo()
+
+super<Z>.foo()
+
+super<Z>@B.foo()

@@ -18,7 +18,9 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Arrays;
@@ -43,7 +45,9 @@ public final class JvmAnnotationNames {
 
     public static class KotlinSyntheticClass {
         public static final JvmClassName CLASS_NAME = JvmClassName.byInternalName("kotlin/jvm/internal/KotlinSyntheticClass");
-        public static final String KIND_INTERNAL_NAME = "kotlin/jvm/internal/KotlinSyntheticClass$Kind";
+        public static final ClassId KIND_CLASS_ID =
+                new ClassId(new FqName("kotlin.jvm.internal"), new FqNameUnsafe("KotlinSyntheticClass.Kind"));
+        public static final String KIND_INTERNAL_NAME = JvmClassName.byClassId(KIND_CLASS_ID).getInternalName();
 
         public static final Name KIND_FIELD_NAME = Name.identifier("kind");
 
@@ -102,12 +106,9 @@ public final class JvmAnnotationNames {
         SPECIAL_ANNOTATIONS.add(KotlinSyntheticClass.CLASS_NAME);
     }
 
-    public static boolean isSpecialAnnotation(@NotNull FqName fqName) {
-        return isSpecialAnnotation(JvmClassName.byFqNameWithoutInnerClasses(fqName));
-    }
-
-    public static boolean isSpecialAnnotation(@NotNull JvmClassName name) {
-        return SPECIAL_ANNOTATIONS.contains(name) || name.getInternalName().startsWith("jet/runtime/typeinfo/");
+    public static boolean isSpecialAnnotation(@NotNull ClassId classId) {
+        JvmClassName className = JvmClassName.byClassId(classId);
+        return SPECIAL_ANNOTATIONS.contains(className) || className.getInternalName().startsWith("jet/runtime/typeinfo/");
     }
 
     private JvmAnnotationNames() {

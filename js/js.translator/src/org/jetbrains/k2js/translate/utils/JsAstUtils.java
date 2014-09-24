@@ -20,16 +20,13 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.k2js.translate.context.Namer;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 public final class JsAstUtils {
     private static final JsNameRef DEFINE_PROPERTY = new JsNameRef("defineProperty");
@@ -71,22 +68,28 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression convertToExpression(@NotNull JsNode jsNode, @NotNull TranslationContext context) {
-        return convertToExpression(jsNode, context, context.dynamicContext().jsBlock());
+    private static JsStatement deBlockIfPossible(@NotNull JsStatement statement) {
+        if (statement instanceof JsBlock && ((JsBlock)statement).getStatements().size() == 1) {
+            return ((JsBlock)statement).getStatements().get(0);
+        }
+        else {
+            return statement;
+        }
     }
 
     @NotNull
-    public static JsExpression convertToExpression(@NotNull JsNode jsNode, @NotNull TranslationContext context, @NotNull JsBlock block) {
-        if (jsNode instanceof  JsExpression) {
-            return (JsExpression) jsNode;
-        }
-        else {
-            assert jsNode instanceof JsStatement : "Unexpected node of type: " + jsNode.getClass().toString();
-            TemporaryVariable result = context.declareTemporary(null);
-            AssignToExpressionMutator saveResultToTemporaryMutator = new AssignToExpressionMutator(result.reference());
-            block.getStatements().add(mutateLastExpression(jsNode, saveResultToTemporaryMutator));
-            return result.reference();
-        }
+    public static JsIf newJsIf(
+            @NotNull JsExpression ifExpression,
+            @NotNull JsStatement thenStatement,
+            @Nullable JsStatement elseStatement
+    ) {
+        elseStatement = elseStatement != null ? deBlockIfPossible(elseStatement) : null;
+        return new JsIf(ifExpression, deBlockIfPossible(thenStatement), elseStatement);
+    }
+
+    @NotNull
+    public static JsIf newJsIf(@NotNull JsExpression ifExpression, @NotNull JsStatement thenStatement) {
+        return newJsIf(ifExpression, thenStatement, null);
     }
 
     @Nullable
@@ -99,9 +102,50 @@ public final class JsAstUtils {
         if (block.isEmpty()) {
             return statement;
         } else {
+            if (isEmptyStatement(statement)) {
+                return deBlockIfPossible(block);
+            }
             block.getStatements().add(statement);
             return block;
         }
+    }
+
+    public static boolean isEmptyStatement(@NotNull JsStatement statement) {
+        return statement instanceof JsEmpty;
+    }
+
+    public static boolean isEmptyExpression(@NotNull JsExpression expression) {
+        return expression instanceof JsEmptyExpression;
+    }
+
+    @NotNull
+    public static JsExpression toInt32(@NotNull JsExpression expression, @NotNull TranslationContext context) {
+        return new JsBinaryOperation(JsBinaryOperator.BIT_OR, expression, context.program().getNumberLiteral(0));
+    }
+
+    @NotNull
+    public static JsExpression toShort(@NotNull JsExpression expression) {
+        return new JsInvocation(new JsNameRef(OperatorConventions.SHORT.getIdentifier(), Namer.KOTLIN_OBJECT_REF), expression);
+    }
+
+    @NotNull
+    public static JsExpression toByte(@NotNull JsExpression expression) {
+        return new JsInvocation(new JsNameRef(OperatorConventions.BYTE.getIdentifier(), Namer.KOTLIN_OBJECT_REF), expression);
+    }
+
+    @NotNull
+    public static JsExpression compareTo(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsInvocation(new JsNameRef(OperatorConventions.COMPARE_TO.getIdentifier(), Namer.KOTLIN_OBJECT_REF), left, right);
+    }
+
+    @NotNull
+    public static JsExpression primitiveCompareTo(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsInvocation(new JsNameRef("primitiveCompareTo", Namer.KOTLIN_OBJECT_REF), left, right);
+    }
+
+    @NotNull
+    public static JsExpression isNumber(@NotNull JsExpression expression) {
+        return new JsInvocation(new JsNameRef("isNumber", Namer.KOTLIN_OBJECT_REF), expression);
     }
 
     @NotNull
@@ -151,6 +195,16 @@ public final class JsAstUtils {
     @NotNull
     public static JsBinaryOperation lessThanEq(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
         return new JsBinaryOperation(JsBinaryOperator.LTE, arg1, arg2);
+    }
+
+    @NotNull
+    public static JsBinaryOperation lessThan(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
+        return new JsBinaryOperation(JsBinaryOperator.LT, arg1, arg2);
+    }
+
+    @NotNull
+    public static JsBinaryOperation greaterThan(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
+        return new JsBinaryOperation(JsBinaryOperator.GT, arg1, arg2);
     }
 
     @NotNull

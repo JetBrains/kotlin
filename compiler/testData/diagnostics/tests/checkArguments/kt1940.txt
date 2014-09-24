@@ -1,0 +1,6 @@
+package
+
+package kt1940 {
+    internal fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
+    internal fun test(): kotlin.Unit
+}

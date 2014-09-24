@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
@@ -69,66 +70,85 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
             return namesCompareTo;
         }
 
-        if (!(o1 instanceof CallableDescriptor) || !(o2 instanceof CallableDescriptor)) {
-            assert false : "Descriptors must be callable:\n" + o1 + "\n" + o2;
-        }
+        if (o1 instanceof CallableDescriptor && o2 instanceof CallableDescriptor) {
+            CallableDescriptor c1 = (CallableDescriptor) o1;
+            CallableDescriptor c2 = (CallableDescriptor) o2;
 
-        CallableDescriptor c1 = (CallableDescriptor)o1;
-        CallableDescriptor c2 = (CallableDescriptor)o2;
+            ReceiverParameterDescriptor c1ReceiverParameter = c1.getReceiverParameter();
+            ReceiverParameterDescriptor c2ReceiverParameter = c2.getReceiverParameter();
+            assert (c1ReceiverParameter != null) == (c2ReceiverParameter != null);
+            if (c1ReceiverParameter != null) {
+                String r1 = RENDERER.renderType(c1ReceiverParameter.getType());
+                String r2 = RENDERER.renderType(c2ReceiverParameter.getType());
+                int receiversCompareTo = r1.compareTo(r2);
+                if (receiversCompareTo != 0) {
+                    return receiversCompareTo;
+                }
+            }
 
-        ReceiverParameterDescriptor c1ReceiverParameter = c1.getReceiverParameter();
-        ReceiverParameterDescriptor c2ReceiverParameter = c2.getReceiverParameter();
-        assert (c1ReceiverParameter != null) == (c2ReceiverParameter != null);
-        if (c1ReceiverParameter != null) {
-            String r1 = RENDERER.renderType(c1ReceiverParameter.getType());
-            String r2 = RENDERER.renderType(c2ReceiverParameter.getType());
-            int receiversCompareTo = r1.compareTo(r2);
-            if (receiversCompareTo != 0) {
-                return receiversCompareTo;
+            List<ValueParameterDescriptor> c1ValueParameters = c1.getValueParameters();
+            List<ValueParameterDescriptor> c2ValueParameters = c2.getValueParameters();
+            for (int i = 0; i < Math.min(c1ValueParameters.size(), c2ValueParameters.size()); i++) {
+                String p1 = RENDERER.renderType(c1ValueParameters.get(i).getType());
+                String p2 = RENDERER.renderType(c2ValueParameters.get(i).getType());
+                int parametersCompareTo = p1.compareTo(p2);
+                if (parametersCompareTo != 0) {
+                    return parametersCompareTo;
+                }
+            }
+
+            int valueParametersNumberCompareTo = c1ValueParameters.size() - c2ValueParameters.size();
+            if (valueParametersNumberCompareTo != 0) {
+                return valueParametersNumberCompareTo;
+            }
+
+            List<TypeParameterDescriptor> c1TypeParameters = c1.getTypeParameters();
+            List<TypeParameterDescriptor> c2TypeParameters = c2.getTypeParameters();
+            for (int i = 0; i < Math.min(c1TypeParameters.size(), c2TypeParameters.size()); i++) {
+                String p1 = RENDERER.renderType(c1TypeParameters.get(i).getUpperBoundsAsType());
+                String p2 = RENDERER.renderType(c2TypeParameters.get(i).getUpperBoundsAsType());
+                int parametersCompareTo = p1.compareTo(p2);
+                if (parametersCompareTo != 0) {
+                    return parametersCompareTo;
+                }
+            }
+
+            int typeParametersCompareTo = c1TypeParameters.size() - c2TypeParameters.size();
+            if (typeParametersCompareTo != 0) {
+                return typeParametersCompareTo;
+            }
+
+            if (c1 instanceof CallableMemberDescriptor && c2 instanceof CallableMemberDescriptor) {
+                CallableMemberDescriptor.Kind c1Kind = ((CallableMemberDescriptor) c1).getKind();
+                CallableMemberDescriptor.Kind c2Kind = ((CallableMemberDescriptor) c2).getKind();
+                int kindsCompareTo = c1Kind.ordinal() - c2Kind.ordinal();
+                if (kindsCompareTo != 0) {
+                    return kindsCompareTo;
+                }
             }
         }
+        else if (o1 instanceof ClassDescriptor && o2 instanceof ClassDescriptor) {
+            ClassDescriptor class1 = (ClassDescriptor) o1;
+            ClassDescriptor class2 = (ClassDescriptor) o2;
 
-        List<ValueParameterDescriptor> c1ValueParameters = c1.getValueParameters();
-        List<ValueParameterDescriptor> c2ValueParameters = c2.getValueParameters();
-        for (int i = 0; i < Math.min(c1ValueParameters.size(), c2ValueParameters.size()); i++) {
-            String p1 = RENDERER.renderType(c1ValueParameters.get(i).getType());
-            String p2 = RENDERER.renderType(c2ValueParameters.get(i).getType());
-            int parametersCompareTo = p1.compareTo(p2);
-            if (parametersCompareTo != 0) {
-                return parametersCompareTo;
+            if (class1.getKind().ordinal() != class2.getKind().ordinal()) {
+                return class1.getKind().ordinal() - class2.getKind().ordinal();
             }
         }
-
-        int valueParametersNumberCompareTo = c1ValueParameters.size() - c2ValueParameters.size();
-        if (valueParametersNumberCompareTo != 0) {
-            return valueParametersNumberCompareTo;
+        else {
+            throw new AssertionError(String.format(
+                    "Unsupported pair of descriptors:\n'" +
+                    "%s' Class: %s\n" +
+                    "%s' Class: %s",
+                    o1, o1.getClass(), o2, o2.getClass()));
         }
 
-        List<TypeParameterDescriptor> c1TypeParameters = c1.getTypeParameters();
-        List<TypeParameterDescriptor> c2TypeParameters = c2.getTypeParameters();
-        for (int i = 0; i < Math.min(c1TypeParameters.size(), c2TypeParameters.size()); i++) {
-            String p1 = RENDERER.renderType(c1TypeParameters.get(i).getUpperBoundsAsType());
-            String p2 = RENDERER.renderType(c2TypeParameters.get(i).getUpperBoundsAsType());
-            int parametersCompareTo = p1.compareTo(p2);
-            if (parametersCompareTo != 0) {
-                return parametersCompareTo;
-            }
-        }
+        int renderDiff = RENDERER.render(o1).compareTo(RENDERER.render(o2));
+        if (renderDiff != 0) return renderDiff;
 
-        int typeParametersCompareTo = c1TypeParameters.size() - c2TypeParameters.size();
-        if (typeParametersCompareTo != 0) {
-            return typeParametersCompareTo;
-        }
+        Name firstModuleName = DescriptorUtils.getContainingModule(o1).getName();
+        Name secondModuleName = DescriptorUtils.getContainingModule(o2).getName();
 
-        if (c1 instanceof CallableMemberDescriptor && c2 instanceof CallableMemberDescriptor) {
-            CallableMemberDescriptor.Kind c1Kind = ((CallableMemberDescriptor) c1).getKind();
-            CallableMemberDescriptor.Kind c2Kind = ((CallableMemberDescriptor) c2).getKind();
-            int kindsCompareTo = c1Kind.ordinal() - c2Kind.ordinal();
-            if (kindsCompareTo != 0) {
-                return kindsCompareTo;
-            }
-        }
-
-        return RENDERER.render(o1).compareTo(RENDERER.render(o2));
+        return firstModuleName.compareTo(secondModuleName);
     }
 }

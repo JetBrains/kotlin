@@ -1,0 +1,4 @@
+package
+
+internal fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
+internal fun r(/*0*/ f: () -> kotlin.Int): kotlin.Unit

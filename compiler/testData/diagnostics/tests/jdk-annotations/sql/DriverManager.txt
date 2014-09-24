@@ -1,0 +1,8 @@
+package
+
+internal fun getConnection(/*0*/ url: kotlin.String?): kotlin.Unit
+internal fun getConnection(/*0*/ url: kotlin.String?, /*1*/ props: java.util.Properties?): kotlin.Unit
+internal fun getConnection(/*0*/ url: kotlin.String?, /*1*/ user: kotlin.String?, /*2*/ password: kotlin.String?): kotlin.Unit
+internal fun getDriver(/*0*/ url: kotlin.String?): kotlin.Unit
+internal fun getDrivers(): kotlin.Unit
+internal fun registerDriver(/*0*/ driver: java.sql.Driver?): kotlin.Unit

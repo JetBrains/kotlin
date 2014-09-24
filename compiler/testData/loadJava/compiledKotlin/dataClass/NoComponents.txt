@@ -2,4 +2,10 @@ package test
 
 kotlin.data() internal final class DataClass {
     /*primary*/ public constructor DataClass()
+    internal final /*synthesized*/ fun copy(): test.DataClass
+}
+
+kotlin.data() internal final class OtherDataClass {
+    /*primary*/ public constructor OtherDataClass()
+    internal final /*synthesized*/ fun copy(): test.OtherDataClass
 }

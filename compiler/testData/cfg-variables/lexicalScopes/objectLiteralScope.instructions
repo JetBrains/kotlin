@@ -25,7 +25,7 @@ L0:
     w(x|<v1>)                                                                                INIT: in: {bar=D, x=D} out: {bar=D, x=ID}
   2 jmp?(L2)                                                                                 INIT: in: {bar=D} out: {bar=D}
     d(fun foo() { val a = 2 })
-L2:
+L2 [after local declaration]:
     r(object { { val x = 1 } fun foo() { val a = 2 } }) -> <v2>
     w(bar|<v2>)                                                                              INIT: in: {bar=D} out: {bar=ID}
     mark("after")                                                                            INIT: in: {bar=ID} out: {bar=ID}

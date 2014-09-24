@@ -20,7 +20,7 @@ L0:
     mark({ (x: Int) -> val a = x + b })                                           INIT: in: {b=ID, f=D} out: {b=ID, f=D}
     jmp?(L2)
     d({ (x: Int) -> val a = x + b })                                                                                          USE: in: {b=READ} out: {b=READ}
-L2:
+L2 [after local declaration]:
     r({ (x: Int) -> val a = x + b }) -> <v2>
     w(f|<v2>)                                                                     INIT: in: {b=ID, f=D} out: {b=ID, f=ID}
     mark("after")                                                                 INIT: in: {b=ID, f=ID} out: {b=ID, f=ID}

@@ -22,6 +22,7 @@ import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.BodyResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -57,6 +58,7 @@ public class InjectorForBodyResolve {
     private final BindingTrace bindingTrace;
     private final ModuleDescriptor moduleDescriptor;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
+    private final AdditionalCheckerProvider additionalCheckerProvider;
     private final BodyResolver bodyResolver;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -84,7 +86,8 @@ public class InjectorForBodyResolve {
         @NotNull Project project,
         @NotNull GlobalContext globalContext,
         @NotNull BindingTrace bindingTrace,
-        @NotNull ModuleDescriptor moduleDescriptor
+        @NotNull ModuleDescriptor moduleDescriptor,
+        @NotNull AdditionalCheckerProvider additionalCheckerProvider
     ) {
         this.project = project;
         this.globalContext = globalContext;
@@ -92,6 +95,7 @@ public class InjectorForBodyResolve {
         this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
+        this.additionalCheckerProvider = additionalCheckerProvider;
         this.bodyResolver = new BodyResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -146,6 +150,7 @@ public class InjectorForBodyResolve {
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 
+        expressionTypingComponents.setAdditionalCheckerProvider(additionalCheckerProvider);
         expressionTypingComponents.setCallResolver(callResolver);
         expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
         expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
@@ -178,6 +183,7 @@ public class InjectorForBodyResolve {
 
         controlFlowAnalyzer.setTrace(bindingTrace);
 
+        declarationsChecker.setAdditionalCheckerProvider(additionalCheckerProvider);
         declarationsChecker.setDescriptorResolver(descriptorResolver);
         declarationsChecker.setTrace(bindingTrace);
 

@@ -421,4 +421,11 @@ public class LockBasedStorageManager implements StorageManager {
         }
     }
 
+    @NotNull
+    public static LockBasedStorageManager createDelegatingWithSameLock(
+            @NotNull LockBasedStorageManager base,
+            @NotNull ExceptionHandlingStrategy newStrategy
+    ) {
+        return new LockBasedStorageManager(getPointOfConstruction(), newStrategy, base.lock);
+    }
 }

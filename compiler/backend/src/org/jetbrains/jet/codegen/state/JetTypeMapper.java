@@ -31,10 +31,8 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
@@ -43,7 +41,6 @@ import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
@@ -62,7 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
-import static org.jetbrains.jet.codegen.AsmUtil.isStatic;
+import static org.jetbrains.jet.codegen.AsmUtil.isStaticMethod;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
@@ -110,10 +107,7 @@ public class JetTypeMapper {
         }
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        if (container instanceof JavaClassStaticsPackageFragmentDescriptor) {
-            return mapClass(((JavaClassStaticsPackageFragmentDescriptor) container).getCorrespondingClass());
-        }
-        else if (container instanceof PackageFragmentDescriptor) {
+        if (container instanceof PackageFragmentDescriptor) {
             return Type.getObjectType(internalNameForPackage(
                     (PackageFragmentDescriptor) container,
                     (CallableMemberDescriptor) descriptor,
@@ -447,7 +441,9 @@ public class JetTypeMapper {
                 thisClass = mapClass(currentOwner);
             }
             else {
-                if (isAccessor(functionDescriptor)) {
+                if (isStaticDeclaration(functionDescriptor) ||
+                    isAccessor(functionDescriptor) ||
+                    AnnotationsPackage.isPlatformStaticInObject(functionDescriptor)) {
                     invokeOpcode = INVOKESTATIC;
                 }
                 else if (isInterface) {
@@ -500,10 +496,7 @@ public class JetTypeMapper {
     }
 
     public static boolean isAccessor(@NotNull CallableMemberDescriptor descriptor) {
-        return descriptor instanceof AccessorForFunctionDescriptor ||
-               descriptor instanceof AccessorForPropertyDescriptor ||
-               descriptor instanceof AccessorForPropertyDescriptor.Getter ||
-               descriptor instanceof AccessorForPropertyDescriptor.Setter;
+        return descriptor instanceof AccessorForCallableDescriptor<?>;
     }
 
     @NotNull
@@ -632,7 +625,7 @@ public class JetTypeMapper {
         Type ownerType = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context, getOutDirectory()));
         String descriptor = getDefaultDescriptor(jvmSignature, functionDescriptor.getReceiverParameter() != null);
         boolean isConstructor = "<init>".equals(jvmSignature.getName());
-        if (!isStatic(kind) && !isConstructor) {
+        if (!isStaticMethod(kind, functionDescriptor) && !isConstructor) {
             descriptor = descriptor.replace("(", "(" + ownerType.getDescriptor());
         }
 
@@ -798,6 +791,7 @@ public class JetTypeMapper {
                 type = sharedVarType;
             }
             else if (isLocalNamedFun(variableDescriptor)) {
+                //noinspection CastConflictsWithInstanceof
                 type = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) variableDescriptor);
             }
             else {
@@ -891,18 +885,16 @@ public class JetTypeMapper {
     }
 
     public Type getSharedVarType(DeclarationDescriptor descriptor) {
-        if (descriptor instanceof PropertyDescriptor) {
-            return StackValue.sharedTypeForType(mapType(((PropertyDescriptor) descriptor).getReceiverParameter().getType()));
-        }
-        else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+        if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
             return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
         }
-        else if (descriptor instanceof FunctionDescriptor) {
-            return StackValue.sharedTypeForType(mapType(((FunctionDescriptor) descriptor).getReceiverParameter().getType()));
+        else if (descriptor instanceof PropertyDescriptor || descriptor instanceof FunctionDescriptor) {
+            ReceiverParameterDescriptor receiverParameter = ((CallableDescriptor) descriptor).getReceiverParameter();
+            assert receiverParameter != null : "Callable should have a receiver parameter: " + descriptor;
+            return StackValue.sharedTypeForType(mapType(receiverParameter.getType()));
         }
         else if (descriptor instanceof VariableDescriptor && isVarCapturedInClosure(bindingContext, descriptor)) {
-            JetType outType = ((VariableDescriptor) descriptor).getType();
-            return StackValue.sharedTypeForType(mapType(outType));
+            return StackValue.sharedTypeForType(mapType(((VariableDescriptor) descriptor).getType()));
         }
         return null;
     }

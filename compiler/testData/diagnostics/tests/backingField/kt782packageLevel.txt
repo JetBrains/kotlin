@@ -1,0 +1,9 @@
+package
+
+package kt782 {
+    internal val w: kotlin.Int
+    internal val x: kotlin.Int
+    internal val y: kotlin.Int = 11
+    internal val z: kotlin.Int = 34
+    internal fun foo(): kotlin.Unit
+}

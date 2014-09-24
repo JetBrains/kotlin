@@ -27,15 +27,16 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
+import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
+import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassId;
 import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
-import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
-import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
+import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.getClassId;
+import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinClassIdToJavaClassId;
 
 public abstract class BaseDescriptorLoader {
     protected KotlinClassFinder kotlinClassFinder;
@@ -99,7 +100,7 @@ public abstract class BaseDescriptorLoader {
             @NotNull AnnotatedCallableKind kind
     ) {
         if (container instanceof PackageFragmentDescriptor) {
-            return getPackagePartClassFqNameSafe((PackageFragmentDescriptor) container, proto, nameResolver);
+            return findPackagePartClass((PackageFragmentDescriptor) container, proto, nameResolver);
         }
         else if (isClassObject(container) && isStaticFieldInOuter(proto)) {
             // Backing fields of properties of a class object are generated in the outer class
@@ -111,7 +112,8 @@ public abstract class BaseDescriptorLoader {
 
             if (proto.hasExtension(JavaProtoBuf.implClassName)) {
                 Name tImplName = nameResolver.getName(proto.getExtension(JavaProtoBuf.implClassName));
-                return kotlinClassFinder.findKotlinClass(containingPackage.getFqName().child(tImplName));
+                // TODO: store accurate name for nested traits
+                return kotlinClassFinder.findKotlinClass(new ClassId(containingPackage.getFqName(), tImplName));
             }
             return null;
         }
@@ -120,13 +122,13 @@ public abstract class BaseDescriptorLoader {
     }
 
     @Nullable
-    private KotlinJvmBinaryClass getPackagePartClassFqNameSafe(
+    private KotlinJvmBinaryClass findPackagePartClass(
             @NotNull PackageFragmentDescriptor container,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver
     ) {
         if (proto.hasExtension(JavaProtoBuf.implClassName)) {
-            return kotlinClassFinder.findKotlinClass(container.getFqName().child(getPackagePartClassName(proto, nameResolver)));
+            return kotlinClassFinder.findKotlinClass(new ClassId(container.getFqName(), getPackagePartClassName(proto, nameResolver)));
         }
         return null;
     }
@@ -150,11 +152,10 @@ public abstract class BaseDescriptorLoader {
     @Nullable
     protected KotlinJvmBinaryClass findKotlinClassByDescriptor(@NotNull ClassOrPackageFragmentDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
-            return kotlinClassFinder.findKotlinClass(kotlinFqNameToJavaFqName(naiveKotlinFqName((ClassDescriptor) descriptor)));
+            return kotlinClassFinder.findKotlinClass(kotlinClassIdToJavaClassId(getClassId((ClassDescriptor) descriptor)));
         }
         else if (descriptor instanceof PackageFragmentDescriptor) {
-            return kotlinClassFinder.findKotlinClass(
-                    PackageClassUtils.getPackageClassFqName(((PackageFragmentDescriptor) descriptor).getFqName()));
+            return kotlinClassFinder.findKotlinClass(getPackageClassId(((PackageFragmentDescriptor) descriptor).getFqName()));
         }
         else {
             throw new IllegalStateException("Unrecognized descriptor: " + descriptor);

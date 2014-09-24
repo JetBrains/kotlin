@@ -89,7 +89,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     public JetTypeInfo visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, ExpressionTypingContext context) {
         TopDownAnalyzer.processClassOrObject(
                 components.globalContext,
-                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration);
+                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration,
+                components.additionalCheckerProvider);
         return DataFlowUtils.checkStatementType(declaration, context, context.dataFlowInfo);
     }
 
@@ -185,7 +186,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     public JetTypeInfo visitClass(@NotNull JetClass klass, ExpressionTypingContext context) {
         TopDownAnalyzer.processClassOrObject(
                 components.globalContext,
-                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), klass);
+                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), klass,
+                components.additionalCheckerProvider);
         return DataFlowUtils.checkStatementType(klass, context, context.dataFlowInfo);
     }
 

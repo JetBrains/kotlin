@@ -4,6 +4,9 @@ Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socke
 vars.kt:6
 Compile bytecode for a
 Compile bytecode for a += 1
+a
+
+// RESULT: 3: I
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

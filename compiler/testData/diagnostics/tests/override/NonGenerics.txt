@@ -1,0 +1,103 @@
+package
+
+package override {
+
+    package override.normal {
+
+        internal abstract class MyAbstractClass {
+            public constructor MyAbstractClass()
+            internal abstract val prr: kotlin.Unit
+            internal abstract fun bar(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        internal final class MyChildClass : override.normal.MyClass {
+            public constructor MyChildClass()
+            internal open override /*1*/ /*fake_override*/ val pr: kotlin.Unit
+            internal open override /*1*/ /*fake_override*/ val prr: kotlin.Unit
+            internal open override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        internal final class MyChildClass1 : override.normal.MyClass {
+            public constructor MyChildClass1()
+            internal final override /*1*/ val pr: kotlin.Unit
+            internal open override /*1*/ val prr: kotlin.Unit
+            internal open override /*1*/ fun bar(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal final override /*1*/ fun foo(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        internal open class MyClass : override.normal.MyTrait, override.normal.MyAbstractClass {
+            public constructor MyClass()
+            internal open override /*1*/ val pr: kotlin.Unit
+            internal open override /*1*/ val prr: kotlin.Unit
+            internal open override /*1*/ fun bar(): kotlin.Unit
+            public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal open override /*1*/ fun foo(): kotlin.Unit
+            public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        internal final class MyIllegalClass : override.normal.MyTrait, override.normal.MyAbstractClass {
+            public constructor MyIllegalClass()
+            internal abstract override /*1*/ /*fake_override*/ val pr: kotlin.Unit
+            internal abstract override /*1*/ /*fake_override*/ val prr: kotlin.Unit
+            internal abstract override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+            public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal abstract override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+            public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        internal final class MyIllegalClass2 : override.normal.MyTrait, override.normal.MyAbstractClass {
+            public constructor MyIllegalClass2()
+            internal open override /*1*/ val pr: kotlin.Unit
+            internal open override /*1*/ val prr: kotlin.Unit
+            internal abstract override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+            public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal open override /*1*/ fun foo(): kotlin.Unit
+            public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        internal final class MyIllegalClass3 : override.normal.MyTrait, override.normal.MyAbstractClass {
+            public constructor MyIllegalClass3()
+            internal open override /*1*/ val pr: kotlin.Unit
+            internal open override /*1*/ val prr: kotlin.Unit
+            internal open override /*1*/ fun bar(): kotlin.Unit
+            public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal abstract override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+            public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        internal final class MyIllegalClass4 : override.normal.MyTrait, override.normal.MyAbstractClass {
+            public constructor MyIllegalClass4()
+            internal open val otherPr: kotlin.Int = 1
+            internal final override /*1*/ val pr: kotlin.Unit
+            internal abstract override /*1*/ /*fake_override*/ val prr: kotlin.Unit
+            internal abstract override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+            public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal final override /*1*/ fun foo(): kotlin.Unit
+            public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            internal open fun other(): kotlin.Unit
+            public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        internal trait MyTrait {
+            internal abstract val pr: kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal abstract fun foo(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}

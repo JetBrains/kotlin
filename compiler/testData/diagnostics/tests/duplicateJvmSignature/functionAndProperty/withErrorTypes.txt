@@ -1,0 +1,9 @@
+package
+
+internal trait T {
+    internal abstract val x: [ERROR : ErrorType]
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal abstract fun getX(): [ERROR : ErrorType1]
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

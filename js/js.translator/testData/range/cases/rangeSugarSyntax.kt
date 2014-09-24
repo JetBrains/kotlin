@@ -1,7 +1,5 @@
 package foo
 
-import js.*
-
 fun box(): Boolean {
 
     var twoToFive = 2..5

@@ -1,0 +1,14 @@
+package
+
+package kt1738 {
+    internal fun test(/*0*/ a: kt1738.A): kotlin.Unit
+
+    internal final class A {
+        public constructor A(/*0*/ i: kotlin.Int, /*1*/ j: kotlin.Int)
+        private final var i: kotlin.Int
+        internal final var j: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -1,0 +1,14 @@
+// WITH_RUNTIME
+// SIBLING:
+fun foo() {
+    val pair = pair()
+    val a = pair.first
+    var b = pair.second
+    println(a + b)
+}
+
+private fun pair(): Pair<Int, Int> {
+    val a = 1
+    var b = 2
+    return Pair(a, b)
+}

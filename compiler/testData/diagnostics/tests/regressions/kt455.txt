@@ -1,0 +1,6 @@
+package
+
+package kt455 {
+    internal fun doSmth(/*0*/ i: kotlin.Int): kotlin.Unit
+    internal fun foo(): kotlin.Unit
+}

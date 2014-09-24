@@ -40,6 +40,13 @@ abstract class LazyAnnotationsContext(
     abstract val scope: JetScope
 }
 
+class LazyAnnotationsContextImpl(
+        annotationResolver: AnnotationResolver,
+        storageManager: StorageManager,
+        trace: BindingTrace,
+        override val scope: JetScope
+) : LazyAnnotationsContext(annotationResolver, storageManager, trace)
+
 public class LazyAnnotations(
         val c: LazyAnnotationsContext,
         val annotationEntries: List<JetAnnotationEntry>

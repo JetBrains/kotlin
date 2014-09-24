@@ -159,6 +159,20 @@ object InvokeIntrinsic : FunctionCallCase {
     override fun FunctionCallInfo.thisObject(): JsExpression {
         return JsInvocation(thisObject, argumentsInfo.getTranslateArguments())
     }
+
+    /**
+     * A call of extension lambda in compiler looks like as call of invoke function of some ExtensionFunctionN instance.
+     * So that call have both receivers -- some ExtensionFunctionN instance as this and receiverObject as receiver.
+     *
+     * in Kotlin code:
+     *      obj.extLambda(some, args)
+     *
+     * in compiler:
+     *      (this: extLambda, receiver: obj).invoke(some, args)
+     *
+     * in result JS:
+     *      extLambda.call(obj, some, args)
+     */
     override fun FunctionCallInfo.bothReceivers(): JsExpression {
         return JsInvocation(Namer.getFunctionCallRef(thisObject!!), addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
     }

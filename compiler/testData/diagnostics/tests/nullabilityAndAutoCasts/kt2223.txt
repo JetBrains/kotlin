@@ -1,0 +1,5 @@
+package
+
+package kt2223 {
+    internal fun foo(): kotlin.Unit
+}

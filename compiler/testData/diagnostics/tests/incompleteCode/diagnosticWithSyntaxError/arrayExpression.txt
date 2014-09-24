@@ -1,0 +1,5 @@
+package
+
+package bar {
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+}

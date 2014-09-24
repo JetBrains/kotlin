@@ -1,0 +1,5 @@
+package
+
+internal fun executeQuery(/*0*/ statement: java.sql.PreparedStatement): kotlin.Unit
+internal fun executeQuery(/*0*/ statement: java.sql.Statement, /*1*/ cmd: kotlin.String?): kotlin.Unit
+internal fun executeUpdate(/*0*/ statement: java.sql.Statement, /*1*/ cmd: kotlin.String?): kotlin.Unit

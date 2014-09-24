@@ -3,9 +3,9 @@
 */
 package hello
 
-import js.dom.html5.*
-import js.dom.html.window
-import js.jquery.*
+import kotlin.js.dom.html.window
+import kotlin.js.dom.html5.*
+import jquery.*
 
 val canvas: HTMLCanvasElement
     get() {

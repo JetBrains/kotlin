@@ -16,28 +16,21 @@
 
 package org.jetbrains.jet.plugin.libraries
 
-import org.jetbrains.jet.descriptors.serialization.ClassId
+import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.descriptors.serialization.ClassDataFinder
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.jet.lang.resolve.kotlin.*
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.storage.LockBasedStorageManager
 import java.util.Collections
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
-import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorLoader
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
-import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage
-import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorLoader
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap
@@ -48,8 +41,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
     assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val classFqName = kotlinClass!!.getClassName().getFqNameForClassNameWithoutDollars()
-    val packageFqName = classFqName.parent()
+    val packageFqName = kotlinClass!!.getClassId().getPackageFqName()
     return DeserializerForDecompiler(classFile.getParent()!!, packageFqName)
 }
 
@@ -60,15 +52,14 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), listOf(), PlatformToKotlinClassMap.EMPTY)
 
-    override fun resolveTopLevelClass(classFqName: FqName) = deserializationContext.classDeserializer.deserializeClass(classFqName.toClassId())
+    override fun resolveTopLevelClass(classId: ClassId) = deserializationContext.classDeserializer.deserializeClass(classId)
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
         assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")
-        val packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName)
-        val binaryClassForPackageClass = localClassFinder.findKotlinClass(packageClassFqName)
+        val binaryClassForPackageClass = localClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFqName))
         val annotationData = binaryClassForPackageClass?.getClassHeader()?.annotationData
         if (annotationData == null) {
-            LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassName()}")
+            LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassId()}")
             return Collections.emptyList()
         }
         val membersScope = DeserializedPackageMemberScope(
@@ -79,16 +70,15 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         return membersScope.getAllDescriptors()
     }
 
-    private val localClassFinder = object: KotlinClassFinder {
-        override fun findKotlinClass(fqName: FqName) = findKotlinClass(fqName.toClassId())
-        override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.getFqName()!!)
+    private val localClassFinder = object : KotlinClassFinder {
+        override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.classId)
 
-        fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
+        override fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
             if (classId.getPackageFqName() != directoryPackageFqName) {
                 return null
             }
             val segments = DeserializedResolverUtils.kotlinFqNameToJavaFqName(classId.getRelativeClassName()).pathSegments()
-            val targetName = segments.makeString("$", postfix = ".class")
+            val targetName = segments.joinToString("$", postfix = ".class")
             val virtualFile = packageDirectory.findChild(targetName)
             if (virtualFile != null && isKotlinCompiledFile(virtualFile)) {
                 return KotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)
@@ -124,7 +114,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
             val binaryClass = localClassFinder.findKotlinClass(classId) ?: return null
             val data = binaryClass.getClassHeader().annotationData
             if (data == null) {
-                LOG.error("Annotation data missing for ${binaryClass.getClassName()}")
+                LOG.error("Annotation data missing for ${binaryClass.getClassId()}")
                 return null
             }
             return JavaProtoBufUtil.readClassDataFrom(data)
@@ -161,21 +151,11 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         return MutablePackageFragmentDescriptor(moduleDescriptor, fqName)
     }
 
-    // we need a "magic" way to obtain ClassId from FqName
-    // the idea behind this function is that we need accurate class ids only for "neighbouring" classes (inner classes, class object, etc)
-    // for all others we can build any ClassId since it will resolve to MissingDependencyErrorClassDescriptor which only stores fqName
-    private fun FqName.toClassId(): ClassId {
-        val segments = pathSegments()
-        val packageSegmentsCount = directoryPackageFqName.pathSegments().size
-        if (segments.size <= packageSegmentsCount) {
-            return ClassId.topLevel(this)
+    private val JavaClass.classId: ClassId
+        get() {
+            val outer = getOuterClass()
+            return if (outer == null) ClassId.topLevel(getFqName()!!) else outer.classId.createNestedClassId(getName())
         }
-        val packageFqName = FqName.fromSegments(segments.subList(0, packageSegmentsCount) map { it.asString() })
-        if (packageFqName == directoryPackageFqName) {
-            return ClassId(packageFqName, FqNameUnsafe.fromSegments(segments.subList(packageSegmentsCount, segments.size)))
-        }
-        return ClassId.topLevel(this)
-    }
 
     class object {
         private val LOG = Logger.getInstance(javaClass<DeserializerForDecompiler>())
@@ -188,7 +168,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
                 LOG.error("Could not infer visibility for $descriptor")
             }
             override fun reportIncompatibleAbiVersion(kotlinClass: KotlinJvmBinaryClass, actualVersion: Int) {
-                LOG.error("Incompatible ABI version for class ${kotlinClass.getClassName()}, actual version: $actualVersion")
+                LOG.error("Incompatible ABI version for class ${kotlinClass.getClassId()}, actual version: $actualVersion")
             }
         }
     }

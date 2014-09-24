@@ -1,0 +1,5 @@
+package
+
+internal fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
+internal fun kotlin.Int.invoke(/*0*/ a: kotlin.Any, /*1*/ i: kotlin.Int): kotlin.Unit
+internal fun kotlin.Int.invoke(/*0*/ i: kotlin.Int, /*1*/ a: kotlin.Any): kotlin.Unit

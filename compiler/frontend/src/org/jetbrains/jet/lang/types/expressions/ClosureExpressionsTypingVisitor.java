@@ -89,7 +89,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                                              null, // don't need to add classifier of object literal to any scope
                                              context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
                                              context.scope.getContainingDeclaration(),
-                                             expression.getObjectDeclaration());
+                                             expression.getObjectDeclaration(), components.additionalCheckerProvider);
 
         DelegatingBindingTrace cloneDelta = new DelegatingBindingTrace(
                 new BindingTraceContext().getBindingContext(), "cached delta trace for object literal expression resolve", expression);

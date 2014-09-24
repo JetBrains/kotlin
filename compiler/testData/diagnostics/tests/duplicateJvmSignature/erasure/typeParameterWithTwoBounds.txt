@@ -1,0 +1,17 @@
+package
+
+internal fun foo(/*0*/ x: Bar): Bar
+internal fun foo(/*0*/ x: Foo): Foo
+internal fun </*0*/ T : Foo> foo(/*0*/ x: T): T where T : Bar
+
+internal trait Bar {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait Foo {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

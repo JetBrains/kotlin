@@ -35,23 +35,13 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.CodeFragmentUtilPackage;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentScopeForJavaPackage;
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.jet.lang.descriptors.Modality.FINAL;
@@ -79,43 +69,6 @@ public class JvmCodegenUtil {
 
     public static <T> T peekFromStack(Stack<T> stack) {
         return stack.empty() ? null : stack.peek();
-    }
-
-    @Nullable
-    public static FunctionDescriptor getDeclaredFunctionByRawSignature(
-            @NotNull ClassDescriptor owner,
-            @NotNull Name name,
-            @NotNull ClassifierDescriptor returnedClassifier,
-            @NotNull ClassifierDescriptor... valueParameterClassifiers
-    ) {
-        Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name);
-        for (FunctionDescriptor function : functions) {
-            if (!CallResolverUtil.isOrOverridesSynthesized(function)
-                && function.getTypeParameters().isEmpty()
-                && valueParameterClassesMatch(function.getValueParameters(), Arrays.asList(valueParameterClassifiers))
-                && rawTypeMatches(function.getReturnType(), returnedClassifier)) {
-                return function;
-            }
-        }
-        return null;
-    }
-
-    private static boolean valueParameterClassesMatch(
-            @NotNull List<ValueParameterDescriptor> parameters,
-            @NotNull List<ClassifierDescriptor> classifiers) {
-        if (parameters.size() != classifiers.size()) return false;
-        for (int i = 0; i < parameters.size(); i++) {
-            ValueParameterDescriptor parameterDescriptor = parameters.get(i);
-            ClassifierDescriptor classDescriptor = classifiers.get(i);
-            if (!rawTypeMatches(parameterDescriptor.getType(), classDescriptor)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean rawTypeMatches(JetType type, ClassifierDescriptor classifier) {
-        return type.getConstructor().equals(classifier.getTypeConstructor());
     }
 
     private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {
@@ -172,7 +125,8 @@ public class JvmCodegenUtil {
             @NotNull DeserializedCallableMemberDescriptor descriptor,
             @Nullable File outDirectory
     ) {
-        if (descriptor.getContainingDeclaration() instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
+        DeclarationDescriptor packageFragment = descriptor.getContainingDeclaration();
+        if (packageFragment instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
             return true;
         }
 
@@ -180,16 +134,11 @@ public class JvmCodegenUtil {
             return false;
         }
 
-        if (!(descriptor.getContainingDeclaration() instanceof JavaPackageFragmentDescriptor)) {
+        if (!(packageFragment instanceof LazyJavaPackageFragment)) {
             return false;
         }
-        JavaPackageFragmentDescriptor packageFragment = (JavaPackageFragmentDescriptor) descriptor.getContainingDeclaration();
-        JetScope packageScope = packageFragment.getMemberScope();
-        if (!(packageScope instanceof LazyPackageFragmentScopeForJavaPackage)) {
-            return false;
-        }
-        KotlinJvmBinaryClass binaryClass = ((LazyPackageFragmentScopeForJavaPackage) packageScope).getKotlinBinaryClass();
 
+        KotlinJvmBinaryClass binaryClass = ((LazyJavaPackageFragment) packageFragment).getMemberScope().getKotlinBinaryClass();
         if (binaryClass instanceof VirtualFileKotlinClass) {
             VirtualFile file = ((VirtualFileKotlinClass) binaryClass).getFile();
             if (file.getFileSystem().getProtocol() == StandardFileSystems.FILE_PROTOCOL) {
@@ -197,6 +146,7 @@ public class JvmCodegenUtil {
                 return ioFile.getAbsolutePath().startsWith(outDirectory.getAbsolutePath() + File.separator);
             }
         }
+
         return false;
     }
 
@@ -279,20 +229,6 @@ public class JvmCodegenUtil {
         }
 
         return null;
-    }
-
-    public static boolean isEnumValueOfMethod(@NotNull FunctionDescriptor functionDescriptor) {
-        List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
-        JetType nullableString = TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getStringType());
-        return "valueOf".equals(functionDescriptor.getName().asString())
-               && methodTypeParameters.size() == 1
-               && JetTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
-    }
-
-    public static boolean isEnumValuesMethod(@NotNull FunctionDescriptor functionDescriptor) {
-        List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
-        return "values".equals(functionDescriptor.getName().asString())
-               && methodTypeParameters.isEmpty();
     }
 
     @NotNull

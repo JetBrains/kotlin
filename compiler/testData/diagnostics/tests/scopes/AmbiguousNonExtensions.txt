@@ -1,0 +1,14 @@
+package
+
+internal val ff: [ERROR : Type for f()]
+internal val vv: [ERROR : Type for v]
+
+package a {
+    internal val v: kotlin.Int = 1
+    internal fun f(): kotlin.Int
+}
+
+package b {
+    internal val v: kotlin.Int = 1
+    internal fun f(): kotlin.Int
+}

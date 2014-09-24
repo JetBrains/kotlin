@@ -1,0 +1,11 @@
+package
+
+internal val </*0*/ T, /*1*/ T> T.foo: kotlin.Int
+internal fun </*0*/ T, /*1*/ T> Pair(): kotlin.Unit
+
+internal final class P</*0*/ T, /*1*/ T> {
+    public constructor P</*0*/ T, /*1*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

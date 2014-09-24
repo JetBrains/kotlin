@@ -1,28 +1,26 @@
-package js.jquery.ui
+package jquery.ui
 
 
 //jquery UI
-import js.jquery.JQuery
-import js.native
-import js.Json
+import jquery.JQuery
 
 native
-fun JQuery.buttonset()  : JQuery = js.noImpl;
+public fun JQuery.buttonset()  : JQuery = noImpl;
 native
-fun JQuery.dialog() : JQuery = js.noImpl;
+public fun JQuery.dialog() : JQuery = noImpl;
 native
-fun JQuery.dialog(params : Json) : JQuery = js.noImpl
+public fun JQuery.dialog(params : Json) : JQuery = noImpl
 native
-fun JQuery.dialog(mode : String, param : String) : Any? = js.noImpl
+public fun JQuery.dialog(mode : String, param : String) : Any? = noImpl
 native
-fun JQuery.dialog(mode : String) : JQuery = js.noImpl
+public fun JQuery.dialog(mode : String) : JQuery = noImpl
 native
-fun JQuery.dialog(mode : String, param : String, value : Any?) : JQuery = js.noImpl
+public fun JQuery.dialog(mode : String, param : String, value : Any?) : JQuery = noImpl
 native
-fun JQuery.button() : JQuery = js.noImpl;
+public fun JQuery.button() : JQuery = noImpl;
 native
-fun JQuery.accordion() : JQuery = js.noImpl
+public fun JQuery.accordion() : JQuery = noImpl
 native
-fun JQuery.draggable(params : Json) : JQuery = js.noImpl
+public fun JQuery.draggable(params : Json) : JQuery = noImpl
 native
-fun JQuery.selectable() : JQuery = js.noImpl
+public fun JQuery.selectable() : JQuery = noImpl

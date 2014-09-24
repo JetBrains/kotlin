@@ -1,0 +1,24 @@
+package
+
+kotlin.inline() public fun test(): kotlin.Unit
+kotlin.inline() internal fun testInternal(): kotlin.Unit
+
+public final class Z {
+    public constructor Z()
+    internal final val privateProperty: kotlin.Int = 11
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun privateFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Z2 {
+    public constructor Z2()
+    private final val privateProperty: kotlin.Int = 11
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    private final fun privateFun(): kotlin.Unit
+    kotlin.inline() public final fun test(): kotlin.Unit
+    kotlin.inline() internal final fun testInternal(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

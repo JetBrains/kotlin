@@ -1,0 +1,6 @@
+package
+
+package noInformationForParameter {
+    internal fun </*0*/ S> newList(): java.util.ArrayList<S>
+    internal fun test(): kotlin.Unit
+}

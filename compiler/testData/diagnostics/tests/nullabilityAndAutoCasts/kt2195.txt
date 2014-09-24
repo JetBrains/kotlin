@@ -1,0 +1,5 @@
+package
+
+package foo {
+    private fun </*0*/ T> sendCommand(/*0*/ errorCallback: (() -> kotlin.Unit)? = ...): kotlin.Unit
+}

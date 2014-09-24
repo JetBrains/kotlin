@@ -1,0 +1,18 @@
+package
+
+internal fun test(): kotlin.Unit
+
+public open class JavaClass {
+    public constructor JavaClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    private final val privateFinal: JavaClass
+    private final var privateMutable: kotlin.Throwable?
+    protected/*protected static*/ final val protectedFinal: kotlin.Double
+    protected/*protected static*/ final var protectedMutable: kotlin.Char
+    public final val publicFinal: kotlin.String
+    public final var publicMutable: kotlin.Any?
+}

@@ -38,15 +38,23 @@ public trait ResolverForModule {
 public trait ResolverForProject<M : ModuleInfo, R : ResolverForModule> {
     public fun resolverForModule(moduleInfo: M): R
     public fun descriptorForModule(moduleInfo: M): ModuleDescriptor
+    val allModules: Collection<M>
+}
+
+public class EmptyResolverForProject<M : ModuleInfo, R : ResolverForModule> : ResolverForProject<M, R> {
+    override fun resolverForModule(moduleInfo: M): R = throw IllegalStateException("Should not be called for $moduleInfo")
+    override fun descriptorForModule(moduleInfo: M) = throw IllegalStateException("Should not be called for $moduleInfo")
+    override val allModules: Collection<M> = listOf()
 }
 
 public class ResolverForProjectImpl<M : ModuleInfo, R : ResolverForModule>(
-        val descriptorByModule: Map<M, ModuleDescriptorImpl>
+        val descriptorByModule: Map<M, ModuleDescriptorImpl>,
+        val delegateResolver: ResolverForProject<M, R> = EmptyResolverForProject()
 ) : ResolverForProject<M, R> {
     val resolverByModuleDescriptor: MutableMap<ModuleDescriptor, R> = HashMap()
 
-    private val allModules: Collection<M> by Delegates.lazy {
-        descriptorByModule.keySet()
+    override val allModules: Collection<M> by Delegates.lazy {
+        (descriptorByModule.keySet() + delegateResolver.allModules).toSet()
     }
 
     private fun assertCorrectModuleInfo(moduleInfo: M) {
@@ -57,13 +65,13 @@ public class ResolverForProjectImpl<M : ModuleInfo, R : ResolverForModule>(
 
     override fun resolverForModule(moduleInfo: M): R {
         assertCorrectModuleInfo(moduleInfo)
-        val descriptor = descriptorByModule[moduleInfo]!!
+        val descriptor = descriptorByModule[moduleInfo] ?: return delegateResolver.resolverForModule(moduleInfo)
         return resolverByModuleDescriptor[descriptor]!!
     }
 
     override fun descriptorForModule(moduleInfo: M): ModuleDescriptorImpl {
         assertCorrectModuleInfo(moduleInfo)
-        return descriptorByModule[moduleInfo]!!
+        return descriptorByModule[moduleInfo] ?: return delegateResolver.descriptorForModule(moduleInfo) as ModuleDescriptorImpl
     }
 }
 
@@ -77,6 +85,7 @@ public trait PlatformAnalysisParameters
 public trait ModuleInfo {
     public val name: Name
     public fun dependencies(): List<ModuleInfo>
+    public fun friends(): Collection<ModuleInfo> = listOf()
     public fun dependencyOnBuiltins(): DependencyOnBuiltins = DependenciesOnBuiltins.LAST
 
     //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
@@ -110,7 +119,8 @@ public trait AnalyzerFacade<out A : ResolverForModule, in P : PlatformAnalysisPa
             project: Project,
             modules: Collection<M>,
             modulesContent: (M) -> ModuleContent,
-            platformParameters: P
+            platformParameters: P,
+            delegateResolver: ResolverForProject<M, A> = EmptyResolverForProject()
     ): ResolverForProject<M, A> {
 
         fun createResolverForProject(): ResolverForProjectImpl<M, A> {
@@ -119,7 +129,7 @@ public trait AnalyzerFacade<out A : ResolverForModule, in P : PlatformAnalysisPa
                 module ->
                 descriptorByModule[module] = ModuleDescriptorImpl(module.name, defaultImports, platformToKotlinClassMap)
             }
-            return ResolverForProjectImpl(descriptorByModule)
+            return ResolverForProjectImpl(descriptorByModule, delegateResolver)
         }
 
         val resolverForProject = createResolverForProject()
@@ -137,11 +147,23 @@ public trait AnalyzerFacade<out A : ResolverForModule, in P : PlatformAnalysisPa
                 module.dependencyOnBuiltins().adjustDependencies(builtinsModule, dependenciesDescriptors)
                 dependenciesDescriptors.forEach { currentModule.addDependencyOnModule(it) }
             }
-
-            resolverForProject.descriptorByModule.values().forEach { it.seal() }
         }
 
         setupModuleDependencies()
+
+        fun addFriends() {
+            modules.forEach {
+                module ->
+                val descriptor = resolverForProject.descriptorForModule(module)
+                module.friends().forEach {
+                    descriptor.addFriend(resolverForProject.descriptorForModule(it as M))
+                }
+            }
+        }
+
+        addFriends()
+
+        resolverForProject.descriptorByModule.values().forEach { it.seal() }
 
         fun initializeResolverForProject() {
             modules.forEach {

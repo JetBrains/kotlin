@@ -1,0 +1,19 @@
+== test ==
+fun test(b: Boolean) {
+    while (true) {
+        if (b) break;
+        continue;
+    }
+}
+---------------------
+                                               <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+                                               <v2>: *         NEW: magic[VALUE_CONSUMER](true|<v1>) -> <v2>
+true                                           <v1>: Boolean   NEW: r(true) -> <v1>
+b                                              <v3>: Boolean   NEW: r(b) -> <v3>
+break                                          !<v4>: *
+if (b) break                                   <v5>: *         NEW: merge(if (b) break|!<v4>) -> <v5>
+continue                                       !<v6>: *
+{ if (b) break; continue; }                    !<v6>: *        COPY
+while (true) { if (b) break; continue; }       !<v7>: *
+{ while (true) { if (b) break; continue; } }   !<v7>: *        COPY
+=====================

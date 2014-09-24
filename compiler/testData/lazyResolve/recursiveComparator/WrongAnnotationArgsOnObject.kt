@@ -5,4 +5,4 @@ object SomeObject
 
 val some = SomeObject
 
-annotation class BadAnnotation(s: String)
+annotation class BadAnnotation(val s: String)

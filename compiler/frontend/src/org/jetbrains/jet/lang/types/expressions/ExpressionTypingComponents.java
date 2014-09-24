@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
+import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 
 import javax.inject.Inject;
@@ -33,6 +34,7 @@ public class ExpressionTypingComponents {
     /*package*/ ControlStructureTypingUtils controlStructureTypingUtils;
     /*package*/ ForLoopConventionsChecker forLoopConventionsChecker;
     /*package*/ ReflectionTypes reflectionTypes;
+    /*package*/ AdditionalCheckerProvider additionalCheckerProvider;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -72,6 +74,11 @@ public class ExpressionTypingComponents {
     @Inject
     public void setReflectionTypes(@NotNull ReflectionTypes reflectionTypes) {
         this.reflectionTypes = reflectionTypes;
+    }
+
+    @Inject
+    public void setAdditionalCheckerProvider(AdditionalCheckerProvider additionalCheckerProvider) {
+        this.additionalCheckerProvider = additionalCheckerProvider;
     }
 
     @NotNull

@@ -166,6 +166,9 @@
     <projectService serviceInterface="org.jetbrains.jet.plugin.stubindex.SubpackagesIndexService"
                     serviceImplementation="org.jetbrains.jet.plugin.stubindex.SubpackagesIndexService"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.LibraryModificationTracker"
+                    serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.LibraryModificationTracker"/>
+
     <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>
@@ -207,6 +210,9 @@
         implementation="org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsHandler"
         order="before kotlin.moveFilesOrDirectories"/>
     <moveFileHandler implementation="org.jetbrains.jet.plugin.refactoring.move.moveFilesOrDirectories.MoveKotlinFileHandler" />
+    <refactoring.moveInnerClassUsagesHandler
+        implementationClass="org.jetbrains.jet.plugin.refactoring.move.MoveJavaInnerClassKotlinUsagesHandler"
+        language="jet" />
     <refactoring.copyHandler implementation="org.jetbrains.jet.plugin.refactoring.copy.JetCopyClassHandler"/>
     <refactoring.changeSignatureUsageProcessor implementation="org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureUsageProcessor"/>
     <inlineActionHandler implementation="org.jetbrains.jet.plugin.refactoring.inline.KotlinInlineValHandler"/>
@@ -335,6 +341,7 @@
     <debugger.codeFragmentFactory implementation="org.jetbrains.jet.plugin.debugger.evaluate.KotlinCodeFragmentFactory"/>
     <debuggerEditorTextProvider language="jet" implementationClass="org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider"/>
     <debuggerClassFilterProvider implementation="org.jetbrains.jet.plugin.debugger.filter.KotlinDebuggerInternalClassesFilterProvider"/>
+    <debugger.nodeRenderer implementation="org.jetbrains.jet.plugin.debugger.render.KotlinClassWithDelegatedPropertyRenderer"/>
     <xdebugger.settings implementation="org.jetbrains.jet.plugin.debugger.KotlinDebuggerSettings"/>
 
     <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler"/>

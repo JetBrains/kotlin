@@ -23,7 +23,7 @@ import com.intellij.psi.search.SearchScope
 import org.jetbrains.jet.asJava.LightClassUtil
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import com.intellij.refactoring.rename.RenameJavaMethodProcessor
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
+import org.jetbrains.jet.asJava.KotlinLightMethod
 import kotlin.properties.Delegates
 import org.jetbrains.jet.plugin.refactoring.runReadAction
 

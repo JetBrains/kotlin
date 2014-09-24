@@ -1,0 +1,15 @@
+package
+
+package kt629 {
+    internal fun box(): kotlin.Boolean
+    internal fun box2(): kotlin.Boolean
+
+    internal final class A {
+        public constructor A()
+        internal final var p: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun mod(/*0*/ other: kt629.A): kt629.A
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

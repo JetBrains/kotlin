@@ -1,0 +1,6 @@
+package
+
+internal fun inlineCall(): kotlin.String
+kotlin.inline() internal fun inlineFun(/*0*/ s: () -> kotlin.Int): kotlin.Unit
+internal fun noInline(/*0*/ s: () -> kotlin.Int): kotlin.Unit
+internal fun noInlineCall(): kotlin.String

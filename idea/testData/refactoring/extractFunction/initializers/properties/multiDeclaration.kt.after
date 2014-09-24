@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+// SIBLING:
+fun foo() {
+    val (a, b) = pair()
+}
+
+private fun pair(): Pair<Int, Int> {
+    return 1 to 2
+}

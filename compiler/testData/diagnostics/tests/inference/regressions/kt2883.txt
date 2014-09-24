@@ -1,0 +1,18 @@
+package
+
+package a {
+    internal fun </*0*/ T> bar(/*0*/ t: T): T
+    internal fun </*0*/ TItem> bar(/*0*/ context: a.Y<TItem>): TItem
+    public fun doAction(/*0*/ action: () -> kotlin.Unit): kotlin.Unit
+    internal fun foo(): kotlin.Unit
+    internal fun test(): kotlin.Unit
+    internal fun testWithoutInference(/*0*/ col: kotlin.MutableCollection<kotlin.Int>): kotlin.Unit
+
+    internal final class Y</*0*/ TItem> {
+        public constructor Y</*0*/ TItem>(/*0*/ itemToString: (TItem) -> kotlin.String)
+        internal final val itemToString: (TItem) -> kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

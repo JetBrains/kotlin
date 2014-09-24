@@ -1,0 +1,4 @@
+package
+
+internal fun doSmth(/*0*/ a: kotlin.Any?): kotlin.Any?
+internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit

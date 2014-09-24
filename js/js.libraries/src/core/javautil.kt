@@ -13,49 +13,49 @@ public trait Comparator<T> {
 
 library
 public abstract class AbstractCollection<E>() : MutableCollection<E> {
-    override fun isEmpty(): Boolean = js.noImpl
-    override fun contains(o: Any?): Boolean = js.noImpl
-    override fun iterator(): MutableIterator<E> = js.noImpl
+    override fun isEmpty(): Boolean = noImpl
+    override fun contains(o: Any?): Boolean = noImpl
+    override fun iterator(): MutableIterator<E> = noImpl
 
-    override fun add(e: E): Boolean = js.noImpl
-    override fun remove(o: Any?): Boolean = js.noImpl
+    override fun add(e: E): Boolean = noImpl
+    override fun remove(o: Any?): Boolean = noImpl
 
-    override fun addAll(c: Collection<E>): Boolean = js.noImpl
-    override fun containsAll(c: Collection<Any?>): Boolean = js.noImpl
-    override fun removeAll(c: Collection<Any?>): Boolean = js.noImpl
-    override fun retainAll(c: Collection<Any?>): Boolean = js.noImpl
+    override fun addAll(c: Collection<E>): Boolean = noImpl
+    override fun containsAll(c: Collection<Any?>): Boolean = noImpl
+    override fun removeAll(c: Collection<Any?>): Boolean = noImpl
+    override fun retainAll(c: Collection<Any?>): Boolean = noImpl
 
-    override fun clear(): Unit = js.noImpl
-    override fun size(): Int = js.noImpl
+    override fun clear(): Unit = noImpl
+    override fun size(): Int = noImpl
 
-    override fun hashCode(): Int = js.noImpl
-    override fun equals(other: Any?): Boolean = js.noImpl
+    override fun hashCode(): Int = noImpl
+    override fun equals(other: Any?): Boolean = noImpl
 }
 
 library
 public abstract class AbstractList<E>() : AbstractCollection<E>(), MutableList<E> {
-    override fun get(index: Int): E = js.noImpl
-    override fun set(index: Int, element: E): E = js.noImpl
+    override fun get(index: Int): E = noImpl
+    override fun set(index: Int, element: E): E = noImpl
 
-    override fun add(e: E): Boolean = js.noImpl
-    override fun add(index: Int, element: E): Unit = js.noImpl
-    override fun addAll(index: Int, c: Collection<E>): Boolean = js.noImpl
+    override fun add(e: E): Boolean = noImpl
+    override fun add(index: Int, element: E): Unit = noImpl
+    override fun addAll(index: Int, c: Collection<E>): Boolean = noImpl
 
-    override fun remove(index: Int): E = js.noImpl
+    override fun remove(index: Int): E = noImpl
 
-    override fun indexOf(o: Any?): Int = js.noImpl
-    override fun lastIndexOf(o: Any?): Int = js.noImpl
+    override fun indexOf(o: Any?): Int = noImpl
+    override fun lastIndexOf(o: Any?): Int = noImpl
 
-    override fun listIterator(): MutableListIterator<E> = js.noImpl
-    override fun listIterator(index: Int): MutableListIterator<E> = js.noImpl
+    override fun listIterator(): MutableListIterator<E> = noImpl
+    override fun listIterator(index: Int): MutableListIterator<E> = noImpl
 
-    override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> = js.noImpl
+    override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> = noImpl
 
-    override fun size(): Int = js.noImpl
+    override fun size(): Int = noImpl
 
-    override fun equals(other: Any?): Boolean = js.noImpl
+    override fun equals(other: Any?): Boolean = noImpl
 
-    override fun toString(): String = js.noImpl
+    override fun toString(): String = noImpl
 }
 
 library
@@ -64,12 +64,15 @@ public open class ArrayList<E>(capacity: Int = 0) : AbstractList<E>() {
 
 library
 public open class LinkedList<E>() : AbstractList<E>() {
-    public override fun get(index: Int): E = js.noImpl
-    public override fun set(index: Int, element: E): E = js.noImpl
-    public override fun add(index: Int, element: E): Unit = js.noImpl
-    public fun poll(): E? = js.noImpl
-    public fun peek(): E? = js.noImpl
-    public fun offer(e: E): Boolean = js.noImpl
+    override fun get(index: Int): E = noImpl
+    override fun set(index: Int, element: E): E = noImpl
+    override fun add(index: Int, element: E): Unit = noImpl
+
+    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    public fun poll(): E? = noImpl
+    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    public fun peek(): E? = noImpl
+    public fun offer(e: E): Boolean = noImpl
 }
 
 library
@@ -92,18 +95,21 @@ public open class LinkedHashSet<E>(
 
 library
 public open class HashMap<K, V>(initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR) : MutableMap<K, V> {
-    public override fun size(): Int = js.noImpl
-    public override fun isEmpty(): Boolean = js.noImpl
-    public override fun get(key: Any?): V? = js.noImpl
-    public override fun containsKey(key: Any?): Boolean = js.noImpl
-    public override fun put(key: K, value: V): V = js.noImpl
-    public override fun putAll(m: Map<out K, out V>): Unit = js.noImpl
-    public override fun remove(key: Any?): V? = js.noImpl
-    public override fun clear(): Unit = js.noImpl
-    public override fun containsValue(value: Any?): Boolean = js.noImpl
-    public override fun keySet(): MutableSet<K> = js.noImpl
-    public override fun values(): MutableCollection<V> = js.noImpl
-    public override fun entrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = js.noImpl
+    override fun size(): Int = noImpl
+    override fun isEmpty(): Boolean = noImpl
+    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    override fun get(key: Any?): V? = noImpl
+    override fun containsKey(key: Any?): Boolean = noImpl
+    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    override fun put(key: K, value: V): V? = noImpl
+    override fun putAll(m: Map<out K, V>): Unit = noImpl
+    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    override fun remove(key: Any?): V? = noImpl
+    override fun clear(): Unit = noImpl
+    override fun containsValue(value: Any?): Boolean = noImpl
+    override fun keySet(): MutableSet<K> = noImpl
+    override fun values(): MutableCollection<V> = noImpl
+    override fun entrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = noImpl
 }
 
 library
@@ -122,5 +128,5 @@ public trait Enumeration<E> {
 
 native
 public class Date() {
-    public fun getTime(): Int = js.noImpl
+    public fun getTime(): Int = noImpl
 }

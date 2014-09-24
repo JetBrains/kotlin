@@ -17,31 +17,20 @@
 package org.jetbrains.jet.asJava
 
 import com.intellij.psi.impl.light.LightMethod
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.*
 import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.asJava.light.LightParameter
-import org.jetbrains.jet.asJava.light.LightParameterListBuilder
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
-import com.intellij.psi.PsiParameterList
 import org.jetbrains.jet.plugin.JetLanguage
 import kotlin.properties.Delegates
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValue
-import com.intellij.psi.PsiTypeParameterList
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetProperty
-import com.intellij.psi.PsiTypeParameter
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import com.intellij.psi.search.SearchScope
-import org.jetbrains.jet.utils.*
 
 public class KotlinLightMethodForDeclaration(
         manager: PsiManager, override val delegate: PsiMethod, override val origin: JetDeclaration, containingClass: PsiClass

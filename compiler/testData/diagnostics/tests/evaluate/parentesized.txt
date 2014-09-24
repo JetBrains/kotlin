@@ -1,0 +1,12 @@
+package
+
+internal val b1: kotlin.Byte = 6
+internal val b2: kotlin.Short = 6
+internal val b3: kotlin.Int = 6
+internal val b4: kotlin.Long = 6.toLong()
+internal val i1: kotlin.Int = 6
+internal val i2: kotlin.Int = 6
+internal val p1: kotlin.Byte = 6.toByte()
+internal val p2: kotlin.Short = 6.toShort()
+internal val p3: kotlin.Int = 6
+internal val p4: kotlin.Long = 6.toLong()

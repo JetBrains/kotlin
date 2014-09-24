@@ -26,9 +26,9 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.AsJavaPackage;
+import org.jetbrains.jet.asJava.KotlinLightMethod;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.plugin.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.search.usagesSearch.*;
 

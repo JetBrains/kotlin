@@ -1,0 +1,17 @@
+// -- Module: <m1> --
+package
+
+package p {
+    private val a: kotlin.Int = 1
+    internal val b: kotlin.Int = 1
+}
+
+
+// -- Module: <m2> --
+package
+
+package p {
+    private val a: kotlin.Int = 1
+    internal val b: kotlin.Int = 1
+    internal val c: kotlin.Int = 1
+}

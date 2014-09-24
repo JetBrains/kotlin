@@ -1,0 +1,12 @@
+package
+
+public/*package*/ open class J : K {
+    public/*package*/ constructor J()
+    internal final override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+    public/*package*/ open fun foo(): kotlin.Unit
+}
+
+internal final class K {
+    public constructor K()
+    internal final fun bar(): kotlin.Unit
+}

@@ -1,0 +1,17 @@
+package
+
+package lol {
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+
+    internal final class B {
+        public constructor B()
+        internal final fun divAssign(/*0*/ other: lol.B): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun minusAssign(/*0*/ other: lol.B): kotlin.String
+        internal final fun modAssign(/*0*/ other: lol.B): kotlin.String
+        internal final fun plusAssign(/*0*/ other: lol.B): kotlin.String
+        internal final fun timesAssign(/*0*/ other: lol.B): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

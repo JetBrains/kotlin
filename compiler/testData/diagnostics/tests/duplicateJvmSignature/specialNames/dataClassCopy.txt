@@ -1,0 +1,12 @@
+package
+
+kotlin.data() internal final class C {
+    public constructor C(/*0*/ c: kotlin.Int)
+    internal final val c: kotlin.Int
+    internal final /*synthesized*/ fun component1(): kotlin.Int
+    internal final /*synthesized*/ fun copy(/*0*/ c: kotlin.Int = ...): C
+    internal final fun `copy$default`(/*0*/ c: C, /*1*/ x: kotlin.Int, /*2*/ m: kotlin.Int): C
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

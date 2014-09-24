@@ -18,7 +18,8 @@ package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiSubstitutorImpl;
-import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Visibility;
@@ -88,26 +89,21 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
         return typeParameters(getPsi().getTypeParameters());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @NotNull
     public Collection<JavaClassifierType> getSupertypes() {
-        // TODO: getPsi().getSuperTypes() ?
-        Collection<JavaClassifierType> superClasses = classifierTypes(getPsi().getExtendsListTypes());
-        Collection<JavaClassifierType> superInterfaces = classifierTypes(getPsi().getImplementsListTypes());
-        return ContainerUtil.collect(ContainerUtil.concat(superClasses, superInterfaces).iterator());
+        return classifierTypes(getPsi().getSuperTypes());
     }
 
     @Override
     @NotNull
     public Collection<JavaMethod> getMethods() {
-        return methods(getPsi().getMethods());
-    }
-
-    @Override
-    @NotNull
-    public Collection<JavaMethod> getAllMethods() {
-        return methods(getPsi().getAllMethods());
+        return methods(KotlinPackage.filter(getPsi().getMethods(), new Function1<PsiMethod, Boolean>() {
+            @Override
+            public Boolean invoke(PsiMethod method) {
+                return !method.isConstructor();
+            }
+        }));
     }
 
     @Override
@@ -118,14 +114,8 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
 
     @Override
     @NotNull
-    public Collection<JavaField> getAllFields() {
-        return fields(getPsi().getAllFields());
-    }
-
-    @Override
-    @NotNull
-    public Collection<JavaMethod> getConstructors() {
-        return methods(getPsi().getConstructors());
+    public Collection<JavaConstructor> getConstructors() {
+        return constructors(getPsi().getConstructors());
     }
 
     @Override

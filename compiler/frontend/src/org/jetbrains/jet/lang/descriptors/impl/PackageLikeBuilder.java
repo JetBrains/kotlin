@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
@@ -38,5 +37,5 @@ public interface PackageLikeBuilder {
         NOT_ALLOWED
     }
 
-    ClassObjectStatus setClassObjectDescriptor(@NotNull ClassDescriptor classObjectDescriptor);
+    ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor);
 }

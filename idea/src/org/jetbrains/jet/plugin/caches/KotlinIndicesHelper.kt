@@ -18,34 +18,23 @@ package org.jetbrains.jet.plugin.caches
 
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelObjectShortNameIndex
+import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.jet.plugin.stubindex.*
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelNonExtensionFunctionShortNameIndex
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
-import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.resolve.ImportPath
-import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver
-import org.jetbrains.jet.lang.resolve.BindingTraceContext
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import com.intellij.openapi.project.Project
 import java.util.HashSet
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelNonExtensionPropertyShortNameIndex
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode
 
 public class KotlinIndicesHelper(private val project: Project) {
     public fun getTopLevelObjects(nameFilter: (String) -> Boolean, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope): Collection<ClassDescriptor> {
@@ -63,13 +52,13 @@ public class KotlinIndicesHelper(private val project: Project) {
         val topObjects = JetTopLevelObjectShortNameIndex.getInstance().get(name, project, scope)
         for (objectDeclaration in topObjects) {
             val fqName = objectDeclaration.getFqName() ?: error("Local object declaration in JetTopLevelShortObjectNameIndex:${objectDeclaration.getText()}")
-            result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, fqName, ResolveSessionUtils.SINGLETON_FILTER))
+            result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession.getModuleDescriptor(), fqName, ResolveSessionUtils.SINGLETON_FILTER))
         }
 
         for (psiClass in JetFromJavaDescriptorHelper.getCompiledClassesForTopLevelObjects(project, scope)) {
             val qualifiedName = psiClass.getQualifiedName()
             if (qualifiedName != null) {
-                result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, FqName(qualifiedName), ResolveSessionUtils.SINGLETON_FILTER))
+                result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession.getModuleDescriptor(), FqName(qualifiedName), ResolveSessionUtils.SINGLETON_FILTER))
             }
         }
 
@@ -98,6 +87,7 @@ public class KotlinIndicesHelper(private val project: Project) {
     private fun MutableCollection<in FunctionDescriptor>.addSourceTopLevelFunctions(name: String, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope) {
         val identifier = Name.identifier(name)
         val affectedPackages = JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().get(name, project, scope)
+                .stream()
                 .map { it.getContainingFile() }
                 .filterIsInstance(javaClass<JetFile>())
                 .map { it.getPackageFqName() }
@@ -113,6 +103,7 @@ public class KotlinIndicesHelper(private val project: Project) {
     private fun MutableCollection<in PropertyDescriptor>.addSourceTopLevelProperties(name: String, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope) {
         val identifier = Name.identifier(name)
         val affectedPackages = JetTopLevelNonExtensionPropertyShortNameIndex.getInstance().get(name, project, scope)
+                .stream()
                 .map { it.getContainingFile() }
                 .filterIsInstance(javaClass<JetFile>())
                 .map { it.getPackageFqName() }
@@ -156,7 +147,27 @@ public class KotlinIndicesHelper(private val project: Project) {
         return allFqNames
                 .filter { nameFilter(it.shortName().asString()) }
                 .toSet()
-                .flatMap { ExpressionTypingUtils.canFindSuitableCall(it, receiverExpression, expressionType, jetScope, resolveSession.getModuleDescriptor()) }
+                .flatMap { findSuitableExtensions(it, receiverExpression, expressionType, jetScope, resolveSession.getModuleDescriptor(), context) }
+    }
+
+    /**
+     * Check that function or property with the given qualified name can be resolved in given scope and called on given receiver
+     */
+    private fun findSuitableExtensions(callableFQN: FqName,
+                                    receiverExpression: JetExpression,
+                                    receiverType: JetType,
+                                    scope: JetScope,
+                                    module: ModuleDescriptor,
+                                    bindingContext: BindingContext): List<CallableDescriptor> {
+        val importDirective = JetPsiFactory(receiverExpression).createImportDirective(callableFQN.asString())
+        val declarationDescriptors = analyzeImportReference(importDirective, scope, BindingTraceContext(), module)
+
+        val receiverValue = ExpressionReceiver(receiverExpression, receiverType)
+        val dataFlowInfo = bindingContext.getDataFlowInfo(receiverExpression)
+
+        return declarationDescriptors
+                .filterIsInstance(javaClass<CallableDescriptor>())
+                .filter { it.getReceiverParameter() != null && ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, it, bindingContext, dataFlowInfo) }
     }
 
     public fun getClassDescriptors(nameFilter: (String) -> Boolean, analyzer: KotlinCodeAnalyzer, scope: GlobalSearchScope): Collection<ClassDescriptor> {
@@ -176,12 +187,19 @@ public class KotlinIndicesHelper(private val project: Project) {
         }
 
         // Note: Can't search with psi element as analyzer could be built over temp files
-        return ResolveSessionUtils.getClassDescriptorsByFqName(analyzer, classFQName)
+        return ResolveSessionUtils.getClassDescriptorsByFqName(analyzer.getModuleDescriptor(), classFQName)
     }
 
     private fun findTopLevelCallables(fqName: FqName, context: JetExpression, jetScope: JetScope, resolveSession: ResolveSessionForBodies): Collection<CallableDescriptor> {
         val importDirective = JetPsiFactory(context.getProject()).createImportDirective(ImportPath(fqName, false))
-        val allDescriptors = QualifiedExpressionResolver().analyseImportReference(importDirective, jetScope, BindingTraceContext(), resolveSession.getModuleDescriptor())
+        val allDescriptors = analyzeImportReference(importDirective, jetScope, BindingTraceContext(), resolveSession.getModuleDescriptor())
         return allDescriptors.filterIsInstance(javaClass<CallableDescriptor>()).filter { it.getReceiverParameter() == null }
+    }
+
+    private fun analyzeImportReference(
+            importDirective: JetImportDirective, scope: JetScope, trace: BindingTrace, module: ModuleDescriptor
+    ): Collection<DeclarationDescriptor> {
+        return QualifiedExpressionResolver().processImportReference(importDirective, scope, scope, Importer.DO_NOTHING, trace,
+                                                                    module, LookupMode.EVERYTHING)
     }
 }

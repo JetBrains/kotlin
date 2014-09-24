@@ -1,7 +1,5 @@
 package foo
 
-import js.*
-
 class RangeIterator(val start: Int, var count: Int, val reversed: Boolean) {
 
     var i = start

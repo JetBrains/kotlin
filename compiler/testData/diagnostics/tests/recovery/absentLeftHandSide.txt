@@ -1,0 +1,6 @@
+package
+
+internal fun composite(): kotlin.Unit
+internal fun html(): kotlin.Unit
+internal fun html1(): kotlin.Unit
+internal fun import(): kotlin.Unit

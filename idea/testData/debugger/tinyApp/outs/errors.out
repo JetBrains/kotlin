@@ -2,6 +2,11 @@ LineBreakpoint created at errors.kt:13
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! errors.ErrorsPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 errors.kt:12
+Compile bytecode for prop += 1
+prop2 +=2
+prop + prop2
+
+// RESULT: instance of kotlin.Triple(id=ID): Lkotlin/Triple;
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

@@ -1,0 +1,4 @@
+package
+
+internal fun f(/*0*/ a: kotlin.Boolean, /*1*/ b: kotlin.Int): kotlin.Unit
+internal fun foo(/*0*/ a: kotlin.Any): kotlin.Unit

@@ -1,0 +1,8 @@
+package
+
+internal fun </*0*/ T> f(/*0*/ l: kotlin.List<T>): kotlin.Unit
+internal fun </*0*/ T> test(/*0*/ l: kotlin.List<T>): kotlin.Unit
+
+package foo {
+    internal fun </*0*/ T> f(/*0*/ l: kotlin.List<T>): kotlin.Unit
+}

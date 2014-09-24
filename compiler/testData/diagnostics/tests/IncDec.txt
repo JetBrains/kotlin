@@ -1,0 +1,32 @@
+package
+
+internal fun testIncDec(): kotlin.Unit
+internal fun testUnitIncDec(): kotlin.Unit
+internal fun testWrongIncDec(): kotlin.Unit
+
+internal final class IncDec {
+    public constructor IncDec()
+    internal final fun dec(): IncDec
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun inc(): IncDec
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class UnitIncDec {
+    public constructor UnitIncDec()
+    internal final fun dec(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun inc(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class WrongIncDec {
+    public constructor WrongIncDec()
+    internal final fun dec(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun inc(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

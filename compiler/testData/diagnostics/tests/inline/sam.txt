@@ -1,0 +1,22 @@
+package
+
+public /*synthesized*/ fun Run(/*0*/ function: () -> kotlin.Int): Run
+kotlin.inline() internal fun inlineFunWithInvoke(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun inlineFunWithInvokeNonInline(/*0*/ kotlin.noinline() s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun (kotlin.Int) -> kotlin.Unit.inlineExt(): kotlin.Unit
+
+public trait Run {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun run(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Test {
+    public constructor Test()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final /*synthesized*/ fun test(/*0*/ r: (() -> kotlin.Int)?): kotlin.Unit
+    public open fun test(/*0*/ r: Run?): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

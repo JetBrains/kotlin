@@ -1,0 +1,14 @@
+package
+
+package kt897 {
+
+    internal final class A {
+        public constructor A()
+        internal final val i: kotlin.Int? = null
+        internal final var j: kotlin.Int
+        internal final val k: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

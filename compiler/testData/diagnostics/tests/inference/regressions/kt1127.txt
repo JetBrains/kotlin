@@ -1,0 +1,6 @@
+package
+
+package d {
+    internal fun </*0*/ T> asList(/*0*/ t: T): kotlin.List<T>?
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+}

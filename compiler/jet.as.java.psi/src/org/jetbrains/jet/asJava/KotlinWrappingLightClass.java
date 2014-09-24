@@ -17,22 +17,18 @@
 package org.jetbrains.jet.asJava;
 
 import com.intellij.lang.Language;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.impl.light.LightField;
-import org.jetbrains.jet.asJava.light.KotlinLightField;
 import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.impl.source.ClassInnerStuffCache;
 import com.intellij.psi.impl.source.PsiExtensibleClass;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
 
 import java.util.List;
 
@@ -112,9 +108,16 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
             @Override
             public PsiField fun(PsiField field) {
                 JetDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(field);
-                return declaration instanceof JetProperty
-                        ? new KotlinLightField(myManager, (JetProperty) declaration, field, KotlinWrappingLightClass.this)
-                        : new LightField(myManager, field, KotlinWrappingLightClass.this);
+                if (declaration instanceof JetEnumEntry) {
+                    assert field instanceof PsiEnumConstant : "Field delegate should be an enum constant (" + field.getName() + "):\n" +
+                                                              JetPsiUtil.getElementTextWithContext(declaration);
+                    return new KotlinLightEnumConstant(myManager, (JetEnumEntry) declaration, ((PsiEnumConstant) field),
+                                                       KotlinWrappingLightClass.this);
+                }
+                if (declaration instanceof JetProperty) {
+                    return new KotlinLightFieldForDeclaration(myManager, (JetProperty) declaration, field, KotlinWrappingLightClass.this);
+                }
+                return new LightField(myManager, field, KotlinWrappingLightClass.this);
             }
         });
     }
@@ -131,5 +134,22 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
                        : new LightMethod(myManager, method, KotlinWrappingLightClass.this);
             }
         });
+    }
+
+    @Override
+    public boolean processDeclarations(
+            @NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place
+    ) {
+        if (isEnum()) {
+            if (!PsiClassImplUtil.processDeclarationsInEnum(processor, state, myInnersCache)) return false;
+        }
+
+        return super.processDeclarations(processor, state, lastParent, place);
+    }
+
+    @Override
+    public String getText() {
+        JetClassOrObject origin = getOrigin();
+        return origin == null ? null : origin.getText();
     }
 }

@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.checkers;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import kotlin.Function1;
@@ -26,6 +28,10 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.Call;
@@ -36,15 +42,20 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.test.util.DescriptorValidator;
+import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 
 import java.io.File;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE;
 
 public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
-
     @Override
     protected void analyzeAndCheck(File testDataFile, List<TestFile> testFiles) {
         Map<TestModule, List<TestFile>> groupedByModule = KotlinPackage.groupByTo(
@@ -80,6 +91,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
             if (module == null) {
                 module = support.newModule();
+                modules.put(entry.getKey(), module);
             }
             else {
                 module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
@@ -97,6 +109,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                     null,
                     null
             );
+
             checkAllResolvedCallsAreCompleted(jetFiles, moduleTrace.getBindingContext());
         }
 
@@ -112,9 +125,83 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         assertTrue("Diagnostics mismatch. See the output above", ok);
 
         checkAllResolvedCallsAreCompleted(allJetFiles, supportTrace.getBindingContext());
+
+        File expectedFile = new File(FileUtil.getNameWithoutExtension(testDataFile.getAbsolutePath()) + ".txt");
+        validateAndCompareDescriptorWithFile(expectedFile, testFiles, support, modules);
     }
 
-    private Map<TestModule, ModuleDescriptorImpl> createModules(Map<TestModule, List<TestFile>> groupedByModule) {
+    private void validateAndCompareDescriptorWithFile(
+            File expectedFile,
+            List<TestFile> testFiles,
+            CliLightClassGenerationSupport support,
+            Map<TestModule, ModuleDescriptorImpl> modules
+    ) {
+        ModuleDescriptorImpl lightClassModule = support.getLightClassModule();
+        if (lightClassModule == null) {
+            ModuleDescriptorImpl cliModule = support.newModule();
+            cliModule.initialize(new PackageFragmentProvider() {
+                @NotNull
+                @Override
+                public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
+                    return Collections.emptyList();
+                }
+
+                @NotNull
+                @Override
+                public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
+                    return Collections.emptyList();
+                }
+            });
+        }
+
+        RecursiveDescriptorComparator comparator = new RecursiveDescriptorComparator(createdAffectedPackagesConfiguration(testFiles));
+
+        boolean isMultiModuleTest = modules.size() != 1;
+        StringBuilder rootPackageText = new StringBuilder();
+
+        for (TestModule module : KotlinPackage.sort(modules.keySet())) {
+            ModuleDescriptorImpl moduleDescriptor = modules.get(module);
+            if (isMultiModuleTest) {
+                rootPackageText.append(String.format("// -- Module: %s --\n", moduleDescriptor.getName()));
+            }
+
+            DeclarationDescriptor aPackage = moduleDescriptor.getPackage(FqName.ROOT);
+            assertNotNull(aPackage);
+
+            String actualSerialized = comparator.serializeRecursively(aPackage);
+            rootPackageText.append(actualSerialized);
+
+            if (isMultiModuleTest) {
+                rootPackageText.append("\n\n");
+            }
+        }
+
+        JetTestUtils.assertEqualsToFile(expectedFile, rootPackageText.toString());
+    }
+
+    public static RecursiveDescriptorComparator.Configuration createdAffectedPackagesConfiguration(List<TestFile> testFiles) {
+        final Set<Name> packagesNames = LazyResolveTestUtil.getTopLevelPackagesFromFileList(getJetFiles(testFiles));
+
+        Predicate<DeclarationDescriptor> stepIntoFilter = new Predicate<DeclarationDescriptor>() {
+            @Override
+            public boolean apply(DeclarationDescriptor descriptor) {
+                if (descriptor instanceof PackageViewDescriptor) {
+                    FqName fqName = ((PackageViewDescriptor) descriptor).getFqName();
+
+                    if (fqName.isRoot()) return true;
+
+                    Name firstName = fqName.pathSegments().get(0);
+                    return packagesNames.contains(firstName);
+                }
+
+                return true;
+            }
+        };
+
+        return RECURSIVE.filterRecursion(stepIntoFilter).withValidationStrategy(DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES);
+    }
+
+    public static Map<TestModule, ModuleDescriptorImpl> createModules(Map<TestModule, List<TestFile>> groupedByModule) {
         Map<TestModule, ModuleDescriptorImpl> modules = new HashMap<TestModule, ModuleDescriptorImpl>();
 
         for (TestModule testModule : groupedByModule.keySet()) {

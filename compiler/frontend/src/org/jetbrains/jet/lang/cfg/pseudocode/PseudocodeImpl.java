@@ -23,7 +23,6 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
-import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.MergeInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.AbstractJumpInstruction;
@@ -35,7 +34,6 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.SubroutineExit
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.*;
 
@@ -46,11 +44,13 @@ public class PseudocodeImpl implements Pseudocode {
 
     public class PseudocodeLabel implements Label {
         private final String name;
+        private final String comment;
         private Integer targetInstructionIndex;
 
 
-        private PseudocodeLabel(String name) {
+        private PseudocodeLabel(@NotNull String name, @Nullable String comment) {
             this.name = name;
+            this.comment = comment;
         }
 
         @NotNull
@@ -61,7 +61,7 @@ public class PseudocodeImpl implements Pseudocode {
 
         @Override
         public String toString() {
-            return name;
+            return comment == null ? name : (name + " [" + comment + "]");
         }
 
         public Integer getTargetInstructionIndex() {
@@ -83,8 +83,8 @@ public class PseudocodeImpl implements Pseudocode {
             return mutableInstructionList.get(targetInstructionIndex);
         }
 
-        public Label copy() {
-            return new PseudocodeLabel("copy " + name);
+        public PseudocodeLabel copy(int newLabelIndex) {
+            return new PseudocodeLabel("L" + newLabelIndex, "copy of " + name + ", " + comment);
         }
     }
 
@@ -101,8 +101,7 @@ public class PseudocodeImpl implements Pseudocode {
     private Set<LocalFunctionDeclarationInstruction> localDeclarations = null;
     //todo getters
     private final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
-    private final Map<JetExpression, LoopInfo> loopInfo = Maps.newHashMap();
-    
+
     private final List<PseudocodeLabel> labels = new ArrayList<PseudocodeLabel>();
 
     private final JetElement correspondingElement;
@@ -162,8 +161,8 @@ public class PseudocodeImpl implements Pseudocode {
         return this;
     }
 
-    /*package*/ PseudocodeLabel createLabel(String name) {
-        PseudocodeLabel label = new PseudocodeLabel(name);
+    /*package*/ PseudocodeLabel createLabel(@NotNull String name, @Nullable String comment) {
+        PseudocodeLabel label = new PseudocodeLabel(name, comment);
         labels.add(label);
         return label;
     }
@@ -243,10 +242,6 @@ public class PseudocodeImpl implements Pseudocode {
         if (PseudocodePackage.calcSideEffectFree(instruction)) {
             sideEffectFree.add(instruction);
         }
-    }
-
-    /*package*/ void recordLoopInfo(JetExpression expression, LoopInfo blockInfo) {
-        loopInfo.put(expression, blockInfo);
     }
 
     @Override
@@ -459,13 +454,13 @@ public class PseudocodeImpl implements Pseudocode {
         return mutableInstructionList.get(targetPosition);
     }
 
-    public void repeatPart(@NotNull Label startLabel, @NotNull Label finishLabel) {
+    public int repeatPart(@NotNull Label startLabel, @NotNull Label finishLabel, int labelCount) {
         Integer startIndex = ((PseudocodeLabel) startLabel).getTargetInstructionIndex();
         assert startIndex != null;
         Integer finishIndex = ((PseudocodeLabel) finishLabel).getTargetInstructionIndex();
         assert finishIndex != null;
 
-        Map<Label, Label> originalToCopy = Maps.newHashMap();
+        Map<Label, Label> originalToCopy = Maps.newLinkedHashMap();
         Multimap<Instruction, Label> originalLabelsForInstruction = HashMultimap.create();
         for (PseudocodeLabel label : labels) {
             Integer index = label.getTargetInstructionIndex();
@@ -473,9 +468,12 @@ public class PseudocodeImpl implements Pseudocode {
             if (label == startLabel || label == finishLabel) continue;
 
             if (startIndex <= index && index <= finishIndex) {
-                originalToCopy.put(label, label.copy());
+                originalToCopy.put(label, label.copy(labelCount++));
                 originalLabelsForInstruction.put(getJumpTarget(label), label);
             }
+        }
+        for (Label label : originalToCopy.values()) {
+            labels.add((PseudocodeLabel) label);
         }
         for (int index = startIndex; index < finishIndex; index++) {
             Instruction originalInstruction = mutableInstructionList.get(index);
@@ -483,6 +481,7 @@ public class PseudocodeImpl implements Pseudocode {
             addInstruction(copyInstruction(originalInstruction, originalToCopy));
         }
         repeatLabelsBindingForInstruction(mutableInstructionList.get(finishIndex), originalToCopy, originalLabelsForInstruction);
+        return labelCount;
     }
 
     private void repeatLabelsBindingForInstruction(

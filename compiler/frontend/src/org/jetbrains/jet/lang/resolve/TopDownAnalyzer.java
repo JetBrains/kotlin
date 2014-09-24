@@ -62,6 +62,8 @@ public class TopDownAnalyzer {
     @NotNull
     private BodyResolver bodyResolver;
     @NotNull
+    private AdditionalCheckerProvider additionalCheckerProvider;
+    @NotNull
     private Project project;
 
     @NotNull
@@ -117,6 +119,11 @@ public class TopDownAnalyzer {
         this.lazyTopDownAnalyzer = lazyTopDownAnalyzer;
     }
 
+    @Inject
+    public void setAdditionalCheckerProvider(@NotNull AdditionalCheckerProvider additionalCheckerProvider) {
+        this.additionalCheckerProvider = additionalCheckerProvider;
+    }
+
     public void doProcess(
             @NotNull TopDownAnalysisContext c,
             @NotNull JetScope outerScope,
@@ -132,7 +139,8 @@ public class TopDownAnalyzer {
                     new GlobalContextImpl((LockBasedStorageManager) c.getStorageManager(), c.getExceptionTracker()), // TODO
                     (ModuleDescriptorImpl) moduleDescriptor, // TODO
                     new FileBasedDeclarationProviderFactory(c.getStorageManager(), getFiles(declarations)),
-                    trace
+                    trace,
+                    additionalCheckerProvider
             ).getResolveSession();
 
             lazyTopDownAnalyzer.analyzeDeclarations(
@@ -193,7 +201,8 @@ public class TopDownAnalyzer {
             @Nullable final WritableScope scope,
             @NotNull ExpressionTypingContext context,
             @NotNull final DeclarationDescriptor containingDeclaration,
-            @NotNull JetClassOrObject object
+            @NotNull JetClassOrObject object,
+            @NotNull AdditionalCheckerProvider additionalCheckerProvider
     ) {
         TopDownAnalysisParameters topDownAnalysisParameters =
                 TopDownAnalysisParameters.createForLocalDeclarations(
@@ -203,7 +212,11 @@ public class TopDownAnalyzer {
                 );
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                object.getProject(), topDownAnalysisParameters, context.trace, DescriptorUtils.getContainingModule(containingDeclaration)
+                object.getProject(),
+                topDownAnalysisParameters,
+                context.trace,
+                DescriptorUtils.getContainingModule(containingDeclaration),
+                additionalCheckerProvider
         );
 
         TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
@@ -238,7 +251,7 @@ public class TopDownAnalyzer {
                    }
 
                    @Override
-                   public ClassObjectStatus setClassObjectDescriptor(@NotNull ClassDescriptor classObjectDescriptor) {
+                   public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                        return ClassObjectStatus.NOT_ALLOWED;
                    }
                },

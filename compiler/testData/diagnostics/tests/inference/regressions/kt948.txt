@@ -1,0 +1,7 @@
+package
+
+package a {
+    internal fun doWithList(/*0*/ list: kotlin.List<kotlin.Int>): kotlin.List<kotlin.Int>
+    internal fun </*0*/ T> emptyList(): kotlin.List<T>?
+    internal fun foo(): kotlin.Unit
+}

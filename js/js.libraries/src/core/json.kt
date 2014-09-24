@@ -1,20 +1,18 @@
-package js
-
-import js.library
+package kotlin.js
 
 native public class Json() {
-    fun get(propertyName: String): Any? = js.noImpl
-    fun set(propertyName: String, value: Any?): Unit = js.noImpl
+    public fun get(propertyName: String): Any? = noImpl
+    public fun set(propertyName: String, value: Any?): Unit = noImpl
 }
 
 library("jsonFromTuples")
-public fun json(vararg pairs: Pair<String, Any?>): Json = js.noImpl
+public fun json(vararg pairs: Pair<String, Any?>): Json = noImpl
 
 library("jsonFromTuples")
-public fun json2(pairs: Array<Pair<String, Any?>>): Json = js.noImpl
+public fun json2(pairs: Array<Pair<String, Any?>>): Json = noImpl
 
 library("jsonAddProperties")
-public fun Json.add(other: Json): Json = js.noImpl
+public fun Json.add(other: Json): Json = noImpl
 
 native
 public trait JsonClass {

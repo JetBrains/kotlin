@@ -1,0 +1,33 @@
+package
+
+public/*package*/ /*synthesized*/ fun JavaInterface(/*0*/ function: (kotlin.Int) -> kotlin.Unit): JavaInterface
+
+public/*package*/ trait JavaInterface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(/*0*/ javaName: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class SimpleSubclass : JavaInterface {
+    public constructor SimpleSubclass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun foo(/*0*/ kotlinName: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Subclass : SubtraitWithFakeOverride {
+    public constructor Subclass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun foo(/*0*/ otherKotlinName: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait SubtraitWithFakeOverride : JavaInterface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ javaName: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

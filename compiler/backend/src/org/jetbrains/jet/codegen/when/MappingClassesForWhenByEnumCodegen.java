@@ -22,6 +22,7 @@ import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;

@@ -1,0 +1,5 @@
+package
+
+internal val kotlin.String.countCharacters: kotlin.Int
+internal var kotlin.Int.meaning: kotlin.Long
+internal fun test(): kotlin.Unit

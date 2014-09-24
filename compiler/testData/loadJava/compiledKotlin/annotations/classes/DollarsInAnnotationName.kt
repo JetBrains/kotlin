@@ -1,6 +1,7 @@
 package test
 
-//this test relies on particular heuristic implemntation, can become irrelevant should implementation change
 annotation class `$$$$$$`
+annotation class `Anno$tation`
 
-`$$$$$$`class A
+`$$$$$$` class A
+`Anno$tation` class `Cla$s`

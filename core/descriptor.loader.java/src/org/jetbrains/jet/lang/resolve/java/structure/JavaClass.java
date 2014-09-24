@@ -45,16 +45,10 @@ public interface JavaClass extends JavaClassifier, JavaTypeParameterListOwner, J
     Collection<JavaMethod> getMethods();
 
     @NotNull
-    Collection<JavaMethod> getAllMethods();
-
-    @NotNull
     Collection<JavaField> getFields();
 
     @NotNull
-    Collection<JavaField> getAllFields();
-
-    @NotNull
-    Collection<JavaMethod> getConstructors();
+    Collection<JavaConstructor> getConstructors();
 
     @NotNull
     JavaClassifierType getDefaultType();

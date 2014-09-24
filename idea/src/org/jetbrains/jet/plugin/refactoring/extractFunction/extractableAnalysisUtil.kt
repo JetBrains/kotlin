@@ -58,9 +58,15 @@ import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
-import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.imports.importableFqNameSafe
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Initializer
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.ParameterUpdate
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.ExpressionValue
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Jump
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.traverseFollowingInstructions
+import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValueBoxer.AsList
+import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBody
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -77,26 +83,59 @@ private fun JetDeclaration.renderForMessage(bindingContext: BindingContext): Str
 
 private fun JetType.isDefault(): Boolean = KotlinBuiltIns.getInstance().isUnit(this)
 
-private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingContext): Set<VariableDescriptor> {
-    return this
-            .map {if (it is WriteValueInstruction) PseudocodeUtil.extractVariableDescriptorIfAny(it, false, bindingContext) else null}
-            .filterNotNullTo(HashSet<VariableDescriptor>())
+private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingContext): Map<VariableDescriptor, List<JetExpression>> {
+    val result = HashMap<VariableDescriptor, MutableList<JetExpression>>()
+    for (instruction in filterIsInstance(javaClass<WriteValueInstruction>())) {
+        val expression = instruction.element as? JetExpression
+        val descriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
+        if (expression != null && descriptor != null) {
+            result.getOrPut(descriptor) { ArrayList() }.add(expression)
+        }
+    }
+
+    return result
+}
+
+private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext: BindingContext): Set<VariableDescriptor> {
+    val accessedAfterwards = HashSet<VariableDescriptor>()
+    val visitedInstructions = HashSet<Instruction>()
+
+    fun doTraversal(instruction: Instruction) {
+        traverseFollowingInstructions(instruction, visitedInstructions, TraversalOrder.FORWARD) {
+            when {
+                it is AccessValueInstruction && it !in this ->
+                    PseudocodeUtil.extractVariableDescriptorIfAny(it, false, bindingContext)?.let { accessedAfterwards.add(it) }
+
+                it is LocalFunctionDeclarationInstruction ->
+                    doTraversal(it.body.getEnterInstruction())
+            }
+
+            true
+        }
+    }
+
+    forEach(::doTraversal)
+    return accessedAfterwards
 }
 
 private fun List<Instruction>.getExitPoints(): List<Instruction> =
         filter { localInstruction -> localInstruction.nextInstructions.any { it !in this } }
 
-private fun List<Instruction>.getResultType(
+private fun List<Instruction>.getResultTypeAndExpressions(
         bindingContext: BindingContext,
-        options: ExtractionOptions): JetType {
-    fun instructionToType(instruction: Instruction): JetType? {
-        val expression = when (instruction) {
+        options: ExtractionOptions): Pair<JetType, List<JetExpression>> {
+    fun instructionToExpression(instruction: Instruction, unwrapReturn: Boolean): JetExpression? {
+        return when (instruction) {
             is ReturnValueInstruction ->
-                instruction.resultExpression
+                (if (unwrapReturn) null else instruction.returnExpressionIfAny) ?: instruction.returnedValue.element as? JetExpression
             is InstructionWithValue ->
                 instruction.outputValue?.element as? JetExpression
             else -> null
         }
+    }
+
+    fun instructionToType(instruction: Instruction): JetType? {
+        val expression = instructionToExpression(instruction, true)
 
         if (expression == null) return null
         if (options.inferUnitTypeForUnusedValues && expression.isUsedAsStatement(bindingContext)) return null
@@ -105,7 +144,10 @@ private fun List<Instruction>.getResultType(
     }
 
     val resultTypes = map(::instructionToType).filterNotNull()
-    return if (resultTypes.isNotEmpty()) CommonSupertypes.commonSupertype(resultTypes) else DEFAULT_RETURN_TYPE
+    val resultType = if (resultTypes.isNotEmpty()) CommonSupertypes.commonSupertype(resultTypes) else DEFAULT_RETURN_TYPE
+    val expressions = map { instructionToExpression(it, false) }.filterNotNull()
+
+    return resultType to expressions
 }
 
 private fun List<AbstractJumpInstruction>.checkEquivalence(checkPsi: Boolean): Boolean {
@@ -139,8 +181,9 @@ private fun ExtractionData.getLocalDeclarationsWithNonLocalUsages(
 private fun ExtractionData.analyzeControlFlow(
         localInstructions: List<Instruction>,
         pseudocode: Pseudocode,
+        module: ModuleDescriptor,
         bindingContext: BindingContext,
-        modifiedVarDescriptors: Set<VariableDescriptor>,
+        modifiedVarDescriptors: Map<VariableDescriptor, List<JetExpression>>,
         options: ExtractionOptions,
         parameters: Set<Parameter>
 ): Pair<ControlFlow, ErrorMessage?> {
@@ -171,7 +214,10 @@ private fun ExtractionData.analyzeControlFlow(
             is ReturnValueInstruction -> {
                 val returnExpression = insn.returnExpressionIfAny
                 if (returnExpression == null) {
-                    defaultExits.add(insn)
+                    val containingDeclaration = insn.returnedValue.element?.getParentByType(javaClass<JetDeclarationWithBody>())
+                    if (containingDeclaration == pseudocode.getCorrespondingElement()) {
+                        defaultExits.add(insn)
+                    }
                 }
                 else if (isCurrentFunctionReturn(returnExpression)) {
                     valuedReturnExits.add(insn)
@@ -199,77 +245,94 @@ private fun ExtractionData.analyzeControlFlow(
     val nonLocallyUsedDeclarations = getLocalDeclarationsWithNonLocalUsages(pseudocode, localInstructions, bindingContext)
     val (declarationsToCopy, declarationsToReport) = nonLocallyUsedDeclarations.partition { it is JetProperty && it.isLocal() }
 
-    val typeOfDefaultFlow = defaultExits.getResultType(bindingContext, options)
-    val returnValueType = valuedReturnExits.getResultType(bindingContext, options)
+    val (typeOfDefaultFlow, defaultResultExpressions) = defaultExits.getResultTypeAndExpressions(bindingContext, options)
+    val (returnValueType, valuedReturnExpressions) = valuedReturnExits.getResultTypeAndExpressions(bindingContext, options)
+
+    val emptyControlFlow =
+            ControlFlow(Collections.emptyList(), { OutputValueBoxer.AsTuple(it, module) }, declarationsToCopy)
 
     val defaultReturnType = if (returnValueType.isMeaningful()) returnValueType else typeOfDefaultFlow
-    if (defaultReturnType.isError()) return Pair(DefaultControlFlow(DEFAULT_RETURN_TYPE, declarationsToCopy), ErrorMessage.ERROR_TYPES)
+    if (defaultReturnType.isError()) return emptyControlFlow to ErrorMessage.ERROR_TYPES
 
-    val defaultControlFlow = DefaultControlFlow(defaultReturnType, declarationsToCopy)
+    val controlFlow = if (defaultReturnType.isMeaningful()) {
+        emptyControlFlow.copy(outputValues = Collections.singletonList(ExpressionValue(false, defaultResultExpressions, defaultReturnType)))
+    }
+    else {
+        emptyControlFlow
+    }
 
     if (declarationsToReport.isNotEmpty()) {
         val localVarStr = declarationsToReport.map { it.renderForMessage(bindingContext)!! }.distinct().sort()
-        return Pair(defaultControlFlow, ErrorMessage.DECLARATIONS_ARE_USED_OUTSIDE.addAdditionalInfo(localVarStr))
+        return controlFlow to ErrorMessage.DECLARATIONS_ARE_USED_OUTSIDE.addAdditionalInfo(localVarStr)
     }
 
+    val outParameters =
+            parameters.filter { it.mirrorVarName != null && modifiedVarDescriptors[it.originalDescriptor] != null }.sortBy { it.nameForRef }
     val outDeclarations =
-            declarationsToCopy.filter { bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] in modifiedVarDescriptors }
+            declarationsToCopy.filter { modifiedVarDescriptors[bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]] != null }
+    val modifiedValueCount = outParameters.size + outDeclarations.size
 
-    val outParameters = parameters.filterTo(HashSet<Parameter>()) { it.mirrorVarName != null }
-    val outValuesCount = outDeclarations.size + outParameters.size
-    when {
-        outValuesCount > 1 -> {
-            val outValuesStr =
-                    (outParameters.map { it.originalDescriptor.renderForMessage() }
-                            + outDeclarations.map { it.renderForMessage(bindingContext)!! }).sort()
-            return Pair(defaultControlFlow, ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr))
-        }
+    val outputValues = ArrayList<OutputValue>()
 
-        outValuesCount == 1 -> {
-            if (returnValueType.isMeaningful() || typeOfDefaultFlow.isMeaningful() || jumpExits.isNotEmpty()) {
-                return Pair(defaultControlFlow, ErrorMessage.OUTPUT_AND_EXIT_POINT)
-            }
-
-            val controlFlow =
-                    outDeclarations.firstOrNull()?.let {
-                        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as? CallableDescriptor
-                        Initializer(it as JetProperty, descriptor?.getReturnType() ?: DEFAULT_PARAMETER_TYPE, declarationsToCopy)
-                    } ?: ParameterUpdate(outParameters.first(), declarationsToCopy)
-            return Pair(controlFlow, null)
-        }
-    }
-
-    val multipleExitsError = Pair(defaultControlFlow, ErrorMessage.MULTIPLE_EXIT_POINTS)
+    val multipleExitsError = controlFlow to ErrorMessage.MULTIPLE_EXIT_POINTS
+    val outputAndExitsError = controlFlow to ErrorMessage.OUTPUT_AND_EXIT_POINT
 
     if (typeOfDefaultFlow.isMeaningful()) {
         if (valuedReturnExits.isNotEmpty() || jumpExits.isNotEmpty()) return multipleExitsError
 
-        return Pair(ExpressionEvaluation(typeOfDefaultFlow, declarationsToCopy), null)
+        outputValues.add(ExpressionValue(false, defaultResultExpressions, typeOfDefaultFlow))
     }
-
-    if (valuedReturnExits.isNotEmpty()) {
+    else if (valuedReturnExits.isNotEmpty()) {
         if (jumpExits.isNotEmpty()) return multipleExitsError
 
         if (defaultExits.isNotEmpty()) {
+            if (modifiedValueCount != 0) return outputAndExitsError
             if (valuedReturnExits.size != 1) return multipleExitsError
 
-            val element = valuedReturnExits.first!!.element
-            return Pair(ConditionalJump(listOf(element), element, declarationsToCopy), null)
+            val element = valuedReturnExits.first!!.element as JetExpression
+            return controlFlow.copy(outputValues = Collections.singletonList(Jump(listOf(element), element, true))) to null
         }
 
         if (!valuedReturnExits.checkEquivalence(false)) return multipleExitsError
-        return Pair(ExpressionEvaluationWithCallSiteReturn(returnValueType, declarationsToCopy), null)
+        outputValues.add(ExpressionValue(true, valuedReturnExpressions, returnValueType))
+    }
+
+    outDeclarations.mapTo(outputValues) {
+        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as? CallableDescriptor
+        Initializer(it as JetProperty, descriptor?.getReturnType() ?: DEFAULT_PARAMETER_TYPE)
+    }
+    outParameters.mapTo(outputValues) { ParameterUpdate(it, modifiedVarDescriptors[it.originalDescriptor]!!) }
+
+    if (outputValues.isNotEmpty()) {
+        if (jumpExits.isNotEmpty()) return outputAndExitsError
+
+        val boxerFactory: (List<OutputValue>) -> OutputValueBoxer = when {
+            outputValues.size > 3 -> {
+                if (!options.enableListBoxing) {
+                    val outValuesStr =
+                            (outParameters.map { it.originalDescriptor.renderForMessage() }
+                             + outDeclarations.map { it.renderForMessage(bindingContext)!! }).sort()
+                    return controlFlow to ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr)
+                }
+                OutputValueBoxer::AsList
+            }
+
+            else -> controlFlow.boxerFactory
+        }
+
+        return controlFlow.copy(outputValues = outputValues, boxerFactory = boxerFactory) to null
     }
 
     if (jumpExits.isNotEmpty()) {
         if (!jumpExits.checkEquivalence(true)) return multipleExitsError
 
-        val elements = jumpExits.map { it.element }
-        if (defaultExits.isNotEmpty()) return Pair(ConditionalJump(elements, elements.first!!, declarationsToCopy), null)
-        return Pair(UnconditionalJump(elements, elements.first!!, declarationsToCopy), null)
+        val elements = jumpExits.map { it.element as JetExpression }
+        return controlFlow.copy(
+                outputValues = Collections.singletonList(Jump(elements, elements.first(), defaultExits.isNotEmpty()))
+        ) to null
     }
 
-    return Pair(defaultControlFlow, null)
+    return controlFlow to null
 }
 
 fun ExtractionData.createTemporaryDeclaration(functionText: String): JetNamedDeclaration {
@@ -497,7 +560,7 @@ private fun ExtractionData.inferParametersInfo(
                 if (!parameterType.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes)) continue
 
                 val parameterTypePredicate =
-                        pseudocode.getElementValue(originalRef)?.let { getExpectedTypePredicate(it, bindingContext) } ?: AllTypes
+                        and(pseudocode.getElementValuesRecursively(originalRef).map { getExpectedTypePredicate(it, bindingContext) })
 
                 val parameter = extractedDescriptorToParameter.getOrPut(descriptorToExtract) {
                     val parameterName =
@@ -545,20 +608,18 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(
         bindingContext: BindingContext
 ): ErrorMessage? {
     val declarationsOutOfScope = HashSet<JetNamedDeclaration>()
-    if (controlFlow is JumpBasedControlFlow) {
-        controlFlow.elementToInsertAfterCall.accept(
-                object: JetTreeVisitorVoid() {
-                    override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                        val target = expression.getReference()?.resolve()
-                        if (target is JetNamedDeclaration
-                                && target.isInsideOf(originalElements)
-                                && target.getParentByType(javaClass<JetDeclaration>(), true) == enclosingDeclaration) {
-                            declarationsOutOfScope.add(target)
-                        }
+    controlFlow.jumpOutputValue?.elementToInsertAfterCall?.accept(
+            object : JetTreeVisitorVoid() {
+                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                    val target = expression.getReference()?.resolve()
+                    if (target is JetNamedDeclaration
+                        && target.isInsideOf(originalElements)
+                        && target.getParentByType(javaClass<JetDeclaration>(), true) == enclosingDeclaration) {
+                        declarationsOutOfScope.add(target)
                     }
                 }
-        )
-    }
+            }
+    )
 
     if (declarationsOutOfScope.isNotEmpty()) {
         val declStr = declarationsOutOfScope.map { it.renderForMessage(bindingContext)!! }.sort()
@@ -594,19 +655,8 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val commonParent = PsiTreeUtil.findCommonParent(originalElements) as JetElement
 
-    val enclosingDeclaration = commonParent.getParentByType(javaClass<JetDeclaration>(), true)
-    val bodyElement = when (enclosingDeclaration) {
-        is JetDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
-        is JetWithExpressionInitializer -> enclosingDeclaration.getInitializer()
-        is JetParameter -> enclosingDeclaration.getDefaultValue()
-        is JetClassInitializer -> enclosingDeclaration.getBody()
-        is JetClass -> {
-            val delegationSpecifierList = enclosingDeclaration.getDelegationSpecifierList()
-            if (delegationSpecifierList.isAncestor(commonParent)) commonParent else return noContainerError
-        }
-        else -> return noContainerError
-    }
-    val bindingContext = originalFile.getLazyResolveSession().resolveToElement(bodyElement)
+    val bindingContext = commonParent.getContextForContainingDeclarationBody()
+    if (bindingContext == null) return noContainerError
 
     val pseudocodeDeclaration = PsiTreeUtil.getParentOfType(
             commonParent, javaClass<JetDeclarationWithBody>(), javaClass<JetClassOrObject>()
@@ -615,20 +665,30 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val pseudocode = PseudocodeUtil.generatePseudocode(pseudocodeDeclaration, bindingContext)
     val localInstructions = getLocalInstructions(pseudocode)
 
-    val modifiedVarDescriptors = localInstructions.getModifiedVarDescriptors(bindingContext)
+    val modifiedVarDescriptorsWithExpressions = localInstructions.getModifiedVarDescriptors(bindingContext)
 
-    val paramsInfo = inferParametersInfo(commonParent, pseudocode, bindingContext, modifiedVarDescriptors)
+    val paramsInfo = inferParametersInfo(commonParent, pseudocode, bindingContext, modifiedVarDescriptorsWithExpressions.keySet())
     if (paramsInfo.errorMessage != null) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(paramsInfo.errorMessage!!))
     }
 
     val messages = ArrayList<ErrorMessage>()
 
+    val modifiedVarDescriptorsForControlFlow = HashMap(modifiedVarDescriptorsWithExpressions)
+    modifiedVarDescriptorsForControlFlow.keySet().retainAll(localInstructions.getVarDescriptorsAccessedAfterwards(bindingContext))
     val (controlFlow, controlFlowMessage) =
-            analyzeControlFlow(localInstructions, pseudocode, bindingContext, modifiedVarDescriptors, options, paramsInfo.parameters)
+            analyzeControlFlow(
+                    localInstructions,
+                    pseudocode,
+                    originalFile.getLazyResolveSession().getModuleDescriptor(),
+                    bindingContext,
+                    modifiedVarDescriptorsForControlFlow,
+                    options,
+                    paramsInfo.parameters
+            )
     controlFlowMessage?.let { messages.add(it) }
 
-    controlFlow.returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes)
+    controlFlow.outputValueBoxer.returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes)
 
     if (paramsInfo.nonDenotableTypes.isNotEmpty()) {
         val typeStr = paramsInfo.nonDenotableTypes.map {it.renderForMessage()}.sort()
@@ -639,7 +699,8 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         )
     }
 
-    checkDeclarationsMovingOutOfScope(enclosingDeclaration!!, controlFlow, bindingContext)?.let { messages.add(it) }
+    val enclosingDeclaration = commonParent.getParentByType(javaClass<JetDeclaration>(), true)!!
+    checkDeclarationsMovingOutOfScope(enclosingDeclaration, controlFlow, bindingContext)?.let { messages.add(it) }
 
     val functionNameValidator =
             JetNameValidatorImpl(
@@ -647,17 +708,18 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                     if (targetSibling is JetClassInitializer) targetSibling.getParent() else targetSibling,
                     JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
             )
-    val functionName = JetNameSuggester.suggestNames(controlFlow.returnType, functionNameValidator, DEFAULT_FUNCTION_NAME).first()
+    val functionName = JetNameSuggester.suggestNames(
+            controlFlow.outputValueBoxer.returnType,
+            functionNameValidator, DEFAULT_FUNCTION_NAME
+    ).first()
 
-    if (controlFlow is JumpBasedControlFlow) {
-        controlFlow.elementToInsertAfterCall.accept(
-                object: JetTreeVisitorVoid() {
-                    override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                        paramsInfo.originalRefToParameter[expression]?.let { it.refCount-- }
-                    }
+    controlFlow.jumpOutputValue?.elementToInsertAfterCall?.accept(
+            object : JetTreeVisitorVoid() {
+                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                    paramsInfo.originalRefToParameter[expression]?.let { it.refCount-- }
                 }
-        )
-    }
+            }
+    )
     val adjustedParameters = paramsInfo.parameters.filterTo(HashSet<Parameter>()) { it.refCount > 0 }
 
     val receiverCandidates = adjustedParameters.filterTo(HashSet<Parameter>()) { it.receiverCandidate }
@@ -667,6 +729,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     return AnalysisResult(
             ExtractableCodeDescriptor(
                     this,
+                    bindingContext,
                     functionName,
                     if (isVisibilityApplicable()) "private" else "",
                     adjustedParameters.sortBy { it.name },

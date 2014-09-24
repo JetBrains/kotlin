@@ -1,3 +1,5 @@
+[file: ANNOTATION]
+
 package test
 
 import test.MyEnum.*

@@ -1,0 +1,13 @@
+package
+
+internal val f: kotlin.reflect.KMemberFunction0<A, kotlin.Unit>
+internal val g: kotlin.reflect.KExtensionFunction0<A, kotlin.Unit>
+internal fun A?.foo(): kotlin.Unit
+
+internal final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

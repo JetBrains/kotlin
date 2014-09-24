@@ -1,0 +1,16 @@
+package
+
+package kt770_351_735 {
+    internal val w: [ERROR : Type for while (true) {}]
+    internal fun bar(/*0*/ a: kotlin.Unit): kotlin.Unit
+    internal fun box(): kotlin.Int
+    internal fun doSmth(/*0*/ i: kotlin.Int): kotlin.Unit
+    internal fun foo(): kotlin.Unit
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    internal fun test1(): kotlin.Unit
+    internal fun test2(): kotlin.Unit
+    internal fun testCoercionToUnit(): kotlin.Unit
+    internal fun testImplicitCoercion(): kotlin.Unit
+    internal fun testStatementInExpressionContext(): kotlin.Unit
+    internal fun testStatementInExpressionContext2(): kotlin.Unit
+}

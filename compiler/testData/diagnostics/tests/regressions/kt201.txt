@@ -1,0 +1,4 @@
+package
+
+internal fun foo(): kotlin.Unit
+internal fun </*0*/ T : kotlin.Any> T?.npe(): T

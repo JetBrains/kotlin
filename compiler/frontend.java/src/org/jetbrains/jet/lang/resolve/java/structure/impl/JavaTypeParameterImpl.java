@@ -54,7 +54,8 @@ public class JavaTypeParameterImpl extends JavaClassifierImpl<PsiTypeParameter> 
         PsiTypeParameterListOwner owner = getPsi().getOwner();
         // TODO: a separate factory for such things
         if (owner instanceof PsiMethod) {
-            return new JavaMethodImpl((PsiMethod) owner);
+            PsiMethod psiMethod = (PsiMethod) owner;
+            return psiMethod.isConstructor() ? new JavaConstructorImpl(psiMethod) : new JavaMethodImpl(psiMethod);
         }
         else if (owner instanceof PsiClass) {
             return new JavaClassImpl((PsiClass) owner);

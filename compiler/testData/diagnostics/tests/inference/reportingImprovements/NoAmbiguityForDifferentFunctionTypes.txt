@@ -1,0 +1,20 @@
+package
+
+package a {
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    internal fun </*0*/ T : a.Closeable, /*1*/ R> T.foo(/*0*/ block: (T) -> R): (T) -> R
+    internal fun </*0*/ T : a.Closeable, /*1*/ R> T.foo(/*0*/ block: (T, T) -> R): (T, T) -> R
+
+    internal final class C : a.Closeable {
+        public constructor C()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal trait Closeable {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

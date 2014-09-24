@@ -25,7 +25,7 @@ import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.general.Translation.translateAsStatement;
+import static org.jetbrains.k2js.translate.general.Translation.translateAsStatementAndMergeInBlockIfNeeded;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForDelegate;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForProperty;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
@@ -53,7 +53,7 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public Void visitAnonymousInitializer(@NotNull JetClassInitializer initializer, @NotNull TranslationContext context) {
-        result.add(translateAsStatement(initializer.getBody(), context));
+        result.add(translateAsStatementAndMergeInBlockIfNeeded(initializer.getBody(), context));
         return null;
     }
 

@@ -46,6 +46,7 @@ public fun JetReturnExpression.getTargetFunctionDescriptor(context: BindingConte
 public fun JetExpression.isUsedAsExpression(context: BindingContext): Boolean = context[BindingContext.USED_AS_EXPRESSION, this]!!
 public fun JetExpression.isUsedAsStatement(context: BindingContext): Boolean = !isUsedAsExpression(context)
 
+
 public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordScopeAndDataFlowInfo(expression: JetExpression?) {
     if (expression == null) return
 
@@ -57,3 +58,6 @@ public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordScopeAndDataFlo
 
 public fun BindingContext.getDataFlowInfo(expression: JetExpression?): DataFlowInfo =
     expression?.let { this[BindingContext.EXPRESSION_DATA_FLOW_INFO, it] } ?: DataFlowInfo.EMPTY
+
+public fun JetExpression.isUnreachableCode(context: BindingContext): Boolean = context[BindingContext.UNREACHABLE_CODE, this]!!
+

@@ -5,6 +5,7 @@ fun main(args: Array<String>) {
     customLib.twoFunDifferentSignature.twoFunDifferentSignatureFun()
     customLib.property.foo
     customLib.breakpointOnLocalProperty.breakpointOnLocalPropertyFun()
+    customLib.simpleLibFile.foo()
 }
 
 // ADDITIONAL_BREAKPOINT: 1.kt:public fun oneFunSameFileNameFun(): Int {
@@ -22,3 +23,7 @@ fun main(args: Array<String>) {
 // ADDITIONAL_BREAKPOINT: 1.kt:public fun breakpointOnLocalPropertyFun(): Int {
 // EXPRESSION: 1 + 4
 // RESULT: 5: I
+
+// ADDITIONAL_BREAKPOINT: simpleLibFile.kt:public fun foo() {
+// EXPRESSION: 1 + 5
+// RESULT: 6: I

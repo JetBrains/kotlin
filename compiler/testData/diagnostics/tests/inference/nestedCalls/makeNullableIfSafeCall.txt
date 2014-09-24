@@ -1,0 +1,24 @@
+package
+
+package a {
+    internal fun doInt(/*0*/ i: kotlin.Int): kotlin.Int
+    internal fun test(/*0*/ a: a.A?): kotlin.Unit
+    internal fun test(/*0*/ u: a.A?, /*1*/ x: a.A?, /*2*/ y: a.A?, /*3*/ z: a.A?, /*4*/ w: a.A, /*5*/ v: a.A?): kotlin.Unit
+    internal fun a.B?.bar(): kotlin.Int
+    internal fun a.B?.baz(): kotlin.Int?
+
+    internal trait A {
+        internal abstract val b: a.B
+        internal abstract val nb: a.B?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal trait B {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal abstract fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

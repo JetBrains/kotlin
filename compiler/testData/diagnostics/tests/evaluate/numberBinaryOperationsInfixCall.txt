@@ -1,0 +1,7 @@
+package
+
+internal fun fooByte(/*0*/ p: kotlin.Byte): kotlin.Byte
+internal fun fooInt(/*0*/ p: kotlin.Int): kotlin.Int
+internal fun fooLong(/*0*/ p: kotlin.Long): kotlin.Long
+internal fun fooShort(/*0*/ p: kotlin.Short): kotlin.Short
+internal fun test(): kotlin.Unit

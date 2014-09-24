@@ -54,6 +54,4 @@ public interface DataFlowInfo {
 
     @NotNull
     DataFlowInfo or(@NotNull DataFlowInfo other);
-
-    boolean hasTypeInfoConstraints();
 }

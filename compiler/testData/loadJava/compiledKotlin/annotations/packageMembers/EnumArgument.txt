@@ -6,4 +6,6 @@ test.Anno(t = ElementType.METHOD: java.lang.annotation.ElementType) internal fun
 
 internal final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ t: java.lang.annotation.ElementType)
+    internal final val t: java.lang.annotation.ElementType
+        internal final fun <get-t>(): java.lang.annotation.ElementType
 }

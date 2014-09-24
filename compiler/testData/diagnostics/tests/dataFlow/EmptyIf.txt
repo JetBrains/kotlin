@@ -1,0 +1,6 @@
+package
+
+internal fun f1(/*0*/ s: kotlin.String?): kotlin.Unit
+internal fun f2(/*0*/ s: kotlin.Number?): kotlin.Unit
+internal fun f3(/*0*/ s: kotlin.Number?): kotlin.Unit
+internal fun f4(/*0*/ s: kotlin.Int?): kotlin.Unit

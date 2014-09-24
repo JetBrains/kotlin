@@ -1,0 +1,40 @@
+package
+
+package abstract {
+
+    internal final class MyClass {
+        public constructor MyClass()
+        internal final val a: kotlin.Int
+        internal final val a1: kotlin.Int = 1
+        internal abstract val a2: kotlin.Int
+        internal abstract val a3: kotlin.Int = 1
+        internal final var b: kotlin.Int
+        internal final var b1: kotlin.Int
+        internal abstract var b2: kotlin.Int
+        internal abstract var b3: kotlin.Int
+        internal final var c: kotlin.Int
+        internal final var c1: kotlin.Int
+        internal abstract var c2: kotlin.Int
+        internal abstract var c3: kotlin.Int
+        internal final val e: kotlin.Int
+        internal final val e1: kotlin.Int = 0
+        internal abstract val e2: kotlin.Int
+        internal abstract val e3: kotlin.Int = 0
+        internal final var i: kotlin.Int
+        internal final var i1: kotlin.Int
+        internal final var j: kotlin.Int
+        internal final var j1: kotlin.Int
+        internal final var k: kotlin.Int
+        internal final var k1: kotlin.Int
+        internal final var l: kotlin.Int
+        internal final var l1: kotlin.Int
+        internal final var n: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun f(): kotlin.Unit
+        internal final fun g(): kotlin.Unit
+        internal abstract fun h(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal abstract fun j(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

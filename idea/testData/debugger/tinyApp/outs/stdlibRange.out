@@ -1,8 +1,0 @@
-LineBreakpoint created at Ranges.kt:7
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! stdlibRange.StdlibRangePackage
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-Ranges.kt:7
-Compile bytecode for start <= item
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-
-Process finished with exit code 0

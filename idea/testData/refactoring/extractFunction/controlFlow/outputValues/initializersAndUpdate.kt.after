@@ -1,0 +1,20 @@
+// WITH_RUNTIME
+// PARAM_TYPES: kotlin.Int
+// PARAM_DESCRIPTOR: var k: kotlin.Int defined in foo
+// SIBLING:
+fun foo() {
+    var k = 0
+    val triple = triple(k)
+    val a = triple.first
+    val b = triple.second
+    k = triple.third
+    println(a + b - k)
+}
+
+private fun triple(k: Int): Triple<Int, Int, Int> {
+    var k1 = k
+    val a = 1
+    k1++
+    val b = 2
+    return Triple(a, b, k1)
+}

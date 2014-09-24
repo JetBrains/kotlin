@@ -51,10 +51,14 @@ import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 import org.jetbrains.jet.lang.psi.JetClassInitializer
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
 
-data class ExtractionOptions(val inferUnitTypeForUnusedValues: Boolean) {
+data class ExtractionOptions(
+        val inferUnitTypeForUnusedValues: Boolean,
+        val enableListBoxing: Boolean
+) {
     class object {
-        val DEFAULT = ExtractionOptions(true)
+        val DEFAULT = ExtractionOptions(true, false)
     }
 }
 
@@ -71,13 +75,14 @@ data class ResolvedReferenceInfo(
         val resolveResult: ResolveResult
 )
 
-class ExtractionData(
+data class ExtractionData(
         val originalFile: JetFile,
-        val originalElements: List<PsiElement>,
+        val originalRange: JetPsiRange,
         val targetSibling: PsiElement,
         val options: ExtractionOptions = ExtractionOptions.DEFAULT
 ) {
     val project: Project = originalFile.getProject()
+    val originalElements: List<PsiElement> = originalRange.elements
 
     val insertBefore: Boolean = targetSibling.getParentByType(javaClass<JetDeclaration>(), true)?.let {
         it is JetDeclarationWithBody || it is JetClassInitializer

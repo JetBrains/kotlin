@@ -1,0 +1,201 @@
+package
+
+package uninitialized_reassigned_variables {
+    internal var x: kotlin.Int
+    internal val y: kotlin.Int = 10
+    internal val z: kotlin.Int = 10
+    internal fun doSmth(/*0*/ i: kotlin.Int): kotlin.Unit
+    internal fun doSmth(/*0*/ s: kotlin.String): kotlin.Unit
+    internal fun foo(): kotlin.Unit
+    internal fun func(): kotlin.Unit
+    internal fun reassignFunParams(/*0*/ a: kotlin.Int): kotlin.Unit
+    internal fun t1(): kotlin.Unit
+    internal fun t1(/*0*/ b: kotlin.Boolean): kotlin.Unit
+    internal fun t2(): kotlin.Unit
+    internal fun t3(): kotlin.Unit
+    internal fun t4(): kotlin.Unit
+    internal fun t4(/*0*/ a: uninitialized_reassigned_variables.A): kotlin.Unit
+    internal fun t5(): kotlin.Unit
+    internal fun test(/*0*/ m: uninitialized_reassigned_variables.M): kotlin.Unit
+    internal fun test1(/*0*/ m: uninitialized_reassigned_variables.M): kotlin.Unit
+
+    internal final class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class AnonymousInitializers {
+        public constructor AnonymousInitializers(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String)
+        internal final var a: kotlin.String
+        internal final val b: kotlin.String
+        internal final val i: kotlin.Int
+        internal final val j: kotlin.Int
+        internal final val k: kotlin.String
+        internal final val l: kotlin.String
+        internal final var m: kotlin.Int
+        internal final val n: kotlin.Int
+        internal final val o: kotlin.String
+        internal final var p: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class ClassObject {
+        public constructor ClassObject()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        internal class object <class-object-for-ClassObject> {
+            private constructor <class-object-for-ClassObject>()
+            internal final val x: kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal final fun foo(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal final class ForwardAccessToBackingField {
+        public constructor ForwardAccessToBackingField()
+        internal final val a: [ERROR : Type for $a]
+        internal final val b: kotlin.Int = 1
+        internal final val c: kotlin.Int = 1
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class LocalValsVsProperties : uninitialized_reassigned_variables.Open {
+        public constructor LocalValsVsProperties(/*0*/ a: kotlin.Int, /*1*/ w: kotlin.Int)
+        internal final val a: kotlin.Int
+        internal final val b: kotlin.Int
+        internal final val x: kotlin.Int
+        internal final var xx: kotlin.Int
+        internal final val y: kotlin.Int
+        internal final var yy: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class M {
+        public constructor M()
+        internal final val x: kotlin.Int = 11
+        internal final var y: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal open class Open {
+        public constructor Open(/*0*/ a: kotlin.Int, /*1*/ w: kotlin.Int)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Outer {
+        public constructor Outer()
+        internal final val a: kotlin.Int
+        internal final var b: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        internal final inner class Inner {
+            public constructor Inner()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal abstract enum class ProtocolState : kotlin.Enum<uninitialized_reassigned_variables.ProtocolState> {
+        private constructor ProtocolState()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        internal abstract fun signal(): uninitialized_reassigned_variables.ProtocolState
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public enum entry TALKING : uninitialized_reassigned_variables.ProtocolState {
+            private constructor TALKING()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+            internal open override /*1*/ fun signal(): uninitialized_reassigned_variables.ProtocolState
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public class object <class-object-for-TALKING> : uninitialized_reassigned_variables.ProtocolState.TALKING {
+                private constructor <class-object-for-TALKING>()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+                internal open override /*1*/ /*fake_override*/ fun signal(): uninitialized_reassigned_variables.ProtocolState
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        public enum entry WAITING : uninitialized_reassigned_variables.ProtocolState {
+            private constructor WAITING()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+            internal open override /*1*/ fun signal(): uninitialized_reassigned_variables.ProtocolState
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public class object <class-object-for-WAITING> : uninitialized_reassigned_variables.ProtocolState.WAITING {
+                private constructor <class-object-for-WAITING>()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+                internal open override /*1*/ /*fake_override*/ fun signal(): uninitialized_reassigned_variables.ProtocolState
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): uninitialized_reassigned_variables.ProtocolState
+        public final /*synthesized*/ fun values(): kotlin.Array<uninitialized_reassigned_variables.ProtocolState>
+    }
+
+    internal object TestObjectDeclaration {
+        private constructor TestObjectDeclaration()
+        internal final val x: kotlin.Int
+        internal final val y: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public class object <class-object-for-TestObjectDeclaration> : uninitialized_reassigned_variables.TestObjectDeclaration {
+            private constructor <class-object-for-TestObjectDeclaration>()
+            internal final override /*1*/ /*fake_override*/ val x: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ val y: kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal final override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal final class TestObjectExpression {
+        public constructor TestObjectExpression()
+        internal final val a: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

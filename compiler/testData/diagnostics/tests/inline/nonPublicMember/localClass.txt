@@ -1,0 +1,10 @@
+package
+
+public final class Z {
+    public constructor Z()
+    private final val privateProperty: kotlin.Int = 11
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun privateFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

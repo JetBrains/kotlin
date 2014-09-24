@@ -1,0 +1,27 @@
+package
+
+kotlin.inline() internal val java.io.InputStream.buffered: java.io.BufferedInputStream
+kotlin.inline() internal val java.io.Reader.buffered: java.io.BufferedReader
+
+internal open class A {
+    public constructor A()
+    internal open val kotlin.Int.foo: kotlin.Int
+    internal open val kotlin.String.foo: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal open fun kotlin.Int.foo(): kotlin.Unit
+    internal open fun kotlin.String.foo(): kotlin.Unit
+}
+
+internal final class B : A {
+    public constructor B()
+    internal open override /*1*/ val kotlin.Int.foo: kotlin.Int
+    internal open override /*1*/ val kotlin.String.foo: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal final fun use(/*0*/ s: kotlin.String): kotlin.Unit
+    internal open override /*1*/ fun kotlin.Int.foo(): kotlin.Unit
+    internal open override /*1*/ fun kotlin.String.foo(): kotlin.Unit
+}

@@ -1,0 +1,88 @@
+JetFile: nonFIleAnnotationBeforePackage.kt
+  FILE_ANNOTATION_LIST
+    ANNOTATION
+      PsiElement(LBRACKET)('[')
+      PsiErrorElement:Expecting "file:" prefix for file annotations
+        <empty list>
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+      PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    ANNOTATION
+      PsiElement(LBRACKET)('[')
+      PsiElement(file)('file')
+      PsiErrorElement:Expecting "file:" prefix for file annotations
+        <empty list>
+      PsiWhiteSpace(' ')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+      PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    ANNOTATION
+      PsiElement(LBRACKET)('[')
+      PsiElement(file)('file')
+      PsiErrorElement:Expecting "file:" prefix for file annotations
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('baz')
+      PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    ANNOTATION
+      PsiElement(LBRACKET)('[')
+      PsiElement(file)('file')
+      PsiErrorElement:Expecting "file:" prefix for file annotations
+        <empty list>
+      PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    ANNOTATION
+      PsiElement(LBRACKET)('[')
+      PsiErrorElement:Expecting "file:" prefix for file annotations
+        <empty list>
+      PsiElement(COLON)(':')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+      PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    ANNOTATION
+      PsiElement(LBRACKET)('[')
+      PsiElement(file)('file')
+      PsiElement(COLON)(':')
+      PsiErrorElement:Expecting a list of annotations
+        <empty list>
+      PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    ANNOTATION
+      PsiElement(LBRACKET)('[')
+      PsiErrorElement:Expecting "file:" prefix for file annotations
+        <empty list>
+      PsiElement(COLON)(':')
+      PsiErrorElement:Expecting a list of annotations
+        <empty list>
+      PsiElement(RBRACKET)(']')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('boo')

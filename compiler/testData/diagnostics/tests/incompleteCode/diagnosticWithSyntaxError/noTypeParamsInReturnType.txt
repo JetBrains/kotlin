@@ -1,0 +1,7 @@
+package
+
+package b {
+    internal fun bar123(): kotlin.Unit
+    internal fun </*0*/ T, /*1*/ R> foo(/*0*/ map: kotlin.Map<T, R>): R
+    internal fun </*0*/ F, /*1*/ G> getMap(): kotlin.Map<F, G>
+}

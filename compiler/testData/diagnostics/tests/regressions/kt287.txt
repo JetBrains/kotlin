@@ -1,0 +1,6 @@
+package
+
+internal val attributes: kotlin.Map<kotlin.String, kotlin.String>
+internal fun attributes(): kotlin.Map<kotlin.String, kotlin.String>
+internal fun foo(/*0*/ m: kotlin.Map<kotlin.String, kotlin.String>): kotlin.Unit
+internal fun test(): kotlin.Unit

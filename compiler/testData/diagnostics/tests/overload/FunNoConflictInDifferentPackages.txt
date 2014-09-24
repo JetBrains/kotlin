@@ -1,0 +1,16 @@
+package
+
+package pkg1 {
+    internal fun e(): kotlin.Int
+}
+
+package pkg2 {
+    internal fun e(): kotlin.Int
+}
+
+package pkg3 {
+
+    package pkg3.pkg1 {
+        internal fun e(): kotlin.Int
+    }
+}

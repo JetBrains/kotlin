@@ -60,7 +60,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
                 JsStatement assignStatement = assignment(jsNameRef, defaultValue).makeStmt();
                 JsStatement thenStatement = JsAstUtils.mergeStatementInBlockIfNeeded(assignStatement, defaultArgBlock);
                 JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, functionBodyContext.namer().getUndefinedExpression());
-                JsIf jsIf = new JsIf(checkArgIsUndefined, thenStatement);
+                JsIf jsIf = JsAstUtils.newJsIf(checkArgIsUndefined, thenStatement);
                 result.add(jsIf);
             }
         }

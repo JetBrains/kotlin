@@ -1,0 +1,42 @@
+JetFile: withoutFileAnnotationAndPackageDeclaration.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    MODIFIER_LIST
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('ann')
+        PsiElement(RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('String')
+        PsiElement(QUEST)('?')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    NULL
+      PsiElement(null)('null')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('ann')

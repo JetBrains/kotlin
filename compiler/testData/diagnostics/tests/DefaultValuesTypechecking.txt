@@ -1,0 +1,14 @@
+package
+
+internal val x: kotlin.String = ""
+internal val z: kotlin.Int = 3
+internal fun bar(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.Int = ..., /*2*/ z: kotlin.String = ...): kotlin.Unit
+internal fun foo(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.Int = ..., /*2*/ i: kotlin.Int = ...): kotlin.Int
+
+internal final class A {
+    public constructor A(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.Int = ...)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(/*0*/ bool: kotlin.Boolean, /*1*/ a: kotlin.Int = ..., /*2*/ b: kotlin.String = ...): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

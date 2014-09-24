@@ -20,11 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
+import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface JavaClassFinder {
     @Nullable
-    JavaClass findClass(@NotNull FqName fqName);
+    JavaClass findClass(@NotNull ClassId classId);
 
     @Nullable
     JavaPackage findPackage(@NotNull FqName fqName);

@@ -1,0 +1,7 @@
+package
+
+package a {
+    internal fun </*0*/ T> either(/*0*/ t1: T, /*1*/ t2: T): T
+    internal fun </*0*/ T> id(/*0*/ t: T): T
+    internal fun test(): kotlin.Unit
+}

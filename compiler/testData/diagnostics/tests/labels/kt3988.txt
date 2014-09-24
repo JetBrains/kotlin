@@ -1,0 +1,21 @@
+package
+
+internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+internal fun new(/*0*/ body: Comment.() -> kotlin.Unit): Comment.() -> kotlin.Unit
+internal fun new2(/*0*/ body: Comment2.() -> kotlin.Unit): Comment2.() -> kotlin.Unit
+
+internal final class Comment {
+    public constructor Comment()
+    internal final var article: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Comment2 {
+    public constructor Comment2()
+    internal final var article2: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

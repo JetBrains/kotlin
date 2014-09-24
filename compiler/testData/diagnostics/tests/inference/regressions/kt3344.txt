@@ -1,0 +1,21 @@
+package
+
+package i {
+
+    internal final class Bar {
+        public constructor Bar()
+        internal final val foos: java.util.ArrayList<i.Foo>
+        internal final fun bar11(/*0*/ foo: i.Foo): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Foo {
+        public constructor Foo(/*0*/ attributes: kotlin.Map<kotlin.String, kotlin.String>)
+        internal final val attributes: kotlin.Map<kotlin.String, kotlin.String>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

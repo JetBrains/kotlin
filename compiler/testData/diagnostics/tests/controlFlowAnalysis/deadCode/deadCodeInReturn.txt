@@ -1,0 +1,4 @@
+package
+
+internal fun testReturn(): kotlin.Unit
+internal fun todo(): kotlin.Nothing

@@ -8,7 +8,10 @@
   <item name='com.intellij.refactoring.BaseRefactoringProcessor myProject'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item
+    <item name='com.intellij.refactoring.BaseRefactoringProcessor void performRefactoring(com.intellij.usageView.UsageInfo[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
       name='com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException java.util.Collection&lt;java.lang.String&gt; getMessages()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

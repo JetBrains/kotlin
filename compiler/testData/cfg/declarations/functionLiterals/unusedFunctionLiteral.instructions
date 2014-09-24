@@ -9,7 +9,7 @@ L0:
     mark({})
     jmp?(L2)         NEXT:[r({}) -> <v0>, d({})]
     d({})            NEXT:[<SINK>]
-L2:
+L2 [after local declaration]:
     r({}) -> <v0>    PREV:[jmp?(L2)]
 L1:
   1 <END>            NEXT:[<SINK>]

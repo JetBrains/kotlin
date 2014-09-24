@@ -18,13 +18,13 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
+import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public interface KotlinJvmBinaryClass {
     @NotNull
-    JvmClassName getClassName();
+    ClassId getClassId();
 
     void loadClassAnnotations(@NotNull AnnotationVisitor visitor);
 
@@ -45,21 +45,21 @@ public interface KotlinJvmBinaryClass {
 
     interface AnnotationVisitor {
         @Nullable
-        AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName className);
+        AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId);
 
         void visitEnd();
     }
 
     interface MethodAnnotationVisitor extends AnnotationVisitor {
         @Nullable
-        AnnotationArgumentVisitor visitParameterAnnotation(int index, @NotNull JvmClassName className);
+        AnnotationArgumentVisitor visitParameterAnnotation(int index, @NotNull ClassId classId);
     }
 
     interface AnnotationArgumentVisitor {
         // TODO: annotations, java.lang.Class
         void visit(@Nullable Name name, @Nullable Object value);
 
-        void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName);
+        void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName);
 
         @Nullable
         AnnotationArrayArgumentVisitor visitArray(@NotNull Name name);
@@ -70,7 +70,7 @@ public interface KotlinJvmBinaryClass {
     interface AnnotationArrayArgumentVisitor {
         void visit(@Nullable Object value);
 
-        void visitEnum(@NotNull JvmClassName enumClassName, @NotNull Name enumEntryName);
+        void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName);
 
         void visitEnd();
     }

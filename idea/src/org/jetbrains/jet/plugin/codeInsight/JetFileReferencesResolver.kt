@@ -29,25 +29,28 @@ import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import java.util.Collections
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 
 object JetFileReferencesResolver {
     fun resolve(
             element: JetElement,
-            visitReceivers: Boolean = true,
-            visitShortNames: Boolean = true
+            resolveQualifiers: Boolean = true,
+            resolveShortNames: Boolean = true
     ): Map<JetReferenceExpression, BindingContext> {
         return (element.getContainingFile() as? JetFile)?.let { file ->
-            resolve(file, listOf(element), visitReceivers, visitShortNames)
+            resolve(file, listOf(element), resolveQualifiers, resolveShortNames)
         } ?: Collections.emptyMap()
     }
 
     fun resolve(
             file: JetFile,
             elements: Iterable<JetElement>? = null,
-            visitReceivers: Boolean = true,
-            visitShortNames: Boolean = true
+            resolveQualifiers: Boolean = true,
+            resolveShortNames: Boolean = true
     ): Map<JetReferenceExpression, BindingContext> {
-        val visitor = ResolveAllReferencesVisitor(file, visitReceivers, visitShortNames)
+        val visitor = ResolveAllReferencesVisitor(file, resolveQualifiers, resolveShortNames)
         if (elements != null) {
             elements.forEach { it.accept(visitor) }
         }
@@ -57,18 +60,18 @@ object JetFileReferencesResolver {
         return visitor.result
     }
 
-    private class ResolveAllReferencesVisitor(file: JetFile, val visitReceivers: Boolean, val visitShortNames: Boolean) : JetTreeVisitorVoid() {
+    private class ResolveAllReferencesVisitor(file: JetFile, val resolveQualifiers: Boolean, val resolveShortNames: Boolean) : JetTreeVisitorVoid() {
         private val resolveSession = file.getLazyResolveSession()
         private val resolveMap = HashMap<JetReferenceExpression, BindingContext>()
 
         public val result: Map<JetReferenceExpression, BindingContext> = resolveMap
 
         override fun visitUserType(userType: JetUserType) {
-            if (visitReceivers) {
+            if (resolveQualifiers) {
                 userType.acceptChildren(this)
             }
 
-            if (visitShortNames || userType.getQualifier() != null) {
+            if (resolveShortNames || userType.getQualifier() != null) {
                 val referenceExpression = userType.getReferenceExpression()
                 if (referenceExpression != null) {
                     resolveMap[referenceExpression] = resolveSession.resolveToElement(referenceExpression)
@@ -76,21 +79,24 @@ object JetFileReferencesResolver {
             }
         }
 
-        override fun visitDotQualifiedExpression(expression: JetDotQualifiedExpression) {
-            if (visitReceivers) {
-                expression.acceptChildren(this)
-            }
+        private fun JetExpression.isReceiver(): Boolean {
+            val parent = getParent()
+            if (parent !is JetQualifiedExpression) return false
+            if (parent.getReceiverExpression() == this) return true
 
-            val referenceExpression = expression.getSelectorExpression()?.referenceExpression()
-            if (referenceExpression != null) {
-                resolveMap[referenceExpression] = resolveSession.resolveToElement(referenceExpression)
-            }
+            val parentParent = parent.getParent()
+            return parentParent is JetQualifiedExpression && parentParent.getReceiverExpression() == parent
         }
 
         override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-            if (visitShortNames) {
-                resolveMap[expression] = resolveSession.resolveToElement(expression)
+            val context = resolveSession.resolveToElement(expression)
+            val descriptor = context[BindingContext.REFERENCE_TARGET, expression]
+            if ((descriptor is ClassDescriptor || descriptor is PackageViewDescriptor) && expression.isReceiver()) {
+                if (!resolveQualifiers) return
             }
+            if (!resolveShortNames) return
+
+            resolveMap[expression] = context
         }
     }
 }

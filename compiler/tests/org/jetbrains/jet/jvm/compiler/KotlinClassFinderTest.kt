@@ -48,7 +48,6 @@ public class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
         val binaryClass = VirtualFileFinder.SERVICE.getInstance(project).findKotlinClass(JavaClassImpl(psiClass!!))
         assertNotNull(binaryClass, "No binary class for $className")
 
-        assertEquals("test/A\$B\$C", binaryClass?.getClassName()?.getInternalName())
+        assertEquals("test/A.B.C", binaryClass?.getClassId()?.toString())
     }
 }
-

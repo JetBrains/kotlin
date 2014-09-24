@@ -1,0 +1,15 @@
+package
+
+internal fun test(/*0*/ a: A): kotlin.Unit
+
+kotlin.data() internal final class A {
+    public constructor A(/*0*/ foo: kotlin.String, /*1*/ bar: kotlin.Int, /*2*/ other: kotlin.Long)
+    internal final val bar: kotlin.Int
+    internal final val foo: kotlin.String
+    internal final val other: kotlin.Long
+    internal final /*synthesized*/ fun component1(): kotlin.Int
+    internal final /*synthesized*/ fun copy(/*0*/ foo: kotlin.String, /*1*/ bar: kotlin.Int = ..., /*2*/ other: kotlin.Long): A
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

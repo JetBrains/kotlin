@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
@@ -31,7 +31,7 @@ public interface JavaAnnotation extends JavaElement {
     Collection<JavaAnnotationArgument> getArguments();
 
     @Nullable
-    FqName getFqName();
+    ClassId getClassId();
 
     @Nullable
     JavaClass resolve();

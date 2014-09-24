@@ -24,7 +24,6 @@ import org.jetbrains.jet.plugin.refactoring.createTempCopy
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionData
-import java.util.Collections
 import org.jetbrains.jet.plugin.refactoring.extractFunction.performAnalysis
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
@@ -37,6 +36,7 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.plugin.intentions.InsertExplicitTypeArguments
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionGeneratorOptions
 import org.jetbrains.jet.plugin.refactoring.extractFunction.generateDeclaration
+import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode
 import org.jetbrains.jet.lang.psi.psiUtil.replaced
 
@@ -62,11 +62,11 @@ fun getFunctionForExtractedFragment(
                 ErrorMessage.SUPER_CALL -> "Cannot perform an action for expression with super call"
                 ErrorMessage.DENOTABLE_TYPES -> "Cannot perform an action because following types are unavailable from debugger scope"
                 ErrorMessage.ERROR_TYPES -> "Cannot perform an action because this code fragment contains erroneous types"
-                ErrorMessage.MULTIPLE_OUTPUT -> "Cannot perform an action because this code fragment changes more than one variable"
                 ErrorMessage.DECLARATIONS_OUT_OF_SCOPE,
                 ErrorMessage.OUTPUT_AND_EXIT_POINT,
                 ErrorMessage.MULTIPLE_EXIT_POINTS,
                 ErrorMessage.DECLARATIONS_ARE_USED_OUTSIDE -> "Cannot perform an action for this expression"
+                else -> throw AssertionError("Unexpected error: $errorMessage")
             }
             errorMessage.additionalInfo?.let { "$message: ${it.joinToString(", ")}" } ?: message
         }.joinToString(", ")
@@ -77,16 +77,11 @@ fun getFunctionForExtractedFragment(
 
         val originalFile = breakpointFile as JetFile
 
-        val lineStart = CodeInsightUtils.getStartLineOffset(originalFile, breakpointLine)
-        if (lineStart == null) return null
-
         val tmpFile = originalFile.createTempCopy { it }
         tmpFile.skipVisibilityCheck = true
 
-        val elementAtOffset = tmpFile.findElementAt(lineStart)
-        if (elementAtOffset == null) return null
-
-        val contextElement: PsiElement = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
+        val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, codeFragment.getContext(), breakpointLine)
+        if (contextElement == null) return null
 
         // Don't evaluate smth when breakpoint is on package directive (ex. for package classes)
         if (contextElement is JetFile) {
@@ -102,7 +97,7 @@ fun getFunctionForExtractedFragment(
         if (targetSibling == null) return null
 
         val analysisResult = ExtractionData(
-                tmpFile, Collections.singletonList(newDebugExpression), targetSibling, ExtractionOptions(false)
+                tmpFile, newDebugExpression.toRange(), targetSibling, ExtractionOptions(false, true)
         ).performAnalysis()
         if (analysisResult.status != Status.SUCCESS) {
             throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult))
@@ -137,12 +132,62 @@ private fun addImportsToFile(newImportList: JetImportList?, tmpFile: JetFile) {
     }
 }
 
+private fun JetFile.getElementInCopy(e: PsiElement): PsiElement? {
+    val offset = e.getTextRange()?.getStartOffset()
+    if (offset == null) {
+        return null
+    }
+    var elementAt = this.findElementAt(offset)
+    while (elementAt == null || elementAt!!.getTextRange()?.getEndOffset() != e.getTextRange()?.getEndOffset()) {
+        elementAt = elementAt?.getParent()
+    }
+    return elementAt
+}
+
+private fun getExpressionToAddDebugExpressionBefore(tmpFile: JetFile, contextElement: PsiElement?, line: Int): PsiElement? {
+    if (contextElement == null) {
+        val lineStart = CodeInsightUtils.getStartLineOffset(tmpFile, line)
+        if (lineStart == null) return null
+
+        val elementAtOffset = tmpFile.findElementAt(lineStart)
+        if (elementAtOffset == null) return null
+
+        return CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
+    }
+
+    fun shouldStop(el: PsiElement?, p: PsiElement?) = p is JetBlockExpression || el is JetDeclaration
+
+    var elementAt = tmpFile.getElementInCopy(contextElement)
+
+    var parent = elementAt?.getParent()
+    if (shouldStop(elementAt, parent)) {
+        return elementAt
+    }
+
+    var parentOfParent = parent?.getParent()
+
+    while (parent != null && parentOfParent != null) {
+        if (shouldStop(parent, parentOfParent)) {
+            break
+        }
+
+        parent = parent?.getParent()
+        parentOfParent = parent?.getParent()
+    }
+
+    return parent
+}
+
 private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment, contextElement: PsiElement): JetExpression? {
     val psiFactory = JetPsiFactory(codeFragment)
 
     val elementBefore = when {
         contextElement is JetProperty && !contextElement.isLocal() -> {
             wrapInRunFun(contextElement.getDelegateExpressionOrInitializer()!!)
+        }
+        contextElement is JetFunctionLiteral -> {
+            val block = contextElement.getBodyExpression()!!
+            block.getStatements().first ?: block.getLastChild()
         }
         contextElement is JetDeclarationWithBody && !contextElement.hasBlockBody()-> {
             wrapInRunFun(contextElement.getBodyExpression()!!)

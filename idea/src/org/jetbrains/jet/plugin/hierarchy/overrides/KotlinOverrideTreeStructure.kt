@@ -20,29 +20,11 @@ import com.intellij.ide.hierarchy.HierarchyTreeStructure
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetElement
 import com.intellij.ide.hierarchy.method.MethodHierarchyNodeDescriptor
 import com.intellij.ide.hierarchy.method.MethodHierarchyTreeStructure
-import com.intellij.psi.PsiMethod
-import org.jetbrains.jet.asJava.LightClassUtil
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetParameter
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
-import org.jetbrains.jet.plugin.search.declarationsSearch.HierarchySearchRequest
-import com.intellij.psi.search.GlobalSearchScopes
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.jet.plugin.search.declarationsSearch.searchOverriders
-import org.jetbrains.jet.lang.psi.JetDeclaration
 import com.intellij.util.ArrayUtil
-import org.jetbrains.jet.lang.psi.JetClassOrObject
-import com.intellij.psi.PsiClass
-import java.util.Collections
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.asJava.toLightMethods
-import com.siyeh.ig.psiutils.CollectionUtils
 import com.intellij.util.containers.ContainerUtil
-import java.util.HashSet
 
 class KotlinOverrideTreeStructure(project: Project, val element: PsiElement) : HierarchyTreeStructure(project, null) {
     val javaTreeStructures = element.toLightMethods().map { method -> MethodHierarchyTreeStructure(project, method) };

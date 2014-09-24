@@ -1,0 +1,116 @@
+package
+
+package illegal_modifiers {
+
+    internal abstract class A {
+        public constructor A()
+        internal open var r: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal abstract fun f(): kotlin.Unit
+        internal abstract fun g(): kotlin.Unit
+        internal open fun h(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    private final class C {
+        public constructor C()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    private object D {
+        private constructor D()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public class object <class-object-for-D> : illegal_modifiers.D {
+            private constructor <class-object-for-D>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal final class FinalClass {
+        public constructor FinalClass()
+        internal final val i: kotlin.Int = 1
+        internal final var j: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal open fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class IllegalModifiers1 {
+        public constructor IllegalModifiers1(/*0*/ a: kotlin.Int)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class IllegalModifiers2 {
+        public constructor IllegalModifiers2(/*0*/ a: kotlin.Int)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class IllegalModifiers3 {
+        public constructor IllegalModifiers3(/*0*/ illegal_modifiers.annotated() b: kotlin.String)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class IllegalModifiers4 {
+        public constructor IllegalModifiers4(/*0*/ a: kotlin.Int, /*1*/ illegal_modifiers.annotated(text = "a text": kotlin.String) vararg v: kotlin.Int /*kotlin.IntArray*/)
+        internal final val a: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal abstract class IllegalModifiers5 {
+        public constructor IllegalModifiers5()
+        internal abstract fun bar(/*0*/ a: kotlin.Int, /*1*/ vararg v: kotlin.String /*kotlin.Array<kotlin.String>*/): kotlin.Unit
+        internal abstract fun baz(/*0*/ illegal_modifiers.annotated(text = "a text": kotlin.String) a: kotlin.Int): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal abstract fun foo(/*0*/ a: kotlin.Int, /*1*/ vararg v: kotlin.String /*kotlin.Array<kotlin.String>*/): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        private final fun qux(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal abstract class IllegalModifiers6 {
+        public constructor IllegalModifiers6()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class LegalModifier {
+        public constructor LegalModifier(/*0*/ a: kotlin.Int, /*1*/ illegal_modifiers.annotated() b: kotlin.String, /*2*/ illegal_modifiers.annotated() vararg v: kotlin.Int /*kotlin.IntArray*/)
+        internal final val a: kotlin.Int
+        illegal_modifiers.annotated() private final var b: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final trait T {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final annotation class annotated : kotlin.Annotation {
+        public constructor annotated(/*0*/ text: kotlin.String = ...)
+        internal final val text: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

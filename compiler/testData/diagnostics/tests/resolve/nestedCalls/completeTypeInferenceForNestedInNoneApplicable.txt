@@ -1,0 +1,8 @@
+package
+
+package h {
+    internal fun </*0*/ T> emptyList(): kotlin.List<T>
+    internal fun foo(/*0*/ i: kotlin.Int): kotlin.Int
+    internal fun foo(/*0*/ s: kotlin.String): kotlin.String
+    internal fun test(): kotlin.Unit
+}

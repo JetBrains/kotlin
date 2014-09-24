@@ -1,0 +1,5 @@
+package
+
+internal val s: kotlin.String
+internal val x: kotlin.String
+internal fun </*0*/ T : kotlin.Any> T?.sure(): T

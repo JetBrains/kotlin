@@ -1,0 +1,63 @@
+package
+
+internal final enum class E : kotlin.Enum<E> {
+    private constructor E()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public enum entry ABC : E {
+        private constructor ABC()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public class object <class-object-for-ABC> : E.ABC {
+            private constructor <class-object-for-ABC>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        internal final enum class F : kotlin.Enum<E.ABC.F> {
+            private constructor F()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public enum entry DEF : E.ABC.F {
+                private constructor DEF()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+                public class object <class-object-for-DEF> : E.ABC.F.DEF {
+                    private constructor <class-object-for-DEF>()
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+                    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+            }
+
+            // Static members
+            public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E.ABC.F
+            public final /*synthesized*/ fun values(): kotlin.Array<E.ABC.F>
+        }
+    }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E
+    public final /*synthesized*/ fun values(): kotlin.Array<E>
+}

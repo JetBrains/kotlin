@@ -44,7 +44,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     private List<TypeParameterDescriptor> typeParameters;
     private Collection<JetType> supertypes = new ArrayList<JetType>();
 
-    private ClassDescriptor classObjectDescriptor;
+    private MutableClassDescriptor classObjectDescriptor;
 
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
     private ConstructorDescriptor primaryConstructor;
@@ -57,8 +57,9 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     private final WritableScope scopeForMemberResolution;
     // This scope contains type parameters but does not contain inner classes
     private final WritableScope scopeForSupertypeResolution;
-    private WritableScope scopeForInitializers = null; //contains members + primary constructor value parameters + map for backing fields
+    private WritableScope scopeForInitializers; //contains members + primary constructor value parameters + map for backing fields
     private JetScope scopeForMemberLookup;
+    private final JetScope staticScope = new StaticScopeForKotlinClass(this);
 
     public MutableClassDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -80,16 +81,18 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler, "MemberResolution")
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
-        if (getKind() == ClassKind.TRAIT) {
+
+        if (kind == ClassKind.TRAIT) {
             setUpScopeForInitializers(this);
         }
 
+        scopeForMemberResolution.importScope(staticScope);
         scopeForMemberResolution.addLabeledDeclaration(this);
     }
 
     @Nullable
     @Override
-    public ClassDescriptor getClassObjectDescriptor() {
+    public MutableClassDescriptor getClassObjectDescriptor() {
         return classObjectDescriptor;
     }
 
@@ -295,10 +298,16 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         return (WritableScope) scopeForMemberLookup;
     }
 
+    @NotNull
+    @Override
+    public JetScope getStaticScope() {
+        return staticScope;
+    }
+
     public void lockScopes() {
         getScopeForMemberLookupAsWritableScope().changeLockLevel(WritableScope.LockLevel.READING);
-        if (classObjectDescriptor instanceof MutableClassDescriptor) {
-            ((MutableClassDescriptor) classObjectDescriptor).lockScopes();
+        if (classObjectDescriptor != null) {
+            classObjectDescriptor.lockScopes();
         }
         scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.READING);
         scopeForMemberResolution.changeLockLevel(WritableScope.LockLevel.READING);
@@ -335,7 +344,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
                 }
 
                 @Override
-                public ClassObjectStatus setClassObjectDescriptor(@NotNull ClassDescriptor classObjectDescriptor) {
+                public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                     if (getKind() == ClassKind.CLASS_OBJECT || isInner()) {
                         return ClassObjectStatus.NOT_ALLOWED;
                     }

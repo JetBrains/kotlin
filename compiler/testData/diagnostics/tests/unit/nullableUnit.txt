@@ -1,0 +1,4 @@
+package
+
+internal val x: kotlin.Unit?
+internal fun foo(): kotlin.Unit

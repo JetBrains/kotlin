@@ -1,0 +1,32 @@
+package
+
+internal val a2: kotlin.Long = 9223372036854775798.toLong()
+internal val intMaxValue: kotlin.Int = 2147483647
+internal val intMinValue: kotlin.Int = -2147483648
+internal val l1: kotlin.Long = -9223372036854775808.toLong()
+internal val l10: kotlin.Long = 2147483648.toLong()
+internal val l11: kotlin.Long = -2147483649.toLong()
+internal val l12: kotlin.Long = 0.toLong()
+internal val l13: kotlin.Long = -9223372036854775808.toLong()
+internal val l14: kotlin.Long = 0.toLong()
+internal val l15: kotlin.Long = 2.toLong()
+internal val l16: kotlin.Long = 2147483648.toLong()
+internal val l19: kotlin.Long = -9223372036854775808.toLong()
+internal val l2: kotlin.Long = -9223372036854775808.toLong()
+internal val l3: kotlin.Long = -1.toLong()
+internal val l4: kotlin.Long = -9223372036854775808.toLong()
+internal val l5: kotlin.Long = 9223372036854775807.toLong()
+internal val l6: kotlin.Long = 1.toLong()
+internal val l7: kotlin.Long = -1.toLong()
+internal val l8: kotlin.Long = -9223372036854775807.toLong()
+internal val longMaxValue: kotlin.Long = 9223372036854775807.toLong()
+internal val longMinValue: kotlin.Long = -9223372036854775808.toLong()
+internal fun foo(): kotlin.Unit
+
+internal final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

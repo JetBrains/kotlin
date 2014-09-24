@@ -1,0 +1,12 @@
+package
+
+internal fun box(): kotlin.String
+internal fun </*0*/ T> generic_invoker(/*0*/ gen: () -> T): T
+internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+internal fun println(/*0*/ message: kotlin.Int): kotlin.Unit
+internal fun println(/*0*/ message: kotlin.Long): kotlin.Unit
+kotlin.inline() internal fun </*0*/ T> run(/*0*/ body: () -> T): T
+internal fun </*0*/ T> kotlin.Iterable<T>.foreach(/*0*/ operation: (T) -> kotlin.Unit): kotlin.Unit
+internal fun </*0*/ T> kotlin.Iterable<T>.foreach(/*0*/ operation: (kotlin.Int, T) -> kotlin.Unit): kotlin.Unit
+internal fun </*0*/ T> kotlin.Iterator<T>.foreach(/*0*/ operation: (T) -> kotlin.Unit): kotlin.Unit
+internal fun </*0*/ T> kotlin.Iterator<T>.foreach(/*0*/ operation: (kotlin.Int, T) -> kotlin.Unit): kotlin.Unit

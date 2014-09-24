@@ -1,0 +1,19 @@
+package
+
+package test {
+    internal fun a(/*0*/ s: kotlin.String): kotlin.Unit
+    internal fun b(/*0*/ s: kotlin.String): kotlin.Unit
+    internal fun println(/*0*/ a: kotlin.Any?): kotlin.Any?
+
+    kotlin.data() internal final class Pair</*0*/ A, /*1*/ B> {
+        public constructor Pair</*0*/ A, /*1*/ B>(/*0*/ a: A, /*1*/ b: B)
+        internal final val a: A
+        internal final val b: B
+        internal final /*synthesized*/ fun component1(): A
+        internal final /*synthesized*/ fun component2(): B
+        internal final /*synthesized*/ fun copy(/*0*/ a: A = ..., /*1*/ b: B = ...): test.Pair<A, B>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

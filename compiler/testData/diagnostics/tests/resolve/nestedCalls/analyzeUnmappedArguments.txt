@@ -1,0 +1,7 @@
+package
+
+package c {
+    internal fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+    internal fun test(): kotlin.Unit
+    internal fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ f: T.() -> R): R
+}

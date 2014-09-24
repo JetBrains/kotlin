@@ -38,7 +38,7 @@ L0:
     mark({1})
     jmp?(L2)                                                                                                        NEXT:[r({1}) -> <v9>, d({1})]
     d({1})                                                                                                          NEXT:[<SINK>]
-L2:
+L2 [after local declaration]:
     r({1}) -> <v9>                                                                                                  PREV:[jmp?(L2)]
     mark(flfun {1})
     call(flfun {1}, flfun|<v9>) -> <v10>
@@ -58,12 +58,12 @@ L2:
     r(a) -> <v20>
     jf(L5|<v20>)                                                                                                    NEXT:[magic[AND](a && true|<v20>, <v21>) -> <v22>, r(true) -> <v21>]
     r(true) -> <v21>
-L5:
+L5 [result of boolean operation]:
     magic[AND](a && true|<v20>, <v21>) -> <v22>                                                                     PREV:[jf(L5|<v20>), r(true) -> <v21>]
     r(a) -> <v23>
     jt(L6|<v23>)                                                                                                    NEXT:[r(false) -> <v24>, magic[OR](a || false|<v23>, <v24>) -> <v25>]
     r(false) -> <v24>
-L6:
+L6 [result of boolean operation]:
     magic[OR](a || false|<v23>, <v24>) -> <v25>                                                                     PREV:[jt(L6|<v23>), r(false) -> <v24>]
 L1:
   1 <END>                                                                                                           NEXT:[<SINK>]

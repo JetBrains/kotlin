@@ -27,9 +27,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.types.JetType
-
-private fun DeclarationDescriptor.getImportableDescriptor() =
-        if (this is ConstructorDescriptor || DescriptorUtils.isClassObject(this)) getContainingDeclaration()!! else this
+import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
 
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {
@@ -41,7 +39,9 @@ public val DeclarationDescriptor.importableFqNameSafe: FqName
     get() = DescriptorUtils.getFqNameSafe(getImportableDescriptor())
 
 public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
-    if (this is PackageViewDescriptor || DescriptorUtils.isTopLevelDeclaration(this)) {
+    if (this is PackageViewDescriptor ||
+        DescriptorUtils.isTopLevelDeclaration(this) ||
+        (this is CallableDescriptor && DescriptorUtils.isStaticDeclaration(this))) {
         return true
     }
     val parent = getContainingDeclaration()!!

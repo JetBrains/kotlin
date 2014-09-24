@@ -1,0 +1,7 @@
+package
+
+package kt2216 {
+    internal fun bar(/*0*/ y: kotlin.Int, /*1*/ z: kotlin.Int): kotlin.Int
+    internal fun baz(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Int, /*3*/ d: kotlin.Int): kotlin.Int
+    internal fun foo(): kotlin.Unit
+}

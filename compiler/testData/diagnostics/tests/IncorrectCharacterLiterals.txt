@@ -1,0 +1,4 @@
+package
+
+internal fun ff(): kotlin.Unit
+internal fun test(): kotlin.Unit

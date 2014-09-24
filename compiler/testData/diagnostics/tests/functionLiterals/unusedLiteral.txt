@@ -1,0 +1,4 @@
+package
+
+internal fun unusedLiteral(): kotlin.Unit
+internal fun unusedLiteralInDoWhile(): kotlin.Unit

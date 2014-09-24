@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
@@ -157,25 +158,38 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         ConstructorDescriptor constructor = getPrimaryConstructor();
         if (constructor == null) return;
 
-        int parameterIndex = 0;
-        for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
-            if (parameter.getType().isError()) continue;
-            Set<VariableDescriptor> properties = getProperties(parameter.getName());
-            if (properties.isEmpty()) continue;
-            assert properties.size() == 1 : "A constructor parameter is resolved to more than one (" + properties.size() + ") property: " + parameter;
-            PropertyDescriptor property = (PropertyDescriptor) properties.iterator().next();
-            if (property == null) continue;
-            ++parameterIndex;
+        List<? extends JetParameter> primaryConstructorParameters = declarationProvider.getOwnerInfo().getPrimaryConstructorParameters();
+        assert constructor.getValueParameters().size() == primaryConstructorParameters.size()
+                : "From descriptor: " + constructor.getValueParameters().size() + " but from PSI: " + primaryConstructorParameters.size();
 
-            if (name.equals(Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + parameterIndex))) {
-                SimpleFunctionDescriptor functionDescriptor =
-                        DescriptorResolver.createComponentFunctionDescriptor(parameterIndex, property,
-                                                                             parameter, thisDescriptor, trace);
-                result.add(functionDescriptor);
-                break;
+        if (DataClassUtilsPackage.isComponentLike(name)) {
+            int componentIndex = 0;
+
+            for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
+                if (parameter.getType().isError()) continue;
+                if (!primaryConstructorParameters.get(parameter.getIndex()).hasValOrVarNode()) continue;
+
+                Set<VariableDescriptor> properties = getProperties(parameter.getName());
+                if (properties.isEmpty()) continue;
+
+                assert properties.size() == 1 :
+                        "A constructor parameter is resolved to more than one (" + properties.size() + ") property: " + parameter;
+
+                PropertyDescriptor property = (PropertyDescriptor) properties.iterator().next();
+                if (property == null) continue;
+
+                ++componentIndex;
+
+                if (name.equals(DataClassUtilsPackage.createComponentName(componentIndex))) {
+                    SimpleFunctionDescriptor functionDescriptor = DescriptorResolver.createComponentFunctionDescriptor(
+                            componentIndex, property, parameter, thisDescriptor, trace);
+                    result.add(functionDescriptor);
+                    break;
+                }
             }
         }
-        if (!constructor.getValueParameters().isEmpty() && name.equals(DescriptorResolver.COPY_METHOD_NAME)) {
+
+        if (name.equals(DescriptorResolver.COPY_METHOD_NAME)) {
             SimpleFunctionDescriptor copyFunctionDescriptor = DescriptorResolver.createCopyFunctionDescriptor(
                     constructor.getValueParameters(),
                     thisDescriptor, trace);
@@ -309,7 +323,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         // Generate componentN functions until there's no such function for some n
         int n = 1;
         while (true) {
-            Name componentName = Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + n);
+            Name componentName = DataClassUtilsPackage.createComponentName(n);
             Set<FunctionDescriptor> functions = getFunctions(componentName);
             if (functions.isEmpty()) break;
 
@@ -324,12 +338,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @Override
     public PackageViewDescriptor getPackage(@NotNull Name name) {
         return null;
-    }
-
-    @NotNull
-    @Override
-    protected ReceiverParameterDescriptor getImplicitReceiver() {
-        return thisDescriptor.getThisAsReceiverParameter();
     }
 
     @NotNull

@@ -1,0 +1,6 @@
+package
+
+internal val n: kotlin.Nothing
+internal fun foo1(): kotlin.Unit
+internal fun </*0*/ T : kotlin.Any> fooT22(): T?
+internal fun </*0*/ T : kotlin.Any> T?.sure(): T

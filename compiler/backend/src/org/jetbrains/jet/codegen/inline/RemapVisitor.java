@@ -94,12 +94,12 @@ public class RemapVisitor extends InliningInstructionAdapter {
     }
 
     @Override
-    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+    public AnnotationVisitor visitAnnotation(@NotNull String desc, boolean visible) {
         return null;
     }
 
     @Override
-    public AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
+    public AnnotationVisitor visitParameterAnnotation(int parameter, @NotNull String desc, boolean visible) {
         return null;
     }
 

@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetTypeParameter;
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightElement;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 public class KotlinLightTypeParameter

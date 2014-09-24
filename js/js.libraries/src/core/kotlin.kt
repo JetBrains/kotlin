@@ -3,36 +3,36 @@ package kotlin
 import java.util.*
 
 library("comparator")
-public fun comparator<T>(f : (T, T) -> Int): Comparator<T> = js.noImpl
+public fun comparator<T>(f : (T, T) -> Int): Comparator<T> = noImpl
 
 library
-public fun <T> array(vararg value : T): Array<T> = js.noImpl
+public fun <T> array(vararg value : T): Array<T> = noImpl
 
 // "constructors" for primitive types array
 
 library
-public fun doubleArray(vararg content : Double): DoubleArray    = js.noImpl
+public fun doubleArray(vararg content : Double): DoubleArray    = noImpl
 
 library
-public fun floatArray(vararg content : Float): FloatArray       = js.noImpl
+public fun floatArray(vararg content : Float): FloatArray       = noImpl
 
 library
-public fun longArray(vararg content : Long): LongArray          = js.noImpl
+public fun longArray(vararg content : Long): LongArray          = noImpl
 
 library
-public fun intArray(vararg content : Int): IntArray             = js.noImpl
+public fun intArray(vararg content : Int): IntArray             = noImpl
 
 library
-public fun charArray(vararg content : Char): CharArray          = js.noImpl
+public fun charArray(vararg content : Char): CharArray          = noImpl
 
 library
-public fun shortArray(vararg content : Short): ShortArray       = js.noImpl
+public fun shortArray(vararg content : Short): ShortArray       = noImpl
 
 library
-public fun byteArray(vararg content : Byte): ByteArray          = js.noImpl
+public fun byteArray(vararg content : Byte): ByteArray          = noImpl
 
 library
-public fun booleanArray(vararg content : Boolean): BooleanArray = js.noImpl
+public fun booleanArray(vararg content : Boolean): BooleanArray = noImpl
 
 library("copyToArray")
-public fun <reified T> Collection<T>.copyToArray(): Array<T> = js.noImpl
+public fun <reified T> Collection<T>.copyToArray(): Array<T> = noImpl

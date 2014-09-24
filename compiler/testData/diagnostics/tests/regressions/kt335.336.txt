@@ -1,0 +1,4 @@
+package
+
+internal fun </*0*/ T> kotlin.List<T>.plus(/*0*/ other: kotlin.List<T>): kotlin.List<T>
+internal fun </*0*/ T : kotlin.Comparable<T>> kotlin.MutableList<T>.sort(): kotlin.Unit

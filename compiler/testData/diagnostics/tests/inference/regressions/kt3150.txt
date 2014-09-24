@@ -1,0 +1,24 @@
+package
+
+package aa {
+    internal fun test(): kotlin.Unit
+    internal fun aa.SomeTemplate.query(/*0*/ f: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Unit
+    internal fun aa.SomeTemplate.query1(/*0*/ f: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Unit
+
+    internal final class Some</*0*/ T> {
+        public constructor Some</*0*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class SomeTemplate {
+        public constructor SomeTemplate()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun </*0*/ T> query(/*0*/ some: java.lang.Class<T>): java.lang.Class<T>
+        internal final fun </*0*/ T> query1(/*0*/ some: aa.Some<T>): aa.Some<T>
+        internal final fun </*0*/ T> query1(/*0*/ some: java.lang.Class<T>): java.lang.Class<T>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

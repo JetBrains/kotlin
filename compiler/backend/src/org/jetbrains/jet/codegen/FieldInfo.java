@@ -17,36 +17,35 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.org.objectweb.asm.Type;
 
 public class FieldInfo {
-
     @NotNull
-    public static FieldInfo createForSingleton(@NotNull ClassDescriptor fieldClassDescriptor, @NotNull JetTypeMapper typeMapper) {
-        ClassKind kind = fieldClassDescriptor.getKind();
-        if (kind != ClassKind.OBJECT && kind != ClassKind.CLASS_OBJECT && kind != ClassKind.ENUM_ENTRY) {
-            throw new UnsupportedOperationException();
+    public static FieldInfo createForSingleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
+        ClassKind kind = classDescriptor.getKind();
+        if (!kind.isSingleton()) {
+            throw new UnsupportedOperationException("Can't create singleton field for class: " + classDescriptor);
         }
 
-        Type fieldType = typeMapper.mapType(fieldClassDescriptor);
-
         ClassDescriptor ownerDescriptor = kind == ClassKind.OBJECT
-                                          ? fieldClassDescriptor: DescriptorUtils.getParentOfType(fieldClassDescriptor, ClassDescriptor.class);
-        assert ownerDescriptor != null;
+                                          ? classDescriptor
+                                          : DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
+        assert ownerDescriptor != null : "Owner not found for class: " + classDescriptor;
         Type ownerType = typeMapper.mapType(ownerDescriptor);
 
         String fieldName = kind == ClassKind.ENUM_ENTRY
-                           ? fieldClassDescriptor.getName().asString()
-                           : fieldClassDescriptor.getKind() == ClassKind.CLASS_OBJECT ? JvmAbi.CLASS_OBJECT_FIELD : JvmAbi.INSTANCE_FIELD;
-        return new FieldInfo(ownerType, fieldType, fieldName, true);
+                           ? classDescriptor.getName().asString()
+                           : classDescriptor.getKind() == ClassKind.CLASS_OBJECT ? JvmAbi.CLASS_OBJECT_FIELD : JvmAbi.INSTANCE_FIELD;
+        return new FieldInfo(ownerType, typeMapper.mapType(classDescriptor), fieldName, true);
     }
 
-    public static FieldInfo createForHiddenField(@NotNull Type owner, Type fieldType, String fieldName) {
+    @NotNull
+    public static FieldInfo createForHiddenField(@NotNull Type owner, @NotNull Type fieldType, @NotNull String fieldName) {
         return new FieldInfo(owner, fieldType, fieldName, false);
     }
 

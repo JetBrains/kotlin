@@ -18,5 +18,5 @@ fun test(listParam: Int) {
 // ORDER: listImportedVal
 // ORDER: listThisFileFun
 // ORDER: listImportedFun
-// ORDER: listMatch
-// ORDER: listNew
+// ORDER: "listMatch ="
+// ORDER: "listNew ="

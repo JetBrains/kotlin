@@ -1,0 +1,10 @@
+package
+
+package kt1027 {
+    internal fun doSmth(): kotlin.Unit
+    internal fun foo(/*0*/ c: kotlin.List<kotlin.Int>): kotlin.Unit
+    internal fun t1(): kotlin.Unit
+    internal fun t2(): kotlin.Unit
+    internal fun t3(): kotlin.Unit
+    internal fun t4(): kotlin.Unit
+}

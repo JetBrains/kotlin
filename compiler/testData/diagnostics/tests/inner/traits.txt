@@ -1,0 +1,24 @@
+package
+
+internal trait Foo {
+    internal abstract val b: Foo.Bar
+    internal abstract val b1: Foo.Bar
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal trait Bar {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+internal trait Foo2 : Foo {
+    internal abstract override /*1*/ /*fake_override*/ val b: Foo.Bar
+    internal abstract override /*1*/ /*fake_override*/ val b1: Foo.Bar
+    internal abstract val bb1: Foo.Bar
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

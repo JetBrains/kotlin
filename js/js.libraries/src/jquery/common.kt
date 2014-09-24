@@ -1,11 +1,11 @@
-package js.jquery;
+package jquery
 
 import org.w3c.dom.Element
 
 native
 public public class JQuery() {
-    public fun addClass(className: String): JQuery = js.noImpl;
-    public fun addClass(f: Element.(Int, String) -> String): JQuery = js.noImpl;
+    public fun addClass(className: String): JQuery = noImpl;
+    public fun addClass(f: Element.(Int, String) -> String): JQuery = noImpl;
 
     public fun attr(attrName: String): String = "";
     public fun attr(attrName: String, value: String): JQuery = this;
@@ -38,9 +38,9 @@ public public class JQuery() {
     public fun slideUp(): JQuery = this;
     public fun hover(handlerInOut: Element.() -> Unit): JQuery = this;
     public fun hover(handlerIn: Element.() -> Unit, handlerOut: Element.() -> Unit): JQuery = this;
-    public fun next(): JQuery = js.noImpl
-    public fun parent(): JQuery = js.noImpl
-    public fun `val`(): String? = js.noImpl
+    public fun next(): JQuery = noImpl
+    public fun parent(): JQuery = noImpl
+    public fun `val`(): String? = noImpl
 }
 
 native
@@ -54,7 +54,7 @@ open public class MouseEvent() {
 
 native
 public class MouseClickEvent() : MouseEvent() {
-    val which: Int = 0;
+    public val which: Int = 0;
 }
 
 native("$")

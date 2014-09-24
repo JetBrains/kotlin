@@ -1,0 +1,35 @@
+package
+
+package test {
+
+    internal trait A {
+        protected abstract val a: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal trait B {
+        protected abstract val a: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal open class C {
+        public constructor C()
+        private final val a: kotlin.String = ""
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Subject : test.C, test.A, test.B {
+        public constructor Subject()
+        protected abstract override /*2*/ /*fake_override*/ val a: kotlin.String
+        internal final val c: kotlin.String
+        public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

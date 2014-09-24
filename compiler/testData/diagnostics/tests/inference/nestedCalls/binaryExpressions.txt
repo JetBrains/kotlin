@@ -1,0 +1,30 @@
+package
+
+package h {
+    internal fun </*0*/ T> id(/*0*/ t: T): T
+    internal fun </*0*/ T> newA(): h.A<T>
+    internal fun test(/*0*/ z: h.Z): kotlin.Unit
+    internal fun test1(/*0*/ z: h.Z): kotlin.Unit
+    internal fun test2(/*0*/ z: h.Z): kotlin.Unit
+    internal fun test3(/*0*/ z: h.Z): kotlin.Unit
+    internal fun test4(/*0*/ collection: kotlin.Collection<h.A<out kotlin.Any?>>): kotlin.Unit
+    internal fun test5(): kotlin.Unit
+    internal fun </*0*/ T> toBeOrNot(): kotlin.Boolean
+    internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<kotlin.Any?>*/): kotlin.Array<kotlin.Any?>
+    internal fun </*0*/ T> h.Z.compareTo(/*0*/ a: h.A<T>): kotlin.Int
+    internal fun h.Z.equals(/*0*/ any: kotlin.Any): kotlin.Int
+    internal fun </*0*/ T> h.Z.foo(/*0*/ a: h.A<T>): h.A<T>
+    internal fun </*0*/ T> h.Z.plus(/*0*/ a: h.A<T>): h.A<T>
+
+    internal trait A</*0*/ T> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal trait Z {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

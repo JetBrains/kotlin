@@ -1,0 +1,26 @@
+package
+
+internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+internal fun </*0*/ T> with(/*0*/ t: T, /*1*/ f: T.() -> kotlin.Unit): kotlin.Unit
+
+internal final class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal class object <class-object-for-Foo> : JPAEntityClass<Foo> {
+        private constructor <class-object-for-Foo>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal open override /*1*/ /*fake_override*/ fun </*0*/ T> T.findByName(/*0*/ s: kotlin.String): Foo
+    }
+}
+
+internal trait JPAEntityClass</*0*/ D> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal open fun </*0*/ T> T.findByName(/*0*/ s: kotlin.String): D
+}

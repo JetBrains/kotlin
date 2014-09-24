@@ -1,0 +1,13 @@
+package
+
+package foo {
+    internal fun dispatch(/*0*/ request: foo.Request): kotlin.Unit
+
+    internal trait Request {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal abstract fun getMethod(): kotlin.String?
+        internal abstract fun getRequestURI(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

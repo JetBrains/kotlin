@@ -26,11 +26,13 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ui.UIUtil;
 import junit.framework.ComparisonFailure;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.DirectiveBasedActionUtils;
 import org.jetbrains.jet.plugin.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -60,6 +62,12 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     }
 
     private void doTest(final String beforeFileName, boolean withExtraFile) throws Exception {
+        final String originalFileText = FileUtil.loadFile(new File(getTestDataPath() + beforeFileName), true);
+
+        if (InTextDirectivesUtils.findStringWithPrefixes(originalFileText, "// WITH_RUNTIME") != null) {
+            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk());
+        }
+
         if (withExtraFile) {
             configureByFiles(null, beforeFileName, beforeFileName.replace(".Main.", ".data.Sample."));
         }
@@ -71,8 +79,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
             @Override
             public void run() {
                 try {
-                    Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(
-                            getFile(),FileUtil.loadFile(new File(getTestDataPath() + beforeFileName), true));
+                    Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(getFile(), originalFileText);
                     String text = pair.getFirst();
 
                     boolean actionShouldBeAvailable = pair.getSecond();

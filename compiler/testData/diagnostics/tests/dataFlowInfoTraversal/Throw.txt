@@ -1,0 +1,4 @@
+package
+
+internal fun bar(/*0*/ x: kotlin.Int): java.lang.RuntimeException
+internal fun foo(): kotlin.Unit

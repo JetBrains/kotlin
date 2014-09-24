@@ -1,0 +1,7 @@
+package
+
+internal val </*0*/ out T> T.x: kotlin.Int
+internal val </*0*/ in T> T.y: kotlin.Int
+internal fun </*0*/ in T> f(): kotlin.Unit
+internal fun </*0*/ out T> g(): kotlin.Unit
+internal fun </*0*/ out T, /*1*/ in X, /*2*/ Y> h(): kotlin.Unit

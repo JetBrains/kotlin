@@ -1,0 +1,17 @@
+package
+
+internal open class I {
+    public constructor I()
+    internal final fun foo(): kotlin.Unit
+}
+
+public/*package*/ open class J : I {
+    public/*package*/ constructor J()
+    public/*package*/ open fun bar(): kotlin.Unit
+    internal final override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+}
+
+internal open class K {
+    public constructor K()
+    internal final fun baz(): kotlin.Unit
+}

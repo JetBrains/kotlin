@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeConstructorImpl;
@@ -34,6 +35,7 @@ import java.util.Set;
 public class ClassDescriptorImpl extends ClassDescriptorBase {
     private final Modality modality;
     private final TypeConstructor typeConstructor;
+    private final JetScope staticScope = new StaticScopeForKotlinClass(this);
 
     private JetScope scopeForMemberLookup;
     private Set<ConstructorDescriptor> constructors;
@@ -89,6 +91,12 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     @Override
     protected JetScope getScopeForMemberLookup() {
         return scopeForMemberLookup;
+    }
+
+    @NotNull
+    @Override
+    public JetScope getStaticScope() {
+        return staticScope;
     }
 
     @Nullable

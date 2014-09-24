@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.base.Predicate;
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
 
@@ -50,14 +49,17 @@ public abstract class AbstractLazyResolveRecursiveComparingTest extends KotlinTe
     }
 
     private void doTest(String testFileName, boolean checkPrimaryConstructors, boolean checkPropertyAccessors, boolean allowErrorTypes) throws IOException {
-        List<JetFile> files = JetTestUtils
-                .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true),
-                                 new JetTestUtils.TestFileFactoryNoModules<JetFile>() {
-                                     @Override
-                                     public JetFile create(String fileName, String text, Map<String, String> directives) {
-                                         return JetPsiFactory(getProject()).createFile(fileName, text);
-                                     }
-                                 });
+        List<JetFile> files = JetTestUtils.createTestFiles(
+                testFileName,
+                FileUtil.loadFile(new File(testFileName), true),
+                new JetTestUtils.TestFileFactoryNoModules<JetFile>() {
+                    @NotNull
+                    @Override
+                    public JetFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
+                        return JetPsiFactory(getProject()).createFile(fileName, text);
+                    }
+                }
+        );
 
         ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(files, getEnvironment());
         ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, getEnvironment());
@@ -73,16 +75,11 @@ public abstract class AbstractLazyResolveRecursiveComparingTest extends KotlinTe
         File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
 
         RecursiveDescriptorComparator.validateAndCompareDescriptors(
-                expected, actual, RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterRecursion(
-                new Predicate<FqName>() {
-                    @Override
-                    public boolean apply(FqName fqName) {
-                        return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName);
-                    }
-                })
-                .checkPrimaryConstructors(checkPrimaryConstructors)
-                .checkPropertyAccessors(checkPropertyAccessors)
-                .withValidationStrategy(allowErrorTypes ? ALLOW_ERROR_TYPES : FORBID_ERROR_TYPES),
+                expected, actual, RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
+                        .filterRecursion(RecursiveDescriptorComparator.SKIP_BUILT_INS_PACKAGES)
+                        .checkPrimaryConstructors(checkPrimaryConstructors)
+                        .checkPropertyAccessors(checkPropertyAccessors)
+                        .withValidationStrategy(allowErrorTypes ? ALLOW_ERROR_TYPES : FORBID_ERROR_TYPES),
                 serializeResultsTo);
     }
 }

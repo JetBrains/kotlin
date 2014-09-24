@@ -1,0 +1,5 @@
+package
+
+package c {
+    internal val i: [ERROR : No type, no body]
+}

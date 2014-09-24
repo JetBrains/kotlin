@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOriginKind.*
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 
 public enum class MemberKind { FIELD; METHOD }
 
@@ -36,6 +37,7 @@ public enum class JvmDeclarationOriginKind {
     PACKAGE_PART
     TRAIT_IMPL
     DELEGATION_TO_TRAIT_IMPL
+    SYNTHETIC // this means that there's no proper descriptor for this jvm declaration
 }
 
 public class JvmDeclarationOrigin(
@@ -62,4 +64,6 @@ public fun PackagePart(file: JetFile, descriptor: PackageFragmentDescriptor): Jv
 
 public fun TraitImpl(element: JetClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(TRAIT_IMPL, element, descriptor)
 public fun DelegationToTraitImpl(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(DELEGATION_TO_TRAIT_IMPL, element, descriptor)
+
+public fun Synthetic(element: PsiElement?, descriptor: CallableMemberDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(SYNTHETIC, element, descriptor)
 

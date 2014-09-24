@@ -1,0 +1,5 @@
+package
+
+internal fun bar1(/*0*/ x: kotlin.Number, /*1*/ y: kotlin.Int): kotlin.Unit
+internal fun bar2(/*0*/ x: kotlin.Number): kotlin.Unit
+internal fun bar3(/*0*/ x: kotlin.Number, /*1*/ y: kotlin.Array<kotlin.Int>): kotlin.Unit

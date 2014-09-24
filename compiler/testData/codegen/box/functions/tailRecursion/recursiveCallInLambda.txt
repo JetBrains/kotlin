@@ -1,0 +1,5 @@
+package
+
+internal fun bar(/*0*/ a: kotlin.Any): kotlin.Unit
+internal fun box(): kotlin.String
+kotlin.tailRecursive() internal fun foo(): kotlin.Unit

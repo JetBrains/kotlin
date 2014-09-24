@@ -24,6 +24,7 @@ import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.completion.util.UtilPackage;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.jet.plugin.caches.resolve.LibraryModificationTracker;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 import java.io.File;
@@ -77,6 +78,9 @@ public abstract class JetFixtureCompletionBaseTestCase extends JetLightCodeInsig
     }
 
     protected void setUpFixture(@NotNull String testPath) {
+        //TODO: this is a hacky workaround for js second completion tests failing with PsiInvalidElementAccessException
+        LibraryModificationTracker.getInstance(getProject()).incModificationCount();
+
         myFixture.configureByFile(testPath);
     }
 }

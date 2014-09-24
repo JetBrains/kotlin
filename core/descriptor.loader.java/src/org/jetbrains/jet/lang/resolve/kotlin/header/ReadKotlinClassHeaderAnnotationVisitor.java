@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -72,7 +73,8 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
     @Nullable
     @Override
-    public AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName annotation) {
+    public AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId) {
+        JvmClassName annotation = JvmClassName.byClassId(classId);
         KotlinClassHeader.Kind newKind = HEADER_KINDS.get(annotation);
         if (newKind == null) return null;
 
@@ -106,7 +108,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             }
 
             @Override
-            public void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
+            public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
                 unexpectedArgument(name, annotationClassName);
             }
 
@@ -137,7 +139,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                     }
 
                     @Override
-                    public void visitEnum(@NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
+                    public void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
                         unexpectedArgument(null, annotationClassName);
                     }
 
@@ -163,9 +165,8 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             }
 
             @Override
-            public void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
-                if (enumClassName.getInternalName().equals(KotlinSyntheticClass.KIND_INTERNAL_NAME) &&
-                    name.equals(KotlinSyntheticClass.KIND_FIELD_NAME)) {
+            public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+                if (enumClassId.equals(KotlinSyntheticClass.KIND_CLASS_ID) && name.equals(KotlinSyntheticClass.KIND_FIELD_NAME)) {
                     // Don't call KotlinSyntheticClass.Kind.valueOf() here, because it will throw an exception if there's no such value,
                     // but we don't want to fail if we're loading the header with an _incompatible_ ABI version
                     syntheticClassKind = KotlinSyntheticClass.Kind.valueOfOrNull(enumEntryName.asString());
@@ -173,7 +174,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 }
                 if (isAbiVersionCompatible(version)) {
                     throw new IllegalStateException("Unexpected enum entry for synthetic class annotation: " +
-                                                    name + "=" + enumClassName + "." + enumEntryName);
+                                                    name + "=" + enumClassId + "." + enumEntryName);
                 }
             }
 

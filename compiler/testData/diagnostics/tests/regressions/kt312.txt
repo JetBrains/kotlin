@@ -1,0 +1,6 @@
+package
+
+internal val args: kotlin.Array<kotlin.String>
+internal val name: kotlin.String
+internal val name1: kotlin.String?
+internal fun </*0*/ T> kotlin.Array<out T>.safeGet(/*0*/ index: kotlin.Int): T?

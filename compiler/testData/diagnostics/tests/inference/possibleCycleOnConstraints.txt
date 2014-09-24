@@ -1,0 +1,6 @@
+package
+
+package a {
+    internal fun </*0*/ T> g(/*0*/ f: () -> kotlin.List<T>): T
+    internal fun test(): kotlin.Unit
+}

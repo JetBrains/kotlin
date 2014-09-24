@@ -1,0 +1,26 @@
+package
+
+internal val b1: kotlin.Byte = -1
+internal val b2: kotlin.Int = -1
+internal val b3: kotlin.Long = -1
+internal val b4: kotlin.Short = -1
+internal val i1: kotlin.Byte = -1
+internal val i2: kotlin.Int = -1
+internal val i3: kotlin.Long = -1
+internal val i4: kotlin.Short = -1
+internal val l1: kotlin.Long = -1.toLong()
+internal val l2: kotlin.Byte = -1.toLong()
+internal val l3: kotlin.Int = -1.toLong()
+internal val l4: kotlin.Short = -1.toLong()
+internal val lp1: kotlin.Int = -1111111111111111111.toLong()
+internal val lp2: kotlin.Long = -1111111111111111111.toLong()
+internal val lp3: kotlin.Byte = -1111111111111111111.toLong()
+internal val lp4: kotlin.Short = -1111111111111111111.toLong()
+internal val p1: kotlin.Int = -1
+internal val p2: kotlin.Long = -1.toLong()
+internal val p3: kotlin.Byte = -1.toByte()
+internal val p4: kotlin.Short = -1.toShort()
+internal val s1: kotlin.Byte = -1
+internal val s2: kotlin.Int = -1
+internal val s3: kotlin.Long = -1
+internal val s4: kotlin.Short = -1

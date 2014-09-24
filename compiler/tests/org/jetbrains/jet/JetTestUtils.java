@@ -35,6 +35,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.testFramework.TestDataFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
@@ -479,24 +480,31 @@ public class JetTestUtils {
     }
 
     public interface TestFileFactory<M, F> {
-        F createFile(@Nullable M module, String fileName, String text, Map<String, String> directives);
-        M createModule(String name, List<String> dependencies);
+        F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
+        M createModule(@NotNull String name, @NotNull List<String> dependencies);
     }
 
-    public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<Void,F> {
+    public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<Void, F> {
         @Override
-        public final F createFile(@Nullable Void module, String fileName, String text, Map<String, String> directives) {
+        public final F createFile(
+                @Nullable Void module,
+                @NotNull String fileName,
+                @NotNull String text,
+                @NotNull Map<String, String> directives
+        ) {
             return create(fileName, text, directives);
         }
 
-        public abstract F create(String fileName, String text, Map<String, String> directives);
+        @NotNull
+        public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
 
         @Override
-        public Void createModule(String name, List<String> dependencies) {
+        public Void createModule(@NotNull String name, @NotNull List<String> dependencies) {
             return null;
         }
     }
 
+    @NotNull
     public static <M, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M, F> factory) {
         Map<String, String> directives = parseDirectives(expectedText);
 
@@ -583,8 +591,9 @@ public class JetTestUtils {
         }
 
         List<String> files = createTestFiles("", content, new TestFileFactoryNoModules<String>() {
+            @NotNull
             @Override
-            public String create(String fileName, String text, Map<String, String> directives) {
+            public String create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
                 int firstLineEnd = text.indexOf('\n');
                 return StringUtil.trimTrailing(text.substring(firstLineEnd + 1));
             }
@@ -668,6 +677,10 @@ public class JetTestUtils {
             }
         }
         return builder.toString();
+    }
+
+    public static String navigationMetadata(@TestDataFile String testFile) {
+        return testFile;
     }
 
     public static void assertAllTestsPresentByMetadata(

@@ -1,9 +1,7 @@
 package foo
 
-import js.*
-
 native
-val c: Any? = js.noImpl
+val c: Any? = noImpl
 
 fun box(): Boolean {
     if (c != null) return false

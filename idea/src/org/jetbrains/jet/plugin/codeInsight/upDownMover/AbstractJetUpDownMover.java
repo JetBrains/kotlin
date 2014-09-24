@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
+import org.jetbrains.jet.plugin.refactoring.RefactoringPackage;
 
 public abstract class AbstractJetUpDownMover extends LineMover {
     protected AbstractJetUpDownMover() {
@@ -83,7 +84,7 @@ public abstract class AbstractJetUpDownMover extends LineMover {
                 }
 
                 if (comment != null) {
-                    int extension = getElementLineCount(comment, editor);
+                    int extension = RefactoringPackage.getLineCount(comment);
                     if (extendDown) {
                         bottomExtension = extension;
                     }
@@ -130,16 +131,6 @@ public abstract class AbstractJetUpDownMover extends LineMover {
         }
 
         return sourceRange;
-    }
-
-    protected static int getElementLineCount(PsiElement element, Editor editor) {
-        Document doc = editor.getDocument();
-        TextRange spaceRange = element.getTextRange();
-
-        int startLine = doc.getLineNumber(spaceRange.getStartOffset());
-        int endLine = doc.getLineNumber(spaceRange.getEndOffset());
-
-        return endLine - startLine;
     }
 
     protected static int getElementLine(PsiElement element, Editor editor, boolean first) {

@@ -6,9 +6,9 @@ Note that only a subset of the api is supported for now.
 
 package fancylines
 
-import js.dom.html5.*
-import js.dom.html.window
-import js.jquery.*
+import kotlin.js.dom.html.window
+import kotlin.js.dom.html5.*
+import jquery.*
 
 fun main(args: Array<String>) {
     jq {

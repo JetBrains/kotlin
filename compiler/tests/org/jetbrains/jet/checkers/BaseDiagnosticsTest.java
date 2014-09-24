@@ -125,9 +125,13 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
 
         List<TestFile> testFiles =
                 JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<TestModule, TestFile>() {
-
                     @Override
-                    public TestFile createFile(@Nullable TestModule module, String fileName, String text, Map<String, String> directives) {
+                    public TestFile createFile(
+                            @Nullable TestModule module,
+                            @NotNull String fileName,
+                            @NotNull String text,
+                            @NotNull Map<String, String> directives
+                    ) {
                         if (fileName.endsWith(".java")) {
                             writeJavaFile(fileName, text, javaFilesDir);
                         }
@@ -136,7 +140,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
                     }
 
                     @Override
-                    public TestModule createModule(String name, List<String> dependencies) {
+                    public TestModule createModule(@NotNull String name, @NotNull List<String> dependencies) {
                         TestModule module = new TestModule(name);
                         ModuleAndDependencies oldValue = modules.put(name, new ModuleAndDependencies(module, dependencies));
                         assert oldValue == null : "Module " + name + " declared more than once";
@@ -244,7 +248,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
                 });
     }
 
-    protected static class TestModule {
+    protected static class TestModule implements Comparable<TestModule> {
         private final String name;
         private final List<TestModule> dependencies = new ArrayList<TestModule>();
 
@@ -260,6 +264,11 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
         @NotNull
         public List<TestModule> getDependencies() {
             return dependencies;
+        }
+
+        @Override
+        public int compareTo(@NotNull TestModule module) {
+            return name.compareTo(module.getName());
         }
     }
 

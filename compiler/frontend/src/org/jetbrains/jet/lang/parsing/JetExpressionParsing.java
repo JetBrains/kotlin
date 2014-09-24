@@ -30,6 +30,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
+import static org.jetbrains.jet.lang.parsing.JetParsing.AnnotationParsingMode.REGULAR_ANNOTATIONS_ALLOW_SHORTS;
+import static org.jetbrains.jet.lang.parsing.JetParsing.AnnotationParsingMode.REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class JetExpressionParsing extends AbstractJetParsing {
@@ -114,7 +116,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             EXPRESSION_FIRST,
             TokenSet.create(
                     // declaration
-                    LBRACKET, // attribute
+                    LBRACKET, // annotation
                     FUN_KEYWORD,
                     VAL_KEYWORD, VAR_KEYWORD,
                     TRAIT_KEYWORD,
@@ -138,7 +140,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         POSTFIX(PLUSPLUS, MINUSMINUS, EXCLEXCL,
                 DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
-        PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LABEL_IDENTIFIER) { // attributes
+        PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LABEL_IDENTIFIER) { // annotations
 
             @Override
             public void parseHigherPrecedence(JetExpressionParsing parser) {
@@ -267,7 +269,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * element
-     *   : attributes element
+     *   : annotations element
      *   : "(" element ")" // see tupleLiteral
      *   : literalConstant
      *   : functionLiteral
@@ -339,12 +341,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (at(LBRACKET)) {
             if (!parseLocalDeclaration()) {
                 PsiBuilder.Marker expression = mark();
-                myJetParsing.parseAnnotations(false);
+                myJetParsing.parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
                 parsePrefixExpression();
                 expression.done(ANNOTATED_EXPRESSION);
-            }
-            else {
-                return;
             }
         }
         else {
@@ -770,7 +769,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             int valPos = matchTokenStreamPredicate(new FirstBefore(new At(VAL_KEYWORD), new AtSet(RPAR, LBRACE, RBRACE, SEMICOLON, EQ)));
             if (valPos >= 0) {
                 PsiBuilder.Marker property = mark();
-                myJetParsing.parseModifierList(MODIFIER_LIST, true);
+                myJetParsing.parseModifierList(MODIFIER_LIST, REGULAR_ANNOTATIONS_ALLOW_SHORTS);
                 myJetParsing.parseProperty(true);
                 property.done(PROPERTY);
             }
@@ -954,7 +953,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private boolean parseLocalDeclaration() {
         PsiBuilder.Marker decl = mark();
         JetParsing.TokenDetector enumDetector = new JetParsing.TokenDetector(ENUM_KEYWORD);
-        myJetParsing.parseModifierList(MODIFIER_LIST, enumDetector, false);
+        myJetParsing.parseModifierList(MODIFIER_LIST, enumDetector, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
 
         IElementType declType = parseLocalDeclarationRest(enumDetector.isDetected());
 
@@ -1200,7 +1199,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 PsiBuilder.Marker parameter = mark();
                 int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtSet(COMMA, RPAR, COLON, ARROW)));
-                createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST, false);
+                createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
 
                 expect(IDENTIFIER, "Expecting parameter declaration");
 
@@ -1450,7 +1449,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : "try" block catchBlock* finallyBlock?
      *   ;
      * catchBlock
-     *   : "catch" "(" attributes SimpleName ":" userType ")" block
+     *   : "catch" "(" annotations SimpleName ":" userType ")" block
      *   ;
      *
      * finallyBlock

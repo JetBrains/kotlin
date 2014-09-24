@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationArgument;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -38,7 +39,7 @@ public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implement
     @Nullable
     public JavaAnnotationArgument findArgument(@NotNull Name name) {
         PsiAnnotationMemberValue attribute = getPsi().findAttributeValue(name.asString());
-        return attribute == null ? null : JavaAnnotationArgumentImpl.create(attribute, name);
+        return attribute == null ? null : JavaAnnotationArgumentImpl.OBJECT$.create(attribute, name);
     }
 
     @Override
@@ -49,20 +50,36 @@ public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implement
 
     @Override
     @Nullable
-    public FqName getFqName() {
-        String qualifiedName = getPsi().getQualifiedName();
-        return qualifiedName == null ? null : new FqName(qualifiedName);
+    public ClassId getClassId() {
+        PsiClass resolved = resolvePsi();
+        return resolved == null ? null : computeClassId(resolved);
     }
 
     @Nullable
     @Override
     public JavaClass resolve() {
+        PsiClass resolved = resolvePsi();
+        return resolved == null ? null : new JavaClassImpl(resolved);
+    }
+
+    @Nullable
+    private static ClassId computeClassId(@NotNull PsiClass psiClass) {
+        PsiClass container = psiClass.getContainingClass();
+        if (container != null) {
+            ClassId parentClassId = computeClassId(container);
+            return parentClassId == null ? null : parentClassId.createNestedClassId(Name.identifier(psiClass.getName()));
+        }
+
+        String fqName = psiClass.getQualifiedName();
+        return fqName == null ? null : ClassId.topLevel(new FqName(fqName));
+    }
+
+    @Nullable
+    private PsiClass resolvePsi() {
         PsiJavaCodeReferenceElement referenceElement = getPsi().getNameReferenceElement();
         if (referenceElement == null) return null;
 
         PsiElement resolved = referenceElement.resolve();
-        if (!(resolved instanceof PsiClass)) return null;
-
-        return new JavaClassImpl((PsiClass) resolved);
+        return resolved instanceof PsiClass ? (PsiClass) resolved : null;
     }
 }

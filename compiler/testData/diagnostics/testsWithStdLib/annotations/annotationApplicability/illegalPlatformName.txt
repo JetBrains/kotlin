@@ -1,0 +1,6 @@
+package
+
+kotlin.platform.platformName(name = ".": kotlin.String) internal fun foo(): kotlin.Unit
+kotlin.platform.platformName(name = "": kotlin.String) internal fun foo(/*0*/ a: kotlin.Any): kotlin.Unit
+kotlin.platform.platformName(name = "<": kotlin.String) internal fun fooLT(): kotlin.Unit
+kotlin.platform.platformName(name = "/": kotlin.String) internal fun fooSlash(): kotlin.Unit

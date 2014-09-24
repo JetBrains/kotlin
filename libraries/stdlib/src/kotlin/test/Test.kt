@@ -3,9 +3,6 @@
  */
 package kotlin.test
 
-// TODO should not need this - its here for the JS stuff
-import java.lang.IllegalStateException
-
 /** Asserts that the given block returns true */
 public inline fun assertTrue(message: String, block: ()-> Boolean) {
     val actual = block()

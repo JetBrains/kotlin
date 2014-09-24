@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.intentions.declarations;
 
 import com.google.common.base.Predicate;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -30,7 +29,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.util.JetPsiMatcher;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
@@ -77,8 +75,7 @@ public class DeclarationUtils {
 
         if (!(assignment.getLeft() instanceof JetSimpleNameExpression)) return null;
         if (assignment.getRight() == null) return null;
-        //noinspection ConstantConditions
-        if (!JetPsiMatcher.checkIdentifierMatch(property.getNameIdentifier().getText(), assignment.getLeft().getText())) return null;
+        if (!JetPsiUtil.unquoteIdentifier(assignment.getLeft().getText()).equals(property.getName())) return null;
 
         return new Pair<JetProperty, JetBinaryExpression>(property, assignment);
     }

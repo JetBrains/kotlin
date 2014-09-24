@@ -255,10 +255,9 @@ public final class FqNameUnsafe extends FqNameBase {
     }
 
     @NotNull
-    public static FqNameUnsafe fromSegments(@NotNull List<Name> names) {
+    public static FqNameUnsafe fromSegments(@NotNull List<?> names) {
         return new FqNameUnsafe(UtilsPackage.join(names, "."));
     }
-
 
 
     @NotNull

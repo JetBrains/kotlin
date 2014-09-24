@@ -1,0 +1,6 @@
+<root>
+    <item
+        name='com.intellij.debugger.ui.impl.watch.NodeManagerImpl java.util.Comparator&lt;com.intellij.debugger.ui.tree.DebuggerTreeNode&gt; getNodeComparator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

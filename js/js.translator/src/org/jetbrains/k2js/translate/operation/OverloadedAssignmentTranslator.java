@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
 

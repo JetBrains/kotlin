@@ -1,4 +1,4 @@
-package some;
+package some
 
 open class MyClass() {
 }

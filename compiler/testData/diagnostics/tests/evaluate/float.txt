@@ -1,0 +1,10 @@
+package
+
+internal val a1: kotlin.Float = 1.0.toFloat()
+internal val a2: kotlin.Float = 1.0.toFloat()
+internal val a3: kotlin.Float = 0.1.toFloat()
+internal val a4: kotlin.Float = 0.1.toFloat()
+internal val b5: kotlin.Float = 1.0.toFloat()
+internal val b6: kotlin.Float = 1.0.toFloat()
+internal val b7: kotlin.Float = 0.1.toFloat()
+internal val b8: kotlin.Float = 0.1.toFloat()

@@ -114,7 +114,7 @@ public interface Errors {
     // Annotations
 
     DiagnosticFactory0<JetDelegationSpecifierList> SUPERTYPES_FOR_ANNOTATION_CLASS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetParameter> MISSING_VAL_ON_ANNOTATION_PARAMETER = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetParameter> MISSING_VAL_ON_ANNOTATION_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetCallExpression> ANNOTATION_CLASS_CONSTRUCTOR_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetAnnotationEntry, DeclarationDescriptor> NOT_AN_ANNOTATION_CLASS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> ANNOTATION_CLASS_WITH_BODY = DiagnosticFactory0.create(ERROR);
@@ -602,7 +602,7 @@ public interface Errors {
     DiagnosticFactory1<JetSimpleNameExpression, TypeParameterDescriptor> TYPE_PARAMETER_IS_NOT_AN_EXPRESSION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, TypeParameterDescriptor> TYPE_PARAMETER_ON_LHS_OF_DOT = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetExpression, ClassDescriptor> NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<JetExpression, ClassDescriptor> NESTED_CLASS_SHOULD_BE_QUALIFIED = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<JetExpression, ClassDescriptor, String> NESTED_CLASS_SHOULD_BE_QUALIFIED = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory1<PsiElement, ClassDescriptor> INACCESSIBLE_OUTER_CLASS_EXPRESSION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetClass> NESTED_CLASS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, DECLARATION_NAME);

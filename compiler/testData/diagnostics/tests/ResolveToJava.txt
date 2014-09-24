@@ -1,0 +1,7 @@
+package
+
+internal val l: kotlin.MutableList<in kotlin.Int>
+internal fun test(/*0*/ l: java.util.List<kotlin.Int>): kotlin.Unit
+
+package xxx {
+}

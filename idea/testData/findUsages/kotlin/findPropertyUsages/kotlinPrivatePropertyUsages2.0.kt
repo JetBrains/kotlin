@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetParameter
 // OPTIONS: usages
-package server;
+package server
 
 public open class Server(private val <caret>foo: String = "foo") {
     open fun processRequest() = foo

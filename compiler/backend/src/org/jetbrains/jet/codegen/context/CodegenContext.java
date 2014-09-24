@@ -260,13 +260,6 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return accessor;
     }
 
-    public StackValue getReceiverExpression(JetTypeMapper typeMapper) {
-        assert getCallableDescriptorWithReceiver() != null;
-        @SuppressWarnings("ConstantConditions")
-        Type asmType = typeMapper.mapType(getCallableDescriptorWithReceiver().getReceiverParameter().getType());
-        return hasThisDescriptor() ? StackValue.local(1, asmType) : StackValue.local(0, asmType);
-    }
-
     public abstract boolean isStatic();
 
     protected void initOuterExpression(@NotNull final JetTypeMapper typeMapper, @NotNull final ClassDescriptor classDescriptor) {

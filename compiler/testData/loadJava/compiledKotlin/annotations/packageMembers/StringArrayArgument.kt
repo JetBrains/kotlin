@@ -1,7 +1,7 @@
 //ALLOW_AST_ACCESS
 package test
 
-annotation class Anno(vararg t: String)
+annotation class Anno(vararg val t: String)
 
 Anno("live", "long") fun foo() {}
 

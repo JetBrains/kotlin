@@ -16,7 +16,15 @@ script
   ;
 
 preamble
-  : packageHeader? import*
+  : fileAnnotations? packageHeader? import*
+  ;
+
+fileAnnotations
+  : fileAnnotation*
+  ;
+
+fileAnnotation
+  : "[" "file" ":" annotationEntry+ "]"
   ;
 
 packageHeader

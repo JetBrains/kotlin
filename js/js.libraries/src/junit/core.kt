@@ -1,5 +1,4 @@
-package org.junit;
+package org.junit
 
 native
-public annotation class Test(name : String = "")
-
+public annotation class Test(val name: String = "")

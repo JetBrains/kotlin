@@ -65,4 +65,20 @@ public final class NumberTest extends SingleFileTranslationTest {
             Assert.assertTrue(cause.getMessage().startsWith("Unsupported long constant "));
         }
     }
+
+    public void testNumberCompareTo() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testNumberIsCheck() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testConversionsWithoutTruncation() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testConversionsWithTruncation() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

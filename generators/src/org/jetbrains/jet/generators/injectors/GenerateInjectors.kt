@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava
 import org.jetbrains.jet.lang.resolve.java.lazy.SingleModuleClassResolver
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -85,11 +86,15 @@ private fun DependencyInjectorGenerator.commonForTopDownAnalyzer() {
 private fun generatorForTopDownAnalyzerBasic() =
         generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic") {
             commonForTopDownAnalyzer()
+            parameter(javaClass<AdditionalCheckerProvider>())
         }
 
 private fun generatorForTopDownAnalyzerForJs() =
         generator("js/js.frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs") {
             commonForTopDownAnalyzer()
+
+            field(javaClass<AdditionalCheckerProvider>(),
+                  init = GivenExpression(javaClass<AdditionalCheckerProvider.Empty>().getCanonicalName() + ".INSTANCE$"))
         }
 
 private fun generatorForTopDownAnalyzerForJvm() =
@@ -99,6 +104,9 @@ private fun generatorForTopDownAnalyzerForJvm() =
 
             publicField(javaClass<JavaDescriptorResolver>())
             publicField(javaClass<DeserializationGlobalContextForJava>())
+
+            field(javaClass<AdditionalCheckerProvider>(),
+                  init = GivenExpression(javaClass<JavaDeclarationCheckerProvider>().getName() + ".INSTANCE$"))
 
             field(javaClass <GlobalSearchScope>(),
                   init = GivenExpression(javaClass<GlobalSearchScope>().getName() + ".allScope(project)"))
@@ -179,6 +187,8 @@ private fun generatorForLazyResolveWithJava() =
                     javaClass<JavaPropertyInitializerEvaluatorImpl>(),
                     javaClass<JavaSourceElementFactoryImpl>()
             )
+            field(javaClass<AdditionalCheckerProvider>(),
+                  init = GivenExpression(javaClass<JavaDeclarationCheckerProvider>().getName() + ".INSTANCE$"))
         }
 
 private fun generatorForMacro() =
@@ -192,6 +202,9 @@ private fun generatorForMacro() =
 
             field(javaClass<GlobalContext>(), useAsContext = true,
                   init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"))
+
+            field(javaClass<AdditionalCheckerProvider>(),
+                  init = GivenExpression(javaClass<AdditionalCheckerProvider.Empty>().getCanonicalName() + ".INSTANCE$"))
         }
 
 private fun generatorForTests() =
@@ -208,6 +221,9 @@ private fun generatorForTests() =
 
             field(javaClass<GlobalContext>(), init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"),
                   useAsContext = true)
+
+            field(javaClass<AdditionalCheckerProvider>(),
+                  init = GivenExpression(javaClass<JavaDeclarationCheckerProvider>().getName() + ".INSTANCE$"))
         }
 
 private fun generatorForBodyResolve() =
@@ -216,6 +232,7 @@ private fun generatorForBodyResolve() =
             parameter(javaClass<GlobalContext>(), useAsContext = true)
             parameter(javaClass<BindingTrace>())
             parameter(javaClass<ModuleDescriptor>(), useAsContext = true)
+            parameter(javaClass<AdditionalCheckerProvider>())
 
             publicField(javaClass<BodyResolver>())
         }
@@ -227,6 +244,7 @@ private fun generatorForLazyResolve() =
             parameter(javaClass<ModuleDescriptorImpl>(), useAsContext = true)
             parameter(javaClass<DeclarationProviderFactory>())
             parameter(javaClass<BindingTrace>())
+            parameter(javaClass<AdditionalCheckerProvider>())
 
             publicField(javaClass<ResolveSession>())
         }

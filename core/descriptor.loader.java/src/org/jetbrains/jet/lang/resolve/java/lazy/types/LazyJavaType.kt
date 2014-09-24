@@ -17,13 +17,8 @@
 package org.jetbrains.jet.lang.resolve.java.lazy.types
 
 import org.jetbrains.jet.storage.StorageManager
-import org.jetbrains.jet.lang.types.TypeConstructor
-import org.jetbrains.jet.lang.types.TypeProjection
+import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.types.AbstractJetType
-import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.kotlin.util.inn
-import org.jetbrains.jet.lang.types.LazyType
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 
 abstract class LazyJavaType(storageManager: StorageManager) : AbstractJetType(), LazyType {
@@ -45,7 +40,7 @@ abstract class LazyJavaType(storageManager: StorageManager) : AbstractJetType(),
 
     override fun isNullable() = false
 
-    override fun isError()= getConstructor().getDeclarationDescriptor().inn({ d -> ErrorUtils.isError(d)}, false)
+    override fun isError() = getConstructor().getDeclarationDescriptor()?.let { d -> ErrorUtils.isError(d) } ?: false
 
     override fun getAnnotations() = Annotations.EMPTY
 

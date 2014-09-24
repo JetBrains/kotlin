@@ -138,6 +138,7 @@ public interface BindingContext {
      */
     WritableSlice<JetExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice();
     WritableSlice<JetElement, Boolean> USED_AS_EXPRESSION = Slices.createRemovableSetSlice();
+    WritableSlice<JetElement, Boolean> UNREACHABLE_CODE = Slices.createRemovableSetSlice();
 
     WritableSlice<VariableDescriptor, CaptureKind> CAPTURED_IN_CLOSURE = new BasicWritableSlice<VariableDescriptor, CaptureKind>(DO_NOTHING);
 

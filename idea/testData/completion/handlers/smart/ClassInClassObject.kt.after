@@ -1,0 +1,9 @@
+class A {
+    class object {
+        class Inner {}
+    }
+}
+
+val v: A.Inner = A.Inner()<caret>
+
+// ELEMENT: Inner

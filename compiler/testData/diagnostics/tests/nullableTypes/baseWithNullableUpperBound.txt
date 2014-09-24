@@ -1,0 +1,7 @@
+package
+
+internal fun </*0*/ T> interactionWithRedundant(/*0*/ t: T?): kotlin.Unit
+internal fun </*0*/ FIRST_BOUND, /*1*/ SECOND_BOUND : kotlin.Any> misleadingNullableMultiBound(/*0*/ fb: FIRST_BOUND?, /*1*/ sb: SECOND_BOUND?): kotlin.Unit where FIRST_BOUND : kotlin.Any, SECOND_BOUND : kotlin.Any?
+internal fun </*0*/ T, /*1*/ N : T, /*2*/ INDIRECT : N> misleadingNullableSimple(/*0*/ t: T?, /*1*/ t2: T?, /*2*/ n: N?, /*3*/ ind: INDIRECT?): kotlin.Unit
+internal fun </*0*/ NN : kotlin.Any, /*1*/ NNN : NN> nonMisleadingNullable(/*0*/ nn: NN?, /*1*/ nnn: NNN?): kotlin.Unit
+internal fun </*0*/ NN : kotlin.Any, /*1*/ TWO_BOUNDS : kotlin.Any> twoBounds(/*0*/ tb: TWO_BOUNDS?): kotlin.Unit where TWO_BOUNDS : NN

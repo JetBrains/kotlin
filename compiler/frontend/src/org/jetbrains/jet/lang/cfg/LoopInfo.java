@@ -16,20 +16,39 @@
 
 package org.jetbrains.jet.lang.cfg;
 
-import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetLoopExpression;
 
 public class LoopInfo extends BreakableBlockInfo {
     private final Label bodyEntryPoint;
+    private final Label bodyExitPoint;
     private final Label conditionEntryPoint;
 
-    public LoopInfo(JetElement element, Label entryPoint, Label exitPoint, Label bodyEntryPoint, Label conditionEntryPoint) {
-        super(element, entryPoint, exitPoint);
+    public LoopInfo(
+            JetLoopExpression loopExpression,
+            Label entryPoint,
+            Label exitPoint,
+            Label bodyEntryPoint,
+            Label bodyExitPoint,
+            Label conditionEntryPoint
+    ) {
+        super(loopExpression, entryPoint, exitPoint);
         this.bodyEntryPoint = bodyEntryPoint;
+        this.bodyExitPoint = bodyExitPoint;
         this.conditionEntryPoint = conditionEntryPoint;
+        markReferablePoints(bodyEntryPoint, bodyExitPoint, conditionEntryPoint);
+    }
+
+    @Override
+    public JetLoopExpression getElement() {
+        return (JetLoopExpression) super.getElement();
     }
 
     public Label getBodyEntryPoint() {
         return bodyEntryPoint;
+    }
+
+    public Label getBodyExitPoint() {
+        return bodyExitPoint;
     }
 
     public Label getConditionEntryPoint() {

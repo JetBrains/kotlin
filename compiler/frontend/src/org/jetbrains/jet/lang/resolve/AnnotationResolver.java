@@ -23,7 +23,6 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
@@ -42,7 +41,7 @@ import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyAnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyAnnotationsContext;
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyAnnotationsContextImpl;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -123,7 +122,7 @@ public class AnnotationResolver {
     }
 
     private Annotations resolveAnnotationEntries(
-            @NotNull final JetScope scope,
+            @NotNull JetScope scope,
             @NotNull List<JetAnnotationEntry> annotationEntryElements,
             @NotNull BindingTrace trace,
             boolean shouldResolveArguments
@@ -133,17 +132,7 @@ public class AnnotationResolver {
         for (JetAnnotationEntry entryElement : annotationEntryElements) {
             AnnotationDescriptor descriptor = trace.get(BindingContext.ANNOTATION, entryElement);
             if (descriptor == null) {
-                descriptor = new LazyAnnotationDescriptor(
-                        new LazyAnnotationsContext(this, storageManager, trace) {
-
-                            @NotNull
-                            @Override
-                            public JetScope getScope() {
-                                return scope;
-                            }
-                        },
-                        entryElement
-                );
+                descriptor = new LazyAnnotationDescriptor(new LazyAnnotationsContextImpl(this, storageManager, trace, scope), entryElement);
             }
             if (shouldResolveArguments) {
                 resolveAnnotationArguments(entryElement, trace);
@@ -210,8 +199,8 @@ public class AnnotationResolver {
         }
     }
 
-    public static void resolveAnnotationsArguments(@NotNull Annotated descriptor, @NotNull BindingTrace trace) {
-        for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
+    public static void resolveAnnotationsArguments(@NotNull Annotations annotations, @NotNull BindingTrace trace) {
+        for (AnnotationDescriptor annotationDescriptor : annotations) {
             JetAnnotationEntry annotationEntry = trace.getBindingContext().get(ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotationDescriptor);
             assert annotationEntry != null : "Cannot find annotation entry: " + annotationDescriptor;
             resolveAnnotationArguments(annotationEntry, trace);

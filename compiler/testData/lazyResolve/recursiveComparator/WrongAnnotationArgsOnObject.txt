@@ -5,6 +5,8 @@ internal val some: test.SomeObject
 
 internal final annotation class BadAnnotation : kotlin.Annotation {
     /*primary*/ public constructor BadAnnotation(/*0*/ s: kotlin.String)
+    internal final val s: kotlin.String
+        internal final fun <get-s>(): kotlin.String
 }
 
 test.BadAnnotation(s = IntegerValueType(1): IntegerValueType(1)) internal object SomeObject {

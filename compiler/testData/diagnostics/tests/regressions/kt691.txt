@@ -1,0 +1,10 @@
+package
+
+package foo {
+
+    package foo.bar {
+
+        package foo.bar.buz {
+        }
+    }
+}

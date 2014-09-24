@@ -16,28 +16,19 @@
 
 package org.jetbrains.jet.lang.resolve.java.lazy.types
 
-import org.jetbrains.jet.lang.resolve.java.structure.JavaType
+import org.jetbrains.jet.lang.resolve.java.structure.*
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.resolve.java.structure.JavaWildcardType
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.*
 import org.jetbrains.jet.lang.resolve.java.resolver.*
 import org.jetbrains.jet.lang.types.Variance.*
 import org.jetbrains.jet.lang.types.*
-import org.jetbrains.jet.lang.resolve.java.structure.JavaPrimitiveType
-import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.kotlin.util.sure
-import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner
 import org.jetbrains.jet.lang.resolve.java.lazy.*
 import org.jetbrains.jet.storage.*
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import java.util.HashSet
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 
@@ -132,17 +123,15 @@ class LazyJavaTypeResolver(
         }
 
         private fun isConstructorTypeParameter(): Boolean {
-            val cl = classifier()
-            if (cl !is JavaTypeParameter) return false
-            val owner = cl.getOwner()
-            return owner is JavaMethod && owner.isConstructor()
+            val classifier = classifier()
+            return classifier is JavaTypeParameter && classifier.getOwner() is JavaConstructor
         }
 
         // We do not memoize the results of this method, because it would consume much memory, and the real gain is little:
         // the case this method accounts for is very rare, not point in optimizing it
         private fun getConstructorTypeParameterSubstitute(): JetType {
             // If a Java-constructor declares its own type parameters, we have no way of directly expressing them in Kotlin,
-            // so we replace thwm by intersections of their upper bounds
+            // so we replace them by intersections of their upper bounds
             val supertypesJet = HashSet<JetType>()
             for (supertype in (classifier() as JavaTypeParameter).getUpperBounds()) {
                 supertypesJet.add(transformJavaType(supertype, UPPER_BOUND.toAttributes()))

@@ -1,0 +1,5 @@
+package
+
+kotlin.inline() internal fun submit(/*0*/ action: (kotlin.Int) -> kotlin.Int): kotlin.Unit
+kotlin.inline() internal fun (kotlin.Int) -> kotlin.Int.submit(): kotlin.Unit
+kotlin.inline() internal fun kotlin.String.submit(/*0*/ action: (kotlin.Int) -> kotlin.Int): kotlin.Unit

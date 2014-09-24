@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
@@ -60,8 +61,9 @@ public abstract class AbstractLazyResolveTest extends JetLiteFixture {
         final ExpectedResolveData expectedResolveData = getExpectedResolveData();
 
         List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactoryNoModules<JetFile>() {
+            @NotNull
             @Override
-            public JetFile create(String fileName, String text, Map<String, String> directives) {
+            public JetFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
                 return expectedResolveData.createFileFromMarkedUpText(fileName, text);
             }
         });

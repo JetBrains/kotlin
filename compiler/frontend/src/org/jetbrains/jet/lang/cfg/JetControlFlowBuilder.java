@@ -52,6 +52,8 @@ public interface JetControlFlowBuilder {
     Label getEntryPoint(@NotNull JetElement labelElement);
     @NotNull
     Label getExitPoint(@NotNull JetElement labelElement);
+    @NotNull
+    Label getConditionEntryPoint(@NotNull JetElement labelElement);
 
     // Declarations
     void declareParameter(@NotNull JetParameter parameter);
@@ -80,11 +82,12 @@ public interface JetControlFlowBuilder {
     void throwException(@NotNull JetThrowExpression throwExpression, @NotNull PseudoValue thrownValue);
 
     // Loops
-    LoopInfo enterLoop(@NotNull JetExpression expression, @Nullable Label loopExitPoint, @Nullable Label conditionEntryPoint);
-
-    void exitLoop(@NotNull JetExpression expression);
+    @NotNull
+    LoopInfo enterLoop(@NotNull JetLoopExpression expression);
+    void enterLoopBody(@NotNull JetLoopExpression expression);
+    void exitLoopBody(@NotNull JetLoopExpression expression);
     @Nullable
-    JetElement getCurrentLoop();
+    JetLoopExpression getCurrentLoop();
 
     // Try-Finally
     void enterTryFinally(@NotNull GenerationTrigger trigger);

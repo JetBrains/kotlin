@@ -25,9 +25,9 @@ L0:
     r(sum) -> <v6>
     ret(*|<v6>) L1                                                          NEXT:[<END>]
 -   jmp(L3)                                                                 NEXT:[merge(if (x == 0.toLong()) return sum|!<v7>) -> <v8>]                    PREV:[]
-L2:
+L2 [else branch]:
     read (Unit)                                                             PREV:[jf(L2|<v5>)]
-L3:
+L3 ['if' expression result]:
     merge(if (x == 0.toLong()) return sum|!<v7>) -> <v8>
     r(x) -> <v9>
     r(1) -> <v10>

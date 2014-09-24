@@ -107,7 +107,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                 module.seal();
                 BindingTraceContext trace = new BindingTraceContext();
                 InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                        myProject, topDownAnalysisParameters, trace, module);
+                        myProject, topDownAnalysisParameters, trace, module, AdditionalCheckerProvider.Empty.INSTANCE$);
 
                 TopDownAnalyzer analyzer = injector.getTopDownAnalyzer();
                 analyzer.analyzeFiles(topDownAnalysisParameters, jetBuiltInsFiles);

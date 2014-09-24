@@ -1,0 +1,8 @@
+package
+
+package p {
+    internal fun foo(): p.foo.<anonymous>.<no name provided>.A
+    internal fun foo(/*0*/ a: kotlin.Int): p.foo.<anonymous>.<no name provided>.A
+    internal fun </*0*/ T> run(/*0*/ f: () -> T): T
+    internal fun test(): kotlin.Unit
+}

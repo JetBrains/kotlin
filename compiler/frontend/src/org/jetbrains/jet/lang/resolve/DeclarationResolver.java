@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallsPackage;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
+import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -41,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -85,6 +87,7 @@ public class DeclarationResolver {
         resolveConstructorHeaders(c);
         resolveAnnotationStubsOnClassesAndConstructors(c);
         resolveFunctionAndPropertyHeaders(c);
+        resolveAnnotationsOnFiles(c.getFileScopes());
 
         // SCRIPT: Resolve script declarations
         resolveScriptDeclarations(c);
@@ -94,6 +97,25 @@ public class DeclarationResolver {
         CallsPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
         checkRedeclarationsInPackages(c);
         checkRedeclarationsInInnerClassNames(c);
+    }
+
+    public void resolveAnnotationsOnFiles(@NotNull TopDownAnalysisContext c, @NotNull final ScopeProvider scopeProvider) {
+        Map<JetFile, JetScope> file2scope = UtilsPackage.keysToMap(c.getFiles(), new Function1<JetFile, JetScope>() {
+            @Override
+            public JetScope invoke(JetFile file) {
+                return scopeProvider.getFileScope(file);
+            }
+        });
+
+        resolveAnnotationsOnFiles(file2scope);
+    }
+
+    private void resolveAnnotationsOnFiles(@NotNull Map<JetFile, ? extends JetScope> file2scope) {
+        for (Map.Entry<JetFile, ? extends JetScope> entry : file2scope.entrySet()) {
+            JetFile file = entry.getKey();
+            JetScope fileScope = entry.getValue();
+            annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getAnnotationEntries(), trace);
+        }
     }
 
     private void resolveAnnotationConstructors(@NotNull TopDownAnalysisContext c) {
@@ -205,10 +227,14 @@ public class DeclarationResolver {
             JetClassOrObject klass = entry.getKey();
             MutableClassDescriptor classDescriptor = (MutableClassDescriptor) entry.getValue();
 
-            if (klass instanceof JetClass && klass.hasPrimaryConstructor() && KotlinBuiltIns.getInstance().isData(classDescriptor)) {
-                ConstructorDescriptor constructor = getConstructorOfDataClass(classDescriptor);
-                createComponentFunctions(classDescriptor, constructor);
-                createCopyFunction(classDescriptor, constructor);
+            if (klass instanceof JetClass && KotlinBuiltIns.getInstance().isData(classDescriptor)) {
+                List<ValueParameterDescriptor> parameters =
+                        klass.hasPrimaryConstructor() ?
+                        getConstructorOfDataClass(classDescriptor).getValueParameters() :
+                        Collections.<ValueParameterDescriptor>emptyList();
+
+                createComponentFunctions(classDescriptor, parameters);
+                createCopyFunction(classDescriptor, parameters);
             }
         }
     }
@@ -220,9 +246,9 @@ public class DeclarationResolver {
         return constructors.iterator().next();
     }
 
-    private void createComponentFunctions(@NotNull MutableClassDescriptor classDescriptor, @NotNull ConstructorDescriptor constructorDescriptor) {
+    private void createComponentFunctions(@NotNull MutableClassDescriptor classDescriptor, List<ValueParameterDescriptor> parameters) {
         int parameterIndex = 0;
-        for (ValueParameterDescriptor parameter : constructorDescriptor.getValueParameters()) {
+        for (ValueParameterDescriptor parameter : parameters) {
             if (!parameter.getType().isError()) {
                 PropertyDescriptor property = trace.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter);
                 if (property != null) {
@@ -237,9 +263,9 @@ public class DeclarationResolver {
         }
     }
 
-    private void createCopyFunction(@NotNull MutableClassDescriptor classDescriptor, @NotNull ConstructorDescriptor constructorDescriptor) {
+    private void createCopyFunction(@NotNull MutableClassDescriptor classDescriptor, List<ValueParameterDescriptor> parameters) {
         SimpleFunctionDescriptor functionDescriptor = DescriptorResolver.createCopyFunctionDescriptor(
-                constructorDescriptor.getValueParameters(), classDescriptor, trace);
+                parameters, classDescriptor, trace);
 
         classDescriptor.getBuilder().addFunctionDescriptor(functionDescriptor);
     }
@@ -347,10 +373,9 @@ public class DeclarationResolver {
 
             Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getScopeForMemberLookup().getOwnDeclaredDescriptors();
 
-            ClassDescriptor classObj = classDescriptor.getClassObjectDescriptor();
-            if (classObj instanceof ClassDescriptorWithResolutionScopes) {
-                Collection<DeclarationDescriptor> classObjDescriptors =
-                        ((ClassDescriptorWithResolutionScopes) classObj).getScopeForMemberLookup().getOwnDeclaredDescriptors();
+            ClassDescriptorWithResolutionScopes classObj = classDescriptor.getClassObjectDescriptor();
+            if (classObj != null) {
+                Collection<DeclarationDescriptor> classObjDescriptors = classObj.getScopeForMemberLookup().getOwnDeclaredDescriptors();
                 if (!classObjDescriptors.isEmpty()) {
                     allDescriptors = Lists.newArrayList(allDescriptors);
                     allDescriptors.addAll(classObjDescriptors);

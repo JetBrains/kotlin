@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -58,6 +59,7 @@ public class InjectorForLazyResolve {
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DeclarationProviderFactory declarationProviderFactory;
     private final BindingTrace bindingTrace;
+    private final AdditionalCheckerProvider additionalCheckerProvider;
     private final ResolveSession resolveSession;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -85,7 +87,8 @@ public class InjectorForLazyResolve {
         @NotNull GlobalContext globalContext,
         @NotNull ModuleDescriptorImpl moduleDescriptor,
         @NotNull DeclarationProviderFactory declarationProviderFactory,
-        @NotNull BindingTrace bindingTrace
+        @NotNull BindingTrace bindingTrace,
+        @NotNull AdditionalCheckerProvider additionalCheckerProvider
     ) {
         this.project = project;
         this.globalContext = globalContext;
@@ -94,6 +97,7 @@ public class InjectorForLazyResolve {
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.declarationProviderFactory = declarationProviderFactory;
         this.bindingTrace = bindingTrace;
+        this.additionalCheckerProvider = additionalCheckerProvider;
         this.resolveSession = new ResolveSession(project, globalContext, moduleDescriptor, declarationProviderFactory, bindingTrace);
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -145,6 +149,7 @@ public class InjectorForLazyResolve {
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 
+        expressionTypingComponents.setAdditionalCheckerProvider(additionalCheckerProvider);
         expressionTypingComponents.setCallResolver(callResolver);
         expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
         expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);

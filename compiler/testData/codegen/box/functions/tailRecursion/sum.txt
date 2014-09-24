@@ -1,0 +1,4 @@
+package
+
+internal fun box(): kotlin.String
+kotlin.tailRecursive() internal fun sum(/*0*/ x: kotlin.Long, /*1*/ sum: kotlin.Long): kotlin.Long

@@ -23,7 +23,4 @@ import org.jetbrains.jet.lang.types.JetType;
 public interface JavaClassDescriptor extends ClassDescriptor {
     @Nullable
     JetType getFunctionTypeForSamInterface();
-
-    @Nullable
-    JavaClassStaticsPackageFragmentDescriptor getCorrespondingPackageFragment();
 }

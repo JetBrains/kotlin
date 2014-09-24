@@ -4,14 +4,14 @@
 */
 package creatures
 
-import js.dom.html5.CanvasContext
-import js.jquery.*
-import js.dom.html5.CanvasGradient
-import js.dom.html5.HTMLCanvasElement
 import java.util.ArrayList
-import js.dom.html.window
-import js.dom.html.HTMLElement
-import js.dom.html.HTMLImageElement
+import jquery.*
+import kotlin.js.dom.html.window
+import kotlin.js.dom.html.HTMLElement
+import kotlin.js.dom.html.HTMLImageElement
+import kotlin.js.dom.html5.CanvasContext
+import kotlin.js.dom.html5.CanvasGradient
+import kotlin.js.dom.html5.HTMLCanvasElement
 
 
 fun getImage(path: String): HTMLImageElement {

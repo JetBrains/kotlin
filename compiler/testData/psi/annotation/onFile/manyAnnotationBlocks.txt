@@ -1,0 +1,39 @@
+JetFile: manyAnnotationBlocks.kt
+  FILE_ANNOTATION_LIST
+    ANNOTATION
+      PsiElement(LBRACKET)('[')
+      PsiElement(file)('file')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+      PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    ANNOTATION
+      PsiElement(LBRACKET)('[')
+      PsiElement(file)('file')
+      PsiElement(COLON)(':')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+      PsiWhiteSpace(' ')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('baz')
+      PsiElement(RBRACKET)(']')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('bar')

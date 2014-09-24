@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -28,19 +27,12 @@ import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.negated;
 
 public final class WhenTranslator extends AbstractTranslator {
     @Nullable
     public static JsNode translate(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
-        WhenTranslator translator = new WhenTranslator(expression, context);
-
-        if (BindingContextUtilPackage.isUsedAsStatement(expression, context.bindingContext())) {
-            return translator.translateAsStatement();
-        }
-
-        return translator.translateAsExpression();
+        return new WhenTranslator(expression, context).translate();
     }
 
     @NotNull
@@ -69,12 +61,11 @@ public final class WhenTranslator extends AbstractTranslator {
         }
     }
 
-    @Nullable
-    private JsNode translateAsExpression() {
-        return convertToExpression(translateAsStatement(), context());
-    }
+    private JsStatement translate() {
+        if (expressionToMatch != null && JsAstUtils.isEmptyExpression(expressionToMatch)) {
+            return context().getEmptyStatement();
+        }
 
-    private JsStatement translateAsStatement() {
         JsIf currentIf = null;
         JsIf resultIf = null;
         for (JetWhenEntry entry : whenExpression.getEntries()) {
@@ -88,7 +79,7 @@ public final class WhenTranslator extends AbstractTranslator {
             statement = JsAstUtils.mergeStatementInBlockIfNeeded(statement, statementBlock);
 
             if (resultIf == null) {
-                currentIf = new JsIf(translateConditions(entry, context()), statement);
+                currentIf = JsAstUtils.newJsIf(translateConditions(entry, context()), statement);
                 resultIf = currentIf;
             }
             else {
@@ -97,7 +88,7 @@ public final class WhenTranslator extends AbstractTranslator {
                     return resultIf;
                 }
                 JsBlock conditionsBlock = new JsBlock();
-                JsIf nextIf = new JsIf(translateConditions(entry, context().innerBlock(conditionsBlock)), statement);
+                JsIf nextIf = JsAstUtils.newJsIf(translateConditions(entry, context().innerBlock(conditionsBlock)), statement);
                 JsStatement statementToAdd = JsAstUtils.mergeStatementInBlockIfNeeded(nextIf, conditionsBlock);
                 currentIf.setElseStatement(statementToAdd);
                 currentIf = nextIf;
@@ -144,7 +135,8 @@ public final class WhenTranslator extends AbstractTranslator {
         } else {
             assert rightExpression instanceof JsNameRef : "expected JsNameRef, but: " + rightExpression;
             JsNameRef result = (JsNameRef) rightExpression;
-            JsIf ifStatement = new JsIf(leftExpression, JsAstUtils.assignment(result, JsLiteral.TRUE).makeStmt(), rightContext.getCurrentBlock());
+            JsIf ifStatement = JsAstUtils.newJsIf(leftExpression, JsAstUtils.assignment(result, JsLiteral.TRUE).makeStmt(),
+                                                  rightContext.getCurrentBlock());
             context.addStatementToCurrentBlock(ifStatement);
             return result;
         }

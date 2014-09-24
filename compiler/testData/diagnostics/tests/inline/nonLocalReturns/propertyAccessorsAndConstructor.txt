@@ -1,0 +1,13 @@
+package
+
+kotlin.inline() internal fun </*0*/ R> doCall(/*0*/ p: () -> R): kotlin.Unit
+kotlin.inline() internal fun </*0*/ R> doCallInt(/*0*/ p: () -> R): R
+
+internal final class A {
+    public constructor A()
+    internal final var field: kotlin.Int
+    internal final var result: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

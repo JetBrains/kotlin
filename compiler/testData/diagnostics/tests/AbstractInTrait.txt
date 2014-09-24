@@ -1,0 +1,39 @@
+package
+
+package abstract {
+
+    internal trait MyTrait {
+        internal abstract val a: kotlin.Int
+        internal open val a1: kotlin.Int = 1
+        internal abstract val a2: kotlin.Int
+        internal abstract val a3: kotlin.Int = 1
+        internal abstract var b: kotlin.Int
+        internal open var b1: kotlin.Int
+        internal abstract var b2: kotlin.Int
+        internal abstract var b3: kotlin.Int
+        internal open var c: kotlin.Int
+        internal open var c1: kotlin.Int
+        internal abstract var c2: kotlin.Int
+        internal abstract var c3: kotlin.Int
+        internal open val e: kotlin.Int
+        internal open val e1: kotlin.Int = 0
+        internal abstract val e2: kotlin.Int
+        internal abstract val e3: kotlin.Int = 0
+        internal abstract var i: kotlin.Int
+        internal open var i1: kotlin.Int
+        internal open var j: kotlin.Int
+        internal open var j1: kotlin.Int
+        internal abstract var k: kotlin.Int
+        internal open var k1: kotlin.Int
+        internal abstract var l: kotlin.Int
+        internal open var l1: kotlin.Int
+        internal open var n: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal abstract fun f(): kotlin.Unit
+        internal open fun g(): kotlin.Unit
+        internal abstract fun h(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal abstract fun j(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

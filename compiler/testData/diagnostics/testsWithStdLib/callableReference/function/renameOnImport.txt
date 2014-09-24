@@ -1,0 +1,16 @@
+package
+
+internal fun main(): kotlin.Unit
+
+package other {
+    internal fun foo(): kotlin.Unit
+    internal fun other.A.baz(/*0*/ x: kotlin.String): kotlin.Unit
+
+    internal final class A {
+        public constructor A()
+        internal final fun bar(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

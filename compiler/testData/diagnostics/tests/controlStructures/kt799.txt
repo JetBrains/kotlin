@@ -1,0 +1,10 @@
+package
+
+package kt799 {
+    internal val a: kotlin.Nothing
+    internal val b: [ERROR : Return not allowed]
+    internal val c: kotlin.Unit
+    internal fun doSmth(/*0*/ i: kotlin.Int): kotlin.Unit
+    internal fun f(/*0*/ mi: kotlin.Int = ...): kotlin.Unit
+    internal fun test(): kotlin.Unit
+}

@@ -31,7 +31,6 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaPackage;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaConstructorImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.plugin.JetIcons;
@@ -91,21 +91,10 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         }
 
         for (PsiElement element : elements) {
-            if (!(element instanceof PsiMember) || element instanceof PsiClass) {
+            PsiModifierListOwner annotationOwner = KotlinSignatureUtil.getAnalyzableAnnotationOwner(element);
+            if (annotationOwner == null) {
                 continue;
             }
-
-            PsiMember member = (PsiMember) element;
-            if (member.hasModifierProperty(PsiModifier.PRIVATE)) {
-                continue;
-            }
-
-            PsiClass containingClass = member.getContainingClass();
-            if (containingClass != null && PsiUtil.isLocalOrAnonymousClass(containingClass)) {
-                continue;
-            }
-
-            PsiModifierListOwner annotationOwner = KotlinSignatureUtil.getAnnotationOwner(element);
 
             JavaResolveExtension resolveExtension = JavaResolveExtension.INSTANCE$;
             BindingContext bindingContext = resolveExtension.getContext(project, annotationOwner);
@@ -130,7 +119,13 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             @NotNull PsiModifierListOwner member
     ) {
         if (member instanceof PsiMethod) {
-            return JavaPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl((PsiMethod) member));
+            PsiMethod method = (PsiMethod) member;
+            if (method.isConstructor()) {
+                return JavaPackage.resolveConstructor(javaDescriptorResolver, new JavaConstructorImpl(method));
+            }
+            else {
+                return JavaPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(method));
+            }
         }
         else if (member instanceof PsiField) {
             return JavaPackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) member));

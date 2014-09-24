@@ -1,0 +1,6 @@
+<root>
+    <item
+        name='com.intellij.refactoring.move.moveClassesOrPackages.CommonMoveUtil com.intellij.refactoring.util.NonCodeUsageInfo[] retargetUsages(com.intellij.usageView.UsageInfo[], java.util.Map&lt;com.intellij.psi.PsiElement,com.intellij.psi.PsiElement&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

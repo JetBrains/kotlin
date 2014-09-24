@@ -1,0 +1,40 @@
+package
+
+package kt1028 {
+
+    internal final class Control {
+        public constructor Control()
+        public final val MouseMoved: kt1028.event<kt1028.MouseMovedEventArgs>
+        internal final fun MoveMouse(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class MouseMovedEventArgs {
+        public constructor MouseMovedEventArgs()
+        public final val X: kotlin.Int = 0
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Test {
+        public constructor Test()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class event</*0*/ T> {
+        public constructor event</*0*/ T>()
+        internal final val callbacks: java.util.ArrayList<(T) -> kotlin.Unit>
+        internal final fun call(/*0*/ value: T): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun minusAssign(/*0*/ f: (T) -> kotlin.Unit): kotlin.Boolean
+        internal final fun plusAssign(/*0*/ f: (T) -> kotlin.Unit): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

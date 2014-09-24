@@ -1,0 +1,6 @@
+package
+
+internal fun ifElse(/*0*/ x: kotlin.Int?): kotlin.Unit
+internal fun ifIs(/*0*/ x: kotlin.Int?, /*1*/ cond: kotlin.Boolean): kotlin.Unit
+internal fun ifThen(/*0*/ x: kotlin.Int?): kotlin.Unit
+internal fun ifThenElse(/*0*/ x: kotlin.Int?): kotlin.Unit

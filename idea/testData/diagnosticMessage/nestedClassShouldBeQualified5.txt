@@ -1,0 +1,2 @@
+<!-- nestedClassShouldBeQualified5 -->
+Nested class object of 'F' should be qualified as 'E.F'

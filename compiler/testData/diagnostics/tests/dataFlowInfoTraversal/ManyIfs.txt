@@ -1,0 +1,5 @@
+package
+
+internal fun dataFlowInfoAnd(/*0*/ a: kotlin.Array<kotlin.Number>): kotlin.Unit
+internal fun dataFlowInfoOr(/*0*/ a: kotlin.Array<kotlin.Number>): kotlin.Unit
+internal fun noUselessDataFlowInfoCreation(/*0*/ x: kotlin.Number): kotlin.Unit

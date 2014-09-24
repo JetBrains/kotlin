@@ -1,4 +1,7 @@
 <root>
+  <item name='com.intellij.lang.ASTNode com.intellij.lang.ASTNode[] getChildren(com.intellij.psi.tree.TokenSet)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.lang.ASTNode java.lang.String getText()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

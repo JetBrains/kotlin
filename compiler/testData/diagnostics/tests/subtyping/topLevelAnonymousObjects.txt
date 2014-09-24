@@ -1,0 +1,4 @@
+package
+
+private var x: kotlin.Any
+internal fun test(): kotlin.Unit

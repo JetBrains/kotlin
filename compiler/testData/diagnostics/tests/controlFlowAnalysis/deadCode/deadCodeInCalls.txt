@@ -1,0 +1,5 @@
+package
+
+internal fun testArgumentInCall(): kotlin.Unit
+internal fun testArgumentInVariableAsFunctionCall(/*0*/ f: (kotlin.Any) -> kotlin.Unit): kotlin.Unit
+internal fun todo(): kotlin.Nothing

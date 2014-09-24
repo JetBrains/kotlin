@@ -335,3 +335,14 @@ public fun JetExpression.isFunctionLiteralOutsideParentheses(): Boolean {
         else -> false
     }
 }
+
+public fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Stream<PsiElement> {
+    val stepFun = if (forward) { (e: PsiElement) -> e.getNextSibling() } else { (e: PsiElement) -> e.getPrevSibling() }
+    val stream = stream(this, stepFun)
+    return if (withItself) stream else stream.drop(1)
+}
+
+public fun PsiElement.parents(withItself: Boolean = true): Stream<PsiElement> {
+    val stream = stream(this) { if (it is PsiFile) null else it.getParent() }
+    return if (withItself) stream else stream.drop(1)
+}

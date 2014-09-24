@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.codegen.inline;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.PackageContext;
@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils;
@@ -44,12 +45,14 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.InsnList;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.tree.*;
+import org.jetbrains.org.objectweb.asm.util.Textifier;
+import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.ListIterator;
 
@@ -283,6 +286,13 @@ public class InlineCodegenUtil {
         return opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN;
     }
 
+    //marked return could be either non-local or local in case of labeled lambda self-returns
+    public static boolean isMarkedReturn(@NotNull AbstractInsnNode returnIns) {
+        assert isReturnOpcode(returnIns.getOpcode()) : "Should be called on return instruction, but " + returnIns;
+        AbstractInsnNode globalFlag = returnIns.getPrevious();
+        return globalFlag instanceof MethodInsnNode && NON_LOCAL_RETURN.equals(((MethodInsnNode)globalFlag).owner);
+    }
+
     public static void generateGlobalReturnFlag(@NotNull InstructionAdapter iv, @NotNull String labelName) {
         iv.invokestatic(NON_LOCAL_RETURN, labelName, "()V", false);
     }
@@ -294,21 +304,77 @@ public class InlineCodegenUtil {
             case Opcodes.DRETURN: return Type.DOUBLE_TYPE;
             case Opcodes.FRETURN: return Type.FLOAT_TYPE;
             case Opcodes.LRETURN: return Type.LONG_TYPE;
-            default: return Type.getObjectType("object");
+            default: return AsmTypeConstants.OBJECT_TYPE;
         }
     }
 
-    public static void insertNodeBefore(@NotNull MethodNode from, @NotNull MethodNode to, @NotNull AbstractInsnNode afterNode) {
+    public static void insertNodeBefore(@NotNull MethodNode from, @NotNull MethodNode to, @NotNull AbstractInsnNode beforeNode) {
         InsnList instructions = to.instructions;
         ListIterator<AbstractInsnNode> iterator = from.instructions.iterator();
         while (iterator.hasNext()) {
             AbstractInsnNode next = iterator.next();
-            instructions.insertBefore(afterNode, next);
+            instructions.insertBefore(beforeNode, next);
         }
     }
 
 
     public static MethodNode createEmptyMethodNode() {
         return new MethodNode(API, 0, "fake", "()V", null, null);
+    }
+
+    private static boolean isLastGoto(@NotNull AbstractInsnNode insnNode, @NotNull AbstractInsnNode stopAt) {
+        if (insnNode.getOpcode() == Opcodes.GOTO) {
+            insnNode = insnNode.getNext();
+            while (insnNode != stopAt && isLineNumberOrLabel(insnNode)) {
+                insnNode = insnNode.getNext();
+            }
+            return stopAt == insnNode;
+        }
+        return false;
+    }
+
+    static boolean isLineNumberOrLabel(@Nullable AbstractInsnNode node) {
+        return node instanceof LineNumberNode || node instanceof LabelNode;
+    }
+
+
+    @NotNull
+    public static LabelNode firstLabelInChain(@NotNull LabelNode node) {
+        LabelNode curNode = node;
+        while (curNode.getPrevious() instanceof LabelNode) {
+            curNode = (LabelNode) curNode.getPrevious();
+        }
+        return curNode;
+    }
+
+    @NotNull
+    public static String getNodeText(@Nullable MethodNode node) {
+        return getNodeText(node, new Textifier());
+    }
+
+    @NotNull
+    public static String getNodeText(@Nullable MethodNode node, @NotNull Textifier textifier) {
+        if (node == null) {
+            return "Not generated";
+        }
+        node.accept(new TraceMethodVisitor(textifier));
+        StringWriter sw = new StringWriter();
+        textifier.print(new PrintWriter(sw));
+        sw.flush();
+        return node.name + " " + node.desc + ": \n " + sw.getBuffer().toString();
+    }
+
+    public static class LabelTextifier extends Textifier {
+
+        public LabelTextifier() {
+            super(API);
+        }
+
+        @Nullable
+        @TestOnly
+        @SuppressWarnings("UnusedDeclaration")
+        public String getLabelNameIfExists(@NotNull Label l) {
+            return labelNames == null ? null : labelNames.get(l);
+        }
     }
 }

@@ -1,0 +1,6 @@
+package
+
+internal fun foo1(/*0*/ x: kotlin.Number, /*1*/ cond: kotlin.Boolean): kotlin.Boolean
+internal fun foo2(/*0*/ x: kotlin.Number, /*1*/ cond: kotlin.Boolean): kotlin.Boolean
+internal fun foo3(/*0*/ x: kotlin.Number, /*1*/ cond: kotlin.Boolean): kotlin.Boolean
+internal fun foo4(/*0*/ x: kotlin.Number, /*1*/ cond: kotlin.Boolean): kotlin.Boolean

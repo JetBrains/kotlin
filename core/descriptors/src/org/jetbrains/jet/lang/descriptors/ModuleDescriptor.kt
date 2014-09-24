@@ -36,6 +36,8 @@ public trait ModuleDescriptor : DeclarationDescriptor {
 
     public val platformToKotlinClassMap: PlatformToKotlinClassMap
 
+    public fun isFriend(other: ModuleDescriptor): Boolean
+
     override fun substitute(substitutor: TypeSubstitutor): ModuleDescriptor {
         return this
     }

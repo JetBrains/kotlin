@@ -1,0 +1,42 @@
+LineBreakpoint created at delegatedPropertyInClass.kt:8
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! delegatedPropertyInClass.DelegatedPropertyInClassPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+delegatedPropertyInClass.kt:7
+package delegatedPropertyInClass
+
+import kotlin.properties.Delegates
+
+fun main(args: Array<String>) {
+    val a = A()
+    //Breakpoint!
+    args.size
+}
+
+class A {
+    val prop by MyDelegate()
+    val propEx by MyDelegateThrowsException()
+}
+
+class MyDelegate {
+    fun get(t: Any?, p: PropertyMetadata): Int = 1
+}
+
+class MyDelegateThrowsException {
+    fun get(t: Any?, p: PropertyMetadata): Int = throw IllegalStateException()
+}
+
+// PRINT_FRAME
+ frame    = main():8, DelegatedPropertyInClassPackage-@packagePartHASH {delegatedPropertyInClass}
+   static   = static = delegatedPropertyInClass.DelegatedPropertyInClassPackage-@packagePartHASH
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID}
+   local    = a: delegatedPropertyInClass.A = {delegatedPropertyInClass.A@uniqueID}
+     field    = prop$delegate: delegatedPropertyInClass.MyDelegate = {delegatedPropertyInClass.MyDelegate@uniqueID}
+     field    = prop: int = 1
+     field    = propEx$delegate: delegatedPropertyInClass.MyDelegateThrowsException = {delegatedPropertyInClass.MyDelegateThrowsException@uniqueID}
+     field    = propEx: java.lang.IllegalStateException = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException
+       field    = detailMessage: java.lang.String = null
+       field    = cause: java.lang.Throwable = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException
+       field    = stackTrace: java.lang.StackTraceElement[] = null
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

@@ -10,8 +10,5 @@ fun main(args: Array<String>) {
 // EXPRESSION: a
 // RESULT: 2: I
 
-// EXPRESSION: a += 1
-// RESULT: 3: I
-
 // EXPRESSION: a
 // RESULT: 2: I

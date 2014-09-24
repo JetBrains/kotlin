@@ -42,7 +42,6 @@ import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.jet.cli.AbstractKotlincExecutableTest
 import org.jetbrains.jet.repl.AbstractReplInterpreterTest
 import org.jetbrains.jet.cfg.AbstractControlFlowTest
-import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest
 import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest
@@ -119,6 +118,7 @@ import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.jet.codegen.AbstractScriptCodegenTest
 import org.jetbrains.jet.plugin.parameterInfo.AbstractFunctionParameterInfoTest
+import org.jetbrains.jet.psi.patternMatching.AbstractJetPsiUnifierTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -177,7 +177,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithJavaCodegenTestGenerated") {
-            model("codegen/boxWithJava", testMethod = "doTestWithJava", extension = null, recursive = false)
+            model("codegen/boxWithJava", testMethod = "doTestWithJava", extension = null, recursive = true, excludeParentDirs = true)
         }
 
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithStdlibCodegenTestGenerated") {
@@ -295,11 +295,6 @@ fun main(args: Array<String>) {
             model("resolve/additionalLazyResolve")
         }
 
-        testClass(javaClass<AbstractJetPsiMatcherTest>()) {
-            model("jetPsiMatcher/expressions", testMethod = "doTestExpressions")
-            model("jetPsiMatcher/types", testMethod = "doTestTypes")
-        }
-
         testClass(javaClass<AbstractJetPsiCheckerTest>()) {
             model("checker", recursive = false)
             model("checker/regression")
@@ -307,6 +302,10 @@ fun main(args: Array<String>) {
             model("checker/rendering")
             model("checker/duplicateJvmSignature")
             model("checker/infos", testMethod = "doTestWithInfos")
+        }
+
+        testClass(javaClass<AbstractJetPsiUnifierTest>()) {
+            model("unifier")
         }
 
         testClass(javaClass<AbstractCodeFragmentHighlightingTest>()) {

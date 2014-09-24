@@ -1,0 +1,6 @@
+package
+
+package foo {
+    internal val kotlin.Int.foo: kotlin.Int
+    internal val kotlin.Int.foo: kotlin.Int
+}

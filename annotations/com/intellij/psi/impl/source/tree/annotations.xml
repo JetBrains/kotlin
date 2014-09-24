@@ -1,0 +1,8 @@
+<root>
+  <item name='com.intellij.psi.impl.source.tree.CompositeElement com.intellij.lang.ASTNode[] getChildren(com.intellij.psi.tree.TokenSet)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.impl.source.tree.LeafElement com.intellij.lang.ASTNode[] getChildren(com.intellij.psi.tree.TokenSet)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

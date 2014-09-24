@@ -52,6 +52,9 @@ public interface JetStubElementTypes {
     JetPlaceHolderStubElementType<JetImportList> IMPORT_LIST =
             new JetPlaceHolderStubElementType<JetImportList>("IMPORT_LIST", JetImportList.class);
 
+    JetPlaceHolderStubElementType<JetFileAnnotationList> FILE_ANNOTATION_LIST =
+            new JetPlaceHolderStubElementType<JetFileAnnotationList>("FILE_ANNOTATION_LIST", JetFileAnnotationList.class);
+
     JetImportDirectiveElementType IMPORT_DIRECTIVE = new JetImportDirectiveElementType("IMPORT_DIRECTIVE");
 
     JetPlaceHolderStubElementType<JetPackageDirective> PACKAGE_DIRECTIVE =

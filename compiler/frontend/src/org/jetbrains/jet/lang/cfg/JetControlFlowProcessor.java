@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
-import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -118,7 +117,7 @@ public class JetControlFlowProcessor {
         JetElement parent = PsiTreeUtil.getParentOfType(subroutine, JetElement.class);
         assert parent != null;
 
-        Label afterDeclaration = builder.createUnboundLabel();
+        Label afterDeclaration = builder.createUnboundLabel("after local declaration");
 
         builder.nondeterministicJump(afterDeclaration, parent, null);
         generate(subroutine);
@@ -383,7 +382,7 @@ public class JetControlFlowProcessor {
             else if (operationType == ELVIS) {
                 generateInstructions(left);
                 mark(expression);
-                Label afterElvis = builder.createUnboundLabel();
+                Label afterElvis = builder.createUnboundLabel("after elvis operator");
                 builder.jumpOnTrue(afterElvis, expression, builder.getBoundValue(left));
                 if (right != null) {
                     generateInstructions(right);
@@ -403,7 +402,7 @@ public class JetControlFlowProcessor {
             JetExpression left = expression.getLeft();
             JetExpression right = expression.getRight();
 
-            Label resultLabel = builder.createUnboundLabel();
+            Label resultLabel = builder.createUnboundLabel("result of boolean operation");
             generateInstructions(left);
             if (operationType == ANDAND) {
                 builder.jumpOnFalse(resultLabel, expression, builder.getBoundValue(left));
@@ -640,7 +639,7 @@ public class JetControlFlowProcessor {
             if (condition != null) {
                 generateInstructions(condition);
             }
-            Label elseLabel = builder.createUnboundLabel();
+            Label elseLabel = builder.createUnboundLabel("else branch");
             builder.jumpOnFalse(elseLabel, expression, builder.getBoundValue(condition));
             JetExpression thenBranch = expression.getThen();
             if (thenBranch != null) {
@@ -650,7 +649,7 @@ public class JetControlFlowProcessor {
             else {
                 builder.loadUnit(expression);
             }
-            Label resultLabel = builder.createUnboundLabel();
+            Label resultLabel = builder.createUnboundLabel("'if' expression result");
             builder.jump(resultLabel, expression);
             builder.bindLabel(elseLabel);
             JetExpression elseBranch = expression.getElse();
@@ -801,7 +800,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitWhileExpression(@NotNull JetWhileExpression expression) {
-            LoopInfo loopInfo = builder.enterLoop(expression, null, null);
+            LoopInfo loopInfo = builder.enterLoop(expression);
 
             builder.bindLabel(loopInfo.getConditionEntryPoint());
             JetExpression condition = expression.getCondition();
@@ -821,13 +820,14 @@ public class JetControlFlowProcessor {
                 builder.magic(condition, null, values, typePredicates, MagicKind.VALUE_CONSUMER);
             }
 
-            builder.bindLabel(loopInfo.getBodyEntryPoint());
+            builder.enterLoopBody(expression);
             JetExpression body = expression.getBody();
             if (body != null) {
                 generateInstructions(body);
             }
             builder.jump(loopInfo.getEntryPoint(), expression);
-            builder.exitLoop(expression);
+            builder.exitLoopBody(expression);
+            builder.bindLabel(loopInfo.getExitPoint());
             builder.loadUnit(expression);
         }
 
@@ -835,20 +835,21 @@ public class JetControlFlowProcessor {
         public void visitDoWhileExpression(@NotNull JetDoWhileExpression expression) {
             builder.enterLexicalScope(expression);
             mark(expression);
-            LoopInfo loopInfo = builder.enterLoop(expression, null, null);
+            LoopInfo loopInfo = builder.enterLoop(expression);
 
-            builder.bindLabel(loopInfo.getBodyEntryPoint());
+            builder.enterLoopBody(expression);
             JetExpression body = expression.getBody();
             if (body != null) {
                 generateInstructions(body);
             }
+            builder.exitLoopBody(expression);
             builder.bindLabel(loopInfo.getConditionEntryPoint());
             JetExpression condition = expression.getCondition();
             if (condition != null) {
                 generateInstructions(condition);
             }
             builder.jumpOnTrue(loopInfo.getEntryPoint(), expression, builder.getBoundValue(condition));
-            builder.exitLoop(expression);
+            builder.bindLabel(loopInfo.getExitPoint());
             builder.loadUnit(expression);
             builder.exitLexicalScope(expression);
         }
@@ -864,26 +865,24 @@ public class JetControlFlowProcessor {
             declareLoopParameter(expression);
 
             // TODO : primitive cases
-            Label loopExitPoint = builder.createUnboundLabel();
-            Label conditionEntryPoint = builder.createUnboundLabel();
+            LoopInfo loopInfo = builder.enterLoop(expression);
 
-            builder.bindLabel(conditionEntryPoint);
-            builder.nondeterministicJump(loopExitPoint, expression, null);
+            builder.bindLabel(loopInfo.getConditionEntryPoint());
+            builder.nondeterministicJump(loopInfo.getExitPoint(), expression, null);
 
-            LoopInfo loopInfo = builder.enterLoop(expression, loopExitPoint, conditionEntryPoint);
 
-            builder.bindLabel(loopInfo.getBodyEntryPoint());
             writeLoopParameterAssignment(expression);
 
             mark(expression);
+            builder.enterLoopBody(expression);
             JetExpression body = expression.getBody();
             if (body != null) {
                 generateInstructions(body);
             }
+            builder.jump(loopInfo.getEntryPoint(), expression);
 
-            builder.nondeterministicJump(loopInfo.getEntryPoint(), expression, null);
-
-            builder.exitLoop(expression);
+            builder.exitLoopBody(expression);
+            builder.bindLabel(loopInfo.getExitPoint());
             builder.loadUnit(expression);
             builder.exitLexicalScope(expression);
         }
@@ -953,13 +952,14 @@ public class JetControlFlowProcessor {
             JetElement loop = getCorrespondingLoop(expression);
             if (loop != null) {
                 checkJumpDoesNotCrossFunctionBoundary(expression, loop);
-                builder.jump(builder.getEntryPoint(loop), expression);
+                builder.jump(builder.getConditionEntryPoint(loop), expression);
             }
         }
 
+        @Nullable
         private JetElement getCorrespondingLoop(JetExpressionWithLabel expression) {
             String labelName = expression.getLabelName();
-            JetElement loop;
+            JetLoopExpression loop;
             if (labelName != null) {
                 JetSimpleNameExpression targetLabel = expression.getTargetLabel();
                 assert targetLabel != null;
@@ -977,6 +977,12 @@ public class JetControlFlowProcessor {
                 if (loop == null) {
                     trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression));
                 }
+            }
+            if (loop != null && loop.getBody() != null
+                    // the faster version of 'isAncestor' check:
+                    && !loop.getBody().getTextRange().contains(expression.getTextRange())) {
+                trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression));
+                return null;
             }
             return loop;
         }
@@ -1169,7 +1175,9 @@ public class JetControlFlowProcessor {
             DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             if (!(descriptor instanceof PropertyDescriptor)) return;
 
-            List<PseudoValue> values = Collections.singletonList(builder.getBoundValue(delegate));
+            PseudoValue delegateValue = builder.getBoundValue(delegate);
+            if (delegateValue == null) return;
+
             List<TypePredicate> typePredicates = KotlinPackage.map(
                     ((PropertyDescriptor) descriptor).getAccessors(),
                     new Function1<PropertyAccessorDescriptor, TypePredicate>() {
@@ -1179,9 +1187,10 @@ public class JetControlFlowProcessor {
                         }
                     }
             );
-            Map<PseudoValue, TypePredicate> valuesToTypePredicates =
-                    PseudocodePackage.expectedTypeFor(PseudocodePackage.and(typePredicates), values);
-            builder.magic(property, null, values, valuesToTypePredicates, MagicKind.VALUE_CONSUMER);
+            Map<PseudoValue, TypePredicate> valuesToTypePredicates = SmartFMap
+                    .<PseudoValue, TypePredicate>emptyMap()
+                    .plus(delegateValue, PseudocodePackage.and(KotlinPackage.filterNotNull(typePredicates)));
+            builder.magic(property, null, Collections.singletonList(delegateValue), valuesToTypePredicates, MagicKind.VALUE_CONSUMER);
         }
 
         private TypePredicate getTypePredicateByReceiverValue(@Nullable ResolvedCall<?> resolvedCall) {
@@ -1293,7 +1302,7 @@ public class JetControlFlowProcessor {
 
             List<JetExpression> branches = new ArrayList<JetExpression>();
 
-            Label doneLabel = builder.createUnboundLabel();
+            Label doneLabel = builder.createUnboundLabel("after 'when' expression");
 
             Label nextLabel = null;
             for (Iterator<JetWhenEntry> iterator = expression.getEntries().iterator(); iterator.hasNext(); ) {
@@ -1306,7 +1315,7 @@ public class JetControlFlowProcessor {
                         trace.report(ELSE_MISPLACED_IN_WHEN.on(whenEntry));
                     }
                 }
-                Label bodyLabel = builder.createUnboundLabel();
+                Label bodyLabel = builder.createUnboundLabel("'when' entry body");
 
                 JetWhenCondition[] conditions = whenEntry.getConditions();
                 for (int i = 0; i < conditions.length; i++) {
@@ -1318,7 +1327,7 @@ public class JetControlFlowProcessor {
                 }
 
                 if (!isElse) {
-                    nextLabel = builder.createUnboundLabel();
+                    nextLabel = builder.createUnboundLabel("next 'when' entry");
                     JetWhenCondition lastCondition = KotlinPackage.lastOrNull(conditions);
                     builder.nondeterministicJump(nextLabel, expression, builder.getBoundValue(lastCondition));
                 }

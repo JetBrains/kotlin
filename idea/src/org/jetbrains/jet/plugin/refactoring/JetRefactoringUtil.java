@@ -25,7 +25,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
@@ -39,6 +38,7 @@ import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.AsJavaPackage;
+import org.jetbrains.jet.asJava.KotlinLightMethod;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -46,7 +46,6 @@ import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -122,9 +121,11 @@ public class JetRefactoringUtil {
             "fun checkSuperMethods(declaration: JetDeclaration, ignore: Collection<PsiElement>?, actionStringKey: String): MutableList<out PsiElement>?")
     @Nullable
     public static List<? extends PsiElement> checkSuperMethods(
-            @NotNull JetDeclaration declaration, @Nullable Collection<PsiElement> ignore, @NotNull String actionStringKey
+            @NotNull JetDeclaration declaration,
+            @Nullable Collection<PsiElement> ignore,
+            @NotNull String actionStringKey
     ) {
-        final BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(declaration);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(declaration);
 
         CallableDescriptor declarationDescriptor =
                 (CallableDescriptor)bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
@@ -133,20 +134,14 @@ public class JetRefactoringUtil {
             return Collections.singletonList(declaration);
         }
 
-        final Project project = declaration.getProject();
-        Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor = ContainerUtil.map2Map(
-                OverrideResolver.getAllOverriddenDescriptors(declarationDescriptor),
-                new Function<CallableDescriptor, Pair<PsiElement, CallableDescriptor>>() {
-                    @Override
-                    public Pair<PsiElement, CallableDescriptor> fun(CallableDescriptor descriptor) {
-                        return new Pair<PsiElement, CallableDescriptor>(
-                                DescriptorToDeclarationUtil.getDeclaration(project, descriptor),
-                                descriptor
-                        );
-                    }
-                }
-        );
-        overriddenElementsToDescriptor.remove(null);
+        Project project = declaration.getProject();
+        Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor = new HashMap<PsiElement, CallableDescriptor>();
+        for (CallableDescriptor overriddenDescriptor : OverrideResolver.getAllOverriddenDescriptors(declarationDescriptor)) {
+            PsiElement overriddenDeclaration = DescriptorToDeclarationUtil.getDeclaration(project, overriddenDescriptor);
+            if (PsiTreeUtil.instanceOf(overriddenDeclaration, JetNamedFunction.class, JetProperty.class, PsiMethod.class)) {
+                overriddenElementsToDescriptor.put(overriddenDeclaration, overriddenDescriptor);
+            }
+        }
         if (ignore != null) {
             overriddenElementsToDescriptor.keySet().removeAll(ignore);
         }

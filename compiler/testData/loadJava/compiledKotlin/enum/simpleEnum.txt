@@ -5,12 +5,6 @@ internal final enum class MyEnum : kotlin.Enum<test.MyEnum> {
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     
-    public class object <class-object-for-MyEnum> {
-        /*primary*/ private constructor <class-object-for-MyEnum>()
-        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.MyEnum
-        public final /*synthesized*/ fun values(): kotlin.Array<test.MyEnum>
-    }
-    
     public enum entry ENTRY : test.MyEnum {
         /*primary*/ private constructor ENTRY()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
@@ -22,4 +16,8 @@ internal final enum class MyEnum : kotlin.Enum<test.MyEnum> {
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.MyEnum
+    public final /*synthesized*/ fun values(): kotlin.Array<test.MyEnum>
 }

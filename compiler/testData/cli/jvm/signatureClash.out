@@ -21,9 +21,9 @@ ERROR: compiler/testData/cli/jvm/signatureClash.kt: (20, 5) Platform declaration
     fun <get-tr>(): kotlin.Int
     fun getTr(): kotlin.Int
 ERROR: compiler/testData/cli/jvm/signatureClash.kt: (24, 7) Platform declaration clash: The following declarations have the same JVM signature (f$b$0(LC;)V):
-    fun f$b$0(c: C): kotlin.Unit
+    fun `f$b$0`(c: C): kotlin.Unit
     fun f(): kotlin.Unit
 ERROR: compiler/testData/cli/jvm/signatureClash.kt: (26, 5) Platform declaration clash: The following declarations have the same JVM signature (f$b$0(LC;)V):
-    fun f$b$0(c: C): kotlin.Unit
+    fun `f$b$0`(c: C): kotlin.Unit
     fun f(): kotlin.Unit
 COMPILATION_ERROR

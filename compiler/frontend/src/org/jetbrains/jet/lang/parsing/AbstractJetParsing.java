@@ -19,14 +19,13 @@ package org.jetbrains.jet.lang.parsing;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.containers.Stack;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.intellij.util.containers.Stack;
-
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
@@ -109,8 +108,14 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
     }
 
     protected boolean errorAndAdvance(String message) {
+        return errorAndAdvance(message, 1);
+    }
+
+    protected boolean errorAndAdvance(String message, int advanceTokenCount) {
         PsiBuilder.Marker err = mark();
-        advance(); // erroneous token
+        for (int i = 0; i < advanceTokenCount; i++) {
+            advance(); // erroneous token
+        }
         err.error(message);
         return false;
     }

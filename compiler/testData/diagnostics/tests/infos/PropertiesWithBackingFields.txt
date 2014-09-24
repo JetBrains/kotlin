@@ -1,0 +1,57 @@
+package
+
+internal open class Super {
+    public constructor Super(/*0*/ i: kotlin.Int)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal abstract class Test {
+    public constructor Test()
+    internal final val a: kotlin.Int
+    internal final val b: kotlin.Int
+    internal final val c: kotlin.Int = 1
+    internal final val c1: kotlin.Int = 1
+    internal final val c2: kotlin.Int
+    internal final val c3: kotlin.Int
+    internal final val c4: kotlin.Int
+    internal final val c5: kotlin.Int
+    internal final var v: kotlin.Int
+    internal final var v1: kotlin.Int
+    internal final var v10: kotlin.Int
+    internal abstract val v11: kotlin.Int
+    internal abstract var v12: kotlin.Int
+    internal final var v2: kotlin.Int
+    internal final var v3: kotlin.Int
+    internal final var v4: kotlin.Int
+    internal final var v5: kotlin.Int
+    internal final var v6: kotlin.Int
+    internal abstract val v7: kotlin.Int
+    internal abstract var v8: kotlin.Int
+    internal final var v9: kotlin.Int
+    internal abstract val x: kotlin.Int
+    internal abstract val x1: kotlin.Int
+    internal abstract val x2: kotlin.Int
+    internal abstract var y: kotlin.Int
+    internal abstract var y1: kotlin.Int
+    internal abstract var y2: kotlin.Int
+    internal abstract var y3: kotlin.Int
+    internal abstract var y4: kotlin.Int
+    internal abstract var y5: kotlin.Int
+    internal abstract var y6: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class TestPCParameters : Super {
+    public constructor TestPCParameters(/*0*/ w: kotlin.Int, /*1*/ x: kotlin.Int, /*2*/ y: kotlin.Int, /*3*/ z: kotlin.Int)
+    internal final val xx: kotlin.Int
+    internal final val y: kotlin.Int
+    internal final var z: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(): [ERROR : Error function type]
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -17,8 +17,6 @@
 package org.jetbrains.jet.plugin.debugger
 
 import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.engine.MethodFilter
-import com.intellij.debugger.engine.DebugProcessImpl
 import org.jetbrains.jet.plugin.debugger.KotlinSmartStepIntoHandler.KotlinMethodSmartStepTarget
 import org.jetbrains.jet.plugin.debugger.KotlinSmartStepIntoHandler.KotlinBasicStepMethodFilter
 import com.intellij.debugger.DebuggerManagerEx
@@ -32,18 +30,18 @@ import java.io.File
 import kotlin.properties.Delegates
 import com.intellij.debugger.settings.DebuggerSettings
 
-public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
+public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
     private var oldSettings: DebuggerSettings by Delegates.notNull()
     private var oldIsFilterForStdlibAlreadyAdded: Boolean by Delegates.notNull()
-    private var oldDisableKoltinInternalClasses: Boolean by Delegates.notNull()
+    private var oldDisableKotlinInternalClasses: Boolean by Delegates.notNull()
 
     override fun initApplication() {
-        super<KotlinDebuggerTestCase>.initApplication()
+        super.initApplication()
         saveDefaultSettings()
     }
 
     override fun tearDown() {
-        super<KotlinDebuggerTestCase>.tearDown()
+        super.tearDown()
         restoreDefaultSettings()
     }
 
@@ -53,7 +51,7 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
         configureSettings(fileText)
 
         createDebugProcess(path)
-        val count = findStringWithPrefixes(fileText, "// REPEAT: ")?.toInt() ?: 1
+        val count = findStringWithPrefixes(fileText, "// STEP_INTO: ")?.toInt() ?: 1
 
         for (i in 1..count) {
             onBreakpoint { stepInto() }
@@ -71,7 +69,7 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
     private fun configureSettings(fileText: String) {
         val kotlinSettings = KotlinDebuggerSettings.getInstance()
         kotlinSettings.DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = false
-        kotlinSettings.DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = fileText.getValueForSetting("DISABLE_KOTLIN_INTERNAL_CLASSES", oldDisableKoltinInternalClasses)
+        kotlinSettings.DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = fileText.getValueForSetting("DISABLE_KOTLIN_INTERNAL_CLASSES", oldDisableKotlinInternalClasses)
 
         val debuggerSettings = DebuggerSettings.getInstance()!!
         debuggerSettings.SKIP_CONSTRUCTORS = fileText.getValueForSetting("SKIP_CONSTRUCTORS", oldSettings.SKIP_CONSTRUCTORS)
@@ -85,13 +83,13 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
 
     private fun saveDefaultSettings() {
         oldIsFilterForStdlibAlreadyAdded = KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED
-        oldDisableKoltinInternalClasses = KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES
+        oldDisableKotlinInternalClasses = KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES
         oldSettings = DebuggerSettings.getInstance()!!.clone()
     }
 
     private fun restoreDefaultSettings() {
         KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED = oldIsFilterForStdlibAlreadyAdded
-        KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = oldDisableKoltinInternalClasses
+        KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES = oldDisableKotlinInternalClasses
 
         val debuggerSettings = DebuggerSettings.getInstance()!!
         debuggerSettings.SKIP_CONSTRUCTORS = oldSettings.SKIP_CONSTRUCTORS
@@ -99,41 +97,13 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
         debuggerSettings.TRACING_FILTERS_ENABLED = oldSettings.TRACING_FILTERS_ENABLED
     }
 
-    private val dp: DebugProcessImpl
-        get() = getDebugProcess() ?: throw AssertionError("createLocalProcess() should be called before getDebugProcess()")
-
-    private fun onBreakpoint(doOnBreakpoint: SuspendContextImpl.() -> Unit) {
-        super.onBreakpoint {
-            it.printContext()
-            it.doOnBreakpoint()
-        }
-    }
-
     private fun SuspendContextImpl.smartStepInto() {
         this.smartStepInto(false)
-    }
-
-    private fun SuspendContextImpl.stepInto() {
-        this.stepInto(false, null)
-    }
-
-    private fun SuspendContextImpl.stepInto(ignoreFilters: Boolean, smartStepFilter: MethodFilter?) {
-        dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, smartStepFilter))
     }
 
     private fun SuspendContextImpl.smartStepInto(ignoreFilters: Boolean) {
         createSmartStepIntoFilters().forEach {
             dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, it))
-        }
-    }
-
-    private fun SuspendContextImpl.printContext() {
-        printContext(this)
-    }
-
-    private fun finish() {
-        onBreakpoint {
-            resume(this)
         }
     }
 

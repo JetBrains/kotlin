@@ -1,0 +1,4 @@
+package
+
+internal fun asCall(): kotlin.Unit
+internal fun asSafe(): kotlin.Unit

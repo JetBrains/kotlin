@@ -59,6 +59,8 @@ import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.JetFil
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.search.allScope
 import org.jetbrains.jet.plugin.refactoring.runWriteAction
+import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.jet.testing.ConfigLibraryUtil
 
 public abstract class AbstractJetMoveTest : MultiFileTestCase() {
     protected fun doTest(path: String) {
@@ -77,6 +79,10 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
         }
 
         val config = JsonParser().parse(FileUtil.loadFile(File(path), true)) as JsonObject
+
+        if (config["withRuntime"]?.getAsBoolean() ?: false) {
+            ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk())
+        }
 
         val action = MoveAction.valueOf(config.getString("type"))
 

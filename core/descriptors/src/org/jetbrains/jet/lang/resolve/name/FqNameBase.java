@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.name;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -44,11 +45,11 @@ public abstract class FqNameBase {
         }
     }
 
-    public final boolean equalsTo(@NotNull FqName that) {
-        return equalsTo(that.toUnsafe());
+    public final boolean equalsTo(@Nullable FqName that) {
+        return that != null && equalsTo(that.toUnsafe());
     }
 
-    public final boolean equalsTo(@NotNull FqNameUnsafe that) {
+    public final boolean equalsTo(@Nullable FqNameUnsafe that) {
         return toFqNameUnsafe().equals(that);
     }
 

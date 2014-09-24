@@ -1,0 +1,8 @@
+package
+
+package f {
+    internal fun getAnswer(): kotlin.Int
+    internal fun </*0*/ R> h(/*0*/ f: (kotlin.Boolean) -> R): kotlin.Int
+    internal fun </*0*/ R> h(/*0*/ f: (kotlin.String) -> R): kotlin.Int
+    internal fun test(): [ERROR : Error function type]
+}

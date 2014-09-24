@@ -1,0 +1,6 @@
+package
+
+internal val _type_test: kotlin.Int
+internal fun foo(): kotlin.Int
+internal fun test(): kotlin.Unit
+internal fun kotlin.Int.foo(): kotlin.Boolean

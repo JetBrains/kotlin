@@ -1,0 +1,5 @@
+package
+
+package t {
+    internal fun foo(/*0*/ array: kotlin.Array<kotlin.Int>): kotlin.Unit
+}

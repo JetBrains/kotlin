@@ -1,0 +1,32 @@
+package
+
+internal fun foo(/*0*/ a: A): kotlin.Unit
+
+kotlin.data() internal open class A {
+    public constructor A(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String, /*2*/ z: kotlin.Any)
+    private final val x: kotlin.Int
+    protected final val y: kotlin.String
+    public final val z: kotlin.Any
+    private final /*synthesized*/ fun component1(): kotlin.Int
+    protected final /*synthesized*/ fun component2(): kotlin.String
+    public final /*synthesized*/ fun component3(): kotlin.Any
+    internal final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ..., /*2*/ z: kotlin.Any = ...): A
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B : A {
+    public constructor B()
+    invisible_fake final override /*1*/ /*fake_override*/ val x: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ val y: kotlin.String
+    public final override /*1*/ /*fake_override*/ val z: kotlin.Any
+    invisible_fake final override /*1*/ /*fake_override*/ fun component1(): kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun component2(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun component3(): kotlin.Any
+    internal final override /*1*/ /*fake_override*/ fun copy(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ..., /*2*/ z: kotlin.Any = ...): A
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

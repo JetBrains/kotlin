@@ -1,4 +1,4 @@
-package interactive;
+package interactive
 
 class Shape(var height : Double = 1.0, var fillColor : String = "#AAAAAA") {
 

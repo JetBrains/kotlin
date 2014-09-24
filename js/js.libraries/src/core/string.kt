@@ -1,4 +1,4 @@
-package js
+package kotlin.js
 
 native public fun String.startsWith(s: String): Boolean = noImpl
 native public fun String.endsWith(s: String): Boolean = noImpl
@@ -8,41 +8,41 @@ native public fun String.startsWith(char: Char): Boolean = noImpl
 native public fun String.endsWith(char: Char): Boolean = noImpl
 native public fun String.contains(char: Char): Boolean = noImpl
 
-native public fun String.toUpperCase() : String = js.noImpl
+native public fun String.toUpperCase() : String = noImpl
 
-native public fun String.toLowerCase() : String = js.noImpl
+native public fun String.toLowerCase() : String = noImpl
 
-native public fun String.indexOf(str : String) : Int = js.noImpl
-native public fun String.indexOf(str : String, fromIndex : Int) : Int = js.noImpl
+native public fun String.indexOf(str : String) : Int = noImpl
+native public fun String.indexOf(str : String, fromIndex : Int) : Int = noImpl
 
-native public fun String.lastIndexOf(str: String) : Int = js.noImpl
-native public fun String.lastIndexOf(str : String, fromIndex : Int) : Int = js.noImpl
-
-library("splitString")
-public fun String.split(regex: String): Array<String> = js.noImpl
+native public fun String.lastIndexOf(str: String) : Int = noImpl
+native public fun String.lastIndexOf(str : String, fromIndex : Int) : Int = noImpl
 
 library("splitString")
-public fun String.split(regex: String, limit: Int): Array<String> = js.noImpl
+public fun String.split(regex: String): Array<String> = noImpl
 
-native public fun String.substring(beginIndex : Int) : String = js.noImpl
-native public fun String.substring(beginIndex : Int, endIndex : Int) : String = js.noImpl
+library("splitString")
+public fun String.split(regex: String, limit: Int): Array<String> = noImpl
 
-native public fun String.charAt(index : Int) : Char = js.noImpl
+native public fun String.substring(beginIndex : Int) : String = noImpl
+native public fun String.substring(beginIndex : Int, endIndex : Int) : String = noImpl
 
-native public fun String.concat(str : String) : String = js.noImpl
+native public fun String.charAt(index : Int) : Char = noImpl
 
-native public fun String.match(regex : String) : Array<String> = js.noImpl
+native public fun String.concat(str : String) : String = noImpl
 
-native public fun String.trim() : String = js.noImpl
+native public fun String.match(regex : String) : Array<String> = noImpl
+
+native public fun String.trim() : String = noImpl
 
 native("length")
-public val CharSequence.size: Int get() = js.noImpl
+public val CharSequence.size: Int get() = noImpl
 
 library
-public fun CharSequence.length(): Int = js.noImpl
+public fun CharSequence.length(): Int = noImpl
 
 library
-public fun CharSequence.isEmpty(): Boolean = js.noImpl
+public fun CharSequence.isEmpty(): Boolean = noImpl
 
 /*
 

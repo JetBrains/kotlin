@@ -1,0 +1,13 @@
+package
+
+internal fun a(): kotlin.Unit
+internal fun use(/*0*/ a: kotlin.Any): kotlin.Any
+
+internal final class A {
+    public constructor A()
+    internal final fun component1(): kotlin.Int
+    internal final fun component2(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

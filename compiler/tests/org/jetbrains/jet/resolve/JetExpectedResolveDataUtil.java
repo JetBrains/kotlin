@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl;
+import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -116,7 +117,7 @@ public class JetExpectedResolveDataUtil {
     @NotNull
     private static PsiClass findClass(String qualifiedName, Project project) {
         InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(project, new BindingTraceContext(), false);
-        JavaClass javaClass = injector.getJavaClassFinder().findClass(new FqName(qualifiedName));
+        JavaClass javaClass = injector.getJavaClassFinder().findClass(ClassId.topLevel(new FqName(qualifiedName)));
         Assert.assertNotNull("Class wasn't found: " + qualifiedName, javaClass);
         assertInstanceOf(javaClass, JavaClassImpl.class);
         return ((JavaClassImpl) javaClass).getPsi();

@@ -83,4 +83,9 @@ public class FakeLightClassForFileOfPackage extends AbstractLightClass implement
     public PsiElement copy() {
         return new FakeLightClassForFileOfPackage(getManager(), delegate, file);
     }
+
+    @Override
+    public String getText() {
+        return null;
+    }
 }

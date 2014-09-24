@@ -175,7 +175,7 @@ public fun interpreterLoop(
                         IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> {
                             val value = frame.getStackTop()
                             val expectedType = Type.getReturnType(m.desc)
-                            if (expectedType.getSort() == Type.OBJECT) {
+                            if (expectedType.getSort() == Type.OBJECT || expectedType.getSort() == Type.ARRAY) {
                                 val coerced = if (value != NULL_VALUE && value.asmType != expectedType)
                                                     ObjectValue(value.obj(), expectedType)
                                               else value

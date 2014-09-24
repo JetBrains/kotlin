@@ -1,0 +1,4 @@
+package
+
+java.lang.Deprecated() internal fun foo(): kotlin.Unit
+java.lang.Deprecated() internal fun foo1(): kotlin.Unit

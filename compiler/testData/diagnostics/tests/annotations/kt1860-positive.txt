@@ -1,0 +1,19 @@
+package
+
+internal var bar: kotlin.Int
+internal val x: (kotlin.Int) -> kotlin.Int
+internal fun foo(/*0*/ test() f: kotlin.Int): kotlin.Unit
+
+internal final class Hello {
+    public constructor Hello(/*0*/ test() args: kotlin.Any)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final annotation class test : kotlin.Annotation {
+    public constructor test()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

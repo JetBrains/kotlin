@@ -17,29 +17,16 @@
 package org.jetbrains.jet.lang.diagnostics.rendering
 
 import org.jetbrains.jet.renderer.Renderer
-import org.jetbrains.jet.lang.descriptors.ClassKind
-import org.jetbrains.jet.lang.descriptors.ClassKind.*
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject
+import org.jetbrains.jet.renderer.DescriptorRendererImpl
 
 public fun <P> renderParameter(parameter: P, renderer: Renderer<P>?): Any = renderer?.render(parameter) ?: parameter
 
 public fun ClassDescriptor.renderKindWithName(): String {
-    val kind = getKind().getText()
+    val kind = DescriptorRendererImpl.getClassKindPrefix(this)
     if (isClassObject(this)) {
         return "$kind of '${getContainingDeclaration().getName()}'"
     }
     return "$kind '${getName()}'"
-}
-
-public fun ClassKind.getText(): String {
-    return when (this) {
-        CLASS -> "class"
-        TRAIT -> "trait"
-        ENUM_CLASS -> "enum class"
-        ENUM_ENTRY -> "enum entry"
-        ANNOTATION_CLASS -> "annotation class"
-        OBJECT -> "object"
-        CLASS_OBJECT -> "class object"
-    }
 }

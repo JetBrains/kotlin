@@ -1,0 +1,5 @@
+package
+
+package customGetValGlobal {
+    internal val zz: kotlin.Int = 1
+}

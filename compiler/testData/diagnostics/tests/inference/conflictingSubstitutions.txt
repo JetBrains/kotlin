@@ -1,0 +1,8 @@
+package
+
+package conflictingSubstitutions {
+    internal fun </*0*/ R> elemAndList(/*0*/ r: R, /*1*/ t: kotlin.MutableList<R>): R
+    internal fun </*0*/ T> list(/*0*/ value: T): java.util.ArrayList<T>
+    internal fun test(): kotlin.Unit
+    internal fun </*0*/ R> R.elemAndListWithReceiver(/*0*/ r: R, /*1*/ t: kotlin.MutableList<R>): R
+}

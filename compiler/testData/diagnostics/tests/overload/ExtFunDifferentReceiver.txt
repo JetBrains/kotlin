@@ -1,0 +1,4 @@
+package
+
+internal fun kotlin.Int.rty(): kotlin.Int
+internal fun kotlin.String.rty(): kotlin.Int

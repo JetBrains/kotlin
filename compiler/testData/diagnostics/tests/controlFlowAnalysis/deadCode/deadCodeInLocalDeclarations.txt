@@ -1,0 +1,16 @@
+package
+
+internal fun bar(): kotlin.Unit
+internal fun testClassDeclaration(): kotlin.Unit
+internal fun testFunctionDefaultArgument(): kotlin.Unit
+internal fun testObject(): kotlin.Unit
+internal fun testObjectExpression(): kotlin.Unit
+internal fun testObjectExpression1(): kotlin.Unit
+internal fun todo(): kotlin.Nothing
+
+internal open class Foo {
+    public constructor Foo(/*0*/ i: kotlin.Int)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

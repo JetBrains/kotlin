@@ -1,0 +1,6 @@
+package
+
+package b {
+    internal fun doSmth(/*0*/ b: a.M.Inner): a.M.Inner
+    internal fun foo(): kotlin.Unit
+}

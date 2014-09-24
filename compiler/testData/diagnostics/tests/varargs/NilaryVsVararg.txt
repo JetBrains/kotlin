@@ -1,0 +1,5 @@
+package
+
+internal fun foo0(): kotlin.String
+internal fun foo0(/*0*/ vararg t: kotlin.Int /*kotlin.IntArray*/): kotlin.String
+internal fun test0(): kotlin.Unit

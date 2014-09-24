@@ -46,6 +46,7 @@ import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.analyzer.ModuleInfo
 import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
 import org.jetbrains.jet.analyzer.ModuleContent
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
 
 public class BuiltInsSerializer(val out: PrintStream?) {
     private var totalSize = 0
@@ -163,6 +164,6 @@ public class BuiltInsSerializer(val out: PrintStream?) {
     }
 
     fun getFileName(classDescriptor: ClassDescriptor): String {
-        return BuiltInsSerializationUtil.getClassMetadataPath(ClassSerializationUtil.getClassId(classDescriptor))
+        return BuiltInsSerializationUtil.getClassMetadataPath(DeserializedResolverUtils.getClassId(classDescriptor))
     }
 }

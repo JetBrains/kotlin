@@ -16,16 +16,13 @@
 
 package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
+import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.types.TypeConstructor
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
 import org.jetbrains.jet.lang.resolve.java.lazy.child
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
@@ -36,17 +33,12 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
-import org.jetbrains.jet.lang.descriptors.Modality
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.descriptors.ClassKind
 import java.util.ArrayList
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
-import org.jetbrains.jet.lang.descriptors.impl.EnumClassObjectDescriptor
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContextWithTypes,
@@ -54,7 +46,7 @@ class LazyJavaClassDescriptor(
         internal val fqName: FqName,
         private val jClass: JavaClass
 ) : ClassDescriptorBase(outerC.storageManager, containingDeclaration, fqName.shortName(),
-                        outerC.sourceElementFactory.source(jClass)), LazyJavaDescriptor, JavaClassDescriptor {
+                        outerC.sourceElementFactory.source(jClass)), JavaClassDescriptor {
 
     private val c: LazyJavaResolverContextWithTypes = outerC.child(this, jClass.getTypeParameters().toSet());
 
@@ -90,19 +82,12 @@ class LazyJavaClassDescriptor(
     private val _innerClassesScope = InnerClassesScopeWrapper(getScopeForMemberLookup())
     override fun getUnsubstitutedInnerClassesScope(): JetScope = _innerClassesScope
 
+    private val _staticScope = LazyJavaStaticClassScope(c, jClass, this)
+    override fun getStaticScope(): JetScope = _staticScope
+
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
 
-    private val _classObjectDescriptor = c.storageManager.createNullableLazyValue {
-        if (jClass.isEnum()) {
-            EnumClassObjectDescriptor(c.storageManager, this)
-        }
-        else null
-    }
-
-    override fun getCorrespondingPackageFragment() =
-            c.packageFragmentProvider.getPackageFragment(fqName) as? JavaClassStaticsPackageFragmentDescriptor
-
-    override fun getClassObjectDescriptor(): ClassDescriptor? = _classObjectDescriptor()
+    override fun getClassObjectDescriptor(): ClassDescriptor? = null
     override fun getClassObjectType(): JetType? = getClassObjectDescriptor()?.let { d -> d.getDefaultType() }
 
     override fun getConstructors() = _scopeForMemberLookup._constructors()
@@ -176,7 +161,7 @@ class LazyJavaClassDescriptor(
                         supertype ->
                         c.typeResolver.transformJavaType(supertype, TypeUsage.SUPERTYPE.toAttributes())
                     }
-                    .filter { supertype -> !supertype.isError() }
+                    .filter { supertype -> !supertype.isError() && !KotlinBuiltIns.getInstance().isAnyOrNullableAny(supertype) }
                     .toList()
                     .ifEmpty {
                         listOf(KotlinBuiltIns.getInstance().getAnyType())

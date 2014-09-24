@@ -1,0 +1,15 @@
+package
+
+package kt1191 {
+    internal fun foo(/*0*/ unused: kotlin.Int): kotlin.Any
+    internal fun </*0*/ T> kt1191.FunctionalList<T>.plus(/*0*/ element: T): kt1191.FunctionalList<T>
+
+    internal trait FunctionalList</*0*/ T> {
+        internal abstract val head: T
+        internal abstract val size: kotlin.Int
+        internal abstract val tail: kt1191.FunctionalList<T>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

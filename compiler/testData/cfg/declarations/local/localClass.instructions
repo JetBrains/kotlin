@@ -17,7 +17,7 @@ L0:
     jmp?(L2)                                                                             NEXT:[<END>, d(fun f() { val x = "" fun loc() { val x3 = "" } })]
     d(fun f() { val x = "" fun loc() { val x3 = "" } })                                  NEXT:[<SINK>]
 L1:
-L2:
+L2 [after local declaration]:
   1 <END>                                                                                NEXT:[<SINK>]                                                                               PREV:[jmp?(L2)]
 error:
     <ERROR>                                                                              PREV:[]
@@ -43,7 +43,7 @@ L3:
     jmp?(L5)                                          NEXT:[<END>, d(fun loc() { val x3 = "" })]
     d(fun loc() { val x3 = "" })                      NEXT:[<SINK>]
 L4:
-L5:
+L5 [after local declaration]:
   3 <END>                                             NEXT:[<SINK>]                                            PREV:[jmp?(L5)]
 error:
     <ERROR>                                           PREV:[]

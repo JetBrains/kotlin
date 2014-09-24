@@ -1,0 +1,4 @@
+package
+
+internal fun foo(/*0*/ a: kotlin.Number): kotlin.Unit
+internal fun kotlin.Int.component1(): kotlin.String

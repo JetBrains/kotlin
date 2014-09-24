@@ -1,0 +1,7 @@
+package
+
+package a {
+    internal fun bar(): kotlin.Int
+    internal fun doSmth(): kotlin.Unit
+    internal fun foo(): kotlin.Int
+}

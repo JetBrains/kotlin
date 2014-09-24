@@ -1,0 +1,20 @@
+package
+
+internal fun foo1(/*0*/ e: PsiElement): kotlin.Unit
+internal fun println(/*0*/ any: kotlin.Any?): kotlin.Nothing
+
+internal trait JetExpression : PsiElement {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal abstract override /*1*/ /*fake_override*/ fun getParent(): PsiElement
+    internal abstract override /*1*/ /*fake_override*/ fun getText(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait PsiElement {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal abstract fun getParent(): PsiElement
+    internal abstract fun getText(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

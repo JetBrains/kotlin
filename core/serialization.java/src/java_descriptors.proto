@@ -77,7 +77,7 @@ extend Callable {
   // Package-less name of the class with the callable's body and annotations, if it differs from the class it's serialized into.
   // E.g. for a class "A/B/C$D" this would be "C$D".
   // This is needed to find the class to load annotations from in the following cases:
-  // 1) annotations on top-level members are written to compiled package fragment classes
+  // 1) annotations on top-level members are written to compiled package part classes
   // 2) annotations on properties in traits are written to TImpl classes
   optional int32 impl_class_name = 102;
 }

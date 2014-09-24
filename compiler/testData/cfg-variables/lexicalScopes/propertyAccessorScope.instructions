@@ -17,11 +17,11 @@ L0:
     v(var a : Int get() { return $a } set(v: Int) { $a = v })                       INIT: in: {} out: {a=D}
     jmp?(L2)                                                                        INIT: in: {a=D} out: {a=D}
     d(get() { return $a })                                                                                        USE: in: {a=READ} out: {a=READ}
-L2:
+L2 [after local declaration]:
     jmp?(L5)
     d(set(v: Int) { $a = v })                                                                                     USE: in: {a=ONLY_WRITTEN_NEVER_READ} out: {a=ONLY_WRITTEN_NEVER_READ}
 L1:
-L5:
+L5 [after local declaration]:
   1 <END>                                                                           INIT: in: {} out: {}
 error:
     <ERROR>

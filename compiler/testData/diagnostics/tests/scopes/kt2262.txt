@@ -1,0 +1,30 @@
+package
+
+package kt2262 {
+
+    internal final class Bar : kt2262.Foo {
+        public constructor Bar()
+        protected final override /*1*/ /*fake_override*/ val color: kotlin.String
+        protected final val i: kotlin.Int = 1
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        internal final inner class Baz {
+            public constructor Baz()
+            internal final val copy: kotlin.String
+            internal final val j: kotlin.Int = 1
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal abstract class Foo {
+        public constructor Foo()
+        protected final val color: kotlin.String = "red"
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

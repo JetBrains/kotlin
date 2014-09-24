@@ -1,0 +1,6 @@
+package
+
+package extensionAndRegular {
+    internal fun who(): kotlin.Int
+    internal fun kotlin.Int.who(): kotlin.Int
+}

@@ -1,0 +1,21 @@
+package
+
+internal fun box(): kotlin.String
+
+internal final class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun h2(/*0*/ x: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun makeC(): B.C
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal final inner class C {
+        public constructor C()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        kotlin.tailRecursive() internal final fun h(/*0*/ counter: kotlin.Int): kotlin.Unit
+        kotlin.tailRecursive() internal final fun h2(/*0*/ x: kotlin.Any): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

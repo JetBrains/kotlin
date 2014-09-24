@@ -1,0 +1,31 @@
+package
+
+internal val a3: kotlin.Int = 2147483638
+internal val a4: kotlin.Int = -2147483638
+internal val i10: kotlin.Int = -2147483648
+internal val i11: kotlin.Int = 0
+internal val i12: kotlin.Int = 2
+internal val i13: kotlin.Int = -2147483647
+internal val i15: kotlin.Int = -2147483648
+internal val i2: kotlin.Int = -2147483648
+internal val i3: kotlin.Int = -1
+internal val i4: kotlin.Int = -2147483648
+internal val i5: kotlin.Int = 2147483647
+internal val i6: kotlin.Int = 1
+internal val i7: kotlin.Int = -1
+internal val i8: kotlin.Int = -2147483647
+internal val intMaxValue: kotlin.Int = 2147483647
+internal val intMinValue: kotlin.Int = -2147483648
+internal val l20: kotlin.Int = -1702967296
+internal val l21: kotlin.Int = 0
+internal val l22: kotlin.Int = 0
+internal val l23: kotlin.Int = -1
+internal fun foo(): kotlin.Unit
+
+internal final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

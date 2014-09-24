@@ -21,6 +21,7 @@ import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext
 import kotlin.properties.Delegates
+import org.jetbrains.jet.lang.resolve.name.ClassId
 
 public class ClassDeserializer(val storageManager: StorageManager, val classDataFinder: ClassDataFinder) {
     private val classes = storageManager.createMemoizedFunctionWithNullableValues {

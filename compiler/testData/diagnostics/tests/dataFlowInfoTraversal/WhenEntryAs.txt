@@ -1,0 +1,5 @@
+package
+
+internal fun bar(/*0*/ x: kotlin.Number): kotlin.Unit
+internal fun foo(/*0*/ x: kotlin.Number, /*1*/ y: kotlin.Int): kotlin.Unit
+internal fun whenWithoutSubject(/*0*/ x: kotlin.Number): kotlin.Unit

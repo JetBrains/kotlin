@@ -1,12 +1,10 @@
 package foo
 
-import js.*
-
 native
-fun paramCount(vararg a: Int): Int = js.noImpl
+fun paramCount(vararg a: Int): Int = noImpl
 
 native("paramCount")
-fun anotherParamCount(vararg a: Int): Int = js.noImpl
+fun anotherParamCount(vararg a: Int): Int = noImpl
 
 // test spread operator
 fun count(vararg a: Int) = paramCount(*a)
@@ -15,23 +13,23 @@ fun count(vararg a: Int) = paramCount(*a)
 fun anotherCount(vararg a: Int) = anotherParamCount(*a)
 
 native
-fun test3(bar: Bar, dummy: Int, vararg args: Int): Boolean = js.noImpl
+fun test3(bar: Bar, dummy: Int, vararg args: Int): Boolean = noImpl
 
 native
-fun Bar.test2(order: Int, dummy: Int, vararg args: Int): Boolean = js.noImpl
+fun Bar.test2(order: Int, dummy: Int, vararg args: Int): Boolean = noImpl
 
 native
 class Bar(val size: Int, order: Int = 0) {
-    fun test(order: Int, dummy: Int, vararg args: Int): Boolean = js.noImpl
+    fun test(order: Int, dummy: Int, vararg args: Int): Boolean = noImpl
     class object {
-        fun startNewTest(): Boolean = js.noImpl
+        fun startNewTest(): Boolean = noImpl
         var hasOrderProblem: Boolean = false
     }
 }
 
 native
 object obj {
-    fun test(size: Int, vararg args: Int): Boolean = js.noImpl
+    fun test(size: Int, vararg args: Int): Boolean = noImpl
 }
 
 fun spreadInMethodCall(size: Int, vararg args: Int) = Bar(size).test(0, 1, *args)
@@ -43,7 +41,7 @@ fun spreadInMethodCallWithReceiver(size: Int, vararg args: Int) = Bar(size).test
 fun spreadInPackageMethodCall(size: Int, vararg args: Int) = test3(Bar(size), 1, *args)
 
 native
-fun testNativeVarargWithFunLit(vararg args: Int, f: (a: IntArray) -> Boolean): Boolean = js.noImpl
+fun testNativeVarargWithFunLit(vararg args: Int, f: (a: IntArray) -> Boolean): Boolean = noImpl
 
 fun testSpreadOperatorWithSafeCall(a: Bar?, expected: Boolean?, vararg args: Int): Boolean {
     return a?.test(0, 1, *args) == expected

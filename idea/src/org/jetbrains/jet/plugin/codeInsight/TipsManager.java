@@ -58,26 +58,29 @@ public final class TipsManager {
             Set<DeclarationDescriptor> descriptors = new HashSet<DeclarationDescriptor>();
             // Process as call expression
             JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
+            if (resolutionScope == null) return descriptors;
+
             Qualifier qualifier = context.get(BindingContext.QUALIFIER, receiverExpression);
-            if (qualifier != null && resolutionScope != null) {
+            if (qualifier != null) {
                 // It's impossible to add extension function for package or class (if it's class object, expression type is not null)
-                descriptors.addAll(new HashSet<DeclarationDescriptor>(excludePrivateDescriptors(qualifier.getScope().getAllDescriptors())));
+                descriptors.addAll(excludePrivateDescriptors(qualifier.getScope().getAllDescriptors()));
             }
 
             JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
-            if (expressionType != null && resolutionScope != null && !expressionType.isError()) {
+            if (expressionType != null && !expressionType.isError()) {
                 ExpressionReceiver receiverValue = new ExpressionReceiver(receiverExpression, expressionType);
 
                 DataFlowInfo info = getDataFlowInfo(context, expression);
+
                 List<JetType> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(receiverValue, context, info);
 
                 for (JetType variant : variantsForExplicitReceiver) {
-                    descriptors.addAll(includeExternalCallableExtensions(
-                            excludePrivateDescriptors(variant.getMemberScope().getAllDescriptors()),
-                            resolutionScope, receiverValue));
+                    descriptors.addAll(excludePrivateDescriptors(variant.getMemberScope().getAllDescriptors()));
                 }
 
+                descriptors.addAll(externalCallableExtensions(resolutionScope, receiverValue, context, info));
             }
+
             return descriptors;
         }
         else {
@@ -102,7 +105,10 @@ public final class TipsManager {
                 }
 
                 descriptorsSet.addAll(resolutionScope.getAllDescriptors());
-                return excludeNotCallableExtensions(excludePrivateDescriptors(descriptorsSet), resolutionScope);
+
+                DataFlowInfo info = getDataFlowInfo(context, expression);
+
+                return excludeNotCallableExtensions(excludePrivateDescriptors(descriptorsSet), resolutionScope, context, info);
             }
         }
         return Collections.emptyList();
@@ -138,7 +144,10 @@ public final class TipsManager {
     }
 
     public static Collection<DeclarationDescriptor> excludeNotCallableExtensions(
-            @NotNull Collection<? extends DeclarationDescriptor> descriptors, @NotNull JetScope scope
+            @NotNull Collection<? extends DeclarationDescriptor> descriptors,
+            @NotNull JetScope scope,
+            @NotNull final BindingContext context,
+            @NotNull final DataFlowInfo dataFlowInfo
     ) {
         Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
 
@@ -152,7 +161,7 @@ public final class TipsManager {
                             return false;
                         }
                         for (ReceiverParameterDescriptor receiverDescriptor : result) {
-                            if (ExpressionTypingUtils.checkIsExtensionCallable(receiverDescriptor.getValue(), callableDescriptor)) {
+                            if (ExpressionTypingUtils.checkIsExtensionCallable(receiverDescriptor.getValue(), callableDescriptor, context, dataFlowInfo)) {
                                 return false;
                             }
                         }
@@ -184,22 +193,18 @@ public final class TipsManager {
         });
     }
 
-    private static Set<DeclarationDescriptor> includeExternalCallableExtensions(
-            @NotNull Collection<DeclarationDescriptor> descriptors,
+    private static Collection<CallableDescriptor> externalCallableExtensions(
             @NotNull JetScope externalScope,
-            @NotNull final ReceiverValue receiverValue
+            @NotNull final ReceiverValue receiverValue,
+            @NotNull final BindingContext context,
+            @NotNull final DataFlowInfo dataFlowInfo
     ) {
-        Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
-
-        descriptorsSet.addAll(
-                Collections2.filter(JetScopeUtils.getAllExtensions(externalScope),
+        return Collections2.filter(JetScopeUtils.getAllExtensions(externalScope),
                                     new Predicate<CallableDescriptor>() {
                                         @Override
                                         public boolean apply(CallableDescriptor callableDescriptor) {
-                                            return ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, callableDescriptor);
+                                            return ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, callableDescriptor, context, dataFlowInfo);
                                         }
-                                    }));
-
-        return descriptorsSet;
+                                    });
     }
 }

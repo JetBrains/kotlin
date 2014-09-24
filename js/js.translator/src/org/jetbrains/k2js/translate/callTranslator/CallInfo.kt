@@ -84,15 +84,21 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
     val argumentsInfo = CallArgumentTranslator.translate(resolvedCall, explicitReceivers.receiverOrThisObject, this, argsBlock)
     val explicitReceiversCorrected =
         if (!argsBlock.isEmpty() && explicitReceivers.receiverOrThisObject != null) {
-            val receiverOrThisRefVar = this.declareTemporary(explicitReceivers.receiverOrThisObject)
-            this.addStatementToCurrentBlock(receiverOrThisRefVar.assignmentExpression().makeStmt()!!)
-
+            val receiverOrThisRef =
+                if (TranslationUtils.isCacheNeeded(explicitReceivers.receiverOrThisObject)) {
+                    val receiverOrThisRefVar = this.declareTemporary(explicitReceivers.receiverOrThisObject)
+                    this.addStatementToCurrentBlock(receiverOrThisRefVar.assignmentExpression().makeStmt())
+                    receiverOrThisRefVar.reference()
+                }
+                else {
+                    explicitReceivers.receiverOrThisObject
+                }
             var receiverRef = explicitReceivers.receiverObject
             if (receiverRef != null) {
                 receiverRef = this.declareTemporary(null).reference()
-                this.addStatementToCurrentBlock(JsAstUtils.assignment(receiverRef!!, explicitReceivers.receiverObject!!).makeStmt()!!)
+                this.addStatementToCurrentBlock(JsAstUtils.assignment(receiverRef!!, explicitReceivers.receiverObject!!).makeStmt())
             }
-            ExplicitReceivers(receiverOrThisRefVar.reference(), receiverRef)
+            ExplicitReceivers(receiverOrThisRef, receiverRef)
         }
         else {
             explicitReceivers

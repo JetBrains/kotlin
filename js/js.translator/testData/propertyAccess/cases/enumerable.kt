@@ -1,8 +1,5 @@
 package foo
 
-import js.enumerable
-import js.native
-
 native
 fun <T> _enumerate(o: T): T = noImpl
 

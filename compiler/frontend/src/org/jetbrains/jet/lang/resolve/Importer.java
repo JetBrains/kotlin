@@ -86,12 +86,13 @@ public interface Importer {
         }
 
         protected void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-            List<JetScope> scopesToImport = new ArrayList<JetScope>(2);
+            List<JetScope> scopesToImport = new ArrayList<JetScope>(3);
             if (descriptor instanceof PackageViewDescriptor) {
                 scopesToImport.add(((PackageViewDescriptor) descriptor).getMemberScope());
             }
             else if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.OBJECT) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+                scopesToImport.add(classDescriptor.getStaticScope());
                 scopesToImport.add(classDescriptor.getUnsubstitutedInnerClassesScope());
                 ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
                 if (classObjectDescriptor != null) {

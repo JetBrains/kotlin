@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.ConstantsPackage;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
+import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.storage.StorageManager;
@@ -130,14 +130,14 @@ public class DescriptorLoadersStorage {
 
                 @Nullable
                 @Override
-                public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitParameterAnnotation(int index, @NotNull JvmClassName className) {
+                public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitParameterAnnotation(int index, @NotNull ClassId classId) {
                     MemberSignature paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(signature, index);
                     List<AnnotationDescriptor> result = memberAnnotations.get(paramSignature);
                     if (result == null) {
                         result = new ArrayList<AnnotationDescriptor>();
                         memberAnnotations.put(paramSignature, result);
                     }
-                    return AnnotationDescriptorLoader.resolveAnnotation(className, result, module);
+                    return AnnotationDescriptorLoader.resolveAnnotation(classId, result, module);
                 }
             }
 
@@ -151,8 +151,8 @@ public class DescriptorLoadersStorage {
 
                 @Nullable
                 @Override
-                public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName className) {
-                    return AnnotationDescriptorLoader.resolveAnnotation(className, result, module);
+                public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId) {
+                    return AnnotationDescriptorLoader.resolveAnnotation(classId, result, module);
                 }
 
                 @Override

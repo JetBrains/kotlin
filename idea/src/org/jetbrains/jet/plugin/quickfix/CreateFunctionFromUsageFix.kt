@@ -70,7 +70,8 @@ import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.lang.resolve.name.COMPONENT_FUNCTION_PATTERN
+import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.jet.lang.resolve.dataClassUtils.getComponentIndex
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -964,10 +965,9 @@ public class CreateFunctionFromUsageFix internal (
                 override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                     val diagnosticWithParameters = Errors.COMPONENT_FUNCTION_MISSING.cast(diagnostic)
                     val name = diagnosticWithParameters.getA()
-                    val componentNumberMatcher = COMPONENT_FUNCTION_PATTERN.matcher(name.getIdentifier())
-                    if (!componentNumberMatcher.matches()) return null
-                    val componentNumberString = componentNumberMatcher.group(1)!!
-                    val componentNumber = Integer.decode(componentNumberString)!! - 1
+                    if (!isComponentLike(name)) return null
+
+                    val componentNumber = getComponentIndex(name) - 1
 
                     var multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetMultiDeclaration>())
                     val ownerType = if (multiDeclaration == null) {

@@ -85,6 +85,30 @@
         return "[" + a.join(", ") + "]";
     };
 
+    Kotlin.compareTo = function(a, b) {
+        var type = typeof a;
+        if (type == "number" || type == "string") {
+            return a < b ? -1 : a > b ? 1 : 0;
+        }
+        return a.compareTo_za3rmp$(b);
+    };
+
+    Kotlin.primitiveCompareTo = function(a, b) {
+        return a < b ? -1 : a > b ? 1 : 0;
+    };
+
+    Kotlin.isNumber = function (a) {
+        return typeof a == "number";
+    };
+
+    Kotlin.toShort = function(a) {
+        return (a & 0xFFFF) << 16 >> 16;
+    };
+
+    Kotlin.toByte = function(a) {
+        return (a & 0xFF) << 24 >> 24;
+    };
+
     Kotlin.intUpto = function (from, to) {
         return new Kotlin.NumberRange(from, to);
     };
@@ -219,34 +243,8 @@
             toString: function () {
                 return this.name();
             }
-    });
-    (function () {
-        function valueOf(name) {
-            return this[name];
         }
-
-        function getValues() {
-            return this.values$;
-        }
-
-        Kotlin.createEnumEntries = function (enumEntryList) {
-            var i = 0;
-            var values = [];
-            for (var entryName in enumEntryList) {
-                if (enumEntryList.hasOwnProperty(entryName)) {
-                    var entryObject = enumEntryList[entryName];
-                    values[i] = entryObject;
-                    entryObject.ordinal$ = i;
-                    entryObject.name$ = entryName;
-                    i++;
-                }
-            }
-            enumEntryList.values$ = values;
-            enumEntryList.valueOf_61zpoe$ = valueOf;
-            enumEntryList.values = getValues;
-            return enumEntryList;
-        };
-    })();
+    );
 
     Kotlin.PropertyMetadata = Kotlin.createClassNow(null,
         function (name) {

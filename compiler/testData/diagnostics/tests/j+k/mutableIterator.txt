@@ -1,0 +1,5 @@
+package
+
+package n {
+    internal fun foo(/*0*/ c: a.JC<kotlin.Int>, /*1*/ iterator: kotlin.Iterator<kotlin.Int>, /*2*/ iterable: kotlin.Iterable<kotlin.Int>): kotlin.Unit
+}

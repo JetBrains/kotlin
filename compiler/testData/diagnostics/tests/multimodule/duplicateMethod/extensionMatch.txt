@@ -1,0 +1,62 @@
+// -- Module: <m1> --
+package
+
+package p {
+
+    public trait B {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public abstract fun kotlin.String.getParent(): p.B?
+    }
+}
+
+
+// -- Module: <m2> --
+package
+
+package p {
+
+    public trait B {
+        // -- Module: <m1> --
+    }
+
+    public final class C : p.B {
+        public constructor C()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public open override /*1*/ fun kotlin.String.getParent(): p.B?
+    }
+}
+
+
+// -- Module: <m3> --
+package
+
+package p {
+
+    public trait B {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public abstract fun kotlin.String.getParent(): p.B?
+    }
+}
+
+
+// -- Module: <m4> --
+package
+
+internal fun p.B.test(): kotlin.Unit
+
+package p {
+
+    public trait B {
+        // -- Module: <m3> --
+    }
+
+    public final class C : p.B {
+        // -- Module: <m2> --
+    }
+}

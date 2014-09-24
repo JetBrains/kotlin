@@ -1,0 +1,64 @@
+package
+
+package baz {
+    internal fun </*0*/ A, /*1*/ B> foo(/*0*/ a: kotlin.Any?): baz.MyProperty<A, B>
+    internal fun getMyConcreteProperty(): baz.MyProperty<kotlin.Any?, kotlin.String>
+    internal fun </*0*/ A, /*1*/ B> getMyProperty(): baz.MyProperty<A, B>
+    internal fun println(/*0*/ a: kotlin.Any?): kotlin.Any?
+    internal fun </*0*/ R, /*1*/ T> baz.MyProperty<R, T>.minus(/*0*/ i: kotlin.Int): baz.MyProperty<R, T>
+    internal fun </*0*/ R, /*1*/ T> baz.MyProperty<R, T>.plus(): baz.MyProperty<R, T>
+
+    internal final class A {
+        public constructor A(/*0*/ outer: baz.Outer)
+        internal final var b: kotlin.String
+        internal final var c: kotlin.String
+        internal final var d: kotlin.String
+        internal final var e: kotlin.String
+        internal final var f: kotlin.String
+        internal final var g: kotlin.String
+        internal final var i: kotlin.String
+        internal final var r: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class MyProperty</*0*/ R, /*1*/ T> {
+        public constructor MyProperty</*0*/ R, /*1*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun get(/*0*/ thisRef: R, /*1*/ desc: kotlin.PropertyMetadata): T
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun set(/*0*/ thisRef: R, /*1*/ desc: kotlin.PropertyMetadata, /*2*/ value: T): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal trait MyPropertyContainer {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal abstract fun </*0*/ R, /*1*/ T> getMyProperty(): baz.MyProperty<R, T>
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal object O {
+        private constructor O()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun </*0*/ A, /*1*/ B> getMyProperty(): baz.MyProperty<A, B>
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public class object <class-object-for-O> : baz.O {
+            private constructor <class-object-for-O>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal final override /*1*/ /*fake_override*/ fun </*0*/ A, /*1*/ B> getMyProperty(): baz.MyProperty<A, B>
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal trait Outer {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal abstract fun getContainer(): baz.MyPropertyContainer
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

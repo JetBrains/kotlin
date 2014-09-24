@@ -19,10 +19,7 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.ClassData;
-import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
-import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
@@ -32,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import javax.inject.Inject;
-
 import java.util.Collection;
 import java.util.Collections;
 

@@ -1,0 +1,93 @@
+JetFile: fileAnnotationInWrongPlace.kt
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    MODIFIER_LIST
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        PsiErrorElement:File annotations are only allowed before package declaration
+          PsiElement(file)('file')
+          PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+        PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('prop')
+  PsiWhiteSpace('\n\n')
+  FUN
+    MODIFIER_LIST
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        PsiErrorElement:File annotations are only allowed before package declaration
+          PsiElement(file)('file')
+          PsiElement(COLON)(':')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
+        PsiWhiteSpace(' ')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('baz')
+        PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('func')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        PsiErrorElement:File annotations are only allowed before package declaration
+          PsiElement(file)('file')
+          PsiElement(COLON)(':')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('baz')
+        PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('C')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        PsiErrorElement:File annotations are only allowed before package declaration
+          PsiElement(file)('file')
+          PsiElement(COLON)(':')
+        PsiErrorElement:Expecting a list of annotations
+          <empty list>
+        PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    PsiElement(trait)('trait')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('T')

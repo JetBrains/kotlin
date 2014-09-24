@@ -1,0 +1,10 @@
+package
+
+kotlin.inline() internal fun inlineFunWithInvoke(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun inlineFunWithInvokeClosure(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun inlineFunWithInvokeClosureNoinline(/*0*/ kotlin.noinline() s: (kotlin.Int) -> kotlin.Unit, /*1*/ kotlin.noinline() ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun inlineFunWithInvokeNonInline(/*0*/ kotlin.noinline() s: (kotlin.Int) -> kotlin.Unit, /*1*/ kotlin.noinline() ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun subInline(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+internal fun subNoInline(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun (kotlin.Int) -> kotlin.Unit.inlineExt(/*0*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+kotlin.inline() internal fun (kotlin.Int) -> kotlin.Unit.inlineExtWithClosure(/*0*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit

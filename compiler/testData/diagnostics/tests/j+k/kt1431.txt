@@ -1,0 +1,5 @@
+package
+
+package d {
+    internal fun test(): kotlin.Unit
+}

@@ -1,0 +1,6 @@
+package
+
+package a {
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    internal fun </*0*/ R> test(/*0*/ callback: (R) -> kotlin.Unit): kotlin.Unit
+}

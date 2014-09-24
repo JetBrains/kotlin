@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
@@ -42,9 +43,6 @@ import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompa
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.not;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
-
 
 public final class BinaryOperationTranslator extends AbstractTranslator {
 
@@ -65,6 +63,12 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     private final JetBinaryExpression expression;
 
+    @NotNull
+    private final JetExpression leftJetExpression;
+
+    @NotNull
+    private final JetExpression rightJetExpression;
+
     @Nullable
     private final CallableDescriptor operationDescriptor;
 
@@ -72,13 +76,20 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
+
+        assert expression.getLeft() != null : "Binary expression should have a left expression: " + expression.getText();
+        leftJetExpression = expression.getLeft();
+
+        assert expression.getRight() != null : "Binary expression should have a right expression: " + expression.getText();
+        rightJetExpression = expression.getRight();
+
         this.operationDescriptor = getCallableDescriptorForOperationExpression(bindingContext(), expression);
     }
 
     @NotNull
     private JsExpression translate() {
         BinaryOperationIntrinsic intrinsic = getIntrinsicForExpression();
-        if (intrinsic != null) {
+        if (intrinsic.exists()) {
             return applyIntrinsic(intrinsic);
         }
         if (getOperationToken(expression).equals(JetTokens.ELVIS)) {
@@ -100,43 +111,69 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translateElvis() {
-        JsExpression leftExpression = translateLeftExpression(context(), expression);
-
-        JetExpression rightJetExpression = expression.getRight();
-        assert rightJetExpression != null : "Binary expression should have a right expression";
-        JsBlock rightBlock = new JsBlock();
-        JsNode rightNode = Translation.translateExpression(rightJetExpression, context(), rightBlock);
-
-        if (rightNode instanceof JsExpression && rightBlock.isEmpty()) {
-            return TranslationUtils.notNullConditional(leftExpression, (JsExpression) rightNode, context());
+        JsExpression leftExpression = Translation.translateAsExpression(leftJetExpression, context());
+        if (JsAstUtils.isEmptyExpression(leftExpression)) {
+            return leftExpression;
         }
 
-        TemporaryVariable result = context().declareTemporary(leftExpression);
-        context().addStatementToCurrentBlock(result.assignmentExpression().makeStmt());
+        JsBlock rightBlock = new JsBlock();
+        JsExpression rightExpression = Translation.translateAsExpression(rightJetExpression, context(), rightBlock);
 
-        JsExpression testExpression = TranslationUtils.isNullCheck(result.reference());
-        JsExpression rightExpression = JsAstUtils.convertToExpression(rightNode, context(), rightBlock);
-        rightBlock.getStatements().add(JsAstUtils.assignment(result.reference(), rightExpression).makeStmt());
+        if (rightBlock.isEmpty()) {
+            return TranslationUtils.notNullConditional(leftExpression, rightExpression, context());
+        }
 
-        JsIf ifStatement = new JsIf(testExpression, rightBlock);
+        JsExpression result;
+        JsIf ifStatement;
+        if (BindingContextUtilPackage.isUsedAsExpression(expression, context().bindingContext())) {
+            if (TranslationUtils.isCacheNeeded(leftExpression)) {
+                TemporaryVariable resultVar = context().declareTemporary(leftExpression);
+                result = resultVar.reference();
+                context().addStatementToCurrentBlock(resultVar.assignmentExpression().makeStmt());
+            }
+            else {
+                result = leftExpression;
+            }
+            JsExpression testExpression = TranslationUtils.isNullCheck(result);
+            if (!JsAstUtils.isEmptyExpression(rightExpression)) {
+                rightBlock.getStatements().add(JsAstUtils.assignment(result, rightExpression).makeStmt());
+            }
+            ifStatement = JsAstUtils.newJsIf(testExpression, rightBlock);
+        }
+        else {
+            result = context().getEmptyExpression();
+            JsExpression testExpression = TranslationUtils.isNullCheck(leftExpression);
+            ifStatement = JsAstUtils.newJsIf(testExpression, rightBlock);
+        }
         context().addStatementToCurrentBlock(ifStatement);
-
-        return result.reference();
+        return result;
     }
 
-    @Nullable
+    @NotNull
     private BinaryOperationIntrinsic getIntrinsicForExpression() {
         return context().intrinsics().getBinaryOperationIntrinsics().getIntrinsic(expression, context());
     }
 
     @NotNull
     private JsExpression applyIntrinsic(@NotNull BinaryOperationIntrinsic intrinsic) {
-        JsExpression leftExpression = translateLeftExpression(context(), expression);
+        JsExpression leftExpression = Translation.translateAsExpression(leftJetExpression, context());
+        if (JsAstUtils.isEmptyExpression(leftExpression)) {
+            return leftExpression;
+        }
+
         JsBlock rightBlock = new JsBlock();
-        JsExpression rightExpression = translateRightExpression(context(), expression, rightBlock);
+        JsExpression rightExpression = Translation.translateAsExpression(rightJetExpression, context(), rightBlock);
 
         if (rightBlock.isEmpty()) {
             return intrinsic.apply(expression, leftExpression, rightExpression, context());
+        }
+
+        if (JsAstUtils.isEmptyExpression(rightExpression)) {
+            if (TranslationUtils.isCacheNeeded(leftExpression)) {
+                context().addStatementToCurrentBlock(leftExpression.makeStmt());
+            }
+            context().addStatementsToCurrentBlockFrom(rightBlock);
+            return context().getEmptyExpression();
         }
 
         if (TranslationUtils.isCacheNeeded(leftExpression)) {
@@ -158,34 +195,46 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         JetToken token = getOperationToken(expression);
         assert OperatorConventions.NOT_OVERLOADABLE.contains(token);
         JsBinaryOperator operator = OperatorTable.getBinaryOperator(token);
-        JsExpression leftExpression = translateLeftExpression(context(), expression);
+        JsExpression leftExpression = Translation.translateAsExpression(leftJetExpression, context());
+        if (JsAstUtils.isEmptyExpression(leftExpression)) {
+            return leftExpression;
+        }
+
         JsBlock rightBlock = new JsBlock();
-        JsExpression rightExpression = translateRightExpression(context(), expression, rightBlock);
+        JsExpression rightExpression = Translation.translateAsExpression(rightJetExpression, context(), rightBlock);
 
         if (rightBlock.isEmpty()) {
             return new JsBinaryOperation(operator, leftExpression, rightExpression);
         }
 
-        JsNameRef result;
-        if (rightExpression instanceof JsNameRef) {
-            result = (JsNameRef) rightExpression; // Reuse tmp variable
-        } else {
-            TemporaryVariable resultVar = context().declareTemporary(rightExpression);
-            result = resultVar.reference();
-            rightBlock.getStatements().add(resultVar.assignmentExpression().makeStmt());
-        }
+        assert token.equals(JetTokens.ANDAND) || token.equals(JetTokens.OROR) : "Unsupported binary operation: " + expression.getText();
+        boolean isOror = token.equals(JetTokens.OROR);
+        JsExpression literalResult = isOror ? JsLiteral.TRUE : JsLiteral.FALSE;
+        leftExpression = isOror ? not(leftExpression) : leftExpression;
 
         JsIf ifStatement;
-        if (token.equals(JetTokens.ANDAND)) {
-            ifStatement = new JsIf(leftExpression, rightBlock, JsAstUtils.assignment(result, JsLiteral.FALSE).makeStmt());
-        }
-        else if (token.equals(JetTokens.OROR)) {
-            ifStatement = new JsIf(leftExpression, JsAstUtils.assignment(result, JsLiteral.TRUE).makeStmt(), rightBlock);
+        JsExpression result;
+        if (BindingContextUtilPackage.isUsedAsExpression(expression, context().bindingContext())) {
+            if (!JsAstUtils.isEmptyExpression(rightExpression)) {
+                if (rightExpression instanceof JsNameRef) {
+                    result = rightExpression; // Reuse tmp variable
+                } else {
+                    TemporaryVariable resultVar = context().declareTemporary(rightExpression);
+                    result = resultVar.reference();
+                    rightBlock.getStatements().add(resultVar.assignmentExpression().makeStmt());
+                }
+                JsStatement assignmentStatement = JsAstUtils.assignment(result, literalResult).makeStmt();
+                ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock, assignmentStatement);
+            }
+            else {
+                ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock);
+                result = literalResult;
+            }
         }
         else {
-            throw new UnsupportedOperationException("Unsupported binary operation: " + expression.getText());
+            ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock);
+            result = context().getEmptyExpression();
         }
-
         context().addStatementToCurrentBlock(ifStatement);
         return result;
     }
@@ -201,9 +250,9 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression getReceiver() {
         if (isInOrNotInOperation(expression)) {
-            return translateRightExpression(context(), expression);
+            return Translation.translateAsExpression(rightJetExpression, context());
         } else {
-            return translateLeftExpression(context(), expression);
+            return Translation.translateAsExpression(leftJetExpression, context());
         }
     }
 

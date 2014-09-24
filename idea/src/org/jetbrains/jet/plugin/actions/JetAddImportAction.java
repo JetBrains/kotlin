@@ -79,7 +79,7 @@ public class JetAddImportAction implements QuestionAction {
 
         // TODO: Validate resolution variants. See AddImportAction.execute()
 
-        if (possibleImports.size() == 1){
+        if (possibleImports.size() == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
             addImport(myElement, myProject, possibleImports.get(0));
         }
         else{

@@ -1,0 +1,13 @@
+package
+
+package a {
+    internal val a: kotlin.MutableSet<kotlin.String>? = null
+
+    internal final class R {
+        public constructor R()
+        internal final val b: kotlin.String? = null
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

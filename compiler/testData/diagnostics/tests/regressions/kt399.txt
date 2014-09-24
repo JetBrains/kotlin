@@ -1,0 +1,4 @@
+package
+
+internal fun box(): kotlin.String
+internal fun </*0*/ T> getSameTypeChecker(/*0*/ obj: T): (kotlin.Any) -> kotlin.Boolean

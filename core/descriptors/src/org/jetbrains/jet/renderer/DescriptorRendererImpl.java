@@ -201,8 +201,23 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     @Override
     @NotNull
     public String renderName(@NotNull Name identifier) {
-        String asString = identifier.toString();
-        return escape(KeywordStringsGenerated.KEYWORDS.contains(asString) ? '`' + asString + '`' : asString);
+        String asString = identifier.asString();
+        return escape(nameShouldBeEscaped(identifier) ? '`' + asString + '`' : asString);
+    }
+
+    private static boolean nameShouldBeEscaped(@NotNull Name identifier) {
+        if (identifier.isSpecial()) return false;
+
+        String name = identifier.asString();
+
+        if (KeywordStringsGenerated.KEYWORDS.contains(name)) return true;
+
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (!Character.isLetterOrDigit(c) && c != '_') return true;
+        }
+
+        return false;
     }
 
     private void renderName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
@@ -855,7 +870,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     @NotNull
-    private static String getClassKindPrefix(@NotNull ClassDescriptor klass) {
+    public static String getClassKindPrefix(@NotNull ClassDescriptor klass) {
         switch (klass.getKind()) {
             case CLASS:
                 return "class";

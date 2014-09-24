@@ -9,11 +9,11 @@ class B : A("B") {
     var prop: String = "B prop"
 }
 
-native fun A.bar(): String = js.noImpl
+native fun A.bar(): String = noImpl
 
 native var A.prop: String
-    get() = js.noImpl
-    set(value) = js.noImpl
+    get() = noImpl
+    set(value) = noImpl
 
 fun box(): String {
     var a: A = A("A")

@@ -1,0 +1,18 @@
+package
+
+kotlin.data() internal final class A : T {
+    public constructor A(/*0*/ x: kotlin.Int)
+    internal final val x: kotlin.Int
+    internal final override /*1*/ /*synthesized*/ fun component1(): kotlin.Int
+    internal final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ...): A
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait T {
+    internal abstract fun component1(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

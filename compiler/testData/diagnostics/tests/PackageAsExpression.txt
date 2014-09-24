@@ -1,0 +1,9 @@
+package
+
+package root {
+    internal val x: [ERROR : Type for a]
+    internal val y2: [ERROR : Type for package]
+
+    package root.a {
+    }
+}

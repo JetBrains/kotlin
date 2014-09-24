@@ -196,10 +196,13 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             }
         }
 
+        val compilationErrors = Utils.ERRORS_DETECTED_KEY[context, false]
+
         for ((target, cache) in incrementalCaches) {
             cache.clearCacheForRemovedFiles(
                     KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target),
-                    target.getOutputDir()!!
+                    target.getOutputDir()!!,
+                    !compilationErrors
             )
         }
 

@@ -1,0 +1,11 @@
+object: Foo {
+        override fun foo() {
+            this
+        }
+    }
+
+object: Foo {
+        override fun foo() {
+            this
+        }
+    }

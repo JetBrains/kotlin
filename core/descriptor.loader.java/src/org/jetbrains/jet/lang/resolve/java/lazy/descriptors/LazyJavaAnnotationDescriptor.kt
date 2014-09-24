@@ -17,42 +17,36 @@
 package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
 import org.jetbrains.jet.lang.resolve.java.structure.*
-import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.resolve.constants.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
-import org.jetbrains.jet.lang.types.TypeProjectionImpl
-import org.jetbrains.jet.lang.types.JetTypeImpl
-import org.jetbrains.jet.lang.types.TypeConstructor
-import org.jetbrains.jet.lang.types.TypeProjection
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaType
 import org.jetbrains.jet.utils.valuesToMap
-import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jet.utils.keysToMapExceptNulls
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
-import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.resolve.java.lazy.resolveTopLevelClassInModule
+import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName
 
 private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
-    override fun getName(): Name? = null
-    override fun getValue(): Any? = "Deprecated in Java"
+    override val name: Name? = null
+    override val value: Any? = "Deprecated in Java"
+}
+
+fun LazyJavaResolverContextWithTypes.resolveAnnotation(annotation: JavaAnnotation): LazyJavaAnnotationDescriptor? {
+    val classId = annotation.getClassId()
+    if (classId == null || JvmAnnotationNames.isSpecialAnnotation(classId)) return null
+    return LazyJavaAnnotationDescriptor(this, annotation)
 }
 
 class LazyJavaAnnotationDescriptor(
@@ -60,9 +54,14 @@ class LazyJavaAnnotationDescriptor(
         val javaAnnotation : JavaAnnotation
 ) : AnnotationDescriptor {
 
-    private val _fqName = c.storageManager.createNullableLazyValue { javaAnnotation.getFqName() }
+    private val fqName = c.storageManager.createNullableLazyValue {
+        val classId = javaAnnotation.getClassId()
+        if (classId == null) null
+        else kotlinFqNameToJavaFqName(classId.asSingleFqName())
+    }
+
     private val _type = c.storageManager.createLazyValue {() : JetType ->
-        val fqName = _fqName()
+        val fqName = fqName()
         if (fqName == null) return@createLazyValue ErrorUtils.createErrorType("No fqName: $javaAnnotation")
         val annotationClass = JavaToKotlinClassMap.getInstance().mapKotlinClass(fqName, TypeUsage.MEMBER_SIGNATURE_INVARIANT)
                 ?: javaAnnotation.resolve()?.let { javaClass -> c.moduleClassResolver.resolveClass(javaClass) }
@@ -71,17 +70,17 @@ class LazyJavaAnnotationDescriptor(
 
     override fun getType(): JetType = _type()
 
-    private val _nameToArgument = c.storageManager.createLazyValue {
+    private val nameToArgument = c.storageManager.createLazyValue {
         var arguments: Collection<JavaAnnotationArgument> = javaAnnotation.getArguments()
-        if (arguments.isEmpty() && _fqName()?.asString() == "java.lang.Deprecated") {
+        if (arguments.isEmpty() && fqName()?.asString() == "java.lang.Deprecated") {
             arguments = listOf(DEPRECATED_IN_JAVA)
         }
-        arguments.valuesToMap { a -> a.getName() }
+        arguments.valuesToMap { it.name }
     }
 
-    private val _valueArguments = c.storageManager.createMemoizedFunctionWithNullableValues<ValueParameterDescriptor, CompileTimeConstant<out Any?>> {
+    private val valueArguments = c.storageManager.createMemoizedFunctionWithNullableValues<ValueParameterDescriptor, CompileTimeConstant<*>> {
         valueParameter ->
-        val nameToArg = _nameToArgument()
+        val nameToArg = nameToArgument()
 
         var javaAnnotationArgument = nameToArg[valueParameter.getName()]
         if (javaAnnotationArgument == null && valueParameter.getName() == DEFAULT_ANNOTATION_MEMBER_NAME) {
@@ -91,9 +90,9 @@ class LazyJavaAnnotationDescriptor(
         resolveAnnotationArgument(javaAnnotationArgument)
     }
 
-    override fun getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) = _valueArguments(valueParameterDescriptor)
+    override fun getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) = valueArguments(valueParameterDescriptor)
 
-    private val _allValueArguments = c.storageManager.createLazyValue {
+    private val allValueArguments = c.storageManager.createLazyValue {
         val constructors = getAnnotationClass().getConstructors()
         if (constructors.isEmpty())
             mapOf<ValueParameterDescriptor, CompileTimeConstant<*>>()
@@ -103,15 +102,15 @@ class LazyJavaAnnotationDescriptor(
             }
     }
 
-    override fun getAllValueArguments() = _allValueArguments()
+    override fun getAllValueArguments() = allValueArguments()
 
     private fun getAnnotationClass() = getType().getConstructor().getDeclarationDescriptor() as ClassDescriptor
 
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): CompileTimeConstant<*>? {
         return when (argument) {
-            is JavaLiteralAnnotationArgument -> createCompileTimeConstant(argument.getValue(), true, false, false, null)
-            is JavaReferenceAnnotationArgument -> resolveFromReference(argument.resolve())
-            is JavaArrayAnnotationArgument -> resolveFromArray(argument.getName() ?: DEFAULT_ANNOTATION_MEMBER_NAME, argument.getElements())
+            is JavaLiteralAnnotationArgument -> createCompileTimeConstant(argument.value, true, false, false, null)
+            is JavaEnumValueAnnotationArgument -> resolveFromEnumValue(argument.resolve())
+            is JavaArrayAnnotationArgument -> resolveFromArray(argument.name ?: DEFAULT_ANNOTATION_MEMBER_NAME, argument.getElements())
             is JavaAnnotationAsAnnotationArgument -> resolveFromAnnotation(argument.getAnnotation())
             is JavaClassObjectAnnotationArgument -> resolveFromJavaClassObjectType(argument.getReferencedType())
             else -> null
@@ -119,14 +118,10 @@ class LazyJavaAnnotationDescriptor(
     }
 
     private fun resolveFromAnnotation(javaAnnotation: JavaAnnotation): CompileTimeConstant<*>? {
-        val fqName = javaAnnotation.getFqName()
-        if (fqName == null) return null
+        val descriptor = c.resolveAnnotation(javaAnnotation)
+        if (descriptor == null) return null
 
-        if (JvmAnnotationNames.isSpecialAnnotation(fqName)) {
-            return null
-        }
-
-        return AnnotationValue(LazyJavaAnnotationDescriptor(c, javaAnnotation))
+        return AnnotationValue(descriptor)
     }
 
     private fun resolveFromArray(argumentName: Name, elements: List<JavaAnnotationArgument>): CompileTimeConstant<*>? {
@@ -141,10 +136,8 @@ class LazyJavaAnnotationDescriptor(
         return ArrayValue(values, valueParameter.getType(), true, values.any { it.usesVariableAsConstant() })
     }
 
-    private fun resolveFromReference(element: JavaElement?): CompileTimeConstant<*>? {
-        if (element !is JavaField) return null
-
-        if (!element.isEnumEntry()) return null
+    private fun resolveFromEnumValue(element: JavaField?): CompileTimeConstant<*>? {
+        if (element == null || !element.isEnumEntry()) return null
 
         val containingJavaClass = element.getContainingClass()
 
@@ -162,7 +155,7 @@ class LazyJavaAnnotationDescriptor(
         // Class type is never nullable in 'Foo.class' in Java
         val `type` = TypeUtils.makeNotNullable(c.typeResolver.transformJavaType(javaType, TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes()))
 
-        val jlClass = c.resolveTopLevelClassInModule(FqName("java.lang.Class"))
+        val jlClass = c.packageFragmentProvider.module.resolveTopLevelClass(FqName("java.lang.Class"))
         if (jlClass == null) return null
 
         val arguments = listOf(TypeProjectionImpl(`type`))
@@ -175,7 +168,6 @@ class LazyJavaAnnotationDescriptor(
 
         return JavaClassValue(javaClassObjectType)
     }
-
 
     override fun toString(): String {
         return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderAnnotation(this)

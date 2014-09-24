@@ -1,0 +1,8 @@
+package
+
+internal fun bar(/*0*/ a: kotlin.Any): kotlin.Unit
+internal fun todo(): kotlin.Nothing
+internal fun unreachable0(): kotlin.Unit
+internal fun unreachable2(): kotlin.Unit
+internal fun unreachable3(): kotlin.Unit
+internal fun unreachable4(/*0*/ array: kotlin.Array<kotlin.Any>): kotlin.Unit

@@ -1,0 +1,16 @@
+package
+
+internal fun test(/*0*/ f: RecB<kotlin.String>): kotlin.Boolean
+internal fun test(/*0*/ f: SelfR<kotlin.String>): kotlin.Boolean
+
+internal open class RecA</*0*/ T> {
+    public constructor RecA</*0*/ T>()
+}
+
+internal open class RecB</*0*/ T> {
+    public constructor RecB</*0*/ T>()
+}
+
+internal open class SelfR</*0*/ T> {
+    public constructor SelfR</*0*/ T>()
+}

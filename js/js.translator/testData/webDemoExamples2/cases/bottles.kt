@@ -26,7 +26,6 @@
  * Additionally, you can pass the desired initial number of bottles to use (rather than 99)
  * as a command-line argument
  */
-import js.*
 
 fun main(args: Array<String>) {
     if (args.isEmpty()) {

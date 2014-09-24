@@ -1,0 +1,10 @@
+package
+
+package i {
+    internal fun test(/*0*/ list: kotlin.List<kotlin.Int>): kotlin.Unit
+    internal fun test1(/*0*/ list: kotlin.List<kotlin.Int>): kotlin.Unit
+    internal fun </*0*/ T> java.lang.Iterable<T>.foo(): kotlin.Unit
+    internal fun </*0*/ T> kotlin.Collection<T>.foo(): kotlin.Unit
+    internal fun </*0*/ T, /*1*/ R> java.lang.Iterable<T>.map1(/*0*/ f: (T) -> R): kotlin.List<R>
+    internal fun </*0*/ T, /*1*/ R> kotlin.Collection<T>.map1(/*0*/ f: (T) -> R): kotlin.List<R>
+}

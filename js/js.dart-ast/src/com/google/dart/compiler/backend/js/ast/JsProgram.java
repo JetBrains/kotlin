@@ -20,6 +20,7 @@ import static com.google.dart.compiler.backend.js.ast.JsNumberLiteral.JsIntLiter
 public final class JsProgram extends SourceInfoAwareJsNode {
     @NotNull
     private final JsEmpty emptyStatement;
+    @NotNull final JsExpression emptyExpression;
 
     private JsProgramFragment[] fragments;
 
@@ -36,11 +37,17 @@ public final class JsProgram extends SourceInfoAwareJsNode {
         setFragmentCount(1);
 
         emptyStatement = new JsEmpty();
+        emptyExpression = new JsEmptyExpression();
     }
 
     @NotNull
     public JsEmpty getEmptyStatement() {
         return emptyStatement;
+    }
+
+    @NotNull
+    public JsExpression getEmptyExpression() {
+        return emptyExpression;
     }
 
     public JsBlock getFragmentBlock(int fragment) {

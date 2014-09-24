@@ -1,0 +1,5 @@
+package
+
+package kt1075 {
+    internal fun foo(/*0*/ b: kotlin.String): kotlin.Unit
+}

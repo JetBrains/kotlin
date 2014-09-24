@@ -34,8 +34,8 @@ public class DeleteSignatureAction extends AnAction {
 
     public DeleteSignatureAction(@NotNull PsiModifierListOwner elementInEditor) {
         super("Delete");
-        this.annotationOwner = KotlinSignatureUtil.getAnnotationOwner(elementInEditor);
-        getTemplatePresentation().setVisible(KotlinSignatureUtil.isAnnotationEditable(elementInEditor));
+        this.annotationOwner = KotlinSignatureUtil.getAnalyzableAnnotationOwner(elementInEditor);
+        getTemplatePresentation().setVisible(annotationOwner != null && KotlinSignatureUtil.isAnnotationEditable(elementInEditor));
     }
 
     @Override

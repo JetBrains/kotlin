@@ -1,0 +1,11 @@
+package
+
+internal fun testAraryAccess3(): kotlin.Unit
+internal fun testArrayAccess1(/*0*/ array: kotlin.Array<kotlin.Any>): kotlin.Unit
+internal fun testArrayAccess2(): kotlin.Unit
+internal fun testArrayAssignment1(/*0*/ array: kotlin.Array<kotlin.Any>): kotlin.Unit
+internal fun testArrayAssignment2(/*0*/ array: kotlin.Array<kotlin.Any>): kotlin.Unit
+internal fun testArrayAssignment3(/*0*/ n: kotlin.Nothing): kotlin.Unit
+internal fun testArrayAssignment4(/*0*/ n: kotlin.Nothing): kotlin.Unit
+internal fun testArrayPlusAssign(/*0*/ array: kotlin.Array<kotlin.Any>): kotlin.Unit
+internal fun todo(): kotlin.Nothing

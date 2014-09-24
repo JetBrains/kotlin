@@ -21,7 +21,10 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.*;
+import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilder;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
@@ -30,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.utils.DFS;
 
 import javax.inject.Inject;
@@ -202,7 +204,7 @@ public class TypeHierarchyResolver {
 
             ClassKind kind = descriptor.getKind();
             if (kind == ClassKind.ENUM_ENTRY || kind == ClassKind.OBJECT) {
-                MutableClassDescriptor classObject = (MutableClassDescriptor) descriptor.getClassObjectDescriptor();
+                MutableClassDescriptor classObject = descriptor.getClassObjectDescriptor();
                 assert classObject != null : "Enum entries and named objects should have class objects: " + classOrObject.getText();
 
                 // This is a clever hack: each enum entry and object declaration (i.e. singleton) has a synthetic class object.
@@ -448,20 +450,12 @@ public class TypeHierarchyResolver {
                 @NotNull JetClass klass,
                 @NotNull DeclarationDescriptor containingDeclaration
         ) {
-            ClassKind kind = getClassKind(klass);
-            // Kind check is needed in order to not consider enums as inner in any case
-            // (otherwise it would be impossible to create a class object in the enum)
-            boolean isInner = kind == ClassKind.CLASS && klass.isInner();
             MutableClassDescriptor descriptor = new MutableClassDescriptor(
-                    containingDeclaration, outerScope, kind, isInner, JetPsiUtil.safeName(klass.getName()),
-                    toSourceElement(klass));
+                    containingDeclaration, outerScope, getClassKind(klass), klass.isInner(), JetPsiUtil.safeName(klass.getName()),
+                    toSourceElement(klass)
+            );
             c.getDeclaredClasses().put(klass, descriptor);
             trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetNamedDeclarationUtil.getUnsafeFQName(klass), descriptor);
-
-            if (descriptor.getKind() == ClassKind.ENUM_CLASS) {
-                ClassDescriptor classObject = new EnumClassObjectDescriptor(LockBasedStorageManager.NO_LOCKS, descriptor);
-                descriptor.getBuilder().setClassObjectDescriptor(classObject);
-            }
 
             prepareForDeferredCall(descriptor.getScopeForMemberDeclarationResolution(), descriptor, klass);
 

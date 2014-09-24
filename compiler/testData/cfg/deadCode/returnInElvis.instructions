@@ -10,7 +10,7 @@ L0:
 -   mark(return ?: null)                         PREV:[]
 -   jt(L2)                                       NEXT:[r(null) -> <v0>, merge(return ?: null|!<v1>, <v0>) -> <v2>]    PREV:[]
 -   r(null) -> <v0>                              PREV:[]
-L2:
+L2 [after elvis operator]:
 -   merge(return ?: null|!<v1>, <v0>) -> <v2>    PREV:[]
 L1:
   1 <END>                                        NEXT:[<SINK>]                                                        PREV:[ret L1]

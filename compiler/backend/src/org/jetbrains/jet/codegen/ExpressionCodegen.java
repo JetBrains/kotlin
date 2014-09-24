@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
@@ -424,10 +425,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitDoWhileExpression(@NotNull JetDoWhileExpression expression, StackValue receiver) {
-        Label continueLabel = new Label();
-        v.mark(continueLabel);
+        Label beginLoopLabel = new Label();
+        v.mark(beginLoopLabel);
 
         Label breakLabel = new Label();
+        Label continueLabel = new Label();
 
         blockStackElements.push(new LoopBlockStackElement(breakLabel, continueLabel, targetLabel(expression)));
 
@@ -444,17 +446,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             statements.addAll(doWhileStatements);
             statements.add(condition);
 
-            conditionValue = generateBlock(statements, true);
+            conditionValue = generateBlock(statements, true, continueLabel);
         }
         else {
             if (body != null) {
                 gen(body, Type.VOID_TYPE);
             }
-
+            v.mark(continueLabel);
             conditionValue = gen(condition);
         }
 
-        conditionValue.condJump(continueLabel, false, v);
+        conditionValue.condJump(beginLoopLabel, false, v);
         v.mark(breakLabel);
 
         blockStackElements.pop();
@@ -1222,6 +1224,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         CompileTimeConstant<?> compileTimeValue = bindingContext.get(COMPILE_TIME_VALUE, expression);
         if (compileTimeValue instanceof IntegerValueTypeConstant) {
             JetType expectedType = bindingContext.get(EXPRESSION_TYPE, expression);
+            assert expectedType != null : "Expression is not type checked: " + expression.getText();
             return EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) compileTimeValue, expectedType);
         }
         return compileTimeValue;
@@ -1389,7 +1392,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             JetType captureReceiver = closure.getCaptureReceiverType();
             if (captureReceiver != null) {
                 Type asmType = typeMapper.mapType(captureReceiver);
-                StackValue.Local capturedReceiver = StackValue.local(context.isStatic() ? 0 : 1, asmType);
+                StackValue.Local capturedReceiver = StackValue.local(AsmUtil.getReceiverIndex(context, context.getContextDescriptor()), asmType);
                 callGenerator.putCapturedValueOnStack(capturedReceiver, capturedReceiver.type, paramIndex++);
             }
         }
@@ -1411,6 +1414,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateBlock(List<JetElement> statements, boolean lastStatementIsExpression) {
+        return generateBlock(statements, lastStatementIsExpression, null);
+    }
+
+    private StackValue generateBlock(List<JetElement> statements, boolean lastStatementIsExpression, Label labelBeforeLastExpression) {
         Label blockEnd = new Label();
 
         List<Function<StackValue, Void>> leaveTasks = Lists.newArrayList();
@@ -1443,6 +1450,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
 
             boolean isExpression = !iterator.hasNext() && lastStatementIsExpression;
+            if (isExpression && labelBeforeLastExpression != null) {
+                v.mark(labelBeforeLastExpression);
+            }
 
             StackValue result = isExpression ? gen(statement) : genStatement(statement);
 
@@ -1744,8 +1754,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return StackValue.field(type, type, descriptor.getName().asString(), true);
             }
             ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-            assert classObjectDescriptor != null : "Class object is not found for " + descriptor;
-            return StackValue.singleton(classObjectDescriptor, typeMapper);
+            if (classObjectDescriptor != null) {
+                return StackValue.singleton(classObjectDescriptor, typeMapper);
+            }
+            return StackValue.none();
         }
 
         if (descriptor instanceof TypeParameterDescriptor) {
@@ -1861,7 +1873,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
 
         boolean isBackingFieldInAnotherClass = AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
-        boolean isStatic = containingDeclaration instanceof PackageFragmentDescriptor;
+        boolean isStatic = DescriptorUtils.isStaticDeclaration(propertyDescriptor);
         boolean isSuper = superExpression != null;
         boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
 
@@ -2297,7 +2309,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper) {
         boolean isSingleton = calleeContainingClass.getKind().isSingleton();
         if (isSingleton) {
-            if (context.hasThisDescriptor() && context.getThisDescriptor().equals(calleeContainingClass)) {
+            if (context.hasThisDescriptor() &&
+                context.getThisDescriptor().equals(calleeContainingClass) &&
+                !AnnotationsPackage.isPlatformStaticInObject(context.getContextDescriptor())) {
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
             }
             else {
@@ -3640,9 +3654,9 @@ The "returned" value of try expression with no finally is either the last expres
                         v.ifnonnull(nonnull);
                         JetType leftType = bindingContext.get(EXPRESSION_TYPE, left);
                         assert leftType != null;
-                        throwNewException("kotlin/TypeCastException", DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(leftType) +
-                                                                     " cannot be cast to " +
-                                                                     DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(rightType));
+                        genThrow(v, "kotlin/TypeCastException", DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(leftType) +
+                                                                " cannot be cast to " +
+                                                                DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(rightType));
                         v.mark(nonnull);
                     }
                 }
@@ -3802,7 +3816,7 @@ The "returned" value of try expression with no finally is either the last expres
     ) {
         if (Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, expression))) {
             // when() is supposed to be exhaustive
-            throwNewException("kotlin/NoWhenBranchMatchedException");
+            genThrow(v, "kotlin/NoWhenBranchMatchedException", null);
         }
         else {
             // non-exhaustive when() with no else -> Unit must be expected
@@ -3842,23 +3856,6 @@ The "returned" value of try expression with no finally is either the last expres
             }
         }
         return false;
-    }
-
-    private void throwNewException(@NotNull String className) {
-        throwNewException(className, null);
-    }
-
-    private void throwNewException(@NotNull String className, @Nullable String message) {
-        v.anew(Type.getObjectType(className));
-        v.dup();
-        if (message != null) {
-            v.visitLdcInsn(message);
-            v.invokespecial(className, "<init>", "(Ljava/lang/String;)V", false);
-        }
-        else {
-            v.invokespecial(className, "<init>", "()V", false);
-        }
-        v.athrow();
     }
 
     private Call makeFakeCall(ReceiverValue initializerAsReceiver) {

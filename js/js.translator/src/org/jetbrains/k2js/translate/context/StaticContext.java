@@ -37,7 +37,6 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.descriptors.ClassKind.CLASS_OBJECT;
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
@@ -502,12 +501,26 @@ public final class StaticContext {
                     return null;
                 }
             };
+            Rule<JsNameRef> staticMembersHaveContainerQualifier = new Rule<JsNameRef>() {
+                @Override
+                public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (descriptor instanceof CallableDescriptor && !isNativeObject(descriptor)) {
+                        CallableDescriptor callableDescriptor = (CallableDescriptor) descriptor;
+                        if (DescriptorUtils.isStaticDeclaration(callableDescriptor)) {
+                            return getQualifiedReference(callableDescriptor.getContainingDeclaration());
+                        }
+                    }
+
+                    return null;
+                }
+            };
 
             addRule(libraryObjectsHaveKotlinQualifier);
             addRule(constructorOrClassObjectHasTheSameQualifierAsTheClass);
             addRule(standardObjectsHaveKotlinQualifier);
             addRule(packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier);
             addRule(nativeObjectsHaveNativePartOfFullQualifier);
+            addRule(staticMembersHaveContainerQualifier);
         }
     }
 

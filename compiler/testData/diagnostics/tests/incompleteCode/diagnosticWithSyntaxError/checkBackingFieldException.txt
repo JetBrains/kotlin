@@ -1,0 +1,14 @@
+package
+
+package h {
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+
+    internal final class Square {
+        public constructor Square()
+        internal final var area: kotlin.Double
+        internal final var size: kotlin.Double
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -1,0 +1,10 @@
+package
+
+package a {
+    internal fun bar(/*0*/ a: kotlin.Any): kotlin.Any
+    internal fun bar(/*0*/ i: kotlin.Int): kotlin.Int
+    internal fun </*0*/ T> emptyList(): kotlin.List<T>
+    internal fun foo(/*0*/ l: kotlin.List<kotlin.Int>): kotlin.Int
+    internal fun </*0*/ T : kotlin.Any> makeNullable(/*0*/ t: T): T?
+    internal fun test(/*0*/ array: kotlin.Array<kotlin.Int>): kotlin.Unit
+}

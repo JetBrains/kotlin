@@ -16,7 +16,7 @@ L0:
     w(b|<v1>)                                                         INIT: in: {b=D} out: {b=ID}
     jmp?(L2)                                                          INIT: in: {b=ID} out: {b=ID}
     d(fun local(x: Int) = x + b)                                                                      USE: in: {b=READ} out: {b=READ}
-L2:
+L2 [after local declaration]:
     mark("after")
     r("after") -> <v2>
 L1:

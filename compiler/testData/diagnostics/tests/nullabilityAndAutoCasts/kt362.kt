@@ -1,7 +1,7 @@
 // FILE: this.kt
 
 // KT-362 Don't allow autocasts on vals that are not internal
-package example;
+package example
 
 fun test() {
   val p = test.Public()

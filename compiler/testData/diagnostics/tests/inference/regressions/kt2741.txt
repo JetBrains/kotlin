@@ -1,0 +1,15 @@
+package
+
+package a {
+    internal fun </*0*/ T> _arrayList(/*0*/ vararg values: T /*kotlin.Array<T>*/): kotlin.List<T>
+    internal fun test(): kotlin.Unit
+    internal fun </*0*/ T, /*1*/ R : kotlin.Comparable<R>> kotlin.Iterable<T>._sortBy(/*0*/ f: (T) -> R): kotlin.List<T>
+
+    internal final class _Pair</*0*/ A> {
+        public constructor _Pair</*0*/ A>(/*0*/ a: A)
+        internal final val a: A
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

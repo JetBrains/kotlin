@@ -1,0 +1,251 @@
+package
+
+package html {
+    internal fun html(/*0*/ init: html.HTML.() -> kotlin.Unit): html.HTML
+    internal fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    internal fun print(/*0*/ message: kotlin.Any?): kotlin.Unit
+    internal fun println(/*0*/ message: kotlin.Any?): kotlin.Unit
+    internal fun </*0*/ K, /*1*/ V> kotlin.MutableMap<K, V>.set(/*0*/ key: K, /*1*/ value: V): V?
+
+    internal final class A : html.BodyTag {
+        public constructor A()
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<html.Element>
+        public final var href: kotlin.String?
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun a(/*0*/ href: kotlin.String, /*1*/ init: html.A.() -> kotlin.Unit): kotlin.Unit
+        internal final override /*1*/ /*fake_override*/ fun b(/*0*/ init: html.B.() -> kotlin.Unit): html.B
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final override /*1*/ /*fake_override*/ fun h1(/*0*/ init: html.H1.() -> kotlin.Unit): html.H1
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal final override /*1*/ /*fake_override*/ fun p(/*0*/ init: html.P.() -> kotlin.Unit): html.P
+        internal open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun ul(/*0*/ init: html.UL.() -> kotlin.Unit): html.UL
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal final class B : html.BodyTag {
+        public constructor B()
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<html.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun a(/*0*/ href: kotlin.String, /*1*/ init: html.A.() -> kotlin.Unit): kotlin.Unit
+        internal final override /*1*/ /*fake_override*/ fun b(/*0*/ init: html.B.() -> kotlin.Unit): html.B
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final override /*1*/ /*fake_override*/ fun h1(/*0*/ init: html.H1.() -> kotlin.Unit): html.H1
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal final override /*1*/ /*fake_override*/ fun p(/*0*/ init: html.P.() -> kotlin.Unit): html.P
+        internal open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun ul(/*0*/ init: html.UL.() -> kotlin.Unit): html.UL
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal final class Body : html.BodyTag {
+        public constructor Body()
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<html.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun a(/*0*/ href: kotlin.String, /*1*/ init: html.A.() -> kotlin.Unit): kotlin.Unit
+        internal final override /*1*/ /*fake_override*/ fun b(/*0*/ init: html.B.() -> kotlin.Unit): html.B
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final override /*1*/ /*fake_override*/ fun h1(/*0*/ init: html.H1.() -> kotlin.Unit): html.H1
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal final override /*1*/ /*fake_override*/ fun p(/*0*/ init: html.P.() -> kotlin.Unit): html.P
+        internal open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun ul(/*0*/ init: html.UL.() -> kotlin.Unit): html.UL
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal abstract class BodyTag : html.TagWithText {
+        public constructor BodyTag(/*0*/ name: kotlin.String)
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<html.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        internal final fun a(/*0*/ href: kotlin.String, /*1*/ init: html.A.() -> kotlin.Unit): kotlin.Unit
+        internal final fun b(/*0*/ init: html.B.() -> kotlin.Unit): html.B
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun h1(/*0*/ init: html.H1.() -> kotlin.Unit): html.H1
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal final fun p(/*0*/ init: html.P.() -> kotlin.Unit): html.P
+        internal open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final fun ul(/*0*/ init: html.UL.() -> kotlin.Unit): html.UL
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal trait Element {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal abstract fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        public open override /*1*/ fun toString(): kotlin.String
+    }
+
+    internal final class H1 : html.BodyTag {
+        public constructor H1()
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<html.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun a(/*0*/ href: kotlin.String, /*1*/ init: html.A.() -> kotlin.Unit): kotlin.Unit
+        internal final override /*1*/ /*fake_override*/ fun b(/*0*/ init: html.B.() -> kotlin.Unit): html.B
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final override /*1*/ /*fake_override*/ fun h1(/*0*/ init: html.H1.() -> kotlin.Unit): html.H1
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal final override /*1*/ /*fake_override*/ fun p(/*0*/ init: html.P.() -> kotlin.Unit): html.P
+        internal open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun ul(/*0*/ init: html.UL.() -> kotlin.Unit): html.UL
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal final class HTML : html.TagWithText {
+        public constructor HTML()
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<html.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        internal final fun body(/*0*/ init: html.Body.() -> kotlin.Unit): html.Body
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal final fun head(/*0*/ init: html.Head.() -> kotlin.Unit): html.Head
+        protected final override /*1*/ /*fake_override*/ fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal final class Head : html.TagWithText {
+        public constructor Head()
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<html.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
+        internal final fun title(/*0*/ init: html.Title.() -> kotlin.Unit): html.Title
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal final class LI : html.BodyTag {
+        public constructor LI()
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<html.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun a(/*0*/ href: kotlin.String, /*1*/ init: html.A.() -> kotlin.Unit): kotlin.Unit
+        internal final override /*1*/ /*fake_override*/ fun b(/*0*/ init: html.B.() -> kotlin.Unit): html.B
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final override /*1*/ /*fake_override*/ fun h1(/*0*/ init: html.H1.() -> kotlin.Unit): html.H1
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal final override /*1*/ /*fake_override*/ fun p(/*0*/ init: html.P.() -> kotlin.Unit): html.P
+        internal open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun ul(/*0*/ init: html.UL.() -> kotlin.Unit): html.UL
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal final class P : html.BodyTag {
+        public constructor P()
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<html.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun a(/*0*/ href: kotlin.String, /*1*/ init: html.A.() -> kotlin.Unit): kotlin.Unit
+        internal final override /*1*/ /*fake_override*/ fun b(/*0*/ init: html.B.() -> kotlin.Unit): html.B
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final override /*1*/ /*fake_override*/ fun h1(/*0*/ init: html.H1.() -> kotlin.Unit): html.H1
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal final override /*1*/ /*fake_override*/ fun p(/*0*/ init: html.P.() -> kotlin.Unit): html.P
+        internal open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun ul(/*0*/ init: html.UL.() -> kotlin.Unit): html.UL
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal abstract class Tag : html.Element {
+        public constructor Tag(/*0*/ name: kotlin.String)
+        internal final val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final val children: java.util.ArrayList<html.Element>
+        internal final val name: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        private final fun renderAttributes(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal abstract class TagWithText : html.Tag {
+        public constructor TagWithText(/*0*/ name: kotlin.String)
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<html.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal final class TextElement : html.Element {
+        public constructor TextElement(/*0*/ text: kotlin.String)
+        internal final val text: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal final class Title : html.TagWithText {
+        public constructor Title()
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<html.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+
+    internal final class UL : html.BodyTag {
+        public constructor UL()
+        internal final override /*1*/ /*fake_override*/ val attributes: java.util.HashMap<kotlin.String, kotlin.String>
+        internal final override /*1*/ /*fake_override*/ val children: java.util.ArrayList<html.Element>
+        internal final override /*1*/ /*fake_override*/ val name: kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun a(/*0*/ href: kotlin.String, /*1*/ init: html.A.() -> kotlin.Unit): kotlin.Unit
+        internal final override /*1*/ /*fake_override*/ fun b(/*0*/ init: html.B.() -> kotlin.Unit): html.B
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final override /*1*/ /*fake_override*/ fun h1(/*0*/ init: html.H1.() -> kotlin.Unit): html.H1
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun </*0*/ T : html.Element> initTag(/*0*/ tag: T, /*1*/ init: T.() -> kotlin.Unit): T
+        internal final fun li(/*0*/ init: html.LI.() -> kotlin.Unit): html.LI
+        internal final override /*1*/ /*fake_override*/ fun p(/*0*/ init: html.P.() -> kotlin.Unit): html.P
+        internal open override /*1*/ /*fake_override*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun renderAttributes(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        internal final override /*1*/ /*fake_override*/ fun ul(/*0*/ init: html.UL.() -> kotlin.Unit): html.UL
+        internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+    }
+}

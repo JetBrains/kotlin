@@ -1,0 +1,6 @@
+package
+
+package qwertyuiop {
+    internal fun c(/*0*/ s: kotlin.String): kotlin.Unit
+    internal fun c(/*0*/ s: kotlin.String): kotlin.Unit
+}

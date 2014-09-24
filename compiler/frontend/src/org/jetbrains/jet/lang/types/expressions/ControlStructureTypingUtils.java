@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.types.expressions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -50,6 +52,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
 public class ControlStructureTypingUtils {
+    private static final Logger LOG = Logger.getInstance(ControlStructureTypingUtils.class);
 
     private final ExpressionTypingServices expressionTypingServices;
 
@@ -346,7 +349,7 @@ public class ControlStructureTypingUtils {
                 ConstraintSystemStatus status = constraintSystem.getStatus();
                 assert !status.isSuccessful() : "Report error only for not successful constraint system";
 
-                if (status.hasErrorInConstrainingTypes()) {
+                if (status.hasErrorInConstrainingTypes() || status.hasUnknownParameters()) {
                     return;
                 }
                 JetExpression expression = (JetExpression) call.getCallElement();
@@ -354,8 +357,9 @@ public class ControlStructureTypingUtils {
                     expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));
                     return;
                 }
-                throwError("Expression: " + expression.getText() + ".\nConstraint system status: \n" + ConstraintsUtil.getDebugMessageForStatus(status));
-                super.typeInferenceFailed(trace, data);
+                JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, JetNamedDeclaration.class);
+                logError("Expression: " + (parentDeclaration != null ? parentDeclaration.getText() : expression.getText()) +
+                         "\nConstraint system status: \n" + ConstraintsUtil.getDebugMessageForStatus(status));
             }
         };
     }
@@ -367,92 +371,92 @@ public class ControlStructureTypingUtils {
             this.debugName = debugName;
         }
 
-        private void throwError() {
-            throwError(null);
+        private void logError() {
+            logError(null);
         }
 
-        protected void throwError(@Nullable String additionalInformation) {
+        protected void logError(@Nullable String additionalInformation) {
             String errorMessage = "Resolution error of this type shouldn't occur for " + debugName;
             if (additionalInformation != null) {
                 errorMessage += ".\n" + additionalInformation;
             }
-            throw new IllegalStateException(errorMessage);
+            LOG.error(errorMessage);
         }
 
         @Override
         public void unresolvedReference(@NotNull BindingTrace trace) {
-            throwError();
+            logError();
         }
 
         @Override
         public <D extends CallableDescriptor> void unresolvedReferenceWrongReceiver(
                 @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> candidates
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public <D extends CallableDescriptor> void recordAmbiguity(
                 @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> candidates
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public void missingReceiver(
                 @NotNull BindingTrace trace, @NotNull ReceiverParameterDescriptor expectedReceiver
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public void wrongReceiverType(
                 @NotNull BindingTrace trace, @NotNull ReceiverParameterDescriptor receiverParameter, @NotNull ReceiverValue receiverArgument
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public void noReceiverAllowed(@NotNull BindingTrace trace) {
-            throwError();
+            logError();
         }
 
         @Override
         public void noValueForParameter(
                 @NotNull BindingTrace trace, @NotNull ValueParameterDescriptor valueParameter
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount) {
-            throwError();
+            logError();
         }
 
         @Override
         public <D extends CallableDescriptor> void ambiguity(
                 @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public <D extends CallableDescriptor> void noneApplicable(
                 @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public <D extends CallableDescriptor> void cannotCompleteResolve(
                 @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {
-            throwError();
+            logError();
         }
 
         @Override
@@ -460,42 +464,42 @@ public class ControlStructureTypingUtils {
                 @NotNull BindingTrace trace, @NotNull ClassDescriptor classDescriptor,
                 @NotNull ExplicitReceiverKind explicitReceiverKind
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public void unsafeCall(
                 @NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public void unnecessarySafeCall(
                 @NotNull BindingTrace trace, @NotNull JetType type
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public void danglingFunctionLiteralArgumentSuspected(
                 @NotNull BindingTrace trace, @NotNull List<JetFunctionLiteralArgument> functionLiteralArguments
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public void invisibleMember(
                 @NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor
         ) {
-            throwError();
+            logError();
         }
 
         @Override
         public void typeInferenceFailed(
                 @NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData
         ) {
-            throwError();
+            logError();
         }
     }
 }

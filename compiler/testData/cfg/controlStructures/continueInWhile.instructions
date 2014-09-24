@@ -1,0 +1,42 @@
+== test ==
+fun test(b: Boolean) {
+    while (true) {
+        if (b) break;
+        continue;
+    }
+}
+---------------------
+L0:
+  1 <START>
+    v(b: Boolean)
+    magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+    w(b|<v0>)
+  2 mark({ while (true) { if (b) break; continue; } })
+L2 [loop entry point]:
+L6 [condition entry point]:
+    r(true) -> <v1>                                       PREV:[mark({ while (true) { if (b) break; continue; } }), jmp(L6)]
+    mark(while (true) { if (b) break; continue; })
+    magic[VALUE_CONSUMER](true|<v1>) -> <v2>
+L4 [body entry point]:
+  3 mark({ if (b) break; continue; })
+    mark(if (b) break)
+    r(b) -> <v3>
+    jf(L7|<v3>)                                           NEXT:[read (Unit), jmp(L3)]
+    jmp(L3)                                               NEXT:[read (Unit)]
+-   jmp(L8)                                               NEXT:[merge(if (b) break|!<v4>) -> <v5>]                     PREV:[]
+L7 [else branch]:
+    read (Unit)                                           PREV:[jf(L7|<v3>)]
+L8 ['if' expression result]:
+    merge(if (b) break|!<v4>) -> <v5>
+    jmp(L6)                                               NEXT:[r(true) -> <v1>]
+- 2 jmp(L2)                                               NEXT:[r(true) -> <v1>]                                       PREV:[]
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                           PREV:[jmp(L3)]
+L1:
+  1 <END>                                                 NEXT:[<SINK>]
+error:
+    <ERROR>                                               PREV:[]
+sink:
+    <SINK>                                                PREV:[<ERROR>, <END>]
+=====================
