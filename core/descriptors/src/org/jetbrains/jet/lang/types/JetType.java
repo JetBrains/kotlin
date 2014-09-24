@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -53,4 +54,7 @@ public interface JetType extends Annotated {
 
     // isFlexible() == false <=> getLowerBound() == getUpperBound()
     boolean isFlexible();
+
+    @Nullable
+    <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass);
 }

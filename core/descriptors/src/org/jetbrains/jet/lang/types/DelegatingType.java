@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
@@ -74,6 +75,16 @@ public abstract class DelegatingType implements JetType {
     @Override
     public Annotations getAnnotations() {
         return getDelegate().getAnnotations();
+    }
+
+    @Override
+    @Nullable
+    public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
+        if (capabilityClass.isInstance(this)) {
+            //noinspection unchecked
+            return (T) this;
+        }
+        return getDelegate().getCapability(capabilityClass);
     }
 
     @Override

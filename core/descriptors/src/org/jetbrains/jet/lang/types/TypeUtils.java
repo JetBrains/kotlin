@@ -85,6 +85,12 @@ public class TypeUtils {
             throw new IllegalStateException(name);
         }
 
+        @Nullable
+        @Override
+        public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
+            return null;
+        }
+
         @Override
         public String toString() {
             return name;
