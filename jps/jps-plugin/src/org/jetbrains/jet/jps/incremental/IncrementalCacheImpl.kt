@@ -106,8 +106,8 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         }
     }
 
-    public override fun getRemovedPackageParts(compiledSourceFilesToFqName: Map<File, String>): Collection<String> {
-        return packagePartMap.getRemovedPackageParts(compiledSourceFilesToFqName)
+    public override fun getRemovedPackageParts(sourceFilesToCompileAndFqNames: Map<File, String>): Collection<String> {
+        return packagePartMap.getRemovedPackageParts(sourceFilesToCompileAndFqNames)
     }
 
     public override fun getPackageData(fqName: String): ByteArray? {
