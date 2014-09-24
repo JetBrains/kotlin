@@ -528,6 +528,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
         
+        @TestMetadata("NoCompletionInDocComment.kt")
+        public void testNoCompletionInDocComment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoCompletionInDocComment.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("NoEmptyPackage.kt")
         public void testNoEmptyPackage() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoEmptyPackage.kt");

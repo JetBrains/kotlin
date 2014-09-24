@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.search.PsiElementProcessor
+import com.intellij.psi.PsiComment
 
 public class JetCompletionContributor : CompletionContributor() {
 
@@ -191,6 +192,10 @@ public class JetCompletionContributor : CompletionContributor() {
     private fun shouldSuppressCompletion(parameters: CompletionParameters, prefixMatcher: PrefixMatcher): Boolean {
         val position = parameters.getPosition()
         val invocationCount = parameters.getInvocationCount()
+
+        // no completion in comments
+        // TODO: this must be changed if we will have references in doc-comments
+        if (PsiTreeUtil.getParentOfType(position, javaClass<PsiComment>(), false) != null) return true
 
         // no completion inside number literals
         if (AFTER_NUMBER_LITERAL.accepts(position)) return true
