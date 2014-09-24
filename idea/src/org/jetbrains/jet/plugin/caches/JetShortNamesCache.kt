@@ -51,8 +51,7 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
         val classNames = JetClassShortNameIndex.getInstance().getAllKeys(project)
 
         // package classes can not be indexed, since they have no explicit declarations
-        val lightClassGenerationSupport = IDELightClassGenerationSupport.getInstanceForIDE(project)
-        val packageClassShortNames = lightClassGenerationSupport.getAllPossiblePackageClasses(GlobalSearchScope.allScope(project)).keySet()
+        val packageClassShortNames = PackageIndexUtil.getAllPossiblePackageClasses(project).keySet()
         classNames.addAll(packageClassShortNames)
 
         return ArrayUtil.toStringArray(classNames)
@@ -64,8 +63,7 @@ public class JetShortNamesCache(private val project: Project) : PsiShortNamesCac
     override fun getClassesByName(NonNls name: String, scope: GlobalSearchScope): Array<PsiClass> {
         val result = ArrayList<PsiClass>()
 
-        val lightClassGenerationSupport = IDELightClassGenerationSupport.getInstanceForIDE(project)
-        val packageClasses = lightClassGenerationSupport.getAllPossiblePackageClasses(scope)
+        val packageClasses = PackageIndexUtil.getAllPossiblePackageClasses(project)
 
         // package classes can not be indexed, since they have no explicit declarations
         val fqNames = packageClasses.get(name)
