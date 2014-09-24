@@ -52,7 +52,7 @@ public class CodegenBinding {
 
     public static final WritableSlice<ScriptDescriptor, ClassDescriptor> CLASS_FOR_SCRIPT = Slices.createSimpleSlice();
 
-    public static final WritableSlice<ClassDescriptor, Type> ASM_TYPE = Slices.createCollectiveSlice();
+    public static final WritableSlice<ClassDescriptor, Type> ASM_TYPE = Slices.createSimpleSlice();
 
     public static final WritableSlice<ClassDescriptor, Boolean> ENUM_ENTRY_CLASS_NEED_SUBCLASS = Slices.createSimpleSetSlice();
 

@@ -58,10 +58,8 @@ public class JetExceptionFilter implements Filter {
         // fullyQualifiedName is of format "package.Class$Inner"
         String fullyQualifiedName = element.getClassName();
 
-        // All classes except package classes and package parts are handled correctly in the default ExceptionFilter
-        if (!isPackageClassOrSubClass(fullyQualifiedName)) {
-            return null;
-        }
+        // All classes except package classes, package parts and top level closures are handled correctly in the default ExceptionFilter
+        if (!isPackageClassOrPackagePartPrefixedName(fullyQualifiedName)) return null;
 
         String internalName = fullyQualifiedName.replace('.', '/');
         JvmClassName jvmClassName = JvmClassName.byInternalName(internalName);
@@ -75,7 +73,7 @@ public class JetExceptionFilter implements Filter {
         return new OpenFileHyperlinkInfo(project, virtualFile, element.getLineNumber() - 1);
     }
 
-    private static boolean isPackageClassOrSubClass(String fqName) {
+    private static boolean isPackageClassOrPackagePartPrefixedName(String fqName) {
         if (fqName.equals(PackageClassUtils.getPackageClassName(FqName.ROOT))) {
             return true;
         }

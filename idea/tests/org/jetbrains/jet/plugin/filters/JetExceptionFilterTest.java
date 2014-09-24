@@ -28,13 +28,17 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.testFramework.PsiTestUtil;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
+
+import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
+import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassName;
+import static org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils.getPackagePartFqName;
 
 public class JetExceptionFilterTest extends MultiFileTestCase {
     private VirtualFile rootDir;
@@ -82,7 +86,7 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
         return "\tat " + element + "\n";
     }
 
-    private void doTest(@NotNull String fileName, @NotNull String className, int lineNumber) {
+    private void doTest(@NotNull String fileName, int lineNumber, @NotNull Function1<VirtualFile, String> className) {
         if (rootDir == null) {
             configure();
         }
@@ -90,7 +94,10 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
 
         Filter filter = new JetExceptionFilterFactory().create(GlobalSearchScope.allScope(myProject));
 
-        String line = createStackTraceElementLine(fileName, className, lineNumber);
+        VirtualFile expectedFile = VfsUtilCore.findRelativeFile(fileName, rootDir);
+        assertNotNull(expectedFile);
+
+        String line = createStackTraceElementLine(fileName, className.invoke(expectedFile), lineNumber);
         Filter.Result result = filter.applyFilter(line, 0);
 
         assertNotNull(result);
@@ -100,8 +107,6 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
         OpenFileDescriptor descriptor = ((OpenFileHyperlinkInfo) info).getDescriptor();
         assertNotNull(descriptor);
 
-        VirtualFile expectedFile = VfsUtilCore.findRelativeFile(fileName, rootDir);
-        assertNotNull(expectedFile);
         assertEquals(expectedFile, descriptor.getFile());
 
         Document document = FileDocumentManager.getInstance().getDocument(expectedFile);
@@ -111,17 +116,44 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
     }
 
     public void testSimple() {
-        doTest("simple.kt", PackageClassUtils.getPackageClassName(FqName.ROOT), 2);
+        doTest("simple.kt", 2, new Function1<VirtualFile, String>() {
+            @Override
+            public String invoke(VirtualFile file) {
+                return getPackageClassName(FqName.ROOT);
+            }
+        });
     }
 
     public void testKt2489() {
-        doTest("a.kt", PackageClassUtils.getPackageClassName(FqName.ROOT) + "$a$f$1", 3);
-        doTest("main.kt", PackageClassUtils.getPackageClassName(FqName.ROOT) + "$main$f$1", 3);
+        final FqName packageClassFqName = getPackageClassFqName(FqName.ROOT);
+        doTest("a.kt", 3, new Function1<VirtualFile, String>() {
+            @Override
+            public String invoke(VirtualFile file) {
+                return getPackagePartFqName(packageClassFqName, file) + "$a$f$1";
+            }
+        });
+        doTest("main.kt", 3, new Function1<VirtualFile, String>() {
+            @Override
+            public String invoke(VirtualFile file) {
+                return getPackagePartFqName(packageClassFqName, file) + "$main$f$1";
+            }
+        });
     }
 
     public void testMultiSameName() {
+        final FqName packageClassFqName = getPackageClassFqName(new FqName("multiSameName"));
         // The order and the exact names do matter here
-        doTest("1/foo.kt", "multiSameName." + PackageClassUtils.getPackageClassName(new FqName("multiSameName")) + "$foo$f$1", 4);
-        doTest("2/foo.kt", "multiSameName." + PackageClassUtils.getPackageClassName(new FqName("multiSameName")) + "$foo$f$2", 4);
+        doTest("1/foo.kt", 4, new Function1<VirtualFile, String>() {
+            @Override
+            public String invoke(VirtualFile file) {
+                return getPackagePartFqName(packageClassFqName, file) + "$foo$f$1";
+            }
+        });
+        doTest("2/foo.kt", 4, new Function1<VirtualFile, String>() {
+            @Override
+            public String invoke(VirtualFile file) {
+                return getPackagePartFqName(packageClassFqName, file) + "$foo$f$1";
+            }
+        });
     }
 }
