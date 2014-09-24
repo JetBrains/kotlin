@@ -1,0 +1,3 @@
+package
+
+internal fun test(/*0*/ v: p.Visitor<kotlin.Nothing>, /*1*/ e: p.Element): kotlin.Unit

@@ -1,0 +1,4 @@
+package
+
+internal fun </*0*/ T> javaClass(): java.lang.Class<T>
+internal fun test(/*0*/ e: p.JetExpression): kotlin.Unit

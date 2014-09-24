@@ -1,0 +1,3 @@
+package
+
+internal fun test(/*0*/ map: kotlin.Map<kotlin.Any, kotlin.Any>): kotlin.Unit

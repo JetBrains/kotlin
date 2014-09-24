@@ -1,0 +1,3 @@
+package
+
+internal fun test(/*0*/ ls: kotlin.List<kotlin.String>, /*1*/ mls: kotlin.MutableList<kotlin.String>, /*2*/ lsn: kotlin.List<kotlin.String?>, /*3*/ mlsn: kotlin.MutableList<kotlin.String?>?): kotlin.Unit
