@@ -618,11 +618,105 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     
     @TestMetadata("idea/testData/quickfix/createFromUsage")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({CreateFromUsage.Component.class, CreateFromUsage.Get.class, CreateFromUsage.HasNext.class, CreateFromUsage.Iterator.class, CreateFromUsage.Next.class, CreateFromUsage.Set.class})
+    @InnerTestClasses({CreateFromUsage.BinaryOperations.class, CreateFromUsage.Component.class, CreateFromUsage.Get.class, CreateFromUsage.HasNext.class, CreateFromUsage.Iterator.class, CreateFromUsage.Next.class, CreateFromUsage.Set.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class CreateFromUsage extends AbstractQuickFixTest {
         public void testAllFilesPresentInCreateFromUsage() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("idea/testData/quickfix/createFromUsage/binaryOperations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class BinaryOperations extends AbstractQuickFixTest {
+            public void testAllFilesPresentInBinaryOperations() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/binaryOperations"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("beforeCustomOperationOnUserType.kt")
+            public void testCustomOperationOnUserType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforeCustomOperationOnUserType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeGreaterOrEqualOnUserType.kt")
+            public void testGreaterOrEqualOnUserType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforeGreaterOrEqualOnUserType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeInOnUserType.kt")
+            public void testInOnUserType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforeInOnUserType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeLessOnUserType.kt")
+            public void testLessOnUserType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforeLessOnUserType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeNotInOnUserType.kt")
+            public void testNotInOnUserType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforeNotInOnUserType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforePlusAssignOnUserType.kt")
+            public void testPlusAssignOnUserType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforePlusAssignOnUserType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforePlusExtraArgs.kt")
+            public void testPlusExtraArgs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforePlusExtraArgs.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforePlusForAssignmentOnUserType.kt")
+            public void testPlusForAssignmentOnUserType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforePlusForAssignmentOnUserType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforePlusMissingArgs.kt")
+            public void testPlusMissingArgs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforePlusMissingArgs.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforePlusOnLibType.kt")
+            public void testPlusOnLibType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforePlusOnLibType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforePlusOnUserType.kt")
+            public void testPlusOnUserType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforePlusOnUserType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforePlusOnUserTypeWithTypeParams.kt")
+            public void testPlusOnUserTypeWithTypeParams() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforePlusOnUserTypeWithTypeParams.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeWhenInOnUserType.kt")
+            public void testWhenInOnUserType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforeWhenInOnUserType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeWhenNotInOnUserType.kt")
+            public void testWhenNotInOnUserType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/binaryOperations/beforeWhenNotInOnUserType.kt");
+                doTest(fileName);
+            }
+            
         }
         
         @TestMetadata("idea/testData/quickfix/createFromUsage/component")

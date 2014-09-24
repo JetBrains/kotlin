@@ -113,6 +113,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
             typeInfo: TypeInfo,
             substitutions: Array<JetTypeSubstitution>,
             scope: JetScope): List<TypeCandidate> {
+        if (typeInfo is TypeInfo.ByType && typeInfo.keepUnsubstituted) return computeTypeCandidates(typeInfo)
         return typeCandidates.getOrPut(typeInfo) {
             val types = typeInfo.getPossibleTypes(currentFileContext).reverse()
 

@@ -222,6 +222,12 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(EXPECTED_TYPE_MISMATCH, changeFunctionLiteralReturnTypeFix);
         QuickFixes.factories.put(ASSIGNMENT_TYPE_MISMATCH, changeFunctionLiteralReturnTypeFix);
 
+        QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, CreateBinaryOperationActionFactory.INSTANCE$);
+        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateBinaryOperationActionFactory.INSTANCE$);
+        QuickFixes.factories.put(NONE_APPLICABLE, CreateBinaryOperationActionFactory.INSTANCE$);
+        QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateBinaryOperationActionFactory.INSTANCE$);
+        QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateBinaryOperationActionFactory.INSTANCE$);
+
         QuickFixes.factories.put(TYPE_MISMATCH, new QuickFixFactoryForTypeMismatchError());
 
         QuickFixes.factories.put(AUTOCAST_IMPOSSIBLE, CastExpressionFix.createFactoryForAutoCastImpossible());

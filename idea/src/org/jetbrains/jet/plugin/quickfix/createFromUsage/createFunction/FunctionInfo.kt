@@ -24,7 +24,7 @@ abstract class TypeInfo(val variance: Variance) {
                 expression.guessTypes(context).flatMap { it.getPossibleSupertypes(variance) }
     }
 
-    class ByType(val theType: JetType, variance: Variance): TypeInfo(variance) {
+    class ByType(val theType: JetType, variance: Variance, val keepUnsubstituted: Boolean = false): TypeInfo(variance) {
         override val possibleNamesFromExpression: Array<String> =
                 ArrayUtil.EMPTY_STRING_ARRAY
 
