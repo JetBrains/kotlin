@@ -38,10 +38,12 @@ public final class Namer {
     public static final String EQUALS_METHOD_NAME = getStableMangledNameForDescriptor(KotlinBuiltIns.getInstance().getAny(), "equals");
     public static final String COMPARE_TO_METHOD_NAME = getStableMangledNameForDescriptor(KotlinBuiltIns.getInstance().getComparable(), "compareTo");
     public static final String NUMBER_RANGE = "NumberRange";
+    public static final String CHAR_RANGE = "CharRange";
     public static final String LONG_FROM_NUMBER = "fromNumber";
     public static final String LONG_TO_NUMBER = "toNumber";
     public static final String LONG_FROM_INT = "fromInt";
     public static final String PRIMITIVE_COMPARE_TO = "primitiveCompareTo";
+    public static final String IS_CHAR = "isChar";
     public static final String IS_NUMBER = "isNumber";
 
     public static final String CALLEE_NAME = "$fun";

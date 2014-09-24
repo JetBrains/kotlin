@@ -86,8 +86,15 @@
     };
 
     Kotlin.compareTo = function (a, b) {
-        var type = typeof a;
-        if (type == "number" || type == "string") {
+        var typeA = typeof a;
+        var typeB = typeof a;
+        if (Kotlin.isChar(a) && typeB == "number") {
+            return Kotlin.primitiveCompareTo(a.charCodeAt(0), b);
+        }
+        if (typeA == "number" && Kotlin.isChar(b)) {
+            return Kotlin.primitiveCompareTo(a, b.charCodeAt(0));
+        }
+        if (typeA == "number" || typeA == "string") {
             return a < b ? -1 : a > b ? 1 : 0;
         }
         return a.compareTo_za3rmp$(b);
@@ -101,8 +108,16 @@
         return typeof a == "number" || a instanceof Kotlin.Long;
     };
 
-    Kotlin.toInt = function (a) {
-        return a | 0;
+    Kotlin.isChar = function (value) {
+        return (typeof value) == "string" && value.length == 1;
+    };
+
+    Kotlin.charInc = function (value) {
+        return String.fromCharCode(value.charCodeAt(0)+1);
+    };
+
+    Kotlin.charDec = function (value) {
+        return String.fromCharCode(value.charCodeAt(0)-1);
     };
 
     Kotlin.toShort = function (a) {
@@ -111,6 +126,10 @@
 
     Kotlin.toByte = function (a) {
         return (a & 0xFF) << 24 >> 24;
+    };
+
+    Kotlin.toChar = function (a) {
+       return String.fromCharCode((((a | 0) % 65536) & 0xFFFF) << 16 >>> 16);
     };
 
     Kotlin.numberToLong = function (a) {
@@ -131,6 +150,10 @@
 
     Kotlin.numberToDouble = function (a) {
         return +a;
+    };
+
+    Kotlin.numberToChar = function (a) {
+        return Kotlin.toChar(Kotlin.numberToInt(a));
     };
 
     Kotlin.intUpto = function (from, to) {
@@ -646,6 +669,50 @@
                  return this.increment.isNegative() ? this.start.compare(this.end) < 0 : this.start.compare(this.end) > 0;
              }
          });
+
+    Kotlin.CharRangeIterator = Kotlin.createClassNow(Kotlin.RangeIterator,
+        function (start, end, increment) {
+            Kotlin.RangeIterator.call(this, start, end, increment);
+        }, {
+            next: function () {
+                var value = this.i;
+                this.i = this.i + this.increment;
+                return String.fromCharCode(value);
+            },
+    });
+
+    Kotlin.CharRange = Kotlin.createClassNow(null,
+        function (start, end) {
+            this.start = start.charCodeAt(0);
+            this.end = end.charCodeAt(0);
+            this.increment = 1;
+        }, {
+            contains: function (char) {
+                var code = char.charCodeAt(0)
+                return this.start <= code && code <= this.end;
+            },
+            iterator: function () {
+                return new Kotlin.CharRangeIterator(this.start, this.end, this.increment);
+            },
+            isEmpty: function () {
+                return this.start > this.end;
+            },
+            equals_za3rmp$: isSameNotNullRanges
+    });
+
+    Kotlin.CharNumberProgression = Kotlin.createClassNow(null,
+        function (start, end, increment) {
+            this.start = start.charCodeAt(0);
+            this.end = end.charCodeAt(0);
+            this.increment = increment;
+        }, {
+        iterator: function () {
+            return new Kotlin.CharRangeIterator(this.start, this.end, this.increment);
+        },
+        isEmpty: function() {
+            return this.increment > 0 ? this.start > this.end : this.start < this.end;
+        }
+    });
 
     /**
      * @interface

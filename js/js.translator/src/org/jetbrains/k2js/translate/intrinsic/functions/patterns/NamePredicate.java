@@ -60,6 +60,9 @@ public final class NamePredicate implements Predicate<Name> {
     public static final NamePredicate NUMBER = new NamePredicate("Number");
 
     @NotNull
+    public static final NamePredicate CHAR = new NamePredicate(PrimitiveType.CHAR.getTypeName());
+
+    @NotNull
     public static final NamePredicate LONG = new NamePredicate(PrimitiveType.LONG.getTypeName());
 
     @NotNull

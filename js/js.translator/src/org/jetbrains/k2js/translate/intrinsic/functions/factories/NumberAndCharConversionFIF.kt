@@ -24,7 +24,7 @@ import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.
 import org.jetbrains.k2js.translate.utils.ID
 import org.jetbrains.k2js.translate.utils.JsAstUtils.*
 
-public object NumberConversionFIF : CompositeFIF() {
+public object NumberAndCharConversionFIF : CompositeFIF() {
     val USE_AS_IS = Predicates.or(
             pattern("Int.toInt|toFloat|toDouble"), pattern("Short.toShort|toInt|toFloat|toDouble"),
             pattern("Byte.toByte|toShort|toInt|toFloat|toDouble"), pattern("Float|Double.toFloat|toDouble"),
@@ -40,16 +40,26 @@ public object NumberConversionFIF : CompositeFIF() {
                     "Int|Short|Byte.toLong" to ConversionUnaryIntrinsic { longFromInt(it) },
                     "Float|Double.toLong" to ConversionUnaryIntrinsic { longFromNumber(it) },
 
+                    "Char.toDouble|toFloat|toInt" to ConversionUnaryIntrinsic { charToInt(it) },
+                    "Char.toShort" to ConversionUnaryIntrinsic { toShort(charToInt(it)) },
+                    "Char.toByte" to ConversionUnaryIntrinsic { toByte(charToInt(it)) },
+                    "Char.toLong" to ConversionUnaryIntrinsic { longFromInt(charToInt(it)) },
+
                     "Number.toInt" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToInt", it) },
                     "Number.toShort" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToShort", it) },
                     "Number.toByte" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToByte", it) },
+                    "Number.toChar" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToChar", it) },
                     "Number.toFloat|toDouble" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToDouble", it) },
                     "Number.toLong" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToLong", it) },
+
+                    "Int|Short|Byte|Float|Double.toChar" to  ConversionUnaryIntrinsic { toChar(it) },
 
                     "Long.toFloat|toDouble" to  ConversionUnaryIntrinsic { invokeMethod(it, "toNumber") },
                     "Long.toInt" to  ConversionUnaryIntrinsic { invokeMethod(it, "toInt") },
                     "Long.toShort" to  ConversionUnaryIntrinsic { toShort(invokeMethod(it, "toInt")) },
-                    "Long.toByte" to  ConversionUnaryIntrinsic { toByte(invokeMethod(it, "toInt")) }
+                    "Long.toByte" to  ConversionUnaryIntrinsic { toByte(invokeMethod(it, "toInt")) },
+                    "Long.toChar" to  ConversionUnaryIntrinsic { toChar(invokeMethod(it, "toInt")) }
+
             )
 
     class ConversionUnaryIntrinsic(val applyFun: (receiver: JsExpression) -> JsExpression) : FunctionIntrinsic() {

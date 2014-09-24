@@ -99,6 +99,9 @@ public final class PatternTranslator extends AbstractTranslator {
         else if (NamePredicate.NUMBER.apply(typeName)) {
             return JsAstUtils.isNumber(expressionToMatch);
         }
+        else if (NamePredicate.CHAR.apply(typeName)) {
+            return JsAstUtils.isChar(expressionToMatch);
+        }
         else if (NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS.apply(typeName)) {
             jsSTypeName = "number";
         }

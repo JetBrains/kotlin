@@ -31,12 +31,28 @@ import org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken
 
 
 object CompareToBOIF : BinaryOperationIntrinsicFactory {
+    val COMPARE_TO_CHAR = pattern("Int|Short|Byte|Double|Float.compareTo(Char)")
+    val CHAR_COMPARE_TO = pattern("Char.compareTo(Int|Short|Byte|Double|Float)")
     val PRIMITIVE_COMPARE_TO = pattern("Int|Short|Byte|Double|Float|Char|String.compareTo")
 
     private object CompareToIntrinsic : AbstractBinaryOperationIntrinsic() {
         override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             return JsBinaryOperation(operator, left, right)
+        }
+    }
+
+    private object CompareToCharIntrinsic : AbstractBinaryOperationIntrinsic() {
+        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+            val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
+            return JsBinaryOperation(operator, left, JsAstUtils.charToInt(right))
+        }
+    }
+
+    private object CompareCharToPrimitiveIntrinsic : AbstractBinaryOperationIntrinsic() {
+        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+            val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
+            return JsBinaryOperation(operator, JsAstUtils.charToInt(left), right)
         }
     }
 
@@ -53,6 +69,10 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
     override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
         if (JsDescriptorUtils.isBuiltin(descriptor))
             when {
+                COMPARE_TO_CHAR.apply(descriptor) ->
+                    return CompareToCharIntrinsic
+                CHAR_COMPARE_TO.apply(descriptor) ->
+                    return CompareCharToPrimitiveIntrinsic
                 PRIMITIVE_COMPARE_TO.apply(descriptor) ->
                     return CompareToIntrinsic
                 else ->

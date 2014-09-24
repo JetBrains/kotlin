@@ -134,6 +134,11 @@ public final class JsAstUtils {
     }
 
     @NotNull
+    public static JsExpression charToInt(@NotNull JsExpression expression) {
+        return invokeMethod(expression, "charCodeAt", JsNumberLiteral.ZERO);
+    }
+
+    @NotNull
     public static JsExpression toShort(@NotNull JsExpression expression) {
         return invokeKotlinFunction(OperatorConventions.SHORT.getIdentifier(), expression);
     }
@@ -146,6 +151,11 @@ public final class JsAstUtils {
     @NotNull
     public static JsExpression toLong(@NotNull JsExpression expression) {
         return invokeKotlinFunction(OperatorConventions.LONG.getIdentifier(), expression);
+    }
+
+    @NotNull
+    public static JsExpression toChar(@NotNull JsExpression expression) {
+        return invokeKotlinFunction(OperatorConventions.CHAR.getIdentifier(), expression);
     }
 
     @NotNull
@@ -164,6 +174,11 @@ public final class JsAstUtils {
     }
 
     @NotNull
+    public static JsExpression isChar(@NotNull JsExpression expression) {
+        return invokeKotlinFunction(Namer.IS_CHAR, expression);
+    }
+
+    @NotNull
     private static JsExpression rangeTo(@NotNull String rangeClassName, @NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
         JsNameRef expr = new JsNameRef(rangeClassName, Namer.KOTLIN_NAME);
         JsNew numberRangeConstructorInvocation = new JsNew(expr);
@@ -174,6 +189,11 @@ public final class JsAstUtils {
     @NotNull
     public static JsExpression numberRangeTo(@NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
         return rangeTo(Namer.NUMBER_RANGE, rangeStart, rangeEnd);
+    }
+
+    @NotNull
+    public static JsExpression charRangeTo(@NotNull JsExpression rangeStart, @NotNull JsExpression rangeEnd) {
+        return rangeTo(Namer.CHAR_RANGE, rangeStart, rangeEnd);
     }
 
     @NotNull

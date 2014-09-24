@@ -36,7 +36,9 @@ public object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
     val FLOATING_POINT_COMPARE_TO_LONG_PATTERN = pattern("Double|Float.compareTo(Long)")
     val LONG_COMPARE_TO_FLOATING_POINT_PATTERN = pattern("Long.compareTo(Float|Double)")
     val INTEGER_COMPARE_TO_LONG_PATTERN = pattern("Int|Short|Byte.compareTo(Long)")
+    val CHAR_COMPARE_TO_LONG_PATTERN = pattern("Char.compareTo(Long)")
     val LONG_COMPARE_TO_INTEGER_PATTERN = pattern("Long.compareTo(Int|Short|Byte)")
+    val LONG_COMPARE_TO_CHAR_PATTERN = pattern("Long.compareTo(Char)")
     val LONG_COMPARE_TO_LONG_PATTERN = pattern("Long.compareTo(Long)")
 
     private object FLOATING_POINT_COMPARE_TO_LONG : AbstractBinaryOperationIntrinsic() {
@@ -62,7 +64,9 @@ public object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
     }
 
     private val INTEGER_COMPARE_TO_LONG = CompareToBinaryIntrinsic( { longFromInt(it) }, ID)
+    private val CHAR_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( { longFromInt(charToInt(it)) }, ID)
     private val LONG_COMPARE_TO_INTEGER  = CompareToBinaryIntrinsic( ID, { longFromInt(it) })
+    private val LONG_COMPARE_TO_CHAR  = CompareToBinaryIntrinsic( ID, { longFromInt(charToInt(it)) })
     private val LONG_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( ID, ID )
 
     override public fun getSupportTokens(): ImmutableSet<JetToken> = OperatorConventions.COMPARISON_OPERATIONS
@@ -73,7 +77,9 @@ public object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
                 FLOATING_POINT_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> FLOATING_POINT_COMPARE_TO_LONG
                 LONG_COMPARE_TO_FLOATING_POINT_PATTERN.apply(descriptor) -> LONG_COMPARE_TO_FLOATING_POINT
                 INTEGER_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> INTEGER_COMPARE_TO_LONG
+                CHAR_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> CHAR_COMPARE_TO_LONG
                 LONG_COMPARE_TO_INTEGER_PATTERN.apply(descriptor) -> LONG_COMPARE_TO_INTEGER
+                LONG_COMPARE_TO_CHAR_PATTERN.apply(descriptor) -> LONG_COMPARE_TO_CHAR
                 LONG_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> LONG_COMPARE_TO_LONG
                 else -> null
             }
