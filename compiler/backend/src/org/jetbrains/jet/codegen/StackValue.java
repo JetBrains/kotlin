@@ -1482,11 +1482,11 @@ public abstract class StackValue {
         }
 
         @Override
-        public void dup(@NotNull InstructionAdapter v, boolean withReceiver) {
-            if (!withReceiver) {
-                super.dup(v, withReceiver);
+        public void dup(@NotNull InstructionAdapter v, boolean withWriteReceiver) {
+            if (!withWriteReceiver) {
+                super.dup(v, withWriteReceiver);
             } else {
-                int receiverSize = hasReceiver(false) && hasReceiver(true) ? receiverSize() : 0;
+                int receiverSize = hasReceiver(false) ? receiverSize() : 0;
                 switch (receiverSize) {
                     case 0:
                         AsmUtil.dup(v, type);
@@ -1577,17 +1577,21 @@ public abstract class StackValue {
         }
     }
 
-    public static class Delegated extends StackValueWithSimpleReceiver {
+    public static class DelegatedForComplexReceiver extends StackValueWithSimpleReceiver {
 
         public final StackValueWithSimpleReceiver originalValue;
 
-        public Delegated(
+        public DelegatedForComplexReceiver(
                 @NotNull Type type,
                 @NotNull StackValueWithSimpleReceiver originalValue,
                 @NotNull StackValue receiver
         ) {
-            super(type, !originalValue.hasReceiver(true), !originalValue.hasReceiver(false), receiver);
+            super(type, bothReceiverStatic(originalValue), bothReceiverStatic(originalValue), receiver);
             this.originalValue = originalValue;
+        }
+
+        private static boolean bothReceiverStatic(StackValueWithSimpleReceiver originalValue) {
+            return !(originalValue.hasReceiver(true) || originalValue.hasReceiver(false));
         }
 
         @Override
@@ -1605,8 +1609,8 @@ public abstract class StackValue {
         }
 
         @Override
-        public void dup(@NotNull InstructionAdapter v, boolean withReceiver) {
-            originalValue.dup(v, withReceiver);
+        public void dup(@NotNull InstructionAdapter v, boolean withWriteReceiver) {
+            originalValue.dup(v, withWriteReceiver);
         }
     }
 
@@ -1616,7 +1620,7 @@ public abstract class StackValue {
 
     private static StackValue complexReceiver(StackValue stackValue, boolean ... isReadOperations) {
         if (stackValue instanceof StackValueWithSimpleReceiver) {
-            return new Delegated(stackValue.type, (StackValueWithSimpleReceiver) stackValue,
+            return new DelegatedForComplexReceiver(stackValue.type, (StackValueWithSimpleReceiver) stackValue,
                                  new ComplexReceiver((StackValueWithSimpleReceiver) stackValue, isReadOperations));
         } else {
             return stackValue;

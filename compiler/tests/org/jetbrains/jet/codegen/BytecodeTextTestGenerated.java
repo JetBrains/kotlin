@@ -458,6 +458,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/staticFields/classObjectSyntheticAccessor.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("object.kt")
+        public void testObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/staticFields/object.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/storeStackBeforeInline")

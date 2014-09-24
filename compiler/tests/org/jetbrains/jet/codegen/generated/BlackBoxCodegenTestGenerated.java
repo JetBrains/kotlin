@@ -6173,21 +6173,33 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/staticFields"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
-        @TestMetadata("classObjectAnonymousInitializer.kt")
-        public void testClassObjectAnonymousInitializer() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/classObjectAnonymousInitializer.kt");
+        @TestMetadata("anonymousInitializerIObject.kt")
+        public void testAnonymousInitializerIObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/anonymousInitializerIObject.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("classObjectInc.kt")
-        public void testClassObjectInc() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/classObjectInc.kt");
+        @TestMetadata("anonymousInitializerInClassObject.kt")
+        public void testAnonymousInitializerInClassObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/anonymousInitializerInClassObject.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("objectInc.kt")
-        public void testObjectInc() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/objectInc.kt");
+        @TestMetadata("incInClassObject.kt")
+        public void testIncInClassObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/incInClassObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("incInObject.kt")
+        public void testIncInObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/incInObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("syntheticAccessor.kt")
+        public void testSyntheticAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/syntheticAccessor.kt");
             doTest(fileName);
         }
     }

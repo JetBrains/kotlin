@@ -249,16 +249,17 @@ public class PropertyCodegen {
         ClassBuilder builder = v;
 
         FieldOwnerContext backingFieldContext = context;
-        if (AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
+        if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
             modifiers |= ACC_STATIC | getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate);
-            ImplementationBodyCodegen codegen = getParentBodyCodegen(classBodyCodegen);
-            builder = codegen.v;
-            backingFieldContext = codegen.context;
-            v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
-        } else {
-            if (kind != OwnerKind.PACKAGE || isDelegate) {
-                modifiers |= ACC_PRIVATE;
+            if (AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
+                ImplementationBodyCodegen codegen = getParentBodyCodegen(classBodyCodegen);
+                builder = codegen.v;
+                backingFieldContext = codegen.context;
+                v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
             }
+        }
+        else if (kind != OwnerKind.PACKAGE || isDelegate) {
+            modifiers |= ACC_PRIVATE;
         }
 
         if (AsmUtil.isPropertyWithBackingFieldCopyInOuterClass(propertyDescriptor)) {

@@ -47,7 +47,9 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             if (descriptor.isVar()) {
                 return false
             }
-            if (DescriptorUtils.isClassObject(descriptor.getContainingDeclaration()) || DescriptorUtils.isStaticDeclaration(descriptor)) {
+            if (DescriptorUtils.isObject(descriptor.getContainingDeclaration()) ||
+                DescriptorUtils.isClassObject(descriptor.getContainingDeclaration()) ||
+                DescriptorUtils.isStaticDeclaration(descriptor)) {
                 val returnType = descriptor.getType()
                 return KotlinBuiltIns.getInstance().isPrimitiveType(returnType) || KotlinBuiltIns.getInstance().getStringType() == returnType
             }

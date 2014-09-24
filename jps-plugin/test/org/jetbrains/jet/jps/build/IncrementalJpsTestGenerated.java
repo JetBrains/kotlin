@@ -201,9 +201,9 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("objectValChanged")
-        public void testObjectValChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/objectValChanged/");
+        @TestMetadata("objectConstantChanged")
+        public void testObjectConstantChanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/objectConstantChanged/");
             doTest(fileName);
         }
 

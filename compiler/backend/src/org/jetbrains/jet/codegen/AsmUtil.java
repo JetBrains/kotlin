@@ -705,6 +705,11 @@ public class AsmUtil {
         }
     }
 
+    public static boolean isInstancePropertyWithStaticBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
+        DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
+        return isObject(containingDeclaration) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+    }
+
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
         return isClassObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
     }

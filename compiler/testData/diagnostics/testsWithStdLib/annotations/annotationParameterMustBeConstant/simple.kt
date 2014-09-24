@@ -3,7 +3,6 @@ annotation class AnnIA(val ia: IntArray)
 annotation class AnnSA(val sa: Array<String>)
 
 Ann(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>MyClass().i<!>)
-Ann(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>O.i<!>)
 Ann(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>i<!>)
 Ann(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>i2<!>)
 AnnIA(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>ia<!>)
@@ -19,10 +18,6 @@ val i2 = foo()
 fun foo(): Int = 1
 
 class MyClass {
-    val i = 1
-}
-
-object O {
     val i = 1
 }
 
