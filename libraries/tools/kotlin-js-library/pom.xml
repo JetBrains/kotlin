@@ -88,6 +88,8 @@
                                 </copy>
                                 <copy tofile="${basedir}/target/generated-js-library/kotlin-maps.js"
                                       file="${kotlin-js-lib-srcdir}/../../js.translator/testData/maps.js"/>
+                                <copy tofile="${basedir}/target/generated-js-library/kotlin-long.js"
+                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testData/long.js"/>
                                 <copy tofile="${basedir}/target/generated-js-library/kotlin-lib.js"
                                       file="${kotlin-js-lib-srcdir}/../../js.translator/testData/kotlin_lib.js"/>
                                <copy tofile="${basedir}/target/generated-js-library/kotlin-lib-ecma5.js"

@@ -173,6 +173,7 @@ public final class RhinoUtils {
             runFileWithRhino(getKotlinLibFile(version), context, scope);
             runFileWithRhino(pathToTestFilesRoot() + "kotlin_lib.js", context, scope);
             runFileWithRhino(pathToTestFilesRoot() + "maps.js", context, scope);
+            runFileWithRhino(pathToTestFilesRoot() + "long.js", context, scope);
             runFileWithRhino(pathToTestFilesRoot() + "jshint.js", context, scope);
             for (String jsLibrary : jsLibraries) {
                 runFileWithRhino(jsLibrary, context, scope);

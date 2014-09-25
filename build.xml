@@ -251,6 +251,7 @@
                 <file name="kotlin_lib_ecma5.js"/>
                 <file name="kotlin_lib.js"/>
                 <file name="maps.js"/>
+                <file name="long.js"/>
             </sources>
 
         </closure-compiler>
