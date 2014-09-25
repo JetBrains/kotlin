@@ -472,8 +472,12 @@
                         public protected *;
                     }
 
-                    # for kdoc
+                    # for kdoc & dokka
                     -keep class com.intellij.openapi.util.TextRange { *; }
+                    -keep class com.intellij.lang.impl.PsiBuilderImpl* {
+                        public protected *;
+                    }
+                    -keep class com.intellij.openapi.util.text.StringHash { *; }
 
                     -keepclassmembers enum * {
                         public static **[] values();
