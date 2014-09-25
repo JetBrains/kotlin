@@ -427,9 +427,6 @@ public class KotlinParserDefinition implements ParserDefinition {
         if (str == "CHARACTER_CONSTANT") {
             return JetNodeTypes.CHARACTER_CONSTANT;
         }
-        if (str == "STRING_TEMPLATE_ELEMENT") {
-            return JetNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY;
-        }
         if (str == "SUPER_REFERENCE") {
             return JetNodeTypes.REFERENCE_EXPRESSION;
         }
@@ -465,6 +462,42 @@ public class KotlinParserDefinition implements ParserDefinition {
         }
         if (str == "THEN_EXPRESSION_WITH_SEMI") {
             return JetNodeTypes.THEN;
+        }
+        if (str == "PROPERTY_DELEGATE") {
+            return JetNodeTypes.PROPERTY_DELEGATE;
+        }
+        if (str == "RANGE_EXPRESSION_PLUS") {
+            return JetNodeTypes.BINARY_EXPRESSION;
+        }
+        if (str == "RANGE_OPERATION") {
+            return JetNodeTypes.OPERATION_REFERENCE;
+        }
+        if (str == "CLASS_DECLARATION_LOCAL") {
+            return JetNodeTypes.CLASS;
+        }
+        if (str == "INFIX_FUNCTION_CALL_PLUS") {
+            return JetNodeTypes.BINARY_EXPRESSION;
+        }
+        if (str == "SIMPLE_NAME_OPERATION") {
+            return JetNodeTypes.OPERATION_REFERENCE;
+        }
+        if (str == "SHORT_TEMPLATE_ENTRY") {
+            return JetNodeTypes.SHORT_STRING_TEMPLATE_ENTRY;
+        }
+        if (str == "LITERAL_STRING_TEMPLATE_ENTRY") {
+            return JetNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY;
+        }
+        if (str == "VALUE_PARAMETER_WITH_TYPE") {
+            return JetNodeTypes.VALUE_PARAMETER;
+        }
+        if (str == "VALUE_PARAMETER_NO_TYPE") {
+            return JetNodeTypes.VALUE_PARAMETER;
+        }
+        if (str == "SCRIPT") {
+            return JetNodeTypes.SCRIPT;
+        }
+        if (str == "FIELD_IDENTIFIER_REFERENCE") {
+            return JetNodeTypes.REFERENCE_EXPRESSION;
         }
         return new IElementType(str, JetLanguage.INSTANCE);
     }

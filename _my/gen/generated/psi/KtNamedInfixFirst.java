@@ -29,6 +29,9 @@ public interface KtNamedInfixFirst extends PsiElement {
   List<KtArrayAccess> getArrayAccessList();
 
   @NotNull
+  List<KtAtomicPackage> getAtomicPackageList();
+
+  @NotNull
   List<KtBinaryConstant> getBinaryConstantList();
 
   @NotNull
@@ -47,6 +50,9 @@ public interface KtNamedInfixFirst extends PsiElement {
   List<KtElvisAccessExpression> getElvisAccessExpressionList();
 
   @NotNull
+  List<KtFieldIdentifierReference> getFieldIdentifierReferenceList();
+
+  @NotNull
   List<KtForLoop> getForLoopList();
 
   @NotNull
@@ -54,6 +60,9 @@ public interface KtNamedInfixFirst extends PsiElement {
 
   @NotNull
   List<KtIfExpression> getIfExpressionList();
+
+  @NotNull
+  List<KtInfixFunctionCallPlus> getInfixFunctionCallPlusList();
 
   @NotNull
   KtIsOperation getIsOperation();
@@ -90,6 +99,9 @@ public interface KtNamedInfixFirst extends PsiElement {
 
   @NotNull
   List<KtPrefixOperationExpression> getPrefixOperationExpressionList();
+
+  @NotNull
+  List<KtRangeExpressionPlus> getRangeExpressionPlusList();
 
   @NotNull
   List<KtReferenceExpression> getReferenceExpressionList();

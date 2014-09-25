@@ -8,6 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface KtStringTemplate extends PsiElement {
 
   @NotNull
-  List<KtStringTemplateElement> getStringTemplateElementList();
+  List<KtLiteralStringTemplateEntry> getLiteralStringTemplateEntryList();
+
+  @NotNull
+  List<KtLongTemplate> getLongTemplateList();
+
+  @NotNull
+  List<KtShortTemplateEntry> getShortTemplateEntryList();
 
 }

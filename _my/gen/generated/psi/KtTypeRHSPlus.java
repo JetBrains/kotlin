@@ -26,6 +26,9 @@ public interface KtTypeRHSPlus extends PsiElement {
   KtArrayAccess getArrayAccess();
 
   @Nullable
+  KtAtomicPackage getAtomicPackage();
+
+  @Nullable
   KtBinaryConstant getBinaryConstant();
 
   @Nullable
@@ -42,6 +45,9 @@ public interface KtTypeRHSPlus extends PsiElement {
 
   @Nullable
   KtElvisAccessExpression getElvisAccessExpression();
+
+  @Nullable
+  KtFieldIdentifierReference getFieldIdentifierReference();
 
   @Nullable
   KtForLoop getForLoop();

@@ -23,6 +23,9 @@ public interface KtElvisAccessExpression extends PsiElement {
   KtArrayAccess getArrayAccess();
 
   @NotNull
+  List<KtAtomicPackage> getAtomicPackageList();
+
+  @NotNull
   List<KtBinaryConstant> getBinaryConstantList();
 
   @Nullable
@@ -39,6 +42,9 @@ public interface KtElvisAccessExpression extends PsiElement {
 
   @NotNull
   KtElvisOperation getElvisOperation();
+
+  @NotNull
+  List<KtFieldIdentifierReference> getFieldIdentifierReferenceList();
 
   @NotNull
   List<KtForLoop> getForLoopList();

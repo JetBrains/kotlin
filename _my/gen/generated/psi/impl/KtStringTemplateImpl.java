@@ -24,8 +24,20 @@ public class KtStringTemplateImpl extends ASTWrapperPsiElement implements KtStri
 
   @Override
   @NotNull
-  public List<KtStringTemplateElement> getStringTemplateElementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtStringTemplateElement.class);
+  public List<KtLiteralStringTemplateEntry> getLiteralStringTemplateEntryList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLiteralStringTemplateEntry.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtLongTemplate> getLongTemplateList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtLongTemplate.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtShortTemplateEntry> getShortTemplateEntryList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtShortTemplateEntry.class);
   }
 
 }

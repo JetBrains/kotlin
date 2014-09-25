@@ -66,6 +66,12 @@ public class KtNamedInfixFirstImpl extends ASTWrapperPsiElement implements KtNam
 
   @Override
   @NotNull
+  public List<KtAtomicPackage> getAtomicPackageList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAtomicPackage.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtBinaryConstant> getBinaryConstantList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtBinaryConstant.class);
   }
@@ -102,6 +108,12 @@ public class KtNamedInfixFirstImpl extends ASTWrapperPsiElement implements KtNam
 
   @Override
   @NotNull
+  public List<KtFieldIdentifierReference> getFieldIdentifierReferenceList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtFieldIdentifierReference.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtForLoop> getForLoopList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtForLoop.class);
   }
@@ -116,6 +128,12 @@ public class KtNamedInfixFirstImpl extends ASTWrapperPsiElement implements KtNam
   @NotNull
   public List<KtIfExpression> getIfExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtIfExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtInfixFunctionCallPlus> getInfixFunctionCallPlusList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtInfixFunctionCallPlus.class);
   }
 
   @Override
@@ -188,6 +206,12 @@ public class KtNamedInfixFirstImpl extends ASTWrapperPsiElement implements KtNam
   @NotNull
   public List<KtPrefixOperationExpression> getPrefixOperationExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtPrefixOperationExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtRangeExpressionPlus> getRangeExpressionPlusList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtRangeExpressionPlus.class);
   }
 
   @Override

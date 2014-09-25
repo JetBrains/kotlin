@@ -32,6 +32,9 @@ public interface KtStatementsBlock extends PsiElement {
   List<KtAssignmentExpression> getAssignmentExpressionList();
 
   @NotNull
+  List<KtAtomicPackage> getAtomicPackageList();
+
+  @NotNull
   List<KtBinaryConstant> getBinaryConstantList();
 
   @NotNull
@@ -41,7 +44,7 @@ public interface KtStatementsBlock extends PsiElement {
   List<KtCallableReference> getCallableReferenceList();
 
   @NotNull
-  List<KtClassDeclaration> getClassDeclarationList();
+  List<KtClassDeclarationLocal> getClassDeclarationLocalList();
 
   @NotNull
   List<KtComparisonExpression> getComparisonExpressionList();
@@ -65,6 +68,9 @@ public interface KtStatementsBlock extends PsiElement {
   List<KtEqualityComparisonExpression> getEqualityComparisonExpressionList();
 
   @NotNull
+  List<KtFieldIdentifierReference> getFieldIdentifierReferenceList();
+
+  @NotNull
   List<KtForLoop> getForLoopList();
 
   @NotNull
@@ -75,6 +81,9 @@ public interface KtStatementsBlock extends PsiElement {
 
   @NotNull
   List<KtIfExpression> getIfExpressionList();
+
+  @NotNull
+  List<KtInfixFunctionCallPlus> getInfixFunctionCallPlusList();
 
   @NotNull
   List<KtJumpBreak> getJumpBreakList();
@@ -120,6 +129,9 @@ public interface KtStatementsBlock extends PsiElement {
 
   @NotNull
   List<KtPropertyLocal> getPropertyLocalList();
+
+  @NotNull
+  List<KtRangeExpressionPlus> getRangeExpressionPlusList();
 
   @NotNull
   List<KtReferenceExpression> getReferenceExpressionList();

@@ -32,6 +32,9 @@ public interface KtGetter extends PsiElement {
   KtAssignmentExpression getAssignmentExpression();
 
   @NotNull
+  List<KtAtomicPackage> getAtomicPackageList();
+
+  @NotNull
   List<KtBinaryConstant> getBinaryConstantList();
 
   @Nullable
@@ -65,6 +68,9 @@ public interface KtGetter extends PsiElement {
   KtEqualityComparisonExpression getEqualityComparisonExpression();
 
   @NotNull
+  List<KtFieldIdentifierReference> getFieldIdentifierReferenceList();
+
+  @NotNull
   List<KtForLoop> getForLoopList();
 
   @NotNull
@@ -72,6 +78,9 @@ public interface KtGetter extends PsiElement {
 
   @NotNull
   List<KtIfExpression> getIfExpressionList();
+
+  @NotNull
+  List<KtInfixFunctionCallPlus> getInfixFunctionCallPlusList();
 
   @NotNull
   List<KtJumpBreak> getJumpBreakList();
@@ -114,6 +123,9 @@ public interface KtGetter extends PsiElement {
 
   @NotNull
   List<KtPrefixOperationExpression> getPrefixOperationExpressionList();
+
+  @NotNull
+  List<KtRangeExpressionPlus> getRangeExpressionPlusList();
 
   @NotNull
   List<KtReferenceExpression> getReferenceExpressionList();

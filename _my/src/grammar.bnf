@@ -13,7 +13,9 @@
 
 // ----- Syntax -----
 
-root ::= kotlinFile
+root ::=
+  //kotlinFile
+  scriptFile
 
 // start
 private kotlinFile
@@ -21,9 +23,13 @@ private kotlinFile
   ;
 
 // start
-//script
-//  ::= preamble expression*
-//  ;
+private scriptFile
+  ::= preamble script
+  ;
+
+script
+  ::= statementsBlock
+  ;
 
 // [Used by script, kotlinFile]
 private preamble
@@ -87,6 +93,16 @@ classDeclaration
       typeConstraints?
       (enumClassBody | classBody?)
   ;
+
+classDeclarationLocal
+  ::= modifierList? ("class" | "trait") IDENTIFIER
+      typeParameters?
+      primaryConstructorModifierList? valueParameters?
+      (":" annotationsPlus? delegationSpecifierExt)?
+      typeConstraints?
+      (enumClassBody | classBody?)
+  ;
+
 
 // [Used by objectLiteral, enumEntry, class, object]
 classBody
@@ -238,11 +254,14 @@ property
       //| "=" expression /*SEMI?*/ (getter setter | setter getter | setter | getter)
       //| "=" expression)
 
-      ("by" | "=" expression SEMI?)?
+      ((propertyDelegate | "=" expression) SEMI?)?
       //was: (getter? setter? | setter? getter?) SEMI?
-      (getter setter | setter getter | setter | getter?)// SEMI?
+      (getter setter | setter getter | setter | getter?)
   ;
 
+propertyDelegate
+  ::= <<at BY_KEYWORD>> "by" expression
+  ;
 
 propertyLocal
   ::= modifierList? ("val" | "var")
@@ -250,14 +269,16 @@ propertyLocal
       (<<stopAtLastDot marker_>> type <<unStop>> "." | annotationsPlus?)?
       (multipleVariableDeclarations | variableDeclarationEntry) RESTORE_JOINING_COMPLEX_TOKENS_STATE
       typeConstraints?
-      ("by" | "=" expression)?
+      (propertyDelegate | "=" expression)?
   ;
 
 
 // [Used by property]
 getter
-  ::= modifierList? <<at GET_KEYWORD>> "get"  "(" DISABLE_NEWLINES RESTORE_NEWLINES_STATE ")" (":" type)? functionBody
+  ::= (
+    modifierList? <<at GET_KEYWORD>> "get"  "(" DISABLE_NEWLINES RESTORE_NEWLINES_STATE ")" (":" type)? functionBody
   | modifierList? <<at GET_KEYWORD>>  "get"
+       ) SEMI?
   ;
 
 // [Used by property]
@@ -314,7 +335,7 @@ enumClassBody
 
 // [Used by enumClassBody]
 enumEntry
-  ::= modifierList? objectDeclarationName (":" initializerExt)? classBody?
+  ::= modifierList? objectDeclarationName (":" initializerExt)? classBody? SEMI?
   ;
 
 objectDeclarationName
@@ -603,14 +624,27 @@ private elvisExpression
 
 // [Used by elvisExpression]
 private infixFunctionCall
-  ::= rangeExpression (!INTERRUPTED_WITH_NEWLINE IDENTIFIER rangeExpression)*
+  ::= rangeExpression infixFunctionCallPlus*
+  ;
+
+simpleNameOperation ::= IDENTIFIER
+
+left infixFunctionCallPlus
+  ::= (!INTERRUPTED_WITH_NEWLINE simpleNameOperation rangeExpression)
   ;
 
 // [Used by infixFunctionCall]
 private rangeExpression
-  ::= additiveExpression (!INTERRUPTED_WITH_NEWLINE ".." additiveExpression)*
+  ::= additiveExpression rangeExpressionPlus*
   ;
 
+left rangeExpressionPlus
+  ::= !INTERRUPTED_WITH_NEWLINE rangeOperation additiveExpression
+  ;
+
+rangeOperation
+  ::= ".."
+  ;
 
 private additiveExpression
   ::= multiplicativeExpression additiveExpressionPlus*
@@ -695,8 +729,16 @@ private atomicExpression
   | jump
   | loop
   | referenceExpression
-  | FIELD_IDENTIFIER
-  | "package"
+  | fieldIdentifierReference
+  | atomicPackage
+  ;
+
+atomicPackage
+  ::= "package"
+  ;
+
+fieldIdentifierReference
+  ::= FIELD_IDENTIFIER
   ;
 
 superReference
@@ -759,11 +801,19 @@ stringTemplate
   ;
 
 // [Used by stringTemplate]
-stringTemplateElement
-  ::= REGULAR_STRING_PART
-  | SHORT_TEMPLATE_ENTRY_START (IDENTIFIER | "this")
+private stringTemplateElement
+  ::= literalStringTemplateEntry
+  | shortTemplateEntry
   | ESCAPE_SEQUENCE
   | longTemplate
+  ;
+
+literalStringTemplateEntry
+  ::= REGULAR_STRING_PART
+  ;
+
+shortTemplateEntry
+  ::= SHORT_TEMPLATE_ENTRY_START (referenceExpression | "this")
   ;
 
 // [Used by stringTemplateElement]
@@ -780,7 +830,7 @@ private isRHS
 private declaration
   ::= function
   | propertyLocal
-  | classDeclaration
+  | classDeclarationLocal
   | typedef
   | object
   ;
@@ -823,7 +873,7 @@ comparisonOperation
 
 // [Used by equalityComparison]
 equalityOperation
-  ::= "!=" | "=="
+  ::= "!=" | "==" | "==="
   ;
 
 // [Used by expression]
@@ -983,10 +1033,18 @@ functionLiteralValueParameterList2
 
 
 // same as (modifiers IDENTIFIER){","}
-modifiersIDENTIFIERExt ::= ((modifierList IDENTIFIER) ",")* (modifierList IDENTIFIER)
+private modifiersIDENTIFIERExt ::= (valueParameterNoType ",")* valueParameterNoType
+
+valueParameterNoType
+  ::= modifierList? IDENTIFIER
+  ;
 
 // same as (modifiers IDENTIFIER (":" type)?){","}
-modifiersIDENTIFIERTypeExt ::= ((modifierList IDENTIFIER (":" type)?) ",")* (modifierList IDENTIFIER (":" type)?)
+private modifiersIDENTIFIERTypeExt ::= (valueParameterWithType ",")* valueParameterWithType
+
+valueParameterWithType
+  ::= modifierList? IDENTIFIER (":" type)?
+  ;
 
 statementsBlock
   ::= statements

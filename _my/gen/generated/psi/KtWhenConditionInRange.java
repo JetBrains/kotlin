@@ -32,6 +32,9 @@ public interface KtWhenConditionInRange extends PsiElement {
   KtAssignmentExpression getAssignmentExpression();
 
   @NotNull
+  List<KtAtomicPackage> getAtomicPackageList();
+
+  @NotNull
   List<KtBinaryConstant> getBinaryConstantList();
 
   @NotNull
@@ -62,6 +65,9 @@ public interface KtWhenConditionInRange extends PsiElement {
   KtEqualityComparisonExpression getEqualityComparisonExpression();
 
   @NotNull
+  List<KtFieldIdentifierReference> getFieldIdentifierReferenceList();
+
+  @NotNull
   List<KtForLoop> getForLoopList();
 
   @NotNull
@@ -72,6 +78,9 @@ public interface KtWhenConditionInRange extends PsiElement {
 
   @NotNull
   KtInOperation getInOperation();
+
+  @NotNull
+  List<KtInfixFunctionCallPlus> getInfixFunctionCallPlusList();
 
   @NotNull
   List<KtJumpBreak> getJumpBreakList();
@@ -111,6 +120,9 @@ public interface KtWhenConditionInRange extends PsiElement {
 
   @NotNull
   List<KtPrefixOperationExpression> getPrefixOperationExpressionList();
+
+  @NotNull
+  List<KtRangeExpressionPlus> getRangeExpressionPlusList();
 
   @NotNull
   List<KtReferenceExpression> getReferenceExpressionList();

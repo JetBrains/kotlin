@@ -60,6 +60,12 @@ public class KtTypeRHSPlusImpl extends ASTWrapperPsiElement implements KtTypeRHS
 
   @Override
   @Nullable
+  public KtAtomicPackage getAtomicPackage() {
+    return findChildByClass(KtAtomicPackage.class);
+  }
+
+  @Override
+  @Nullable
   public KtBinaryConstant getBinaryConstant() {
     return findChildByClass(KtBinaryConstant.class);
   }
@@ -92,6 +98,12 @@ public class KtTypeRHSPlusImpl extends ASTWrapperPsiElement implements KtTypeRHS
   @Nullable
   public KtElvisAccessExpression getElvisAccessExpression() {
     return findChildByClass(KtElvisAccessExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public KtFieldIdentifierReference getFieldIdentifierReference() {
+    return findChildByClass(KtFieldIdentifierReference.class);
   }
 
   @Override

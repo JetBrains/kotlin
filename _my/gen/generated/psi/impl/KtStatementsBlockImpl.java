@@ -72,6 +72,12 @@ public class KtStatementsBlockImpl extends ASTWrapperPsiElement implements KtSta
 
   @Override
   @NotNull
+  public List<KtAtomicPackage> getAtomicPackageList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAtomicPackage.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtBinaryConstant> getBinaryConstantList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtBinaryConstant.class);
   }
@@ -90,8 +96,8 @@ public class KtStatementsBlockImpl extends ASTWrapperPsiElement implements KtSta
 
   @Override
   @NotNull
-  public List<KtClassDeclaration> getClassDeclarationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtClassDeclaration.class);
+  public List<KtClassDeclarationLocal> getClassDeclarationLocalList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtClassDeclarationLocal.class);
   }
 
   @Override
@@ -138,6 +144,12 @@ public class KtStatementsBlockImpl extends ASTWrapperPsiElement implements KtSta
 
   @Override
   @NotNull
+  public List<KtFieldIdentifierReference> getFieldIdentifierReferenceList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtFieldIdentifierReference.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtForLoop> getForLoopList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtForLoop.class);
   }
@@ -158,6 +170,12 @@ public class KtStatementsBlockImpl extends ASTWrapperPsiElement implements KtSta
   @NotNull
   public List<KtIfExpression> getIfExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtIfExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtInfixFunctionCallPlus> getInfixFunctionCallPlusList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtInfixFunctionCallPlus.class);
   }
 
   @Override
@@ -248,6 +266,12 @@ public class KtStatementsBlockImpl extends ASTWrapperPsiElement implements KtSta
   @NotNull
   public List<KtPropertyLocal> getPropertyLocalList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtPropertyLocal.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtRangeExpressionPlus> getRangeExpressionPlusList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtRangeExpressionPlus.class);
   }
 
   @Override

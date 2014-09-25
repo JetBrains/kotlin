@@ -54,6 +54,12 @@ public class KtSafeAccessExpressionImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @NotNull
+  public List<KtAtomicPackage> getAtomicPackageList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAtomicPackage.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtBinaryConstant> getBinaryConstantList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtBinaryConstant.class);
   }
@@ -80,6 +86,12 @@ public class KtSafeAccessExpressionImpl extends ASTWrapperPsiElement implements 
   @Nullable
   public KtElvisAccessExpression getElvisAccessExpression() {
     return findChildByClass(KtElvisAccessExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtFieldIdentifierReference> getFieldIdentifierReferenceList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtFieldIdentifierReference.class);
   }
 
   @Override

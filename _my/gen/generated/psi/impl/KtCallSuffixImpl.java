@@ -54,6 +54,12 @@ public class KtCallSuffixImpl extends ASTWrapperPsiElement implements KtCallSuff
 
   @Override
   @Nullable
+  public KtAtomicPackage getAtomicPackage() {
+    return findChildByClass(KtAtomicPackage.class);
+  }
+
+  @Override
+  @Nullable
   public KtBinaryConstant getBinaryConstant() {
     return findChildByClass(KtBinaryConstant.class);
   }
@@ -80,6 +86,12 @@ public class KtCallSuffixImpl extends ASTWrapperPsiElement implements KtCallSuff
   @Nullable
   public KtElvisAccessExpression getElvisAccessExpression() {
     return findChildByClass(KtElvisAccessExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public KtFieldIdentifierReference getFieldIdentifierReference() {
+    return findChildByClass(KtFieldIdentifierReference.class);
   }
 
   @Override

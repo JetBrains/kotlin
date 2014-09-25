@@ -32,6 +32,9 @@ public interface KtAdditiveExpressionPlus extends PsiElement {
   List<KtArrayAccess> getArrayAccessList();
 
   @NotNull
+  List<KtAtomicPackage> getAtomicPackageList();
+
+  @NotNull
   List<KtBinaryConstant> getBinaryConstantList();
 
   @NotNull
@@ -48,6 +51,9 @@ public interface KtAdditiveExpressionPlus extends PsiElement {
 
   @NotNull
   List<KtElvisAccessExpression> getElvisAccessExpressionList();
+
+  @NotNull
+  List<KtFieldIdentifierReference> getFieldIdentifierReferenceList();
 
   @NotNull
   List<KtForLoop> getForLoopList();

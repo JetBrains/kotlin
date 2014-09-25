@@ -23,6 +23,9 @@ public interface KtDotQualifiedExpression extends PsiElement {
   List<KtArrayAccess> getArrayAccessList();
 
   @NotNull
+  List<KtAtomicPackage> getAtomicPackageList();
+
+  @NotNull
   List<KtBinaryConstant> getBinaryConstantList();
 
   @NotNull
@@ -39,6 +42,9 @@ public interface KtDotQualifiedExpression extends PsiElement {
 
   @NotNull
   List<KtElvisAccessExpression> getElvisAccessExpressionList();
+
+  @NotNull
+  List<KtFieldIdentifierReference> getFieldIdentifierReferenceList();
 
   @NotNull
   List<KtForLoop> getForLoopList();

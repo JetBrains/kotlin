@@ -32,6 +32,9 @@ public interface KtIndices extends PsiElement {
   List<KtAssignmentExpression> getAssignmentExpressionList();
 
   @NotNull
+  List<KtAtomicPackage> getAtomicPackageList();
+
+  @NotNull
   List<KtBinaryConstant> getBinaryConstantList();
 
   @NotNull
@@ -62,6 +65,9 @@ public interface KtIndices extends PsiElement {
   List<KtEqualityComparisonExpression> getEqualityComparisonExpressionList();
 
   @NotNull
+  List<KtFieldIdentifierReference> getFieldIdentifierReferenceList();
+
+  @NotNull
   List<KtForLoop> getForLoopList();
 
   @NotNull
@@ -69,6 +75,9 @@ public interface KtIndices extends PsiElement {
 
   @NotNull
   List<KtIfExpression> getIfExpressionList();
+
+  @NotNull
+  List<KtInfixFunctionCallPlus> getInfixFunctionCallPlusList();
 
   @NotNull
   List<KtJumpBreak> getJumpBreakList();
@@ -108,6 +117,9 @@ public interface KtIndices extends PsiElement {
 
   @NotNull
   List<KtPrefixOperationExpression> getPrefixOperationExpressionList();
+
+  @NotNull
+  List<KtRangeExpressionPlus> getRangeExpressionPlusList();
 
   @NotNull
   List<KtReferenceExpression> getReferenceExpressionList();

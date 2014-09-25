@@ -75,6 +75,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitAtomicPackage(@NotNull KtAtomicPackage o) {
+    visitPsiElement(o);
+  }
+
   public void visitBinaryConstant(@NotNull KtBinaryConstant o) {
     visitPsiElement(o);
   }
@@ -104,6 +108,10 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitClassDeclaration(@NotNull KtClassDeclaration o) {
+    visitPsiElement(o);
+  }
+
+  public void visitClassDeclarationLocal(@NotNull KtClassDeclarationLocal o) {
     visitPsiElement(o);
   }
 
@@ -187,6 +195,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitFieldIdentifierReference(@NotNull KtFieldIdentifierReference o) {
+    visitPsiElement(o);
+  }
+
   public void visitFinallyBlock(@NotNull KtFinallyBlock o) {
     visitPsiElement(o);
   }
@@ -263,6 +275,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitInfixFunctionCallPlus(@NotNull KtInfixFunctionCallPlus o) {
+    visitPsiElement(o);
+  }
+
   public void visitInitializerExt(@NotNull KtInitializerExt o) {
     visitPsiElement(o);
   }
@@ -303,6 +319,10 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitLiteralStringTemplateEntry(@NotNull KtLiteralStringTemplateEntry o) {
+    visitPsiElement(o);
+  }
+
   public void visitLongAnnotation(@NotNull KtLongAnnotation o) {
     visitPsiElement(o);
   }
@@ -316,14 +336,6 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitModifierList(@NotNull KtModifierList o) {
-    visitPsiElement(o);
-  }
-
-  public void visitModifiersIDENTIFIERExt(@NotNull KtModifiersIDENTIFIERExt o) {
-    visitPsiElement(o);
-  }
-
-  public void visitModifiersIDENTIFIERTypeExt(@NotNull KtModifiersIDENTIFIERTypeExt o) {
     visitPsiElement(o);
   }
 
@@ -419,7 +431,19 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitPropertyDelegate(@NotNull KtPropertyDelegate o) {
+    visitPsiElement(o);
+  }
+
   public void visitPropertyLocal(@NotNull KtPropertyLocal o) {
+    visitPsiElement(o);
+  }
+
+  public void visitRangeExpressionPlus(@NotNull KtRangeExpressionPlus o) {
+    visitPsiElement(o);
+  }
+
+  public void visitRangeOperation(@NotNull KtRangeOperation o) {
     visitPsiElement(o);
   }
 
@@ -431,11 +455,23 @@ public class KtVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitScript(@NotNull KtScript o) {
+    visitPsiElement(o);
+  }
+
   public void visitSelfType(@NotNull KtSelfType o) {
     visitPsiElement(o);
   }
 
   public void visitSetter(@NotNull KtSetter o) {
+    visitPsiElement(o);
+  }
+
+  public void visitShortTemplateEntry(@NotNull KtShortTemplateEntry o) {
+    visitPsiElement(o);
+  }
+
+  public void visitSimpleNameOperation(@NotNull KtSimpleNameOperation o) {
     visitPsiElement(o);
   }
 
@@ -460,10 +496,6 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitStringTemplate(@NotNull KtStringTemplate o) {
-    visitPsiElement(o);
-  }
-
-  public void visitStringTemplateElement(@NotNull KtStringTemplateElement o) {
     visitPsiElement(o);
   }
 
@@ -560,6 +592,14 @@ public class KtVisitor extends PsiElementVisitor {
   }
 
   public void visitValueParameterList(@NotNull KtValueParameterList o) {
+    visitPsiElement(o);
+  }
+
+  public void visitValueParameterNoType(@NotNull KtValueParameterNoType o) {
+    visitPsiElement(o);
+  }
+
+  public void visitValueParameterWithType(@NotNull KtValueParameterWithType o) {
     visitPsiElement(o);
   }
 

@@ -72,6 +72,12 @@ public class KtAdditiveExpressionPlusImpl extends ASTWrapperPsiElement implement
 
   @Override
   @NotNull
+  public List<KtAtomicPackage> getAtomicPackageList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtAtomicPackage.class);
+  }
+
+  @Override
+  @NotNull
   public List<KtBinaryConstant> getBinaryConstantList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtBinaryConstant.class);
   }
@@ -104,6 +110,12 @@ public class KtAdditiveExpressionPlusImpl extends ASTWrapperPsiElement implement
   @NotNull
   public List<KtElvisAccessExpression> getElvisAccessExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, KtElvisAccessExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<KtFieldIdentifierReference> getFieldIdentifierReferenceList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, KtFieldIdentifierReference.class);
   }
 
   @Override

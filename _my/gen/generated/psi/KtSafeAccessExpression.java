@@ -23,6 +23,9 @@ public interface KtSafeAccessExpression extends PsiElement {
   KtArrayAccess getArrayAccess();
 
   @NotNull
+  List<KtAtomicPackage> getAtomicPackageList();
+
+  @NotNull
   List<KtBinaryConstant> getBinaryConstantList();
 
   @Nullable
@@ -36,6 +39,9 @@ public interface KtSafeAccessExpression extends PsiElement {
 
   @Nullable
   KtElvisAccessExpression getElvisAccessExpression();
+
+  @NotNull
+  List<KtFieldIdentifierReference> getFieldIdentifierReferenceList();
 
   @NotNull
   List<KtForLoop> getForLoopList();
