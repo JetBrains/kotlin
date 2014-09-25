@@ -28,8 +28,11 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator
 import org.jetbrains.k2js.translate.general.Translation
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils
 
-import org.jetbrains.k2js.translate.context.Namer.getDelegateNameRef
+import org.jetbrains.k2js.translate.context.Namer.*
+import org.jetbrains.k2js.translate.utils.ast.*
 import org.jetbrains.k2js.translate.utils.TranslationUtils.*
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isExtension
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 
 /**
  * Translates single property /w accessors.
@@ -113,12 +116,36 @@ private class PropertyTranslator(
     private fun generateDefaultGetterFunction(getterDescriptor: PropertyGetterDescriptor): JsFunction {
         val delegatedCall = bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor)
 
-        val value = if (delegatedCall != null)
-            CallTranslator.translate(context(), delegatedCall, getDelegateNameRef(propertyName))
-        else
-            backingFieldReference(context(), this.descriptor)
+        if (delegatedCall != null) {
+            return generateDelegatedGetterFunction(getterDescriptor, delegatedCall)
+        }
 
-        return simpleReturnFunction(context().getScopeForDescriptor(getterDescriptor.getContainingDeclaration()), value)
+        val scope = context().getScopeForDescriptor(getterDescriptor.getContainingDeclaration())
+        val result = backingFieldReference(context(), descriptor)
+        val body = JsBlock(JsReturn(result))
+
+        return JsFunction(scope, body, accessorDescription(getterDescriptor))
+    }
+
+    private fun generateDelegatedGetterFunction(
+        getterDescriptor: PropertyGetterDescriptor,
+        delegatedCall: ResolvedCall<FunctionDescriptor>
+    ): JsFunction {
+        val scope = context().getScopeForDescriptor(getterDescriptor.getContainingDeclaration())
+        val function = JsFunction(scope, JsBlock(), accessorDescription(getterDescriptor))
+
+        val delegateRef = getDelegateNameRef(propertyName)
+        val delegatedJsCall = CallTranslator.translate(context(), delegatedCall, delegateRef)
+
+        if (isExtension(getterDescriptor)) {
+            val receiver = function.addParameter(getReceiverParameterName()).getName()
+            val arguments = (delegatedJsCall as JsInvocation).getArguments()
+            arguments.set(0, receiver.makeRef())
+        }
+
+        val returnResult = JsReturn(delegatedJsCall)
+        function.addStatement(returnResult)
+        return function
     }
 
     private fun generateDefaultSetter(): JsPropertyInitializer {
@@ -127,25 +154,29 @@ private class PropertyTranslator(
     }
 
     private fun generateDefaultSetterFunction(setterDescriptor: PropertySetterDescriptor): JsFunction {
-        val jsFunction = JsFunction(context().getScopeForDescriptor(setterDescriptor.getContainingDeclaration()),
-                                    "setter for " + setterDescriptor.getName().asString())
+        val containingScope = context().getScopeForDescriptor(setterDescriptor.getContainingDeclaration())
+        val function = JsFunction(containingScope, JsBlock(), accessorDescription(setterDescriptor))
 
         assert(setterDescriptor.getValueParameters().size() == 1, "Setter must have 1 parameter")
-        val valueParameterDescriptor = setterDescriptor.getValueParameters().get(0)
-        val defaultParameter = JsParameter(jsFunction.getScope().declareTemporary())
-        val defaultParameterRef = defaultParameter.getName().makeRef()
-        val contextWithAliased = context().innerContextWithAliased(valueParameterDescriptor, defaultParameterRef)
+        val correspondingPropertyName = setterDescriptor.getCorrespondingProperty().getName().asString()
+        val valueParameter = function.addParameter(correspondingPropertyName).getName()
+        val withAliased = context().innerContextWithAliased(setterDescriptor.getValueParameters().get(0), valueParameter.makeRef())
+        val delegatedCall = context().bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, setterDescriptor)
 
-        val delegatedCall = bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, setterDescriptor)
+        if (delegatedCall != null) {
+            val delegatedJsCall = CallTranslator.translate(withAliased, delegatedCall, getDelegateNameRef(correspondingPropertyName))
+            function.addStatement(delegatedJsCall.makeStmt())
 
-        val setExpression = if (delegatedCall != null)
-            CallTranslator.translate(contextWithAliased, delegatedCall, getDelegateNameRef(propertyName))
-        else
-            assignmentToBackingField(contextWithAliased, descriptor, defaultParameterRef)
+            if (isExtension(setterDescriptor)) {
+                val receiver = function.addParameter(getReceiverParameterName(), 0).getName()
+                (delegatedJsCall as JsInvocation).getArguments().set(0, receiver.makeRef())
+            }
+        } else {
+            val assignment = assignmentToBackingField(withAliased, descriptor, valueParameter.makeRef())
+            function.addStatement(assignment.makeStmt())
+        }
 
-        jsFunction.getParameters().add(defaultParameter)
-        jsFunction.setBody(JsBlock(setExpression.makeStmt()))
-        return jsFunction
+        return function
     }
 
     private fun generateDefaultAccessor(accessorDescriptor: PropertyAccessorDescriptor, function: JsFunction): JsPropertyInitializer =
@@ -153,4 +184,19 @@ private class PropertyTranslator(
 
     private fun translateCustomAccessor(expression: JetPropertyAccessor): JsPropertyInitializer =
             Translation.functionTranslator(expression, context()).translateAsEcma5PropertyDescriptor()
+
+    private fun accessorDescription(accessorDescriptor: PropertyAccessorDescriptor): String {
+        val accessorType =
+                when(accessorDescriptor) {
+                    is PropertyGetterDescriptor ->
+                        "getter"
+                    is PropertySetterDescriptor ->
+                        "setter"
+                    else ->
+                        throw IllegalArgumentException("Unknown accessor type ${accessorDescriptor.javaClass}")
+                }
+
+        val name = accessorDescriptor.getName().asString()
+        return "$accessorType for $name"
+    }
 }
