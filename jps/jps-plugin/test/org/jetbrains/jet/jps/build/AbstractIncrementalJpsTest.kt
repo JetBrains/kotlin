@@ -252,8 +252,8 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         }
 
         class object {
-            // We suspect sequences of several consecutive hexadecimal digits to be a package part hash code
-            val STRIP_PACKAGE_PART_HASH_PATTERN = Pattern.compile("\\$([0-9a-f]{5,8})")
+            // We suspect sequences of eight consecutive hexadecimal digits to be a package part hash code
+            val STRIP_PACKAGE_PART_HASH_PATTERN = Pattern.compile("\\$([0-9a-f]{8})")
         }
     }
 
