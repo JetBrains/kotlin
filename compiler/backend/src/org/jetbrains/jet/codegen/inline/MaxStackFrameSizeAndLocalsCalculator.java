@@ -14,14 +14,31 @@
  * limitations under the License.
  */
 
-package org.jetbrains.org.objectweb.asm;
+package org.jetbrains.jet.codegen.inline;
 
 import com.intellij.openapi.util.Factory;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.org.objectweb.asm.*;
 
 import java.util.*;
 
 public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
+    private static final int[] FRAME_SIZE_CHANGE_BY_OPCODE;
+    static {
+        // copy-pasted from org.jetbrains.org.objectweb.asm.Frame
+        int i;
+        int[] b = new int[202];
+        String s = "EFFFFFFFFGGFFFGGFFFEEFGFGFEEEEEEEEEEEEEEEEEEEEDEDEDDDDD"
+                   + "CDCDEEEEEEEEEEEEEEEEEEEEBABABBBBDCFFFGGGEDCDCDCDCDCDCDCDCD"
+                   + "CDCEEEEDDDDDDDCDCDCEFEFDDEEFFDEDEEEBDDBBDDDDDDCCCCCCCCEFED"
+                   + "DDCDCDEEEEEEEEEEFEEEEEEDDEEDDEE";
+        for (i = 0; i < b.length; ++i) {
+            b[i] = s.charAt(i) - 'E';
+        }
+        
+        FRAME_SIZE_CHANGE_BY_OPCODE = b;
+    }
+
     private final LabelWrapper firstLabel;
 
     private LabelWrapper currentBlock;
@@ -69,7 +86,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
 
     @Override
     public void visitInsn(int opcode) {
-        increaseStackSize(Frame.SIZE[opcode]);
+        increaseStackSize(FRAME_SIZE_CHANGE_BY_OPCODE[opcode]);
 
         // if opcode == ATHROW or xRETURN, ends current block (no successor)
         if ((opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) || opcode == Opcodes.ATHROW) {
@@ -92,7 +109,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
 
     @Override
     public void visitVarInsn(int opcode, int var) {
-        increaseStackSize(Frame.SIZE[opcode]);
+        increaseStackSize(FRAME_SIZE_CHANGE_BY_OPCODE[opcode]);
 
         super.visitVarInsn(opcode, var);
     }
@@ -173,7 +190,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
             // updates current stack size (max stack size unchanged
             // because stack size variation always negative in this
             // case)
-            stackSize += Frame.SIZE[opcode];
+            stackSize += FRAME_SIZE_CHANGE_BY_OPCODE[opcode];
             addSuccessor(getLabelWrapper(label), stackSize);
 
             if (opcode == Opcodes.GOTO) {
