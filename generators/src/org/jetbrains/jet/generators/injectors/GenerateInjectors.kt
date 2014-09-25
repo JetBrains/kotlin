@@ -63,6 +63,7 @@ public fun main(args: Array<String>) {
 public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
         listOf(
                 generatorForTopDownAnalyzerBasic(),
+                generatorForLazyTopDownAnalyzerBasic(),
                 generatorForTopDownAnalyzerForJvm(),
                 generatorForJavaDescriptorResolver(),
                 generatorForLazyResolveWithJava(),
@@ -91,6 +92,23 @@ private fun generatorForTopDownAnalyzerBasic() =
         generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic") {
             commonForTopDownAnalyzer()
             parameter(javaClass<AdditionalCheckerProvider>())
+        }
+
+private fun generatorForLazyTopDownAnalyzerBasic() =
+        generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyTopDownAnalyzerBasic") {
+            parameter(javaClass<Project>())
+            parameter(javaClass<GlobalContext>(), useAsContext = true)
+            parameter(javaClass<BindingTrace>())
+            parameter(javaClass<ModuleDescriptorImpl>(), useAsContext = true)
+            parameter(javaClass<DeclarationProviderFactory>())
+
+            publicFields(
+                    javaClass<ResolveSession>(),
+                    javaClass<LazyTopDownAnalyzer>()
+            )
+
+            field(javaClass<AdditionalCheckerProvider>(),
+                  init = GivenExpression(javaClass<AdditionalCheckerProvider.Empty>().getCanonicalName() + ".INSTANCE$"))
         }
 
 private fun generatorForLazyBodyResolve() =
