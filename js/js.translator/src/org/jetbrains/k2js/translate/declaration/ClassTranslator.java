@@ -99,6 +99,7 @@ public final class ClassTranslator extends AbstractTranslator {
         return descriptor.getKind().equals(ClassKind.TRAIT);
     }
 
+    @NotNull
     private List<JsExpression> getClassCreateInvocationArguments(@NotNull TranslationContext declarationContext) {
         List<JsExpression> invocationArguments = new ArrayList<JsExpression>();
 

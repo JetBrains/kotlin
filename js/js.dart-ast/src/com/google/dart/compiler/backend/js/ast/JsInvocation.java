@@ -5,6 +5,7 @@
 package com.google.dart.compiler.backend.js.ast;
 
 import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,7 +18,7 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
         super(new SmartList<JsExpression>());
     }
 
-    public JsInvocation(JsExpression qualifier, List<JsExpression> arguments) {
+    public JsInvocation(JsExpression qualifier, @NotNull List<JsExpression> arguments) {
         super(arguments);
         this.qualifier = qualifier;
     }
@@ -35,6 +36,7 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
         this.qualifier = qualifier;
     }
 
+    @NotNull
     @Override
     public List<JsExpression> getArguments() {
         return arguments;
