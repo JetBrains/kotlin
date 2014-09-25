@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.inline;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -43,7 +44,8 @@ public class MaxLocalsCalculator extends MethodVisitor {
         if (opcode == Opcodes.LLOAD || opcode == Opcodes.DLOAD ||
             opcode == Opcodes.LSTORE || opcode == Opcodes.DSTORE) {
             n = var + 2;
-        } else {
+        }
+        else {
             n = var + 1;
         }
         updateMaxLocals(n);
@@ -60,9 +62,7 @@ public class MaxLocalsCalculator extends MethodVisitor {
 
     @Override
     public void visitLocalVariable(
-            String name, String desc,
-            String signature, Label start, Label end,
-            int index
+            @NotNull String name, @NotNull String desc, String signature, @NotNull Label start, @NotNull Label end, int index
     ) {
         // updates max locals
         char c = desc.charAt(0);

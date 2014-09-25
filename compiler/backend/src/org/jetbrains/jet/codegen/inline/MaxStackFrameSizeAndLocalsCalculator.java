@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen.inline;
 
 import com.intellij.openapi.util.Factory;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.util.*;
@@ -68,8 +69,8 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     private int maxStack;
 
 
-    private Collection<ExceptionHandler> exceptionHandlers = new LinkedList<ExceptionHandler>();
-    private Map<Label, LabelWrapper> labelWrappersMap = new HashMap<Label, LabelWrapper>();
+    private final Collection<ExceptionHandler> exceptionHandlers = new LinkedList<ExceptionHandler>();
+    private final Map<Label, LabelWrapper> labelWrappersMap = new HashMap<Label, LabelWrapper>();
 
     public MaxStackFrameSizeAndLocalsCalculator(int api, int access, String descriptor, MethodVisitor mv) {
         super(api, access, descriptor, mv);
@@ -79,8 +80,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     }
 
     @Override
-    public void visitFrame(int type, int nLocal,
-            Object[] local, int nStack, Object[] stack) {
+    public void visitFrame(int type, int nLocal, Object[] local, int nStack, Object[] stack) {
         throw new AssertionError("We don't support visitFrame because currently nobody needs");
     }
 
@@ -115,7 +115,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     }
 
     @Override
-    public void visitTypeInsn(int opcode, String type) {
+    public void visitTypeInsn(int opcode, @NotNull String type) {
         if (opcode == Opcodes.NEW) {
             // updates current and max stack sizes only if opcode == NEW
             // (no stack change for ANEWARRAY, CHECKCAST, INSTANCEOF)
@@ -126,8 +126,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     }
 
     @Override
-    public void visitFieldInsn(int opcode, String owner,
-            String name, String desc) {
+    public void visitFieldInsn(int opcode, @NotNull String owner, @NotNull String name, @NotNull String desc) {
         int stackSizeVariation;
 
         // computes the stack size variation
@@ -154,15 +153,13 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     }
 
     @Override
-    public void visitMethodInsn(
-            int opcode, String owner,
-            String name, String desc, boolean itf
-    ) {
+    public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         int argSize = Type.getArgumentsAndReturnSizes(desc);
         int sizeVariation;
         if (opcode == Opcodes.INVOKESTATIC) {
             sizeVariation = (argSize & 0x03) - (argSize >> 2) + 1;
-        } else {
+        }
+        else {
             sizeVariation = (argSize & 0x03) - (argSize >> 2);
         }
 
@@ -172,10 +169,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     }
 
     @Override
-    public void visitInvokeDynamicInsn(
-            String name, String desc,
-            Handle bsm, Object... bsmArgs
-    ) {
+    public void visitInvokeDynamicInsn(@NotNull String name, @NotNull String desc, @NotNull Handle bsm, @NotNull Object... bsmArgs) {
         int argSize = Type.getArgumentsAndReturnSizes(desc);
         increaseStackSize((argSize & 0x03) - (argSize >> 2) + 1);
 
@@ -183,9 +177,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     }
 
     @Override
-    public void visitJumpInsn(
-            int opcode, Label label
-    ) {
+    public void visitJumpInsn(int opcode, @NotNull Label label) {
         if (currentBlock != null) {
             // updates current stack size (max stack size unchanged
             // because stack size variation always negative in this
@@ -202,7 +194,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     }
 
     @Override
-    public void visitLabel(Label label) {
+    public void visitLabel(@NotNull Label label) {
         processLabel(label);
         super.visitLabel(label);
     }
@@ -230,11 +222,12 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     }
 
     @Override
-    public void visitLdcInsn(Object cst) {
+    public void visitLdcInsn(@NotNull Object cst) {
         // computes the stack size variation
         if (cst instanceof Long || cst instanceof Double) {
             increaseStackSize(2);
-        } else {
+        }
+        else {
             increaseStackSize(1);
         }
 
@@ -242,16 +235,14 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     }
 
     @Override
-    public void visitTableSwitchInsn(int min, int max,
-            Label dflt, Label... labels) {
+    public void visitTableSwitchInsn(int min, int max, @NotNull Label dflt, @NotNull Label... labels) {
         visitSwitchInsn(dflt, labels);
 
         super.visitTableSwitchInsn(min, max, dflt, labels);
     }
 
     @Override
-    public void visitLookupSwitchInsn(Label dflt, int[] keys,
-            Label[] labels) {
+    public void visitLookupSwitchInsn(@NotNull Label dflt, @NotNull int[] keys, @NotNull Label[] labels) {
         visitSwitchInsn(dflt, labels);
 
         super.visitLookupSwitchInsn(dflt, keys, labels);
@@ -263,8 +254,8 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
             --stackSize;
             // adds current block successors
             addSuccessor(getLabelWrapper(dflt), stackSize);
-            for (int i = 0; i < labels.length; ++i) {
-                addSuccessor(getLabelWrapper(labels[i]), stackSize);
+            for (Label label : labels) {
+                addSuccessor(getLabelWrapper(label), stackSize);
             }
             // ends current block
             noSuccessor();
@@ -272,7 +263,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     }
 
     @Override
-    public void visitMultiANewArrayInsn(String desc, int dims) {
+    public void visitMultiANewArrayInsn(@NotNull String desc, int dims) {
         if (currentBlock != null) {
             increaseStackSize(dims - 1);
         }
@@ -341,8 +332,8 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
 
     @Override
     public void visitTryCatchBlock(
-            Label start, Label end,
-            Label handler, String type
+            @NotNull Label start, @NotNull Label end,
+            @NotNull Label handler, String type
     ) {
         ExceptionHandler exceptionHandler = new ExceptionHandler(
             getLabelWrapper(start), getLabelWrapper(end), getLabelWrapper(handler)
