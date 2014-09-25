@@ -47,7 +47,7 @@ public class DelegatePropertyTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
-    public void testDelegateForExtProperty() throws Exception {
+    public void testDelegateByExtensionProperty() throws Exception {
         checkFooBoxIsOk();
     }
 
