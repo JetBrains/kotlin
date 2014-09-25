@@ -25,7 +25,7 @@ public final class JvmAbi {
      * This constant is used to identify binary format (class file) versions
      * If you change class file metadata format and/or naming conventions, please increase this number
      */
-    public static final int VERSION = 17;
+    public static final int VERSION = 18;
 
     public static final String TRAIT_IMPL_CLASS_NAME = "$TImpl";
     public static final String TRAIT_IMPL_SUFFIX = "$" + TRAIT_IMPL_CLASS_NAME;
@@ -63,7 +63,7 @@ public final class JvmAbi {
     }
 
     public static boolean isAccessorName(String name) {
-        return name.startsWith(JvmAbi.GETTER_PREFIX) || name.startsWith(JvmAbi.SETTER_PREFIX);
+        return name.startsWith(GETTER_PREFIX) || name.startsWith(SETTER_PREFIX);
     }
 
     private JvmAbi() {
