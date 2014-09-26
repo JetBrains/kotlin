@@ -1,0 +1,106 @@
+// This is a generated file. Not intended for manual editing.
+package generated.psi;
+
+import java.util.List;
+import org.jetbrains.annotations.*;
+import com.intellij.psi.PsiElement;
+
+public interface KtPlusPlusAndOthersExpression extends PsiElement {
+
+  @Nullable
+  KtCharacterConstant getCharacterConstant();
+
+  @Nullable
+  KtFloatConstant getFloatConstant();
+
+  @Nullable
+  KtIntegerConstant getIntegerConstant();
+
+  @Nullable
+  KtNull getNull();
+
+  @Nullable
+  KtArrayAccess getArrayAccess();
+
+  @Nullable
+  KtAtomicPackage getAtomicPackage();
+
+  @Nullable
+  KtBinaryConstant getBinaryConstant();
+
+  @Nullable
+  KtCallSuffix getCallSuffix();
+
+  @Nullable
+  KtCallableReference getCallableReference();
+
+  @Nullable
+  KtDoWhileLoop getDoWhileLoop();
+
+  @Nullable
+  KtElvisAccessExpression getElvisAccessExpression();
+
+  @Nullable
+  KtFieldIdentifierReference getFieldIdentifierReference();
+
+  @Nullable
+  KtForLoop getForLoop();
+
+  @Nullable
+  KtFunctionLiteralExpression getFunctionLiteralExpression();
+
+  @Nullable
+  KtIfExpression getIfExpression();
+
+  @Nullable
+  KtJumpBreak getJumpBreak();
+
+  @Nullable
+  KtJumpContinue getJumpContinue();
+
+  @Nullable
+  KtJumpReturn getJumpReturn();
+
+  @Nullable
+  KtJumpThrow getJumpThrow();
+
+  @Nullable
+  KtLabel getLabel();
+
+  @Nullable
+  KtObjectLiteral getObjectLiteral();
+
+  @Nullable
+  KtParenthesizedExpression getParenthesizedExpression();
+
+  @Nullable
+  KtPlusPlusAndOthersExpression getPlusPlusAndOthersExpression();
+
+  @NotNull
+  KtPlusPlusAndOthersOperation getPlusPlusAndOthersOperation();
+
+  @Nullable
+  KtReferenceExpression getReferenceExpression();
+
+  @Nullable
+  KtSafeAccessExpression getSafeAccessExpression();
+
+  @Nullable
+  KtStringTemplate getStringTemplate();
+
+  @Nullable
+  KtSuperExpression getSuperExpression();
+
+  @Nullable
+  KtThisExpression getThisExpression();
+
+  @Nullable
+  KtTryBlock getTryBlock();
+
+  @Nullable
+  KtWhen getWhen();
+
+  @Nullable
+  KtWhileLoop getWhileLoop();
+
+}
