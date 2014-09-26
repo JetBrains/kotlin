@@ -111,6 +111,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             doTestAgainstJava(fileName);
         }
         
+        @TestMetadata("staticMethod.kt")
+        public void testStaticMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/callableReference/staticMethod.kt");
+            doTestAgainstJava(fileName);
+        }
+        
     }
     
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/constructor")

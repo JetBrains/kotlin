@@ -289,6 +289,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 doTest(fileName);
             }
             
+            @TestMetadata("javaStaticMethod.kt")
+            public void testJavaStaticMethod() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/javaStaticMethod.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("lhsNotAClass.kt")
             public void testLhsNotAClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/lhsNotAClass.kt");
