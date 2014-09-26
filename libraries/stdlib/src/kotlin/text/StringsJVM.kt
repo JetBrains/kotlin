@@ -151,6 +151,15 @@ public fun CharSequence.get(start: Int, end: Int): CharSequence? = subSequence(s
 public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
 public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
 
+deprecated("Use toByteArray() instead to emphasize copy behaviour")
+public fun String.getBytes(): ByteArray = (this as java.lang.String).getBytes()
+
+deprecated("Use toByteArray(charset) instead to emphasize copy behaviour")
+public fun String.getBytes(charset: Charset): ByteArray = (this as java.lang.String).getBytes(charset)
+
+deprecated("Use toByteArray(charset) instead to emphasize copy behaviour")
+public fun String.getBytes(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
+
 /**
  * Returns a subsequence specified by given range.
  */
