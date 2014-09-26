@@ -14,8 +14,8 @@
 // ----- Syntax -----
 
 root ::=
-  //kotlinFile
-  scriptFile
+  kotlinFile
+  //scriptFile
 
 // start
 private kotlinFile

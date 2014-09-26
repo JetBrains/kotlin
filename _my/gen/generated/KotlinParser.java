@@ -5252,9 +5252,9 @@ public class KotlinParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // scriptFile
+  // kotlinFile
   static boolean root(PsiBuilder builder_, int level_) {
-    return scriptFile(builder_, level_ + 1);
+    return kotlinFile(builder_, level_ + 1);
   }
 
   /* ********************************************************** */
