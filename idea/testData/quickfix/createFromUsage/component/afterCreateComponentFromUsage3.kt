@@ -16,6 +16,7 @@ fun Any.component1(): Int {
 fun foo() {
     for ((i: Int, j: Int) in Foo<Int>()) { }
 }
+
 fun Any.component2(): Int {
     throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
 }

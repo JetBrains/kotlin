@@ -6,6 +6,7 @@ class Foo<T> {
         y["", w] = w
     }
 }
+
 fun <T> Any.set(s: String, w: ArrayList<T>, value: ArrayList<T>) {
     throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
 }

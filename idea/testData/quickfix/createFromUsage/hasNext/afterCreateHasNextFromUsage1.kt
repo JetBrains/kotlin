@@ -3,6 +3,7 @@ class FooIterator<T> {
     fun next(): Int {
         throw Exception("not implemented")
     }
+
     fun hasNext(): Boolean {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

@@ -2,6 +2,7 @@
 
 class A<T>(val n: T) {
     fun minus(n: Int): A<T> = throw Exception()
+
     fun minus(): A<T> {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

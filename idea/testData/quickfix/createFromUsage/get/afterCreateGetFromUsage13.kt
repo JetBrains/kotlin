@@ -7,6 +7,7 @@ class Foo<T> {
         val z = y["", w]
         bar(z)
     }
+
     fun <V> get(s: String, w: ArrayList<V>): String {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

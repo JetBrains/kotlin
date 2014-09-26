@@ -53,6 +53,11 @@ import org.jetbrains.jet.plugin.refactoring.CollectingValidator
 import org.jetbrains.jet.plugin.util.isUnit
 import org.jetbrains.jet.plugin.refactoring.runWriteAction
 import com.intellij.util.ArrayUtil
+import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.jet.plugin.refactoring.isMultiLine
+import org.jetbrains.jet.plugin.refactoring.getLineCount
+import com.intellij.psi.PsiElement
+import org.jetbrains.jet.lexer.JetTokens
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -238,42 +243,54 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
             with (config) {
                 val parametersString = functionInfo.parameterInfos.indices.map { i -> "p$i: Any" }.joinToString(", ")
                 val returnTypeString = if (isUnit) "" else ": Any"
+                val ownerTypeString = if (isExtension) "${receiverTypeCandidate!!.renderedType!!}." else ""
                 val psiFactory = JetPsiFactory(currentFile)
-                if (isExtension) {
-                    // create as extension function
-                    val ownerTypeString = receiverTypeCandidate!!.renderedType!!
-                    val func = psiFactory.createFunction(
-                            "fun $ownerTypeString.${functionInfo.name}($parametersString)$returnTypeString { }"
-                    )
-                    return currentFile.add(func) as JetNamedFunction
+                val func = psiFactory.createFunction("fun $ownerTypeString${functionInfo.name}($parametersString)$returnTypeString { }")
+                val newLine = psiFactory.createNewLine()
+
+                fun prepend(element: PsiElement, elementBeforeStart: PsiElement): PsiElement {
+                    val parent = elementBeforeStart.getParent()!!
+                    val anchor = PsiTreeUtil.skipSiblingsForward(elementBeforeStart, javaClass<PsiWhiteSpace>())
+                    val addedElement = parent.addBefore(element, anchor)!!
+                    parent.addAfter(newLine, addedElement)
+                    parent.addAfter(newLine, addedElement)
+                    return addedElement
                 }
-                else {
-                    // create as regular function
 
-                    val func = psiFactory.createFunction("fun ${functionInfo.name}($parametersString)$returnTypeString { }")
-                    when (containingElement) {
-                        is JetFile -> {
-                            return currentFile.add(func) as JetNamedFunction
-                        }
-
-                        is JetClassOrObject -> {
-                            var classBody = containingElement.getBody()
-                            if (classBody == null) {
-                                classBody = containingElement.add(psiFactory.createEmptyClassBody()) as JetClassBody
-                                containingElement.addBefore(psiFactory.createWhiteSpace(), classBody)
+                fun append(element: PsiElement, elementAfterEnd: PsiElement, skipInitial: Boolean): PsiElement {
+                    val parent = elementAfterEnd.getParent()!!
+                    val anchor =
+                            if (!skipInitial && elementAfterEnd !is PsiWhiteSpace) {
+                                elementAfterEnd
                             }
-                            val rBrace = classBody!!.getRBrace()
-
-                            //TODO: Assert rbrace not null? It can be if the class isn't closed.
-                            return classBody!!.addBefore(func, rBrace) as JetNamedFunction
-                        }
-
-                        is JetBlockExpression -> {
-                            return containingElement.addAfter(func, containingElement.getLBrace()) as JetNamedFunction
-                        }
-
-                        else -> throw AssertionError("Invalid containing element: ${containingElement.getText()}")
+                            else {
+                                PsiTreeUtil.skipSiblingsBackward(elementAfterEnd, javaClass<PsiWhiteSpace>())
+                            }
+                    val addedElement = parent.addAfter(element, anchor)!!
+                    if (anchor?.getNode()?.getElementType() != JetTokens.LBRACE) {
+                        parent.addAfter(newLine, anchor)
+                        parent.addAfter(newLine, anchor)
                     }
+                    return addedElement
+                }
+
+                when (containingElement) {
+                    is JetFile -> return append(func, containingElement.getLastChild()!!, false) as JetNamedFunction
+
+                    is JetClassOrObject -> {
+                        var classBody = containingElement.getBody()
+                        if (classBody == null) {
+                            classBody = containingElement.add(psiFactory.createEmptyClassBody()) as JetClassBody
+                            containingElement.addBefore(psiFactory.createWhiteSpace(), classBody)
+                        }
+                        val rBrace = classBody!!.getRBrace()
+                        return (rBrace?.let { append(func, it, true) }
+                                ?: append(func, classBody!!.getLastChild()!!, false)) as JetNamedFunction
+                    }
+
+                    is JetBlockExpression -> return prepend(func, containingElement.getLBrace()!!) as JetNamedFunction
+
+                    else -> throw AssertionError("Invalid containing element: ${containingElement.getText()}")
                 }
             }
         }
