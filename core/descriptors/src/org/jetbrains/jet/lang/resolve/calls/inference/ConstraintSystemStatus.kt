@@ -85,4 +85,7 @@ public trait ConstraintSystemStatus {
      * Is used not to generate type inference error if there was one in argument types.
      */
     public fun hasErrorInConstrainingTypes(): Boolean
+
+    //todo comment
+    public fun hasCannotCaptureTypesError(): Boolean
 }

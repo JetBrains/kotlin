@@ -6,6 +6,7 @@ SUPERTYPE T IntegerValueType(1000)
 type parameter bounds:
 T >: IntegerValueType(1)(SPECIAL), >: IntegerValueType(1000)(SPECIAL)
 status:
+-hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false

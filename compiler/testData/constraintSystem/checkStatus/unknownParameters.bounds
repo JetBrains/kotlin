@@ -5,6 +5,7 @@ SUBTYPE Any Any
 type parameter bounds:
 T
 status:
+-hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false

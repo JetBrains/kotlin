@@ -5,6 +5,7 @@ SUPERTYPE T IntegerValueType(1)
 type parameter bounds:
 T >: IntegerValueType(1)(SPECIAL)
 status:
+-hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false

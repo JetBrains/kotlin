@@ -5,6 +5,7 @@ SUBTYPE Producer<A> Producer<T>
 type parameter bounds:
 T >: A(SPECIAL)
 status:
+-hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false

@@ -34,10 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.Renderer;
@@ -214,6 +211,15 @@ public class Renderers {
                 }
             };
 
+    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_CANNOT_CAPTURE_TYPES_RENDERER =
+            new Renderer<InferenceErrorData>() {
+                @NotNull
+                @Override
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
+                    return renderCannotCaptureTypeParameterError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
+                }
+            };
+
     public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer result) {
         LOG.assertTrue(inferenceErrorData.constraintSystem.getStatus().hasConflictingConstraints(), renderDebugMessage(
@@ -277,8 +283,11 @@ public class Renderers {
         return result;
     }
 
-    public static TabledDescriptorRenderer renderTypeConstructorMismatchError(final InferenceErrorData inferenceErrorData,
-            TabledDescriptorRenderer renderer) {
+    @NotNull
+    public static TabledDescriptorRenderer renderTypeConstructorMismatchError(
+            final @NotNull InferenceErrorData inferenceErrorData,
+            @NotNull TabledDescriptorRenderer renderer
+    ) {
         Predicate<ConstraintPosition> isErrorPosition = new Predicate<ConstraintPosition>() {
             @Override
             public boolean apply(ConstraintPosition constraintPosition) {
@@ -294,8 +303,11 @@ public class Renderers {
                                               isErrorPosition));
     }
 
-    public static TabledDescriptorRenderer renderNoInformationForParameterError(InferenceErrorData inferenceErrorData,
-            TabledDescriptorRenderer result) {
+    @NotNull
+    public static TabledDescriptorRenderer renderNoInformationForParameterError(
+            @NotNull InferenceErrorData inferenceErrorData,
+            @NotNull TabledDescriptorRenderer result
+    ) {
         TypeParameterDescriptor firstUnknownParameter = null;
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.constraintSystem.getTypeVariables()) {
             if (inferenceErrorData.constraintSystem.getTypeBounds(typeParameter).isEmpty()) {
@@ -373,6 +385,37 @@ public class Renderers {
                             .error(typeRenderer.render(inferredValueForTypeParameter))
                             .normal(" is not a subtype of ")
                             .strong(typeRenderer.render(violatedUpperBound)));
+        return result;
+    }
+
+    @NotNull
+    public static TabledDescriptorRenderer renderCannotCaptureTypeParameterError(
+            @NotNull InferenceErrorData inferenceErrorData,
+            @NotNull TabledDescriptorRenderer result
+    ) {
+        ConstraintSystem constraintSystem = inferenceErrorData.constraintSystem;
+        TypeParameterDescriptor typeParameterWithCapturedConstraint = null;
+        CapturedTypeConstructor capturedTypeConstructor = null;
+        for (TypeParameterDescriptor typeParameter : constraintSystem.getTypeVariables()) {
+            TypeBounds typeBounds = constraintSystem.getTypeBounds(typeParameter);
+            for (TypeBounds.Bound bound : typeBounds.getBounds()) {
+                TypeConstructor constructor = bound.getConstrainingType().getConstructor();
+                if (constructor instanceof CapturedTypeConstructor) {
+                    typeParameterWithCapturedConstraint = typeParameter;
+                    capturedTypeConstructor = (CapturedTypeConstructor) constructor;
+                }
+            }
+        }
+        if (capturedTypeConstructor == null) {
+            LOG.error(renderDebugMessage("There is no captured type in bounds, but there is an error 'cannot capture type parameter'",
+                                         inferenceErrorData));
+            return result;
+        }
+
+        result.text(newText().normal("'" + typeParameterWithCapturedConstraint.getName() + "'" +
+                                     " cannot capture " +
+                                     "'" + capturedTypeConstructor.getTypeProjection() + "'. " +
+                                     "Only top level type projections can be captured"));
         return result;
     }
 

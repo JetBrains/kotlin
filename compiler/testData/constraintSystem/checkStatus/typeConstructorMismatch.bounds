@@ -5,6 +5,7 @@ SUBTYPE List<T> Int
 type parameter bounds:
 T
 status:
+-hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: true
 -hasErrorInConstrainingTypes: false
