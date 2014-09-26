@@ -21,7 +21,7 @@ import com.intellij.psi.PsiJavaFile
 
 import java.awt.datatransfer.DataFlavor
 
-class CopiedCode(val file: PsiJavaFile?, val startOffsets: IntArray, val endOffsets: IntArray) : TextBlockTransferableData {
+class CopiedCode(val fileName: String, val fileText: String, val startOffsets: IntArray, val endOffsets: IntArray) : TextBlockTransferableData {
 
     override fun getFlavor() = DATA_FLAVOR
     override fun getOffsetCount() = 0

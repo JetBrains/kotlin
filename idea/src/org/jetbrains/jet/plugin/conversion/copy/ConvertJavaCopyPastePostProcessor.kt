@@ -33,6 +33,7 @@ import java.awt.datatransfer.Transferable
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.jet.plugin.j2k.J2kPostProcessor;
+import com.intellij.lang.java.JavaLanguage
 
 public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData>() {
 
@@ -51,8 +52,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
     public override fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): List<TextBlockTransferableData> {
         if (file !is PsiJavaFile) return listOf()
 
-        val lightFile = PsiFileFactory.getInstance(file.getProject()).createFileFromText(file.getText()!!, file)
-        return listOf(CopiedCode(lightFile as? PsiJavaFile, startOffsets, endOffsets))
+        return listOf(CopiedCode(file.getName(), file.getText()!!, startOffsets, endOffsets))
     }
 
     public override fun processTransferableData(project: Project, editor: Editor, bounds: RangeMarker, caretOffset: Int, indented: Ref<Boolean>, values: List<TextBlockTransferableData>) {
@@ -62,7 +62,8 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
         
         if (value !is CopiedCode) return
 
-        val sourceFile = value.file ?: return
+        val sourceFile = PsiFileFactory.getInstance(project).
+                createFileFromText(value.fileName, JavaLanguage.INSTANCE, value.fileText) as? PsiJavaFile ?: return
 
         val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument())
         if (targetFile !is JetFile) return
