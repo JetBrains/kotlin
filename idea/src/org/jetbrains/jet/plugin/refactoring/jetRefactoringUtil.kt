@@ -110,14 +110,14 @@ fun createKotlinFile(fileName: String, targetDir: PsiDirectory): JetFile {
     val packageName = targetDir.getPackage()?.getQualifiedName()
 
     targetDir.checkCreateFile(fileName)
-    val file = PsiFileFactory.getInstance(targetDir.getProject())!!.createFileFromText(
+    val file = PsiFileFactory.getInstance(targetDir.getProject()).createFileFromText(
             fileName, JetFileType.INSTANCE, if (packageName != null) "package $packageName \n\n" else ""
     )
 
     return targetDir.add(file) as JetFile
 }
 
-public fun File.toVirtualFile(): VirtualFile? = LocalFileSystem.getInstance()!!.findFileByIoFile(this)
+public fun File.toVirtualFile(): VirtualFile? = LocalFileSystem.getInstance().findFileByIoFile(this)
 
 public fun File.toPsiFile(project: Project): PsiFile? {
     return toVirtualFile()?.let { vfile -> PsiManager.getInstance(project).findFile(vfile) }

@@ -33,7 +33,7 @@ public object JavaToKotlinTranslator {
 
     private fun createFile(text: String): PsiFile? {
         val javaCoreEnvironment: JavaCoreProjectEnvironment? = setUpJavaCoreEnvironment()
-        return PsiFileFactory.getInstance(javaCoreEnvironment?.getProject()!!)?.createFileFromText("test.java", JavaLanguage.INSTANCE, text)
+        return PsiFileFactory.getInstance(javaCoreEnvironment?.getProject()!!).createFileFromText("test.java", JavaLanguage.INSTANCE, text)
     }
 
     fun setUpJavaCoreEnvironment(): JavaCoreProjectEnvironment {

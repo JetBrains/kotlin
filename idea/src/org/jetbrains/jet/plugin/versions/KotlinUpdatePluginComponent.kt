@@ -57,7 +57,7 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
             requestFullJarUpdate(ideaPluginPaths.getAndroidSdkAnnotationsPath())
 
             // Force update indices for files under config directory
-            val fileBasedIndex = FileBasedIndex.getInstance()!!
+            val fileBasedIndex = FileBasedIndex.getInstance()
             fileBasedIndex.requestRebuild(KotlinAbiVersionIndex.INSTANCE.getName())
             fileBasedIndex.requestRebuild(KotlinClassFileIndex.KEY)
 
@@ -73,7 +73,7 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
     }
 
     private fun requestFullJarUpdate(jarFilePath: File) {
-        val localVirtualFile = LocalFileSystem.getInstance()!!.refreshAndFindFileByIoFile(jarFilePath)
+        val localVirtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(jarFilePath)
 
         // Build and update JarHandler
         val jarFile = JarFileSystem.getInstance()!!.getJarRootForLocalFile(localVirtualFile!!)

@@ -51,7 +51,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
     public override fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): List<TextBlockTransferableData> {
         if (file !is PsiJavaFile) return listOf()
 
-        val lightFile = PsiFileFactory.getInstance(file.getProject())!!.createFileFromText(file.getText()!!, file)
+        val lightFile = PsiFileFactory.getInstance(file.getProject()).createFileFromText(file.getText()!!, file)
         return listOf(CopiedCode(lightFile as? PsiJavaFile, startOffsets, endOffsets))
     }
 
@@ -172,6 +172,6 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
     }
 
     class object {
-        private val LOG = Logger.getInstance("#org.jetbrains.jet.plugin.conversion.copy.ConvertJavaCopyPastePostProcessor")!!
+        private val LOG = Logger.getInstance("#org.jetbrains.jet.plugin.conversion.copy.ConvertJavaCopyPastePostProcessor")
     }
 }
