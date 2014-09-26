@@ -19,14 +19,13 @@ package org.jetbrains.jet.plugin.completion.smart
 import com.intellij.openapi.util.Key
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.WeighingContext
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
 import com.intellij.psi.codeStyle.NameUtil
 
 val NAME_SIMILARITY_KEY = Key<Int>("NAME_SIMILARITY_KEY")
 
 object NameSimilarityWeigher : LookupElementWeigher("kotlin.nameSimilarity") {
-    override fun weigh(element: LookupElement, context: WeighingContext)
+    override fun weigh(element: LookupElement)
             = -(element.getUserData(NAME_SIMILARITY_KEY) ?: 0)
 }
 

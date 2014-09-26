@@ -101,7 +101,7 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
         Filter.Result result = filter.applyFilter(line, 0);
 
         assertNotNull(result);
-        HyperlinkInfo info = result.getFirstHyperlinkInfo();
+        HyperlinkInfo info = result.hyperlinkInfo;
         assertNotNull(info);
         assertInstanceOf(info, OpenFileHyperlinkInfo.class);
         OpenFileDescriptor descriptor = ((OpenFileHyperlinkInfo) info).getDescriptor();

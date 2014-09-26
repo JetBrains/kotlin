@@ -23,8 +23,6 @@ import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -106,16 +104,9 @@ public class JetExceptionFilter implements Filter {
 
     @NotNull
     private Result patchResult(@NotNull Result result, @NotNull String line) {
-        final HyperlinkInfo newHyperlinkInfo = createHyperlinkInfo(line);
-        if (newHyperlinkInfo == null) return result;
-
-        return new Result(KotlinPackage.map(result.getResultItems(), new Function1<ResultItem, ResultItem>() {
-            @Override
-            public ResultItem invoke(ResultItem item) {
-                return new ResultItem(item.getHighlightStartOffset(), item.getHighlightEndOffset(), newHyperlinkInfo,
-                                      item.getHighlightAttributes());
-            }
-        }));
+        HyperlinkInfo newHyperlinkInfo = createHyperlinkInfo(line);
+        return newHyperlinkInfo == null ? result :
+               new Result(result.highlightStartOffset, result.highlightEndOffset, newHyperlinkInfo, result.highlightAttributes);
     }
 
     @Nullable

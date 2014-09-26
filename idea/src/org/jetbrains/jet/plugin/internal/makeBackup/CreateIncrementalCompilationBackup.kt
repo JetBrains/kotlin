@@ -49,16 +49,16 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
         val ZIP_FRACTION = 1.0 - PATCHES_FRACTION - LOGS_FRACTION
     }
 
-    override fun update(e: AnActionEvent) {
-        e.getPresentation().setVisible(incrementalCompilationEnabled(e.getProject()!!))
+    override fun update(e: AnActionEvent?) {
+        e!!.getPresentation().setVisible(incrementalCompilationEnabled(e.getProject()!!))
     }
 
-    override fun actionPerformed(e: AnActionEvent) {
-        val project = e.getProject()!!
+    override fun actionPerformed(e: AnActionEvent?) {
+        val project = e!!.getProject()!!
         val projectBaseDir = File(project.getBaseDir()!!.getPath())
         val backupDir = File(FileUtil.createTempDirectory("makeBackup", null), BACKUP_DIR_NAME)
 
-        ProgressManager.getInstance().run(
+        ProgressManager.getInstance()!!.run(
                 object : Task.Backgroundable(project, "Creating backup for debugging Kotlin incremental compilation", true) {
                     override fun run(indicator: ProgressIndicator) {
                         createPatches(backupDir, project, indicator)
