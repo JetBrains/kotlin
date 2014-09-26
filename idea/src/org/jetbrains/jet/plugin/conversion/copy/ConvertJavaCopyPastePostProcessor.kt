@@ -62,7 +62,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
         
         if (value !is CopiedCode) return
 
-        val sourceFile = value.getFile() ?: return
+        val sourceFile = value.file ?: return
 
         val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument())
         if (targetFile !is JetFile) return
@@ -89,8 +89,8 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
                                          ConverterSettings.defaultSettings,
                                          FilesConversionScope(listOf(fileCopiedFrom)),
                                          J2kPostProcessor(fileCopiedTo))
-        val startOffsets = code.getStartOffsets()
-        val endOffsets = code.getEndOffsets()
+        val startOffsets = code.startOffsets
+        val endOffsets = code.endOffsets
         assert(startOffsets.size == endOffsets.size) { "Must have the same size" }
         val result = StringBuilder()
         for (i in startOffsets.indices) {
