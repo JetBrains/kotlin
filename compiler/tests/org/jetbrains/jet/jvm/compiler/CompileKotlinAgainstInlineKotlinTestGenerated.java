@@ -745,6 +745,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/tryCatchFinally"), Pattern.compile("^(.+)\\.1.kt$"), true);
         }
         
+        @TestMetadata("kt5863.1.kt")
+        public void testKt5863() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/tryCatchFinally/kt5863.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+        
         @TestMetadata("tryCatch.1.kt")
         public void testTryCatch() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/tryCatchFinally/tryCatch.1.kt");
