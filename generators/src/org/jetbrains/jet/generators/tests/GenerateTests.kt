@@ -649,6 +649,7 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractIncrementalJpsTest>()) {
             model("incremental/circularDependency", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, excludeParentDirs = true)
+            model("incremental/withJava", extension = null, excludeParentDirs = true)
         }
     }
 
