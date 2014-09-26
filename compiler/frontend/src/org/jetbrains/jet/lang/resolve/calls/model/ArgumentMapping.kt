@@ -45,7 +45,8 @@ public trait ArgumentMatch : ArgumentMapping {
 
 class ArgumentMatchImpl(override val valueParameter: ValueParameterDescriptor): ArgumentMatch {
     private var _status: ArgumentMatchStatus? = null
-    override val status: ArgumentMatchStatus get() = _status!!
+    override val status: ArgumentMatchStatus
+        get() = _status!!
     fun recordMatchStatus(status: ArgumentMatchStatus) {
         _status = status
     }

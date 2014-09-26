@@ -109,6 +109,7 @@ public class CandidateResolver {
                 if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR
                             && !CallResolverUtil.isInvokeCallOnExpressionWithBothReceivers(context.call)) {
                     candidateCall.addStatus(RECEIVER_PRESENCE_ERROR);
+                    checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS);
                     return;
                 }
                 else {

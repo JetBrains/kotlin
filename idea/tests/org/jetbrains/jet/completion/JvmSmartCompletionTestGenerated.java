@@ -410,6 +410,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
     
+    @TestMetadata("kt5873.kt")
+    public void testKt5873() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/kt5873.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("Lambda1.kt")
     public void testLambda1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/Lambda1.kt");
