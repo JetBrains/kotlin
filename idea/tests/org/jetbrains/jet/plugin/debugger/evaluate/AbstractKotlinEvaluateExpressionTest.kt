@@ -58,6 +58,8 @@ import com.intellij.psi.PsiManager
 import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.debugger.ui.tree.render.ClassRenderer
+import com.intellij.debugger.settings.NodeRendererSettings
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
@@ -71,9 +73,14 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     }
 
     private var oldLogLevel: Level? = null
+    private var oldShowFqTypeNames = false
 
     override fun setUp() {
         super.setUp()
+
+        val classRenderer = NodeRendererSettings.getInstance()!!.getClassRenderer()!!
+        oldShowFqTypeNames = classRenderer.SHOW_FQ_TYPE_NAMES
+        classRenderer.SHOW_FQ_TYPE_NAMES = true
 
         oldLogLevel = logger.getLevel()
         logger.setLevel(Level.DEBUG)
@@ -83,6 +90,8 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     override fun tearDown() {
         logger.setLevel(oldLogLevel)
         logger.removeAppender(appender)
+
+        NodeRendererSettings.getInstance()!!.getClassRenderer()!!.SHOW_FQ_TYPE_NAMES = oldShowFqTypeNames
 
         super.tearDown()
     }

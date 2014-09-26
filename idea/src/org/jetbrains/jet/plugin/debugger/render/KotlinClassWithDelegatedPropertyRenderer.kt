@@ -106,32 +106,4 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
         val getterName = PropertyCodegen.getterName(Name.identifier(fieldName))
         return objRef.referenceType().methodsByName(getterName)?.firstOrNull()
     }
-
-    private fun shouldDisplay(context: EvaluationContext, objInstance: ObjectReference, field: Field): Boolean {
-        val isSynthetic = DebuggerUtils.isSynthetic(field)
-        when {
-            !SHOW_SYNTHETICS && isSynthetic,
-            !SHOW_STATIC && field.isStatic(),
-            !SHOW_STATIC_FINAL && field.isStatic() && field.isFinal() -> return false
-            SHOW_VAL_FIELDS_AS_LOCAL_VARIABLES && isSynthetic -> {
-                try {
-                    val frameProxy = context.getFrameProxy()
-                    if (frameProxy != null) {
-                        val location = frameProxy.location()
-                        if (location != null &&
-                            objInstance == context.getThisObject() &&
-                            objInstance.referenceType() == location.declaringType() &&
-                            field.name().startsWith(FieldDescriptorImpl.OUTER_LOCAL_VAR_FIELD_PREFIX)
-                        ) {
-                            return false
-                        }
-                    }
-                }
-                catch (ignored: EvaluateException) {
-                }
-                return true
-            }
-            else -> return true
-        }
-    }
 }

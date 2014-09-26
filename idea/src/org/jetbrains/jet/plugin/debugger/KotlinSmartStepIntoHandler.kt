@@ -39,6 +39,7 @@ import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.jet.plugin.refactoring.runReadAction
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
@@ -191,7 +192,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {
             if (super.locationMatches(process, location)) return true
 
-            val containingFile = stepTarget.resolvedElement.getContainingFile()
+            val containingFile = runReadAction { stepTarget.resolvedElement.getContainingFile() }
             if (containingFile !is JetFile) return false
 
             val positionManager = process.getPositionManager()
