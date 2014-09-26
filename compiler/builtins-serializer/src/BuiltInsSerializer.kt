@@ -164,6 +164,6 @@ public class BuiltInsSerializer(val out: PrintStream?) {
     }
 
     fun getFileName(classDescriptor: ClassDescriptor): String {
-        return BuiltInsSerializationUtil.getClassMetadataPath(DeserializedResolverUtils.getClassId(classDescriptor))
+        return BuiltInsSerializationUtil.getClassMetadataPath(DeserializedResolverUtils.getClassId(classDescriptor))!!
     }
 }
