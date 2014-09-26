@@ -20,7 +20,6 @@ import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.*;
-import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -39,7 +38,8 @@ import java.util.Map;
 
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_THIS_FIELD;
 import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.anonymousClassForFunction;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.canHaveOuter;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -266,13 +266,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         lazyOuterExpression = LockBasedStorageManager.NO_LOCKS.createNullableLazyValue(new Function0<StackValue>() {
             @Override
             public StackValue invoke() {
-                BindingContext bindingContext = typeMapper.getBindingContext();
                 ClassDescriptor enclosingClass = getEnclosingClass();
-                return enclosingClass != null && canHaveOuter(bindingContext, classDescriptor)
-                       ? StackValue.field(typeMapper.mapType(enclosingClass),
-                                          CodegenBinding.getAsmType(bindingContext, classDescriptor),
-                                          CAPTURED_THIS_FIELD,
-                                          false)
+                if (enclosingClass == null) return null;
+
+                return canHaveOuter(typeMapper.getBindingContext(), classDescriptor)
+                       ? StackValue.field(typeMapper.mapType(enclosingClass), typeMapper.mapType(classDescriptor),
+                                          CAPTURED_THIS_FIELD, false)
                        : null;
             }
         });
@@ -289,7 +288,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
             for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
                 if (aCase.isCase(d)) {
-                    Type classType = state.getBindingContext().get(ASM_TYPE, getThisDescriptor());
+                    Type classType = state.getTypeMapper().mapType(getThisDescriptor());
                     StackValue innerValue = aCase.innerValue(d, enclosingLocalLookup, state, closure, classType);
                     if (innerValue == null) {
                         break;

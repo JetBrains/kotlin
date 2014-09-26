@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
+import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
@@ -48,6 +49,7 @@ import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -277,7 +279,7 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            Type asmType = getAsmType(bindingContext, (ClassDescriptor) descriptor);
+            Type asmType = computeAsmType((ClassDescriptor) descriptor.getOriginal());
             writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, projectionsAllowed);
             return asmType;
         }
@@ -295,8 +297,47 @@ public class JetTypeMapper {
     }
 
     @NotNull
+    private Type computeAsmType(@NotNull ClassDescriptor klass) {
+        Type alreadyComputedType = bindingContext.get(ASM_TYPE, klass);
+        if (alreadyComputedType != null) {
+            return alreadyComputedType;
+        }
+
+        Type asmType = Type.getObjectType(computeAsmTypeImpl(klass));
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(klass, asmType);
+        return asmType;
+    }
+
+    @NotNull
+    private String computeAsmTypeImpl(@NotNull ClassDescriptor klass) {
+        DeclarationDescriptor container = klass.getContainingDeclaration();
+
+        String name = SpecialNames.safeIdentifier(klass.getName()).getIdentifier();
+        if (container instanceof PackageFragmentDescriptor) {
+            FqName fqName = ((PackageFragmentDescriptor) container).getFqName();
+            return fqName.isRoot() ? name : fqName.asString().replace('.', '/') + '/' + name;
+        }
+
+        if (container instanceof ScriptDescriptor) {
+            return asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) container).getInternalName() + "$" + name;
+        }
+
+        assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
+
+        String containerInternalName = computeAsmTypeImpl((ClassDescriptor) container);
+        switch (klass.getKind()) {
+            case ENUM_ENTRY:
+                return containerInternalName;
+            case CLASS_OBJECT:
+                return containerInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
+            default:
+                return containerInternalName + "$" + name;
+        }
+    }
+
+    @NotNull
     public Type mapTraitImpl(@NotNull ClassDescriptor descriptor) {
-        return Type.getObjectType(getAsmType(bindingContext, descriptor).getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
+        return Type.getObjectType(mapType(descriptor).getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
     }
 
     @NotNull

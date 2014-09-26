@@ -23,7 +23,7 @@ import java.util.HashMap
 import java.io.File
 
 public trait IncrementalCache {
-    public fun getRemovedPackageParts(compiledSourceFilesToFqName: Map<File, String>): Collection<String>
+    public fun getRemovedPackageParts(sourceFilesToCompileAndFqNames: Map<File, String>): Collection<String>
 
     public fun getPackageData(fqName: String): ByteArray?
 

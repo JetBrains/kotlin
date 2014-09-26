@@ -42,7 +42,7 @@ final class PackageTranslator extends AbstractTranslator {
         JsNameRef reference = context.getQualifiedReference(descriptor);
         SmartList<JsPropertyInitializer> properties = new SmartList<JsPropertyInitializer>();
 
-        DefinitionPlace definitionPlace = new DefinitionPlace(scope, reference, properties);
+        DefinitionPlace definitionPlace = new DefinitionPlace((JsObjectScope) scope, reference, properties);
 
         TranslationContext newContext = context.newDeclaration(descriptor, definitionPlace);
         FileDeclarationVisitor visitor = new FileDeclarationVisitor(newContext, definitionPlace.getProperties());

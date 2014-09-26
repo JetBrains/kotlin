@@ -33,6 +33,7 @@ import kotlin.test.fail
 import java.util.HashMap
 import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jps.incremental.messages.BuildMessage
+import java.util.regex.Pattern
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     private var testDataDir: File by Delegates.notNull()
@@ -239,16 +240,20 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         override fun isEnabled(): Boolean = true
 
         override fun logLine(message: String?) {
-
             fun String.replaceHashWithStar(): String {
-                val lastHyphen = this.lastIndexOf('-')
-                if (lastHyphen != -1 && substring(lastHyphen + 1).matches("[0-9a-f]{1,8}\\.class")) {
-                    return substring(0, lastHyphen) + "-*.class"
+                val matcher = STRIP_PACKAGE_PART_HASH_PATTERN.matcher(this)
+                if (matcher.find()) {
+                    return matcher.replaceAll("\\$*")
                 }
                 return this
             }
 
             logBuf.append(message!!.trimLeading(rootPath + "/").replaceHashWithStar()).append('\n')
+        }
+
+        class object {
+            // We suspect sequences of eight consecutive hexadecimal digits to be a package part hash code
+            val STRIP_PACKAGE_PART_HASH_PATTERN = Pattern.compile("\\$([0-9a-f]{8})")
         }
     }
 

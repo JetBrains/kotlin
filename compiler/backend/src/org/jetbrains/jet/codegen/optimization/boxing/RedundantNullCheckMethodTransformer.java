@@ -28,18 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RedundantNullCheckMethodTransformer extends MethodTransformer {
-    public RedundantNullCheckMethodTransformer(MethodTransformer methodTransformer) {
-        super(methodTransformer);
-    }
 
     @Override
     public void transform(@NotNull String internalClassName, @NotNull MethodNode methodNode) {
-
         while (removeRedundantNullCheckPass(internalClassName, methodNode)) {
             //do nothing
         }
-
-        super.transform(internalClassName, methodNode);
     }
 
     private static boolean removeRedundantNullCheckPass(@NotNull String internalClassName, @NotNull MethodNode methodNode) {

@@ -120,7 +120,7 @@ class KeywordCompletion {
 
         add(JetTokens.OUT_KEYWORD, InTypeParameterFirstChildFilter)
 
-        add(JetTokens.OBJECT_KEYWORD, inNonClassBlock, AfterClassInClassBodyFilter)
+        add(JetTokens.OBJECT_KEYWORD, inNonClassBlock, inClassBody, AfterClassInClassBodyFilter)
 
         add(JetTokens.ELSE_KEYWORD, inNonClassBlock, inPropertyBody)
         add(JetTokens.IF_KEYWORD, inNonClassBlock, inPropertyBody)

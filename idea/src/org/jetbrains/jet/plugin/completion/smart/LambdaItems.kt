@@ -37,7 +37,7 @@ object LambdaItems {
             val lookupElement = LookupElementBuilder.create("{...}")
                     .withInsertHandler(ArtificialElementInsertHandler("{ ", " }", false))
                     .suppressAutoInsertion()
-                    .addTail(functionExpectedInfos)
+                    .addTailAndNameSimilarity(functionExpectedInfos)
             lookupElement.putUserData(JetCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
             collection.add(lookupElement)
         }
@@ -53,7 +53,7 @@ object LambdaItems {
                                                insertLambdaTemplate(context, TextRange(offset, offset + placeholder.length), functionType)
                                            })
                         .suppressAutoInsertion()
-                        .addTail(functionExpectedInfos.filter { it.`type` == functionType })
+                        .addTailAndNameSimilarity(functionExpectedInfos.filter { it.`type` == functionType })
                 lookupElement.putUserData(JetCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
                 collection.add(lookupElement)
             }

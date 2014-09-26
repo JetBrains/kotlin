@@ -23,8 +23,7 @@ fun filtering(): List<GenericFunction> {
         returns(Streams) { "Stream<T>" }
         body(Streams) {
             """
-            var count = 0;
-            return FilteringStream(this) { count++ >= n }
+            return DropStream(this, n)
             """
         }
 
@@ -69,8 +68,7 @@ fun filtering(): List<GenericFunction> {
         returns(Streams) { "Stream<T>" }
         body(Streams) {
             """
-            var count = 0
-            return LimitedStream(this) { count++ == n }
+            return TakeStream(this, n)
             """
         }
 
@@ -126,16 +124,7 @@ fun filtering(): List<GenericFunction> {
         returns(Streams) { "Stream<T>" }
         body(Streams) {
             """
-            var yielding = false
-            return FilteringStream(this) {
-                if (yielding)
-                    true
-                else if (!predicate(it)) {
-                    yielding = true
-                    true
-                } else
-                    false
-            }
+            return DropWhileStream(this, predicate)
             """
         }
 
@@ -174,7 +163,7 @@ fun filtering(): List<GenericFunction> {
         returns(Streams) { "Stream<T>" }
         body(Streams) {
             """
-            return LimitedStream(this, false, predicate)
+            return TakeWhileStream(this, predicate)
             """
         }
     }

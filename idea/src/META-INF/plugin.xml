@@ -107,6 +107,10 @@
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
+    <action id="CreateIncrementalCompilationBackup" class="org.jetbrains.jet.plugin.internal.makeBackup.CreateIncrementalCompilationBackup">
+      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
+    </action>
+
     <action id="ExtractFunctionToScope" class="org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractFunctionToScopeAction"
             text="Extract Function to _Scope...">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift M"/>
@@ -183,6 +187,7 @@
     <fileTypeFactory implementation="org.jetbrains.jet.plugin.JetFileFactory"/>
 
     <compileServer.plugin classpath="jps/kotlin-jps-plugin.jar;kotlin-runtime.jar;kotlin-plugin.jar"/>
+    <compiler.task execute="BEFORE" implementation="org.jetbrains.jet.plugin.internal.makeBackup.MakeBackupCompileTask"/>
 
     <lang.syntaxHighlighterFactory key="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetSyntaxHighlighterFactory"/>
     <lang.braceMatcher language="jet" implementationClass="org.jetbrains.jet.plugin.JetPairMatcher"/>

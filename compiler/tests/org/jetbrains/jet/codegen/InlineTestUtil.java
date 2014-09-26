@@ -16,13 +16,16 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import groovyjarjarasm.asm.Opcodes;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.*;
-import org.jetbrains.asm4.tree.MethodNode;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,9 +37,8 @@ public class InlineTestUtil {
     public static final String INLINE_ANNOTATION_CLASS = "kotlin/inline";
 
     public static void checkNoCallsToInline(List<OutputFile> files) {
-        //final HashMap<Type> inlineMethods = new HashMap();
         Set<MethodInfo> inlinedMethods = collectInlineMethods(files);
-        assert !inlinedMethods.isEmpty() : "There is no any inline method";
+        assert !inlinedMethods.isEmpty() : "There are no inline methods";
 
         List<NotInlinedCall> notInlinedCalls = checkInlineNotInvoked(files, inlinedMethods);
         assert notInlinedCalls.isEmpty() : "All inline methods should be inlined but " + StringUtil.join(notInlinedCalls, "\n");
@@ -52,18 +54,19 @@ public class InlineTestUtil {
             cr.accept(new ClassVisitor(Opcodes.ASM4) {
 
                 @Override
-                public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+                public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
                     className[0] = name;
                     super.visit(version, access, name, signature, superName, interfaces);
                 }
 
                 @Override
                 public MethodVisitor visitMethod(
-                        int access, String name, String desc, String signature, String[] exceptions
+                        int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions
                 ) {
                     return new MethodNode(Opcodes.ASM4, access, name, desc, signature, exceptions) {
+                        @NotNull
                         @Override
-                        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+                        public AnnotationVisitor visitAnnotation(@NotNull String desc, boolean visible) {
                             Type type = Type.getType(desc);
                             String annotationClass = type.getInternalName();
                             if (INLINE_ANNOTATION_CLASS.equals(annotationClass)) {
@@ -84,30 +87,29 @@ public class InlineTestUtil {
         for (OutputFile file : files) {
             ClassReader cr = new ClassReader(file.asByteArray());
 
-            final String[] className = {null};
+            final Ref<String> className = Ref.create();
             cr.accept(new ClassVisitor(Opcodes.ASM4) {
-
                 @Override
-                public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-                    className[0] = name;
+                public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
+                    className.set(name);
                     super.visit(version, access, name, signature, superName, interfaces);
                 }
 
                 @Override
                 public MethodVisitor visitMethod(
-                        int access, String name, String desc, String signature, String[] exceptions
+                        int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions
                 ) {
-                    return new MethodNode(Opcodes.ASM4, access, name, desc, signature, exceptions) {
+                    FqName classFqName = JvmClassName.byInternalName(className.get()).getFqNameForClassNameWithoutDollars();
+                    if (PackageClassUtils.isPackageClassFqName(classFqName)) {
+                        return super.visitMethod(access, name, desc, signature, exceptions);
+                    }
 
+                    return new MethodNode(Opcodes.ASM4, access, name, desc, signature, exceptions) {
                         @Override
-                        public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+                        public void visitMethodInsn(int opcode, @NotNull String owner, String name, @NotNull String desc, boolean itf) {
                             MethodInfo methodCall = new MethodInfo(owner, name, desc);
                             if (inlinedMethods.contains(methodCall)) {
-                                MethodInfo fromCall = new MethodInfo(className[0], this.name, this.desc);
-                                //skip facades
-                                if (methodCall.owner.startsWith(fromCall.owner + "-")) {
-                                    return;
-                                }
+                                MethodInfo fromCall = new MethodInfo(className.get(), this.name, this.desc);
 
                                 //skip delegation to trait impl from child class
                                 if (methodCall.owner.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX) && !fromCall.owner.equals(methodCall.owner)) {
@@ -119,13 +121,12 @@ public class InlineTestUtil {
                     };
                 }
             }, 0);
-
         }
+
         return notInlined;
     }
 
-    public static class NotInlinedCall {
-
+    private static class NotInlinedCall {
         public final MethodInfo fromCall;
         public final MethodInfo inlineMethod;
 
@@ -143,8 +144,7 @@ public class InlineTestUtil {
         }
     }
 
-    public static class MethodInfo {
-
+    private static class MethodInfo {
         private final String owner;
         private final String name;
         private final String desc;

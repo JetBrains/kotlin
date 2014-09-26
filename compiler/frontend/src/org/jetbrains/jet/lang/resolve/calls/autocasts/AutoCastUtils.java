@@ -44,6 +44,7 @@ public class AutoCastUtils {
 
     private AutoCastUtils() {}
 
+    @NotNull
     public static List<JetType> getAutoCastVariants(
             @NotNull ReceiverValue receiverToCast,
             @NotNull ResolutionContext context
@@ -51,6 +52,7 @@ public class AutoCastUtils {
         return getAutoCastVariants(receiverToCast, context.trace.getBindingContext(), context.dataFlowInfo);
     }
 
+    @NotNull
     public static List<JetType> getAutoCastVariants(
             @NotNull ReceiverValue receiverToCast,
             @NotNull BindingContext bindingContext,

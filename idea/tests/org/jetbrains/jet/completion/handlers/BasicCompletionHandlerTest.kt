@@ -150,4 +150,7 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testKeywordClassName() = doTest(1, "class", null, '\n')
     fun testKeywordFunctionName() = doTest(1, "fun", "fun()", null, '\n')
+
+    fun testInfixCall() = doTest(1, "to", null, null, '\n')
+    fun testInfixCallOnSpace() = doTest(1, "to", null, null, ' ')
 }

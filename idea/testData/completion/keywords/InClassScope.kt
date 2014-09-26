@@ -2,8 +2,6 @@ class TestClass {
     <caret>
 }
 
-// INVOCATION_COUNT: 1
-
 // EXIST:  abstract
 // ABSENT: annotation
 // ABSENT: as

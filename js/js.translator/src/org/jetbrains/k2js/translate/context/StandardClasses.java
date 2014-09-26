@@ -18,7 +18,7 @@ package org.jetbrains.k2js.translate.context;
 
 import com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsScope;
+import com.google.dart.compiler.backend.js.ast.JsObjectScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Map;
 
+import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 
 /**
@@ -85,7 +86,7 @@ public final class StandardClasses {
     }
 
     @NotNull
-    public static StandardClasses bindImplementations(@NotNull JsScope kotlinObjectScope) {
+    public static StandardClasses bindImplementations(@NotNull JsObjectScope kotlinObjectScope) {
         StandardClasses standardClasses = new StandardClasses(kotlinObjectScope);
         declareKotlinStandardClasses(standardClasses);
         return standardClasses;
@@ -107,24 +108,24 @@ public final class StandardClasses {
 
 
     @NotNull
-    private final JsScope kotlinScope;
+    private final JsObjectScope kotlinScope;
 
 
     @NotNull
     private final Map<FqNameUnsafe, JsName> standardObjects = Maps.newHashMap();
 
     @NotNull
-    private final Map<FqNameUnsafe, JsScope> scopeMap = Maps.newHashMap();
+    private final Map<FqNameUnsafe, JsObjectScope> scopeMap = Maps.newHashMap();
 
-    private StandardClasses(@NotNull JsScope kotlinScope) {
+    private StandardClasses(@NotNull JsObjectScope kotlinScope) {
         this.kotlinScope = kotlinScope;
     }
 
-    private void declareTopLevelObjectInScope(@NotNull JsScope scope, @NotNull Map<FqNameUnsafe, JsName> map,
+    private void declareTopLevelObjectInScope(@NotNull JsObjectScope scope, @NotNull Map<FqNameUnsafe, JsName> map,
                                               @NotNull FqNameUnsafe fullQualifiedName, @NotNull String name) {
         JsName declaredName = scope.declareName(name);
         map.put(fullQualifiedName, declaredName);
-        scopeMap.put(fullQualifiedName, new JsScope(scope, "scope for " + name));
+        scopeMap.put(fullQualifiedName, JsObjectScope(scope, "scope for " + name));
     }
 
     private void declareKotlinObject(@NotNull FqNameUnsafe fullQualifiedName, @NotNull String kotlinLibName) {
@@ -134,7 +135,7 @@ public final class StandardClasses {
     private void declareInner(@NotNull FqNameUnsafe fullQualifiedClassName,
                               @NotNull String shortMethodName,
                               @NotNull String javascriptName) {
-        JsScope classScope = scopeMap.get(fullQualifiedClassName);
+        JsObjectScope classScope = scopeMap.get(fullQualifiedClassName);
         assert classScope != null;
         FqNameUnsafe fullQualifiedMethodName = fullQualifiedClassName.child(Name.guess(shortMethodName));
         standardObjects.put(fullQualifiedMethodName, classScope.declareName(javascriptName));

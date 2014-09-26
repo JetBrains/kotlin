@@ -11,12 +11,6 @@ import kotlin.InlineOption.ONLY_LOCAL_RETURN
  */
 public val defaultBufferSize: Int = 64 * 1024
 
-/**
- * Returns the default [[Charset]] which defaults to UTF-8
- */
-public val defaultCharset: Charset = Charset.forName("UTF-8")!!
-
-
 /** Prints the given message to [[System.out]] */
 public fun print(message: Any?) {
     System.out.print(message)
@@ -162,28 +156,28 @@ public fun InputStream.buffered(bufferSize: Int = defaultBufferSize): InputStrea
 else
     BufferedInputStream(this, bufferSize)
 
-/** Creates a reader on an input stream with specified *encoding* */
-public fun InputStream.reader(encoding: Charset = defaultCharset): InputStreamReader = InputStreamReader(this, encoding)
+/** Creates a reader on an input stream using UTF-8 or specified charset. */
+public fun InputStream.reader(charset: Charset = Charsets.UTF_8): InputStreamReader = InputStreamReader(this, charset)
 
-/** Creates a reader on an input stream with specified *encoding* */
-public fun InputStream.reader(encoding: String): InputStreamReader = InputStreamReader(this, encoding)
+/** Creates a reader on an input stream using specified *charset* */
+public fun InputStream.reader(charset: String): InputStreamReader = InputStreamReader(this, charset)
 
-/** Creates a reader on an input stream with specified *encoding* */
-public fun InputStream.reader(encoding: CharsetDecoder): InputStreamReader = InputStreamReader(this, encoding)
+/** Creates a reader on an input stream using specified *decoder* */
+public fun InputStream.reader(decoder: CharsetDecoder): InputStreamReader = InputStreamReader(this, decoder)
 
 
 /** Creates a buffered output stream */
 public fun OutputStream.buffered(bufferSize: Int = defaultBufferSize): BufferedOutputStream
         = if (this is BufferedOutputStream) this else BufferedOutputStream(this, bufferSize)
 
-/** Creates a writer on an output stream with specified *encoding* */
-public fun OutputStream.writer(encoding: Charset = defaultCharset): OutputStreamWriter = OutputStreamWriter(this, encoding)
+/** Creates a writer on an output stream using UTF-8 or specified charset. */
+public fun OutputStream.writer(charset: Charset = Charsets.UTF_8): OutputStreamWriter = OutputStreamWriter(this, charset)
 
-/** Creates a writer on an output stream with specified *encoding* */
-public fun OutputStream.writer(encoding: String): OutputStreamWriter = OutputStreamWriter(this, encoding)
+/** Creates a writer on an output stream using specified *charset* */
+public fun OutputStream.writer(charset: String): OutputStreamWriter = OutputStreamWriter(this, charset)
 
-/** Creates a writer on an output stream with specified *encoding* */
-public fun OutputStream.writer(encoding: CharsetEncoder): OutputStreamWriter = OutputStreamWriter(this, encoding)
+/** Creates a writer on an output stream using specified *encoder* */
+public fun OutputStream.writer(encoder: CharsetEncoder): OutputStreamWriter = OutputStreamWriter(this, encoder)
 
 
 /** Creates a buffered reader, or returns self if Reader is already buffered */
@@ -299,18 +293,18 @@ public fun Reader.copyTo(out: Writer, bufferSize: Int = defaultBufferSize): Long
 }
 
 /**
- * Reads the entire content of the URL as a String with a character set name
+ * Reads the entire content of the URL as a String using specified charset.
  *
  * This method is not recommended on huge files.
  */
-public fun URL.readText(encoding: String = Charset.defaultCharset().name()): String = readBytes().toString(encoding)
+public fun URL.readText(charset: String): String = readBytes().toString(charset)
 
 /**
- * Reads the entire content of the URL as a String with the specified character encoding.
+ * Reads the entire content of the URL as a String using UTF-8 or specified charset..
  *
  * This method is not recommended on huge files.
  */
-public fun URL.readText(encoding: Charset): String = readBytes().toString(encoding)
+public fun URL.readText(charset: Charset = Charsets.UTF_8): String = readBytes().toString(charset)
 
 /**
  * Reads the entire content of the URL as bytes

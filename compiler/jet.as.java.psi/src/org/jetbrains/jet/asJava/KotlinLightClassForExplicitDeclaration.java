@@ -70,10 +70,8 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
             return null;
         }
 
-        String jvmInternalName = getJvmInternalName(classOrObject);
-        if (jvmInternalName == null) return null;
-
-        FqName fqName = JvmClassName.byInternalName(jvmInternalName).getFqNameForClassNameWithoutDollars();
+        FqName fqName = predictFqName(classOrObject);
+        if (fqName == null) return null;
 
         if (classOrObject instanceof JetObjectDeclaration && ((JetObjectDeclaration) classOrObject).isObjectLiteral()) {
             return new KotlinLightClassForAnonymousDeclaration(manager, fqName, classOrObject);
@@ -81,12 +79,14 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         return new KotlinLightClassForExplicitDeclaration(manager, fqName, classOrObject);
     }
 
-    private static String getJvmInternalName(JetClassOrObject classOrObject) {
+    @Nullable
+    private static FqName predictFqName(@NotNull JetClassOrObject classOrObject) {
         if (classOrObject.isLocal()) {
             LightClassDataForKotlinClass data = getLightClassDataExactly(classOrObject);
-            return data != null ? data.getJvmInternalName() : "";
+            return data == null ? null : data.getJvmQualifiedName();
         }
-        return PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject);
+        String internalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject);
+        return internalName == null ? null : JvmClassName.byInternalName(internalName).getFqNameForClassNameWithoutDollars();
     }
 
     private final FqName classFqName; // FqName of (possibly inner) class

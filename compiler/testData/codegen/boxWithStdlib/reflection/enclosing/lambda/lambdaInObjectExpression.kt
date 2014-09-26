@@ -5,11 +5,13 @@ fun box(): String {
     }
 
     val javaClass = l.a.javaClass
-    val enclosingMethod = javaClass.getEnclosingConstructor()
-    if (enclosingMethod?.getName() != "_DefaultPackage\$box\$l\$1") return "ctor: $enclosingMethod"
+    val enclosingMethod = javaClass.getEnclosingConstructor()!!.getName()
+    if (!enclosingMethod.startsWith("_DefaultPackage\$") || !enclosingMethod.endsWith("\$box\$l\$1")) return "ctor: $enclosingMethod"
 
-    val enclosingClass = javaClass.getEnclosingClass()
-    if (!enclosingClass!!.getName().startsWith("_DefaultPackage\$box\$l\$1")) return "enclosing class: $enclosingClass"
+    val enclosingClass = javaClass.getEnclosingClass()!!.getName()
+    if (!enclosingClass.startsWith("_DefaultPackage\$") || !enclosingClass.endsWith("\$box\$l\$1")) return "enclosing class: $enclosingClass"
+
+    if (enclosingMethod != enclosingClass) return "$enclosingClass != $enclosingMethod"
 
     val declaringClass = javaClass.getDeclaringClass()
     if (declaringClass != null) return "anonymous function has a declaring class: $declaringClass"

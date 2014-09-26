@@ -22,7 +22,6 @@ fun foo() {
 // EXIST: if
 // ABSENT: import
 // EXIST: in
-// EXIST: inline
 // EXIST: internal
 // EXIST: is
 // EXIST: null

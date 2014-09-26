@@ -356,6 +356,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
     
+    @TestMetadata("InfixCall.kt")
+    public void testInfixCall() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/InfixCall.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("InsideIdentifier.kt")
     public void testInsideIdentifier() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/InsideIdentifier.kt");
@@ -443,6 +449,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("NoConstructorWithQualifier.kt")
     public void testNoConstructorWithQualifier() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/NoConstructorWithQualifier.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("NoExtensionMethodFromClassObject.kt")
+    public void testNoExtensionMethodFromClassObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/NoExtensionMethodFromClassObject.kt");
         doTest(fileName);
     }
     

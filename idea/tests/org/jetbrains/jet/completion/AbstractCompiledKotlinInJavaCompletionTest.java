@@ -17,6 +17,7 @@
 package org.jetbrains.jet.completion;
 
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
@@ -35,9 +36,8 @@ public abstract class AbstractCompiledKotlinInJavaCompletionTest extends JetFixt
         return new JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/completion/injava/mockLib", false);
     }
 
-    @NotNull
     @Override
-    protected CompletionType completionType() {
-        return CompletionType.BASIC;
+    protected LookupElement[] complete(int invocationCount) {
+        return myFixture.complete(CompletionType.BASIC, invocationCount);
     }
 }

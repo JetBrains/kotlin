@@ -1,5 +1,6 @@
 fun test() {
-    for (i in 12.<caret>) {
+    val v = 1
+    for (i in v.<caret>) {
     }
 }
 

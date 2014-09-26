@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {
@@ -64,7 +65,3 @@ public fun isInReceiverScope(referenceElement: PsiElement, referencedDescriptor:
     val isExpressionWithReceiver = referenceElement is JetSimpleNameExpression && referenceElement.getReceiverExpression() != null
     return isExpressionWithReceiver && !referencedDescriptor.isExtension
 }
-
-//TODO: move this utility to more appropriate place
-public val DeclarationDescriptor.isExtension: Boolean
-    get() = this is CallableDescriptor && getReceiverParameter() != null

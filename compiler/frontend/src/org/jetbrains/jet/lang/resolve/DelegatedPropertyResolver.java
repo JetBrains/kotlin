@@ -61,6 +61,8 @@ public class DelegatedPropertyResolver {
     @NotNull
     private CallResolver callResolver;
 
+    private static final String PD_METHOD_NAME = "propertyDelegated";
+
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
         this.expressionTypingServices = expressionTypingServices;
@@ -113,6 +115,55 @@ public class DelegatedPropertyResolver {
             @NotNull JetScope scope
     ) {
         resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, trace, scope, false);
+    }
+
+    @NotNull
+    private static JetExpression createExpressionForPropertyMetadata(
+            @NotNull JetPsiFactory psiFactory,
+            @NotNull PropertyDescriptor propertyDescriptor
+    ) {
+        return psiFactory.createExpression(KotlinBuiltIns.getInstance().getPropertyMetadataImpl().getName().asString() +
+                                           "(\"" +
+                                           propertyDescriptor.getName().asString() +
+                                           "\")");
+    }
+
+    public void resolveDelegatedPropertyPDMethod(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetExpression delegateExpression,
+            @NotNull JetType delegateType,
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scope
+    ) {
+        TemporaryBindingTrace traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve propertyDelegated method in delegated property");
+        ExpressionTypingContext context = ExpressionTypingContext.newContext(
+                expressionTypingServices, traceToResolvePDMethod, scope,
+                DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
+
+        List<JetExpression> arguments = Lists.newArrayList();
+        JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
+        arguments.add(createExpressionForPropertyMetadata(psiFactory, propertyDescriptor));
+        Name functionName = Name.identifier(PD_METHOD_NAME);
+        JetReferenceExpression fakeCalleeExpression = psiFactory.createSimpleName(functionName.asString());
+        ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
+        Call call = CallMaker.makeCallWithExpressions(fakeCalleeExpression, receiver, null, fakeCalleeExpression, arguments, Call.CallType.DEFAULT);
+
+        OverloadResolutionResults<FunctionDescriptor> functionResults =
+                callResolver.resolveCallWithGivenName(context, call, fakeCalleeExpression, functionName);
+
+        if (!functionResults.isSuccess()) {
+            String expectedFunction = renderCall(call, traceToResolvePDMethod.getBindingContext());
+            if (functionResults.isIncomplete() || functionResults.isSingleResult() ||
+                functionResults.getResultCode() == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES) {
+                trace.report(DELEGATE_PD_METHOD_NONE_APPLICABLE.on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
+            } else if (functionResults.isAmbiguity()) {
+                trace.report(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY
+                                     .on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
+            }
+            return;
+        }
+
+        trace.record(DELEGATED_PROPERTY_PD_RESOLVED_CALL, propertyDescriptor, functionResults.getResultingCall());
     }
 
     /* Resolve get() or set() methods from delegate */
@@ -179,10 +230,7 @@ public class DelegatedPropertyResolver {
         JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
         arguments.add(psiFactory.createExpression(hasThis ? "this" : "null"));
 
-        arguments.add(psiFactory.createExpression(KotlinBuiltIns.getInstance().getPropertyMetadataImpl().getName().asString() +
-                                               "(\"" +
-                                               propertyDescriptor.getName().asString() +
-                                               "\")"));
+        arguments.add(createExpressionForPropertyMetadata(psiFactory, propertyDescriptor));
 
         if (!isGet) {
             JetReferenceExpression fakeArgument = (JetReferenceExpression) createFakeExpressionOfType(expressionTypingServices.getProject(), trace,

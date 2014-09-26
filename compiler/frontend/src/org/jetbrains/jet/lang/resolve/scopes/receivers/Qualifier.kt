@@ -37,19 +37,19 @@ import kotlin.properties.Delegates
 
 public trait Qualifier {
 
-    val expression: JetExpression
+    public val expression: JetExpression
 
-    val packageView: PackageViewDescriptor?
+    public val packageView: PackageViewDescriptor?
 
-    val classifier: ClassifierDescriptor?
+    public val classifier: ClassifierDescriptor?
 
-    val name: Name
+    public val name: Name
         get() = classifier?.getName() ?: packageView!!.getName()
 
     // package, classifier or class object descriptor
-    val resultingDescriptor: DeclarationDescriptor
+    public val resultingDescriptor: DeclarationDescriptor
 
-    val scope: JetScope
+    public val scope: JetScope
 }
 
 class QualifierReceiver (

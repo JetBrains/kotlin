@@ -278,7 +278,7 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsFunction createFunctionWithEmptyBody(@NotNull JsScope parent) {
-        return new JsFunction(parent, new JsBlock());
+        return new JsFunction(parent, new JsBlock(), "<anonymous>");
     }
 
     @NotNull
@@ -322,10 +322,10 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsFunction createPackage(@NotNull List<JsStatement> to, @NotNull JsScope scope) {
+    public static JsFunction createPackage(@NotNull List<JsStatement> to, @NotNull JsObjectScope scope) {
         JsFunction packageBlockFunction = createFunctionWithEmptyBody(scope);
 
-        JsName kotlinObjectAsParameter = packageBlockFunction.getScope().declareName(Namer.KOTLIN_NAME);
+        JsName kotlinObjectAsParameter = packageBlockFunction.getScope().declareNameUnsafe(Namer.KOTLIN_NAME);
         packageBlockFunction.getParameters().add(new JsParameter(kotlinObjectAsParameter));
 
         to.add(new JsInvocation(packageBlockFunction, Namer.KOTLIN_OBJECT_REF).makeStmt());

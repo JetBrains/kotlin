@@ -23,6 +23,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
@@ -49,8 +50,8 @@ import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -77,6 +78,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
+import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 
 public class ReplInterpreter {
     private int lineNumber = 0;
@@ -366,8 +368,11 @@ public class ReplInterpreter {
             ScriptDescriptor earlierDescriptor = pair.first;
             Type earlierClassType = pair.second;
 
-            registerClassNameForScript(state.getBindingTrace(), earlierDescriptor, earlierClassType);
-            earlierScriptDescriptors.add(earlierDescriptor);
+            PsiElement jetScript = descriptorToDeclaration(earlierDescriptor);
+            if (jetScript != null) {
+                registerClassNameForScript(state.getBindingTrace(), (JetScript) jetScript, earlierClassType);
+                earlierScriptDescriptors.add(earlierDescriptor);
+            }
         }
         state.setEarlierScriptsForReplInterpreter(earlierScriptDescriptors);
     }

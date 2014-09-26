@@ -36,7 +36,15 @@ import org.jetbrains.jet.plugin.completion.handlers.BaseDeclarationInsertHandler
 import org.jetbrains.jet.plugin.completion.handlers.JetPropertyInsertHandler
 
 public object DescriptorLookupConverter {
-    public fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor, declaration: PsiElement?): LookupElement {
+    public fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): LookupElement {
+        val _descriptor = if (descriptor is CallableMemberDescriptor)
+            DescriptorUtils.unwrapFakeOverride(descriptor)
+        else
+            descriptor
+        return createLookupElement(analyzer, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
+    }
+
+    private fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor, declaration: PsiElement?): LookupElement {
         val name = descriptor.getName().asString()
         var element = LookupElementBuilder.create(DeclarationLookupObject(descriptor, analyzer, declaration), name)
 
@@ -107,13 +115,5 @@ public object DescriptorLookupConverter {
 
             else -> BaseDeclarationInsertHandler()
         }
-    }
-
-    public fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): LookupElement {
-        val _descriptor = if (descriptor is CallableMemberDescriptor)
-            DescriptorUtils.unwrapFakeOverride(descriptor)
-        else
-            descriptor
-        return createLookupElement(analyzer, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
     }
 }

@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
 import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
+import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 
 // adds java static members, enum members and members from class object
 class StaticMembers(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
@@ -92,7 +93,9 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
 
         val classObject = classDescriptor.getClassObjectDescriptor()
         if (classObject != null) {
-            classObject.getDefaultType().getMemberScope().getAllDescriptors().forEach(::processMember)
+            classObject.getDefaultType().getMemberScope().getAllDescriptors()
+                    .filter { !it.isExtension }
+                    .forEach(::processMember)
         }
 
         var members = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()

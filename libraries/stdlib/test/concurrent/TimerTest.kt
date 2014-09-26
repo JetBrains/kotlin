@@ -12,23 +12,15 @@ class TimerTest {
     test fun scheduledTask() {
         val counter = AtomicInteger(0)
         val timer = Timer()
-        /*
-        TODO this generates a compiler error!
 
-            val task = timer.scheduleAtFixedRate(1000, 1000) {
+        val task = timer.scheduleAtFixedRate(1000, 100) {
             val current = counter.incrementAndGet()
             println("Timer fired at $current")
         }
-        */
-        val task = timerTask {
-            val current = counter.incrementAndGet()
-            println("Timer fired at $current")
-        }
-        timer.scheduleAtFixedRate(task, 1000, 1000)
-        Thread.sleep(5000)
+        Thread.sleep(1500)
         task.cancel()
 
         val value = counter.get()
-        assertTrue(value > 2, "current counter is $value")
+        assertTrue(value > 4, "current counter is $value")
     }
 }

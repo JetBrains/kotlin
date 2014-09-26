@@ -17,11 +17,12 @@
 package org.jetbrains.jet.completion;
 
 import com.intellij.codeInsight.CodeInsightSettings;
-import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.completion.util.UtilPackage;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.caches.resolve.LibraryModificationTracker;
@@ -30,40 +31,37 @@ import org.jetbrains.jet.plugin.project.TargetPlatform;
 import java.io.File;
 
 public abstract class JetFixtureCompletionBaseTestCase extends JetLightCodeInsightFixtureTestCase {
-    private boolean autoCompleteSetting;
+    private Pair<Boolean, Boolean> savedAutoCompleteSettings;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-        autoCompleteSetting = setAutoCompleteSetting(false);
+        savedAutoCompleteSettings = setAutoCompleteSetting(new Pair<Boolean, Boolean>(false, false));
     }
 
     @Override
     protected void tearDown() throws Exception {
-        setAutoCompleteSetting(autoCompleteSetting);
+        setAutoCompleteSetting(savedAutoCompleteSettings);
 
         super.tearDown();
     }
 
-    private boolean setAutoCompleteSetting(boolean value){
+    private static Pair<Boolean, Boolean> setAutoCompleteSetting(Pair<Boolean, Boolean> value){
         CodeInsightSettings settings = CodeInsightSettings.getInstance();
-        boolean oldValue;
-        if (completionType() == CompletionType.SMART){
-            oldValue = settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION;
-            settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION = value;
-        }
-        else {
-            oldValue = settings.AUTOCOMPLETE_COMMON_PREFIX;
-            settings.AUTOCOMPLETE_ON_CODE_COMPLETION = value;
-        }
-        return oldValue;
+        boolean oldValue1 = settings.AUTOCOMPLETE_ON_CODE_COMPLETION;
+        boolean oldValue2 = settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION;
+        settings.AUTOCOMPLETE_ON_CODE_COMPLETION = value.first;
+        settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION = value.second;
+        return new Pair<Boolean, Boolean>(oldValue1, oldValue2);
     }
 
     public abstract TargetPlatform getPlatform();
 
-    @NotNull
-    protected abstract CompletionType completionType();
+    @Nullable
+    protected abstract LookupElement[] complete(int invocationCount);
+
+    protected int defaultInvocationCount() { return 0; }
 
     public void doTest(String testPath) throws Exception {
         setUpFixture(testPath);
@@ -72,9 +70,9 @@ public abstract class JetFixtureCompletionBaseTestCase extends JetLightCodeInsig
         UtilPackage.testCompletion(fileText, getPlatform(), new Function1<Integer, LookupElement[]>() {
             @Override
             public LookupElement[] invoke(Integer invocationCount) {
-                return myFixture.complete(completionType(), invocationCount);
+                return complete(invocationCount);
             }
-        });
+        }, defaultInvocationCount());
     }
 
     protected void setUpFixture(@NotNull String testPath) {

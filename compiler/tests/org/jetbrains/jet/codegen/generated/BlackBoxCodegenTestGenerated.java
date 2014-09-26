@@ -2276,6 +2276,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty")
     @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({DelegatedProperty.PropertyDelegatedMethod.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class DelegatedProperty extends AbstractBlackBoxCodegenTest {
         @TestMetadata("accessTopLevelDelegatedPropertyInClinit.kt")
@@ -2454,6 +2455,106 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testVararg() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/vararg.kt");
             doTest(fileName);
+        }
+        
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class PropertyDelegatedMethod extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInPropertyDelegatedMethod() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("defaultArgs.kt")
+            public void testDefaultArgs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/defaultArgs.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("delegateAsInnerClass.kt")
+            public void testDelegateAsInnerClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/delegateAsInnerClass.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("delegateByOtherProperty.kt")
+            public void testDelegateByOtherProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/delegateByOtherProperty.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("delegateByTopLevelFun.kt")
+            public void testDelegateByTopLevelFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/delegateByTopLevelFun.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("delegateByTopLevelProperty.kt")
+            public void testDelegateByTopLevelProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/delegateByTopLevelProperty.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("delegateForExtProperty.kt")
+            public void testDelegateForExtProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/delegateForExtProperty.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("delegateForExtPropertyInClass.kt")
+            public void testDelegateForExtPropertyInClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/delegateForExtPropertyInClass.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("inTrait.kt")
+            public void testInTrait() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/inTrait.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("noneApplicable.kt")
+            public void testNoneApplicable() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/noneApplicable.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("pdAsExtensionFun.kt")
+            public void testPdAsExtensionFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/pdAsExtensionFun.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("privateProperty.kt")
+            public void testPrivateProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/privateProperty.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("topLevel.kt")
+            public void testTopLevel() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/topLevel.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("twoPropsByOneDelegate.kt")
+            public void testTwoPropsByOneDelegate() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/twoPropsByOneDelegate.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("valInInnerClass.kt")
+            public void testValInInnerClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/valInInnerClass.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("vararg.kt")
+            public void testVararg() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyDelegatedMethod/vararg.kt");
+                doTest(fileName);
+            }
+            
         }
         
     }
@@ -6489,6 +6590,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt2466.kt")
         public void testKt2466() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/when/kt2466.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("kt5307.kt")
+        public void testKt5307() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/when/kt5307.kt");
             doTest(fileName);
         }
         

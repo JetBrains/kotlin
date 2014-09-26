@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
@@ -26,17 +25,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
-import org.jetbrains.jet.lang.resolve.calls.context.SimpleResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
@@ -553,6 +548,9 @@ public class BodyResolver {
             delegatedPropertyResolver.resolveDelegatedPropertySetMethod(propertyDescriptor, delegateExpression, delegateType,
                                                                         trace, accessorScope);
         }
+
+        delegatedPropertyResolver.resolveDelegatedPropertyPDMethod(propertyDescriptor, delegateExpression, delegateType,
+                                                                   trace, accessorScope);
     }
 
     public void resolvePropertyInitializer(

@@ -33,10 +33,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OptimizationMethodVisitor extends MethodVisitor {
-    private static final int MAX_INSTRUCTIONS_SIZE_TO_OPTIMIZE = 5000;
-    private static final MethodTransformer MAIN_METHOD_TRANSFORMER = new RedundantNullCheckMethodTransformer(
-            new RedundantBoxingMethodTransformer(null)
-    );
+    private static final int MEMORY_LIMIT_BY_METHOD_MB = 50;
+    private static final MethodTransformer[] TRANSFORMERS = new MethodTransformer[]{
+            new RedundantNullCheckMethodTransformer(), new RedundantBoxingMethodTransformer(),
+            new RedundantGotoMethodTransformer()
+    };
 
     private final MethodNode methodNode;
     private final MethodVisitor delegate;
@@ -65,9 +66,10 @@ public class OptimizationMethodVisitor extends MethodVisitor {
 
         super.visitEnd();
 
-        if (methodNode.instructions.size() > 0 &&
-            methodNode.instructions.size() <= MAX_INSTRUCTIONS_SIZE_TO_OPTIMIZE) {
-            MAIN_METHOD_TRANSFORMER.transform("fake", methodNode);
+        if (canBeAnalyzed(methodNode)) {
+            for (MethodTransformer transformer : TRANSFORMERS) {
+                transformer.transform("fake", methodNode);
+            }
         }
 
         methodNode.accept(new EndIgnoringMethodVisitorDecorator(Opcodes.ASM5, delegate));
@@ -112,5 +114,13 @@ public class OptimizationMethodVisitor extends MethodVisitor {
         }
 
         return traceMethodVisitor;
+    }
+
+    private static boolean canBeAnalyzed(@NotNull MethodNode node) {
+        int totalFramesSizeMb = node.instructions.size() *
+                              (node.maxLocals + node.maxStack) / (1024 * 1024);
+
+        return node.instructions.size() > 0 &&
+               totalFramesSizeMb < MEMORY_LIMIT_BY_METHOD_MB;
     }
 }

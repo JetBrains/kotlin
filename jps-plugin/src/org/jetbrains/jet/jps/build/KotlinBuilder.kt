@@ -50,10 +50,13 @@ import org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JsCompiler
 import org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JvmCompiler
 import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
+import com.intellij.openapi.diagnostic.Logger
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
         public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
+
+        private val LOG = Logger.getInstance("#org.jetbrains.jps.cmdline.BuildSession")
     }
 
     override fun getPresentableName() = KOTLIN_BUILDER_NAME
@@ -66,6 +69,11 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
             outputConsumer: ModuleLevelBuilder.OutputConsumer
     ): ModuleLevelBuilder.ExitCode {
+        val historyLabel = context.getBuilderParameter("history label")
+        if (historyLabel != null) {
+            LOG.info("Label in local history: $historyLabel")
+        }
+
         val messageCollector = MessageCollectorAdapter(context)
         // Workaround for Android Studio
         if (!isJavaPluginEnabled(context)) {

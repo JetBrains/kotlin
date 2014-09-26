@@ -171,6 +171,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
     
+    @TestMetadata("redundantGotoRemoving.kt")
+    public void testRedundantGotoRemoving() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/redundantGotoRemoving.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("topLevelFunWithDefaultArgs.kt")
     public void testTopLevelFunWithDefaultArgs() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/topLevelFunWithDefaultArgs.kt");
@@ -338,6 +344,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("ifThenElseEmpty.kt")
         public void testIfThenElseEmpty() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/statements/ifThenElseEmpty.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("statementsComposition.kt")
+        public void testStatementsComposition() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/statements/statementsComposition.kt");
             doTest(fileName);
         }
         

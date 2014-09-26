@@ -96,7 +96,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         return DO_NOTHING
     }
 
-    public fun clearCacheForRemovedFiles(removedSourceFiles: Collection<String>, outDirectory: File, compilationSuccessful: Boolean) {
+    public fun clearCacheForRemovedFiles(removedSourceFiles: Collection<File>, outDirectory: File, compilationSuccessful: Boolean) {
         removedSourceFiles.forEach { packagePartMap.remove(it) }
 
         if (compilationSuccessful) {
@@ -106,8 +106,8 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         }
     }
 
-    public override fun getRemovedPackageParts(compiledSourceFilesToFqName: Map<File, String>): Collection<String> {
-        return packagePartMap.getRemovedPackageParts(compiledSourceFilesToFqName)
+    public override fun getRemovedPackageParts(sourceFilesToCompileAndFqNames: Map<File, String>): Collection<String> {
+        return packagePartMap.getRemovedPackageParts(sourceFilesToCompileAndFqNames)
     }
 
     public override fun getPackageData(fqName: String): ByteArray? {
@@ -398,8 +398,8 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
             map.put(sourceFile.getAbsolutePath(), className.getInternalName())
         }
 
-        public fun remove(sourceFile: String) {
-            map.remove(sourceFile)
+        public fun remove(sourceFile: File) {
+            map.remove(sourceFile.getAbsolutePath())
         }
 
         public fun getRemovedPackageParts(compiledSourceFilesToFqName: Map<File, String>): Collection<String> {
@@ -413,7 +413,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
                     result.add(packagePartClassName)
                 }
                 else {
-                    val previousPackageFqName = JvmClassName.byInternalName(packagePartClassName).getFqNameForClassNameWithoutDollars().parent()
+                    val previousPackageFqName = JvmClassName.byInternalName(packagePartClassName).getPackageFqName()
                     val currentPackageFqName = compiledSourceFilesToFqName[sourceFile]
                     if (currentPackageFqName != null && currentPackageFqName != previousPackageFqName.asString()) {
                         result.add(packagePartClassName)
@@ -432,7 +432,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
             map.processKeysWithExistingMapping { key ->
                 val packagePartClassName = map[key!!]!!
 
-                val packageFqName = JvmClassName.byInternalName(packagePartClassName).getFqNameForClassNameWithoutDollars().parent()
+                val packageFqName = JvmClassName.byInternalName(packagePartClassName).getPackageFqName()
 
                 result.add(packageFqName)
 

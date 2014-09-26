@@ -32,8 +32,6 @@ public fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase
 
 public fun String.length(): Int = (this as java.lang.String).length()
 
-public fun String.getBytes(): ByteArray = (this as java.lang.String).getBytes()
-
 public fun String.toCharArray(): CharArray = (this as java.lang.String).toCharArray()
 
 public fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
@@ -70,9 +68,9 @@ public fun String(bytes: ByteArray, charsetName: String): String = java.lang.Str
 
 public fun String(bytes: ByteArray, charset: Charset): String = java.lang.String(bytes, charset) as String
 
-public fun String(bytes: ByteArray, i: Int, i1: Int): String = java.lang.String(bytes, i, i1) as String
+public fun String(bytes: ByteArray, i: Int, i1: Int): String = java.lang.String(bytes, i, i1, Charsets.UTF_8) as String
 
-public fun String(bytes: ByteArray): String = java.lang.String(bytes) as String
+public fun String(bytes: ByteArray): String = java.lang.String(bytes, Charsets.UTF_8) as String
 
 public fun String(chars: CharArray): String = java.lang.String(chars) as String
 
@@ -99,10 +97,6 @@ public fun String.concat(str: String): String = (this as java.lang.String).conca
 public fun String.contentEquals(cs: CharSequence): Boolean = (this as java.lang.String).contentEquals(cs)
 
 public fun String.contentEquals(sb: StringBuffer): Boolean = (this as java.lang.String).contentEquals(sb)
-
-public fun String.getBytes(charset: Charset): ByteArray = (this as java.lang.String).getBytes(charset)
-
-public fun String.getBytes(charsetName: String): ByteArray = (this as java.lang.String).getBytes(charsetName)
 
 public fun String.getChars(srcBegin: Int, srcEnd: Int, dst: CharArray, dstBegin: Int): Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)
 
@@ -142,8 +136,6 @@ public fun CharSequence.toString(): String? = (this as java.lang.CharSequence).t
 
 public fun CharSequence.length(): Int = (this as java.lang.CharSequence).length()
 
-public fun String.toByteArray(encoding: Charset): ByteArray = (this as java.lang.String).getBytes(encoding)
-
 public fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
 public fun String.toShort(): Short = java.lang.Short.parseShort(this)
 public fun String.toInt(): Int = java.lang.Integer.parseInt(this)
@@ -155,7 +147,9 @@ public fun String.toCharList(): List<Char> = toCharArray().toList()
 
 public fun CharSequence.get(index: Int): Char = charAt(index)
 public fun CharSequence.get(start: Int, end: Int): CharSequence? = subSequence(start, end)
-public fun String.toByteArray(encoding: String = Charset.defaultCharset().name()): ByteArray = (this as java.lang.String).getBytes(encoding)
+
+public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
+public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
 
 /**
  * Returns a subsequence specified by given range.
@@ -163,7 +157,6 @@ public fun String.toByteArray(encoding: String = Charset.defaultCharset().name()
 public fun CharSequence.slice(range: IntRange): CharSequence {
     return subSequence(range.start, range.end + 1)!! // inclusive
 }
-
 
 /**
  * Converts the string into a regular expression [[Pattern]] optionally

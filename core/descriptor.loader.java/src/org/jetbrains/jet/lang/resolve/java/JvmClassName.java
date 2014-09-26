@@ -82,6 +82,13 @@ public class JvmClassName {
     }
 
     @NotNull
+    public FqName getPackageFqName() {
+        int lastSlash = internalName.lastIndexOf("/");
+        if (lastSlash == -1) return FqName.ROOT;
+        return new FqName(internalName.substring(0, lastSlash).replace('/', '.'));
+    }
+
+    @NotNull
     public String getInternalName() {
         return internalName;
     }

@@ -29,11 +29,11 @@ public final class JsProgram extends SourceInfoAwareJsNode {
 
     private final JsRootScope rootScope;
     private final Map<String, JsStringLiteral> stringLiteralMap = new THashMap<String, JsStringLiteral>();
-    private final JsScope topScope;
+    private final JsObjectScope topScope;
 
     public JsProgram(String unitId) {
         rootScope = new JsRootScope(this);
-        topScope = new JsScope(rootScope, "Global", unitId);
+        topScope = new JsObjectScope(rootScope, "Global", unitId);
         setFragmentCount(1);
 
         emptyStatement = new JsEmpty();
@@ -94,7 +94,7 @@ public final class JsProgram extends SourceInfoAwareJsNode {
      * Gets the top level scope. This is the scope of all the statements in the
      * main program.
      */
-    public JsScope getScope() {
+    public JsObjectScope getScope() {
         return topScope;
     }
 

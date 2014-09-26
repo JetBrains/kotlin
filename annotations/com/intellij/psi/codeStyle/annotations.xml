@@ -1,0 +1,8 @@
+<root>
+    <item name='com.intellij.psi.codeStyle.NameUtil java.lang.String[] nameToWords(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.psi.codeStyle.NameUtil java.util.List&lt;java.lang.String&gt; nameToWordsLowerCase(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

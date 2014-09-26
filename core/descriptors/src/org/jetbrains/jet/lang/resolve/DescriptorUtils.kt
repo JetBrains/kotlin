@@ -29,3 +29,6 @@ public fun ClassDescriptor.hasSyntheticClassObject(): Boolean = getKind() in set
 
 public fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescriptor =
         if (this is ConstructorDescriptor || DescriptorUtils.isClassObject(this)) getContainingDeclaration()!! else this
+
+public val DeclarationDescriptor.isExtension: Boolean
+    get() = this is CallableDescriptor && getReceiverParameter() != null

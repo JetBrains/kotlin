@@ -1,31 +1,36 @@
 package kotlin.concurrent
 
-import java.util.concurrent.Executor
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Future
-import java.util.concurrent.Callable
+import java.util.concurrent.*
 
 public val currentThread: Thread
     get() = Thread.currentThread()
 
 public var Thread.name: String
     get() = getName()
-    set(name: String) { setName(name) }
+    set(value) {
+        setName(value)
+    }
 
 public var Thread.daemon: Boolean
     get() = isDaemon()
-    set(on: Boolean) { setDaemon(on) }
+    set(value) {
+        setDaemon(value)
+    }
 
 public val Thread.alive: Boolean
     get() = isAlive()
 
 public var Thread.priority: Int
     get() = getPriority()
-    set(prio: Int) { setPriority(prio) }
+    set(value) {
+        setPriority(value)
+    }
 
 public var Thread.contextClassLoader: ClassLoader?
     get() = getContextClassLoader()
-    set(loader: ClassLoader?) { setContextClassLoader(loader) }
+    set(value) {
+        setContextClassLoader(value)
+    }
 
 public fun thread(start: Boolean = true, daemon: Boolean = false, contextClassLoader: ClassLoader? = null, name: String? = null, priority: Int = -1, block: () -> Unit): Thread {
     val thread = object : Thread() {
@@ -50,14 +55,14 @@ public fun thread(start: Boolean = true, daemon: Boolean = false, contextClassLo
  * Allows you to use the executor as a function to
  * execute the given block on the [[Executor]].
  */
-public /*inline*/ fun Executor.invoke(action: () -> Unit) {
-    execute(runnable(action))
+public fun Executor.invoke(action: () -> Unit) {
+    execute(action)
 }
 
 /**
-* Allows you to use the executor as a function to
-* execute the given block on the [[Executor]].
-*/
-public /*inline*/ fun <T>ExecutorService.invoke(action: () -> T): Future<T> {
+ * Allows you to use the executor as a function to
+ * execute the given block on the [[Executor]].
+ */
+public fun <T> ExecutorService.invoke(action: () -> T): Future<T> {
     return submit(action)
 }

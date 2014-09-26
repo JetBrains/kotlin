@@ -18,12 +18,15 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.ClassReader;
-import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.org.objectweb.asm.ClassReader;
+import org.jetbrains.org.objectweb.asm.ClassVisitor;
+import org.jetbrains.org.objectweb.asm.Opcodes;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +81,31 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         extractAndCompareInnerClasses("E$E2", innerE2);
     }
 
+    public void testInnerAccessFlags() {
+        checkAccess("A", "Annotation", ACC_PUBLIC | ACC_STATIC | ACC_INTERFACE | ACC_ABSTRACT | ACC_ANNOTATION);
+        checkAccess("A", "Enum", ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_ENUM);
+        checkAccess("A", "Trait", ACC_PUBLIC | ACC_STATIC | ACC_INTERFACE | ACC_ABSTRACT);
 
+        checkAccess("A", "OpenStaticClass", ACC_PUBLIC | ACC_STATIC);
+        checkAccess("A", "FinalStaticClass", ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
+        checkAccess("A", "AbstractStaticClass", ACC_PUBLIC | ACC_STATIC | ACC_ABSTRACT);
+        checkAccess("A", "OpenInnerClass", ACC_PUBLIC);
+        checkAccess("A", "FinalInnerClass", ACC_PUBLIC | ACC_FINAL);
+        checkAccess("A", "AbstractInnerClass", ACC_PUBLIC | ACC_ABSTRACT);
+
+        checkAccess("A", "PrivateClass", ACC_PRIVATE);
+        checkAccess("A", "ProtectedClass", ACC_PROTECTED);
+        checkAccess("A", "InternalClass", ACC_PUBLIC);
+        checkAccess("A", "PublicClass", ACC_PUBLIC);
+    }
+
+
+
+    private void checkAccess(@NotNull String outerName, @NotNull String innerName, int accessFlags) {
+        String name = outerName + "$" + innerName;
+        InnerClassAttribute attribute = new InnerClassAttribute(name, outerName, innerName, accessFlags);
+        extractAndCompareInnerClasses(name, attribute);
+    }
 
     private void extractAndCompareInnerClasses(@NotNull String className, @NotNull InnerClassAttribute... expectedInnerClasses) {
         assertSameElements(extractInnerClasses(className), expectedInnerClasses);
@@ -94,7 +121,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
 
         reader.accept(new ClassVisitor(ASM5) {
             @Override
-            public void visitInnerClass(String name, String outerName, String innerName, int access) {
+            public void visitInnerClass(@NotNull String name, String outerName, String innerName, int access) {
                 result.add(new InnerClassAttribute(name, outerName, innerName, access));
             }
         }, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
@@ -104,8 +131,8 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
 
     private static class InnerClassAttribute {
         private final String name;
-        @Nullable private final String outerName;
-        @Nullable private final String innerName;
+        private final String outerName;
+        private final String innerName;
         private final int access;
 
         private InnerClassAttribute(@NotNull String name, @Nullable String outerName, @Nullable String innerName, int access) {
@@ -141,7 +168,27 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
 
         @Override
         public String toString() {
-            return String.format("InnerClass(name=%s, outerName=%s, innerName=%s, access=%d)", name, outerName, innerName, access);
+            return String.format("InnerClass(name=%s, outerName=%s, innerName=%s, access=%s)",
+                                 name, outerName, innerName, renderAccess(access));
+        }
+
+        @NotNull
+        private static String renderAccess(int access) {
+            try {
+                StringBuilder sb = new StringBuilder();
+                for (Field field : Opcodes.class.getDeclaredFields()) {
+                    String name = field.getName();
+                    if (name.startsWith("ACC_") && (access & field.getInt(null)) != 0) {
+                        sb.append("|");
+                        sb.append(name);
+                    }
+                }
+                String result = sb.toString();
+                return result.isEmpty() ? "<empty>" : result.substring(1);
+            }
+            catch (Exception e) {
+                throw UtilsPackage.rethrow(e);
+            }
         }
     }
 }

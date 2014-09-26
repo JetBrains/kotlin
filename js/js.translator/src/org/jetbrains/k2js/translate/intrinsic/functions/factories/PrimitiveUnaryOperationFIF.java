@@ -18,9 +18,7 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsPrefixOperation;
-import com.google.dart.compiler.backend.js.ast.JsUnaryOperator;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -61,11 +59,54 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
     @NotNull
     private static final Predicate<FunctionDescriptor> PATTERN = Predicates.and(PRIMITIVE_UNARY_OPERATION_NAMES, NO_PARAMETERS);
 
+    @NotNull
+    private static final DescriptorPredicate INC_OPERATION_FOR_PRIMITIVE_NUMBER = pattern(PRIMITIVE_NUMBERS, "inc");
+
+    @NotNull
+    private static final DescriptorPredicate DEC_OPERATION_FOR_PRIMITIVE_NUMBER = pattern(PRIMITIVE_NUMBERS, "dec");
+
+    @NotNull
+    private static final FunctionIntrinsic NUMBER_INC_INTRINSIC = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            assert receiver != null;
+            assert arguments.size() == 0;
+            return new JsBinaryOperation(JsBinaryOperator.ADD, receiver, context.program().getNumberLiteral(1));
+        }
+    };
+
+    @NotNull
+    private static final FunctionIntrinsic NUMBER_DEC_INTRINSIC = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            assert receiver != null;
+            assert arguments.size() == 0;
+            return new JsBinaryOperation(JsBinaryOperator.SUB, receiver, context.program().getNumberLiteral(1));
+        }
+    };
+
     @Nullable
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
         if (!PATTERN.apply(descriptor)) {
             return null;
+        }
+
+        if (INC_OPERATION_FOR_PRIMITIVE_NUMBER.apply(descriptor)) {
+            return NUMBER_INC_INTRINSIC;
+        }
+        if (DEC_OPERATION_FOR_PRIMITIVE_NUMBER.apply(descriptor)) {
+            return NUMBER_DEC_INTRINSIC;
         }
 
         Name name = descriptor.getName();

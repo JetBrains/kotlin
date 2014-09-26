@@ -79,7 +79,7 @@ public class AnonymousObjectTransformer {
                 if (file == null) {
                     throw new RuntimeException("Couldn't find virtual file for " + objectInternalName);
                 }
-                reader = new ClassReader(file.getInputStream());
+                reader = new ClassReader(file.contentsToByteArray());
             }
         }
         catch (IOException e) {

@@ -36,6 +36,8 @@ import org.jetbrains.jet.lang.types.JetType
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.jet.plugin.completion.DeclarationLookupObject
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.psi.JetBinaryExpression
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 
 public abstract class JetCallableInsertHandler : BaseDeclarationInsertHandler() {
     public override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -97,19 +99,37 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
         psiDocumentManager.commitAllDocuments()
         psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.getDocument())
 
-        if (context.getCompletionChar() == '(') {
-            context.setAddCompletionChar(false)
-        }
-
         val startOffset = context.getStartOffset()
-        val element = context.getFile().findElementAt(startOffset)
+        val element = context.getFile().findElementAt(startOffset) ?: return
 
-        if (element != null && shouldAddBrackets(element)) {
-            addBrackets(context, element)
+        when {
+            PsiTreeUtil.getParentOfType(element, javaClass<JetImportDirective>()) != null -> return
+
+            isInfixCall(element) -> {
+                if (context.getCompletionChar() == ' ') {
+                    context.setAddCompletionChar(false)
+                }
+
+                val tailOffset = context.getTailOffset()
+                context.getDocument().insertString(tailOffset, " ")
+                context.getEditor().getCaretModel().moveToOffset(tailOffset + 1)
+            }
+
+            else -> addBrackets(context, element)
         }
     }
 
+    private fun isInfixCall(context: PsiElement): Boolean {
+        val parent = context.getParent()
+        val grandParent = parent?.getParent()
+        return parent is JetSimpleNameExpression && grandParent is JetBinaryExpression && parent == grandParent.getOperationReference()
+    }
+
     private fun addBrackets(context : InsertionContext, offsetElement : PsiElement) {
+        if (context.getCompletionChar() == '(') { //TODO: more correct behavior related to braces type
+            context.setAddCompletionChar(false)
+        }
+
         val offset = context.getTailOffset()
         val document = context.getDocument()
         val completionChar = context.getCompletionChar()

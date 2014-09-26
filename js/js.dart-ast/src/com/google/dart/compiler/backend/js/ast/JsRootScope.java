@@ -5,6 +5,7 @@
 package com.google.dart.compiler.backend.js.ast;
 
 import com.google.dart.compiler.backend.js.JsReservedIdentifiers;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The root scope is the parent of every scope. All identifiers in this scope
@@ -25,7 +26,7 @@ public final class JsRootScope extends JsScope {
   }
 
   @Override
-  protected JsName findOwnName(String ident) {
+  protected JsName findOwnName(@NotNull String ident) {
     JsName name = super.findOwnName(ident);
     if (name == null) {
         if (JsReservedIdentifiers.reservedGlobalSymbols.contains(ident)) {

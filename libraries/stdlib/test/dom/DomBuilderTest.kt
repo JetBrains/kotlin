@@ -37,8 +37,6 @@ class DomBuilderTest() {
                 }
             }
         }
-        println("builder document: ${doc.toXmlString()}")
-
 
         // test css selections on document
         assertEquals(0, doc[".doesNotExist"].size())
@@ -90,7 +88,6 @@ class DomBuilderTest() {
         }
         val grandChild = doc["grandChild"].first
         if (grandChild != null) {
-            println("got element ${grandChild.toXmlString()} with text '${grandChild.text}`")
             assertEquals("Hello World!", grandChild.text)
             assertEquals(" bar tiny", grandChild.attribute("class"))
 
@@ -127,8 +124,6 @@ class DomBuilderTest() {
             fail("No child found!")
         }
         val children = doc.documentElement.children()
-        val xml = nodesToXmlString(children)
-        println("root element has children: ${xml}")
         assertEquals(1, children.size())
 
     }

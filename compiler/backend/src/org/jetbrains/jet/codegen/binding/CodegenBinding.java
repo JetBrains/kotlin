@@ -28,12 +28,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
@@ -44,7 +41,9 @@ import java.util.*;
 
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
+import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
 
 public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, MutableClosure> CLOSURE = Slices.createSimpleSlice();
@@ -53,7 +52,7 @@ public class CodegenBinding {
 
     public static final WritableSlice<ScriptDescriptor, ClassDescriptor> CLASS_FOR_SCRIPT = Slices.createSimpleSlice();
 
-    public static final WritableSlice<ClassDescriptor, Type> ASM_TYPE = Slices.createCollectiveSlice();
+    public static final WritableSlice<ClassDescriptor, Type> ASM_TYPE = Slices.createSimpleSlice();
 
     public static final WritableSlice<ClassDescriptor, Boolean> ENUM_ENTRY_CLASS_NEED_SUBCLASS = Slices.createSimpleSetSlice();
 
@@ -138,22 +137,6 @@ public class CodegenBinding {
         return getAsmType(bindingContext, anonymousClassForFunction(bindingContext, descriptor));
     }
 
-    // SCRIPT: register asmType for script descriptor, move to ScriptingUtil
-    public static void registerClassNameForScript(
-            BindingTrace bindingTrace,
-            @NotNull ScriptDescriptor scriptDescriptor,
-            @NotNull Type asmType
-    ) {
-        ClassDescriptorImpl classDescriptor =
-                new ClassDescriptorImpl(scriptDescriptor, Name.special("<script-" + asmType.getInternalName() + ">"), Modality.FINAL,
-                                        Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()), SourceElement.NO_SOURCE);
-        classDescriptor.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
-
-        recordClosure(bindingTrace, null, classDescriptor, null, asmType);
-
-        bindingTrace.record(CLASS_FOR_SCRIPT, scriptDescriptor, classDescriptor);
-    }
-
     public static boolean canHaveOuter(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
         if (classDescriptor.getKind() != ClassKind.CLASS) {
             return false;
@@ -168,40 +151,28 @@ public class CodegenBinding {
     }
 
     static void recordClosure(
-            @NotNull BindingTrace bindingTrace,
-            @Nullable JetElement element,
+            @NotNull BindingTrace trace,
             @NotNull ClassDescriptor classDescriptor,
             @Nullable ClassDescriptor enclosing,
             @NotNull Type asmType
     ) {
-        ResolvedCall<ConstructorDescriptor> superCall = findSuperCall(bindingTrace.getBindingContext(), element);
+        JetElement element = (JetElement) descriptorToDeclaration(classDescriptor);
+        assert element != null : "No source element for " + classDescriptor;
 
-        CallableDescriptor enclosingReceiver = null;
-        if (classDescriptor.getContainingDeclaration() instanceof CallableDescriptor) {
-            enclosingReceiver = (CallableDescriptor) classDescriptor.getContainingDeclaration();
-            enclosingReceiver = enclosingReceiver instanceof PropertyAccessorDescriptor
-                                ? ((PropertyAccessorDescriptor) enclosingReceiver).getCorrespondingProperty()
-                                : enclosingReceiver;
-
-            if (enclosingReceiver.getReceiverParameter() == null) {
-                enclosingReceiver = null;
-            }
-        }
-
-        MutableClosure closure = new MutableClosure(superCall, enclosing, enclosingReceiver);
-
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(classDescriptor, asmType);
-        bindingTrace.record(ASM_TYPE, classDescriptor, asmType);
-        bindingTrace.record(CLOSURE, classDescriptor, closure);
+        MutableClosure closure = new MutableClosure(classDescriptor, findSuperCall(trace.getBindingContext(), element), enclosing);
 
         if (classDescriptor.isInner()) {
             closure.setCaptureThis();
         }
 
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(classDescriptor, asmType);
+        trace.record(ASM_TYPE, classDescriptor, asmType);
+        trace.record(CLOSURE, classDescriptor, closure);
+
         //TEMPORARY EAT INNER CLASS INFO FOR FUNCTION LITERALS
         //TODO: we should understand that lambda/closure would be inlined and don't generate inner class record
         if (enclosing != null && !(element instanceof JetFunctionLiteral)) {
-            recordInnerClass(bindingTrace, enclosing, classDescriptor);
+            recordInnerClass(trace, enclosing, classDescriptor);
         }
     }
 
@@ -219,16 +190,21 @@ public class CodegenBinding {
     }
 
     // SCRIPT: register asmType for script, move to ScriptingUtil
-    public static void registerClassNameForScript(
-            BindingTrace bindingTrace,
-            @NotNull JetScript jetScript,
-            @NotNull Type asmType
-    ) {
-        ScriptDescriptor descriptor = bindingTrace.getBindingContext().get(SCRIPT, jetScript);
+    public static void registerClassNameForScript(@NotNull BindingTrace trace, @NotNull JetScript script, @NotNull Type asmType) {
+        ScriptDescriptor descriptor = trace.getBindingContext().get(SCRIPT, script);
         if (descriptor == null) {
-            throw new IllegalStateException("Descriptor is not found for PSI " + jetScript);
+            throw new IllegalStateException("Script descriptor is not found for PSI: " + JetPsiUtil.getElementTextWithContext(script));
         }
-        registerClassNameForScript(bindingTrace, descriptor, asmType);
+
+        String simpleName = asmType.getInternalName().substring(asmType.getInternalName().lastIndexOf('/') + 1);
+        ClassDescriptorImpl classDescriptor =
+                new ClassDescriptorImpl(descriptor, Name.special("<script-" + simpleName + ">"), Modality.FINAL,
+                                        Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()), toSourceElement(script));
+        classDescriptor.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
+
+        recordClosure(trace, classDescriptor, null, asmType);
+
+        trace.record(CLASS_FOR_SCRIPT, descriptor, classDescriptor);
     }
 
     @NotNull
@@ -287,73 +263,30 @@ public class CodegenBinding {
 
     @NotNull
     public static Type getAsmType(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
-        klass = (ClassDescriptor) klass.getOriginal();
-        Type alreadyComputedType = bindingContext.get(ASM_TYPE, klass);
-        if (alreadyComputedType != null) {
-            return alreadyComputedType;
-        }
-
-        Type asmType = Type.getObjectType(getAsmTypeImpl(bindingContext, klass));
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(klass, asmType);
-        return asmType;
-    }
-
-    @NotNull
-    private static String getAsmTypeImpl(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
-        DeclarationDescriptor container = klass.getContainingDeclaration();
-
-        Name name = SpecialNames.safeIdentifier(klass.getName());
-        if (container instanceof PackageFragmentDescriptor) {
-            String shortName = name.getIdentifier();
-            FqName fqName = ((PackageFragmentDescriptor) container).getFqName();
-            return fqName.isRoot() ? shortName : fqName.asString().replace('.', '/') + '/' + shortName;
-        }
-
-        if (container instanceof ScriptDescriptor) {
-            Type scriptType = asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) container);
-            return scriptType.getInternalName() + "$" + name.getIdentifier();
-        }
-
-        assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
-
-        String containerInternalName = getAsmType(bindingContext, (ClassDescriptor) container).getInternalName();
-        switch (klass.getKind()) {
-            case ENUM_ENTRY:
-                return containerInternalName;
-            case CLASS_OBJECT:
-                return containerInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
-            default:
-                return containerInternalName + "$" + name.getIdentifier();
-        }
+        Type type = bindingContext.get(ASM_TYPE, klass);
+        assert type != null : "Type is not yet recorded for " + klass;
+        return type;
     }
 
     @Nullable
     private static ResolvedCall<ConstructorDescriptor> findSuperCall(
             @NotNull BindingContext bindingContext,
-            @Nullable JetElement classOrObject
+            @NotNull JetElement classOrObject
     ) {
-        if (!(classOrObject instanceof JetClassOrObject)) {
-            return null;
-        }
+        if (!(classOrObject instanceof JetClassOrObject)) return null;
 
-        if (classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait()) {
-            return null;
-        }
+        if (classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait()) return null;
 
         for (JetDelegationSpecifier specifier : ((JetClassOrObject) classOrObject).getDelegationSpecifiers()) {
-            if (specifier instanceof JetDelegatorToSuperCall) {
-                JetType supertype = bindingContext.get(TYPE, specifier.getTypeReference());
-                assert supertype != null : String.format(
-                        "No type in binding context for  \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(specifier));
+            if (!(specifier instanceof JetDelegatorToSuperCall)) continue;
 
-                ClassifierDescriptor superClass = supertype.getConstructor().getDeclarationDescriptor();
-                if (superClass != null && !isInterface(superClass)) {
-                    ResolvedCall<?> resolvedCall = getResolvedCall(specifier, bindingContext);
-                    if (resolvedCall != null && resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor) {
-                        //noinspection unchecked
-                        return (ResolvedCall<ConstructorDescriptor>) resolvedCall;
-                    }
-                }
+            ResolvedCall<?> resolvedCall = getResolvedCall(specifier, bindingContext);
+            if (resolvedCall == null) continue;
+
+            CallableDescriptor constructor = resolvedCall.getResultingDescriptor();
+            if (constructor instanceof ConstructorDescriptor && !isInterface(constructor.getContainingDeclaration())) {
+                //noinspection unchecked
+                return (ResolvedCall<ConstructorDescriptor>) resolvedCall;
             }
         }
 
@@ -383,10 +316,5 @@ public class CodegenBinding {
         } while (!stack.isEmpty());
 
         return allInnerClasses;
-    }
-
-    @NotNull
-    public static String getJvmInternalName(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
-        return getAsmType(bindingContext, classDescriptor).getClassName();
     }
 }

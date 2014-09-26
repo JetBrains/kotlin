@@ -50,7 +50,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
     @Override
     public void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<JetParameter> constructorParameters) {
         JsFunction functionObj = generateJsMethod(function);
-        JsScope funScope = functionObj.getScope();
+        JsFunctionScope funScope = functionObj.getScope();
 
         assert function.getValueParameters().size() == constructorParameters.size();
 
@@ -145,7 +145,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         assert !classProperties.isEmpty();
         FunctionDescriptor prototypeFun = CodegenUtil.getAnyEqualsMethod();
         JsFunction functionObj = generateJsMethod(prototypeFun);
-        JsScope funScope = functionObj.getScope();
+        JsFunctionScope funScope = functionObj.getScope();
 
         JsName paramName = funScope.declareName("other");
         functionObj.getParameters().add(new JsParameter(paramName));

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.util.ArrayUtil;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.context.CodegenContext;
@@ -38,7 +39,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.method;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLASS_FOR_SCRIPT;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForScriptDescriptor;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -52,17 +54,17 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
             @NotNull GenerationState state,
             @NotNull CodegenContext parentContext
     ) {
-        ScriptDescriptor scriptDescriptor = state.getBindingContext().get(BindingContext.SCRIPT, declaration);
+        BindingContext bindingContext = state.getBindingContext();
+        ScriptDescriptor scriptDescriptor = bindingContext.get(BindingContext.SCRIPT, declaration);
         assert scriptDescriptor != null;
 
-        ClassDescriptor classDescriptorForScript = state.getBindingContext().get(CLASS_FOR_SCRIPT, scriptDescriptor);
+        ClassDescriptor classDescriptorForScript = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
         assert classDescriptorForScript != null;
 
-        Type className = state.getBindingContext().get(ASM_TYPE, classDescriptorForScript);
-        assert className != null;
+        Type classType = asmTypeForScriptDescriptor(bindingContext, scriptDescriptor);
 
         ClassBuilder builder = state.getFactory().newVisitor(OtherOrigin(declaration, classDescriptorForScript),
-                                                             className, declaration.getContainingFile());
+                                                             classType, declaration.getContainingFile());
         List<ScriptDescriptor> earlierScripts = state.getEarlierScriptsForReplInterpreter();
         ScriptContext scriptContext = parentContext.intoScript(
                 scriptDescriptor,
@@ -90,8 +92,7 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
 
     @Override
     protected void generateDeclaration() {
-        Type classType = bindingContext.get(ASM_TYPE, context.getContextDescriptor());
-        assert classType != null;
+        Type classType = typeMapper.mapClass(context.getContextDescriptor());
 
         v.defineClass(scriptDeclaration,
                       V1_6,
@@ -99,7 +100,7 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
                       classType.getInternalName(),
                       null,
                       "java/lang/Object",
-                      new String[0]);
+                      ArrayUtil.EMPTY_STRING_ARRAY);
 
         generateReflectionObjectField(state, classType, v, method("kClassFromKotlin", K_CLASS_IMPL_TYPE, getType(Class.class)),
                                       JvmAbi.KOTLIN_CLASS_FIELD_NAME, createOrGetClInitCodegen().v);
@@ -124,6 +125,7 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
             @NotNull ClassBuilder classBuilder,
             @NotNull final MethodContext methodContext
     ) {
+        //noinspection ConstantConditions
         Type blockType = typeMapper.mapType(scriptDescriptor.getScriptCodeDescriptor().getReturnType());
 
         PropertyDescriptor scriptResultProperty = scriptDescriptor.getScriptResultProperty();
@@ -142,8 +144,7 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
 
-        Type classType = bindingContext.get(ASM_TYPE, classDescriptorForScript);
-        assert classType != null;
+        Type classType = typeMapper.mapType(classDescriptorForScript);
 
         iv.load(0, classType);
         iv.invokespecial("java/lang/Object", "<init>", "()V", false);

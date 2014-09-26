@@ -24,4 +24,3 @@ fun bar2(x : Season) : String {
 }
 
 // 2 TABLESWITCH
-// 1 @_DefaultPackage-expression-.*\$WhenMappings\.class

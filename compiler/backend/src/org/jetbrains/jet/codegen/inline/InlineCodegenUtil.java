@@ -75,7 +75,7 @@ public class InlineCodegenUtil {
 
     @Nullable
     public static MethodNode getMethodNode(
-            InputStream classData,
+            byte[] classData,
             final String methodName,
             final String methodDescriptor
     ) throws ClassNotFoundException, IOException {
@@ -257,8 +257,8 @@ public class InlineCodegenUtil {
     }
 
     @NotNull
-    public static MaxCalcNode wrapWithMaxLocalCalc(@NotNull MethodNode methodNode) {
-        return new MaxCalcNode(methodNode);
+    public static MethodVisitor wrapWithMaxLocalCalc(@NotNull MethodNode methodNode) {
+        return new MaxStackFrameSizeAndLocalsCalculator(API, methodNode.access, methodNode.desc, methodNode);
     }
 
     private static boolean isInteger(@NotNull String string) {

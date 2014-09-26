@@ -26,18 +26,14 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.debugger.DebuggerPackage;
 
 import java.util.Collection;
-import java.util.List;
 
 import static org.jetbrains.jet.plugin.stubindex.PackageIndexUtil.findFilesWithExactPackage;
 
@@ -53,10 +49,7 @@ public class DebuggerUtils {
             @NotNull final String fileName,
             final int lineNumber
     ) {
-
-        FqName packageFqName = getPackageFqNameForClass(className);
-
-        Collection<JetFile> filesInPackage = findFilesWithExactPackage(packageFqName, searchScope, project);
+        Collection<JetFile> filesInPackage = findFilesWithExactPackage(className.getPackageFqName(), searchScope, project);
         Collection<JetFile> filesWithExactName = Collections2.filter(filesInPackage, new Predicate<JetFile>() {
             @Override
             public boolean apply(@Nullable JetFile file) {
@@ -70,7 +63,7 @@ public class DebuggerUtils {
             return filesWithExactName.iterator().next();
         }
 
-        JetFile file = PsiCodegenPredictor.getFileForPackagePartName(filesWithExactName, className);
+        JetFile file = getFileForPackagePartPrefixedName(filesWithExactName, className.getInternalName());
         if (file != null) {
             return file;
         }
@@ -95,19 +88,20 @@ public class DebuggerUtils {
             }));
         }
 
-        // In the rare case that there's more than one file with this name in this package,
-        // we may actually need to analyze the project in order to find a file which produces this class
-        // TODO: this code is not entirely correct, because it takes a session for only one file
-        AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResultsForElements(filesWithExactName);
-
-        return PsiCodegenPredictor.getFileForCodegenNamedClass(analyzeExhaust.getModuleDescriptor(), analyzeExhaust.getBindingContext(),
-                                                               filesWithExactName, className.getInternalName());
+        return null;
     }
 
-    @NotNull
-    private static FqName getPackageFqNameForClass(@NotNull JvmClassName className) {
-        String internalName = className.getInternalName();
-        int lastSlash = internalName.lastIndexOf('/');
-        return lastSlash == -1 ? FqName.ROOT : new FqName(internalName.substring(0, lastSlash).replace('/', '.'));
+    @Nullable
+    private static JetFile getFileForPackagePartPrefixedName(
+            @NotNull Collection<JetFile> allPackageFiles,
+            @NotNull String classInternalName
+    ) {
+        for (JetFile file : allPackageFiles) {
+            String packagePartInternalName = PackagePartClassUtils.getPackagePartInternalName(file);
+            if (classInternalName.startsWith(packagePartInternalName)) {
+                return file;
+            }
+        }
+        return null;
     }
 }

@@ -150,4 +150,8 @@ public class FunctionTest extends AbstractExpressionTest {
     public void testInfixCall() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testLambdaOrLocalFunInsideEnumMethod() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

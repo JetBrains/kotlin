@@ -154,7 +154,7 @@ public class InlineCodegen implements CallGenerator {
         MethodNode node;
         if (functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) {
             VirtualFile file = InlineCodegenUtil.getVirtualFileForCallable((DeserializedSimpleFunctionDescriptor) functionDescriptor, state);
-            node = InlineCodegenUtil.getMethodNode(file.getInputStream(), asmMethod.getName(), asmMethod.getDescriptor());
+            node = InlineCodegenUtil.getMethodNode(file.contentsToByteArray(), asmMethod.getName(), asmMethod.getDescriptor());
 
             if (node == null) {
                 throw new RuntimeException("Couldn't obtain compiled function body for " + descriptorName(functionDescriptor));

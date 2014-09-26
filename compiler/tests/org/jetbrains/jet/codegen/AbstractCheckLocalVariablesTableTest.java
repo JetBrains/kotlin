@@ -102,7 +102,10 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         for (LocalVariable expectedVariable : expectedLocalVariables) {
             LocalVariable actualVariable = actualLocalVariables.get(index);
             assertEquals("Names are different", expectedVariable.name, actualVariable.name);
-            assertEquals("Types are different for " + expectedVariable.name, expectedVariable.type, actualVariable.type);
+            assertTrue(
+                    String.format("Type doesn't match regex: name %s, regex %s, type %s", expectedVariable.name, expectedVariable.type, actualVariable.type),
+                    actualVariable.type.matches(expectedVariable.type)
+            );
             assertEquals("Indexes are different", expectedVariable.index, actualVariable.index);
             index++;
         }
@@ -149,7 +152,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
 
 
                 expectedLocalVariables.add(new LocalVariable(nameMatcher.group(1),
-                                                             typeMatcher.group(1),
+                                                             StringUtil.escapeToRegexp(typeMatcher.group(1)).replace("\\*", ".+"),
                                                              Integer.parseInt(indexMatcher.group(1))));
             }
         }

@@ -19,8 +19,8 @@ package org.jetbrains.jet.asJava
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.Diagnostics
+import org.jetbrains.jet.lang.resolve.name.FqName
 
 trait LightClassData
 
@@ -32,7 +32,7 @@ trait WithFileStubAndExtraDiagnostics {
 trait LightClassDataForKotlinClass: LightClassData {
     val classOrObject: JetClassOrObject
     val descriptor: ClassDescriptor?
-    val jvmInternalName: String
+    val jvmQualifiedName: FqName
 }
 
 data class KotlinPackageLightClassData(
@@ -41,7 +41,7 @@ data class KotlinPackageLightClassData(
 ): LightClassData, WithFileStubAndExtraDiagnostics
 
 data class InnerKotlinClassLightClassData(
-        override val jvmInternalName: String,
+        override val jvmQualifiedName: FqName,
         override val classOrObject: JetClassOrObject,
         override val descriptor: ClassDescriptor?
 ): LightClassDataForKotlinClass
@@ -49,7 +49,7 @@ data class InnerKotlinClassLightClassData(
 data class OutermostKotlinClassLightClassData(
         override val javaFileStub: PsiJavaFileStub,
         override val extraDiagnostics: Diagnostics,
-        override val jvmInternalName: String,
+        override val jvmQualifiedName: FqName,
         override val classOrObject: JetClassOrObject,
         override val descriptor: ClassDescriptor?,
         val allInnerClasses: Map<JetClassOrObject, InnerKotlinClassLightClassData>

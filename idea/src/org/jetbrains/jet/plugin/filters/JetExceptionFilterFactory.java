@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 public class JetExceptionFilterFactory implements ExceptionFilterFactory {
     @NotNull
     @Override
-    public Filter create(GlobalSearchScope searchScope) {
+    public Filter create(@NotNull GlobalSearchScope searchScope) {
         return new JetExceptionFilter(searchScope);
     }
 }

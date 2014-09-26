@@ -30,8 +30,8 @@ public val ByteArray.inputStream : ByteArrayInputStream
 
 public fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
 
-public fun ByteArray.toString(encoding: String): String = String(this, encoding)
-public fun ByteArray.toString(encoding: Charset): String = String(this, encoding)
+public fun ByteArray.toString(charset: String): String = String(this, charset)
+public fun ByteArray.toString(charset: Charset): String = String(this, charset)
 
 [Intrinsic("kotlin.collections.copyToArray")] public fun <reified T> Collection<T>.copyToArray(): Array<T> =
         throw UnsupportedOperationException()

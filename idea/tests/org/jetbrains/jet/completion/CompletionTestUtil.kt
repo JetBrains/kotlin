@@ -21,8 +21,8 @@ import org.jetbrains.jet.plugin.project.TargetPlatform
 import org.junit.Assert
 import org.jetbrains.jet.completion.ExpectedCompletionUtils
 
-fun testCompletion(fileText: String, platform: TargetPlatform?, complete: (Int) -> Array<LookupElement>?) {
-    val invocationCount = ExpectedCompletionUtils.getInvocationCount(fileText) ?: 0
+fun testCompletion(fileText: String, platform: TargetPlatform?, complete: (Int) -> Array<LookupElement>?, defaultInvocationCount: Int = 0) {
+    val invocationCount = ExpectedCompletionUtils.getInvocationCount(fileText) ?: defaultInvocationCount
     val items = complete(invocationCount) ?: array()
 
     ExpectedCompletionUtils.assertDirectivesValid(fileText)

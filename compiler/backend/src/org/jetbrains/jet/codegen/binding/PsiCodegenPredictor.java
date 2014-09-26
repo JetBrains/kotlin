@@ -16,31 +16,17 @@
 
 package org.jetbrains.jet.codegen.binding;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.AsmUtil;
-import org.jetbrains.jet.codegen.ClassBuilderFactories;
-import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.org.objectweb.asm.Type;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 
@@ -82,14 +68,14 @@ public final class PsiCodegenPredictor {
             }
         }
         else {
-            FqName packageFqName = declaration.getContainingJetFile().getPackageFqName();
+            JetFile containingFile = declaration.getContainingJetFile();
 
             if (declaration instanceof JetNamedFunction) {
                 Name name = ((JetNamedFunction) declaration).getNameAsName();
-                return name == null ? null : PackageClassUtils.getPackageClassInternalName(packageFqName) + "$" + name.asString();
+                return name == null ? null : PackagePartClassUtils.getPackagePartInternalName(containingFile) + "$" + name.asString();
             }
 
-            parentInternalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(packageFqName);
+            parentInternalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(containingFile.getPackageFqName());
         }
 
         if (declaration instanceof JetClassObject) {
@@ -127,40 +113,5 @@ public final class PsiCodegenPredictor {
         }
 
         return parentInternalName + (parentDeclaration == null ? "/" : "$") + name.asString();
-    }
-
-    @Nullable
-    public static JetFile getFileForPackagePartName(@NotNull Collection<JetFile> allPackageFiles, @NotNull JvmClassName className) {
-        for (JetFile file : allPackageFiles) {
-            String internalName = PackagePartClassUtils.getPackagePartInternalName(file);
-            JvmClassName jvmClassName = JvmClassName.byInternalName(internalName);
-            if (jvmClassName.equals(className)) {
-                return file;
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    public static JetFile getFileForCodegenNamedClass(
-            @NotNull ModuleDescriptor module,
-            @NotNull BindingContext context,
-            @NotNull Collection<JetFile> allPackageFiles,
-            @NotNull String classInternalName
-    ) {
-        Project project = allPackageFiles.iterator().next().getProject();
-        GenerationState state = new GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION, module, context,
-                                                    new ArrayList<JetFile>(allPackageFiles));
-        state.beforeCompile();
-
-        BindingTrace trace = state.getBindingTrace();
-        for (ClassDescriptor classDescriptor : trace.getKeys(CodegenBinding.ASM_TYPE)) {
-            Type type = trace.get(CodegenBinding.ASM_TYPE, classDescriptor);
-            if (type != null && classInternalName.equals(type.getInternalName())) {
-                return DescriptorToSourceUtils.getContainingFile(classDescriptor);
-            }
-        }
-
-        return null;
     }
 }

@@ -19,15 +19,15 @@ package org.jetbrains.k2js.translate.context
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isAncestor
 import com.google.dart.compiler.backend.js.ast.JsName
-import com.google.dart.compiler.backend.js.ast.JsScope
 import org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName
+import com.google.dart.compiler.backend.js.ast.JsFunctionScope
 
 private val CAPTURED_RECEIVER_NAME_PREFIX : String = "this$"
 
 class UsageTracker(
         private val parent: UsageTracker?,
         val containingDescriptor: MemberDescriptor,
-        private val scope: JsScope
+        private val scope: JsFunctionScope
 ) {
 
     private val captured = linkedMapOf<CallableDescriptor, JsName>()

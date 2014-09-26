@@ -65,7 +65,6 @@ import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest
 import org.jetbrains.jet.safeDelete.AbstractJetSafeDeleteTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveWithLibTest
-import org.jetbrains.jet.completion.weighers.AbstractCompletionWeigherTest
 import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest
 import org.jetbrains.jet.plugin.configuration.AbstractConfigureProjectByChangingFileTest
 import org.jetbrains.jet.formatter.AbstractJetFormatterTest
@@ -100,6 +99,7 @@ import org.jetbrains.jet.plugin.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.jet.plugin.stubs.AbstractStubBuilderTest
 import org.jetbrains.jet.plugin.codeInsight.AbstractJetInspectionTest
 import org.jetbrains.jet.plugin.debugger.AbstractKotlinSteppingTest
+import org.jetbrains.jet.plugin.debugger.AbstractJetPositionManagerTest
 import org.jetbrains.jet.completion.AbstractMultiFileJvmBasicCompletionTest
 import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.AbstractJetExtractionTest
 import org.jetbrains.jet.formatter.AbstractJetTypingIndentationTestBase
@@ -119,6 +119,10 @@ import org.jetbrains.jet.plugin.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.jet.codegen.AbstractScriptCodegenTest
 import org.jetbrains.jet.plugin.parameterInfo.AbstractFunctionParameterInfoTest
 import org.jetbrains.jet.psi.patternMatching.AbstractJetPsiUnifierTest
+import org.jetbrains.jet.completion.weighers.AbstractBasicCompletionWeigherTest
+import org.jetbrains.jet.completion.weighers.AbstractSmartCompletionWeigherTest
+import org.jetbrains.jet.generators.tests.reservedWords.generateTestDataForReservedWords
+import org.jetbrains.k2js.test.semantics.AbstractReservedWordTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -479,8 +483,11 @@ fun main(args: Array<String>) {
             model("refactoring/move", extension = "test", singleClass = true)
         }
 
-        testClass(javaClass<AbstractCompletionWeigherTest>()) {
-            model("completion/weighers", pattern = """^([^\.]+)\.kt$""")
+        testClass(javaClass<AbstractBasicCompletionWeigherTest>()) {
+            model("completion/weighers/basic", pattern = """^([^\.]+)\.kt$""")
+        }
+        testClass(javaClass<AbstractSmartCompletionWeigherTest>()) {
+            model("completion/weighers/smart", pattern = """^([^\.]+)\.kt$""")
         }
 
         testClass(javaClass<AbstractConfigureProjectByChangingFileTest>()) {
@@ -559,6 +566,11 @@ fun main(args: Array<String>) {
             model("editor/optimizeImports", extension = null, recursive = false)
         }
 
+        testClass(javaClass<AbstractJetPositionManagerTest>()) {
+            model("debugger/positionManager", recursive = false, extension = "kt", testClassName = "SingleFile")
+            model("debugger/positionManager", recursive = false, extension = null, testClassName = "MultiFile")
+        }
+
         testClass(javaClass<AbstractSmartStepIntoTest>()) {
             model("debugger/smartStepInto")
         }
@@ -570,8 +582,8 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractKotlinEvaluateExpressionTest>()) {
-            model("debugger/tinyApp/src/evaluate/singleBreakpoint", testMethod = "doSingleBreakpointTest", recursive = true)
-            model("debugger/tinyApp/src/evaluate/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest", recursive = true)
+            model("debugger/tinyApp/src/evaluate/singleBreakpoint", testMethod = "doSingleBreakpointTest")
+            model("debugger/tinyApp/src/evaluate/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
         }
 
         testClass(javaClass<AbstractStubBuilderTest>()) {
@@ -611,6 +623,14 @@ fun main(args: Array<String>) {
     testGroup("jps-plugin/test", "jps-plugin/testData") {
         testClass(javaClass<AbstractIncrementalJpsTest>()) {
             model("incremental", extension = null, excludeParentDirs = true)
+        }
+    }
+
+    generateTestDataForReservedWords()
+
+    testGroup("js/js.tests/test", "js/js.translator/testData") {
+        testClass(javaClass<AbstractReservedWordTest>()) {
+            model("reservedWords/cases")
         }
     }
 }

@@ -54,7 +54,9 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -157,21 +159,22 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                         ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject);
                         if (classDescriptor == null) {
                             return new OutermostKotlinClassLightClassData(
-                                    javaFileStub, extraDiagnostics,
-                                    "", classOrObject, null, Collections.<JetClassOrObject, InnerKotlinClassLightClassData>emptyMap()
+                                    javaFileStub, extraDiagnostics, FqName.ROOT, classOrObject,
+                                    null, Collections.<JetClassOrObject, InnerKotlinClassLightClassData>emptyMap()
                             );
                         }
 
-                        String jvmInternalName = CodegenBinding.getJvmInternalName(bindingContext, classDescriptor);
+                        FqName fqName = predictClassFqName(bindingContext, classDescriptor);
                         Collection<ClassDescriptor> allInnerClasses = CodegenBinding.getAllInnerClasses(bindingContext, classDescriptor);
 
                         Map<JetClassOrObject, InnerKotlinClassLightClassData> innerClassesMap = ContainerUtil.newHashMap();
                         for (ClassDescriptor innerClassDescriptor : allInnerClasses) {
-                            JetClassOrObject innerClass = (JetClassOrObject) descriptorToDeclaration(innerClassDescriptor);
-                            if (innerClass == null) continue;
+                            PsiElement declaration = descriptorToDeclaration(innerClassDescriptor);
+                            if (!(declaration instanceof JetClassOrObject)) continue;
+                            JetClassOrObject innerClass = (JetClassOrObject) declaration;
 
                             InnerKotlinClassLightClassData innerLightClassData = new InnerKotlinClassLightClassData(
-                                    CodegenBinding.getJvmInternalName(bindingContext, innerClassDescriptor),
+                                    predictClassFqName(bindingContext, innerClassDescriptor),
                                     innerClass,
                                     innerClassDescriptor
                             );
@@ -182,11 +185,18 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                         return new OutermostKotlinClassLightClassData(
                                 javaFileStub,
                                 extraDiagnostics,
-                                jvmInternalName,
+                                fqName,
                                 classOrObject,
                                 classDescriptor,
                                 innerClassesMap
                         );
+                    }
+
+                    @NotNull
+                    private FqName predictClassFqName(BindingContext bindingContext, ClassDescriptor classDescriptor) {
+                        Type asmType = CodegenBinding.getAsmType(bindingContext, classDescriptor);
+                        //noinspection ConstantConditions
+                        return JvmClassName.byInternalName(asmType.getClassName().replace('.', '/')).getFqNameForClassNameWithoutDollars();
                     }
 
                     @NotNull

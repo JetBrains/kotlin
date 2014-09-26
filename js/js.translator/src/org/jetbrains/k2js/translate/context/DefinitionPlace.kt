@@ -19,10 +19,10 @@ package org.jetbrains.k2js.translate.context
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer
 import com.google.dart.compiler.backend.js.ast.JsNameRef
-import com.google.dart.compiler.backend.js.ast.JsScope
+import com.google.dart.compiler.backend.js.ast.JsObjectScope
 
 class DefinitionPlace(
-        private val scope: JsScope,
+        private val scope: JsObjectScope,
         private val fqName: JsExpression,
         val properties: MutableList<JsPropertyInitializer>
 ) {

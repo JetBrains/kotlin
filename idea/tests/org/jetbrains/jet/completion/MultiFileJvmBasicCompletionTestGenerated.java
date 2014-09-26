@@ -134,6 +134,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
     
+    @TestMetadata("NotImportedInfixExtension")
+    public void testNotImportedInfixExtension() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedInfixExtension/");
+        doTest(fileName);
+    }
+    
     @TestMetadata("NotImportedJavaClass")
     public void testNotImportedJavaClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedJavaClass/");

@@ -32,6 +32,7 @@ import org.jetbrains.jet.plugin.util.makeNullable
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,
@@ -79,16 +80,12 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         val asTypePositionResult = buildForAsTypePosition()
         if (asTypePositionResult != null) return asTypePositionResult
 
-        val parent = expression.getParent()
-        val expressionWithType: JetExpression
-        val receiver: JetExpression?
-        if (parent is JetQualifiedExpression) {
-            expressionWithType = parent
-            receiver = parent.getReceiverExpression()
+        val receiver = expression.getReceiverExpression()
+        val expressionWithType = if (receiver != null) {
+            expression.getParent() as? JetExpression ?: return null
         }
         else {
-            expressionWithType = expression
-            receiver = null
+            expression
         }
 
         val allExpectedInfos = calcExpectedInfos(expressionWithType) ?: return null
@@ -97,7 +94,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
         // if we complete argument of == or !=, make types in expected info's nullable to allow nullable items too
         val expectedInfos = if ((expressionWithType.getParent() as? JetBinaryExpression)?.getOperationToken() in setOf(JetTokens.EQEQ, JetTokens.EXCLEQ))
-            filteredExpectedInfos.map { ExpectedInfo(it.`type`.makeNullable(), it.tail) }
+            filteredExpectedInfos.map { ExpectedInfo(it.`type`.makeNullable(), it.name, it.tail) }
         else
             filteredExpectedInfos
 
@@ -153,7 +150,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             if (originalDeclaration != null) {
                 val originalDescriptor = originalDeclaration.getLazyResolveSession().resolveToDescriptor(originalDeclaration) as? CallableDescriptor
                 val returnType = originalDescriptor?.getReturnType()
-                return if (returnType != null) listOf(ExpectedInfo(returnType, null)) else null
+                return if (returnType != null) listOf(ExpectedInfo(returnType, declaration.getName(), null)) else null
             }
         }
 
@@ -253,7 +250,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                 }
             }
 
-            return lookupElement.addTail(matchedExpectedInfos)
+            return lookupElement.addTailAndNameSimilarity(matchedExpectedInfos)
         }
 
         if (descriptor is SimpleFunctionDescriptor) {
@@ -284,7 +281,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         val items = ArrayList<LookupElement>()
         for ((jetType, infos) in expectedInfosGrouped) {
             val lookupElement = lookupElementForType(jetType) ?: continue
-            items.add(lookupElement.addTail(infos))
+            items.add(lookupElement.addTailAndNameSimilarity(infos))
         }
         return Result(null, items)
     }

@@ -17,11 +17,17 @@
 package org.jetbrains.jet.codegen.inline;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClosureCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -533,7 +539,6 @@ public class MethodInliner {
         }
     }
 
-    //TODO: check annotation on class - it's package part
     //TODO: check it's external module
     //TODO?: assert method exists in facade?
     public String changeOwnerForExternalPackage(String type, int opcode) {
@@ -541,10 +546,18 @@ public class MethodInliner {
             return type;
         }
 
-        int i = type.indexOf('-');
-        if (i >= 0) {
-            return type.substring(0, i);
+        JvmClassName name = JvmClassName.byInternalName(type);
+        String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(name.getPackageFqName());
+        if (type.startsWith(packageClassInternalName + '$')) {
+            VirtualFile virtualFile = InlineCodegenUtil.findVirtualFile(inliningContext.state.getProject(), type);
+            if (virtualFile != null) {
+                KotlinJvmBinaryClass klass = KotlinBinaryClassCache.getKotlinBinaryClass(virtualFile);
+                if (klass != null && klass.getClassHeader().getSyntheticClassKind() == KotlinSyntheticClass.Kind.PACKAGE_PART) {
+                    return packageClassInternalName;
+                }
+            }
         }
+
         return type;
     }
 
@@ -552,7 +565,8 @@ public class MethodInliner {
     public RuntimeException wrapException(@NotNull Exception originalException, @NotNull MethodNode node, @NotNull String errorSuffix) {
         if (originalException instanceof InlineException) {
             return new InlineException(errorPrefix + ": " + errorSuffix, originalException);
-        } else {
+        }
+        else {
             return new InlineException(errorPrefix + ": " + errorSuffix + "\ncause: " +
                                        getNodeText(node), originalException);
         }

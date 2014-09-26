@@ -285,48 +285,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void writeInnerClass(@NotNull ClassDescriptor innerClass) {
-        // TODO: proper access
-        int innerClassAccess = getVisibilityAccessFlag(innerClass);
-        if (innerClass.getModality() == Modality.FINAL) {
-            innerClassAccess |= ACC_FINAL;
-        }
-        else if (innerClass.getModality() == Modality.ABSTRACT) {
-            innerClassAccess |= ACC_ABSTRACT;
-        }
-
-        if (innerClass.getKind() == ClassKind.TRAIT) {
-            innerClassAccess |= ACC_INTERFACE;
-        }
-        else if (innerClass.getKind() == ClassKind.ENUM_CLASS) {
-            innerClassAccess |= ACC_ENUM;
-        }
-
-        if (!innerClass.isInner()) {
-            innerClassAccess |= ACC_STATIC;
-        }
-
-        // TODO: cache internal names
         DeclarationDescriptor containing = innerClass.getContainingDeclaration();
-        String outerClassInternalName = containing instanceof ClassDescriptor ? getInternalNameForImpl((ClassDescriptor) containing) : null;
+        String outerClassInternalName =
+                containing instanceof ClassDescriptor ? typeMapper.mapClass((ClassDescriptor) containing).getInternalName() : null;
 
-        String innerClassInternalName;
-        String innerName;
+        String innerName = isClassObject(innerClass)
+                           ? JvmAbi.CLASS_OBJECT_CLASS_NAME
+                           : innerClass.getName().isSpecial() ? null : innerClass.getName().asString();
 
-        if (isClassObject(innerClass)) {
-            innerName = JvmAbi.CLASS_OBJECT_CLASS_NAME;
-            innerClassInternalName = outerClassInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
-        }
-        else {
-            innerName = innerClass.getName().isSpecial() ? null : innerClass.getName().asString();
-            innerClassInternalName = getInternalNameForImpl(innerClass);
-        }
-
-        v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, innerClassAccess);
-    }
-
-    @NotNull
-    private String getInternalNameForImpl(@NotNull ClassDescriptor descriptor) {
-        return typeMapper.mapClass(descriptor).getInternalName();
+        String innerClassInternalName = typeMapper.mapClass(innerClass).getInternalName();
+        v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, calculateInnerClassAccessFlags(innerClass));
     }
 
     @NotNull

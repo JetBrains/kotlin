@@ -1,4 +1,3 @@
-
 var _l: Any = ""
 
 var l: Any
@@ -13,8 +12,8 @@ fun box(): String {
     val enclosingMethod = l.javaClass.getEnclosingMethod()
     if (enclosingMethod?.getName() != "setL") return "method: $enclosingMethod"
 
-    val enclosingClass = l.javaClass.getEnclosingClass()
-    if (!enclosingClass!!.getName().startsWith("_DefaultPackage-lambdaInPropertySetter-")) return "enclosing class: $enclosingClass"
+    val enclosingClass = l.javaClass.getEnclosingClass()!!.getName()
+    if (!enclosingClass.startsWith("_DefaultPackage") || !enclosingClass.contains("lambdaInPropertySetter")) return "enclosing class: $enclosingClass"
 
     val declaringClass = l.javaClass.getDeclaringClass()
     if (declaringClass != null) return "anonymous function has a declaring class: $declaringClass"

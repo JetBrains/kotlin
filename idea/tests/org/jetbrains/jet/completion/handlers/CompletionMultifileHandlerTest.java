@@ -58,6 +58,10 @@ public class CompletionMultifileHandlerTest extends KotlinCompletionTestCase {
         doTest();
     }
 
+    public void testInfixExtensionCallImport() throws Exception {
+        doTest();
+    }
+
     public void doTest() throws Exception {
         String fileName = getTestName(false);
 

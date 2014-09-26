@@ -45,4 +45,9 @@ public class CodegenStatementVisitor extends JetVisitor<StackValue, StackValue> 
     public StackValue visitWhenExpression(@NotNull JetWhenExpression expression, StackValue data) {
         return codegen.generateWhenExpression(expression, true);
     }
+
+    @Override
+    public StackValue visitBlockExpression(@NotNull JetBlockExpression expression, StackValue data) {
+        return codegen.generateBlock(expression, true);
+    }
 }

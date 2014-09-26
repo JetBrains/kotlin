@@ -169,6 +169,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
         
+        @TestMetadata("kt5844.kt")
+        public void testKt5844() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/boxingOptimization/kt5844.kt");
+            doTestWithStdlib(fileName);
+        }
+        
         @TestMetadata("nullCheck.kt")
         public void testNullCheck() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/boxingOptimization/nullCheck.kt");
@@ -1889,6 +1895,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         public static class Enclosing extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInEnclosing() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/enclosing"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("localClassInTopLevelFunction.kt")
+            public void testLocalClassInTopLevelFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/localClassInTopLevelFunction.kt");
+                doTestWithStdlib(fileName);
             }
             
             @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/insideLambda")
