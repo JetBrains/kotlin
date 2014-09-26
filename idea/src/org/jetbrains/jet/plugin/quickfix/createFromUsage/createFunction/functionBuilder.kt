@@ -142,7 +142,19 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
         }
     }
 
-    private inner class Context() {
+    fun build() {
+        try {
+            if (finished) throw IllegalStateException("Current builder has already finished")
+
+            val context = Context()
+            runWriteAction { context.buildAndRunTemplate() }
+        }
+        finally {
+            finished = true
+        }
+    }
+
+    private inner class Context {
         val isUnit: Boolean
         val isExtension: Boolean
         val containingFile: JetFile
@@ -479,15 +491,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
                 }
             })
         }
-    }
 
-    fun build() {
-        if (finished) throw IllegalStateException("Current builder has already finished")
-
-        val context = Context()
-        runWriteAction { context.buildAndRunTemplate() }
-
-        finished = true
     }
 }
 
