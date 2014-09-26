@@ -1,13 +1,13 @@
 // test that name similarity sorting takes over declaration kind sorting
-val globalBar = ""
-val globalX = ""
+val xGlobalBar = ""
+val xGlobalX = ""
 
 fun f(fooBar: String){}
 
 fun g() {
-    val localBar = ""
-    val localX = ""
-    f(<caret>)
+    val xLocalBar = ""
+    val xLocalX = ""
+    f(x<caret>)
 }
 
-// ORDER: localBar, globalBar, localX, globalX
+// ORDER: xLocalBar, xGlobalBar, xLocalX, xGlobalX

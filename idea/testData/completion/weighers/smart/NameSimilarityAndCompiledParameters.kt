@@ -1,10 +1,10 @@
-val id = ""
-val p = ""
-val p1 = ""
+val xId = ""
+val xP = ""
+val xP1 = ""
 
 fun g(zone: java.util.TimeZone) {
-    val local = ""
-    zone.setID(<caret>)
+    val xLocal = ""
+    zone.setID(x<caret>)
 }
 
-// ORDER: local, id, p, p1
+// ORDER: xLocal, xId, xP, xP1
