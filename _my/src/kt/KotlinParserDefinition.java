@@ -28,477 +28,478 @@ public class KotlinParserDefinition implements ParserDefinition {
     //public static final Language KT_LANGUAGE = JetLanguage.INSTANCE;
 
     public static IElementType createType(String str) {
-        if (str == "ADDITIVE_OPERATION") {
+        if (str.equals("ADDITIVE_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "ASSIGNMENT_EXPRESSION") {
+        if (str.equals("ASSIGNMENT_EXPRESSION")) {
             return JetNodeTypes.BINARY_EXPRESSION;
         }
-        if (str == "ADDITIVE_EXPRESSION_PLUS") {
+        if (str.equals("ADDITIVE_EXPRESSION_PLUS")) {
             return JetNodeTypes.BINARY_EXPRESSION;
         }
-        if (str == "ASSIGNMENT_OPERATOR") {
+        if (str.equals("ASSIGNMENT_OPERATOR")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "VALUE_PARAMETERS") {
+        if (str.equals("VALUE_PARAMETERS")) {
             return JetNodeTypes.VALUE_PARAMETER_LIST;
         }
-        if (str == "FUNCTION") {
+        if (str.equals("FUNCTION")) {
             return JetNodeTypes.FUN;
         }
-        if (str == "FUNCTION_LITERAL") {
+        if (str.equals("FUNCTION_LITERAL")) {
             return JetNodeTypes.FUNCTION_LITERAL;
         }
-        if (str == "PACKAGE_HEADER") {
+        if (str.equals("PACKAGE_HEADER")) {
             return JetNodeTypes.PACKAGE_DIRECTIVE;
         }
-        if (str == "BLOCK") {
+        if (str.equals("BLOCK")) {
             return JetNodeTypes.BLOCK;
         }
-        if (str == "REFERENCE_EXPRESSION") {
+        if (str.equals("REFERENCE_EXPRESSION")) {
             return JetNodeTypes.REFERENCE_EXPRESSION;
         }
-        if (str == "INTEGER_CONSTANT") {
+        if (str.equals("INTEGER_CONSTANT")) {
             return JetNodeTypes.INTEGER_CONSTANT;
         }
-        if (str == "PROPERTY") {
+        if (str.equals("PROPERTY")) {
             return JetNodeTypes.PROPERTY;
         }
-        if (str == "PROPERTY_LOCAL") {
+        if (str.equals("PROPERTY_LOCAL")) {
             return JetNodeTypes.PROPERTY;
         }
-        if (str == "CLASS_DECLARATION") {
+        if (str.equals("CLASS_DECLARATION")) {
             return JetNodeTypes.CLASS;
         }
-        if (str == "DO_WHILE_LOOP") {
+        if (str.equals("DO_WHILE_LOOP")) {
             return JetNodeTypes.DO_WHILE;
         }
-        if (str == "FOR_LOOP") {
+        if (str.equals("FOR_LOOP")) {
             return JetNodeTypes.FOR;
         }
-        if (str == "ARRAY_ACCESS") {
+        if (str.equals("ARRAY_ACCESS")) {
             return JetNodeTypes.ARRAY_ACCESS_EXPRESSION;
         }
-        if (str == "IF_EXPRESSION") {
+        if (str.equals("IF_EXPRESSION")) {
             return JetNodeTypes.IF;
         }
-        if (str == "CATCH_BLOCK") {
+        if (str.equals("CATCH_BLOCK")) {
             return JetNodeTypes.CATCH;
         }
-        if (str == "WHILE_LOOP") {
+        if (str.equals("WHILE_LOOP")) {
             return JetNodeTypes.WHILE;
         }
-        if (str == "WHEN") {
+        if (str.equals("WHEN")) {
             return JetNodeTypes.WHEN;
         }
-        if (str == "WHEN_ENTRY") {
+        if (str.equals("WHEN_ENTRY")) {
             return JetNodeTypes.WHEN_ENTRY;
         }
-        if (str == "SELF_TYPE") {
+        if (str.equals("SELF_TYPE")) {
             return JetNodeTypes.SELF_TYPE;
         }
-        if (str == "ANNOTATED_EXPRESSION") {
+        if (str.equals("ANNOTATED_EXPRESSION")) {
             return JetNodeTypes.ANNOTATED_EXPRESSION;
         }
-        if (str == "LONG_ANNOTATION") {
+        if (str.equals("LONG_ANNOTATION")) {
             return JetNodeTypes.ANNOTATION;
         }
-        if (str == "ANNOTATION_ENTRY") {
+        if (str.equals("ANNOTATION_ENTRY")) {
             return JetNodeTypes.ANNOTATION_ENTRY;
         }
-        if (str == "CLASS_BODY") {
+        if (str.equals("CLASS_BODY")) {
             return JetNodeTypes.CLASS_BODY;
         }
-        if (str == "ENUM_CLASS_BODY") {
+        if (str.equals("ENUM_CLASS_BODY")) {
             return JetNodeTypes.CLASS_BODY;
         }
-        if (str == "ANONYMOUS_INITIALIZER") {
+        if (str.equals("ANONYMOUS_INITIALIZER")) {
             return JetNodeTypes.ANONYMOUS_INITIALIZER;
         }
-        if (str == "VALUE_ARGUMENTS") {
+        if (str.equals("VALUE_ARGUMENTS")) {
             return JetNodeTypes.VALUE_ARGUMENT_LIST;
         }
-        if (str == "CALL_SUFFIX") {
+        if (str.equals("CALL_SUFFIX")) {
             return JetNodeTypes.CALL_EXPRESSION;
         }
-        if (str == "DOT_IDENTIFIER") {
+        if (str.equals("DOT_IDENTIFIER")) {
             return JetNodeTypes.DOT_QUALIFIED_EXPRESSION;
         }
-        if (str == "IMPORT_LIST") {
+        if (str.equals("IMPORT_LIST")) {
             return JetNodeTypes.IMPORT_LIST;
         }
-        if (str == "IMPORT_DIRECTIVE") {
+        if (str.equals("IMPORT_DIRECTIVE")) {
             return JetNodeTypes.IMPORT_DIRECTIVE;
         }
-        if (str == "TYPE_PARAMETERS") {
+        if (str.equals("TYPE_PARAMETERS")) {
             return JetNodeTypes.TYPE_PARAMETER_LIST;
         }
-        if (str == "TYPE_PARAMETER") {
+        if (str.equals("TYPE_PARAMETER")) {
             return JetNodeTypes.TYPE_PARAMETER;
         }
-        if (str == "FUNCTION_PARAMETER") {
+        if (str.equals("FUNCTION_PARAMETER")) {
             return JetNodeTypes.VALUE_PARAMETER;
         }
-        if (str == "TYPE") {
+        if (str.equals("TYPE")) {
             return JetNodeTypes.TYPE_REFERENCE;
         }
-        if (str == "TYPE_FOLLOWED_BY_DOT") {
+        if (str.equals("TYPE_FOLLOWED_BY_DOT")) {
             return JetNodeTypes.TYPE_REFERENCE;
         }
-        if (str == "USER_TYPE") {
+        if (str.equals("USER_TYPE")) {
             return JetNodeTypes.USER_TYPE;
         }
-        if (str == "USER_TYPE_FOLLOWED_BY_DOT") {
+        if (str.equals("USER_TYPE_FOLLOWED_BY_DOT")) {
             return JetNodeTypes.USER_TYPE;
         }
-        if (str == "VALUE_PARAMETERS") {
+        if (str.equals("VALUE_PARAMETERS")) {
             return JetNodeTypes.VALUE_PARAMETER_LIST;
         }
-        if (str == "DELEGATION_SPECIFIER_EXT") {
+        if (str.equals("DELEGATION_SPECIFIER_EXT")) {
             return JetNodeTypes.DELEGATION_SPECIFIER_LIST;
         }
-        if (str == "CONSTRUCTOR_CALLEE") {
+        if (str.equals("CONSTRUCTOR_CALLEE")) {
             return JetNodeTypes.CONSTRUCTOR_CALLEE;
         }
-        if (str == "DELEGATOR_SUPER_CALL") {
+        if (str.equals("DELEGATOR_SUPER_CALL")) {
             return JetNodeTypes.DELEGATOR_SUPER_CALL;
         }
-        if (str == "USER_TYPE_REFERENCE") {
+        if (str.equals("USER_TYPE_REFERENCE")) {
             return JetNodeTypes.TYPE_REFERENCE;
         }
-        if (str == "VALUE_ARGUMENT_NAME") {
+        if (str.equals("VALUE_ARGUMENT_NAME")) {
             return JetNodeTypes.VALUE_ARGUMENT_NAME;
         }
-        if (str == "VALUE_ARGUMENT") {
+        if (str.equals("VALUE_ARGUMENT")) {
             return JetNodeTypes.VALUE_ARGUMENT;
         }
-        if (str == "EXPLICIT_DELEGATION") {
+        if (str.equals("EXPLICIT_DELEGATION")) {
             return JetNodeTypes.DELEGATOR_BY;
         }
-        if (str == "DELEGATOR_SUPER_CLASS") {
+        if (str.equals("DELEGATOR_SUPER_CLASS")) {
             return JetNodeTypes.DELEGATOR_SUPER_CLASS;
         }
-        if (str == "DOT_QUALIFIED_EXPRESSION") {
+        if (str.equals("DOT_QUALIFIED_EXPRESSION")) {
             return JetNodeTypes.DOT_QUALIFIED_EXPRESSION;
         }
-        if (str == "GETTER") {
+        if (str.equals("GETTER")) {
             return JetNodeTypes.PROPERTY_ACCESSOR;
         }
-        if (str == "SETTER") {
+        if (str.equals("SETTER")) {
             return JetNodeTypes.PROPERTY_ACCESSOR;
         }
-        if (str == "SINGLE_VALUE_PARAMETER_LIST") {
+        if (str.equals("SINGLE_VALUE_PARAMETER_LIST")) {
             return JetNodeTypes.VALUE_PARAMETER_LIST;
         }
-        if (str == "PARAMETER") {
+        if (str.equals("PARAMETER")) {
             return JetNodeTypes.VALUE_PARAMETER;
         }
-        if (str == "MODIFIER_LIST") {
+        if (str.equals("MODIFIER_LIST")) {
             return JetNodeTypes.MODIFIER_LIST;
         }
-        if (str == "TYPE_OPERATION") {
+        if (str.equals("TYPE_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "TYPE_RHS_PLUS") {
+        if (str.equals("TYPE_RHS_PLUS")) {
             return JetNodeTypes.BINARY_WITH_TYPE;
         }
-        if (str == "THIS_EXPRESSION") {
+        if (str.equals("THIS_EXPRESSION")) {
             return JetNodeTypes.THIS_EXPRESSION;
         }
-        if (str == "THIS_REFERENCE") {
+        if (str.equals("THIS_REFERENCE")) {
             return JetNodeTypes.REFERENCE_EXPRESSION;
         }
-        if (str == "TYPE_ARGUMENT_LIST") {
+        if (str.equals("TYPE_ARGUMENT_LIST")) {
             return JetNodeTypes.TYPE_ARGUMENT_LIST;
         }
-        if (str == "TYPE_PROJECTION") {
+        if (str.equals("TYPE_PROJECTION")) {
             return JetNodeTypes.TYPE_PROJECTION;
         }
-        if (str == "NULLABLE_TYPE") {
+        if (str.equals("NULLABLE_TYPE")) {
             return JetNodeTypes.NULLABLE_TYPE;
         }
-        if (str == "WHEN_CONDITION_EXPRESSION") {
+        if (str.equals("WHEN_CONDITION_EXPRESSION")) {
             return JetNodeTypes.WHEN_CONDITION_EXPRESSION;
         }
-        if (str == "WHEN_CONDITION_IN_RANGE") {
+        if (str.equals("WHEN_CONDITION_IN_RANGE")) {
             return JetNodeTypes.WHEN_CONDITION_IN_RANGE;
         }
-        if (str == "WHEN_CONDITION_IS_PATTERN") {
+        if (str.equals("WHEN_CONDITION_IS_PATTERN")) {
             return JetNodeTypes.WHEN_CONDITION_IS_PATTERN;
         }
-        if (str == "PRIMARY_CONSTRUCTOR_MODIFIER_LIST") {
+        if (str.equals("PRIMARY_CONSTRUCTOR_MODIFIER_LIST")) {
             return JetNodeTypes.PRIMARY_CONSTRUCTOR_MODIFIER_LIST;
         }
-        if (str == "ENUM_ENTRY") {
+        if (str.equals("ENUM_ENTRY")) {
             return JetNodeTypes.ENUM_ENTRY;
         }
-        if (str == "OBJECT_DECLARATION_NAME") {
+        if (str.equals("OBJECT_DECLARATION_NAME")) {
             return JetNodeTypes.OBJECT_DECLARATION_NAME;
         }
-        if (str == "INITIALIZER_EXT") {
+        if (str.equals("INITIALIZER_EXT")) {
             return JetNodeTypes.INITIALIZER_LIST;
         }
-        if (str == "PREFIX_OPERATION_EXPRESSION") {
+        if (str.equals("PREFIX_OPERATION_EXPRESSION")) {
             return JetNodeTypes.PREFIX_EXPRESSION;
         }
-        if (str == "LABEL_EXPRESSION") {
+        if (str.equals("LABEL_EXPRESSION")) {
             return JetNodeTypes.LABELED_EXPRESSION;
         }
-        if (str == "PREFIX_OPERATION") {
+        if (str.equals("PREFIX_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "TYPE_ARGUMENTS") {
+        if (str.equals("TYPE_ARGUMENTS")) {
             return JetNodeTypes.TYPE_ARGUMENT_LIST;
         }
-        if (str == "TYPE_LIST") {
+        if (str.equals("TYPE_LIST")) {
             return JetNodeTypes.TYPE_PROJECTION;
         }
-        if (str == "JUMP_THROW") {
+        if (str.equals("JUMP_THROW")) {
             return JetNodeTypes.THROW;
         }
-        if (str == "JUMP_RETURN") {
+        if (str.equals("JUMP_RETURN")) {
             return JetNodeTypes.RETURN;
         }
-        if (str == "JUMP_CONTINUE") {
+        if (str.equals("JUMP_CONTINUE")) {
             return JetNodeTypes.CONTINUE;
         }
-        if (str == "JUMP_BREAK") {
+        if (str.equals("JUMP_BREAK")) {
             return JetNodeTypes.BREAK;
         }
-        if (str == "FLOAT_CONSTANT") {
+        if (str.equals("FLOAT_CONSTANT")) {
             return JetNodeTypes.FLOAT_CONSTANT;
         }
-        if (str == "PARENTHESIZED_EXPRESSION") {
+        if (str.equals("PARENTHESIZED_EXPRESSION")) {
             return JetNodeTypes.PARENTHESIZED;
         }
-        if (str == "FUNCTION_LITERAL_EXPRESSION") {
+        if (str.equals("FUNCTION_LITERAL_EXPRESSION")) {
             return JetNodeTypes.FUNCTION_LITERAL_EXPRESSION;
         }
-        if (str == "STATEMENTS_BLOCK") {
+        if (str.equals("STATEMENTS_BLOCK")) {
             return JetNodeTypes.BLOCK;
         }
-        if (str == "INDICES") {
+        if (str.equals("INDICES")) {
             return JetNodeTypes.INDICES;
         }
-        if (str == "IN_OPERATION") {
+        if (str.equals("IN_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "NAMED_INFIX_PLUS") {
+        if (str.equals("NAMED_INFIX_PLUS")) {
             return JetNodeTypes.BINARY_EXPRESSION;
         }
-        if (str == "NAMED_INFIX_FIRST") {
+        if (str.equals("NAMED_INFIX_FIRST")) {
             return JetNodeTypes.IS_EXPRESSION;
         }
-        if (str == "IS_OPERATION") {
+        if (str.equals("IS_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "STRING_TEMPLATE") {
+        if (str.equals("STRING_TEMPLATE")) {
             return JetNodeTypes.STRING_TEMPLATE;
         }
-        if (str == "SAFE_ACCESS_EXPRESSION") {
+        if (str.equals("SAFE_ACCESS_EXPRESSION")) {
             return JetNodeTypes.SAFE_ACCESS_EXPRESSION;
         }
-        if (str == "ELVIS_ACCESS_EXPRESSION") {
+        if (str.equals("ELVIS_ACCESS_EXPRESSION")) {
             return JetNodeTypes.BINARY_EXPRESSION;
         }
-        if (str == "ELVIS_OPERATION") {
+        if (str.equals("ELVIS_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "DISJUNCTION_PLUS") {
+        if (str.equals("DISJUNCTION_PLUS")) {
             return JetNodeTypes.BINARY_EXPRESSION;
         }
-        if (str == "OR_OPERATION") {
+        if (str.equals("OR_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "BINARY_CONSTANT") {
+        if (str.equals("BINARY_CONSTANT")) {
             return JetNodeTypes.BOOLEAN_CONSTANT;
         }
-        if (str == "AND_OPERATION") {
+        if (str.equals("AND_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "CONJUNCTION_PLUS") {
+        if (str.equals("CONJUNCTION_PLUS")) {
             return JetNodeTypes.BINARY_EXPRESSION;
         }
-        if (str == "OBJECT_DECLARATION") {
+        if (str.equals("OBJECT_DECLARATION")) {
             return JetNodeTypes.OBJECT_DECLARATION;
         }
-        if (str == "OBJECT_LITERAL") {
+        if (str.equals("OBJECT_LITERAL")) {
             return JetNodeTypes.OBJECT_LITERAL;
         }
-        if (str == "TYPEDEF") {
+        if (str.equals("TYPEDEF")) {
             return JetNodeTypes.TYPEDEF;
         }
-        if (str == "TYPE_CONSTRAINT_EXT") {
+        if (str.equals("TYPE_CONSTRAINT_EXT")) {
             return JetNodeTypes.TYPE_CONSTRAINT_LIST;
         }
-        if (str == "TYPE_CONSTRAINT") {
+        if (str.equals("TYPE_CONSTRAINT")) {
             return JetNodeTypes.TYPE_CONSTRAINT;
         }
-        if (str == "MODIFIER_LIST_FOLLOWED_BY_IDENTIFIER") {
+        if (str.equals("MODIFIER_LIST_FOLLOWED_BY_IDENTIFIER")) {
             return JetNodeTypes.MODIFIER_LIST;
         }
-        if (str == "ANNOTATION_WITH_SHORT") {
+        if (str.equals("ANNOTATION_WITH_SHORT")) {
             return JetNodeTypes.ANNOTATION;
         }
-        if (str == "CONDITION") {
+        if (str.equals("CONDITION")) {
             return JetNodeTypes.CONDITION;
         }
-        if (str == "THEN_EXPRESSION") {
+        if (str.equals("THEN_EXPRESSION")) {
             return JetNodeTypes.THEN;
         }
-        if (str == "ELSE_EXPRESSION") {
+        if (str.equals("ELSE_EXPRESSION")) {
             return JetNodeTypes.ELSE;
         }
-        if (str == "NULL") {
+        if (str.equals("NULL")) {
             return JetNodeTypes.NULL;
         }
-        if (str == "VALUE_PARAMETER_LIST") {
+        if (str.equals("VALUE_PARAMETER_LIST")) {
             return JetNodeTypes.VALUE_PARAMETER_LIST;
         }
-        if (str == "FUNCTION_TYPE") {
+        if (str.equals("FUNCTION_TYPE")) {
             return JetNodeTypes.FUNCTION_TYPE;
         }
-        if (str == "PARAMETER_OR_MODIFIER_TYPE") {
+        if (str.equals("PARAMETER_OR_MODIFIER_TYPE")) {
             return JetNodeTypes.VALUE_PARAMETER;
         }
-        if (str == "FUNCTION_TYPE_RECEIVER") {
+        if (str.equals("FUNCTION_TYPE_RECEIVER")) {
             return JetNodeTypes.TYPE_REFERENCE;
         }
-        if (str == "FUNCTION_TYPE_RECEIVER_REFERENCE") {
+        if (str.equals("FUNCTION_TYPE_RECEIVER_REFERENCE")) {
             return JetNodeTypes.FUNCTION_TYPE_RECEIVER;
         }
-        if (str == "SIMPLE_USER_TYPE_ADD") {
+        if (str.equals("SIMPLE_USER_TYPE_ADD")) {
             return JetNodeTypes.USER_TYPE;
         }
-        if (str == "LEFT_FUNCTION_TYPE") {
+        if (str.equals("LEFT_FUNCTION_TYPE")) {
             return JetNodeTypes.FUNCTION_TYPE;
         }
-        if (str == "SIMPLE_USER_TYPE") {
+        if (str.equals("SIMPLE_USER_TYPE")) {
             return JetNodeTypes.USER_TYPE;
         }
-        if (str == "PLUS_PLUS_AND_OTHERS_EXPRESSION") {
+        if (str.equals("PLUS_PLUS_AND_OTHERS_EXPRESSION")) {
             return JetNodeTypes.POSTFIX_EXPRESSION;
         }
-        if (str == "PLUS_PLUS_AND_OTHERS_OPERATION") {
+        if (str.equals("PLUS_PLUS_AND_OTHERS_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "EQUALITY_OPERATION") {
+        if (str.equals("EQUALITY_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "EQUALITY_COMPARISON_EXPRESSION") {
+        if (str.equals("EQUALITY_COMPARISON_EXPRESSION")) {
             return JetNodeTypes.BINARY_EXPRESSION;
         }
-        if (str == "ASTERISK") {
+        if (str.equals("ASTERISK")) {
             return JetNodeTypes.TYPE_PROJECTION;
         }
-        if (str == "CLASS_OBJECT") {
+        if (str.equals("CLASS_OBJECT")) {
             return JetNodeTypes.CLASS_OBJECT;
         }
-        if (str == "OBJECT_UNNAMED") {
+        if (str.equals("OBJECT_UNNAMED")) {
             return JetNodeTypes.OBJECT_DECLARATION;
         }
-        if (str == "MULTIPLICATIVE_OPERATION") {
+        if (str.equals("MULTIPLICATIVE_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "MULTIPLICATIVE_EXPRESSION_PLUS") {
+        if (str.equals("MULTIPLICATIVE_EXPRESSION_PLUS")) {
             return JetNodeTypes.BINARY_EXPRESSION;
         }
-        if (str == "FUNCTION_LITERAL_ARGUMENT") {
+        if (str.equals("FUNCTION_LITERAL_ARGUMENT")) {
             return JetNodeTypes.FUNCTION_LITERAL_ARGUMENT;
         }
-        if (str == "FUNCTION_LITERAL_VALUE_PARAMETER_LIST_1") {
+        if (str.equals("FUNCTION_LITERAL_VALUE_PARAMETER_LIST_1")) {
             return JetNodeTypes.VALUE_PARAMETER_LIST;
         }
-        if (str == "FUNCTION_LITERAL_VALUE_PARAMETER_LIST_2") {
+        if (str.equals("FUNCTION_LITERAL_VALUE_PARAMETER_LIST_2")) {
             return JetNodeTypes.VALUE_PARAMETER_LIST;
         }
-        if (str == "OBJECT") {
+        if (str.equals("OBJECT")) {
             return JetNodeTypes.OBJECT_DECLARATION;
         }
-        if (str == "OBJECT_NAME") {
+        if (str.equals("OBJECT_NAME")) {
             return JetNodeTypes.OBJECT_DECLARATION_NAME;
         }
-        if (str == "COMPARISON_EXPRESSION") {
+        if (str.equals("COMPARISON_EXPRESSION")) {
             return JetNodeTypes.BINARY_EXPRESSION;
         }
-        if (str == "COMPARISON_OPERATION") {
+        if (str.equals("COMPARISON_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "CHARACTER_CONSTANT") {
+        if (str.equals("CHARACTER_CONSTANT")) {
             return JetNodeTypes.CHARACTER_CONSTANT;
         }
-        if (str == "SUPER_REFERENCE") {
+        if (str.equals("SUPER_REFERENCE")) {
             return JetNodeTypes.REFERENCE_EXPRESSION;
         }
-        if (str == "SUPER_EXPRESSION") {
+        if (str.equals("SUPER_EXPRESSION")) {
             return JetNodeTypes.SUPER_EXPRESSION;
         }
-        if (str == "LABEL") {
+        if (str.equals("LABEL")) {
             return JetNodeTypes.LABEL_QUALIFIER;
         }
-        if (str == "LABEL_LABEL") {
+        if (str.equals("LABEL_LABEL")) {
             return JetNodeTypes.LABEL;
         }
-        if (str == "WHEN_PROPERTY") {
+        if (str.equals("WHEN_PROPERTY")) {
             return JetNodeTypes.PROPERTY;
         }
-        if (str == "TRY_BLOCK") {
+        if (str.equals("TRY_BLOCK")) {
             return JetNodeTypes.TRY;
         }
-        if (str == "SINGLE_VALUE_PARAMETER_LIST_WITH_BRACKETS") {
+        if (str.equals("SINGLE_VALUE_PARAMETER_LIST_WITH_BRACKETS")) {
             return JetNodeTypes.VALUE_PARAMETER_LIST;
         }
-        if (str == "FINALLY_BLOCK") {
+        if (str.equals("FINALLY_BLOCK")) {
             return JetNodeTypes.FINALLY;
         }
-        if (str == "FOR_VALUE_PARAMETER") {
+        if (str.equals("FOR_VALUE_PARAMETER")) {
             return JetNodeTypes.VALUE_PARAMETER;
         }
-        if (str == "LOOP_RANGE") {
+        if (str.equals("LOOP_RANGE")) {
             return JetNodeTypes.LOOP_RANGE;
         }
-        if (str == "BODY") {
+        if (str.equals("BODY")) {
             return JetNodeTypes.BODY;
         }
-        if (str == "THEN_EXPRESSION_WITH_SEMI") {
+        if (str.equals("THEN_EXPRESSION_WITH_SEMI")) {
             return JetNodeTypes.THEN;
         }
-        if (str == "PROPERTY_DELEGATE") {
+        if (str.equals("PROPERTY_DELEGATE")) {
             return JetNodeTypes.PROPERTY_DELEGATE;
         }
-        if (str == "RANGE_EXPRESSION_PLUS") {
+        if (str.equals("RANGE_EXPRESSION_PLUS")) {
             return JetNodeTypes.BINARY_EXPRESSION;
         }
-        if (str == "RANGE_OPERATION") {
+        if (str.equals("RANGE_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "CLASS_DECLARATION_LOCAL") {
+        if (str.equals("CLASS_DECLARATION_LOCAL")) {
             return JetNodeTypes.CLASS;
         }
-        if (str == "INFIX_FUNCTION_CALL_PLUS") {
+        if (str.equals("INFIX_FUNCTION_CALL_PLUS")) {
             return JetNodeTypes.BINARY_EXPRESSION;
         }
-        if (str == "SIMPLE_NAME_OPERATION") {
+        if (str.equals("SIMPLE_NAME_OPERATION")) {
             return JetNodeTypes.OPERATION_REFERENCE;
         }
-        if (str == "SHORT_TEMPLATE_ENTRY") {
+        if (str.equals("SHORT_TEMPLATE_ENTRY")) {
             return JetNodeTypes.SHORT_STRING_TEMPLATE_ENTRY;
         }
-        if (str == "LITERAL_STRING_TEMPLATE_ENTRY") {
+        if (str.equals("LITERAL_STRING_TEMPLATE_ENTRY")) {
             return JetNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY;
         }
-        if (str == "VALUE_PARAMETER_WITH_TYPE") {
+        if (str.equals("VALUE_PARAMETER_WITH_TYPE")) {
             return JetNodeTypes.VALUE_PARAMETER;
         }
-        if (str == "VALUE_PARAMETER_NO_TYPE") {
+        if (str.equals("VALUE_PARAMETER_NO_TYPE")) {
             return JetNodeTypes.VALUE_PARAMETER;
         }
-        if (str == "SCRIPT") {
+        if (str.equals("SCRIPT")) {
             return JetNodeTypes.SCRIPT;
         }
-        if (str == "FIELD_IDENTIFIER_REFERENCE") {
+        if (str.equals("FIELD_IDENTIFIER_REFERENCE")) {
             return JetNodeTypes.REFERENCE_EXPRESSION;
         }
+
         return new IElementType(str, JetLanguage.INSTANCE);
     }
 

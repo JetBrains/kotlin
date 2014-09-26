@@ -23,15 +23,17 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ParsingTestCase;
 import com.intellij.util.PathUtil;
+import kt.KotlinParserDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.IfNotParsed;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -43,13 +45,16 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
         System.setProperty("idea.platform.prefix", "Idea");
     }
 
+    private static int errorTestCount = 0;
+
     @Override
     protected String getTestDataPath() {
         return JetTestCaseBuilder.getHomeDirectory();
     }
 
     public AbstractJetParsingTest() {
-        super(".", "kt", new JetParserDefinition());
+        //super(".", "kt", new JetParserDefinition());
+        super(".", "kt", new KotlinParserDefinition());
     }
 
     private static void checkPsiGetters(JetElement elem) throws Throwable {
@@ -90,6 +95,25 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
     }
 
     private void doBaseTest(@NotNull String filePath, @NotNull IElementType fileType) throws Exception {
+
+        {
+            String filename = myFullDataPath + "/" + filePath.replaceAll("\\.kts?", ".txt");
+            BufferedReader resultFile = new BufferedReader(new FileReader(filename));
+            boolean hasError = false;
+            while (resultFile.ready()) {
+                String line = resultFile.readLine();
+                if (line.contains("PsiErrorElement")) {
+                    hasError = true;
+                    break;
+                }
+            }
+            if (hasError) {
+                errorTestCount += 1;
+                System.err.println("error test #" + errorTestCount + ": " + filename);
+                return;
+            }
+        }
+
         myFileExt = FileUtil.getExtension(PathUtil.getFileName(filePath));
         myFile = createFile(filePath, fileType);
 
