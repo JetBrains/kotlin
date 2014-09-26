@@ -52,6 +52,9 @@ import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.jps.builders.java.JavaBuilderUtil
+import com.intellij.util.containers.MultiMap
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -136,6 +139,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
 
         val allCompiledFiles = getAllCompiledFilesContainer(context)
+        val filesToCompile: MultiMap<ModuleBuildTarget, File>
 
         if (JpsUtils.isJsKotlinModule(representativeTarget)) {
             if (chunk.getModules().size() > 1) {
@@ -151,6 +155,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
             val sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(representativeTarget)
             //List<File> sourceFiles = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder);
+
+            filesToCompile = MultiMap.emptyInstance() // won't be used
 
             if (sourceFiles.isEmpty()) {
                 return NOTHING_DONE
@@ -171,10 +177,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                                                  + "Kotlin will compile them, but some strange effect may happen", NO_LOCATION)
             }
 
-            val filesToCompile = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder)
-            for (target in filesToCompile.keySet()) {
-                filesToCompile.getModifiable(target).removeAll(allCompiledFiles)
-            }
+            filesToCompile = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder)
             allCompiledFiles.addAll(filesToCompile.values())
 
             val processedTargetsWithRemoved = getProcessedTargetsWithRemovedFilesContainer(context)
@@ -243,6 +246,21 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             outputConsumer.registerOutputFile(target, outputFile, sourceFiles.map { it.getPath() })
         }
 
+        val delta = context.getProjectDescriptor().dataManager.getMappings()!!.createDelta()
+        val callback = delta!!.getCallback()!!
+
+        for (outputItem in outputItemCollector.getOutputs()) {
+            val outputFile = outputItem.getOutputFile()
+            callback.associate(FileUtil.toSystemIndependentName(outputFile.getAbsolutePath()),
+                               outputItem.getSourceFiles().map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
+                               ClassReader(outputFile.readBytes())
+            )
+        }
+
+        val allCompiled = filesToCompile.values()
+        val compiledInThisRound = if (compilationErrors) listOf<File>() else allCompiled
+        JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
+
         if (compilationErrors) {
             return ABORT
         }
@@ -254,7 +272,9 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             }
             if (recompilationDecision == IncrementalCacheImpl.RecompilationDecision.COMPILE_OTHERS) {
                 // TODO should mark dependencies as dirty, as well
-                FSOperations.markDirty(context, chunk, { file -> !allCompiledFiles.contains(file) })
+                FSOperations.markDirty(context, chunk, { file ->
+                    KotlinSourceFileCollector.isKotlinSourceFile(file) && file !in allCompiledFiles
+                })
             }
             return ADDITIONAL_PASS_REQUIRED
         }

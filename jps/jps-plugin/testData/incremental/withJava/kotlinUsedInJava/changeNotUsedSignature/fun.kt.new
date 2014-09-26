@@ -1,0 +1,5 @@
+package test
+
+fun foo(): String {
+  return "Hello, world!"
+}
