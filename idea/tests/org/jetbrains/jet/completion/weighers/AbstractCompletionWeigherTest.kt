@@ -39,14 +39,13 @@ public abstract class AbstractCompletionWeigherTest(val completionType: Completi
         myFixture.assertPreferredCompletionItems(InTextDirectivesUtils.getPrefixedInt(text, "// SELECTED:") ?: 0, *items)
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-    }
-
     protected override fun getTestDataPath() : String? {
         return File(PluginTestCaseBase.getTestDataPathBase(), relativeTestDataPath).getPath() + File.separator
     }
 }
 
 public abstract class AbstractBasicCompletionWeigherTest() : AbstractCompletionWeigherTest(CompletionType.BASIC, "/completion/weighers/basic")
-public abstract class AbstractSmartCompletionWeigherTest() : AbstractCompletionWeigherTest(CompletionType.SMART, "/completion/weighers/smart")
+
+public abstract class AbstractSmartCompletionWeigherTest() : AbstractCompletionWeigherTest(CompletionType.SMART, "/completion/weighers/smart") {
+    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+}

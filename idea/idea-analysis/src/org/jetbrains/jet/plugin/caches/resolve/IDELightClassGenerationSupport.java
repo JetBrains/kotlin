@@ -16,14 +16,12 @@
 
 package org.jetbrains.jet.plugin.caches.resolve;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.containers.MultiMap;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +35,6 @@ import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -45,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex;
-import org.jetbrains.jet.plugin.stubindex.JetExactPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil;
 
@@ -56,11 +52,6 @@ import static org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope.kotlinSour
 public class IDELightClassGenerationSupport extends LightClassGenerationSupport {
 
     private static final Logger LOG = Logger.getInstance(IDELightClassGenerationSupport.class);
-
-    @NotNull
-    public static IDELightClassGenerationSupport getInstanceForIDE(@NotNull Project project) {
-        return (IDELightClassGenerationSupport) ServiceManager.getService(project, LightClassGenerationSupport.class);
-    }
 
     private final Project project;
 
@@ -231,19 +222,6 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         }
 
         return  KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), classOrObject);
-    }
-
-    @NotNull
-    public MultiMap<String, FqName> getAllPossiblePackageClasses(@NotNull GlobalSearchScope scope) {
-        Collection<String> packageFqNames = JetExactPackagesIndex.getInstance().getAllKeys(project);
-
-        MultiMap<String, FqName> result = new MultiMap<String, FqName>();
-        for (String packageFqName : packageFqNames) {
-            FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(new FqName(packageFqName));
-            result.putValue(packageClassFqName.shortName().asString(), packageClassFqName);
-        }
-
-        return result;
     }
 
     @NotNull

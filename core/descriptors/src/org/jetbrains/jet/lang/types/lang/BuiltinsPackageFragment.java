@@ -123,6 +123,7 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
 
     @Nullable
     private static InputStream getStreamNullable(@NotNull String path) {
+        //noinspection ConstantConditions
         return KotlinBuiltIns.class.getClassLoader().getResourceAsStream(path);
     }
 
@@ -150,10 +151,10 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
         @Nullable
         @Override
         public ClassData findClassData(@NotNull ClassId classId) {
-            InputStream stream = getStreamNullable(BuiltInsSerializationUtil.getClassMetadataPath(classId));
-            if (stream == null) {
-                return null;
-            }
+            String metadataPath = BuiltInsSerializationUtil.getClassMetadataPath(classId);
+            if (metadataPath == null) return null;
+            InputStream stream = getStreamNullable(metadataPath);
+            if (stream == null) return null;
 
             try {
                 ProtoBuf.Class classProto = ProtoBuf.Class.parseFrom(stream);

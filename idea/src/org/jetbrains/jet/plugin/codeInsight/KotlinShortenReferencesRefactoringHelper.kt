@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetUserType
 
 public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
-    private val LOG = Logger.getInstance(javaClass<KotlinShortenReferencesRefactoringHelper>().getCanonicalName())!!
+    private val LOG = Logger.getInstance(javaClass<KotlinShortenReferencesRefactoringHelper>().getCanonicalName())
 
     override fun prepareOperation(usages: Array<out UsageInfo>?): Any? {
         if (usages != null && usages.isNotEmpty()) {
@@ -74,5 +74,5 @@ private fun Project.clearElementsToShorten() {
 public fun JetElement.addToShorteningWaitSet() {
     assert (ApplicationManager.getApplication()!!.isWriteAccessAllowed(), "Write access needed")
     val project = getProject()
-    project.getElementsToShorten(true)!!.add(SmartPointerManager.getInstance(project)!!.createSmartPsiElementPointer(this))
+    project.getElementsToShorten(true)!!.add(SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this))
 }

@@ -4971,6 +4971,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("useAnonymousObjectAsIterator.kt")
+        public void testUseAnonymousObjectAsIterator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/useAnonymousObjectAsIterator.kt");
+            doTest(fileName);
+        }
+        
     }
     
     @TestMetadata("compiler/testData/codegen/box/operatorConventions")

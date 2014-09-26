@@ -354,7 +354,7 @@ public class MethodInliner {
 
         AbstractInsnNode cur = node.instructions.getFirst();
         int index = 0;
-        Set<LabelNode> deadLabels = new HashSet<LabelNode>();
+        Set<LabelNode> possibleDeadLabels = new HashSet<LabelNode>();
 
         while (cur != null) {
             Frame<SourceValue> frame = sources[index];
@@ -414,10 +414,15 @@ public class MethodInliner {
             if (frame == null) {
                 //clean dead code otherwise there is problems in unreachable finally block, don't touch label it cause try/catch/finally problems
                 if (prevNode.getType() == AbstractInsnNode.LABEL) {
-                    deadLabels.add((LabelNode) prevNode);
+                    possibleDeadLabels.add((LabelNode) prevNode);
                 } else {
                     node.instructions.remove(prevNode);
                 }
+            } else {
+                //Cause we generate exception table for default handler using gaps (see ExpressionCodegen.visitTryExpression)
+                //it may occurs that interval for default handler starts before catch start label, so this label seems as dead,
+                //but as result all this labels will be merged into one (see KT-5863)
+                possibleDeadLabels.remove(prevNode.getPrevious());
             }
         }
 
@@ -425,7 +430,7 @@ public class MethodInliner {
         List<TryCatchBlockNode> blocks = node.tryCatchBlocks;
         for (Iterator<TryCatchBlockNode> iterator = blocks.iterator(); iterator.hasNext(); ) {
             TryCatchBlockNode block = iterator.next();
-            if (deadLabels.contains(block.start) && deadLabels.contains(block.end)) {
+            if (possibleDeadLabels.contains(block.start) && possibleDeadLabels.contains(block.end)) {
                 iterator.remove();
             }
         }

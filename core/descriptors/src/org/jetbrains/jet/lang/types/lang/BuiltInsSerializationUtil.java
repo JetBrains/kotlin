@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.types.lang;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -37,21 +38,27 @@ public class BuiltInsSerializationUtil {
     private BuiltInsSerializationUtil() {
     }
 
-    @NotNull
-    public static String relativeClassNameToFilePath(@NotNull FqNameUnsafe className) {
+    @Nullable
+    private static String relativeClassNameToFilePath(@NotNull FqNameUnsafe className) {
         List<Name> segments = className.pathSegments();
         List<String> correctedSegments = new ArrayList<String>(segments.size());
         for (Name segment : segments) {
-            correctedSegments.add(isClassObjectName(segment) ? CLASS_OBJECT_NAME : segment.getIdentifier());
+            if (isClassObjectName(segment)) {
+                correctedSegments.add(CLASS_OBJECT_NAME);
+            }
+            else if (!segment.isSpecial()) {
+                correctedSegments.add(segment.getIdentifier());
+            }
+            else return null;
         }
         return FqName.fromSegments(correctedSegments).asString();
     }
 
-    @NotNull
+    @Nullable
     public static String getClassMetadataPath(@NotNull ClassId classId) {
-        return packageFqNameToPath(classId.getPackageFqName())
-               + "/" + relativeClassNameToFilePath(classId.getRelativeClassName())
-               + "." + CLASS_METADATA_FILE_EXTENSION;
+        String filePath = relativeClassNameToFilePath(classId.getRelativeClassName());
+        if (filePath == null) return null;
+        return packageFqNameToPath(classId.getPackageFqName()) + "/" + filePath + "." + CLASS_METADATA_FILE_EXTENSION;
     }
 
     @NotNull

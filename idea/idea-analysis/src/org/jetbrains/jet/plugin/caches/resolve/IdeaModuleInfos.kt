@@ -35,7 +35,6 @@ import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.utils.emptyOrSingletonList
-import com.intellij.openapi.roots.OrderEnumerator
 
 public abstract class IdeaModuleInfo : ModuleInfo {
     abstract fun contentScope(): GlobalSearchScope
@@ -80,14 +79,14 @@ fun ideaModelDependencies(module: Module, productionOnly: Boolean): List<IdeaMod
     return result.toList()
 }
 
-public abstract class ModuleSourceInfo(): IdeaModuleInfo() {
+public abstract class ModuleSourceInfo : IdeaModuleInfo() {
     abstract val module: Module
 }
 
 public data class ModuleProductionSourceInfo(override val module: Module) : ModuleSourceInfo() {
     override val name = Name.special("<production sources for module ${module.getName()}>")
 
-    override fun contentScope() = module.getModuleScope(false)
+    override fun contentScope() = ModuleProductionSourceScope(module)
 
     override fun dependencies() = ideaModelDependencies(module, productionOnly = true)
 
@@ -98,7 +97,7 @@ public data class ModuleProductionSourceInfo(override val module: Module) : Modu
 public data class ModuleTestSourceInfo(override val module: Module) : ModuleSourceInfo() {
     override val name = Name.special("<test sources for module ${module.getName()}>")
 
-    override fun contentScope() = module.getModuleScope().intersectWith(GlobalSearchScope.notScope(module.getModuleScope(false)))
+    override fun contentScope() = ModuleTestSourceScope(module)
 
     override fun dependencies() = ideaModelDependencies(module, productionOnly = false)
 }
@@ -107,6 +106,26 @@ private fun ModuleSourceInfo.isTests() = this is ModuleTestSourceInfo
 
 public fun Module.productionSourceInfo(): ModuleProductionSourceInfo = ModuleProductionSourceInfo(this)
 public fun Module.testSourceInfo(): ModuleTestSourceInfo = ModuleTestSourceInfo(this)
+
+private abstract class ModuleSourceScope : GlobalSearchScope() {
+    abstract val module: Module
+
+    override fun compare(file1: VirtualFile, file2: VirtualFile) = 0
+    override fun isSearchInModuleContent(aModule: Module) = aModule == module
+    override fun isSearchInLibraries() = false
+}
+
+private data class ModuleProductionSourceScope(override val module: Module) : ModuleSourceScope() {
+    val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
+
+    override fun contains(file: VirtualFile) = moduleFileIndex.isInSourceContent(file) && !moduleFileIndex.isInTestSourceContent(file)
+}
+
+private data class ModuleTestSourceScope(override val module: Module) : ModuleSourceScope() {
+    val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
+
+    override fun contains(file: VirtualFile) = moduleFileIndex.isInTestSourceContent(file)
+}
 
 public data class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo() {
     override val name: Name = Name.special("<library ${library.getName()}>")

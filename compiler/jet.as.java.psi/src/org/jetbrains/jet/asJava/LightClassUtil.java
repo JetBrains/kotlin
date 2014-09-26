@@ -55,6 +55,10 @@ public class LightClassUtil {
 
     public static final File BUILT_INS_SRC_DIR = new File("core/builtins/native", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString());
 
+    private static final class BuiltinsDirUrlHolder {
+        private static final URL BUILT_INS_DIR_URL = computeBuiltInsDir();
+    }
+
     /**
      * Checks whether the given file is loaded from the location where Kotlin's built-in classes are defined.
      * As of today, this is core/builtins/native/kotlin directory and files such as Any.kt, Nothing.kt etc.
@@ -86,6 +90,11 @@ public class LightClassUtil {
 
     @NotNull
     public static URL getBuiltInsDirUrl() {
+        return BuiltinsDirUrlHolder.BUILT_INS_DIR_URL;
+    }
+
+    @NotNull
+    private static URL computeBuiltInsDir() {
         String builtInFilePath = "/" + KotlinBuiltIns.BUILT_INS_PACKAGE_NAME + "/Library.kt";
 
         URL url = KotlinBuiltIns.class.getResource(builtInFilePath);

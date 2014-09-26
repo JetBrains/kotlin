@@ -297,6 +297,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
             
+            @TestMetadata("enumValueOfMethod.kt")
+            public void testEnumValueOfMethod() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/enumValueOfMethod.kt");
+                doTestWithStdlib(fileName);
+            }
+            
             @TestMetadata("equalsIntrinsic.kt")
             public void testEqualsIntrinsic() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/equalsIntrinsic.kt");
@@ -366,6 +372,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("innerConstructorFromTopLevelOneStringArg.kt")
             public void testInnerConstructorFromTopLevelOneStringArg() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/innerConstructorFromTopLevelOneStringArg.kt");
+                doTestWithStdlib(fileName);
+            }
+            
+            @TestMetadata("javaCollectionsStaticMethod.kt")
+            public void testJavaCollectionsStaticMethod() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/javaCollectionsStaticMethod.kt");
                 doTestWithStdlib(fileName);
             }
             
