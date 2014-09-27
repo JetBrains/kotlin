@@ -37,6 +37,7 @@ import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorToString;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
@@ -102,7 +103,7 @@ public class ReplInterpreter {
         JetCoreEnvironment environment = JetCoreEnvironment.createForProduction(disposable, configuration);
         Project project = environment.getProject();
         this.psiFileFactory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
-        this.trace = new BindingTraceContext();
+        this.trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         this.module = TopDownAnalyzerFacadeForJVM.createJavaModule("<repl>");
 
         GlobalContextImpl context = ContextPackage.GlobalContext();

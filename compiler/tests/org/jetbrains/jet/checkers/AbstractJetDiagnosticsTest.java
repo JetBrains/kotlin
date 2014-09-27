@@ -98,7 +98,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             allJetFiles.addAll(jetFiles);
 
             ModuleDescriptorImpl module = modules.get(testModule);
-            BindingTrace moduleTrace = CliLightClassGenerationSupport.createTrace();
+            BindingTrace moduleTrace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
 
             moduleBindings.put(testModule, moduleTrace.getBindingContext());
 

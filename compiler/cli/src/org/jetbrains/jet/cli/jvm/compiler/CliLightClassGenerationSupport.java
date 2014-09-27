@@ -18,7 +18,6 @@ package org.jetbrains.jet.cli.jvm.compiler;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
@@ -30,6 +29,7 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
@@ -79,12 +79,11 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         this.bindingContext = trace.getBindingContext();
         this.module = module;
 
-        if (trace instanceof CliBindingTrace) {
-            ((CliBindingTrace) trace).setKotlinCodeAnalyzer(analyzer);
+        if (!(trace instanceof CliBindingTrace)) {
+            throw new IllegalArgumentException("Shared trace is expected to be subclass of " + CliBindingTrace.class.getSimpleName() + " class");
         }
-        else {
-            assert ApplicationManager.getApplication().isUnitTestMode();
-        }
+
+        ((CliBindingTrace) trace).setKotlinCodeAnalyzer(analyzer);
     }
 
     @NotNull
@@ -217,13 +216,13 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         return KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), classOrObject);
     }
 
-    public static BindingTrace createTrace() {
-        return new CliBindingTrace();
+    @NotNull
+    @Override
+    public BindingTraceContext createTrace() {
+        return new NoScopeRecordCliBindingTrace();
     }
 
-    public static class CliBindingTrace extends BindingTraceContext {
-        private KotlinCodeAnalyzer kotlinCodeAnalyzer;
-
+    public static class NoScopeRecordCliBindingTrace extends CliBindingTrace {
         @Override
         public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
             if (slice == BindingContext.RESOLUTION_SCOPE || slice == BindingContext.TYPE_RESOLUTION_SCOPE) {
@@ -231,6 +230,19 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
                 return;
             }
             super.record(slice, key, value);
+        }
+
+        @Override
+        public String toString() {
+            return NoScopeRecordCliBindingTrace.class.getName();
+        }
+    }
+
+    public static class CliBindingTrace extends BindingTraceContext {
+        private KotlinCodeAnalyzer kotlinCodeAnalyzer;
+
+        @TestOnly
+        public CliBindingTrace() {
         }
 
         @Override

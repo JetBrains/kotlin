@@ -17,15 +17,14 @@
 package org.jetbrains.jet.lang.resolve
 
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
-import kotlin.platform.platformStatic
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import javax.annotation.PostConstruct
 
 public trait CodeAnalyzerInitializer {
     public fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer?)
-
+    public fun createTrace(): BindingTrace
+    
     class object {
         public fun getInstance(project: Project): CodeAnalyzerInitializer =
                 ServiceManager.getService<CodeAnalyzerInitializer>(project, javaClass<CodeAnalyzerInitializer>())!!
@@ -36,4 +35,6 @@ public class DummyCodeAnalyzerInitializer: CodeAnalyzerInitializer {
     public override fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer?) {
         // Do nothing
     }
+
+    public override fun createTrace(): BindingTrace = BindingTraceContext()
 }

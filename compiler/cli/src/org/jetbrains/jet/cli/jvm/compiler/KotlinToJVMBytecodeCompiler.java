@@ -291,7 +291,7 @@ public class KotlinToJVMBytecodeCompiler {
                     @NotNull
                     @Override
                     public AnalysisResult invoke() {
-                        BindingTrace sharedTrace = CliLightClassGenerationSupport.createTrace();
+                        BindingTrace sharedTrace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
                         ModuleDescriptorImpl analyzeModule = TopDownAnalyzerFacadeForJVM.createAnalyzeModule();
 
                         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(

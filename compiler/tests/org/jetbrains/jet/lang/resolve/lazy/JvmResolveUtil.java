@@ -80,8 +80,7 @@ public class JvmResolveUtil {
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         module.seal();
 
-        CliLightClassGenerationSupport lightClassGenerationSupport = CliLightClassGenerationSupport.getInstanceForCli(project);
-        BindingTrace trace = lightClassGenerationSupport != null ? CliLightClassGenerationSupport.createTrace() : new BindingTraceContext();
+        BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
 
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 project, files, trace, filesToAnalyzeCompletely, module, null, null);

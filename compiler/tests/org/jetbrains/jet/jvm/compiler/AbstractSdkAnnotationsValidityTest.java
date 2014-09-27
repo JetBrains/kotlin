@@ -21,6 +21,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
@@ -69,7 +70,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
             try {
                 JetCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
 
-                BindingTrace trace = new BindingTraceContext();
+                BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
                 InjectorForJavaDescriptorResolver injector =
                         InjectorForJavaDescriptorResolverUtil.create(commonEnvironment.getProject(), trace, false);
 

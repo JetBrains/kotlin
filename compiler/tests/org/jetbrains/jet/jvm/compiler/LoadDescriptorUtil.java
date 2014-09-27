@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -90,7 +90,7 @@ public final class LoadDescriptorUtil {
                 new File("compiler/tests") // for @ExpectLoadError annotation
         );
         JetCoreEnvironment jetCoreEnvironment = JetCoreEnvironment.createForTests(disposable, configuration);
-        BindingTraceContext trace = new BindingTraceContext();
+        BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         InjectorForJavaDescriptorResolver injector =
                 InjectorForJavaDescriptorResolverUtil.create(jetCoreEnvironment.getProject(), trace, true);
         ModuleDescriptorImpl module = injector.getModule();

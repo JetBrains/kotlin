@@ -24,6 +24,7 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
@@ -600,8 +601,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
-        InjectorForJavaDescriptorResolver injector =
-                InjectorForJavaDescriptorResolverUtil.create(getProject(), new BindingTraceContext(), true);
+        BindingTraceContext trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
+        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(getProject(), trace, true);
         ModuleDescriptor module = injector.getModule();
         for (ImportPath defaultImport : module.getDefaultImports()) {
             writableScope.importScope(module.getPackage(defaultImport.fqnPart()).getMemberScope());

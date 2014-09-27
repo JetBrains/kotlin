@@ -145,7 +145,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File("compiler/tests")); // for @ExpectLoadError annotation
         JetCoreEnvironment environment = JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
 
-        BindingTrace trace = CliLightClassGenerationSupport.createTrace();
+        BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createAnalyzeModule();
 
         TopDownAnalysisParameters parameters = TopDownAnalysisParameters.create(

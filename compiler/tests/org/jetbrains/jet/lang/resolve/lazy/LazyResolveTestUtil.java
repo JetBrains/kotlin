@@ -53,7 +53,7 @@ public class LazyResolveTestUtil {
                 globalContext.getExceptionTracker(),
                 Predicates.<PsiFile>alwaysTrue(),
                 false, false);
-        BindingTrace trace = CliLightClassGenerationSupport.createTrace();
+        BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         ModuleDescriptorImpl sharedModule = TopDownAnalyzerFacadeForJVM.createAnalyzeModule();
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(

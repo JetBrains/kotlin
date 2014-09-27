@@ -120,7 +120,7 @@ class NoInternalVisibilityInStdLibTest {
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                     environment.getProject(),
                     environment.getSourceFiles(),
-                    BindingTraceContext(),
+                    CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                     { true },
                     module,
                     null,
