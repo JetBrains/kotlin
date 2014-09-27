@@ -19,6 +19,8 @@ package org.jetbrains.jet.plugin.util.application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.ShutDownTracker
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.command.CommandProcessor
 
 public fun warnTimeConsuming(logger: Logger) {
     val application = ApplicationManager.getApplication()!!
@@ -32,4 +34,22 @@ public fun warnTimeConsuming(logger: Logger) {
 
     logger.warn("This operation is time consuming and must not be called on EDT.")
     Throwable().printStackTrace()
+}
+
+public fun runReadAction<T: Any>(action: () -> T?): T? {
+    return ApplicationManager.getApplication()?.runReadAction<T>(action)
+}
+
+public fun runWriteAction<T: Any>(action: () -> T?): T? {
+    return ApplicationManager.getApplication()?.runWriteAction<T>(action)
+}
+
+public fun Project.executeWriteCommand(name: String, command: () -> Unit) {
+    CommandProcessor.getInstance().executeCommand(this, { runWriteAction(command) }, name, null)
+}
+
+public fun <T: Any> Project.executeWriteCommand(name: String, command: () -> T): T {
+    var result: T? = null
+    CommandProcessor.getInstance().executeCommand(this, { result = runWriteAction(command) }, name, null)
+    return result!!
 }

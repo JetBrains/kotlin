@@ -59,7 +59,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import com.sun.jdi.VirtualMachine
 import org.jetbrains.jet.codegen.AsmUtil
 import com.sun.jdi.InvalidStackFrameException
-import org.jetbrains.jet.plugin.refactoring.runReadAction
+import org.jetbrains.jet.plugin.util.application.runReadAction
 import org.jetbrains.jet.lang.psi.analysisContext
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
@@ -396,7 +396,8 @@ fun Type.getClassDescriptor(project: Project): ClassDescriptor? {
 
     return runReadAction {
         val classes = JavaPsiFacade.getInstance(project).findClasses(jvmName.asString(), GlobalSearchScope.allScope(project))
-        if (classes.isEmpty()) null else {
+        if (classes.isEmpty()) null
+        else {
             val clazz = classes.first()
             JavaResolveExtension.getResolver(project, clazz).resolveClass(JavaClassImpl(clazz))
         }

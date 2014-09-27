@@ -39,7 +39,7 @@ import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.plugin.refactoring.runReadAction
+import org.jetbrains.jet.plugin.util.application.runReadAction
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 

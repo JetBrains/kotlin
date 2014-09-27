@@ -51,13 +51,13 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
 import org.jetbrains.jet.plugin.refactoring.CollectingValidator
 import org.jetbrains.jet.plugin.util.isUnit
-import org.jetbrains.jet.plugin.refactoring.runWriteAction
 import com.intellij.util.ArrayUtil
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.plugin.refactoring.isMultiLine
 import org.jetbrains.jet.plugin.refactoring.getLineCount
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.plugin.util.application.runWriteAction
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -128,7 +128,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
         return typeCandidates.getOrPut(typeInfo) {
             val types = typeInfo.getPossibleTypes(this).reverse()
 
-            val newTypes = LinkedHashSet<JetType>(types)
+            val newTypes = LinkedHashSet(types)
             for (substitution in substitutions) {
                 // each substitution can be applied or not, so we offer all options
                 val toAdd = newTypes.map { theType -> theType.substitute(substitution, typeInfo.variance) }

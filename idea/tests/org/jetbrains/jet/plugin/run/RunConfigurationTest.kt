@@ -43,7 +43,7 @@ import com.intellij.openapi.module.Module
 import java.io.File
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import org.jetbrains.jet.plugin.search.allScope
-import org.jetbrains.jet.plugin.refactoring.runWriteAction
+import org.jetbrains.jet.plugin.util.application.runWriteAction
 
 class RunConfigurationTest: CodeInsightTestCase() {
     fun getTestProject() = myProject!!

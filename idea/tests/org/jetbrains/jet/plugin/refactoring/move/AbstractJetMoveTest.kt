@@ -58,9 +58,9 @@ import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKo
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.search.allScope
-import org.jetbrains.jet.plugin.refactoring.runWriteAction
 import org.jetbrains.jet.InTextDirectivesUtils
 import org.jetbrains.jet.testing.ConfigLibraryUtil
+import org.jetbrains.jet.plugin.util.application.runWriteAction
 
 public abstract class AbstractJetMoveTest : MultiFileTestCase() {
     protected fun doTest(path: String) {
@@ -93,7 +93,7 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
         doTest { rootDir, rootAfter ->
             val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
             val mainPsiFile = PsiManager.getInstance(getProject()!!).findFile(mainFile)!!
-            val document = FileDocumentManager.getInstance()!!.getDocument(mainFile)!!
+            val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
             val editor = EditorFactory.getInstance()!!.createEditor(document, getProject()!!)!!
 
             val caretOffset = extractCaretOffset(document)
@@ -112,11 +112,11 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
                 assert(!conflictFile.exists())
             }
             catch(e: ConflictsInTestsException) {
-                JetTestUtils.assertEqualsToFile(conflictFile, e.getMessages().sort().makeString("\n"))
+                JetTestUtils.assertEqualsToFile(conflictFile, e.getMessages().sort().joinToString("\n"))
             }
             finally {
                 PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()
-                FileDocumentManager.getInstance()?.saveAllDocuments()
+                FileDocumentManager.getInstance().saveAllDocuments()
 
                 EditorFactory.getInstance()!!.releaseEditor(editor)
             }

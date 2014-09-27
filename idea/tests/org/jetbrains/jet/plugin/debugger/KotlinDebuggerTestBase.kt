@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.debugger
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.MethodFilter
-import org.jetbrains.jet.plugin.refactoring.runReadAction
+import org.jetbrains.jet.plugin.util.application.runReadAction
 import com.intellij.debugger.impl.PositionUtil
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.roots.libraries.LibraryUtil
@@ -46,7 +46,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     protected fun SuspendContextImpl.printContext() {
-        runReadAction { (): Unit ->
+        runReadAction {(): Unit ->
             if (this.getFrameProxy() == null) {
                 return@runReadAction println("Context thread is null", ProcessOutputTypes.SYSTEM)
             }
