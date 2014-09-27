@@ -452,6 +452,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
     
+    @TestMetadata("MultipleArgsItem.kt")
+    public void testMultipleArgsItem() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/MultipleArgsItem.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("NullableValue1.kt")
     public void testNullableValue1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/NullableValue1.kt");

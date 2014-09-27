@@ -39,6 +39,7 @@ public final class JetDescriptorIconProvider {
     private JetDescriptorIconProvider() {
     }
 
+    @NotNull
     public static Icon getIcon(@NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration, @Iconable.IconFlags int flags) {
         if (declaration != null && !isKotlinDeclaration(declaration)) {
             return declaration.getIcon(flags);
