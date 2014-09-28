@@ -7863,6 +7863,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("overloadingForSubclass.kt")
+                public void testOverloadingForSubclass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/overloadingForSubclass.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("sam.kt")
                 public void testSam() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/sam.kt");

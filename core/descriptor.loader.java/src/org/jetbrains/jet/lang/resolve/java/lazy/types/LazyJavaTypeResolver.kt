@@ -34,8 +34,6 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 import org.jetbrains.jet.lang.resolve.java.lazy.types.Flexibility.*
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 
 class LazyJavaTypeResolver(
@@ -273,7 +271,7 @@ class LazyJavaTypeResolver(
     public open class FlexibleJavaClassifierType protected (
             lowerBound: JetType,
             upperBound: JetType
-    ) : DelegatingFlexibleType(lowerBound, upperBound), CustomTypeVariable {
+    ) : DelegatingFlexibleType(lowerBound, upperBound), CustomTypeVariable, Specificity {
         public class object {
             public fun create(lowerBound: JetType, upperBound: JetType): JetType {
                 if (lowerBound == upperBound) return lowerBound
@@ -293,6 +291,22 @@ class LazyJavaTypeResolver(
         override fun substitutionResult(replacement: JetType): JetType {
             return if (replacement.isFlexible()) replacement
                    else FlexibleJavaClassifierType(TypeUtils.makeNotNullable(replacement), TypeUtils.makeNullable(replacement))
+        }
+
+        override fun getSpecificityRelationTo(otherType: JetType): Specificity.Relation {
+            // For primitive types we have to take care of the case when there are two overloaded methods like
+            //    foo(int) and foo(Integer)
+            // if we do not discriminate one of them, any call to foo(kotlin.Int) will result in overload resolution ambiguity
+            // so, for such cases, we discriminate Integer in favour of int
+            if (!KotlinBuiltIns.getInstance().isPrimitiveType(otherType) || !KotlinBuiltIns.getInstance().isPrimitiveType(getLowerBound())) {
+                return Specificity.Relation.DONT_KNOW
+            }
+            // Int! >< Int?
+            if (otherType.isFlexible()) return Specificity.Relation.DONT_KNOW
+            // Int? >< Int!
+            if (otherType.isNullable()) return Specificity.Relation.DONT_KNOW
+            // Int! lessSpecific Int
+            return Specificity.Relation.LESS_SPECIFIC
         }
     }
 

@@ -16,6 +16,17 @@
 
 package org.jetbrains.jet.lang.types
 
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-
 public trait TypeCapability
+
+public trait Specificity : TypeCapability {
+
+    public enum class Relation {
+        LESS_SPECIFIC
+        MORE_SPECIFIC
+        DONT_KNOW
+    }
+
+    public fun getSpecificityRelationTo(otherType: JetType): Relation
+}
+
+fun JetType.getSpecificityRelationTo(otherType: JetType) = this.getCapability(javaClass<Specificity>())?.getSpecificityRelationTo(otherType) ?: Specificity.Relation.DONT_KNOW
