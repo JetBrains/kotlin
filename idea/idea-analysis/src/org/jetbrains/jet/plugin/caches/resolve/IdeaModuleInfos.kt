@@ -133,12 +133,15 @@ public data class LibraryInfo(val project: Project, val library: Library) : Idea
     override fun contentScope() = LibraryWithoutSourceScope(project, library)
 
     override fun dependencies(): List<IdeaModuleInfo> {
-        //TODO: (module refactoring) heuristic dependencies for libraries
-        val orderEntry = ModuleManager.getInstance(project).getModules().stream().flatMap {
-            ModuleRootManager.getInstance(it).getOrderEntries().stream()
-        }.firstOrNull { it is JdkOrderEntry } as? JdkOrderEntry
-        val sdk = orderEntry?.getJdk()
-        return if (sdk != null) listOf(SdkInfo(project, sdk), this) else listOf(this)
+        val result = LinkedHashSet<IdeaModuleInfo>()
+        result.add(this)
+
+        val (libraries, sdks) = LibraryDependenciesCache(project).getLibrariesAndSdksUsedWith(library)
+
+        sdks.mapTo(result) { SdkInfo(project, it) }
+        libraries.mapTo(result) { LibraryInfo(project, it) }
+
+        return result.toList()
     }
 }
 
