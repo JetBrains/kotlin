@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.quickfix;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction.*;
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.createVariable.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
@@ -236,6 +237,8 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateFunctionFromCallActionFactory.INSTANCE$);
         QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateFunctionFromCallActionFactory.INSTANCE$);
         QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateFunctionFromCallActionFactory.INSTANCE$);
+
+        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateLocalVariableActionFactory.INSTANCE$);
 
         QuickFixes.factories.put(FUNCTION_EXPECTED, CreateInvokeFunctionActionFactory.INSTANCE$);
 

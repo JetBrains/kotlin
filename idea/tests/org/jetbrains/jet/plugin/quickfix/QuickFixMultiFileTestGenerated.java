@@ -218,7 +218,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     
     @TestMetadata("idea/testData/quickfix/createFromUsage")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({CreateFromUsage.CreateFunction.class})
+    @InnerTestClasses({CreateFromUsage.CreateFunction.class, CreateFromUsage.CreateVariable.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class CreateFromUsage extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInCreateFromUsage() throws Exception {
@@ -232,6 +232,17 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         public static class CreateFunction extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInCreateFunction() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+            
+        }
+        
+        @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable")
+        @TestDataPath("$PROJECT_ROOT")
+        @InnerTestClasses({})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class CreateVariable extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInCreateVariable() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
             }
             
         }

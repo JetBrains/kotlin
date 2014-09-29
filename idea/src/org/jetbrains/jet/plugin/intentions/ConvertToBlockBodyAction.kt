@@ -34,38 +34,45 @@ public class ConvertToBlockBodyAction : PsiElementBaseIntentionAction() {
     }
 
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
-        val declaration = findDeclaration(element)!!
+        convert(findDeclaration(element)!!)
+    }
+
+    fun convert(declaration: JetDeclarationWithBody): JetDeclarationWithBody {
         val body = declaration.getBodyExpression()!!
 
         fun generateBody(returnsValue: Boolean): JetExpression {
             val bodyType = expressionType(body)
             val needReturn = returnsValue &&
-                    (bodyType == null || (!KotlinBuiltIns.getInstance().isUnit(bodyType) && !KotlinBuiltIns.getInstance().isNothing(bodyType)))
+                             (bodyType == null || (!KotlinBuiltIns.getInstance().isUnit(bodyType) && !KotlinBuiltIns.getInstance().isNothing(bodyType)))
 
             val oldBodyText = body.getText()!!
             val newBodyText = if (needReturn) "return ${oldBodyText}" else oldBodyText
             return JetPsiFactory(declaration).createFunctionBody(newBodyText)
         }
 
-        if (declaration is JetNamedFunction) {
-            val returnType = functionReturnType(declaration)!!
-            if (!declaration.hasDeclaredReturnType() && !KotlinBuiltIns.getInstance().isUnit(returnType)) {
-                specifyTypeExplicitly(declaration, returnType)
+        val newBody = when (declaration) {
+            is JetNamedFunction -> {
+                val returnType = functionReturnType(declaration)!!
+                if (!declaration.hasDeclaredReturnType() && !KotlinBuiltIns.getInstance().isUnit(returnType)) {
+                    specifyTypeExplicitly(declaration, returnType)
+                }
+
+                val newBody = generateBody(!KotlinBuiltIns.getInstance().isUnit(returnType) && !KotlinBuiltIns.getInstance().isNothing(returnType))
+
+                declaration.getEqualsToken()!!.delete()
+                body.replace(newBody)
             }
 
-            val newBody = generateBody(!KotlinBuiltIns.getInstance().isUnit(returnType) && !KotlinBuiltIns.getInstance().isNothing(returnType))
+            is JetPropertyAccessor -> {
+                val newBody = generateBody(declaration.isGetter())
+                declaration.getEqualsToken()!!.delete()
+                body.replace(newBody)
+            }
 
-            declaration.getEqualsToken()!!.delete()
-            body.replace(newBody)
+            else -> throw RuntimeException("Unknown declaration type: $declaration")
         }
-        else if (declaration is JetPropertyAccessor) {
-            val newBody = generateBody(declaration.isGetter())
-            declaration.getEqualsToken()!!.delete()
-            body.replace(newBody)
-        }
-        else {
-            throw RuntimeException("Unknown declaration type: $declaration")
-        }
+
+        return newBody.getParent() as JetDeclarationWithBody
     }
 
     private fun findDeclaration(element: PsiElement): JetDeclarationWithBody? {
