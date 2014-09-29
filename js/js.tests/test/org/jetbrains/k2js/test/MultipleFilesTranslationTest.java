@@ -55,5 +55,10 @@ public abstract class MultipleFilesTranslationTest extends BasicTest {
     public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
         runMultiFileTest(dirName, TEST_PACKAGE, TEST_FUNCTION, true);
     }
+
+    public void checkFooBoxIsOk() throws Exception {
+        String dir = getTestName(true);
+        runMultiFileTest(dir, TEST_PACKAGE, TEST_FUNCTION, "OK");
+    }
 }
 
