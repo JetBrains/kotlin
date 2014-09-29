@@ -15,10 +15,25 @@ import org.jetbrains.jet.lang.resolve.calls.callUtil.getCall
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypeAndBranch
 
 object CreateFunctionFromCallActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val callExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetCallExpression>()) ?: return null
+        val diagElement = diagnostic.getPsiElement()
+        val callExpr = when (diagnostic.getFactory()) {
+            in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS -> {
+                val parent = diagElement.getParent()
+                if (parent is JetCallExpression && parent.getCalleeExpression() == diagElement) parent else diagElement
+            }
+
+            Errors.NO_VALUE_FOR_PARAMETER,
+            Errors.TOO_MANY_ARGUMENTS -> diagElement.getParentByType(javaClass<JetCallExpression>())
+
+            else -> throw AssertionError("Unexpected diagnostic: ${diagnostic.getFactory()}")
+        }
+        if (callExpr !is JetCallExpression) return null
 
         val calleeExpr = callExpr.getCalleeExpression() as? JetSimpleNameExpression ?: return null
         if (calleeExpr.getReferencedNameElementType() != JetTokens.IDENTIFIER) return null
