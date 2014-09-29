@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class JsCatchScope extends JsScope {
     private final JsName name;
 
-    public JsCatchScope(JsScope parent, String ident) {
+    public JsCatchScope(JsScope parent, @NotNull String ident) {
         super(parent, "Catch scope", null);
         name = new JsName(this, ident);
     }

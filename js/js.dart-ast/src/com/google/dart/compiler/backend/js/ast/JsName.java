@@ -13,16 +13,19 @@ import org.jetbrains.annotations.NotNull;
  */
 public class JsName extends HasMetadata implements Symbol {
   private final JsScope enclosing;
+
+  @NotNull
   private final String ident;
 
   /**
    * @param ident the unmangled ident to use for this name
    */
-  JsName(JsScope enclosing, String ident) {
+  JsName(JsScope enclosing, @NotNull String ident) {
     this.enclosing = enclosing;
     this.ident = ident;
   }
 
+  @NotNull
   public String getIdent() {
     return ident;
   }

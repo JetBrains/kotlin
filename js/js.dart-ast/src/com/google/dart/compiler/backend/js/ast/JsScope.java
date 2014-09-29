@@ -166,7 +166,7 @@ public abstract class JsScope {
     }
 
     @NotNull
-    protected JsName doCreateName(String ident) {
+    protected JsName doCreateName(@NotNull String ident) {
         JsName name = new JsName(this, ident);
         names = Maps.put(names, ident, name);
         return name;
