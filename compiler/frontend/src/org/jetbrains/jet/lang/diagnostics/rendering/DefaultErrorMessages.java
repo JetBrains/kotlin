@@ -376,8 +376,8 @@ public class DefaultErrorMessages {
                 return typeConstraint.getSubjectTypeParameterName().getReferencedName();
             }
         }, DECLARATION_NAME);
-        MAP.put(AUTOCAST_IMPOSSIBLE,
-                "Automatic cast to ''{0}'' is impossible, because ''{1}'' could have changed since the is-check", RENDER_TYPE, STRING);
+        MAP.put(SMARTCAST_IMPOSSIBLE,
+                "Smart cast to ''{0}'' is impossible, because ''{1}'' could have changed since the is-check", RENDER_TYPE, STRING);
 
         MAP.put(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY, "Variance annotations are only allowed for type parameters of classes and traits");
         MAP.put(REDUNDANT_PROJECTION, "Projection is redundant: the corresponding type parameter of {0} has the same variance", NAME);

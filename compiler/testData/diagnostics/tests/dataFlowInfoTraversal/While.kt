@@ -5,11 +5,11 @@ fun foo() {
     while (x == null) {
         bar(<!TYPE_MISMATCH!>x<!>)
     }
-    bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
+    bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
     
     val y: Int? = null
     while (y != null) {
-        bar(<!DEBUG_INFO_AUTOCAST!>y<!>)
+        bar(<!DEBUG_INFO_SMARTCAST!>y<!>)
     }
     bar(<!TYPE_MISMATCH!>y<!>)
     

@@ -20,7 +20,7 @@ import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.ValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
 
 import java.util.Iterator;
 import java.util.List;

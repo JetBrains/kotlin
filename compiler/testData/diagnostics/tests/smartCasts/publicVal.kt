@@ -6,5 +6,5 @@ fun Int.bar(i: Int) = i
 
 fun test() {
     val p = A()
-    if (p.foo is Int) <!AUTOCAST_IMPOSSIBLE!>p.foo<!> bar 11
+    if (p.foo is Int) <!SMARTCAST_IMPOSSIBLE!>p.foo<!> bar 11
 }

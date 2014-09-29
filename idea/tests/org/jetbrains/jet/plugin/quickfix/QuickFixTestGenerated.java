@@ -2886,27 +2886,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/casts"), Pattern.compile("^before(\\w+)\\.kt$"), true);
             }
             
-            @TestMetadata("beforeAutocastImpossible1.kt")
-            public void testAutocastImpossible1() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/beforeAutocastImpossible1.kt");
-                doTest(fileName);
-            }
-            
-            @TestMetadata("beforeAutocastImpossible2.kt")
-            public void testAutocastImpossible2() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/beforeAutocastImpossible2.kt");
-                doTest(fileName);
-            }
-            
-            @TestMetadata("beforeAutocastImpossible3.kt")
-            public void testAutocastImpossible3() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/beforeAutocastImpossible3.kt");
-                doTest(fileName);
-            }
-            
             @TestMetadata("beforeCastToFunctionType.kt")
             public void testCastToFunctionType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/beforeCastToFunctionType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeSmartcastImpossible1.kt")
+            public void testSmartcastImpossible1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/beforeSmartcastImpossible1.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeSmartcastImpossible2.kt")
+            public void testSmartcastImpossible2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/beforeSmartcastImpossible2.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeSmartcastImpossible3.kt")
+            public void testSmartcastImpossible3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/beforeSmartcastImpossible3.kt");
                 doTest(fileName);
             }
             

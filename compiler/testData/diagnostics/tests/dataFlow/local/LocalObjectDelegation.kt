@@ -9,7 +9,7 @@ class B : A {
 }
 fun foo(b: B?) : Int {
     if (b == null) return 0
-    val o = object : A by <!DEBUG_INFO_AUTOCAST!>b<!> { //no info about b not null check
+    val o = object : A by <!DEBUG_INFO_SMARTCAST!>b<!> { //no info about b not null check
     }
     return o.foo()
 }

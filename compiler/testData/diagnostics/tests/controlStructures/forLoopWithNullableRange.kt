@@ -11,6 +11,6 @@ fun test(c: Coll?) {
   for (x in <!ITERATOR_MISSING!>c<!>) {}
 
   if (c != null) {
-    for(x in <!DEBUG_INFO_AUTOCAST!>c<!>) {}
+    for(x in <!DEBUG_INFO_SMARTCAST!>c<!>) {}
   }
 }

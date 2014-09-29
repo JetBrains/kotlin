@@ -20,8 +20,8 @@ import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.psi.psiUtil.*
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
@@ -61,7 +61,7 @@ public object TipsManager{
                     val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
                     val dataFlowInfo = context.getDataFlowInfo(expression)
 
-                    for (variant in AutoCastUtils.getAutoCastVariants(receiverValue, context, dataFlowInfo)) {
+                    for (variant in SmartCastUtils.getSmartCastVariants(receiverValue, context, dataFlowInfo)) {
                         variant.getMemberScope().getAllDescriptors().filterTo(descriptors) { filterIfInfix(it) && !it.isExtension }
                     }
 

@@ -25,8 +25,8 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
@@ -129,7 +129,7 @@ public class TaskPrioritizer {
             boolean isExplicit
     ) {
 
-        List<JetType> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(explicitReceiver, c.context);
+        List<JetType> variantsForExplicitReceiver = SmartCastUtils.getSmartCastVariants(explicitReceiver, c.context);
 
         //members
         for (CallableDescriptorCollector<D> callableDescriptorCollector : c.callableDescriptorCollectors) {
@@ -319,7 +319,7 @@ public class TaskPrioritizer {
         List<ReceiverParameterDescriptor> receivers = scope.getImplicitReceiversHierarchy();
         for (ReceiverParameterDescriptor receiver : receivers) {
             if (JetTypeChecker.DEFAULT.isSubtypeOf(receiver.getType(), dispatchReceiver.getType())) {
-                // TODO : Autocasts & nullability
+                // TODO : Smartcasts & nullability
                 candidate.setDispatchReceiver(dispatchReceiver.getValue());
                 return true;
             }

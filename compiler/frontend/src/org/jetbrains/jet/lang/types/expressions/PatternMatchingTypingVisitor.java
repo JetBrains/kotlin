@@ -25,9 +25,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.PossiblyBareType;
 import org.jetbrains.jet.lang.resolve.TypeResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.*;
@@ -310,7 +310,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             @NotNull JetType subjectType,
             @NotNull JetElement reportErrorOn
     ) {
-        // TODO : Take auto casts into account?
+        // TODO : Take smart casts into account?
         if (type == null) {
             return;
         }

@@ -68,10 +68,10 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
     @Override
     public void visitExpression(@NotNull JetExpression expression) {
-        JetType autoCast = bindingContext.get(AUTOCAST, expression);
-        if (autoCast != null) {
-            holder.createInfoAnnotation(expression, "Automatically cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(autoCast)).setTextAttributes(
-                JetHighlightingColors.AUTO_CASTED_VALUE);
+        JetType smartCast = bindingContext.get(SMARTCAST, expression);
+        if (smartCast != null) {
+            holder.createInfoAnnotation(expression, "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast)).setTextAttributes(
+                JetHighlightingColors.SMART_CAST_VALUE);
         }
         super.visitExpression(expression);
     }

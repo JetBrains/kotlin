@@ -1,9 +1,8 @@
-// !DIAGNOSTICS: -DEBUG_INFO_AUTOCAST
+// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 package a
 
 import java.util.Date
 import java.util.Comparator
-
 
 fun foo() {
 

@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
     @TestMetadata("compiler/testData/diagnostics/tests")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Delegation.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.TraitWithRequired.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Delegation.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndSmartCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.TraitWithRequired.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Tests extends AbstractJetDiagnosticsTest {
         @TestMetadata("Abstract.kt")
@@ -81,18 +81,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestMetadata("AutoCreatedIt.kt")
         public void testAutoCreatedIt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/AutoCreatedIt.kt");
-            doTest(fileName);
-        }
-        
-        @TestMetadata("AutocastAmbiguitites.kt")
-        public void testAutocastAmbiguitites() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/AutocastAmbiguitites.kt");
-            doTest(fileName);
-        }
-        
-        @TestMetadata("AutocastsForStableIdentifiers.kt")
-        public void testAutocastsForStableIdentifiers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/AutocastsForStableIdentifiers.kt");
             doTest(fileName);
         }
         
@@ -2302,6 +2290,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         
         @TestMetadata("compiler/testData/diagnostics/tests/dataFlowInfoTraversal")
         @TestDataPath("$PROJECT_ROOT")
+        @InnerTestClasses({DataFlowInfoTraversal.Smartcasts.class})
         @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class DataFlowInfoTraversal extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInDataFlowInfoTraversal() throws Exception {
@@ -2618,6 +2607,28 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             public void testWhileCondition() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/WhileCondition.kt");
                 doTest(fileName);
+            }
+            
+            @TestMetadata("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/smartcasts")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+            public static class Smartcasts extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInSmartcasts() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/smartcasts"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("SmartcastAmbiguitites.kt")
+                public void testSmartcastAmbiguitites() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/smartcasts/SmartcastAmbiguitites.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("SmartcastsForStableIdentifiers.kt")
+                public void testSmartcastsForStableIdentifiers() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/smartcasts/SmartcastsForStableIdentifiers.kt");
+                    doTest(fileName);
+                }
+                
             }
             
         }
@@ -5416,15 +5427,15 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/infos"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
-            @TestMetadata("Autocasts.kt")
-            public void testAutocasts() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/infos/Autocasts.kt");
-                doTest(fileName);
-            }
-            
             @TestMetadata("PropertiesWithBackingFields.kt")
             public void testPropertiesWithBackingFields() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/infos/PropertiesWithBackingFields.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("SmartCasts.kt")
+            public void testSmartCasts() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/infos/SmartCasts.kt");
                 doTest(fileName);
             }
             
@@ -6790,197 +6801,197 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             
         }
         
-        @TestMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts")
+        @TestMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
-        public static class NullabilityAndAutoCasts extends AbstractJetDiagnosticsTest {
-            public void testAllFilesPresentInNullabilityAndAutoCasts() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts"), Pattern.compile("^(.+)\\.kt$"), true);
+        public static class NullabilityAndSmartCasts extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInNullabilityAndSmartCasts() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("AssertNotNull.kt")
             public void testAssertNotNull() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/AssertNotNull.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/AssertNotNull.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("dataFlowInfoAfterExclExcl.kt")
             public void testDataFlowInfoAfterExclExcl() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/dataFlowInfoAfterExclExcl.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/dataFlowInfoAfterExclExcl.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("equalityUnderNotNullCheck.kt")
             public void testEqualityUnderNotNullCheck() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/equalityUnderNotNullCheck.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/equalityUnderNotNullCheck.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("funcLiteralArgsInsideAmbiguity.kt")
             public void testFuncLiteralArgsInsideAmbiguity() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/funcLiteralArgsInsideAmbiguity.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/funcLiteralArgsInsideAmbiguity.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("funcLiteralArgsInsideUnresolvedFunction.kt")
             public void testFuncLiteralArgsInsideUnresolvedFunction() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/funcLiteralArgsInsideUnresolvedFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/funcLiteralArgsInsideUnresolvedFunction.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("InfixCallNullability.kt")
             public void testInfixCallNullability() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/InfixCallNullability.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/InfixCallNullability.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt1270.kt")
             public void testKt1270() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt1270.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt1270.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt1680.kt")
             public void testKt1680() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt1680.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt1680.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt1778.kt")
             public void testKt1778() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt1778.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt1778.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt2109.kt")
             public void testKt2109() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt2109.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt2109.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt2125.kt")
             public void testKt2125() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt2125.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt2125.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt2146.kt")
             public void testKt2146() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt2146.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt2146.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt2164.kt")
             public void testKt2164() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt2164.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt2164.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt2176.kt")
             public void testKt2176() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt2176.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt2176.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt2195.kt")
             public void testKt2195() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt2195.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt2195.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt2212.kt")
             public void testKt2212() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt2212.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt2212.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt2216.kt")
             public void testKt2216() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt2216.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt2216.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt2223.kt")
             public void testKt2223() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt2223.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt2223.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt2234.kt")
             public void testKt2234() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt2234.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt2234.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt2336.kt")
             public void testKt2336() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt2336.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt2336.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt244.kt")
             public void testKt244() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt244.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt244.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("kt362.kt")
             public void testKt362() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt362.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/kt362.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("noUnnecessaryNotNullAssertionOnErrorType.kt")
             public void testNoUnnecessaryNotNullAssertionOnErrorType() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/noUnnecessaryNotNullAssertionOnErrorType.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/noUnnecessaryNotNullAssertionOnErrorType.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("NullableNothingIsExactlyNull.kt")
             public void testNullableNothingIsExactlyNull() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/NullableNothingIsExactlyNull.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/NullableNothingIsExactlyNull.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("PreferExtensionsOnNullableReceiver.kt")
             public void testPreferExtensionsOnNullableReceiver() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/PreferExtensionsOnNullableReceiver.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/PreferExtensionsOnNullableReceiver.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("QualifiedExpressionNullability.kt")
             public void testQualifiedExpressionNullability() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/QualifiedExpressionNullability.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/QualifiedExpressionNullability.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("ReceiverNullability.kt")
             public void testReceiverNullability() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/ReceiverNullability.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/ReceiverNullability.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("SenselessNullInWhen.kt")
             public void testSenselessNullInWhen() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/SenselessNullInWhen.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/SenselessNullInWhen.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("senslessComparisonWithNullOnTypeParameters.kt")
             public void testSenslessComparisonWithNullOnTypeParameters() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/senslessComparisonWithNullOnTypeParameters.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/senslessComparisonWithNullOnTypeParameters.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("smartCastedReceiverWithGenerics.kt")
             public void testSmartCastedReceiverWithGenerics() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/smartCastedReceiverWithGenerics.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/smartCastedReceiverWithGenerics.kt");
                 doTest(fileName);
             }
             
             @TestMetadata("smartCastsAndBooleanExpressions.kt")
             public void testSmartCastsAndBooleanExpressions() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/smartCastsAndBooleanExpressions.kt");
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/smartCastsAndBooleanExpressions.kt");
                 doTest(fileName);
             }
             

@@ -79,7 +79,7 @@ public class JetHighlightingColors {
 
     // other
     public static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("KOTLIN_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER);
-    public static final TextAttributesKey AUTO_CASTED_VALUE = createTextAttributesKey("KOTLIN_AUTO_CASTED_VALUE");
+    public static final TextAttributesKey SMART_CAST_VALUE = createTextAttributesKey("KOTLIN_SMART_CAST_VALUE");
     public static final TextAttributesKey LABEL = createTextAttributesKey("KOTLIN_LABEL");
     public static final TextAttributesKey DEBUG_INFO = createTextAttributesKey("KOTLIN_DEBUG_INFO");
     public static final TextAttributesKey RESOLVED_TO_ERROR = createTextAttributesKey("KOTLIN_RESOLVED_TO_ERROR");

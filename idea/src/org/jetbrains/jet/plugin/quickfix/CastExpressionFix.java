@@ -84,13 +84,13 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForAutoCastImpossible() {
+    public static JetSingleIntentionActionFactory createFactoryForSmartCastImpossible() {
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 DiagnosticWithParameters2<JetExpression, JetType, String> diagnosticWithParameters =
-                        Errors.AUTOCAST_IMPOSSIBLE.cast(diagnostic);
+                        Errors.SMARTCAST_IMPOSSIBLE.cast(diagnostic);
                 return new CastExpressionFix(diagnosticWithParameters.getPsiElement(), diagnosticWithParameters.getA());
             }
         };

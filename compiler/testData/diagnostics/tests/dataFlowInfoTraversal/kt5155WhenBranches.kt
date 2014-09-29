@@ -3,7 +3,7 @@
 fun foo(s: String?) {
     when {
         s == null -> <!UNUSED_EXPRESSION!>1<!>
-        <!DEBUG_INFO_AUTOCAST!>s<!>.foo() -> <!UNUSED_EXPRESSION!>2<!>
+        <!DEBUG_INFO_SMARTCAST!>s<!>.foo() -> <!UNUSED_EXPRESSION!>2<!>
         else -> <!UNUSED_EXPRESSION!>3<!>
     }
 }

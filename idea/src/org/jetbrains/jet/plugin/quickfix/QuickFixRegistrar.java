@@ -244,7 +244,7 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(TYPE_MISMATCH, new QuickFixFactoryForTypeMismatchError());
 
-        QuickFixes.factories.put(AUTOCAST_IMPOSSIBLE, CastExpressionFix.createFactoryForAutoCastImpossible());
+        QuickFixes.factories.put(SMARTCAST_IMPOSSIBLE, CastExpressionFix.createFactoryForSmartCastImpossible());
 
         QuickFixes.factories.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, MapPlatformClassToKotlinFix.createFactory());
 

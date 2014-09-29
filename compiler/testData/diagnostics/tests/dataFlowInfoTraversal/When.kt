@@ -5,7 +5,7 @@ fun foo() {
 
     if (x != null) {
         when (x) {
-            0 -> bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
+            0 -> bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
             else -> {}
         }
     }
@@ -14,5 +14,5 @@ fun foo() {
         0 -> { if (<!SENSELESS_COMPARISON!>x == null<!>) return }
         else -> { if (x == null) return }
     }
-    bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
+    bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }

@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.jet.asJava.LightClassUtil
-import com.intellij.openapi.roots.libraries.LibraryUtil
 import org.jetbrains.jet.lang.resolve.LibrarySourceHacks
 import org.jetbrains.jet.plugin.project.TargetPlatform
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
@@ -57,13 +56,11 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo
 import org.jetbrains.jet.analyzer.analyzeInContext
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.plugin.util.application.warnTimeConsuming
 
 public trait CacheExtension<T> {

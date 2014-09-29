@@ -97,7 +97,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         else
             filteredExpectedInfos
 
-        val typesWithAutoCasts: (DeclarationDescriptor) -> Iterable<JetType> = TypesWithAutoCasts(bindingContext).calculate(expressionWithType, receiver)
+        val typesWithSmartCasts: (DeclarationDescriptor) -> Iterable<JetType> = TypesWithSmartCasts(bindingContext).calculate(expressionWithType, receiver)
 
         val itemsToSkip = calcItemsToSkip(expressionWithType)
 
@@ -106,7 +106,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
             val result = ArrayList<LookupElement>()
             if (!itemsToSkip.contains(descriptor)) {
-                val types = typesWithAutoCasts(descriptor)
+                val types = typesWithSmartCasts(descriptor)
                 val nonNullTypes = types.map { it.makeNotNullable() }
                 val classifier = { (expectedInfo: ExpectedInfo) ->
                     when {
@@ -136,7 +136,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
             KeywordValues.addToCollection(additionalItems, filteredExpectedInfos/* use filteredExpectedInfos to not include null after == */, expressionWithType)
 
-            MultipleArgumentsItemProvider(bindingContext, typesWithAutoCasts).addToCollection(additionalItems, expectedInfos, expression)
+            MultipleArgumentsItemProvider(bindingContext, typesWithSmartCasts).addToCollection(additionalItems, expectedInfos, expression)
         }
 
         return Result(::filterDeclaration, additionalItems)

@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.jet.lang.psi.ValueArgument
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentUnmapped
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
 import org.jetbrains.jet.lang.resolve.BindingContext

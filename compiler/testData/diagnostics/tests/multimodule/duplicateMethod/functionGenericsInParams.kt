@@ -31,12 +31,12 @@ import p.*
 
 fun test(b: B?) {
     if (b is C) {
-        <!DEBUG_INFO_AUTOCAST!>b<!>?.foo<String>("")
+        <!DEBUG_INFO_SMARTCAST!>b<!>?.foo<String>("")
     }
 }
 
 fun test1(b: B?) {
     if (b is C) {
-        <!DEBUG_INFO_AUTOCAST!>b<!>?.foo("")
+        <!DEBUG_INFO_SMARTCAST!>b<!>?.foo("")
     }
 }

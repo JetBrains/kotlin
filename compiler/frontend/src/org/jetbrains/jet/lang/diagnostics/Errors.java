@@ -531,7 +531,7 @@ public interface Errors {
 
     DiagnosticFactory1<JetExpression, JetType> IMPLICIT_CAST_TO_UNIT_OR_ANY = DiagnosticFactory1.create(WARNING);
 
-    DiagnosticFactory2<JetExpression, JetType, String> AUTOCAST_IMPOSSIBLE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<JetExpression, JetType, String> SMARTCAST_IMPOSSIBLE = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory0<JetNullableType> USELESS_NULLABLE_CHECK = DiagnosticFactory0.create(WARNING, NULLABLE_TYPE);
 

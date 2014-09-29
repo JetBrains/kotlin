@@ -552,7 +552,7 @@ private fun ExtractionData.inferParametersInfo(
             if (extractParameter) {
                 val parameterType = when {
                     receiver.exists() -> receiver.getType()
-                    else -> bindingContext[BindingContext.AUTOCAST, originalRef]
+                    else -> bindingContext[BindingContext.SMARTCAST, originalRef]
                             ?: bindingContext[BindingContext.EXPRESSION_TYPE, originalRef]
                             ?: DEFAULT_PARAMETER_TYPE
                 }

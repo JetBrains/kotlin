@@ -86,18 +86,6 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
     
-    @TestMetadata("AutoCastedType.kt")
-    public void testAutoCastedType() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/AutoCastedType.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("AutoCastedTypeWithQualifier.kt")
-    public void testAutoCastedTypeWithQualifier() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/AutoCastedTypeWithQualifier.kt");
-        doTest(fileName);
-    }
-    
     @TestMetadata("AutoNotNullType.kt")
     public void testAutoNotNullType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/AutoNotNullType.kt");
@@ -683,6 +671,18 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("SkipUnresolvedTypes.kt")
     public void testSkipUnresolvedTypes() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/SkipUnresolvedTypes.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("SmartCastType.kt")
+    public void testSmartCastType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/SmartCastType.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("SmartCastTypeWithQualifier.kt")
+    public void testSmartCastTypeWithQualifier() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/SmartCastTypeWithQualifier.kt");
         doTest(fileName);
     }
     

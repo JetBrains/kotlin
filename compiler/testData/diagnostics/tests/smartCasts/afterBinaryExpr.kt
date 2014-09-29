@@ -10,5 +10,5 @@ class B {
 
 fun test(a: A, b: B?) {
     a foo b!!
-    <!DEBUG_INFO_AUTOCAST!>b<!>.bar()
+    <!DEBUG_INFO_SMARTCAST!>b<!>.bar()
 }

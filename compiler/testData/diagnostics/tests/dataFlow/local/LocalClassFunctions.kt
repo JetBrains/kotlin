@@ -7,12 +7,12 @@ fun test(d: Any?) {
 
   class Local {
     fun f() {
-      <!DEBUG_INFO_AUTOCAST!>d<!>.foo()
+      <!DEBUG_INFO_SMARTCAST!>d<!>.foo()
     }
 
-    fun f1() = <!DEBUG_INFO_AUTOCAST!>d<!>.foo()
+    fun f1() = <!DEBUG_INFO_SMARTCAST!>d<!>.foo()
 
-    fun f2(): String = <!DEBUG_INFO_AUTOCAST!>d<!>.foo()
+    fun f2(): String = <!DEBUG_INFO_SMARTCAST!>d<!>.foo()
   }
 }
 

@@ -45,7 +45,7 @@ public class OverloadingConflictResolver {
             @NotNull Set<MutableResolvedCall<D>> candidates,
             boolean discriminateGenericDescriptors
     ) {
-        // Different autocasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
+        // Different smartcasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
         Set<MutableResolvedCall<D>> maximallySpecific = new THashSet<MutableResolvedCall<D>>(new TObjectHashingStrategy<MutableResolvedCall<D>>() {
                     @Override
                     public boolean equals(MutableResolvedCall<D> o1, MutableResolvedCall<D> o2) {

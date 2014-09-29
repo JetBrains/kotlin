@@ -208,9 +208,9 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
         
-        @TestMetadata("withAutoCastedQualifier.before.Main.kt")
-        public void testWithAutoCastedQualifier() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/withAutoCastedQualifier.before.Main.kt");
+        @TestMetadata("withSmartCastQualifier.before.Main.kt")
+        public void testWithSmartCastQualifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/withSmartCastQualifier.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
         

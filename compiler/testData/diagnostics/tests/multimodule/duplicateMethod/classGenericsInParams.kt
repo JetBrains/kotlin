@@ -31,6 +31,6 @@ import p.*
 
 fun test(b: B<String>?) {
     if (b is C) {
-        <!DEBUG_INFO_AUTOCAST!>b<!>?.foo("")
+        <!DEBUG_INFO_SMARTCAST!>b<!>?.foo("")
     }
 }

@@ -26,16 +26,16 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
@@ -501,13 +501,13 @@ public class CandidateResolver {
                 }
                 else if (!noExpectedType(expectedType)) {
                     if (!ArgumentTypeResolver.isSubtypeOfForArgumentType(type, expectedType)) {
-                        JetType autocastType = autocastValueArgumentTypeIfPossible(expression, expectedType, type, newContext);
-                        if (autocastType == null) {
+                        JetType smartCastType = smartCastValueArgumentTypeIfPossible(expression, expectedType, type, newContext);
+                        if (smartCastType == null) {
                             resultStatus = OTHER_ERROR;
                             matchStatus = ArgumentMatchStatus.TYPE_MISMATCH;
                         }
                         else {
-                            resultingType = autocastType;
+                            resultingType = smartCastType;
                         }
                     }
                     else if (ErrorUtils.containsUninferredParameter(expectedType)) {
@@ -522,7 +522,7 @@ public class CandidateResolver {
     }
 
     @Nullable
-    private static JetType autocastValueArgumentTypeIfPossible(
+    private static JetType smartCastValueArgumentTypeIfPossible(
             @NotNull JetExpression expression,
             @NotNull JetType expectedType,
             @NotNull JetType actualType,
@@ -530,7 +530,8 @@ public class CandidateResolver {
     ) {
         ExpressionReceiver receiverToCast = new ExpressionReceiver(JetPsiUtil.safeDeparenthesize(expression, false), actualType);
         List<JetType> variants =
-                AutoCastUtils.getAutoCastVariantsExcludingReceiver(context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
+                SmartCastUtils.getSmartCastVariantsExcludingReceiver(context.trace.getBindingContext(), context.dataFlowInfo,
+                                                                     receiverToCast);
         for (JetType possibleType : variants) {
             if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, expectedType)) {
                 return possibleType;
@@ -568,8 +569,8 @@ public class CandidateResolver {
 
         JetType erasedReceiverType = CallResolverUtil.getErasedReceiverType(receiverParameterDescriptor, candidateDescriptor);
 
-        boolean isSubtypeByAutoCast = AutoCastUtils.isSubTypeByAutoCastIgnoringNullability(receiverArgument, erasedReceiverType, context);
-        if (!isSubtypeByAutoCast) {
+        boolean isSubtypeBySmartCast = SmartCastUtils.isSubTypeBySmartCastIgnoringNullability(receiverArgument, erasedReceiverType, context);
+        if (!isSubtypeBySmartCast) {
             return RECEIVER_TYPE_ERROR;
         }
 
@@ -590,19 +591,19 @@ public class CandidateResolver {
         if (TypeUtils.dependsOnTypeParameters(receiverParameter.getType(), candidateDescriptor.getTypeParameters())) return SUCCESS;
 
         boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.isSafeCall();
-        boolean isSubtypeByAutoCast = AutoCastUtils.isSubTypeByAutoCastIgnoringNullability(
+        boolean isSubtypeBySmartCast = SmartCastUtils.isSubTypeBySmartCastIgnoringNullability(
                 receiverArgument, receiverParameter.getType(), context);
-        if (!isSubtypeByAutoCast) {
+        if (!isSubtypeBySmartCast) {
             context.tracing.wrongReceiverType(trace, receiverParameter, receiverArgument);
             return OTHER_ERROR;
         }
-        AutoCastUtils.recordAutoCastIfNecessary(receiverArgument, receiverParameter.getType(), context, safeAccess);
+        SmartCastUtils.recordSmartCastIfNecessary(receiverArgument, receiverParameter.getType(), context, safeAccess);
 
         JetType receiverArgumentType = receiverArgument.getType();
 
         BindingContext bindingContext = trace.getBindingContext();
         if (!safeAccess && !receiverParameter.getType().isNullable() && receiverArgumentType.isNullable()) {
-            if (!AutoCastUtils.isNotNull(receiverArgument, bindingContext, context.dataFlowInfo)) {
+            if (!SmartCastUtils.isNotNull(receiverArgument, bindingContext, context.dataFlowInfo)) {
 
                 context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck);
                 return UNSAFE_CALL_ERROR;
