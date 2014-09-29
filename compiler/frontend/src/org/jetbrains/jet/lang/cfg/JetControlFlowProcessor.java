@@ -929,10 +929,10 @@ public class JetControlFlowProcessor {
 
         private ReceiverValue getExplicitReceiverValue(ResolvedCall<?> resolvedCall) {
             switch(resolvedCall.getExplicitReceiverKind()) {
-                case THIS_OBJECT:
-                    return resolvedCall.getThisObject();
-                case RECEIVER_ARGUMENT:
-                    return resolvedCall.getReceiverArgument();
+                case DISPATCH_RECEIVER:
+                    return resolvedCall.getDispatchReceiver();
+                case EXTENSION_RECEIVER:
+                    return resolvedCall.getExtensionReceiver();
                 default:
                     return ReceiverValue.NO_RECEIVER;
             }
@@ -1533,8 +1533,8 @@ public class JetControlFlowProcessor {
         private Map<PseudoValue, ReceiverValue> getReceiverValues(ResolvedCall<?> resolvedCall) {
             SmartFMap<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
             JetElement callElement = resolvedCall.getCall().getCallElement();
-            receiverValues = getReceiverValues(callElement, resolvedCall.getThisObject(), receiverValues);
-            receiverValues = getReceiverValues(callElement, resolvedCall.getReceiverArgument(), receiverValues);
+            receiverValues = getReceiverValues(callElement, resolvedCall.getDispatchReceiver(), receiverValues);
+            receiverValues = getReceiverValues(callElement, resolvedCall.getExtensionReceiver(), receiverValues);
             return receiverValues;
         }
 

@@ -23,7 +23,6 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.JetModuleUtil;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
@@ -173,7 +172,7 @@ public class DataFlowValueFactory {
             // assert resolvedCall != null : "Cannot create right identifier info if the resolved call is not known yet for " + declarationDescriptor;
 
             IdentifierInfo receiverInfo =
-                    resolvedCall != null ? getIdForImplicitReceiver(resolvedCall.getThisObject(), simpleNameExpression) : null;
+                    resolvedCall != null ? getIdForImplicitReceiver(resolvedCall.getDispatchReceiver(), simpleNameExpression) : null;
 
             VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
             return combineInfo(receiverInfo, createInfo(variableDescriptor, isStableVariable(variableDescriptor)));
@@ -200,7 +199,7 @@ public class DataFlowValueFactory {
     @NotNull
     private static IdentifierInfo getIdForThisReceiver(@Nullable DeclarationDescriptor descriptorOfThisReceiver) {
         if (descriptorOfThisReceiver instanceof CallableDescriptor) {
-            ReceiverParameterDescriptor receiverParameter = ((CallableDescriptor) descriptorOfThisReceiver).getReceiverParameter();
+            ReceiverParameterDescriptor receiverParameter = ((CallableDescriptor) descriptorOfThisReceiver).getExtensionReceiverParameter();
             assert receiverParameter != null : "'This' refers to the callable member without a receiver parameter: " + descriptorOfThisReceiver;
             return createInfo(receiverParameter.getValue(), true);
         }

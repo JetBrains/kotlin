@@ -654,14 +654,14 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private void renderReceiverAfterName(CallableDescriptor callableDescriptor, StringBuilder builder) {
         if (!receiverAfterName) return;
 
-        ReceiverParameterDescriptor receiver = callableDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiver = callableDescriptor.getExtensionReceiverParameter();
         if (receiver != null) {
             builder.append(" on ").append(escape(renderType(receiver.getType())));
         }
     }
 
     private void renderReceiver(CallableDescriptor callableDescriptor, StringBuilder builder) {
-        ReceiverParameterDescriptor receiver = callableDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiver = callableDescriptor.getExtensionReceiverParameter();
         if (receiver != null) {
             builder.append(escape(renderType(receiver.getType()))).append(".");
         }

@@ -61,7 +61,7 @@ public class RecursiveDescriptorProcessor {
         private boolean processCallable(CallableDescriptor descriptor, D data) {
             return applyWorker(descriptor, data)
                    && visitChildren(descriptor.getTypeParameters(), data)
-                   && visitChildren(descriptor.getReceiverParameter(), data)
+                   && visitChildren(descriptor.getExtensionReceiverParameter(), data)
                    && visitChildren(descriptor.getValueParameters(), data);
         }
 

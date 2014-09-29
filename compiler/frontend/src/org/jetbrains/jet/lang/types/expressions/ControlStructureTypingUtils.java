@@ -186,7 +186,7 @@ public class ControlStructureTypingUtils {
 
             @NotNull
             @Override
-            public ReceiverValue getThisObject() {
+            public ReceiverValue getDispatchReceiver() {
                 return ReceiverValue.NO_RECEIVER;
             }
 

@@ -102,7 +102,7 @@ fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: JetNamedDeclara
                 usageDescriptor !is FunctionDescriptor -> false
                 else -> {
                     val receiverDescriptor =
-                            usageDescriptor.getReceiverParameter()?.getType()?.getConstructor()?.getDeclarationDescriptor()
+                            usageDescriptor.getExtensionReceiverParameter()?.getType()?.getConstructor()?.getDeclarationDescriptor()
                     val containingDescriptor = targetDescriptor.getContainingDeclaration()
 
                     containingDescriptor == receiverDescriptor

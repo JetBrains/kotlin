@@ -98,7 +98,7 @@ public final class JsDescriptorUtils {
     }
 
     public static boolean isExtension(@NotNull CallableDescriptor functionDescriptor) {
-        return (functionDescriptor.getReceiverParameter() != null);
+        return (functionDescriptor.getExtensionReceiverParameter() != null);
     }
 
     public static boolean isOverride(@NotNull CallableMemberDescriptor descriptor) {
@@ -127,7 +127,7 @@ public final class JsDescriptorUtils {
             return ((ClassDescriptor) declarationDescriptor).getThisAsReceiverParameter();
         }
         else if (declarationDescriptor instanceof CallableMemberDescriptor) {
-            ReceiverParameterDescriptor receiverDescriptor = ((CallableMemberDescriptor) declarationDescriptor).getReceiverParameter();
+            ReceiverParameterDescriptor receiverDescriptor = ((CallableMemberDescriptor) declarationDescriptor).getExtensionReceiverParameter();
             assert receiverDescriptor != null;
             return receiverDescriptor;
         }

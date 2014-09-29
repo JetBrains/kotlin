@@ -56,7 +56,7 @@ public final class MutableClosure implements CalculatedClosure {
         DeclarationDescriptor classContainer = classDescriptor.getContainingDeclaration();
         if (classContainer instanceof CallableMemberDescriptor) {
             CallableMemberDescriptor member = getDirectMember((CallableMemberDescriptor) classContainer);
-            if (member.getReceiverParameter() != null) {
+            if (member.getExtensionReceiverParameter() != null) {
                 return member;
             }
         }
@@ -86,7 +86,7 @@ public final class MutableClosure implements CalculatedClosure {
     public JetType getCaptureReceiverType() {
         if (captureReceiver) {
             //noinspection ConstantConditions
-            ReceiverParameterDescriptor parameter = enclosingReceiverDescriptor.getReceiverParameter();
+            ReceiverParameterDescriptor parameter = enclosingReceiverDescriptor.getExtensionReceiverParameter();
             assert parameter != null : "Receiver parameter should exist in " + enclosingReceiverDescriptor;
             return parameter.getType();
         }

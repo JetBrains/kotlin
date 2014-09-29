@@ -269,8 +269,8 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
         private void checkReceiverArgument() {
             D candidate = candidateCall.getCandidateDescriptor();
 
-            ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
-            ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
+            ReceiverParameterDescriptor receiverParameter = candidate.getExtensionReceiverParameter();
+            ReceiverValue receiverArgument = candidateCall.getExtensionReceiver();
             if (receiverParameter != null &&!receiverArgument.exists()) {
                 tracing.missingReceiver(candidateCall.getTrace(), receiverParameter);
                 setStatus(ERROR);

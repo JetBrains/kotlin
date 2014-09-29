@@ -362,7 +362,7 @@ public class DescriptorResolver {
         Visibility visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, containingDescriptor));
         functionDescriptor.initialize(
                 receiverType,
-                getExpectedThisObjectIfNeeded(containingDescriptor),
+                getDispatchReceiverParameterIfNeeded(containingDescriptor),
                 typeParameterDescriptors,
                 valueParameterDescriptors,
                 returnType,
@@ -959,7 +959,7 @@ public class DescriptorResolver {
         }
 
         ReceiverParameterDescriptor receiverDescriptor =
-                DescriptorFactory.createReceiverParameterForCallable(propertyDescriptor, receiverType);
+                DescriptorFactory.createExtensionReceiverParameterForCallable(propertyDescriptor, receiverType);
 
         ReceiverParameterDescriptor implicitInitializerReceiver = property.hasDelegate() ? NO_RECEIVER_PARAMETER : receiverDescriptor;
 
@@ -968,7 +968,7 @@ public class DescriptorResolver {
 
         JetType type = getVariableType(propertyDescriptor, propertyScope, property, dataFlowInfo, true, trace);
 
-        propertyDescriptor.setType(type, typeParameterDescriptors, getExpectedThisObjectIfNeeded(containingDeclaration),
+        propertyDescriptor.setType(type, typeParameterDescriptors, getDispatchReceiverParameterIfNeeded(containingDeclaration),
                                    receiverDescriptor);
 
         PropertyGetterDescriptorImpl getter = resolvePropertyGetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor, trace);
@@ -1332,7 +1332,7 @@ public class DescriptorResolver {
                 toSourceElement(parameter)
         );
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),
-                                   getExpectedThisObjectIfNeeded(classDescriptor), NO_RECEIVER_PARAMETER);
+                                   getDispatchReceiverParameterIfNeeded(classDescriptor), NO_RECEIVER_PARAMETER);
 
         PropertyGetterDescriptorImpl getter = DescriptorFactory.createDefaultGetter(propertyDescriptor);
         PropertySetterDescriptor setter =

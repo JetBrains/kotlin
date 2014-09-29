@@ -37,8 +37,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private List<TypeParameterDescriptor> typeParameters;
     private List<ValueParameterDescriptor> unsubstitutedValueParameters;
     private JetType unsubstitutedReturnType;
-    private ReceiverParameterDescriptor receiverParameter;
-    private ReceiverParameterDescriptor expectedThisObject;
+    private ReceiverParameterDescriptor extensionReceiverParameter;
+    private ReceiverParameterDescriptor dispatchReceiverParameter;
     private Modality modality;
     private Visibility visibility;
     private final Set<FunctionDescriptor> overriddenFunctions = new LinkedHashSet<FunctionDescriptor>(); // LinkedHashSet is essential here
@@ -61,7 +61,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @NotNull
     public FunctionDescriptorImpl initialize(
             @Nullable JetType receiverParameterType,
-            @Nullable ReceiverParameterDescriptor expectedThisObject,
+            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
@@ -73,8 +73,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
         this.visibility = visibility;
-        this.receiverParameter = DescriptorFactory.createReceiverParameterForCallable(this, receiverParameterType);
-        this.expectedThisObject = expectedThisObject;
+        this.extensionReceiverParameter = DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverParameterType);
+        this.dispatchReceiverParameter = dispatchReceiverParameter;
         
         for (int i = 0; i < typeParameters.size(); ++i) {
             TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
@@ -109,14 +109,14 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @Nullable
     @Override
-    public ReceiverParameterDescriptor getReceiverParameter() {
-        return receiverParameter;
+    public ReceiverParameterDescriptor getExtensionReceiverParameter() {
+        return extensionReceiverParameter;
     }
 
     @Nullable
     @Override
-    public ReceiverParameterDescriptor getExpectedThisObject() {
-        return expectedThisObject;
+    public ReceiverParameterDescriptor getDispatchReceiverParameter() {
+        return dispatchReceiverParameter;
     }
 
     @NotNull
@@ -207,16 +207,16 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         );
 
         JetType substitutedReceiverParameterType = null;
-        if (receiverParameter != null) {
-            substitutedReceiverParameterType = substitutor.substitute(getReceiverParameter().getType(), Variance.IN_VARIANCE);
+        if (extensionReceiverParameter != null) {
+            substitutedReceiverParameterType = substitutor.substitute(getExtensionReceiverParameter().getType(), Variance.IN_VARIANCE);
             if (substitutedReceiverParameterType == null) {
                 return null;
             }
         }
 
         ReceiverParameterDescriptor substitutedExpectedThis = null;
-        if (expectedThisObject != null) {
-            substitutedExpectedThis = expectedThisObject.substitute(substitutor);
+        if (dispatchReceiverParameter != null) {
+            substitutedExpectedThis = dispatchReceiverParameter.substitute(substitutor);
             if (substitutedExpectedThis == null) {
                 return null;
             }

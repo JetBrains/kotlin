@@ -206,7 +206,7 @@ public class PropertyCodegen {
     private void generateSyntheticMethodIfNeeded(@NotNull PropertyDescriptor descriptor) {
         if (descriptor.getAnnotations().isEmpty()) return;
 
-        ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
         String name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(descriptor.getName());
         String desc = receiver == null ? "()V" : "(" + typeMapper.mapType(receiver.getType()) + ")V";
 
@@ -395,7 +395,7 @@ public class PropertyCodegen {
                 v.areturn(type);
             }
             else if (callableDescriptor instanceof PropertySetterDescriptor) {
-                ReceiverParameterDescriptor receiverParameter = propertyDescriptor.getReceiverParameter();
+                ReceiverParameterDescriptor receiverParameter = propertyDescriptor.getExtensionReceiverParameter();
                 if (receiverParameter != null) {
                     paramCode += codegen.typeMapper.mapType(receiverParameter.getType()).getSize();
                 }

@@ -117,7 +117,7 @@ public class CandidateResolver {
                 }
             }
         }
-        if (!checkThisObject(context)) {
+        if (!checkDispatchReceiver(context)) {
             candidateCall.addStatus(OTHER_ERROR);
         }
 
@@ -168,18 +168,18 @@ public class CandidateResolver {
 
         // 'super' cannot be passed as an argument, for receiver arguments expression typer does not track this
         // See TaskPrioritizer for more
-        JetSuperExpression superExpression = TaskPrioritizer.getReceiverSuper(candidateCall.getReceiverArgument());
+        JetSuperExpression superExpression = TaskPrioritizer.getReceiverSuper(candidateCall.getExtensionReceiver());
         if (superExpression != null) {
             context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(superExpression, superExpression.getText()));
             candidateCall.addStatus(OTHER_ERROR);
         }
     }
 
-    private static boolean checkThisObject(@NotNull CallCandidateResolutionContext<?> context) {
+    private static boolean checkDispatchReceiver(@NotNull CallCandidateResolutionContext<?> context) {
         MutableResolvedCall<? extends CallableDescriptor> candidateCall = context.candidateCall;
         CallableDescriptor candidateDescriptor = candidateCall.getCandidateDescriptor();
-        ReceiverValue thisObject = candidateCall.getThisObject();
-        if (thisObject.exists()) {
+        ReceiverValue dispatchReceiver = candidateCall.getDispatchReceiver();
+        if (dispatchReceiver.exists()) {
             ClassDescriptor nestedClass = null;
             if (candidateDescriptor instanceof ConstructorDescriptor
                 && DescriptorUtils.isStaticNestedClass(candidateDescriptor.getContainingDeclaration())) {
@@ -194,7 +194,7 @@ public class CandidateResolver {
             }
         }
 
-        assert (thisObject.exists() == (candidateCall.getResultingDescriptor().getExpectedThisObject() != null))
+        assert (dispatchReceiver.exists() == (candidateCall.getResultingDescriptor().getDispatchReceiverParameter() != null))
                 : "Shouldn't happen because of TaskPrioritizer: " + candidateDescriptor;
 
         return true;
@@ -202,7 +202,7 @@ public class CandidateResolver {
 
     private static boolean checkOuterClassMemberIsAccessible(@NotNull CallCandidateResolutionContext<?> context) {
         // In "this@Outer.foo()" the error will be reported on "this@Outer" instead
-        if (context.call.getExplicitReceiver().exists() || context.call.getThisObject().exists()) return true;
+        if (context.call.getExplicitReceiver().exists() || context.call.getDispatchReceiver().exists()) return true;
 
         ClassDescriptor candidateThis = getDeclaringClass(context.candidateCall.getCandidateDescriptor());
         if (candidateThis == null || candidateThis.getKind().isSingleton()) return true;
@@ -212,7 +212,7 @@ public class CandidateResolver {
 
     @Nullable
     private static ClassDescriptor getDeclaringClass(@NotNull CallableDescriptor candidate) {
-        ReceiverParameterDescriptor expectedThis = candidate.getExpectedThisObject();
+        ReceiverParameterDescriptor expectedThis = candidate.getDispatchReceiverParameter();
         if (expectedThis == null) return null;
         DeclarationDescriptor descriptor = expectedThis.getContainingDeclaration();
         return descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null;
@@ -338,8 +338,8 @@ public class CandidateResolver {
 
         // Receiver
         // Error is already reported if something is missing
-        ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
-        ReceiverParameterDescriptor receiverParameter = candidateWithFreshVariables.getReceiverParameter();
+        ReceiverValue receiverArgument = candidateCall.getExtensionReceiver();
+        ReceiverParameterDescriptor receiverParameter = candidateWithFreshVariables.getExtensionReceiverParameter();
         if (receiverArgument.exists() && receiverParameter != null) {
             JetType receiverType =
                     context.candidateCall.isSafeCall()
@@ -452,13 +452,13 @@ public class CandidateResolver {
 
         resultStatus = resultStatus.combine(checkReceiver(
                 context, candidateCall, trace,
-                candidateCall.getResultingDescriptor().getReceiverParameter(),
-                candidateCall.getReceiverArgument(), candidateCall.getExplicitReceiverKind().isReceiver(), false));
+                candidateCall.getResultingDescriptor().getExtensionReceiverParameter(),
+                candidateCall.getExtensionReceiver(), candidateCall.getExplicitReceiverKind().isExtensionReceiver(), false));
 
         resultStatus = resultStatus.combine(checkReceiver(
                 context, candidateCall, trace,
-                candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(),
-                candidateCall.getExplicitReceiverKind().isThisObject(),
+                candidateCall.getResultingDescriptor().getDispatchReceiverParameter(), candidateCall.getDispatchReceiver(),
+                candidateCall.getExplicitReceiverKind().isDispatchReceiver(),
                 // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
                 context.call instanceof CallForImplicitInvoke));
         return resultStatus;
@@ -545,15 +545,15 @@ public class CandidateResolver {
         MutableResolvedCall<D> candidateCall = context.candidateCall;
         D candidateDescriptor = candidateCall.getCandidateDescriptor();
 
-        ReceiverParameterDescriptor receiverDescriptor = candidateDescriptor.getReceiverParameter();
-        ReceiverParameterDescriptor expectedThisObjectDescriptor = candidateDescriptor.getExpectedThisObject();
+        ReceiverParameterDescriptor extensionReceiver = candidateDescriptor.getExtensionReceiverParameter();
+        ReceiverParameterDescriptor dispatchReceiver = candidateDescriptor.getDispatchReceiverParameter();
         ResolutionStatus status = SUCCESS;
         // For the expressions like '42.(f)()' where f: String.() -> Unit we'd like to generate a type mismatch error on '1',
         // not to throw away the candidate, so the following check is skipped.
         if (!CallResolverUtil.isInvokeCallOnExpressionWithBothReceivers(context.call)) {
-            status = status.combine(checkReceiverTypeError(context, receiverDescriptor, candidateCall.getReceiverArgument()));
+            status = status.combine(checkReceiverTypeError(context, extensionReceiver, candidateCall.getExtensionReceiver()));
         }
-        status = status.combine(checkReceiverTypeError(context, expectedThisObjectDescriptor, candidateCall.getThisObject()));
+        status = status.combine(checkReceiverTypeError(context, dispatchReceiver, candidateCall.getDispatchReceiver()));
         return status;
     }
 

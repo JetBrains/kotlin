@@ -189,11 +189,11 @@ public class LabelResolver {
             }
             else if (declarationDescriptor instanceof FunctionDescriptor) {
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;
-                thisReceiver = functionDescriptor.getReceiverParameter();
+                thisReceiver = functionDescriptor.getExtensionReceiverParameter();
             }
             else if (declarationDescriptor instanceof PropertyDescriptor) {
                 PropertyDescriptor propertyDescriptor = (PropertyDescriptor) declarationDescriptor;
-                thisReceiver = propertyDescriptor.getReceiverParameter();
+                thisReceiver = propertyDescriptor.getExtensionReceiverParameter();
             }
             else {
                 throw new UnsupportedOperationException("Unsupported descriptor: " + declarationDescriptor); // TODO
@@ -218,7 +218,7 @@ public class LabelResolver {
                 DeclarationDescriptor declarationDescriptor =
                         context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
                 if (declarationDescriptor instanceof FunctionDescriptor) {
-                    ReceiverParameterDescriptor thisReceiver = ((FunctionDescriptor) declarationDescriptor).getReceiverParameter();
+                    ReceiverParameterDescriptor thisReceiver = ((FunctionDescriptor) declarationDescriptor).getExtensionReceiverParameter();
                     if (thisReceiver != null) {
                         context.trace.record(LABEL_TARGET, targetLabel, element);
                         context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor);

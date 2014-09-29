@@ -156,7 +156,7 @@ data class ExtractionData(
             val parent = ref.getParent()
             if (parent is JetQualifiedExpression && parent.getSelectorExpression() == ref) {
                 val receiverDescriptor =
-                        (originalResolveResult.resolvedCall?.getThisObject() as? ThisReceiver)?.getDeclarationDescriptor()
+                        (originalResolveResult.resolvedCall?.getDispatchReceiver() as? ThisReceiver)?.getDeclarationDescriptor()
                 if ((receiverDescriptor as? ClassDescriptor)?.getKind() != ClassKind.CLASS_OBJECT
                         && parent.getReceiverExpression() !is JetSuperExpression) continue
             }

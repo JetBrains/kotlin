@@ -43,6 +43,6 @@ Resolved call:
 
 Resulting descriptor: fun String.plus(): Unit defined in Title
 
-Explicit receiver kind = RECEIVER_ARGUMENT
-This object = TitleExt{fun Title.<anonymous>(): Unit defined in result.<anonymous>.<anonymous>}
-Receiver argument = "Foo" {String}
+Explicit receiver kind = EXTENSION_RECEIVER
+Dispatch receiver = TitleExt{fun Title.<anonymous>(): Unit defined in result.<anonymous>.<anonymous>}
+Extension receiver = "Foo" {String}

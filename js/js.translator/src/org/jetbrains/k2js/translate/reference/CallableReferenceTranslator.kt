@@ -129,7 +129,7 @@ object CallableReferenceTranslator {
     }
 
     private fun translateForExtensionFunction(descriptor: FunctionDescriptor, context: TranslationContext): JsExpression {
-        val receiverParameterDescriptor = descriptor.getReceiverParameter()
+        val receiverParameterDescriptor = descriptor.getExtensionReceiverParameter()
         assert(receiverParameterDescriptor != null, "receiverParameter for extension should not be null")
 
         val jsFunctionRef = ReferenceTranslator.translateAsFQReference(descriptor, context)

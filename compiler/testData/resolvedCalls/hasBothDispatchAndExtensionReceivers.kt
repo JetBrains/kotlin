@@ -6,8 +6,6 @@ trait B
 
 fun bar(a: A, b: B) {
     with (a) {
-        with (b) {
-            <caret>foo()
-        }
+        b.<caret>foo()
     }
 }

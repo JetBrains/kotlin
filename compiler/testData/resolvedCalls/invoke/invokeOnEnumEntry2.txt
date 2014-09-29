@@ -12,9 +12,9 @@ Resolved call:
 
 Resulting descriptor: fun invoke(i: Int): Int defined in A
 
-Explicit receiver kind = THIS_OBJECT
-This object = ONE {A}
-Receiver argument = NO_RECEIVER
+Explicit receiver kind = DISPATCH_RECEIVER
+Dispatch receiver = ONE {A}
+Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 

@@ -11,8 +11,8 @@ Candidate descriptor: fun <T> foo(f: (T) -> String): Unit defined in root packag
 Resulting descriptor: fun <T> foo(f: (Int) -> String): Unit defined in root package
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
-This object = NO_RECEIVER
-Receiver argument = NO_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 

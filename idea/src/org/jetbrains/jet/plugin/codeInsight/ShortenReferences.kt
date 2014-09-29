@@ -330,7 +330,7 @@ public object ShortenReferences {
     private fun DeclarationDescriptor.asString() = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
 
     private fun ResolvedCall<*>.asString(): String {
-        return "${getReceiverArgument()}, ${getThisObject()} -> ${getResultingDescriptor()?.let {FQ_NAMES_IN_TYPES.render(it)}}"
+        return "${getExtensionReceiver()}, ${getDispatchReceiver()} -> ${getResultingDescriptor()?.let {FQ_NAMES_IN_TYPES.render(it)}}"
     }
 
     //TODO: do we need this "IfNeeded" check?

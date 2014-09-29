@@ -237,8 +237,8 @@ public class LazyJavaClassMemberScope(
         }
     }
 
-    override fun getExpectedThisObject(): ReceiverParameterDescriptor? =
-            DescriptorUtils.getExpectedThisObjectIfNeeded(getContainingDeclaration())
+    override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? =
+            DescriptorUtils.getDispatchReceiverParameterIfNeeded(getContainingDeclaration())
 
     override fun getClassifier(name: Name): ClassifierDescriptor? = nestedClasses(name)
     override fun getAllClassNames(): Collection<Name> = nestedClassIndex().keySet() + enumEntryIndex().keySet()

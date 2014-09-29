@@ -237,7 +237,7 @@ public final class PatternBuilder {
         public boolean apply(@Nullable FunctionDescriptor functionDescriptor) {
             assert functionDescriptor != null :
                     "argument for DescriptorPredicate.apply should not be null, receiverFqName=" + receiverFqName + " names=" + Arrays.asList(names);
-            ReceiverParameterDescriptor actualReceiver = functionDescriptor.getReceiverParameter();
+            ReceiverParameterDescriptor actualReceiver = functionDescriptor.getExtensionReceiverParameter();
             if (actualReceiver != null) {
                 if (receiverFqName == null) return false;
 

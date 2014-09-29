@@ -507,9 +507,9 @@ private fun ExtractionData.inferParametersInfo(
             return info
         }
 
-        val receiverArgument = resolvedCall?.getReceiverArgument()
+        val receiverArgument = resolvedCall?.getExtensionReceiver()
         val receiver = when(receiverArgument) {
-            ReceiverValue.NO_RECEIVER -> resolvedCall?.getThisObject()
+            ReceiverValue.NO_RECEIVER -> resolvedCall?.getDispatchReceiver()
             else -> receiverArgument
         } ?: ReceiverValue.NO_RECEIVER
 

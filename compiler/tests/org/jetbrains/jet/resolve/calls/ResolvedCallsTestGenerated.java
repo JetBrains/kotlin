@@ -39,39 +39,39 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
-    @TestMetadata("explicitReceiverIsReceiverArgument.kt")
-    public void testExplicitReceiverIsReceiverArgument() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/explicitReceiverIsReceiverArgument.kt");
+    @TestMetadata("explicitReceiverIsDispatchReceiver.kt")
+    public void testExplicitReceiverIsDispatchReceiver() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/explicitReceiverIsDispatchReceiver.kt");
         doTest(fileName);
     }
     
-    @TestMetadata("explicitReceiverIsThisObject.kt")
-    public void testExplicitReceiverIsThisObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/explicitReceiverIsThisObject.kt");
+    @TestMetadata("explicitReceiverIsExtensionReceiver.kt")
+    public void testExplicitReceiverIsExtensionReceiver() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/explicitReceiverIsExtensionReceiver.kt");
         doTest(fileName);
     }
     
-    @TestMetadata("hasBothThisObjectAndReceiverArgument.kt")
-    public void testHasBothThisObjectAndReceiverArgument() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/hasBothThisObjectAndReceiverArgument.kt");
+    @TestMetadata("hasBothDispatchAndExtensionReceivers.kt")
+    public void testHasBothDispatchAndExtensionReceivers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/hasBothDispatchAndExtensionReceivers.kt");
         doTest(fileName);
     }
     
-    @TestMetadata("hasBothThisObjectAndReceiverArgumentWithoutExplicitReceiver.kt")
-    public void testHasBothThisObjectAndReceiverArgumentWithoutExplicitReceiver() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/hasBothThisObjectAndReceiverArgumentWithoutExplicitReceiver.kt");
+    @TestMetadata("hasBothDispatchAndExtensionReceiversWithoutExplicitReceiver.kt")
+    public void testHasBothDispatchAndExtensionReceiversWithoutExplicitReceiver() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/hasBothDispatchAndExtensionReceiversWithoutExplicitReceiver.kt");
         doTest(fileName);
     }
     
-    @TestMetadata("implicitReceiverIsReceiverArgument.kt")
-    public void testImplicitReceiverIsReceiverArgument() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/implicitReceiverIsReceiverArgument.kt");
+    @TestMetadata("implicitReceiverIsDispatchReceiver.kt")
+    public void testImplicitReceiverIsDispatchReceiver() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/implicitReceiverIsDispatchReceiver.kt");
         doTest(fileName);
     }
     
-    @TestMetadata("implicitReceiverIsThisObject.kt")
-    public void testImplicitReceiverIsThisObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/implicitReceiverIsThisObject.kt");
+    @TestMetadata("implicitReceiverIsExtensionReceiver.kt")
+    public void testImplicitReceiverIsExtensionReceiver() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/implicitReceiverIsExtensionReceiver.kt");
         doTest(fileName);
     }
     
@@ -360,6 +360,18 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
             doTest(fileName);
         }
         
+        @TestMetadata("dispatchReceiverAsReceiverForInvoke.kt")
+        public void testDispatchReceiverAsReceiverForInvoke() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/dispatchReceiverAsReceiverForInvoke.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("extensionReceiverAsReceiverForInvoke.kt")
+        public void testExtensionReceiverAsReceiverForInvoke() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/extensionReceiverAsReceiverForInvoke.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("implicitReceiverForInvoke.kt")
         public void testImplicitReceiverForInvoke() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/implicitReceiverForInvoke.kt");
@@ -399,18 +411,6 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         @TestMetadata("invokeOnObject2.kt")
         public void testInvokeOnObject2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/invokeOnObject2.kt");
-            doTest(fileName);
-        }
-        
-        @TestMetadata("receiverArgumentAsReceiverForInvoke.kt")
-        public void testReceiverArgumentAsReceiverForInvoke() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/receiverArgumentAsReceiverForInvoke.kt");
-            doTest(fileName);
-        }
-        
-        @TestMetadata("thisObjectAsReceiverForInvoke.kt")
-        public void testThisObjectAsReceiverForInvoke() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/thisObjectAsReceiverForInvoke.kt");
             doTest(fileName);
         }
         

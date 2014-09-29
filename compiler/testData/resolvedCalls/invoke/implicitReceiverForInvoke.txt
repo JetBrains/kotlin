@@ -13,6 +13,6 @@ Resolved call:
 
 Resulting descriptor: fun Int.invoke(): Unit defined in Foo
 
-Explicit receiver kind = THIS_OBJECT
-This object = f {Foo}
-Receiver argument = IntExt{fun Int.<anonymous>(): Unit defined in bar}
+Explicit receiver kind = DISPATCH_RECEIVER
+Dispatch receiver = f {Foo}
+Extension receiver = IntExt{fun Int.<anonymous>(): Unit defined in bar}

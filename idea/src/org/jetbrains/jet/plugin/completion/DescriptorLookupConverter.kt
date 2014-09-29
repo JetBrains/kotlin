@@ -57,8 +57,8 @@ public object DescriptorLookupConverter {
             typeText = if (returnType != null) DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(returnType) else ""
             presentableText += DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(descriptor)
 
-            if (descriptor.getReceiverParameter() != null) {
-                tailText += " for " + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.getReceiverParameter()!!.getType())
+            if (descriptor.getExtensionReceiverParameter() != null) {
+                tailText += " for " + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.getExtensionReceiverParameter()!!.getType())
                 tailText += " in " + DescriptorUtils.getFqName(descriptor.getContainingDeclaration())
             }
         }

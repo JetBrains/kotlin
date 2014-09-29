@@ -50,7 +50,7 @@ public class ErrorUtils {
         if (containsErrorType(function.getReturnType())) {
             return true;
         }
-        ReceiverParameterDescriptor receiverParameter = function.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = function.getExtensionReceiverParameter();
         if (receiverParameter != null && containsErrorType(receiverParameter.getType())) {
             return true;
         }

@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.ResolvePackage;
 import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
@@ -236,7 +235,7 @@ public class FunctionCodegen extends ParentCodegenAware {
                 }
 
                 if (kind == JvmMethodParameterKind.RECEIVER) {
-                    ReceiverParameterDescriptor receiver = functionDescriptor.getReceiverParameter();
+                    ReceiverParameterDescriptor receiver = functionDescriptor.getExtensionReceiverParameter();
                     nullableType = receiver == null || receiver.getType().isNullable();
                 }
                 else {
@@ -271,12 +270,12 @@ public class FunctionCodegen extends ParentCodegenAware {
 
     @Nullable
     private static Type getThisTypeForFunction(@NotNull FunctionDescriptor functionDescriptor, @NotNull MethodContext context, @NotNull JetTypeMapper typeMapper) {
-        ReceiverParameterDescriptor expectedThisObject = functionDescriptor.getExpectedThisObject();
+        ReceiverParameterDescriptor dispatchReceiver = functionDescriptor.getDispatchReceiverParameter();
         if (functionDescriptor instanceof ConstructorDescriptor) {
             return typeMapper.mapType(functionDescriptor);
         }
-        else if (expectedThisObject != null) {
-            return typeMapper.mapType(expectedThisObject.getType());
+        else if (dispatchReceiver != null) {
+            return typeMapper.mapType(dispatchReceiver.getType());
         }
         else if (isFunctionLiteral(functionDescriptor) || isLocalNamedFun(functionDescriptor)) {
             return typeMapper.mapType(context.getThisDescriptor());

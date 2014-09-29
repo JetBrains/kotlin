@@ -61,12 +61,12 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull Visibility visibility
     ) {
-        super.initialize(null, calculateExpectedThisObject(), typeParameters, unsubstitutedValueParameters, null, Modality.FINAL, visibility);
+        super.initialize(null, calculateDispatchReceiverParameter(), typeParameters, unsubstitutedValueParameters, null, Modality.FINAL, visibility);
         return this;
     }
 
     @Nullable
-    private ReceiverParameterDescriptor calculateExpectedThisObject() {
+    private ReceiverParameterDescriptor calculateDispatchReceiverParameter() {
         ClassDescriptor classDescriptor = getContainingDeclaration();
         if (classDescriptor.isInner()) {
             DeclarationDescriptor classContainer = classDescriptor.getContainingDeclaration();

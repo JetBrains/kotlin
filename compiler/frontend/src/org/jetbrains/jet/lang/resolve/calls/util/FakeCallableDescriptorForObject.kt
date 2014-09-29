@@ -43,9 +43,9 @@ public class FakeCallableDescriptorForObject(
 
     public fun getReferencedDescriptor(): ClassDescriptor = classDescriptor.getClassObjectReferenceTarget()
 
-    override fun getReceiverParameter(): ReceiverParameterDescriptor? = null
+    override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = null
 
-    override fun getExpectedThisObject(): ReceiverParameterDescriptor? = null
+    override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
 
     override fun getTypeParameters(): List<TypeParameterDescriptor> = Collections.emptyList()
 

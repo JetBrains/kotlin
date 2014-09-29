@@ -221,7 +221,7 @@ public class ExpressionTypingUtils {
             @NotNull JetType receiverType,
             @NotNull CallableDescriptor callableDescriptor
     ) {
-        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getExtensionReceiverParameter();
 
         if (!receiverArgument.exists() && receiverParameter == null) {
             // Both receivers do not exist

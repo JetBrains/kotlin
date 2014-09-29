@@ -307,7 +307,7 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsExpression getThisObject(@NotNull ReceiverParameterDescriptor descriptor) {
+    public JsExpression getDispatchReceiver(@NotNull ReceiverParameterDescriptor descriptor) {
         JsExpression alias = getAliasForDescriptor(descriptor);
         return alias == null ? JsLiteral.THIS : alias;
     }

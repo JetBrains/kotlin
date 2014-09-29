@@ -34,7 +34,7 @@ public interface Call {
     ReceiverValue getExplicitReceiver();
 
     @NotNull
-    ReceiverValue getThisObject();
+    ReceiverValue getDispatchReceiver();
 
     @Nullable
     JetExpression getCalleeExpression();

@@ -567,8 +567,8 @@ fun isIntegerType(value: Any?) = value is Byte || value is Short || value is Int
 
 private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): JetType? {
     return when (resolvedCall.getExplicitReceiverKind()) {
-        ExplicitReceiverKind.THIS_OBJECT -> resolvedCall.getThisObject().getType()
-        ExplicitReceiverKind.RECEIVER_ARGUMENT -> resolvedCall.getReceiverArgument().getType()
+        ExplicitReceiverKind.DISPATCH_RECEIVER -> resolvedCall.getDispatchReceiver().getType()
+        ExplicitReceiverKind.EXTENSION_RECEIVER -> resolvedCall.getExtensionReceiver().getType()
         ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> null
         ExplicitReceiverKind.BOTH_RECEIVERS -> null
         else -> null

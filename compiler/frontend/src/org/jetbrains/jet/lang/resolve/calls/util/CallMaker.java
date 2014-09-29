@@ -134,7 +134,7 @@ public class CallMaker {
 
         @NotNull
         @Override
-        public ReceiverValue getThisObject() {
+        public ReceiverValue getDispatchReceiver() {
             return ReceiverValue.NO_RECEIVER;
         }
 
@@ -277,7 +277,7 @@ public class CallMaker {
 
             @NotNull
             @Override
-            public ReceiverValue getThisObject() {
+            public ReceiverValue getDispatchReceiver() {
                 return ReceiverValue.NO_RECEIVER;
             }
 

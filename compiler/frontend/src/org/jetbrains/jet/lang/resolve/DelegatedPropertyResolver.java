@@ -224,7 +224,7 @@ public class DelegatedPropertyResolver {
                 expressionTypingServices, trace, scope,
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
-        boolean hasThis = propertyDescriptor.getReceiverParameter() != null || propertyDescriptor.getExpectedThisObject() != null;
+        boolean hasThis = propertyDescriptor.getExtensionReceiverParameter() != null || propertyDescriptor.getDispatchReceiverParameter() != null;
 
         List<JetExpression> arguments = Lists.newArrayList();
         JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
@@ -358,11 +358,11 @@ public class DelegatedPropertyResolver {
             }
 
             private void addConstraintForThisValue(ConstraintSystem constraintSystem, FunctionDescriptor resultingDescriptor) {
-                ReceiverParameterDescriptor receiverParameter = propertyDescriptor.getReceiverParameter();
-                ReceiverParameterDescriptor thisObject = propertyDescriptor.getExpectedThisObject();
+                ReceiverParameterDescriptor extensionReceiver = propertyDescriptor.getExtensionReceiverParameter();
+                ReceiverParameterDescriptor dispatchReceiver = propertyDescriptor.getDispatchReceiverParameter();
                 JetType typeOfThis =
-                        receiverParameter != null ? receiverParameter.getType() :
-                        thisObject != null ? thisObject.getType() :
+                        extensionReceiver != null ? extensionReceiver.getType() :
+                        dispatchReceiver != null ? dispatchReceiver.getType() :
                         KotlinBuiltIns.getInstance().getNullableNothingType();
 
                 List<ValueParameterDescriptor> valueParameters = resultingDescriptor.getValueParameters();

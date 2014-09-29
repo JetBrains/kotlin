@@ -66,7 +66,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         }
 
         //add extension receiver as inlinable
-        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
             if (isInlinableParameter(receiverParameter)) {
                 inlinableParameters.add(receiverParameter);
@@ -83,8 +83,8 @@ public class InlineCallResolverExtension implements CallResolverExtension {
 
         //checking that only invoke or inlinable extension called on function parameter
         CallableDescriptor targetDescriptor = resolvedCall.getResultingDescriptor();
-        checkCallWithReceiver(context, targetDescriptor, resolvedCall.getThisObject(), expression);
-        checkCallWithReceiver(context, targetDescriptor, resolvedCall.getReceiverArgument(), expression);
+        checkCallWithReceiver(context, targetDescriptor, resolvedCall.getDispatchReceiver(), expression);
+        checkCallWithReceiver(context, targetDescriptor, resolvedCall.getExtensionReceiver(), expression);
 
         if (inlinableParameters.contains(targetDescriptor)) {
             if (!isInsideCall(expression)) {
@@ -167,7 +167,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
             ExtensionReceiver extensionReceiver = (ExtensionReceiver) receiver;
             CallableDescriptor extension = extensionReceiver.getDeclarationDescriptor();
 
-            varDescriptor = extension.getReceiverParameter();
+            varDescriptor = extension.getExtensionReceiverParameter();
             assert varDescriptor != null : "Extension should have receiverParameterDescriptor: " + extension;
 
             receiverExpression = expression;

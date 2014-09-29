@@ -182,7 +182,7 @@ public class OverridingUtil {
             CallableDescriptor superDescriptor,
             CallableDescriptor subDescriptor
     ) {
-        if ((superDescriptor.getReceiverParameter() == null) != (subDescriptor.getReceiverParameter() == null)) {
+        if ((superDescriptor.getExtensionReceiverParameter() == null) != (subDescriptor.getExtensionReceiverParameter() == null)) {
             return OverrideCompatibilityInfo.receiverPresenceMismatch();
         }
 
@@ -206,7 +206,7 @@ public class OverridingUtil {
     }
 
     static List<JetType> compiledValueParameters(CallableDescriptor callableDescriptor) {
-        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getExtensionReceiverParameter();
         ArrayList<JetType> parameters = new ArrayList<JetType>();
         if (receiverParameter != null) {
             parameters.add(receiverParameter.getType());

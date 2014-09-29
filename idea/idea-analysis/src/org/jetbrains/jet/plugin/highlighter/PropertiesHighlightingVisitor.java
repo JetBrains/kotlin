@@ -87,7 +87,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
                 holder, elementToHighlight,
                 isStatic ? JetHighlightingColors.PACKAGE_PROPERTY : JetHighlightingColors.INSTANCE_PROPERTY
         );
-        if (descriptor.getReceiverParameter() != null) {
+        if (descriptor.getExtensionReceiverParameter() != null) {
             JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.EXTENSION_PROPERTY);
         }
         if (withBackingField) {

@@ -119,14 +119,14 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
 
     @Nullable
     @Override
-    public ReceiverParameterDescriptor getReceiverParameter() {
-        return getCorrespondingProperty().getReceiverParameter();
+    public ReceiverParameterDescriptor getExtensionReceiverParameter() {
+        return getCorrespondingProperty().getExtensionReceiverParameter();
     }
 
     @Nullable
     @Override
-    public ReceiverParameterDescriptor getExpectedThisObject() {
-        return getCorrespondingProperty().getExpectedThisObject();
+    public ReceiverParameterDescriptor getDispatchReceiverParameter() {
+        return getCorrespondingProperty().getDispatchReceiverParameter();
     }
 
     @NotNull

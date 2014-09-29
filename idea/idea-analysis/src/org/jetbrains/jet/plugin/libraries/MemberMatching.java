@@ -144,7 +144,7 @@ public class MemberMatching {
     /* DECLARATION AND DESCRIPTOR STRICT MATCHING */
     static boolean receiversMatch(@NotNull JetNamedDeclaration declaration, @NotNull CallableDescriptor descriptor) {
         JetTypeReference declarationReceiver = getReceiverType(declaration);
-        ReceiverParameterDescriptor descriptorReceiver = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor descriptorReceiver = descriptor.getExtensionReceiverParameter();
         if (declarationReceiver == null && descriptorReceiver == null) {
             return true;
         }

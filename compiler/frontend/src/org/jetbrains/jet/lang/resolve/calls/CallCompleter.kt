@@ -184,7 +184,7 @@ public class CallCompleter(
             return
         }
 
-        val receiverType = if (getReceiverArgument().exists()) getReceiverArgument().getType() else null
+        val receiverType = if (getExtensionReceiver().exists()) getExtensionReceiver().getType() else null
         val errorData = InferenceErrorData.create(
                 getCandidateDescriptor(), getConstraintSystem()!!, valueArgumentsCheckingResult.argumentTypes,
                 receiverType, context.expectedType)

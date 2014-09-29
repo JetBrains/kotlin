@@ -7,6 +7,6 @@ Resolved call:
 
 Resulting descriptor: fun invoke(): Unit defined in kotlin.Function0
 
-Explicit receiver kind = THIS_OBJECT
-This object = f {Function0<Unit>}
-Receiver argument = NO_RECEIVER
+Explicit receiver kind = DISPATCH_RECEIVER
+Dispatch receiver = f {Function0<Unit>}
+Extension receiver = NO_RECEIVER

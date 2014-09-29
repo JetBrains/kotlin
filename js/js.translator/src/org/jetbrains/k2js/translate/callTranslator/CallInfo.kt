@@ -45,15 +45,15 @@ trait CallInfo {
     val context: TranslationContext
     val resolvedCall: ResolvedCall<out CallableDescriptor>
 
-    val thisObject: JsExpression?
-    val receiverObject: JsExpression?
+    val dispatchReceiver: JsExpression?
+    val extensionReceiver: JsExpression?
 
     fun constructSafeCallIsNeeded(result: JsExpression): JsExpression
 
     override fun toString(): String {
         val location = DiagnosticUtils.atLocation(callableDescriptor)
         val name = callableDescriptor.getName().asString()
-        return "callableDescriptor: $name at $location; thisObject: $thisObject; receiverObject: $receiverObject"
+        return "callableDescriptor: $name at $location; dispatchReceiver: $dispatchReceiver; extensionReceiver: $extensionReceiver"
     }
 }
 
@@ -63,40 +63,40 @@ class VariableAccessInfo(callInfo: CallInfo, val value: JsExpression? = null) : 
 class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : CallInfo by callInfo
 
 /**
- * no receivers - thisObjectOrReceiverObject = null,     receiverObject = null
- * this -         thisObjectOrReceiverObject = this,     receiverObject = null
- * receiver -     thisObjectOrReceiverObject = receiver, receiverObject = null
- * both -         thisObjectOrReceiverObject = this,     receiverObject = receiver
+ * no receivers - extensionOrDispatchReceiver = null,     extensionReceiver = null
+ * this -         extensionOrDispatchReceiver = this,     extensionReceiver = null
+ * receiver -     extensionOrDispatchReceiver = receiver, extensionReceiver = null
+ * both -         extensionOrDispatchReceiver = this,     extensionReceiver = receiver
  */
-class ExplicitReceivers(val receiverOrThisObject: JsExpression?, val receiverObject: JsExpression? = null)
+class ExplicitReceivers(val extensionOrDispatchReceiver: JsExpression?, val extensionReceiver: JsExpression? = null)
 
-fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, receiverOrThisObject: JsExpression?): CallInfo {
-    return createCallInfo(resolvedCall, ExplicitReceivers(receiverOrThisObject))
+fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, extensionOrDispatchReceiver: JsExpression?): CallInfo {
+    return createCallInfo(resolvedCall, ExplicitReceivers(extensionOrDispatchReceiver))
 }
 
-fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiverOrThisObject: JsExpression?): FunctionCallInfo {
-    return getCallInfo(resolvedCall, ExplicitReceivers(receiverOrThisObject));
+fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, extensionOrDispatchReceiver: JsExpression?): FunctionCallInfo {
+    return getCallInfo(resolvedCall, ExplicitReceivers(extensionOrDispatchReceiver));
 }
 
 // two receiver need only for FunctionCall in VariableAsFunctionResolvedCall
 fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, explicitReceivers: ExplicitReceivers): FunctionCallInfo {
     val argsBlock = JsBlock()
-    val argumentsInfo = CallArgumentTranslator.translate(resolvedCall, explicitReceivers.receiverOrThisObject, this, argsBlock)
+    val argumentsInfo = CallArgumentTranslator.translate(resolvedCall, explicitReceivers.extensionOrDispatchReceiver, this, argsBlock)
     val explicitReceiversCorrected =
-        if (!argsBlock.isEmpty() && explicitReceivers.receiverOrThisObject != null) {
+        if (!argsBlock.isEmpty() && explicitReceivers.extensionOrDispatchReceiver != null) {
             val receiverOrThisRef =
-                if (TranslationUtils.isCacheNeeded(explicitReceivers.receiverOrThisObject)) {
-                    val receiverOrThisRefVar = this.declareTemporary(explicitReceivers.receiverOrThisObject)
+                if (TranslationUtils.isCacheNeeded(explicitReceivers.extensionOrDispatchReceiver)) {
+                    val receiverOrThisRefVar = this.declareTemporary(explicitReceivers.extensionOrDispatchReceiver)
                     this.addStatementToCurrentBlock(receiverOrThisRefVar.assignmentExpression().makeStmt())
                     receiverOrThisRefVar.reference()
                 }
                 else {
-                    explicitReceivers.receiverOrThisObject
+                    explicitReceivers.extensionOrDispatchReceiver
                 }
-            var receiverRef = explicitReceivers.receiverObject
+            var receiverRef = explicitReceivers.extensionReceiver
             if (receiverRef != null) {
                 receiverRef = this.declareTemporary(null).reference()
-                this.addStatementToCurrentBlock(JsAstUtils.assignment(receiverRef!!, explicitReceivers.receiverObject!!).makeStmt())
+                this.addStatementToCurrentBlock(JsAstUtils.assignment(receiverRef!!, explicitReceivers.extensionReceiver!!).makeStmt())
             }
             ExplicitReceivers(receiverOrThisRef, receiverRef)
         }
@@ -108,58 +108,58 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
     return FunctionCallInfo(callInfo, argumentsInfo)
 }
 
-private fun TranslationContext.getThisObject(receiverValue: ReceiverValue): JsExpression {
+private fun TranslationContext.getDispatchReceiver(receiverValue: ReceiverValue): JsExpression {
     assert(receiverValue.exists(), "receiverValue must be exist here")
-    return getThisObject(getReceiverParameterForReceiver(receiverValue))
+    return getDispatchReceiver(getReceiverParameterForReceiver(receiverValue))
 }
 
 private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, explicitReceivers: ExplicitReceivers): CallInfo {
     val receiverKind = resolvedCall.getExplicitReceiverKind()
 
-    fun getThisObject(): JsExpression? {
-        val receiverValue = resolvedCall.getThisObject()
+    fun getDispatchReceiver(): JsExpression? {
+        val receiverValue = resolvedCall.getDispatchReceiver()
         if (!receiverValue.exists()) {
             return null
         }
         return when (receiverKind) {
-            THIS_OBJECT, BOTH_RECEIVERS -> explicitReceivers.receiverOrThisObject
-            else -> this.getThisObject(receiverValue)
+            DISPATCH_RECEIVER, BOTH_RECEIVERS -> explicitReceivers.extensionOrDispatchReceiver
+            else -> this.getDispatchReceiver(receiverValue)
         }
     }
 
-    fun getReceiverObject(): JsExpression? {
-        val receiverValue = resolvedCall.getReceiverArgument()
+    fun getExtensionReceiver(): JsExpression? {
+        val receiverValue = resolvedCall.getExtensionReceiver()
         if (!receiverValue.exists()) {
             return null
         }
         return when (receiverKind) {
-            RECEIVER_ARGUMENT -> explicitReceivers.receiverOrThisObject
-            BOTH_RECEIVERS -> explicitReceivers.receiverObject
-            else -> this.getThisObject(receiverValue)
+            EXTENSION_RECEIVER -> explicitReceivers.extensionOrDispatchReceiver
+            BOTH_RECEIVERS -> explicitReceivers.extensionReceiver
+            else -> this.getDispatchReceiver(receiverValue)
         }
     }
 
-    var thisObject = getThisObject()
-    var receiverObject = getReceiverObject()
+    var dispatchReceiver = getDispatchReceiver()
+    var extensionReceiver = getExtensionReceiver()
     var notNullConditional: JsConditional? = null
 
     if (resolvedCall.isSafeCall()) {
         when (resolvedCall.getExplicitReceiverKind()) {
-            BOTH_RECEIVERS, RECEIVER_ARGUMENT -> {
-                notNullConditional = TranslationUtils.notNullConditional(receiverObject!!, JsLiteral.NULL, this)
-                receiverObject = notNullConditional!!.getThenExpression()
+            BOTH_RECEIVERS, EXTENSION_RECEIVER -> {
+                notNullConditional = TranslationUtils.notNullConditional(extensionReceiver!!, JsLiteral.NULL, this)
+                extensionReceiver = notNullConditional!!.getThenExpression()
             }
             else -> {
-                notNullConditional = TranslationUtils.notNullConditional(thisObject!!, JsLiteral.NULL, this)
-                thisObject = notNullConditional!!.getThenExpression()
+                notNullConditional = TranslationUtils.notNullConditional(dispatchReceiver!!, JsLiteral.NULL, this)
+                dispatchReceiver = notNullConditional!!.getThenExpression()
             }
         }
     }
     return object : CallInfo {
         override val context: TranslationContext = this@createCallInfo
         override val resolvedCall: ResolvedCall<out CallableDescriptor> = resolvedCall
-        override val thisObject: JsExpression? = thisObject
-        override val receiverObject: JsExpression? = receiverObject
+        override val dispatchReceiver: JsExpression? = dispatchReceiver
+        override val extensionReceiver: JsExpression? = extensionReceiver
 
         val notNullConditionalForSafeCall: JsConditional? = notNullConditional
 

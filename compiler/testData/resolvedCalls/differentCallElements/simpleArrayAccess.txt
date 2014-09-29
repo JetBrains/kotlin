@@ -7,9 +7,9 @@ Resolved call:
 
 Resulting descriptor: fun get(index: Int): Int defined in kotlin.Array
 
-Explicit receiver kind = THIS_OBJECT
-This object = array {Array<Int>}
-Receiver argument = NO_RECEIVER
+Explicit receiver kind = DISPATCH_RECEIVER
+Dispatch receiver = array {Array<Int>}
+Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 

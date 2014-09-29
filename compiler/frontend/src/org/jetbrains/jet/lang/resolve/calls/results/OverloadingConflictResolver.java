@@ -139,8 +139,8 @@ public class OverloadingConflictResolver {
         if (OverrideResolver.overrides(f, g)) return true;
         if (OverrideResolver.overrides(g, f)) return false;
 
-        ReceiverParameterDescriptor receiverOfF = f.getReceiverParameter();
-        ReceiverParameterDescriptor receiverOfG = g.getReceiverParameter();
+        ReceiverParameterDescriptor receiverOfF = f.getExtensionReceiverParameter();
+        ReceiverParameterDescriptor receiverOfG = g.getExtensionReceiverParameter();
         if (receiverOfF != null && receiverOfG != null) {
             if (!typeMoreSpecific(receiverOfF.getType(), receiverOfG.getType())) return false;
         }

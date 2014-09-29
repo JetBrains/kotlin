@@ -86,7 +86,7 @@ public final class JetDescriptorIconProvider {
         }
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-            if (functionDescriptor.getReceiverParameter() != null) {
+            if (functionDescriptor.getExtensionReceiverParameter() != null) {
                 return JetIcons.EXTENSION_FUNCTION;
             }
 

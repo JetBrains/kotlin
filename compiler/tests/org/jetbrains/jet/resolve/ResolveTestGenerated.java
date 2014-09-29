@@ -245,6 +245,18 @@ public class ResolveTestGenerated extends AbstractResolveTest {
             doTest(fileName);
         }
         
+        @TestMetadata("dispatchReceiverVsExtensionReceiver.resolve")
+        public void testDispatchReceiverVsExtensionReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/candidatesPriority/dispatchReceiverVsExtensionReceiver.resolve");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("dispatchReceiverVsExtensionReceiver2.resolve")
+        public void testDispatchReceiverVsExtensionReceiver2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/candidatesPriority/dispatchReceiverVsExtensionReceiver2.resolve");
+            doTest(fileName);
+        }
+        
         @TestMetadata("extensionToCloserReceiverVsMember.resolve")
         public void testExtensionToCloserReceiverVsMember() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/candidatesPriority/extensionToCloserReceiverVsMember.resolve");
@@ -296,18 +308,6 @@ public class ResolveTestGenerated extends AbstractResolveTest {
         @TestMetadata("memberWithInvokeVsNonLocal.resolve")
         public void testMemberWithInvokeVsNonLocal() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/candidatesPriority/memberWithInvokeVsNonLocal.resolve");
-            doTest(fileName);
-        }
-        
-        @TestMetadata("receiverVsThisObject.resolve")
-        public void testReceiverVsThisObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/candidatesPriority/receiverVsThisObject.resolve");
-            doTest(fileName);
-        }
-        
-        @TestMetadata("receiverVsThisObject2.resolve")
-        public void testReceiverVsThisObject2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/candidatesPriority/receiverVsThisObject2.resolve");
             doTest(fileName);
         }
         

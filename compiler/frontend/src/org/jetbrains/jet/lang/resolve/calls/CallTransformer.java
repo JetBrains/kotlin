@@ -103,7 +103,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
             assert candidate.getDescriptor() instanceof VariableDescriptor;
 
-            boolean hasReceiver = candidate.getReceiverArgument().exists();
+            boolean hasReceiver = candidate.getExtensionReceiver().exists();
             Call variableCall = stripCallArguments(task.call);
             ResolutionCandidate<CallableDescriptor> variableCandidate = getVariableCallCandidate(candidate, variableCall);
             if (!hasReceiver) {
@@ -118,7 +118,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             ResolutionCandidate<CallableDescriptor> candidateWithoutReceiver = ResolutionCandidate.create(
                     variableCandidate.getCall(),
                     variableCandidate.getDescriptor(),
-                    variableCandidate.getThisObject(),
+                    variableCandidate.getDispatchReceiver(),
                     ReceiverValue.NO_RECEIVER,
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, false);
 
@@ -145,8 +145,8 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             return ResolutionCandidate.create(
                     variableCall,
                     candidate.getDescriptor(),
-                    candidate.getThisObject(),
-                    candidate.getReceiverArgument(),
+                    candidate.getDispatchReceiver(),
+                    candidate.getExtensionReceiver(),
                     candidate.getExplicitReceiverKind(),
                     candidate.isSafeCall());
         }
@@ -252,18 +252,18 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
     public static class CallForImplicitInvoke extends DelegatingCall {
         final Call outerCall;
         final ReceiverValue explicitExtensionReceiver;
-        final ExpressionReceiver calleeExpressionAsThisObject;
+        final ExpressionReceiver calleeExpressionAsDispatchReceiver;
         final JetSimpleNameExpression fakeInvokeExpression;
 
         public CallForImplicitInvoke(
                 @NotNull ReceiverValue explicitExtensionReceiver,
-                @NotNull ExpressionReceiver calleeExpressionAsThisObject,
+                @NotNull ExpressionReceiver calleeExpressionAsDispatchReceiver,
                 @NotNull Call call
         ) {
             super(call);
             this.outerCall = call;
             this.explicitExtensionReceiver = explicitExtensionReceiver;
-            this.calleeExpressionAsThisObject = calleeExpressionAsThisObject;
+            this.calleeExpressionAsDispatchReceiver = calleeExpressionAsDispatchReceiver;
             this.fakeInvokeExpression = (JetSimpleNameExpression) JetPsiFactory(call.getCallElement()).createExpression( "invoke");
         }
 
@@ -275,8 +275,8 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
         @NotNull
         @Override
-        public ExpressionReceiver getThisObject() {
-            return calleeExpressionAsThisObject;
+        public ExpressionReceiver getDispatchReceiver() {
+            return calleeExpressionAsDispatchReceiver;
         }
 
         @Override

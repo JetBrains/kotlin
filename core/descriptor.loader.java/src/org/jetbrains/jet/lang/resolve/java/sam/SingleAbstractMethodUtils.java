@@ -189,7 +189,7 @@ public class SingleAbstractMethodUtils {
             ) {
                 result.initialize(
                         null,
-                        original.getExpectedThisObject(),
+                        original.getDispatchReceiverParameter(),
                         typeParameters,
                         valueParameters,
                         returnType,

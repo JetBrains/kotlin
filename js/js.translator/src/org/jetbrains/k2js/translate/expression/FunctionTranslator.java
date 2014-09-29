@@ -78,7 +78,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     private TranslationContext getFunctionBodyContext() {
         AliasingContext aliasingContext;
         if (isExtensionFunction()) {
-            DeclarationDescriptor expectedReceiverDescriptor = descriptor.getReceiverParameter();
+            DeclarationDescriptor expectedReceiverDescriptor = descriptor.getExtensionReceiverParameter();
             assert expectedReceiverDescriptor != null;
             extensionFunctionReceiverName = functionObject.getScope().declareName(Namer.getReceiverParameterName());
             //noinspection ConstantConditions

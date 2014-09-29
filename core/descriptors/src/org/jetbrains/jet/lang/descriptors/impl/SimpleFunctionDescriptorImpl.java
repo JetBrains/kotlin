@@ -59,14 +59,14 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     @Override
     public SimpleFunctionDescriptorImpl initialize(
             @Nullable JetType receiverParameterType,
-            @Nullable ReceiverParameterDescriptor expectedThisObject,
+            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
             @Nullable Modality modality,
             @NotNull Visibility visibility
     ) {
-        super.initialize(receiverParameterType, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType,
+        super.initialize(receiverParameterType, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType,
                          modality, visibility);
         this.inlineStrategy = InlineUtil.getInlineType(this);
         return this;

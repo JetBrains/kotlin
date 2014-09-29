@@ -31,19 +31,19 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_R
 public class ResolutionCandidate<D extends CallableDescriptor> {
     private final Call call;
     private final D candidateDescriptor;
-    private ReceiverValue thisObject; // receiver object of a method
-    private ReceiverValue receiverArgument; // receiver of an extension function
+    private ReceiverValue dispatchReceiver; // receiver object of a method
+    private ReceiverValue extensionReceiver; // receiver of an extension function
     private ExplicitReceiverKind explicitReceiverKind;
     private Boolean isSafeCall;
 
     private ResolutionCandidate(
-            @NotNull Call call, @NotNull D descriptor, @NotNull ReceiverValue thisObject,
-            @NotNull ReceiverValue receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind, @Nullable Boolean isSafeCall
+            @NotNull Call call, @NotNull D descriptor, @NotNull ReceiverValue dispatchReceiver,
+            @NotNull ReceiverValue extensionReceiver, @NotNull ExplicitReceiverKind explicitReceiverKind, @Nullable Boolean isSafeCall
     ) {
         this.call = call;
         this.candidateDescriptor = descriptor;
-        this.thisObject = thisObject;
-        this.receiverArgument = receiverArgument;
+        this.dispatchReceiver = dispatchReceiver;
+        this.extensionReceiver = extensionReceiver;
         this.explicitReceiverKind = explicitReceiverKind;
         this.isSafeCall = isSafeCall;
     }
@@ -60,18 +60,18 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     }
 
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
-            @NotNull Call call, @NotNull D descriptor, @NotNull ReceiverValue thisObject,
+            @NotNull Call call, @NotNull D descriptor, @NotNull ReceiverValue dispatchReceiver,
             @NotNull ReceiverValue receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind, boolean isSafeCall
     ) {
-        return new ResolutionCandidate<D>(call, descriptor, thisObject, receiverArgument, explicitReceiverKind, isSafeCall);
+        return new ResolutionCandidate<D>(call, descriptor, dispatchReceiver, receiverArgument, explicitReceiverKind, isSafeCall);
     }
 
-    public void setThisObject(@NotNull ReceiverValue thisObject) {
-        this.thisObject = thisObject;
+    public void setDispatchReceiver(@NotNull ReceiverValue dispatchReceiver) {
+        this.dispatchReceiver = dispatchReceiver;
     }
 
-    public void setReceiverArgument(@NotNull ReceiverValue receiverArgument) {
-        this.receiverArgument = receiverArgument;
+    public void setExtensionReceiver(@NotNull ReceiverValue extensionReceiver) {
+        this.extensionReceiver = extensionReceiver;
     }
 
     public void setExplicitReceiverKind(@NotNull ExplicitReceiverKind explicitReceiverKind) {
@@ -89,13 +89,13 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     }
 
     @NotNull
-    public ReceiverValue getThisObject() {
-        return thisObject;
+    public ReceiverValue getDispatchReceiver() {
+        return dispatchReceiver;
     }
 
     @NotNull
-    public ReceiverValue getReceiverArgument() {
-        return receiverArgument;
+    public ReceiverValue getExtensionReceiver() {
+        return extensionReceiver;
     }
 
     @NotNull

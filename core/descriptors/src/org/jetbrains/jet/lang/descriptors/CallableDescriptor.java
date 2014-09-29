@@ -27,10 +27,10 @@ import java.util.Set;
 
 public interface CallableDescriptor extends DeclarationDescriptorWithVisibility, DeclarationDescriptorNonRoot {
     @Nullable
-    ReceiverParameterDescriptor getReceiverParameter();
+    ReceiverParameterDescriptor getExtensionReceiverParameter();
 
     @Nullable
-    ReceiverParameterDescriptor getExpectedThisObject();
+    ReceiverParameterDescriptor getDispatchReceiverParameter();
 
     @KotlinSignature("fun getTypeParameters(): List<TypeParameterDescriptor>")
     @NotNull

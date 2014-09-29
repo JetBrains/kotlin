@@ -319,7 +319,7 @@ public class DeclarationResolver {
                     public boolean apply(@Nullable DeclarationDescriptor descriptor) {
                         if (descriptor instanceof PropertyDescriptor) {
                             PropertyDescriptor propertyDescriptor = (PropertyDescriptor)descriptor;
-                            return propertyDescriptor.getReceiverParameter() == null;
+                            return propertyDescriptor.getExtensionReceiverParameter() == null;
                         }
                         return true;
                     }
@@ -459,7 +459,7 @@ public class DeclarationResolver {
                             new Function1<VariableDescriptor, Boolean>() {
                                 @Override
                                 public Boolean invoke(VariableDescriptor descriptor) {
-                                    return descriptor.getReceiverParameter() == null;
+                                    return descriptor.getExtensionReceiverParameter() == null;
                                 }
                             }
                     )

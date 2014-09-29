@@ -10,5 +10,5 @@ Resolved call:
 Resulting descriptor: AExt{fun A.bar(): Unit defined in root package}::this
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
-This object = NO_RECEIVER
-Receiver argument = NO_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER

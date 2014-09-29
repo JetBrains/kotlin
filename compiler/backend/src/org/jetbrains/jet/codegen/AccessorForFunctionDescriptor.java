@@ -44,8 +44,8 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
               Kind.DECLARATION, SourceElement.NO_SOURCE);
         this.calleeDescriptor = descriptor;
 
-        initialize(DescriptorUtils.getReceiverParameterType(descriptor.getReceiverParameter()),
-                   descriptor instanceof ConstructorDescriptor ? NO_RECEIVER_PARAMETER : descriptor.getExpectedThisObject(),
+        initialize(DescriptorUtils.getReceiverParameterType(descriptor.getExtensionReceiverParameter()),
+                   descriptor instanceof ConstructorDescriptor ? NO_RECEIVER_PARAMETER : descriptor.getDispatchReceiverParameter(),
                    copyTypeParameters(descriptor),
                    copyValueParameters(descriptor),
                    descriptor.getReturnType(),

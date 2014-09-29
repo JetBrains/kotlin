@@ -12,5 +12,5 @@ Resolved call:
 Resulting descriptor: fun A.foo(): Unit defined in root package
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
-This object = NO_RECEIVER
-Receiver argument = AExt{fun A.bar(): Unit defined in root package}
+Dispatch receiver = NO_RECEIVER
+Extension receiver = AExt{fun A.bar(): Unit defined in root package}

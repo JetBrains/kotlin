@@ -481,21 +481,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         if (descriptor == null) return null;
 
-        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
-        ReceiverParameterDescriptor expectedThisObject = descriptor.getExpectedThisObject();
-        if (receiverParameter != null && expectedThisObject != null && descriptor instanceof CallableMemberDescriptor) {
+        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
+        ReceiverParameterDescriptor dispatchReceiver = descriptor.getDispatchReceiverParameter();
+        if (extensionReceiver != null && dispatchReceiver != null && descriptor instanceof CallableMemberDescriptor) {
             context.trace.report(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED.on(reference, (CallableMemberDescriptor) descriptor));
             return null;
         }
 
         JetType receiverType = null;
-        if (receiverParameter != null) {
-            receiverType = receiverParameter.getType();
+        if (extensionReceiver != null) {
+            receiverType = extensionReceiver.getType();
         }
-        else if (expectedThisObject != null) {
-            receiverType = expectedThisObject.getType();
+        else if (dispatchReceiver != null) {
+            receiverType = dispatchReceiver.getType();
         }
-        boolean isExtension = receiverParameter != null;
+        boolean isExtension = extensionReceiver != null;
 
         if (descriptor instanceof FunctionDescriptor) {
             return createFunctionReferenceType(expression, context, (FunctionDescriptor) descriptor, receiverType, isExtension);

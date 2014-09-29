@@ -75,7 +75,7 @@ public class FunctionDescriptorUtil {
     @NotNull
     public static JetScope getFunctionInnerScope(@NotNull JetScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull BindingTrace trace) {
         WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, new TraceBasedRedeclarationHandler(trace), "Function inner scope");
-        ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
         if (receiver != null) {
             parameterScope.setImplicitReceiver(receiver);
         }
@@ -93,14 +93,14 @@ public class FunctionDescriptorUtil {
     public static void initializeFromFunctionType(
             @NotNull FunctionDescriptorImpl functionDescriptor,
             @NotNull JetType functionType,
-            @Nullable ReceiverParameterDescriptor expectedThisObject,
+            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull Modality modality,
             @NotNull Visibility visibility
     ) {
 
         assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(functionType);
         functionDescriptor.initialize(KotlinBuiltIns.getInstance().getReceiverType(functionType),
-                                      expectedThisObject,
+                                      dispatchReceiverParameter,
                                       Collections.<TypeParameterDescriptorImpl>emptyList(),
                                       KotlinBuiltIns.getInstance().getValueParameters(functionDescriptor, functionType),
                                       KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(functionType),
@@ -149,10 +149,10 @@ public class FunctionDescriptorUtil {
             );
             idx++;
         }
-        ReceiverParameterDescriptor receiver = function.getReceiverParameter();
+        ReceiverParameterDescriptor receiver = function.getExtensionReceiverParameter();
         descriptor.initialize(
                 receiver == null ? null : receiver.getType(),
-                function.getExpectedThisObject(),
+                function.getDispatchReceiverParameter(),
                 function.getTypeParameters(),
                 parameters,
                 function.getReturnType(),

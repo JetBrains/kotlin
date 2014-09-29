@@ -91,7 +91,7 @@ public class JvmRuntimeTypes {
 
     @NotNull
     public Collection<JetType> getSupertypesForClosure(@NotNull FunctionDescriptor descriptor) {
-        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
 
         List<TypeProjection> typeArguments = new ArrayList<TypeProjection>(2);
 
@@ -127,21 +127,21 @@ public class JvmRuntimeTypes {
 
     @NotNull
     public Collection<JetType> getSupertypesForFunctionReference(@NotNull FunctionDescriptor descriptor) {
-        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
-        ReceiverParameterDescriptor expectedThisObject = descriptor.getExpectedThisObject();
+        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
+        ReceiverParameterDescriptor dispatchReceiver = descriptor.getDispatchReceiverParameter();
 
         List<TypeProjection> typeArguments = new ArrayList<TypeProjection>(2);
 
         ClassDescriptor classDescriptor;
         JetType receiverType;
-        if (receiverParameter != null) {
+        if (extensionReceiver != null) {
             classDescriptor = kExtensionFunctionImpl;
-            receiverType = receiverParameter.getType();
+            receiverType = extensionReceiver.getType();
             typeArguments.add(new TypeProjectionImpl(receiverType));
         }
-        else if (expectedThisObject != null) {
+        else if (dispatchReceiver != null) {
             classDescriptor = kMemberFunctionImpl;
-            receiverType = expectedThisObject.getType();
+            receiverType = dispatchReceiver.getType();
             typeArguments.add(new TypeProjectionImpl(receiverType));
         }
         else {
@@ -165,7 +165,7 @@ public class JvmRuntimeTypes {
                 receiverType,
                 ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
                 descriptor.getReturnType(),
-                receiverParameter != null
+                extensionReceiver != null
         );
 
         return Arrays.asList(kFunctionImplType, kFunctionType);

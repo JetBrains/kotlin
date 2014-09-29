@@ -12,8 +12,8 @@ Candidate descriptor: fun <T> bar(f: () -> T): T defined in root package
 Resulting descriptor: fun <T> bar(f: () -> Unit): Unit defined in root package
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
-This object = NO_RECEIVER
-Receiver argument = NO_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 

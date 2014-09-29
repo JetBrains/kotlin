@@ -92,7 +92,7 @@ public final class TopLevelFIF extends CompositeFIF {
         @Nullable
         @Override
         protected ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall) {
-            ReceiverValue result = resolvedCall.getThisObject();
+            ReceiverValue result = resolvedCall.getDispatchReceiver();
             return result instanceof ExpressionReceiver ? (ExpressionReceiver) result : null;
         }
 
@@ -116,7 +116,7 @@ public final class TopLevelFIF extends CompositeFIF {
         @Nullable
         @Override
         protected ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall) {
-            ReceiverValue result = resolvedCall.getReceiverArgument();
+            ReceiverValue result = resolvedCall.getExtensionReceiver();
             return result instanceof ExpressionReceiver ? (ExpressionReceiver) result : null;
         }
 

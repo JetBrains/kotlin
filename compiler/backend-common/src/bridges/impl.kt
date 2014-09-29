@@ -87,7 +87,7 @@ public fun findTraitImplementation(descriptor: CallableMemberDescriptor): Callab
 
     // If this implementation is already generated into one of the superclasses, we need not generate it again, it'll be inherited
     val containingClass = descriptor.getContainingDeclaration() as ClassDescriptor
-    val implClassType = implementation!!.getExpectedThisObject()!!.getType()
+    val implClassType = implementation!!.getDispatchReceiverParameter()!!.getType()
     for (supertype in containingClass.getDefaultType().getConstructor().getSupertypes()) {
         if (!DescriptorUtils.isTrait(supertype.getConstructor().getDeclarationDescriptor()!!) &&
             TypeUtils.getAllSupertypes(supertype).contains(implClassType)) {

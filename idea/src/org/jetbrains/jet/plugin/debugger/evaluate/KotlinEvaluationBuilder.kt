@@ -202,7 +202,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 val bindingContext = getAnalysisResults().getBindingContext()
                 val descriptor = bindingContext[BindingContext.FUNCTION, this]
                 if (descriptor != null) {
-                    val receiver = descriptor.getReceiverParameter()
+                    val receiver = descriptor.getExtensionReceiverParameter()
                     if (receiver != null) {
                         parameters.add(THIS_NAME, receiver.getType())
                     }

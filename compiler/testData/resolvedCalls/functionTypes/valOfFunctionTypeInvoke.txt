@@ -11,9 +11,9 @@ Resolved call:
 
 Resulting descriptor: fun invoke(p1: Int): Int defined in kotlin.Function1
 
-Explicit receiver kind = THIS_OBJECT
-This object = foo {Function1<Int, Int>}
-Receiver argument = NO_RECEIVER
+Explicit receiver kind = DISPATCH_RECEIVER
+Dispatch receiver = foo {Function1<Int, Int>}
+Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 

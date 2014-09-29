@@ -280,7 +280,7 @@ public final class TranslationUtils {
     private static String getArgumentTypesAsString(FunctionDescriptor descriptor) {
         StringBuilder argTypes = new StringBuilder();
 
-        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
             argTypes.append(getJetTypeFqName(receiverParameter.getType())).append(".");
         }
@@ -492,7 +492,7 @@ public final class TranslationUtils {
         }
 
         private static int arity(FunctionDescriptor descriptor) {
-            return descriptor.getValueParameters().size() + (descriptor.getReceiverParameter() == null ? 0 : 1);
+            return descriptor.getValueParameters().size() + (descriptor.getExtensionReceiverParameter() == null ? 0 : 1);
         }
 
         private static boolean isNativeOrOverrideNative(FunctionDescriptor descriptor) {

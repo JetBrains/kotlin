@@ -69,7 +69,7 @@ public abstract class LazyJavaMemberScope(
 
     protected abstract fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name)
 
-    protected abstract fun getExpectedThisObject(): ReceiverParameterDescriptor?
+    protected abstract fun getDispatchReceiverParameter(): ReceiverParameterDescriptor?
 
     protected abstract fun computeAdditionalFunctions(name: Name): Collection<SimpleFunctionDescriptor>
 
@@ -140,7 +140,7 @@ public abstract class LazyJavaMemberScope(
 
         functionDescriptorImpl.initialize(
                 effectiveSignature.getReceiverType(),
-                getExpectedThisObject(),
+                getDispatchReceiverParameter(),
                 effectiveSignature.getTypeParameters(),
                 effectiveSignature.getValueParameters(),
                 effectiveSignature.getReturnType(),
@@ -258,7 +258,7 @@ public abstract class LazyJavaMemberScope(
             c.externalSignatureResolver.reportSignatureErrors(propertyDescriptor, signatureErrors)
         }
 
-        propertyDescriptor.setType(effectiveSignature.getReturnType(), listOf(), getExpectedThisObject(), null : JetType?)
+        propertyDescriptor.setType(effectiveSignature.getReturnType(), listOf(), getDispatchReceiverParameter(), null : JetType?)
 
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.getType())) {
             propertyDescriptor.setCompileTimeInitializer(

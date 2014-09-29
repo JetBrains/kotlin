@@ -120,15 +120,15 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
         TranslationContext contextWithAliasForThisExpression = contextForInlining;
         SimpleFunctionDescriptor functionDescriptor = getFunctionDescriptor();
         CallInfo callInfo = CallTranslatorPackage.getCallInfo(contextForInlining, resolvedCall, receiver);
-        JsExpression receiver = callInfo.getReceiverObject();
+        JsExpression receiver = callInfo.getExtensionReceiver();
         if (receiver != null) {
             contextWithAliasForThisExpression =
-                contextWithAlias(contextWithAliasForThisExpression, receiver, functionDescriptor.getReceiverParameter());
+                contextWithAlias(contextWithAliasForThisExpression, receiver, functionDescriptor.getExtensionReceiverParameter());
         }
-        JsExpression thisObject = callInfo.getThisObject();
-        if (thisObject != null) {
+        JsExpression dispatchReceiver = callInfo.getDispatchReceiver();
+        if (dispatchReceiver != null) {
             contextWithAliasForThisExpression =
-                contextWithAlias(contextWithAliasForThisExpression, thisObject, functionDescriptor.getExpectedThisObject());
+                contextWithAlias(contextWithAliasForThisExpression, dispatchReceiver, functionDescriptor.getDispatchReceiverParameter());
         }
         return contextWithAliasForThisExpression;
     }
