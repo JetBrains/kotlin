@@ -18,7 +18,6 @@ package org.jetbrains.jet;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
@@ -32,7 +31,9 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.ZipOutputStream;
@@ -43,35 +44,43 @@ public class MockLibraryUtil {
 
     private static Class<?> compilerClass = null;
 
-    public static File compileLibraryToJar(String sourcesPath, boolean addSources) {
+    @NotNull
+    public static File compileLibraryToJar(
+            @NotNull String sourcesPath,
+            @NotNull String jarName,
+            boolean addSources,
+            @NotNull String... extraClasspath
+    ) {
         try {
-            File contentDir = JetTestUtils.tmpDir("lib-content");
+            File contentDir = JetTestUtils.tmpDir("testLibrary-" + jarName);
 
             File classesDir = new File(contentDir, "classes");
-            compileKotlin(sourcesPath, classesDir);
+            compileKotlin(sourcesPath, classesDir, extraClasspath);
 
             List<File> javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), new File(sourcesPath));
             if (!javaFiles.isEmpty()) {
-                List<String> classPath = ContainerUtil.list(ForTestCompileRuntime.runtimeJarForTests().getPath(),
-                                                            JetTestUtils.getAnnotationsJar().getPath());
+                List<String> classpath = new ArrayList<String>();
+                classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
+                classpath.add(JetTestUtils.getAnnotationsJar().getPath());
+                Collections.addAll(classpath, extraClasspath);
 
                 // Probably no kotlin files were present, so dir might not have been created after kotlin compiler
                 if (classesDir.exists()) {
-                    classPath.add(classesDir.getPath());
+                    classpath.add(classesDir.getPath());
                 }
                 else {
                     FileUtil.createDirectory(classesDir);
                 }
 
                 List<String> options = Arrays.asList(
-                        "-classpath", StringUtil.join(classPath, File.pathSeparator),
+                        "-classpath", StringUtil.join(classpath, File.pathSeparator),
                         "-d", classesDir.getPath()
                 );
 
                 JetTestUtils.compileJavaFiles(javaFiles, options);
             }
 
-            File jarFile = new File(contentDir, "library.jar");
+            File jarFile = new File(contentDir, jarName + ".jar");
 
             ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(jarFile));
             ZipUtil.addDirToZipRecursively(zip, jarFile, classesDir, "", null, null);
@@ -88,18 +97,17 @@ public class MockLibraryUtil {
     }
 
     // Runs compiler in custom class loader to avoid effects caused by replacing Application with another one created in compiler.
-    public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir) {
-        compileKotlin(sourcesPath, outDir, sourcesPath);
-    }
-
-    public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir, @NotNull String classpath) {
+    public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir, @NotNull String... extraClasspath) {
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             Class<?> compilerClass = getCompilerClass();
             Object compilerObject = compilerClass.newInstance();
             Method execMethod = compilerClass.getMethod("exec", PrintStream.class, String[].class);
 
-            String newClasspath = classpath.contains(sourcesPath) ? classpath : classpath + File.pathSeparator + sourcesPath;
+            List<String> classpath = new ArrayList<String>();
+            classpath.add(sourcesPath);
+            Collections.addAll(classpath, extraClasspath);
+            String newClasspath = StringUtil.join(classpath, File.pathSeparator);
 
             //noinspection IOResourceOpenedButNotSafelyClosed
             Enum<?> invocationResult = (Enum<?>) execMethod.invoke(
