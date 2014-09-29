@@ -49,9 +49,9 @@ class NamingContext(
         renamings.put(name, replacement)
     }
 
-    public fun getFreshName(candidate: String?): JsName = scope.declareFreshName(candidate)
+    public fun getFreshName(candidate: String): JsName = scope.declareFreshName(candidate)
 
-    public fun getFreshName(candidate: JsName?): JsName = getFreshName(candidate?.getIdent())
+    public fun getFreshName(candidate: JsName): JsName = getFreshName(candidate.getIdent())
 
     public fun newVar(name: JsName, value: JsExpression? = null) {
         val vars = JsAstUtils.newVar(name, value)
