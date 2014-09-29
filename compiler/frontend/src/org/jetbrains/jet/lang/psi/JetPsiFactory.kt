@@ -216,9 +216,8 @@ public class JetPsiFactory(private val project: Project) {
         return createClass("class A(){}").getBody()!!
     }
 
-    public fun createParameter(name: String, `type`: String): JetParameter {
-        val function = createFunction("fun foo(" + name + " : " + `type` + ") {}")
-        return function.getValueParameters().first()
+    public fun createParameter(text : String): JetParameter {
+        return createClass("class A($text)").getPrimaryConstructorParameters().first()
     }
 
     public fun createParameterList(text: String): JetParameterList {

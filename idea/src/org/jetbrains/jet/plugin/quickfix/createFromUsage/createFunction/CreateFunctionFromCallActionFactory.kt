@@ -47,6 +47,6 @@ object CreateFunctionFromCallActionFactory : JetSingleIntentionActionFactory() {
         }
 
         val returnType = TypeInfo(fullCallExpr, Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(callExpr, FunctionInfo(calleeExpr.getReferencedName(), receiverType, returnType, parameters))
+        return CreateFunctionFromUsageFix(callExpr, createFunctionInfo(calleeExpr.getReferencedName(), receiverType, returnType, parameters))
     }
 }

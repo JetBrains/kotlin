@@ -14,15 +14,15 @@ import org.jetbrains.jet.plugin.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
 import org.jetbrains.jet.lang.psi.JetClassBody
 
-public class CreateFunctionFromUsageFix(element: PsiElement, val functionInfo: FunctionInfo) : CreateFromUsageFixBase(element) {
+public class CreateFunctionFromUsageFix(element: PsiElement, val functionInfo: CallableInfo) : CreateFromUsageFixBase(element) {
     override fun getText(): String {
         return JetBundle.message("create.function.from.usage", functionInfo.name)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
-        val functionBuilder = FunctionBuilderConfiguration(functionInfo, file!!, editor!!).createBuilder()
+        val functionBuilder = CallableBuilderConfiguration(functionInfo, file!!, editor!!).createBuilder()
 
-        fun runBuilder(placement: FunctionPlacement) {
+        fun runBuilder(placement: CallablePlacement) {
             functionBuilder.placement = placement
             CommandProcessor.getInstance().executeCommand(project, { functionBuilder.build() }, getText(), null)
         }
@@ -35,7 +35,7 @@ public class CreateFunctionFromUsageFix(element: PsiElement, val functionInfo: F
                 DescriptorToDeclarationUtil.getDeclaration(file, descriptor) as JetClassOrObject
             }
             chooseContainerElementIfNecessary(receiverTypeCandidates, editor, popupTitle, false, toPsi) {
-                runBuilder(FunctionPlacement.WithReceiver(it))
+                runBuilder(CallablePlacement.WithReceiver(it))
             }
         }
         else {
@@ -43,7 +43,7 @@ public class CreateFunctionFromUsageFix(element: PsiElement, val functionInfo: F
 
             chooseContainerElementIfNecessary(element.getExtractionContainers(), editor, popupTitle, true, { it }) {
                 val container = if (it is JetClassBody) it.getParent() as JetClassOrObject else it
-                runBuilder(FunctionPlacement.NoReceiver(container))
+                runBuilder(CallablePlacement.NoReceiver(container))
             }
         }
     }

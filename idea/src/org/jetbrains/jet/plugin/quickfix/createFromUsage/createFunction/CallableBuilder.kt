@@ -90,18 +90,18 @@ class TypeCandidate(val theType: JetType, scope: JetScope? = null) {
     }
 }
 
-class FunctionBuilderConfiguration(
-        val functionInfo: FunctionInfo,
+class CallableBuilderConfiguration(
+        val callableInfo: CallableInfo,
         val currentFile: JetFile,
         val currentEditor: Editor
 )
 
-trait FunctionPlacement {
-    class WithReceiver(val receiverTypeCandidate: TypeCandidate): FunctionPlacement
-    class NoReceiver(val containingElement: JetElement): FunctionPlacement
+trait CallablePlacement {
+    class WithReceiver(val receiverTypeCandidate: TypeCandidate): CallablePlacement
+    class NoReceiver(val containingElement: JetElement): CallablePlacement
 }
 
-class FunctionBuilder(val config: FunctionBuilderConfiguration) {
+class CallableBuilder(val config: CallableBuilderConfiguration) {
     private var finished: Boolean = false
 
     val currentFileContext: BindingContext
@@ -115,7 +115,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
         currentFileModule = exhaust.getModuleDescriptor()
     }
 
-    public var placement: FunctionPlacement by Delegates.notNull()
+    public var placement: CallablePlacement by Delegates.notNull()
 
     fun computeTypeCandidates(typeInfo: TypeInfo): List<TypeCandidate> =
             typeCandidates.getOrPut(typeInfo) { typeInfo.getPossibleTypes(this).map { TypeCandidate(it) } }
@@ -174,18 +174,18 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
 
             val placement = placement
             when {
-                placement is FunctionPlacement.NoReceiver -> {
+                placement is CallablePlacement.NoReceiver -> {
                     receiverClassDescriptor = null
                     isExtension = false
                     containingElement = placement.containingElement
                 }
-                placement is FunctionPlacement.WithReceiver -> {
+                placement is CallablePlacement.WithReceiver -> {
                     receiverClassDescriptor = DescriptorUtils.getClassDescriptorForType(placement.receiverTypeCandidate.theType)
                     val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.classDescriptorToDeclaration(it) }
                     isExtension = !(classDeclaration is JetClassOrObject && classDeclaration.isWritable())
                     containingElement = if (isExtension) config.currentFile else classDeclaration as JetElement
                 }
-                else -> throw IllegalArgumentException("Unexpected function kind: $placement")
+                else -> throw IllegalArgumentException("Unexpected placement: $placement")
             }
             val receiverType = receiverClassDescriptor?.getDefaultType()
 
@@ -198,7 +198,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
                 containingFileEditor = config.currentEditor
             }
 
-            isUnit = config.functionInfo.returnTypeInfo.let { it is TypeInfo.ByType && it.theType.isUnit() }
+            isUnit = config.callableInfo.returnTypeInfo.let { it is TypeInfo.ByType && it.theType.isUnit() }
 
             val scope = if (isExtension || receiverClassDescriptor == null) {
                 currentFileModule.getPackage(config.currentFile.getPackageFqName())!!.getMemberScope()
@@ -209,15 +209,15 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
 
             // figure out type substitutions for type parameters
             val classTypeParameters = receiverType?.getArguments() ?: Collections.emptyList()
-            val ownerTypeArguments = (placement as? FunctionPlacement.WithReceiver)?.receiverTypeCandidate?.theType?.getArguments()
+            val ownerTypeArguments = (placement as? CallablePlacement.WithReceiver)?.receiverTypeCandidate?.theType?.getArguments()
                                      ?: Collections.emptyList()
             assert(ownerTypeArguments.size == classTypeParameters.size)
             val substitutions = ownerTypeArguments.zip(classTypeParameters).map {
                 JetTypeSubstitution(it.first.getType(), it.second.getType())
             }.copyToArray()
-            config.functionInfo.parameterInfos.forEach { parameter -> computeTypeCandidates(parameter.typeInfo, substitutions, scope) }
+            config.callableInfo.parameterInfos.forEach { parameter -> computeTypeCandidates(parameter.typeInfo, substitutions, scope) }
             if (!isUnit) {
-                computeTypeCandidates(config.functionInfo.returnTypeInfo, substitutions, scope)
+                computeTypeCandidates(config.callableInfo.returnTypeInfo, substitutions, scope)
             }
 
             // now that we have done substitutions, we can throw it away
@@ -225,9 +225,9 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
 
             // figure out type parameter renames to avoid conflicts
             typeParameterNameMap = getTypeParameterRenames(scope)
-            config.functionInfo.parameterInfos.forEach { renderTypeCandidates(it.typeInfo, typeParameterNameMap) }
+            config.callableInfo.parameterInfos.forEach { renderTypeCandidates(it.typeInfo, typeParameterNameMap) }
             if (!isUnit) {
-                renderTypeCandidates(config.functionInfo.returnTypeInfo, typeParameterNameMap)
+                renderTypeCandidates(config.callableInfo.returnTypeInfo, typeParameterNameMap)
             }
             receiverTypeCandidate?.render(typeParameterNameMap)
         }
@@ -239,13 +239,22 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
             typeCandidates[typeInfo]?.forEach { it.render(typeParameterNameMap) }
         }
 
-        private fun createFunctionSkeleton(): JetNamedFunction {
+        private fun createDeclarationSkeleton(): JetCallableDeclaration {
             with (config) {
-                val parametersString = functionInfo.parameterInfos.indices.map { i -> "p$i: Any" }.joinToString(", ")
-                val returnTypeString = if (isUnit) "" else ": Any"
                 val ownerTypeString = if (isExtension) "${receiverTypeCandidate!!.renderedType!!}." else ""
+                val paramList = when (callableInfo.kind) {
+                    CallableKind.FUNCTION -> "(${callableInfo.parameterInfos.indices.map { i -> "p$i: Any" }.joinToString(", ")})"
+                    CallableKind.PROPERTY -> ""
+                }
+                val returnTypeString = if (isUnit) "" else ": Any"
+                val header = "$ownerTypeString${callableInfo.name}$paramList$returnTypeString"
+
                 val psiFactory = JetPsiFactory(currentFile)
-                val func = psiFactory.createFunction("fun $ownerTypeString${functionInfo.name}($parametersString)$returnTypeString { }")
+
+                val declaration = when (callableInfo.kind) {
+                    CallableKind.FUNCTION -> psiFactory.createFunction("fun $header {}")
+                    CallableKind.PROPERTY -> psiFactory.createProperty("val $header")
+                }
                 val newLine = psiFactory.createNewLine()
 
                 fun prepend(element: PsiElement, elementBeforeStart: PsiElement): PsiElement {
@@ -275,7 +284,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
                 }
 
                 when (containingElement) {
-                    is JetFile -> return append(func, containingElement.getLastChild()!!, false) as JetNamedFunction
+                    is JetFile -> return append(declaration, containingElement.getLastChild()!!, false) as JetCallableDeclaration
 
                     is JetClassOrObject -> {
                         var classBody = containingElement.getBody()
@@ -284,11 +293,11 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
                             containingElement.addBefore(psiFactory.createWhiteSpace(), classBody)
                         }
                         val rBrace = classBody!!.getRBrace()
-                        return (rBrace?.let { append(func, it, true) }
-                                ?: append(func, classBody!!.getLastChild()!!, false)) as JetNamedFunction
+                        return (rBrace?.let { append(declaration, it, true) }
+                                ?: append(declaration, classBody!!.getLastChild()!!, false)) as JetCallableDeclaration
                     }
 
-                    is JetBlockExpression -> return prepend(func, containingElement.getLBrace()!!) as JetNamedFunction
+                    is JetBlockExpression -> return prepend(declaration, containingElement.getLBrace()!!) as JetCallableDeclaration
 
                     else -> throw AssertionError("Invalid containing element: ${containingElement.getText()}")
                 }
@@ -300,13 +309,13 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
 
             allTypeParametersNotInScope.addAll(receiverTypeCandidate?.typeParameters?.toList() ?: Collections.emptyList())
 
-            config.functionInfo.parameterInfos.stream()
+            config.callableInfo.parameterInfos.stream()
                     .flatMap { typeCandidates[it.typeInfo]!!.stream() }
                     .flatMap { it.typeParameters.stream() }
                     .toCollection(allTypeParametersNotInScope)
 
             if (!isUnit) {
-                computeTypeCandidates(config.functionInfo.returnTypeInfo).stream().flatMapTo(allTypeParametersNotInScope) { it.typeParameters.stream() }
+                computeTypeCandidates(config.callableInfo.returnTypeInfo).stream().flatMapTo(allTypeParametersNotInScope) { it.typeParameters.stream() }
             }
 
             val validator = CollectingValidator { scope.getClassifier(Name.identifier(it)) == null }
@@ -316,14 +325,14 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
         }
 
         private fun setupTypeReferencesForShortening(
-                func: JetNamedFunction,
+                declaration: JetCallableDeclaration,
                 typeRefsToShorten: MutableList<JetTypeReference>, parameterTypeExpressions: List<TypeExpression>,
                 returnTypeExpression: TypeExpression?) {
             if (isExtension) {
-                val receiverTypeRef = JetPsiFactory(func).createType(receiverTypeCandidate!!.theType.renderLong(typeParameterNameMap))
+                val receiverTypeRef = JetPsiFactory(declaration).createType(receiverTypeCandidate!!.theType.renderLong(typeParameterNameMap))
                 replaceWithLongerName(receiverTypeRef, receiverTypeCandidate.theType)
 
-                val funcReceiverTypeRef = func.getReceiverTypeRef()
+                val funcReceiverTypeRef = declaration.getReceiverTypeRef()
                 if (funcReceiverTypeRef != null) {
                     typeRefsToShorten.add(funcReceiverTypeRef)
                 }
@@ -331,24 +340,30 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
 
             if (!isUnit) {
                 returnTypeExpression!!
-                val returnTypeRef = func.getReturnTypeRef()
+                val returnTypeRef = declaration.getReturnTypeRef()
                 if (returnTypeRef != null) {
-                    val returnType = returnTypeExpression.getTypeFromSelection(returnTypeRef.getText() ?: throw AssertionError("Expression for function return type shouldn't be empty: function = ${func.getText()}"))
+                    val returnType = returnTypeExpression.getTypeFromSelection(
+                            returnTypeRef.getText()
+                            ?: throw AssertionError("Expression for return type shouldn't be empty: declaration = ${declaration.getText()}")
+                    )
                     if (returnType != null) {
                         // user selected a given type
                         replaceWithLongerName(returnTypeRef, returnType)
-                        typeRefsToShorten.add(func.getReturnTypeRef()!!)
+                        typeRefsToShorten.add(declaration.getReturnTypeRef()!!)
                     }
                 }
             }
 
-            val valueParameters = func.getValueParameters()
+            val valueParameters = declaration.getValueParameterList()?.getParameters() ?: Collections.emptyList<JetParameter>()
             val parameterIndicesToShorten = ArrayList<Int>()
             assert(valueParameters.size == parameterTypeExpressions.size)
             for ((i, parameter) in valueParameters.stream().withIndices()) {
                 val parameterTypeRef = parameter.getTypeReference()
                 if (parameterTypeRef != null) {
-                    val parameterType = parameterTypeExpressions[i].getTypeFromSelection(parameterTypeRef.getText() ?: throw AssertionError("Expression for function parameter type shouldn't be empty: function = ${func.getText()}"))
+                    val parameterType = parameterTypeExpressions[i].getTypeFromSelection(
+                            parameterTypeRef.getText()
+                            ?: throw AssertionError("Expression for parameter type shouldn't be empty: declaration = ${declaration.getText()}")
+                    )
                     if (parameterType != null) {
                         replaceWithLongerName(parameterTypeRef, parameterType)
                         parameterIndicesToShorten.add(i)
@@ -356,8 +371,11 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
                 }
             }
 
-            val expandedValueParameters = func.getValueParameters()
-            parameterIndicesToShorten.stream().map { expandedValueParameters[it].getTypeReference() }.filterNotNullTo(typeRefsToShorten)
+            declaration.getValueParameterList()?.getParameters()?.let { expandedValueParameters ->
+                parameterIndicesToShorten.stream()
+                        .map { expandedValueParameters[it].getTypeReference() }
+                        .filterNotNullTo(typeRefsToShorten)
+            }
         }
 
         private fun setupFunctionBody(func: JetNamedFunction) {
@@ -368,7 +386,7 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
                 properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFqName(it).asString())
                 properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, it.getName().asString())
             }
-            properties.setProperty(ATTRIBUTE_FUNCTION_NAME, config.functionInfo.name)
+            properties.setProperty(ATTRIBUTE_FUNCTION_NAME, config.callableInfo.name)
 
             val bodyText = try {
                 fileTemplate!!.getText(properties)
@@ -386,37 +404,36 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
             func.getBodyExpression()!!.replace(newBodyExpression)
         }
 
-        private fun setupReturnTypeTemplate(builder: TemplateBuilder, func: JetNamedFunction): TypeExpression {
-            val returnTypeRef = func.getReturnTypeRef()!!
-            val returnTypeExpression = TypeExpression(typeCandidates[config.functionInfo.returnTypeInfo]!!)
+        private fun setupReturnTypeTemplate(builder: TemplateBuilder, declaration: JetCallableDeclaration): TypeExpression {
+            val returnTypeRef = declaration.getReturnTypeRef()!!
+            val returnTypeExpression = TypeExpression(typeCandidates[config.callableInfo.returnTypeInfo]!!)
             builder.replaceElement(returnTypeRef, returnTypeExpression)
             return returnTypeExpression
         }
 
-        private fun setupTypeParameterListTemplate(builder: TemplateBuilderImpl, func: JetNamedFunction): TypeParameterListExpression {
+        private fun setupTypeParameterListTemplate(builder: TemplateBuilderImpl, declaration: JetCallableDeclaration): TypeParameterListExpression {
             val typeParameterMap = HashMap<String, Array<String>>()
             val receiverTypeParameterNames = receiverTypeCandidate?.let { it.typeParameterNames!! } ?: ArrayUtil.EMPTY_STRING_ARRAY
 
-            config.functionInfo.parameterInfos.stream().flatMap { typeCandidates[it.typeInfo]!!.stream() }.forEach {
+            config.callableInfo.parameterInfos.stream().flatMap { typeCandidates[it.typeInfo]!!.stream() }.forEach {
                 typeParameterMap[it.renderedType!!] = it.typeParameterNames!!
             }
 
-            if (func.getReturnTypeRef() != null) {
-                typeCandidates[config.functionInfo.returnTypeInfo]!!.forEach {
+            if (declaration.getReturnTypeRef() != null) {
+                typeCandidates[config.callableInfo.returnTypeInfo]!!.forEach {
                     typeParameterMap[it.renderedType!!] = it.typeParameterNames!!
                 }
             }
             // ((3, 3) is after "fun")
-            builder.replaceElement(func, TextRange.create(3, 3), TYPE_PARAMETER_LIST_VARIABLE_NAME, null, false)
+            builder.replaceElement(declaration, TextRange.create(3, 3), TYPE_PARAMETER_LIST_VARIABLE_NAME, null, false)
             return TypeParameterListExpression(receiverTypeParameterNames, typeParameterMap)
         }
 
-        private fun setupParameterTypeTemplates(builder: TemplateBuilder, parameterList: JetParameterList): List<TypeExpression> {
-            val jetParameters = parameterList.getParameters()
-            assert(jetParameters.size == config.functionInfo.parameterInfos.size)
+        private fun setupParameterTypeTemplates(builder: TemplateBuilder, parameterList: List<JetParameter>): List<TypeExpression> {
+            assert(parameterList.size == config.callableInfo.parameterInfos.size)
 
             val typeParameters = ArrayList<TypeExpression>()
-            for ((parameter, jetParameter) in config.functionInfo.parameterInfos.zip(jetParameters)) {
+            for ((parameter, jetParameter) in config.callableInfo.parameterInfos.zip(parameterList)) {
                 val parameterTypeExpression = TypeExpression(typeCandidates[parameter.typeInfo]!!)
                 val parameterTypeRef = jetParameter.getTypeReference()!!
                 builder.replaceElement(parameterTypeRef, parameterTypeExpression)
@@ -454,9 +471,8 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
         }
 
         fun buildAndRunTemplate() {
-            val func = createFunctionSkeleton()
-            val project = func.getProject()
-            val parameterList = func.getValueParameterList()!!
+            val declaration = createDeclarationSkeleton()
+            val project = declaration.getProject()
 
             // build templates
             PsiDocumentManager.getInstance(project).commitAllDocuments()
@@ -466,20 +482,21 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
             caretModel.moveToOffset(containingFile.getNode().getStartOffset())
 
             val builder = TemplateBuilderImpl(containingFile)
-            val returnTypeExpression = if (isUnit) null else setupReturnTypeTemplate(builder, func)
-            val parameterTypeExpressions = setupParameterTypeTemplates(builder, parameterList)
+            val returnTypeExpression = if (isUnit) null else setupReturnTypeTemplate(builder, declaration)
+            val parameterTypeExpressions =
+                    setupParameterTypeTemplates(builder, declaration.getValueParameterList()?.getParameters() ?: Collections.emptyList())
 
             // add a segment for the parameter list
             // Note: because TemplateBuilderImpl does not have a replaceElement overload that takes in both a TextRange and alwaysStopAt, we
             // need to create the segment first and then hack the Expression into the template later. We use this template to update the type
             // parameter list as the user makes selections in the parameter types, and we need alwaysStopAt to be false so the user can't tab to
             // it.
-            val expression = setupTypeParameterListTemplate(builder, func)
+            val expression = setupTypeParameterListTemplate(builder, declaration)
 
             // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
             val templateImpl = builder.buildInlineTemplate() as TemplateImpl
             val variables = templateImpl.getVariables()!!
-            for (i in 0..(config.functionInfo.parameterInfos.size - 1)) {
+            for (i in 0..(config.callableInfo.parameterInfos.size - 1)) {
                 Collections.swap(variables, i * 2, i * 2 + 1)
             }
 
@@ -494,15 +511,19 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
                 override fun templateFinished(template: Template?, brokenOff: Boolean) {
                     // file templates
                     val offset = templateImpl.getSegmentOffset(0)
-                    val newFunc = PsiTreeUtil.findElementOfClassAtOffset(containingFile, offset, javaClass<JetNamedFunction>(), false)!!
+                    val newDeclaration = PsiTreeUtil.findElementOfClassAtOffset(
+                            containingFile, offset, javaClass<JetCallableDeclaration>(), false
+                    )!!
                     val typeRefsToShorten = ArrayList<JetTypeReference>()
 
                     ApplicationManager.getApplication()!!.runWriteAction {
                         // file templates
-                        setupFunctionBody(newFunc)
+                        if (newDeclaration is JetNamedFunction) {
+                            setupFunctionBody(newDeclaration)
+                        }
 
                         // change short type names to fully qualified ones (to be shortened below)
-                        setupTypeReferencesForShortening(newFunc, typeRefsToShorten, parameterTypeExpressions, returnTypeExpression)
+                        setupTypeReferencesForShortening(newDeclaration, typeRefsToShorten, parameterTypeExpressions, returnTypeExpression)
                         ShortenReferences.process(typeRefsToShorten)
                     }
                 }
@@ -512,4 +533,4 @@ class FunctionBuilder(val config: FunctionBuilderConfiguration) {
     }
 }
 
-fun FunctionBuilderConfiguration.createBuilder(): FunctionBuilder = FunctionBuilder(this)
+fun CallableBuilderConfiguration.createBuilder(): CallableBuilder = CallableBuilder(this)

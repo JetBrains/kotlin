@@ -17,6 +17,6 @@ object CreateHasNextFunctionActionFactory : JetSingleIntentionActionFactory() {
 
         val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
         val returnType = TypeInfo(KotlinBuiltIns.getInstance().getBooleanType(), Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(forExpr, FunctionInfo("hasNext", ownerType, returnType))
+        return CreateFunctionFromUsageFix(forExpr, createFunctionInfo("hasNext", ownerType, returnType))
     }
 }

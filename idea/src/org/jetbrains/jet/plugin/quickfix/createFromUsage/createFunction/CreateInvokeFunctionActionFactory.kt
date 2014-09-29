@@ -28,6 +28,6 @@ object CreateInvokeFunctionActionFactory : JetSingleIntentionActionFactory() {
         }
 
         val returnType = TypeInfo(callExpr, Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(callExpr, FunctionInfo("invoke", receiverType, returnType, parameters))
+        return CreateFunctionFromUsageFix(callExpr, createFunctionInfo("invoke", receiverType, returnType, parameters))
     }
 }

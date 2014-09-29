@@ -16,7 +16,7 @@ import org.jetbrains.jet.plugin.util.supertypes
  */
 abstract class TypeInfo(val variance: Variance) {
     object Empty: TypeInfo(Variance.INVARIANT) {
-        override fun getPossibleTypes(builder: FunctionBuilder): List<JetType> = Collections.emptyList()
+        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> = Collections.emptyList()
     }
 
     class ByExpression(val expression: JetExpression, variance: Variance): TypeInfo(variance) {
@@ -24,22 +24,22 @@ abstract class TypeInfo(val variance: Variance) {
             JetNameSuggester.suggestNamesForExpression(expression, EmptyValidator)
         }
 
-        override fun getPossibleTypes(builder: FunctionBuilder): List<JetType> =
+        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
                 expression.guessTypes(builder.currentFileContext).flatMap { it.getPossibleSupertypes(variance) }
     }
 
     class ByType(val theType: JetType, variance: Variance, val keepUnsubstituted: Boolean = false): TypeInfo(variance) {
-        override fun getPossibleTypes(builder: FunctionBuilder): List<JetType> =
+        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
                 theType.getPossibleSupertypes(variance)
     }
 
     class ByReceiverType(variance: Variance): TypeInfo(variance) {
-        override fun getPossibleTypes(builder: FunctionBuilder): List<JetType> =
-                (builder.placement as FunctionPlacement.WithReceiver).receiverTypeCandidate.theType.getPossibleSupertypes(variance)
+        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
+                (builder.placement as CallablePlacement.WithReceiver).receiverTypeCandidate.theType.getPossibleSupertypes(variance)
     }
 
     open val possibleNamesFromExpression: Array<String> get() = ArrayUtil.EMPTY_STRING_ARRAY
-    abstract fun getPossibleTypes(builder: FunctionBuilder): List<JetType>
+    abstract fun getPossibleTypes(builder: CallableBuilder): List<JetType>
 
     protected fun JetType.getPossibleSupertypes(variance: Variance): List<JetType> {
         val single = Collections.singletonList(this)
@@ -61,9 +61,32 @@ class ParameterInfo(
         val preferredName: String? = null
 )
 
-class FunctionInfo (
+enum class CallableKind {
+    FUNCTION
+    PROPERTY
+}
+
+class CallableInfo (
         val name: String,
+        val kind: CallableKind,
         val receiverTypeInfo: TypeInfo,
         val returnTypeInfo: TypeInfo,
         val parameterInfos: List<ParameterInfo> = Collections.emptyList()
-)
+) {
+    {
+        if (kind == CallableKind.PROPERTY) assert (parameterInfos.isEmpty(), "$kind: Parameters are not allowed")
+    }
+}
+
+fun createFunctionInfo(name: String,
+                    receiverTypeInfo: TypeInfo,
+                    returnTypeInfo: TypeInfo,
+                    parameterInfos: List<ParameterInfo> = Collections.emptyList()): CallableInfo {
+    return CallableInfo(name, CallableKind.FUNCTION, receiverTypeInfo, returnTypeInfo, parameterInfos)
+}
+
+fun createPropertyInfo(name: String,
+                    receiverTypeInfo: TypeInfo,
+                    returnTypeInfo: TypeInfo): CallableInfo {
+    return CallableInfo(name, CallableKind.PROPERTY, receiverTypeInfo, returnTypeInfo)
+}
