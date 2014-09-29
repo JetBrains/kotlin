@@ -156,7 +156,7 @@ private data class LibrarySourceInfo(val project: Project, val library: Library)
 }
 
 //TODO: (module refactoring) there should be separate SdkSourceInfo but there are no kotlin source in existing sdks for now :)
-private data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo() {
+public data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo() {
     override val name: Name = Name.special("<library ${sdk.getName()}>")
 
     override fun contentScope() = SdkScope(project, sdk)

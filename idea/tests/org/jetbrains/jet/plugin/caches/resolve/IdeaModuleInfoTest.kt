@@ -220,6 +220,53 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         f.production.assertDependentsEqual(f.production, f.test)
     }
 
+    fun testLibraryDependency1() {
+        val lib1 = projectLibrary("lib1")
+        val lib2 = projectLibrary("lib2")
+
+        val module = module("module")
+        module.addDependency(lib1)
+        module.addDependency(lib2)
+
+        lib1.classes.assertAdditionalLibraryDependencies(lib2.classes)
+        lib2.classes.assertAdditionalLibraryDependencies(lib1.classes)
+    }
+
+    fun testLibraryDependency2() {
+        val lib1 = projectLibrary("lib1")
+        val lib2 = projectLibrary("lib2")
+        val lib3 = projectLibrary("lib3")
+
+        val (a, b, c) = modules()
+        a.addDependency(lib1)
+        b.addDependency(lib2)
+        c.addDependency(lib3)
+
+        c.addDependency(a)
+        c.addDependency(b)
+
+        lib1.classes.assertAdditionalLibraryDependencies()
+        lib2.classes.assertAdditionalLibraryDependencies()
+        lib3.classes.assertAdditionalLibraryDependencies(lib1.classes, lib2.classes)
+    }
+
+    fun testLibraryDependency3() {
+        val lib1 = projectLibrary("lib1")
+        val lib2 = projectLibrary("lib2")
+        val lib3 = projectLibrary("lib3")
+
+        val (a, b) = modules()
+        a.addDependency(lib1)
+        b.addDependency(lib2)
+
+        a.addDependency(lib3)
+        b.addDependency(lib3)
+
+        lib1.classes.assertAdditionalLibraryDependencies(lib3.classes)
+        lib2.classes.assertAdditionalLibraryDependencies(lib3.classes)
+        lib3.classes.assertAdditionalLibraryDependencies(lib1.classes, lib2.classes)
+    }
+
     private fun Module.addDependency(
             other: Module,
             dependencyScope: DependencyScope = DependencyScope.COMPILE,
@@ -247,12 +294,18 @@ class IdeaModuleInfoTest : ModuleTestCase() {
 
     private fun modules(name1: String = "a", name2: String = "b", name3: String = "c") = Triple(module(name1), module(name2), module(name3))
 
-    private fun IdeaModuleInfo.assertDependenciesEqual(vararg dependencies: IdeaModuleInfo) {
-        Assert.assertEquals(dependencies.toList(), this.dependencies())
+    private fun IdeaModuleInfo.assertDependenciesEqual(vararg expected: IdeaModuleInfo) {
+        Assert.assertEquals(expected.toList(), this.dependencies())
     }
 
-    private fun ModuleSourceInfo.assertDependentsEqual(vararg dependents: ModuleSourceInfo) {
-        UsefulTestCase.assertSameElements(this.getDependentModules(), dependents.toList())
+    private fun LibraryInfo.assertAdditionalLibraryDependencies(vararg expected: IdeaModuleInfo) {
+        Assert.assertEquals(this, dependencies().first())
+        val dependenciesWithoutSelf = this.dependencies().tail
+        UsefulTestCase.assertSameElements(dependenciesWithoutSelf, expected.toList())
+    }
+
+    private fun ModuleSourceInfo.assertDependentsEqual(vararg expected: ModuleSourceInfo) {
+        UsefulTestCase.assertSameElements(this.getDependentModules(), expected.toList())
     }
 
     private fun projectLibrary(name: String = "lib"): Library {
