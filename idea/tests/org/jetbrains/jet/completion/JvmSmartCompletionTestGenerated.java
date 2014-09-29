@@ -17,9 +17,13 @@
 package org.jetbrains.jet.completion;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.TestMetadata;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.junit.runner.RunWith;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.test.InnerTestClasses;
+import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -601,6 +605,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("OverloadedMethodCallArgument3.kt")
     public void testOverloadedMethodCallArgument3() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/OverloadedMethodCallArgument3.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("ParameterWithDefaultValue.kt")
+    public void testParameterWithDefaultValue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ParameterWithDefaultValue.kt");
         doTest(fileName);
     }
     

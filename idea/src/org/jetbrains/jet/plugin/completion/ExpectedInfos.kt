@@ -167,7 +167,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: Reso
         val expectedInfos = HashSet<ExpectedInfo>()
         for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
             // consider only candidates with more arguments than in the truncated call and with all arguments before the current one matched
-            if (candidate.noErrorsInValueArguments() && (isFunctionLiteralArgument || candidate.hasUnmappedParameters())) {
+            if (candidate.noErrorsInValueArguments() && (candidate.getCandidateDescriptor().getValueParameters().size > argumentIndex || isFunctionLiteralArgument)) {
                 val descriptor = candidate.getResultingDescriptor()
                 if (!Visibilities.isVisible(descriptor, resolutionScope.getContainingDeclaration())) continue
 
