@@ -410,6 +410,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             return returnTypeExpression
         }
 
+        private fun setupValVarTemplate(builder: TemplateBuilder, property: JetProperty) {
+            builder.replaceElement(property.getValOrVarNode().getPsi()!!, ValVarExpression)
+        }
+
         private fun setupTypeParameterListTemplate(builder: TemplateBuilderImpl, declaration: JetCallableDeclaration): TypeParameterListExpression {
             val typeParameterMap = HashMap<String, Array<String>>()
             val receiverTypeParameterNames = receiverTypeCandidate?.let { it.typeParameterNames!! } ?: ArrayUtil.EMPTY_STRING_ARRAY
@@ -481,6 +485,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             caretModel.moveToOffset(containingFile.getNode().getStartOffset())
 
             val builder = TemplateBuilderImpl(containingFile)
+            if (declaration is JetProperty) {
+                setupValVarTemplate(builder, declaration)
+            }
             val returnTypeExpression = if (isUnit) null else setupReturnTypeTemplate(builder, declaration)
             val parameterTypeExpressions =
                     setupParameterTypeTemplates(builder, declaration.getValueParameterList()?.getParameters() ?: Collections.emptyList())
