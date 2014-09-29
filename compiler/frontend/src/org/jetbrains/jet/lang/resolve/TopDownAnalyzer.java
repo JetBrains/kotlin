@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -24,16 +23,14 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.context.GlobalContext;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptorWithResolutionScopes;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.lang.descriptors.impl.*;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -171,69 +168,6 @@ public class TopDownAnalyzer {
                 fragment.getMemberScope().changeLockLevel(WritableScope.LockLevel.READING);
             }
         }
-    }
-
-    public static void processClassOrObject(
-            @NotNull GlobalContext globalContext,
-            @Nullable final WritableScope scope,
-            @NotNull ExpressionTypingContext context,
-            @NotNull final DeclarationDescriptor containingDeclaration,
-            @NotNull JetClassOrObject object,
-            @NotNull AdditionalCheckerProvider additionalCheckerProvider
-    ) {
-        TopDownAnalysisParameters topDownAnalysisParameters =
-                TopDownAnalysisParameters.createForLocalDeclarations(
-                        globalContext.getStorageManager(),
-                        globalContext.getExceptionTracker(),
-                        Predicates.equalTo(object.getContainingFile())
-                );
-
-        InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                object.getProject(),
-                topDownAnalysisParameters,
-                context.trace,
-                DescriptorUtils.getContainingModule(containingDeclaration),
-                additionalCheckerProvider
-        );
-
-        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
-        c.setOuterDataFlowInfo(context.dataFlowInfo);
-
-        injector.getTopDownAnalyzer().doProcess(
-               c,
-               context.scope,
-               new PackageLikeBuilder() {
-
-                   @NotNull
-                   @Override
-                   public DeclarationDescriptor getOwnerForChildren() {
-                       return containingDeclaration;
-                   }
-
-                   @Override
-                   public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
-                       if (scope != null) {
-                           scope.addClassifierDescriptor(classDescriptor);
-                       }
-                   }
-
-                   @Override
-                   public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-                       throw new UnsupportedOperationException();
-                   }
-
-                   @Override
-                   public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-
-                   }
-
-                   @Override
-                   public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
-                       return ClassObjectStatus.NOT_ALLOWED;
-                   }
-               },
-               Collections.<PsiElement>singletonList(object)
-        );
     }
 
     @NotNull
