@@ -16,28 +16,29 @@ public final class JsNameRef extends JsExpressionImpl implements HasName {
     private JsName name;
     private JsExpression qualifier;
 
-    public JsNameRef(JsName name) {
+    public JsNameRef(@NotNull JsName name) {
         this.name = name;
     }
 
-    public JsNameRef(String ident) {
+    public JsNameRef(@NotNull String ident) {
         this.ident = ident;
     }
 
-    public JsNameRef(String ident, JsExpression qualifier) {
+    public JsNameRef(@NotNull String ident, JsExpression qualifier) {
         this.ident = ident;
         this.qualifier = qualifier;
     }
 
-    public JsNameRef(String ident, String qualifier) {
+    public JsNameRef(@NotNull String ident, @NotNull String qualifier) {
         this(ident, new JsNameRef(qualifier));
     }
 
-    public JsNameRef(JsName name, JsExpression qualifier) {
+    public JsNameRef(@NotNull JsName name, JsExpression qualifier) {
         this.name = name;
         this.qualifier = qualifier;
     }
 
+    @NotNull
     public String getIdent() {
         return (name == null) ? ident : name.getIdent();
     }
