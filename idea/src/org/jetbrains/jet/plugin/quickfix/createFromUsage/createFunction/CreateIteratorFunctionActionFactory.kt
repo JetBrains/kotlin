@@ -13,6 +13,7 @@ import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
 import org.jetbrains.jet.lang.types.TypeProjectionImpl
 import java.util.Collections
 import org.jetbrains.jet.lang.types.JetTypeImpl
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 
 object CreateIteratorFunctionActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {

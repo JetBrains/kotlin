@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
+package org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder
 
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.codeInsight.template.*
@@ -53,10 +53,9 @@ import org.jetbrains.jet.plugin.refactoring.CollectingValidator
 import org.jetbrains.jet.plugin.util.isUnit
 import com.intellij.util.ArrayUtil
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.jet.plugin.refactoring.isMultiLine
-import org.jetbrains.jet.plugin.refactoring.getLineCount
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"

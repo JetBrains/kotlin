@@ -1,4 +1,4 @@
-package org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
+package org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder
 
 import com.intellij.codeInsight.template.Expression
 import com.intellij.codeInsight.template.ExpressionContext

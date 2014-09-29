@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.jet.lang.psi.JetForExpression
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 
 object CreateNextFunctionActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {

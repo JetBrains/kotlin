@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.plugin.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
 import org.jetbrains.jet.lang.psi.JetClassBody
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 
 public class CreateFunctionFromUsageFix(element: PsiElement, val functionInfo: CallableInfo) : CreateFromUsageFixBase(element) {
     override fun getText(): String {

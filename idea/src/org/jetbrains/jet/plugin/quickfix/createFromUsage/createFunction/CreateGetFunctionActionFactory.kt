@@ -6,6 +6,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
 import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 
 object CreateGetFunctionActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {

@@ -1,4 +1,4 @@
-package org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
+package org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder
 
 import java.util.Collections
 import org.jetbrains.jet.lang.psi.JetExpression

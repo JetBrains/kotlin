@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.types.Variance
 import java.util.Collections
 import org.jetbrains.jet.lang.psi.JetUnaryExpression
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 
 public object CreateUnaryOperationActionFactory: JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {

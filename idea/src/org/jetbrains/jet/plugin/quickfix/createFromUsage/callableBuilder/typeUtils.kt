@@ -1,4 +1,4 @@
-package org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
+package org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder
 
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
@@ -70,7 +70,7 @@ private fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
     return typeParameters
 }
 
-private fun JetExpression.guessTypes(context: BindingContext): Array<JetType> {
+fun JetExpression.guessTypes(context: BindingContext): Array<JetType> {
     // if we know the actual type of the expression
     val theType1 = context[BindingContext.EXPRESSION_TYPE, this]
     if (theType1 != null) {
