@@ -7,8 +7,7 @@ public trait <lineMarker descr="*"></lineMarker>SkipSupportWithDefaults : SkipSu
     // TODO: should be "Is overriden in SkipSupportImpl"
     override fun <lineMarker descr="<html><body>Is implemented in <br>&nbsp;&nbsp;&nbsp;&nbsp;SkipSupportImpl</body></html>"><lineMarker descr="Implements function in 'SkipSupport'"></lineMarker></lineMarker>skip(why: String) {}
 
-    // TODO: fix bug with 'null' marker
-    override fun <lineMarker descr="*"><lineMarker descr="Implements function in 'SkipSupport'"></lineMarker></lineMarker>skip() {
+    override fun <lineMarker descr="Implements function in 'SkipSupport'"></lineMarker>skip() {
         skip("not given")
     }
 }
