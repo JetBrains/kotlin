@@ -27,6 +27,14 @@ import org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFuncti
 import org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName
 import org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.jet.lang.descriptors.MemberDescriptor
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
+import org.jetbrains.k2js.translate.utils.AnnotationsUtils
+import org.jetbrains.jet.lang.descriptors.Visibilities
+import com.google.dart.compiler.backend.js.ast.JsVars.JsVar
+import org.jetbrains.k2js.translate.utils.JsAstUtils
+import com.intellij.util.SmartList
+import org.jetbrains.jet.lang.types.lang.InlineUtil
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
     fun translate(declaration: JetDeclarationWithBody): JsExpression {
@@ -38,7 +46,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         FunctionTranslator.addParameters(lambda.getParameters(), descriptor, functionContext)
         val functionBody = translateFunctionBody(descriptor, declaration, functionContext)
-        lambda.getBody()?.getStatements()?.addAll(functionBody.getStatements()!!)
+        lambda.getBody().getStatements().addAll(functionBody.getStatements())
 
         val tracker = functionContext.usageTracker()!!
 
@@ -50,9 +58,11 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         if (tracker.hasCapturedExceptContaining()) {
             val lambdaCreator = simpleReturnFunction(invokingContext.scope(), lambda)
+            lambdaCreator.markAsLocal()
             return lambdaCreator.withCapturedParameters(functionContext, invokingContext, descriptor)
         }
 
+        lambda.markAsLocal()
         return invokingContext.define(descriptor, lambda)
     }
 }
@@ -71,17 +81,121 @@ fun JsFunction.withCapturedParameters(context: TranslationContext, invokingConte
     val ref = invokingContext.define(descriptor, this)
     val invocation = JsInvocation(ref)
 
-    val invocationArguments = invocation.getArguments()!!
-    val functionParameters = this.getParameters()!!
+    val invocationArguments = invocation.getArguments()
+    val functionParameters = this.getParameters()
 
     val tracker = context.usageTracker()!!
 
     for ((capturedDescriptor, name) in tracker.capturedDescriptorToJsName) {
         if (capturedDescriptor == tracker.containingDescriptor) continue
 
-        functionParameters.add(JsParameter(name))
-        invocationArguments.add(getParameterNameRefForInvocation(capturedDescriptor))
+        val capturedRef = getParameterNameRefForInvocation(capturedDescriptor)
+        var additionalArgs = listOf(capturedRef)
+        var additionalParams = listOf(JsParameter(name))
+
+        if (isLocalInlineDeclaration(capturedDescriptor)) {
+            val aliasRef = capturedRef as? JsNameRef
+            val localFunAlias = aliasRef?.getStaticRef() as? JsExpression
+
+            if (localFunAlias != null) {
+                val (args, params) = moveCapturedLocalInside(this, name, localFunAlias)
+                additionalArgs = args
+                additionalParams = params
+            }
+        }
+
+        functionParameters.addAll(additionalParams)
+        invocationArguments.addAll(additionalArgs)
     }
 
     return invocation
+}
+
+private data class CapturedArgsParams(val arguments: List<JsExpression> = listOf(), val parameters: List<JsParameter> = listOf())
+
+/**
+ * Moves captured local inline function inside capturing function.
+ *
+ * For example:
+ *  var inc = _.foo.inc(closure) // local fun that captures closure
+ *  capturingFunction(inc)
+ *
+ * Is transformed to:
+ *  capturingFunction(closure) // var inc = _.foo.inc(closure) is moved inside capturingFunction
+ */
+private fun moveCapturedLocalInside(capturingFunction: JsFunction, capturedName: JsName, localFunAlias: JsExpression): CapturedArgsParams =
+    when (localFunAlias) {
+        is JsNameRef -> {
+            /** Local inline function does not capture anything, so just move alias inside */
+            capturedName.setStaticRef(localFunAlias)
+            capturingFunction.getInnerFunction()?.addDeclaration(capturedName, localFunAlias)
+            CapturedArgsParams()
+        }
+        is JsInvocation ->
+            moveCapturedLocalInside(capturingFunction, capturedName, localFunAlias as JsInvocation)
+        else ->
+            throw AssertionError("Local function reference has wrong alias $localFunAlias")
+    }
+
+/**
+ * Processes case when local inline function with capture
+ * is captured by capturingFunction.
+ *
+ * In this case, capturingFunction should
+ * capture arguments captured by localFunAlias,
+ * and localFunAlias declaration is moved inside.
+ *
+ * For example:
+ *  val x = 0
+ *  [inline] fun id() = x
+ *  val lambda = {println(id())}
+ *
+ * `lambda` should capture x in this case
+ */
+private fun moveCapturedLocalInside(capturingFunction: JsFunction, capturedName: JsName, localFunAlias: JsInvocation): CapturedArgsParams {
+    val capturedArgs = localFunAlias.getArguments()
+
+    val scope = capturingFunction.getInnerFunction()?.getScope()!!
+    val names = capturedArgs.map {(it as JsNameRef).getName()}
+    val freshNames = getFreshNamesInScope(scope, names)
+
+    val aliasCallArguments = freshNames.map { it.makeRef() }
+    val alias = JsInvocation(localFunAlias.getQualifier(), aliasCallArguments)
+
+    capturedName.setStaticRef(alias)
+    capturingFunction.getInnerFunction()?.addDeclaration(capturedName, alias)
+
+    val capturedParameters = freshNames.map {JsParameter(it)}
+    return CapturedArgsParams(capturedArgs, capturedParameters)
+}
+
+private fun getFreshNamesInScope(scope: JsScope, suggested: List<JsName?>): List<JsName> {
+    val suggestedNames = suggested.stream().filterNotNull()
+    val suggestedIdents = suggestedNames.map { it.getIdent() }
+    val freshNames = suggestedIdents.map { scope.declareFreshName(it) }
+
+    return freshNames.toList()
+}
+
+private fun JsFunction.getInnerFunction(): JsFunction? {
+    val outerStatements = this.getBody().getStatements()
+    val outerReturn = outerStatements.get(0) as? JsReturn
+    val innerFunction = outerReturn?.getExpression() as? JsFunction
+
+    return innerFunction
+}
+
+private fun JsFunction.addDeclaration(name: JsName, value: JsExpression?) {
+    val declaration = JsAstUtils.newVar(name, value)
+    this.getBody().getStatements().add(0, declaration)
+}
+
+private fun HasName.getStaticRef(): JsNode? {
+    return this.getName()?.getStaticRef()
+}
+
+private fun isLocalInlineDeclaration(descriptor: CallableDescriptor): Boolean {
+    return descriptor is FunctionDescriptor
+           && descriptor.getVisibility() == Visibilities.LOCAL
+           && InlineUtil.getInlineType(descriptor).isInline()
 }

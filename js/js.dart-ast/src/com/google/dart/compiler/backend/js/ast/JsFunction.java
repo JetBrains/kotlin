@@ -19,6 +19,7 @@ public final class JsFunction extends JsLiteral implements HasName {
     @NotNull
     private final JsFunctionScope scope;
     private JsName name;
+    private boolean isLocal = false;
 
     public JsFunction(@NotNull JsScope parentScope, @NotNull String description) {
         this(parentScope, description, null);
@@ -62,12 +63,20 @@ public final class JsFunction extends JsLiteral implements HasName {
         return scope;
     }
 
+    public boolean isLocal() {
+        return isLocal;
+    }
+
     public void setBody(@NotNull JsBlock body) {
         this.body = body;
     }
 
     public void setName(@Nullable JsName name) {
         this.name = name;
+    }
+
+    public void markAsLocal() {
+        isLocal = true;
     }
 
     @Override
@@ -97,6 +106,7 @@ public final class JsFunction extends JsLiteral implements HasName {
         functionCopy.getScope().copyOwnNames(scope);
         functionCopy.setBody(body.deepCopy());
         functionCopy.params = AstUtil.deepCopy(params);
+        functionCopy.isLocal = isLocal;
 
         return functionCopy;
     }
