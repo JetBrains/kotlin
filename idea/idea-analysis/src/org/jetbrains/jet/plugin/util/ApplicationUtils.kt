@@ -33,7 +33,7 @@ public fun warnTimeConsuming(logger: Logger) {
     }
 
     logger.warn("This operation is time consuming and must not be called on EDT.")
-    Throwable().printStackTrace()
+    java.lang.Throwable().printStackTrace()
 }
 
 public fun runReadAction<T: Any>(action: () -> T?): T? {
