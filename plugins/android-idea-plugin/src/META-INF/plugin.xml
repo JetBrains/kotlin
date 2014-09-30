@@ -1,0 +1,18 @@
+<idea-plugin version="2" url="http://kotlin.jetbrains.org">
+  <id>org.jetbrains.kotlin.android</id>
+
+  <name>Kotlin Extensions For Android</name>
+  <description>Various extensions facilitating Android development in Kotlin</description>
+  <version>@snapshot@</version>
+  <vendor url="http://www.jetbrains.com">JetBrains Inc.</vendor>
+
+  <idea-version since-build="138.977" until-build="138.9999"/>
+
+  <depends optional="false">org.jetbrains.kotlin</depends>
+  <depends optional="false" config-file="android.xml">org.jetbrains.android</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+      <projectService serviceInterface="org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor"
+                      serviceImplementation="org.jetbrains.jet.plugin.android.IDEAndroidUIXmlProcessor"/>
+  </extensions>
+</idea-plugin>

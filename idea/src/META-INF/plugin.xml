@@ -201,6 +201,9 @@
     <projectService serviceInterface="org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor"
                     serviceImplementation="org.jetbrains.jet.plugin.android.IDEAndroidUIXmlProcessor"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.plugin.stubindex.SubpackagesIndexService"
+                    serviceImplementation="org.jetbrains.jet.plugin.stubindex.SubpackagesIndexService"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"
                     serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
 
