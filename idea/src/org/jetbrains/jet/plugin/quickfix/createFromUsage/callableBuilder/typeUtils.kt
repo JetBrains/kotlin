@@ -53,7 +53,7 @@ private fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParam
     }
 }
 
-private fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
+fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
     val typeParameters = LinkedHashSet<TypeParameterDescriptor>()
     val arguments = getArguments()
     if (arguments.empty) {

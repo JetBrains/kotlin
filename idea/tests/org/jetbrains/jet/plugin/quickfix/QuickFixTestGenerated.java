@@ -1164,7 +1164,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         
         @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({CreateVariable.LocalVariable.class})
+        @InnerTestClasses({CreateVariable.LocalVariable.class, CreateVariable.Parameter.class})
         @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class CreateVariable extends AbstractQuickFixTest {
             public void testAllFilesPresentInCreateVariable() throws Exception {
@@ -1224,6 +1224,208 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforeQualifiedInFun.kt")
                 public void testQualifiedInFun() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/beforeQualifiedInFun.kt");
+                    doTest(fileName);
+                }
+                
+            }
+            
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+            public static class Parameter extends AbstractQuickFixTest {
+                public void testAllFilesPresentInParameter() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/parameter"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("beforeInAccessorInClass.kt")
+                public void testInAccessorInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInAccessorInClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInAccessorInClassObject.kt")
+                public void testInAccessorInClassObject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInAccessorInClassObject.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInAccessorInGenClass.kt")
+                public void testInAccessorInGenClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInAccessorInGenClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInAccessorInObject.kt")
+                public void testInAccessorInObject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInAccessorInObject.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInAccessorInTrait.kt")
+                public void testInAccessorInTrait() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInAccessorInTrait.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInAccessorNoClass.kt")
+                public void testInAccessorNoClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInAccessorNoClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInAccessorWithExpressionBodyInClass.kt")
+                public void testInAccessorWithExpressionBodyInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInAccessorWithExpressionBodyInClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInClassInitializer.kt")
+                public void testInClassInitializer() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInClassInitializer.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInClassObjectInitializer.kt")
+                public void testInClassObjectInitializer() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInClassObjectInitializer.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInFun.kt")
+                public void testInFun() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInFun.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInFunInClass.kt")
+                public void testInFunInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInFunInClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInFunInGenClass.kt")
+                public void testInFunInGenClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInFunInGenClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInGenAccessorInClass.kt")
+                public void testInGenAccessorInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInGenAccessorInClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInGenAccessorInGenClass.kt")
+                public void testInGenAccessorInGenClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInGenAccessorInGenClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInGenFunInClass.kt")
+                public void testInGenFunInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInGenFunInClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInGenFunInGenClass.kt")
+                public void testInGenFunInGenClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInGenFunInGenClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInGenPropertyInitializerInClass.kt")
+                public void testInGenPropertyInitializerInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInGenPropertyInitializerInClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInGenPropertyInitializerInGenClass.kt")
+                public void testInGenPropertyInitializerInGenClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInGenPropertyInitializerInGenClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInLambdaNoParams.kt")
+                public void testInLambdaNoParams() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInLambdaNoParams.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInLambdaWithIt.kt")
+                public void testInLambdaWithIt() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInLambdaWithIt.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInLambdaWithParams.kt")
+                public void testInLambdaWithParams() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInLambdaWithParams.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInLambdaWithTypedParams.kt")
+                public void testInLambdaWithTypedParams() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInLambdaWithTypedParams.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInMultiLineLambdaNoParams.kt")
+                public void testInMultiLineLambdaNoParams() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInMultiLineLambdaNoParams.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInPropertyInitializerInClass.kt")
+                public void testInPropertyInitializerInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInPropertyInitializerInClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInPropertyInitializerInClassObject.kt")
+                public void testInPropertyInitializerInClassObject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInPropertyInitializerInClassObject.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInPropertyInitializerInEnumClass.kt")
+                public void testInPropertyInitializerInEnumClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInPropertyInitializerInEnumClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInPropertyInitializerInEnumEntry.kt")
+                public void testInPropertyInitializerInEnumEntry() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInPropertyInitializerInEnumEntry.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInPropertyInitializerInGenClass.kt")
+                public void testInPropertyInitializerInGenClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInPropertyInitializerInGenClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInPropertyInitializerInNestedClass.kt")
+                public void testInPropertyInitializerInNestedClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInPropertyInitializerInNestedClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInPropertyInitializerInObject.kt")
+                public void testInPropertyInitializerInObject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInPropertyInitializerInObject.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInPropertyInitializerNoClass.kt")
+                public void testInPropertyInitializerNoClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeInPropertyInitializerNoClass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeQualifiedInFun.kt")
+                public void testQualifiedInFun() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeQualifiedInFun.kt");
                     doTest(fileName);
                 }
                 
