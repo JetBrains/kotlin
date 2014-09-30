@@ -291,7 +291,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     ) {
         JetExpression baseExpression = expression.getBaseExpression();
         assert baseExpression != null;
-        JsName name = context.scope().declareName(getReferencedName(expression.getTargetLabel()));
+        JsScope scope = context.scope();
+        assert scope instanceof JsFunctionScope: "Labeled statement is unexpected outside of function scope";
+        JsName name = ((JsFunctionScope) scope).declareNameUnsafe(getReferencedName(expression.getTargetLabel()));
         JsStatement baseStatement = Translation.translateAsStatement(baseExpression, context);
         return new JsLabel(name, baseStatement).source(expression);
     }
@@ -359,7 +361,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     private static String getReferencedName(JetSimpleNameExpression expression) {
         return expression.getReferencedName()
                 .replaceAll("^@", "")
-                .replaceAll("(?:^`(.*)`$)", "$1");
+                .replaceAll("(?:^`(.*)`$)", "$1") + "$";
     }
 
     private static JsNameRef getTargetLabel(JetExpressionWithLabel expression, TranslationContext context) {
