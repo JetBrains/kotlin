@@ -143,6 +143,8 @@ public data class LibraryInfo(val project: Project, val library: Library) : Idea
 
         return result.toList()
     }
+
+    override fun toString() = "LibraryInfo(libraryName=${library.getName()})"
 }
 
 private data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaModuleInfo() {
@@ -153,6 +155,8 @@ private data class LibrarySourceInfo(val project: Project, val library: Library)
     override fun dependencies(): List<IdeaModuleInfo> {
         return listOf(this) + LibraryInfo(project, library).dependencies()
     }
+
+    override fun toString() = "LibrarySourceInfo(libraryName=${library.getName()})"
 }
 
 //TODO: (module refactoring) there should be separate SdkSourceInfo but there are no kotlin source in existing sdks for now :)
