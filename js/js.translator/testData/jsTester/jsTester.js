@@ -26,7 +26,14 @@ var JsTests = (function () {
         }
     };
 
+    var init = function () {
+        init = function() {};
+        Kotlin.modules["JS_TESTS"].kotlin.test.init();
+    };
+
     var test = function (testName, testFun) {
+        init();
+
         reporter.testStart(testName);
         try {
             testFun();
@@ -45,4 +52,3 @@ var JsTests = (function () {
         assert: assert
     }
 })();
-
