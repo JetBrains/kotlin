@@ -38,8 +38,6 @@ import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import org.jetbrains.jet.lang.resolve.android.AndroidPackage;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -77,7 +75,7 @@ public enum TopDownAnalyzerFacadeForJVM {
                 false
         );
 
-        Collection<JetFile> filesToAnalyze = AndroidPackage.searchAndAddAndroidDeclarations(project, files);
+        List<JetFile> allFiles = JvmAnalyzerFacade.getAllFilesToAnalyze(project, files);
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
         try {
@@ -89,7 +87,7 @@ public enum TopDownAnalyzerFacadeForJVM {
 
                     additionalProviders.add(
                             new IncrementalPackageFragmentProvider(
-                                    filesToAnalyze, module, globalContext.getStorageManager(), injector.getDeserializationGlobalContextForJava(),
+                                    allFiles, module, globalContext.getStorageManager(), injector.getDeserializationGlobalContextForJava(),
                                     incrementalCache, moduleId, injector.getJavaDescriptorResolver()
                             )
                     );
@@ -97,7 +95,7 @@ public enum TopDownAnalyzerFacadeForJVM {
             }
             additionalProviders.add(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 
-            injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, filesToAnalyze, additionalProviders);
+            injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, allFiles, additionalProviders);
             return AnalyzeExhaust.success(trace.getBindingContext(), module);
         }
         finally {

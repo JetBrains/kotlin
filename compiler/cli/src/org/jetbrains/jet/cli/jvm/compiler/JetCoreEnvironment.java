@@ -50,6 +50,7 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.extensions.ExternalDeclarationsProvider;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -212,8 +213,9 @@ public class JetCoreEnvironment {
 
         for (ComponentRegistrar registrar : configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
             registrar.registerProjectComponents(project, configuration);
-
         }
+
+        ExternalDeclarationsProvider.OBJECT$.registerExtensionPoint(project);
     }
 
     // made public for Upsource
