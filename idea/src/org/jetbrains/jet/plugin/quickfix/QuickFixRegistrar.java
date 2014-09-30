@@ -233,10 +233,10 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateBinaryOperationActionFactory.INSTANCE$);
         QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateBinaryOperationActionFactory.INSTANCE$);
 
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, CreateFunctionFromCallActionFactory.INSTANCE$);
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateFunctionFromCallActionFactory.INSTANCE$);
-        QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateFunctionFromCallActionFactory.INSTANCE$);
-        QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateFunctionFromCallActionFactory.INSTANCE$);
+        QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, CreateFunctionOrPropertyFromCallActionFactory.INSTANCE$);
+        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateFunctionOrPropertyFromCallActionFactory.INSTANCE$);
+        QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateFunctionOrPropertyFromCallActionFactory.INSTANCE$);
+        QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateFunctionOrPropertyFromCallActionFactory.INSTANCE$);
 
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateLocalVariableActionFactory.INSTANCE$);
 

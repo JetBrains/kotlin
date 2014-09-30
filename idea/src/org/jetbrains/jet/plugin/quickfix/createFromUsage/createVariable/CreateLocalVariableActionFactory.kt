@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.intentions.ConvertToBlockBodyAction
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
+import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
+import org.jetbrains.jet.lang.psi.JetClassBody
 
 object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -35,7 +37,9 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
                 .filter { it is JetBlockExpression || it is JetDeclarationWithBody }
                 .firstOrNull() as? JetElement ?: return null
 
-        val propertyInfo = createPropertyInfo(refExpr.getReferencedName(), TypeInfo.Empty, TypeInfo(refExpr, Variance.OUT_VARIANCE))
+        val containers = refExpr.getExtractionContainers().filterNot { it is JetClassBody || it is JetFile }
+        val propertyInfo =
+                createPropertyInfo(refExpr.getReferencedName(), TypeInfo.Empty, TypeInfo(refExpr, Variance.OUT_VARIANCE), containers)
 
         return object: CreateFromUsageFixBase(refExpr) {
             override fun getText(): String = JetBundle.message("create.local.variable.from.usage", propertyInfo.name)

@@ -1,4 +1,5 @@
 // "Create local variable 'foo'" "false"
+// ACTION: Create property 'foo' from usage
 // ACTION: Split property declaration
 // ERROR: Unresolved reference: foo
 

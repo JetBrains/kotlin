@@ -298,9 +298,13 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             classBody = containingElement.add(psiFactory.createEmptyClassBody()) as JetClassBody
                             containingElement.addBefore(psiFactory.createWhiteSpace(), classBody)
                         }
-                        val rBrace = classBody!!.getRBrace()
-                        return (rBrace?.let { append(declaration, it, true) }
-                                ?: append(declaration, classBody!!.getLastChild()!!, false)) as JetCallableDeclaration
+
+                        if (declaration is JetNamedFunction) {
+                            val rBrace = classBody!!.getRBrace()
+                            return (rBrace?.let { append(declaration, it, true) }
+                                    ?: append(declaration, classBody!!.getLastChild()!!, false)) as JetCallableDeclaration
+                        }
+                        return prepend(declaration, classBody!!.getLBrace()!!, true) as JetCallableDeclaration
                     }
 
                     is JetBlockExpression -> {

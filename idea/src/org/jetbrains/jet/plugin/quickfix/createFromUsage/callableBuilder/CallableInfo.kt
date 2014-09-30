@@ -13,6 +13,7 @@ import org.jetbrains.jet.plugin.util.supertypes
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.psi.JetElement
 
 /**
  * Represents a concrete type or a set of types yet to be inferred from an expression.
@@ -75,6 +76,7 @@ class CallableInfo (
         val kind: CallableKind,
         val receiverTypeInfo: TypeInfo,
         val returnTypeInfo: TypeInfo,
+        val possibleContainers: List<JetElement>,
         val parameterInfos: List<ParameterInfo> = Collections.emptyList()
 ) {
     {
@@ -83,14 +85,16 @@ class CallableInfo (
 }
 
 fun createFunctionInfo(name: String,
-                    receiverTypeInfo: TypeInfo,
-                    returnTypeInfo: TypeInfo,
-                    parameterInfos: List<ParameterInfo> = Collections.emptyList()): CallableInfo {
-    return CallableInfo(name, CallableKind.FUNCTION, receiverTypeInfo, returnTypeInfo, parameterInfos)
+                       receiverTypeInfo: TypeInfo,
+                       returnTypeInfo: TypeInfo,
+                       possibleContainers: List<JetElement> = Collections.emptyList(),
+                       parameterInfos: List<ParameterInfo> = Collections.emptyList()): CallableInfo {
+    return CallableInfo(name, CallableKind.FUNCTION, receiverTypeInfo, returnTypeInfo, possibleContainers, parameterInfos)
 }
 
 fun createPropertyInfo(name: String,
-                    receiverTypeInfo: TypeInfo,
-                    returnTypeInfo: TypeInfo): CallableInfo {
-    return CallableInfo(name, CallableKind.PROPERTY, receiverTypeInfo, returnTypeInfo)
+                       receiverTypeInfo: TypeInfo,
+                       returnTypeInfo: TypeInfo,
+                       possibleContainers: List<JetElement>): CallableInfo {
+    return CallableInfo(name, CallableKind.PROPERTY, receiverTypeInfo, returnTypeInfo, possibleContainers)
 }

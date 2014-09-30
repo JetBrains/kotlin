@@ -6,7 +6,6 @@ import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
@@ -17,9 +16,13 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypeAndBranch
+import org.jetbrains.jet.lang.psi.JetExpression
+import java.util.Collections
+import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
+import org.jetbrains.jet.lang.psi.JetClassBody
+import org.jetbrains.jet.lang.psi.JetFile
 
-object CreateFunctionFromCallActionFactory : JetSingleIntentionActionFactory() {
+object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val diagElement = diagnostic.getPsiElement()
         val callExpr = when (diagnostic.getFactory()) {
@@ -32,10 +35,14 @@ object CreateFunctionFromCallActionFactory : JetSingleIntentionActionFactory() {
             Errors.TOO_MANY_ARGUMENTS -> diagElement.getParentByType(javaClass<JetCallExpression>())
 
             else -> throw AssertionError("Unexpected diagnostic: ${diagnostic.getFactory()}")
-        }
-        if (callExpr !is JetCallExpression) return null
+        } as? JetExpression ?: return null
 
-        val calleeExpr = callExpr.getCalleeExpression() as? JetSimpleNameExpression ?: return null
+        val calleeExpr = when (callExpr) {
+            is JetCallExpression -> callExpr.getCalleeExpression()
+            is JetSimpleNameExpression -> callExpr
+            else -> null
+        } as? JetSimpleNameExpression ?: return null
+
         if (calleeExpr.getReferencedNameElementType() != JetTokens.IDENTIFIER) return null
 
         val callParent = callExpr.getParent()
@@ -54,15 +61,34 @@ object CreateFunctionFromCallActionFactory : JetSingleIntentionActionFactory() {
             else -> TypeInfo(receiver.getType(), Variance.IN_VARIANCE)
         }
 
-        val anyType = KotlinBuiltIns.getInstance().getNullableAnyType()
-        val parameters = callExpr.getValueArguments().map {
-            ParameterInfo(
-                    it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
-                    it.getArgumentName()?.getReferenceExpression()?.getReferencedName()
-            )
-        }
+        val possibleContainers =
+                if (receiverType is TypeInfo.Empty) {
+                    val containers = with(fullCallExpr.getExtractionContainers()) {
+                        if (callExpr is JetCallExpression) this else filter { it is JetClassBody || it is JetFile }
+                    }
+                    if (containers.isNotEmpty()) containers else return null
+                }
+                else Collections.emptyList()
 
         val returnType = TypeInfo(fullCallExpr, Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(callExpr, createFunctionInfo(calleeExpr.getReferencedName(), receiverType, returnType, parameters))
+
+        val callableInfo = when (callExpr) {
+            is JetCallExpression -> {
+                val anyType = KotlinBuiltIns.getInstance().getNullableAnyType()
+                val parameters = callExpr.getValueArguments().map {
+                    ParameterInfo(
+                            it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
+                            it.getArgumentName()?.getReferenceExpression()?.getReferencedName()
+                    )
+                }
+                createFunctionInfo(calleeExpr.getReferencedName(), receiverType, returnType, possibleContainers, parameters)
+            }
+
+            is JetSimpleNameExpression -> createPropertyInfo(calleeExpr.getReferencedName(), receiverType, returnType, possibleContainers)
+
+            else -> return null
+        }
+
+        return CreateFunctionFromUsageFix(callExpr, callableInfo)
     }
 }

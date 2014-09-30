@@ -7,6 +7,7 @@ import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
+import java.util.Collections
 
 object CreateGetFunctionActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -19,6 +20,6 @@ object CreateGetFunctionActionFactory : JetSingleIntentionActionFactory() {
         }
 
         val returnType = TypeInfo(accessExpr, Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(accessExpr, createFunctionInfo("get", arrayType, returnType, parameters))
+        return CreateFunctionFromUsageFix(accessExpr, createFunctionInfo("get", arrayType, returnType, Collections.emptyList(), parameters))
     }
 }

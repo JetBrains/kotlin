@@ -17,7 +17,11 @@ import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 
 public class CreateFunctionFromUsageFix(element: PsiElement, val functionInfo: CallableInfo) : CreateFromUsageFixBase(element) {
     override fun getText(): String {
-        return JetBundle.message("create.function.from.usage", functionInfo.name)
+        val key = when (functionInfo.kind) {
+            CallableKind.FUNCTION -> "create.function.from.usage"
+            CallableKind.PROPERTY -> "create.property.from.usage"
+        }
+        return JetBundle.message(key, functionInfo.name)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
@@ -42,7 +46,7 @@ public class CreateFunctionFromUsageFix(element: PsiElement, val functionInfo: C
         else {
             assert(functionInfo.receiverTypeInfo is TypeInfo.Empty, "No receiver type candidates: ${element.getText()} in ${file.getText()}")
 
-            chooseContainerElementIfNecessary(element.getExtractionContainers(), editor, popupTitle, true, { it }) {
+            chooseContainerElementIfNecessary(functionInfo.possibleContainers, editor, popupTitle, true, { it }) {
                 val container = if (it is JetClassBody) it.getParent() as JetClassOrObject else it
                 runBuilder(CallablePlacement.NoReceiver(container))
             }
