@@ -143,11 +143,11 @@ public final class RhinoUtils {
             putGlobalVariablesIntoScope(scope, variables);
             for (String filename : fileNames) {
                 runFileWithRhino(filename, context, scope);
-                String problems = lintIt(context, filename, scope);
-                if (problems != null) {
-                    //fail(problems);
-                    System.out.print(problems);
-                }
+                //String problems = lintIt(context, filename, scope);
+                //if (problems != null) {
+                //    //fail(problems);
+                //    System.out.print(problems);
+                //}
             }
             checker.runChecks(context, scope);
         }
@@ -185,7 +185,7 @@ public final class RhinoUtils {
             runFileWithRhino(pathToTestFilesRoot() + "kotlin_lib.js", context, scope);
             runFileWithRhino(pathToTestFilesRoot() + "maps.js", context, scope);
             runFileWithRhino(pathToTestFilesRoot() + "long.js", context, scope);
-            runFileWithRhino(pathToTestFilesRoot() + "jshint.js", context, scope);
+            //runFileWithRhino(pathToTestFilesRoot() + "jshint.js", context, scope);
             for (String jsLibrary : jsLibraries) {
                 runFileWithRhino(jsLibrary, context, scope);
             }
