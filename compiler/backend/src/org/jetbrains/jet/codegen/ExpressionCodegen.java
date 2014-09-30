@@ -18,10 +18,8 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
@@ -33,6 +31,7 @@ import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.context.*;
+import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.jet.codegen.inline.InlineCodegen;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.inline.NameGenerator;
@@ -50,7 +49,6 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
-import org.jetbrains.jet.lang.resolve.android.AndroidConst;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
@@ -88,7 +86,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
-import static org.jetbrains.jet.lang.resolve.android.AndroidConst.ANDROID_USER_PACKAGE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
@@ -1734,20 +1731,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            JetFile file = DescriptorToSourceUtils.getContainingFile(propertyDescriptor);
-            if (file != null) {
-                String androidPackage = file.getUserData(ANDROID_USER_PACKAGE);
-                if (androidPackage != null) {
+            for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject())) {
+                StackValue result = extension.apply(resolvedCall, new ExpressionCodegenExtension.Context(typeMapper, v));
 
-                    Type retType = typeMapper.mapType(propertyDescriptor.getReturnType());
-                    v.load(0, Type.getType("Landroid/app/Activity;"));
-                    v.getstatic(androidPackage.replace(".", "/") + "/R$id",
-                                propertyDescriptor.getName().asString(), "I");
-                    v.invokevirtual("android/app/Activity", "findViewById", "(I)" + "Landroid/view/View;", false);
-                    v.checkcast(retType);
-
-                    return StackValue.onStack(retType);
-                }
+                if (result != null) return result;
             }
 
             boolean directToField =

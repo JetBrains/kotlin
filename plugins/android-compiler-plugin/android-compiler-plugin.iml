@@ -12,6 +12,7 @@
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="module" module-name="cli" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="backend" scope="PROVIDED" />
   </component>
 </module>
 
