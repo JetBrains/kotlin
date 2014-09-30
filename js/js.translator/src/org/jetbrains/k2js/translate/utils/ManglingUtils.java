@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.getJetTypeFqName;
 
 public class ManglingUtils {
     private ManglingUtils() {}
@@ -180,13 +181,13 @@ public class ManglingUtils {
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
-            argTypes.append(TranslationUtils.getJetTypeFqName(receiverParameter.getType())).append(".");
+            argTypes.append(getJetTypeFqName(receiverParameter.getType(), true)).append(".");
         }
 
         argTypes.append(StringUtil.join(descriptor.getValueParameters(), new Function<ValueParameterDescriptor, String>() {
             @Override
             public String fun(ValueParameterDescriptor descriptor) {
-                return TranslationUtils.getJetTypeFqName(descriptor.getType());
+                return getJetTypeFqName(descriptor.getType(), true);
             }
         }, ","));
 

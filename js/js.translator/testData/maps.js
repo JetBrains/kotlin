@@ -380,11 +380,11 @@
         /**
          * @param {Hashtable.<Key, Value>} hashtable
          */
-        this.putAll_za3j1t$ = hashMapPutAll;
+        this.putAll_48yl7j$ = hashMapPutAll;
 
         this.clone = function () {
             var clone = new Hashtable(hashingFunctionParam, equalityFunctionParam);
-            clone.putAll_za3j1t$(that);
+            clone.putAll_48yl7j$(that);
             return clone;
         };
 
@@ -530,7 +530,7 @@
                 this.$size = 0;
                 this.map = {};
             },
-            putAll_za3j1t$: hashMapPutAll,
+            putAll_48yl7j$: hashMapPutAll,
             entrySet: function () {
                 var result = new Kotlin.ComplexHashSet();
                 var map = this.map;
@@ -820,10 +820,10 @@ Kotlin.PrimitiveBooleanHashSet = Kotlin.createClassNow(Kotlin.AbstractPrimitiveH
     function HashSet(hashingFunction, equalityFunction) {
         var hashTable = new Kotlin.HashTable(hashingFunction, equalityFunction);
 
-        this.addAll_xeylzf$ = Kotlin.AbstractCollection.prototype.addAll_xeylzf$;
-        this.removeAll_xeylzf$ = Kotlin.AbstractCollection.prototype.removeAll_xeylzf$;
-        this.retainAll_xeylzf$ = Kotlin.AbstractCollection.prototype.retainAll_xeylzf$;
-        this.containsAll_xeylzf$ = Kotlin.AbstractCollection.prototype.containsAll_xeylzf$;
+        this.addAll_4fm7v2$ = Kotlin.AbstractCollection.prototype.addAll_4fm7v2$;
+        this.removeAll_4fm7v2$ = Kotlin.AbstractCollection.prototype.removeAll_4fm7v2$;
+        this.retainAll_4fm7v2$ = Kotlin.AbstractCollection.prototype.retainAll_4fm7v2$;
+        this.containsAll_4fm7v2$ = Kotlin.AbstractCollection.prototype.containsAll_4fm7v2$;
 
         this.add_za3rmp$ = function (o) {
             return !hashTable.put_wn2jw4$(o, true);
@@ -860,7 +860,7 @@ Kotlin.PrimitiveBooleanHashSet = Kotlin.createClassNow(Kotlin.AbstractPrimitiveH
 
         this.clone = function () {
             var h = new HashSet(hashingFunction, equalityFunction);
-            h.addAll_xeylzf$(hashTable.keys());
+            h.addAll_4fm7v2$(hashTable.keys());
             return h;
         };
 

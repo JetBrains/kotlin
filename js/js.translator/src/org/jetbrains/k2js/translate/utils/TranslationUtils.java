@@ -17,12 +17,15 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.translate.context.TemporaryConstVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -134,15 +137,34 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static String getJetTypeFqName(@NotNull JetType jetType) {
+    public static String getJetTypeFqName(@NotNull JetType jetType, boolean printTypeArguments) {
         ClassifierDescriptor declaration = jetType.getConstructor().getDeclarationDescriptor();
         assert declaration != null;
 
         if (declaration instanceof TypeParameterDescriptor) {
-            return getJetTypeFqName(((TypeParameterDescriptor) declaration).getUpperBoundsAsType());
+            TypeParameterDescriptor typeParameter = (TypeParameterDescriptor) declaration;
+            return getJetTypeFqName(typeParameter.getUpperBoundsAsType(), printTypeArguments);
         }
 
-        return getFqName(declaration).asString();
+        List<TypeProjection> typeArguments = jetType.getArguments();
+
+        String typeArgumentsAsString;
+
+        if (printTypeArguments && !typeArguments.isEmpty()) {
+            String joinedTypeArguments = StringUtil.join(typeArguments, new Function<TypeProjection, String>() {
+                @Override
+                public String fun(TypeProjection typeProjection) {
+                    return getJetTypeFqName(typeProjection.getType(), false);
+                }
+            }, ", ");
+
+            typeArgumentsAsString = "<" + joinedTypeArguments + ">";
+        }
+        else {
+            typeArgumentsAsString = "";
+        }
+
+        return getFqName(declaration).asString() + typeArgumentsAsString;
     }
 
     @NotNull

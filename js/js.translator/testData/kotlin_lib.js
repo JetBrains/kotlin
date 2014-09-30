@@ -300,7 +300,7 @@
     );
 
     Kotlin.AbstractCollection = Kotlin.createClassNow(Kotlin.Collection, null, {
-        addAll_xeylzf$: function (collection) {
+        addAll_4fm7v2$: function (collection) {
             var modified = false;
             var it = collection.iterator();
             while (it.hasNext()) {
@@ -310,7 +310,7 @@
             }
             return modified
         },
-        removeAll_xeylzf$: function (c) {
+        removeAll_4fm7v2$: function (c) {
             var modified = false;
             var it = this.iterator();
             while (it.hasNext()) {
@@ -321,7 +321,7 @@
             }
             return modified
         },
-        retainAll_xeylzf$: function (c) {
+        retainAll_4fm7v2$: function (c) {
             var modified = false;
             var it = this.iterator();
             while (it.hasNext()) {
@@ -332,7 +332,7 @@
             }
             return modified
         },
-        containsAll_xeylzf$: function (c) {
+        containsAll_4fm7v2$: function (c) {
             var it = c.iterator();
             while (it.hasNext()) {
                 if (!this.contains_za3rmp$(it.next())) return false;
@@ -428,7 +428,7 @@
             add_vux3hl$: function (index, element) {
                 this.array.splice(index, 0, element);
             },
-            addAll_xeylzf$: function (collection) {
+            addAll_4fm7v2$: function (collection) {
                 var it = collection.iterator();
                 for (var i = this.array.length, n = collection.size(); n-- > 0;) {
                     this.array[i++] = it.next();

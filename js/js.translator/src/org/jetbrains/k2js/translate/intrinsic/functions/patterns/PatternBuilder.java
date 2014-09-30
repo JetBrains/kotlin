@@ -241,7 +241,7 @@ public final class PatternBuilder {
             if (actualReceiver != null) {
                 if (receiverFqName == null) return false;
 
-                String actualReceiverFqName = TranslationUtils.getJetTypeFqName(actualReceiver.getType());
+                String actualReceiverFqName = TranslationUtils.getJetTypeFqName(actualReceiver.getType(), false);
 
                 if (!actualReceiverFqName.equals(receiverFqName)) return false;
             }
