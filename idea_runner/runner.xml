@@ -3,7 +3,7 @@
     <property name="dependencies.dir" value="${basedir}/../dependencies" />
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${dependencies.dir}/ant-contrib.jar"/>
 
-    <property name="disable_plugins.file.path" value="${basedir}/../ideaSDK/config/disabled_plugins.txt"/>
+    <property name="disable_plugins.file.path" value="${basedir}/../ideaSDK/config-idea/disabled_plugins.txt"/>
     <available property="disable_plugins.found" file="${disable_plugins.file.path}"/>
 
     <if>

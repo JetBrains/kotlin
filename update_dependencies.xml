@@ -257,8 +257,7 @@
 
                 <then>
                     <delete dir="ideaSDK" failonerror="false">
-                        <exclude name="config/**"/>
-                        <exclude name="system/**"/>
+                        <exclude name="config-idea/**"/>
                         <exclude name="system-idea/**"/>
                     </delete>
 
