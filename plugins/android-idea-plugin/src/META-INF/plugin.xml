@@ -18,5 +18,6 @@
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
       <externalDeclarationsProvider implementation="org.jetbrains.kotlin.android.AndroidDeclarationsProvider"/>
+      <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.AndroidExpressionCodegen"/>
   </extensions>
 </idea-plugin>

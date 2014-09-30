@@ -41,6 +41,7 @@ import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.jet.extensions.ExternalDeclarationsProvider;
 import org.jetbrains.kotlin.asJava.JavaElementFinder;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
@@ -257,6 +258,7 @@ public class JetCoreEnvironment {
         }
 
         ExternalDeclarationsProvider.OBJECT$.registerExtensionPoint(project);
+        ExpressionCodegenExtension.OBJECT$.registerExtensionPoint(project);
     }
 
     // made public for Upsource

@@ -29,6 +29,13 @@ import org.jetbrains.jet.lang.resolve.android.*
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.jet.utils.emptyOrSingletonList
 import com.intellij.openapi.project.Project
+import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
+import org.jetbrains.jet.codegen.StackValue
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 public object AndroidConfigurationKeys {
 
@@ -65,6 +72,28 @@ public class AndroidDeclarationsProvider(private val project: Project) : Externa
     }
 }
 
+public class AndroidExpressionCodegen : ExpressionCodegenExtension {
+    override fun apply(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue? {
+            if (resolvedCall.getResultingDescriptor() !is PropertyDescriptor) return null
+
+            val propertyDescriptor = resolvedCall.getResultingDescriptor() as PropertyDescriptor
+
+            val file = DescriptorToSourceUtils.getContainingFile(propertyDescriptor)
+            if (file == null) return null
+
+            val androidPackage = file.getUserData<String>(AndroidConst.ANDROID_USER_PACKAGE)
+            if (androidPackage == null) return null
+
+            val retType = c.typeMapper.mapType(propertyDescriptor.getReturnType()!!)
+            receiver.put(Type.getType("Landroid/app/Activity;"), c.v)
+            c.v.getstatic(androidPackage.replace(".", "/") + "/R\$id", propertyDescriptor.getName().asString(), "I")
+            c.v.invokevirtual("android/app/Activity", "findViewById", "(I)" + "Landroid/view/View;", false)
+            c.v.checkcast(retType)
+
+            return StackValue.onStack(retType)
+        }
+}
+
 public class AndroidComponentRegistrar : ComponentRegistrar {
 
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
@@ -73,5 +102,6 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
         project.registerService(javaClass<AndroidUIXmlProcessor>(), CliAndroidUIXmlProcessor(project, androidResPath, androidManifest))
 
         ExternalDeclarationsProvider.registerExtension(project, AndroidDeclarationsProvider(project))
+        ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())
     }
 }
