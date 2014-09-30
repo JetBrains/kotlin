@@ -5,8 +5,6 @@
 
 package foo
 
-inline fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
-
 inline fun Inline.calcExt(s: (Int) -> Int, p: Int) : Int {
     return s(p)
 }

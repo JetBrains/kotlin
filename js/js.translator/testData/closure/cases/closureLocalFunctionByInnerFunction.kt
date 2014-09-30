@@ -1,7 +1,5 @@
 package foo
 
-fun run<T>(f: () -> T) = f()
-
 fun box(): String {
     fun simple(s: String? = null): String {
         if (s != null) return s

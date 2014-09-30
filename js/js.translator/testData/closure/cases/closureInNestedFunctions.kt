@@ -1,7 +1,5 @@
 package foo
 
-fun run<T>(f: () -> T) = f()
-
 fun funfun(): Boolean {
     val result = true
 

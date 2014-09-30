@@ -3,15 +3,15 @@ package foo
 import java.util.*
 
 fun box(): Boolean {
-    val data = arrayList("foo", "bar")
-    if (data.head != "foo") {
+    val data = myArrayList("foo", "bar")
+    if (data.myHead != "foo") {
         return false
     }
     return true
 }
 
 
-public fun arrayList<T>(vararg values: T): ArrayList<T> {
+inline public fun myArrayList<T>(vararg values: T): ArrayList<T> {
     val c = ArrayList<T>()
     for (v in values) {
         c.add(v)
@@ -19,7 +19,7 @@ public fun arrayList<T>(vararg values: T): ArrayList<T> {
     return c
 }
 
-public val <T> ArrayList<T>.head: T
+inline public val <T> ArrayList<T>.myHead: T
     get() {
         return get(0)
     }

@@ -2,17 +2,6 @@ package foo
 
 import java.util.ArrayList;
 
-// TODO: drop when listOf will be available here.
-fun listOf<T>(vararg a: T): List<T> {
-    val list = ArrayList<T>();
-
-    for (e in a) {
-        list.add(e)
-    }
-
-    return list
-}
-
 fun test<T>(list: List<T>, elements: List<T>, expected: List<Int>, method: List<T>.(T) -> Int, methodName: String): String? {
     for (i in 0..elements.size() - 1) {
         val actual = list.method(elements[i])

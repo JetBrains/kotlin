@@ -2,8 +2,6 @@
 
 package foo
 
-fun run<T>(f: Int.() -> T) = 1.f()
-
 public class Foo(val trigger: () -> Any) {
     fun test() = run {trigger()};
 }
