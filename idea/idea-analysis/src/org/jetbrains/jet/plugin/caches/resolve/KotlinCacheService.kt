@@ -124,13 +124,8 @@ public class KotlinCacheService(val project: Project) {
                             )
                     )
                 }
-                else -> {
-                    if (syntheticFileModule.isLibraryClasses()) {
-                        //NOTE: this code should not be called for sdk or library classes
-                        // currently the only known scenario is when we cannot determine that file is a library source
-                        // (file under both classes and sources root)
-                        LOG.warn("Creating cache with synthetic file ($file) in classes of library $syntheticFileModule")
-                    }
+
+                syntheticFileModule is LibrarySourceInfo || syntheticFileModule is NotUnderContentRootModuleInfo -> {
                     KotlinResolveCache(
                             project,
                             globalResolveSessionProvider(
@@ -142,8 +137,25 @@ public class KotlinCacheService(val project: Project) {
                             )
                     )
                 }
-            }
 
+                syntheticFileModule.isLibraryClasses() -> {
+                    //NOTE: this code should not be called for sdk or library classes
+                    // currently the only known scenario is when we cannot determine that file is a library source
+                    // (file under both classes and sources root)
+                    LOG.warn("Creating cache with synthetic file ($file) in classes of library $syntheticFileModule")
+                    KotlinResolveCache(
+                            project,
+                            globalResolveSessionProvider(
+                                    targetPlatform,
+                                    syntheticFiles = listOf(file),
+                                    moduleFilter = { true },
+                                    dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                            )
+                    )
+                }
+
+                else -> throw IllegalStateException("Unknown IdeaModuleInfo ${syntheticFileModule.javaClass}")
+            }
         }
     }
 
