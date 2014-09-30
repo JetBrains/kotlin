@@ -40,10 +40,8 @@
     <orderEntry type="library" scope="PROVIDED" name="maven" level="project" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="eval4j" />
-    <orderEntry type="library" scope="PROVIDED" name="android" level="project" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />
-    <orderEntry type="library" name="android_tests" level="project" />
-    <orderEntry type="module" module-name="android-compiler-plugin" />
+    <orderEntry type="module" module-name="android-idea-plugin" />
   </component>
 </module>
 

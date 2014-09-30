@@ -40,9 +40,9 @@ class AndroidID(val rawID: String) : AndroidResource {
     }
 }
 
-class AndroidWidget(val id: String, val className: String) : AndroidResource
+public class AndroidWidget(val id: String, val className: String) : AndroidResource
 
-class AndroidManifest(val _package: String) : AndroidResource
+public class AndroidManifest(public val _package: String) : AndroidResource
 
 fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
     return f?.getUserData(org.jetbrains.jet.lang.resolve.android.AndroidConst.ANDROID_USER_PACKAGE) != null
