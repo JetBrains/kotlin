@@ -116,11 +116,10 @@ public enum TopDownAnalyzerFacadeForJVM {
             @Nullable List<String> moduleIds,
             @Nullable IncrementalCacheProvider incrementalCacheProvider
     ) {
-        List<JetFile> filesToAnalyze = new ArrayList<JetFile>(files);
-        searchAndAddAndroidDeclarations(project, filesToAnalyze);
+        List<JetFile> allFiles = JvmAnalyzerFacade.getAllFilesToAnalyze(project, files);
 
         FileBasedDeclarationProviderFactory providerFactory =
-                new FileBasedDeclarationProviderFactory(topDownAnalysisParameters.getStorageManager(), filesToAnalyze);
+                new FileBasedDeclarationProviderFactory(topDownAnalysisParameters.getStorageManager(), allFiles);
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
                 project,
@@ -149,7 +148,7 @@ public enum TopDownAnalyzerFacadeForJVM {
             }
             additionalProviders.add(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 
-            injector.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisParameters, filesToAnalyze, additionalProviders);
+            injector.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisParameters, allFiles, additionalProviders);
             return AnalysisResult.success(trace.getBindingContext(), module);
         }
         finally {

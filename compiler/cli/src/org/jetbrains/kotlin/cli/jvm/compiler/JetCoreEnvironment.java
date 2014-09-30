@@ -41,6 +41,7 @@ import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.jet.extensions.ExternalDeclarationsProvider;
 import org.jetbrains.kotlin.asJava.JavaElementFinder;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport;
@@ -253,8 +254,9 @@ public class JetCoreEnvironment {
 
         for (ComponentRegistrar registrar : configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
             registrar.registerProjectComponents(project, configuration);
-
         }
+
+        ExternalDeclarationsProvider.OBJECT$.registerExtensionPoint(project);
     }
 
     // made public for Upsource

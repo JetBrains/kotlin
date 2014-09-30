@@ -17,14 +17,18 @@
 package org.jetbrains.kotlin.android
 
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.jet.lang.resolve.android.CliAndroidUIXmlProcessor
 import org.jetbrains.jet.config.CompilerConfiguration
-import org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor
 import com.intellij.mock.MockProject
 import org.jetbrains.jet.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
+import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.resolve.android.*
+import com.intellij.openapi.components.ServiceManager
+import org.jetbrains.jet.utils.emptyOrSingletonList
+import com.intellij.openapi.project.Project
 
 public object AndroidConfigurationKeys {
 
@@ -54,11 +58,20 @@ public class AndroidCommandLineProcessor : CommandLineProcessor {
     }
 }
 
+public class AndroidDeclarationsProvider(private val project: Project) : ExternalDeclarationsProvider {
+    override fun getExternalDeclarations(): Collection<JetFile> {
+        val parser = ServiceManager.getService<AndroidUIXmlProcessor>(project, javaClass<AndroidUIXmlProcessor>())
+        return emptyOrSingletonList(parser?.parseToPsi(project))
+    }
+}
+
 public class AndroidComponentRegistrar : ComponentRegistrar {
 
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val androidResPath = configuration.get(AndroidConfigurationKeys.ANDROID_RES_PATH)
         val androidManifest = configuration.get(AndroidConfigurationKeys.ANDROID_MANIFEST)
         project.registerService(javaClass<AndroidUIXmlProcessor>(), CliAndroidUIXmlProcessor(project, androidResPath, androidManifest))
+
+        ExternalDeclarationsProvider.registerExtension(project, AndroidDeclarationsProvider(project))
     }
 }

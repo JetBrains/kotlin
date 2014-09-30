@@ -21,9 +21,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.openapi.components.ServiceManager
-import java.util.ArrayList
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiClass
+import org.jetbrains.jet.utils.emptyOrSingletonList
 
 trait AndroidResource
 
@@ -50,14 +50,6 @@ fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
 
 public fun isAndroidSyntheticElement(element: PsiElement?): Boolean {
     return isAndroidSyntheticFile(element?.getContainingFile())
-}
-
-public fun searchAndAddAndroidDeclarations(project: Project, originalFiles: Collection<JetFile>): Collection<JetFile> {
-    val parser = ServiceManager.getService<AndroidUIXmlProcessor>(project, javaClass<AndroidUIXmlProcessor>())
-    val file = parser?.parseToPsi(project)
-    val files = ArrayList(originalFiles)
-    if (file != null) files.add(file)
-    return files
 }
 
 public fun isRClassField(element: PsiElement): Boolean {
