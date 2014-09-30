@@ -11,5 +11,8 @@
         <extensionPoint name="externalDeclarationsProvider"
                         interface="org.jetbrains.jet.extensions.ExternalDeclarationsProvider"
                         area="IDEA_PROJECT"/>
+        <extensionPoint name="expressionCodegenExtension"
+                        interface="org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 </idea-plugin>

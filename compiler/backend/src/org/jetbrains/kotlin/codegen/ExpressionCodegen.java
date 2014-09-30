@@ -30,6 +30,7 @@ import kotlin.KotlinPackage;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
@@ -1888,20 +1889,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            JetFile file = DescriptorToSourceUtils.getContainingFile(propertyDescriptor);
-            if (file != null) {
-                String androidPackage = file.getUserData(ANDROID_USER_PACKAGE);
-                if (androidPackage != null) {
+            for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject())) {
+                StackValue result = extension.apply(receiver, resolvedCall, new ExpressionCodegenExtension.Context(typeMapper, v));
 
-                    Type retType = typeMapper.mapType(propertyDescriptor.getReturnType());
-                    v.load(0, Type.getType("Landroid/app/Activity;"));
-                    v.getstatic(androidPackage.replace(".", "/") + "/R$id",
-                                propertyDescriptor.getName().asString(), "I");
-                    v.invokevirtual("android/app/Activity", "findViewById", "(I)" + "Landroid/view/View;", false);
-                    v.checkcast(retType);
-
-                    return StackValue.onStack(retType);
-                }
+                if (result != null) return result;
             }
 
             boolean directToField =
