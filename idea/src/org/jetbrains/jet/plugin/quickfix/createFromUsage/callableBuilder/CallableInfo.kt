@@ -10,6 +10,9 @@ import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.util.supertypes
+import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 
 /**
  * Represents a concrete type or a set of types yet to be inferred from an expression.
@@ -42,6 +45,7 @@ abstract class TypeInfo(val variance: Variance) {
     abstract fun getPossibleTypes(builder: CallableBuilder): List<JetType>
 
     protected fun JetType.getPossibleSupertypes(variance: Variance): List<JetType> {
+        if (ErrorUtils.containsErrorType(this)) return Collections.singletonList(KotlinBuiltIns.getInstance().getAnyType())
         val single = Collections.singletonList(this)
         return when (variance) {
             Variance.IN_VARIANCE -> single + supertypes()

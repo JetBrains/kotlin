@@ -802,6 +802,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("beforeInLambda.kt")
+                public void testInLambda() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeInLambda.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("beforeInconsistentTypes.kt")
                 public void testInconsistentTypes() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeInconsistentTypes.kt");
@@ -865,6 +871,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforeUnknownType.kt")
                 public void testUnknownType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeUnknownType.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeUnresolvedSupertype.kt")
+                public void testUnresolvedSupertype() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeUnresolvedSupertype.kt");
                     doTest(fileName);
                 }
                 
