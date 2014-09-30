@@ -30,7 +30,7 @@ public abstract class AndroidResourceManager(protected val project: Project, pro
     public val classAttribute: String = androidNamespace + ":" + classAttributeNoNamespace
 
     abstract fun getLayoutXmlFiles(): Collection<PsiFile>
-    abstract fun idToXmlAttribute(id: String): PsiElement?
+    public abstract fun idToXmlAttribute(id: String): PsiElement?
     public fun nameToIdDeclaration(name: String): String = idDeclarationPrefix + name
     public fun nameToIdUsage(name: String): String = idUsagePrefix + name
     public fun idToName(id: String?): String {
