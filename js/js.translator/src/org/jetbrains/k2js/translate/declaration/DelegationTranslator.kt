@@ -33,8 +33,8 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.backend.common.CodegenUtil
 import java.util.HashMap
-import com.google.dart.compiler.backend.js.ast.JsLiteral
 import org.jetbrains.k2js.translate.declaration.propertyTranslator.addGetterAndSetter
+import org.jetbrains.k2js.translate.utils.ManglingUtils.getMangledMemberNameForExplicitDelegation
 
 public class DelegationTranslator(
         private val classDeclaration: JetClassOrObject,

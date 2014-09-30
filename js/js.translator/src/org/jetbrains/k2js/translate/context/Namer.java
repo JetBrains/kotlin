@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getStableMangledNameForDescriptor;
+import static org.jetbrains.k2js.translate.utils.ManglingUtils.getStableMangledNameForDescriptor;
 
 /**
  * Encapuslates different types of constants and naming conventions.

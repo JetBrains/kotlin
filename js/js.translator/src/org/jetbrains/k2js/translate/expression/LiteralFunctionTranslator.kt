@@ -26,7 +26,6 @@ import org.jetbrains.k2js.translate.context.*
 import org.jetbrains.k2js.translate.general.AbstractTranslator
 import org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor
 import org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody
-import org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName
 import org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.jet.lang.descriptors.MemberDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor

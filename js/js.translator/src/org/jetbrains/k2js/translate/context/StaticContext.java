@@ -41,8 +41,8 @@ import java.util.Map;
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMangledName;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName;
+import static org.jetbrains.k2js.translate.utils.ManglingUtils.getMangledName;
+import static org.jetbrains.k2js.translate.utils.ManglingUtils.getSuggestedName;
 
 /**
  * Aggregates all the static parts of the context.
