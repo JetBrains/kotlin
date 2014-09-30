@@ -14,5 +14,8 @@
         <extensionPoint name="expressionCodegenExtension"
                         interface="org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension"
                         area="IDEA_PROJECT"/>
+        <extensionPoint name="findUsagesHandlerDecorator"
+                        interface="org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 </idea-plugin>

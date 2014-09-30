@@ -33,11 +33,13 @@ import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.DelegatingFindMemberUsagesHandler
+import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
+import com.intellij.openapi.extensions.Extensions
 
 public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
     val javaHandlerFactory = JavaFindUsagesHandlerFactory(project)
 
-    val findFunctionOptions = KotlinFunctionFindUsagesOptions(project)
+    public val findFunctionOptions: KotlinFunctionFindUsagesOptions = KotlinFunctionFindUsagesOptions(project)
     val findPropertyOptions = KotlinPropertyFindUsagesOptions(project)
     val findClassOptions = KotlinClassFindUsagesOptions(project)
     val defaultOptions = FindUsagesOptions(project)
@@ -50,25 +52,31 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
             element is JetTypeParameter
 
     public override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler? {
-        when(element) {
+        val handler = when (element) {
             is JetClassOrObject ->
-                return KotlinFindClassUsagesHandler(element, this)
+                KotlinFindClassUsagesHandler(element, this)
 
             is JetNamedFunction, is JetProperty, is JetParameter -> {
                 val declaration = element as JetNamedDeclaration
 
                 if (forHighlightUsages) return KotlinFindMemberUsagesHandler.getInstance(declaration, this)
-                return JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")?.let { callables ->
+                JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")?.let { callables ->
                     if (callables.empty) FindUsagesHandler.NULL_HANDLER else DelegatingFindMemberUsagesHandler(declaration, callables, this)
                 }
             }
 
             is JetTypeParameter ->
-                return KotlinTypeParameterFindUsagesHandler(element, this)
+                KotlinTypeParameterFindUsagesHandler(element, this)
 
             else ->
                 throw IllegalArgumentException("unexpected element type: " + element)
         }
+
+        for (decorator in Extensions.getArea(element.getProject()).getExtensionPoint(KotlinFindUsagesHandlerDecorator.EP_NAME).getExtensions()) {
+            val decorated = decorator.decorateHandler(element, forHighlightUsages, handler!!)
+            if (decorated != handler) return decorated
+        }
+        return handler
     }
 
 }

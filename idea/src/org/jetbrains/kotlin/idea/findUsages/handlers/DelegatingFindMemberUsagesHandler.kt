@@ -48,7 +48,7 @@ class DelegatingFindMemberUsagesHandler(
         JavaFindUsagesHandler(declaration, elementsToSearch.copyToArray(), factory.javaHandlerFactory)
     }
 
-    fun getHandler(element: PsiElement): FindUsagesHandler? =
+    private fun getHandler(element: PsiElement): FindUsagesHandler? =
             when (element) {
                 is JetNamedDeclaration ->
                     KotlinFindMemberUsagesHandler.getInstance(element, elementsToSearch, factory)
@@ -60,51 +60,16 @@ class DelegatingFindMemberUsagesHandler(
             }
 
     override fun getPrimaryElements(): Array<PsiElement> {
-        val primaryElements = kotlinHandler.getPrimaryElements()
-        if (isAndroidSyntheticElement(declaration)) {
-            val name = (declaration as JetProperty).getName()!!
-            val parser = ServiceManager.getService(declaration.getProject(), javaClass<AndroidUIXmlProcessor>())
-            val psiElement = parser?.resourceManager?.idToXmlAttribute(name) as? XmlAttribute
-            if (psiElement != null && psiElement.getValueElement() != null) {
-                return array(psiElement.getValueElement()!!)
-            }
-        }
-        return primaryElements
+        return kotlinHandler.getPrimaryElements()
     }
 
     override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {
         return kotlinHandler.getFindUsagesOptions(dataContext)
     }
 
-    override fun getSecondaryElements(): Array<PsiElement> {
-        if (isAndroidSyntheticElement(declaration)) {
-            val name = (declaration as JetProperty).getName()!!
-            val parser = ServiceManager.getService(declaration.getProject(), javaClass<AndroidUIXmlProcessor>())
-            val psiElement = parser?.resourceManager?.idToXmlAttribute(name) as? XmlAttribute
-            if (psiElement != null) {
-                val res = ArrayList<PsiElement>()
-                val fields = AndroidResourceUtil.findIdFields(psiElement)
-                for (field in fields) {
-                    res.add(field)
-                }
-                res.add(declaration)
-                return res.copyToArray()
-            }
-        }
-        return array()
-    }
-
     override fun processElementUsages(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
         val handler = getHandler(element)
-        if (handler == null || isAndroidSyntheticElement(element)) {
-            val findUsagesOptions = JavaVariableFindUsagesOptions(element.getProject())
-            findUsagesOptions.isSearchForTextOccurrences = false
-            findUsagesOptions.isSkipImportStatements = true
-            findUsagesOptions.isUsages = true
-            findUsagesOptions.isReadAccess = true
-            findUsagesOptions.isWriteAccess = true
-            return super.processElementUsages(element, processor, findUsagesOptions)
-        }
+        if (handler == null) return true
 
         val handlerOptions = when (handler) {
             /* Can't have KotlinPropertyFindUsagesOptions here since Kotlin properties do not override java methods, so
