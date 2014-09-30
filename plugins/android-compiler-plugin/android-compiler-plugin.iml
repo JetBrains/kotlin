@@ -11,6 +11,7 @@
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="module" module-name="cli" />
+    <orderEntry type="module" module-name="util" />
   </component>
 </module>
 

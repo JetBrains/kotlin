@@ -15,4 +15,8 @@
       <projectService serviceInterface="org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor"
                       serviceImplementation="org.jetbrains.jet.plugin.android.IDEAndroidUIXmlProcessor"/>
   </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+      <externalDeclarationsProvider implementation="org.jetbrains.kotlin.android.AndroidDeclarationsProvider"/>
+  </extensions>
 </idea-plugin>
