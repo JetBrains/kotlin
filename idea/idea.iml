@@ -46,5 +46,6 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="library" name="android_tests" level="project" />
     <orderEntry type="module" module-name="android-compiler-plugin" />
+    <orderEntry type="module" module-name="android-idea-plugin" />
   </component>
 </module>
