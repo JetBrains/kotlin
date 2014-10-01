@@ -28,6 +28,6 @@ object CreateSetFunctionActionFactory : JetSingleIntentionActionFactory() {
         parameters.add(ParameterInfo(valType, "value"))
 
         val returnType = TypeInfo(KotlinBuiltIns.getInstance().getUnitType(), Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(accessExpr, FunctionInfo("set", arrayType, returnType, Collections.emptyList(), parameters))
+        return CreateCallableFromUsageFix(accessExpr, FunctionInfo("set", arrayType, returnType, Collections.emptyList(), parameters))
     }
 }

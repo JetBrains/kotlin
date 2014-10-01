@@ -38,6 +38,6 @@ public object CreateBinaryOperationActionFactory: JetSingleIntentionActionFactor
             else -> TypeInfo(callExpr, Variance.OUT_VARIANCE)
         }
         val parameters = Collections.singletonList(ParameterInfo(TypeInfo(argumentExpr, Variance.IN_VARIANCE)))
-        return CreateFunctionFromUsageFix(callExpr, FunctionInfo(operationName, receiverType, returnType, Collections.emptyList(), parameters))
+        return CreateCallableFromUsageFix(callExpr, FunctionInfo(operationName, receiverType, returnType, Collections.emptyList(), parameters))
     }
 }

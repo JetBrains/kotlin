@@ -15,27 +15,27 @@ import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.jet.lang.psi.JetExpression
 
-public class CreateFunctionFromUsageFix(
+public class CreateCallableFromUsageFix(
         originalExpression: JetExpression,
-        val functionInfo: CallableInfo) : CreateFromUsageFixBase(originalExpression) {
+        val callableInfo: CallableInfo) : CreateFromUsageFixBase(originalExpression) {
     override fun getText(): String {
-        val key = when (functionInfo.kind) {
+        val key = when (callableInfo.kind) {
             CallableKind.FUNCTION -> "create.function.from.usage"
             CallableKind.PROPERTY -> "create.property.from.usage"
         }
-        return JetBundle.message(key, functionInfo.name)
+        return JetBundle.message(key, callableInfo.name)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
-        val functionBuilder = CallableBuilderConfiguration(functionInfo, element as JetExpression, file!!, editor!!).createBuilder()
+        val callableBuilder = CallableBuilderConfiguration(callableInfo, element as JetExpression, file!!, editor!!).createBuilder()
 
         fun runBuilder(placement: CallablePlacement) {
-            functionBuilder.placement = placement
-            CommandProcessor.getInstance().executeCommand(project, { functionBuilder.build() }, getText(), null)
+            callableBuilder.placement = placement
+            CommandProcessor.getInstance().executeCommand(project, { callableBuilder.build() }, getText(), null)
         }
 
         val popupTitle = JetBundle.message("choose.target.class.or.trait.title")
-        val receiverTypeCandidates = functionBuilder.computeTypeCandidates(functionInfo.receiverTypeInfo)
+        val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfo.receiverTypeInfo)
         if (receiverTypeCandidates.isNotEmpty()) {
             val toPsi: (TypeCandidate) -> JetClassOrObject = {
                 val descriptor = DescriptorUtils.getClassDescriptorForType(it.theType)
@@ -46,9 +46,9 @@ public class CreateFunctionFromUsageFix(
             }
         }
         else {
-            assert(functionInfo.receiverTypeInfo is TypeInfo.Empty, "No receiver type candidates: ${element.getText()} in ${file.getText()}")
+            assert(callableInfo.receiverTypeInfo is TypeInfo.Empty, "No receiver type candidates: ${element.getText()} in ${file.getText()}")
 
-            chooseContainerElementIfNecessary(functionInfo.possibleContainers, editor, popupTitle, true, { it }) {
+            chooseContainerElementIfNecessary(callableInfo.possibleContainers, editor, popupTitle, true, { it }) {
                 val container = if (it is JetClassBody) it.getParent() as JetClassOrObject else it
                 runBuilder(CallablePlacement.NoReceiver(container))
             }

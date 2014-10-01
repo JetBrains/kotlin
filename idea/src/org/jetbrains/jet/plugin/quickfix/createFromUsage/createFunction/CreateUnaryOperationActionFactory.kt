@@ -23,6 +23,6 @@ public object CreateUnaryOperationActionFactory: JetSingleIntentionActionFactory
 
         val receiverType = TypeInfo(receiverExpr, Variance.IN_VARIANCE)
         val returnType = if (incDec) TypeInfo.ByReceiverType(Variance.OUT_VARIANCE) else TypeInfo(callExpr, Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(callExpr, FunctionInfo(operationName.asString(), receiverType, returnType))
+        return CreateCallableFromUsageFix(callExpr, FunctionInfo(operationName.asString(), receiverType, returnType))
     }
 }

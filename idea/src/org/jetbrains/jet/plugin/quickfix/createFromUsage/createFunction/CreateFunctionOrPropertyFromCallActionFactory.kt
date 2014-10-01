@@ -97,6 +97,6 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionF
             else -> return null
         }
 
-        return CreateFunctionFromUsageFix(callExpr, callableInfo)
+        return CreateCallableFromUsageFix(callExpr, callableInfo)
     }
 }
