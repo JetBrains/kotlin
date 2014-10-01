@@ -41,7 +41,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionCallUsage;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage;
@@ -49,7 +48,6 @@ import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetParameterU
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetUsageInfo;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -136,8 +134,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         JetScope parametersScope = null;
         DeclarationDescriptor containingDeclaration = oldDescriptor != null ? oldDescriptor.getContainingDeclaration() : null;
 
-        if (oldDescriptor instanceof ConstructorDescriptor && containingDeclaration instanceof ClassDescriptor)
-            parametersScope = ((ClassDescriptor) containingDeclaration).getMemberScope(Collections.<TypeProjection>emptyList());
+        if (oldDescriptor instanceof ConstructorDescriptor && containingDeclaration instanceof ClassDescriptorWithResolutionScopes)
+            parametersScope = ((ClassDescriptorWithResolutionScopes) containingDeclaration).getScopeForInitializerResolution();
         else if (function instanceof JetFunction)
             parametersScope = getFunctionBodyScope((JetFunction) function, bindingContext);
 
@@ -187,8 +185,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
     @Nullable
     private static JetScope getFunctionScope(BindingContext bindingContext, DeclarationDescriptor containingDeclaration) {
-        if (containingDeclaration instanceof ClassDescriptor)
-            return ((ClassDescriptor) containingDeclaration).getMemberScope(ContainerUtil.<TypeProjection>emptyList());
+        if (containingDeclaration instanceof ClassDescriptorWithResolutionScopes)
+            return ((ClassDescriptorWithResolutionScopes) containingDeclaration).getScopeForInitializerResolution();
         else if (containingDeclaration instanceof FunctionDescriptorImpl) {
             PsiElement container = DescriptorToSourceUtils.descriptorToDeclaration(containingDeclaration);
 

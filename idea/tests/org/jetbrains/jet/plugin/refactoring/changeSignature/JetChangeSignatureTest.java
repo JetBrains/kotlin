@@ -122,6 +122,19 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testGenericConstructor() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setNewVisibility(Visibilities.PUBLIC);
+        changeInfo.getNewParameters()[0].setValOrVar(JetValVar.Var);
+        changeInfo.getNewParameters()[1].setValOrVar(JetValVar.None);
+        changeInfo.getNewParameters()[2].setValOrVar(JetValVar.Val);
+        changeInfo.getNewParameters()[0].setName("_x1");
+        changeInfo.getNewParameters()[1].setName("_x2");
+        changeInfo.getNewParameters()[2].setName("_x3");
+        changeInfo.getNewParameters()[1].setTypeText("Double?");
+        doTest(changeInfo);
+    }
+
     public void testConstructorSwapArguments() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.getNewParameters()[0].setName("_x1");
@@ -139,6 +152,16 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         changeInfo.getNewParameters()[1].setName("_x2");
         changeInfo.getNewParameters()[2].setName("_x3");
         changeInfo.getNewParameters()[1].setTypeText("Float?");
+        doTest(changeInfo);
+    }
+
+    public void testGenericFunctions() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setNewVisibility(Visibilities.PUBLIC);
+        changeInfo.getNewParameters()[0].setName("_x1");
+        changeInfo.getNewParameters()[1].setName("_x2");
+        changeInfo.getNewParameters()[2].setName("_x3");
+        changeInfo.getNewParameters()[1].setTypeText("Double?");
         doTest(changeInfo);
     }
 
