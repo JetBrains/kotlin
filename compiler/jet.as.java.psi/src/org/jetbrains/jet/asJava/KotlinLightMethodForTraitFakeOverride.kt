@@ -20,17 +20,17 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import com.intellij.psi.PsiClass
-import org.jetbrains.jet.asJava.KotlinLightMethodFromTrait
+import org.jetbrains.jet.asJava.KotlinLightMethodForTraitFakeOverride
 import com.intellij.psi.PsiElement
 
 
-public class KotlinLightMethodFromTrait(manager: PsiManager,
-                                            override val delegate: PsiMethod,
-                                            override val origin: JetDeclaration,
-                                            containingClass: PsiClass) :
+public class KotlinLightMethodForTraitFakeOverride(manager: PsiManager,
+                                                   override val delegate: PsiMethod,
+                                                   override val origin: JetDeclaration,
+                                                   containingClass: PsiClass) :
         KotlinLightMethodForDeclaration(manager, delegate, origin, containingClass) {
 
     override fun copy(): PsiElement {
-        return KotlinLightMethodFromTrait(getManager()!!, delegate, origin.copy() as JetDeclaration, getContainingClass()!!)
+        return KotlinLightMethodForTraitFakeOverride(getManager()!!, delegate, origin.copy() as JetDeclaration, getContainingClass()!!)
     }
 }

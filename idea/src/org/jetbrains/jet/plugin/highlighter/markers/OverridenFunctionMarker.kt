@@ -41,7 +41,7 @@ import com.intellij.psi.search.searches.AllOverridingMethodsSearch
 import com.intellij.openapi.util.Pair
 import java.util.HashSet
 import com.intellij.util.Processor
-import org.jetbrains.jet.asJava.KotlinLightMethodFromTrait
+import org.jetbrains.jet.asJava.KotlinLightMethodForTraitFakeOverride
 
 private fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, T>, classes: Set<PsiClass>): Set<T> {
     val overridden = HashSet<T>()
@@ -50,7 +50,7 @@ private fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, T
             override fun process(pair: Pair<PsiMethod, PsiMethod>?): Boolean {
                 ProgressManager.checkCanceled()
 
-                if (pair!!.getSecond() !is KotlinLightMethodFromTrait) {
+                if (pair!!.getSecond() !is KotlinLightMethodForTraitFakeOverride) {
                     val superMethod = pair.getFirst()
 
                     val declaration = mappingToJava.get(superMethod)
@@ -80,7 +80,7 @@ public fun getOverriddenMethodTooltip(method: PsiMethod): String? {
 
     val comparator = MethodCellRenderer(false).getComparator()
 
-    val overridingJavaMethods = processor.getCollection().filter { it !is KotlinLightMethodFromTrait } sortBy(comparator)
+    val overridingJavaMethods = processor.getCollection().filter { it !is KotlinLightMethodForTraitFakeOverride } sortBy(comparator)
     if (overridingJavaMethods.isEmpty()) return null
 
     val start = if (isAbstract) DaemonBundle.message("method.is.implemented.header") else DaemonBundle.message("method.is.overriden.header")
@@ -103,7 +103,7 @@ public fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
         return
     }
 
-    var overridingJavaMethods = processor.getCollection().filter { it !is KotlinLightMethodFromTrait }
+    var overridingJavaMethods = processor.getCollection().filter { it !is KotlinLightMethodForTraitFakeOverride }
     if (overridingJavaMethods.isEmpty()) return
 
     val showMethodNames = !PsiUtil.allMethodsHaveSameSignature(overridingJavaMethods.copyToArray())

@@ -134,9 +134,9 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
                 JetDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(method);
 
                 if (declaration != null) {
-                    return !isMethodFromTrait(declaration) ?
+                    return !isTraitFakeOverride(declaration) ?
                            new KotlinLightMethodForDeclaration(myManager, method, declaration, KotlinWrappingLightClass.this) :
-                           new KotlinLightMethodFromTrait(myManager, method, declaration, KotlinWrappingLightClass.this);
+                           new KotlinLightMethodForTraitFakeOverride(myManager, method, declaration, KotlinWrappingLightClass.this);
                 }
 
                 return new LightMethod(myManager, method, KotlinWrappingLightClass.this);
@@ -161,7 +161,7 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
         return origin == null ? null : origin.getText();
     }
 
-    private boolean isMethodFromTrait(@NotNull JetDeclaration originMethodDeclaration) {
+    private boolean isTraitFakeOverride(@NotNull JetDeclaration originMethodDeclaration) {
         if (!(originMethodDeclaration instanceof JetNamedFunction ||
               originMethodDeclaration instanceof JetPropertyAccessor ||
               originMethodDeclaration instanceof JetProperty)) {
