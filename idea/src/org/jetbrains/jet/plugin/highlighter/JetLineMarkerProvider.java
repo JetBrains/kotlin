@@ -39,6 +39,7 @@ import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.highlighter.markers.MarkersPackage;
@@ -222,20 +223,6 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         }
     }
 
-    private static boolean isOverridableHeuristic(JetNamedDeclaration declaration) {
-        PsiElement parent = declaration.getParent();
-        if (parent instanceof JetFile) return false;
-        if (parent instanceof JetClassBody && parent.getParent() instanceof JetClass) {
-            // Not all open or abstract declarations are actually overridable, but this is heuristic
-            return declaration.hasModifier(JetTokens.ABSTRACT_KEYWORD) ||
-                   declaration.hasModifier(JetTokens.OPEN_KEYWORD) ||
-                   declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD) ||
-                   ((JetClass) parent.getParent()).isTrait();
-        }
-
-        return false;
-    }
-
     public static boolean isImplemented(JetNamedDeclaration declaration) {
         if (declaration.hasModifier(JetTokens.ABSTRACT_KEYWORD)) return true;
 
@@ -250,7 +237,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     private static void collectOverridingPropertiesAccessors(Collection<JetProperty> properties, Collection<LineMarkerInfo> result) {
         Map<PsiMethod, JetProperty> mappingToJava = Maps.newHashMap();
         for (JetProperty property : properties) {
-            if (isOverridableHeuristic(property)) {
+            if (PsiUtilPackage.isOverridable(property)) {
                 LightClassUtil.PropertyAccessorsPsiMethods accessorsPsiMethods = LightClassUtil.getLightClassPropertyMethods(property);
                 for (PsiMethod psiMethod : accessorsPsiMethods) {
                     mappingToJava.put(psiMethod, property);
@@ -281,7 +268,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     private static void collectOverridingAccessors(Collection<JetNamedFunction> functions, Collection<LineMarkerInfo> result) {
         Map<PsiMethod, JetNamedFunction> mappingToJava = Maps.newHashMap();
         for (JetNamedFunction function : functions) {
-            if (isOverridableHeuristic(function)) {
+            if (PsiUtilPackage.isOverridable(function)) {
                 PsiMethod method = LightClassUtil.getLightClassMethod(function);
                 if (method != null) {
                     mappingToJava.put(method, function);
