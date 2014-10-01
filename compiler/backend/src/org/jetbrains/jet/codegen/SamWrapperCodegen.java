@@ -22,6 +22,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -149,6 +150,21 @@ public class SamWrapperCodegen {
                 .getFunctions(Name.identifier("invoke")).iterator().next().getOriginal();
         StackValue functionField = StackValue.field(functionType, ownerType, FUNCTION_FIELD_NAME, false);
         codegen.genDelegate(erasedInterfaceFunction, invokeFunction, functionField);
+
+        // generate sam bridges
+        // TODO: erasedInterfaceFunction is actually not an interface function, but function in generated class
+        SimpleFunctionDescriptor originalInterfaceErased = samType.getAbstractMethod().getOriginal();
+        SimpleFunctionDescriptorImpl descriptorForBridges = SimpleFunctionDescriptorImpl
+                .create(erasedInterfaceFunction.getContainingDeclaration(), erasedInterfaceFunction.getAnnotations(), originalInterfaceErased.getName(),
+                        CallableMemberDescriptor.Kind.DECLARATION, erasedInterfaceFunction.getSource());
+
+        descriptorForBridges
+                .initialize(null, originalInterfaceErased.getDispatchReceiverParameter(), originalInterfaceErased.getTypeParameters(),
+                            originalInterfaceErased.getValueParameters(), originalInterfaceErased.getReturnType(), Modality.OPEN,
+                            originalInterfaceErased.getVisibility());
+
+        descriptorForBridges.addOverriddenDescriptor(originalInterfaceErased);
+        codegen.generateBridges(descriptorForBridges);
     }
 
     @NotNull
