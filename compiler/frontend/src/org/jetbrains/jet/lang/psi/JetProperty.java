@@ -33,7 +33,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
-import static org.jetbrains.jet.JetNodeTypes.PROPERTY_ACCESSOR;
 import static org.jetbrains.jet.JetNodeTypes.PROPERTY_DELEGATE;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
@@ -231,6 +230,34 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
 
     public boolean hasDelegateExpressionOrInitializer() {
         return hasDelegateExpression() || hasInitializer();
+    }
+
+    @Nullable
+    public JetExpression setInitializer(@Nullable JetExpression initializer) {
+        JetExpression oldInitializer = getInitializer();
+
+        if (oldInitializer != null) {
+            if (initializer != null) {
+                return (JetExpression) oldInitializer.replace(initializer);
+            }
+            else {
+                deleteChildRange(findChildByType(EQ), oldInitializer);
+                return null;
+            }
+        }
+        else {
+            if (initializer != null) {
+                PsiElement addAfter = getTypeRef();
+                if (addAfter == null) {
+                    addAfter = getNameIdentifier();
+                }
+                PsiElement eq = addAfter(new JetPsiFactory(getProject()).createEQ(), addAfter);
+                return (JetExpression) addAfter(initializer, eq);
+            }
+            else {
+                return null;
+            }
+        }
     }
 
     @Nullable

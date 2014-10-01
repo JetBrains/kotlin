@@ -17,13 +17,9 @@
 package org.jetbrains.jet.plugin.intentions.declarations;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -47,6 +43,12 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     @TestMetadata("longInit2.kt")
     public void testLongInit2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/longInit2.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("propertyWithAnnotation.kt")
+    public void testPropertyWithAnnotation() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/propertyWithAnnotation.kt");
         doTest(fileName);
     }
     

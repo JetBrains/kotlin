@@ -38,7 +38,8 @@ public class JetDeclarationJoinLinesHandler : JoinRawLinesHandlerDelegate {
                            .firstOrNull() ?: return -1
         val (property, assignment) = pair
 
-        return doJoin(property, assignment).getTextRange()!!.getStartOffset()
+        doJoin(property, assignment)
+        return property.getTextRange()!!.getStartOffset()
     }
 
     override fun tryJoinLines(document: Document, file: PsiFile, start: Int, end: Int)
@@ -58,10 +59,9 @@ public class JetDeclarationJoinLinesHandler : JoinRawLinesHandlerDelegate {
         return property to assignment
     }
 
-    private fun doJoin(property: JetProperty, assignment: JetBinaryExpression): JetProperty {
-        val newProperty = DeclarationUtils.changePropertyInitializer(property, assignment.getRight())
-        property.getParent()!!.deleteChildRange(property.getNextSibling(), assignment)
-        return property.replace(newProperty) as JetProperty
+    private fun doJoin(property: JetProperty, assignment: JetBinaryExpression) {
+        property.setInitializer(assignment.getRight())
+        property.getParent()!!.deleteChildRange(property.getNextSibling(), assignment) //TODO: should we remove range?
     }
 
 }
