@@ -100,16 +100,4 @@ public class DeclarationUtils {
 
         return newInitializer;
     }
-
-    @NotNull
-    public static JetProperty changePropertyInitializer(@NotNull JetProperty property, @Nullable JetExpression initializer) {
-        //noinspection ConstantConditions
-        return JetPsiFactory(property).createProperty(
-                property.getNameIdentifier().getText(),
-                JetPsiUtil.getNullableText(property.getTypeRef()),
-                property.isVar(),
-                JetPsiUtil.getNullableText(initializer)
-        );
-    }
-
 }

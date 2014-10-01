@@ -304,7 +304,7 @@ private fun makeCall(
 
             is Initializer -> {
                 val newProperty = copiedDeclarations[outputValue.initializedDeclaration] as JetProperty
-                newProperty.replace(DeclarationUtils.changePropertyInitializer(newProperty, psiFactory.createExpression(callText)))
+                newProperty.setInitializer(psiFactory.createExpression(callText))
                 Collections.emptyList()
             }
 
