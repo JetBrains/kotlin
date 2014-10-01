@@ -1,0 +1,18 @@
+<component name="ArtifactManager">
+  <artifact name="KotlinAndroidExtensionsPlugin">
+    <output-path>$PROJECT_DIR$/out/artifacts/KotlinAndroidExtensionsPlugin</output-path>
+    <root id="root">
+      <element id="directory" name="lib">
+        <element id="archive" name="kotlin-android-extensions-plugin.jar">
+          <element id="module-output" name="android-compiler-plugin" />
+          <element id="module-output" name="android-idea-plugin" />
+        </element>
+        <element id="directory" name="jps">
+          <element id="archive" name="kotlin-android-extensions-jps.jar">
+            <element id="module-output" name="android-jps-plugin" />
+          </element>
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
