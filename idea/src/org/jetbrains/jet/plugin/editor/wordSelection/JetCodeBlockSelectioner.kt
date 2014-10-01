@@ -34,17 +34,15 @@ import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
  * Originally from IDEA platform: CodeBlockOrInitializerSelectioner
  */
 public class JetCodeBlockSelectioner : BasicSelectioner() {
-    override fun canSelect(e: PsiElement): Boolean {
-        return e is JetBlockExpression || e is JetWhenExpression
-    }
+    override fun canSelect(e: PsiElement)
+            = e is JetBlockExpression || e is JetWhenExpression
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange> {
         val result = ArrayList<TextRange>()
 
-        val children = e.getNode()!!.getChildren(null)
-
-        val start = findOpeningBrace(children)
-        val end = findClosingBrace(children, start)
+        val node = e.getNode()!!
+        val start = findBlockContentStart(node)
+        val end = findBlockContentEnd(node, start)
 
         result.add(e.getTextRange()!!)
         result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(start, end)))
@@ -52,39 +50,24 @@ public class JetCodeBlockSelectioner : BasicSelectioner() {
         return result
     }
 
-    class object {
-        public fun findOpeningBrace(children: Array<ASTNode>): Int {
-            var start = children.last().getTextRange()!!.getStartOffset()
-            for ((i, child) in children.withIndices()) {
-                if (child is LeafPsiElement) {
-                    if (child.getElementType() == JetTokens.LBRACE) {
-                        var j = i + 1
-                        while (children[j] is PsiWhiteSpace) {
-                            j++
-                        }
+    private fun findBlockContentStart(parentNode: ASTNode): Int {
+        val node = parentNode.getChildren(null)
+                .stream()
+                .dropWhile { it.getElementType() != JetTokens.LBRACE } // search for '{'
+                .drop(1) // skip it
+                .dropWhile { it is PsiWhiteSpace } // and skip all whitespaces
+                .firstOrNull() ?: parentNode
+        return node.getTextRange()!!.getStartOffset()
+    }
 
-                        start = children[j].getTextRange()!!.getStartOffset()
-                    }
-                }
-            }
-            return start
-        }
-
-        public fun findClosingBrace(children: Array<ASTNode>, startOffset: Int): Int {
-            var end = children[children.size - 1].getTextRange()!!.getEndOffset()
-            for ((i, child) in children.withIndices()) {
-                if (child is LeafPsiElement) {
-                    if (child.getElementType() == JetTokens.RBRACE) {
-                        var j = i - 1
-                        while (children[j] is PsiWhiteSpace && children[j].getTextRange()!!.getStartOffset() > startOffset) {
-                            j--
-                        }
-
-                        end = children[j].getTextRange()!!.getEndOffset()
-                    }
-                }
-            }
-            return end
-        }
+    private fun findBlockContentEnd(parentNode: ASTNode, startOffset: Int): Int {
+        val node = parentNode.getChildren(null)
+                           .reverse()
+                           .stream()
+                           .dropWhile { it.getElementType() != JetTokens.RBRACE } // search for '}'
+                           .drop(1) // skip it
+                           .dropWhile { it is PsiWhiteSpace && (it: PsiWhiteSpace).getTextRange()!!.getStartOffset() > startOffset } // and skip all whitespaces
+                           .firstOrNull() ?: parentNode.getLastChildNode()!!
+        return node.getTextRange()!!.getEndOffset()
     }
 }
