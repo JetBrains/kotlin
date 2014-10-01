@@ -24,37 +24,40 @@ import java.io.File;
 
 public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
     public void testStatements() {
-        doTest(11);
+        doTest();
     }
 
     public void testWhenEntries() {
-        doTest(6);
+        doTest();
     }
 
     public void testTypeArguments() {
-        doTest(1);
+        doTest();
     }
 
     public void testValueArguments() {
-        doTest(1);
+        doTest();
     }
 
     public void testTypeParameters() {
-        doTest(1);
+        doTest();
     }
 
     public void testValueParameters() {
-        doTest(1);
+        doTest();
     }
 
-    private void doTest(int howMany) {
-        String testName = getTestName(false);
-        String[] afterFiles = new String[howMany];
-        for (int i = 1; i <= howMany; i++) {
-            afterFiles[i - 1] = String.format("%s.%d.kt", testName, i);
+    private void doTest() {
+        String dirName = getTestName(false);
+
+        File dir = new File(myFixture.getTestDataPath() + dirName);
+        int filesCount = dir.listFiles().length;
+        String[] afterFiles = new String[filesCount - 1];
+        for (int i = 1; i < filesCount; i++) {
+            afterFiles[i - 1] = dirName + File.separator + i + ".kt";
         }
 
-        CodeInsightTestUtil.doWordSelectionTest(myFixture, testName + ".kt", afterFiles);
+        CodeInsightTestUtil.doWordSelectionTest(myFixture, dirName + File.separator + "0.kt", afterFiles);
     }
 
     @NotNull
