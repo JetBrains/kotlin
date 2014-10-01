@@ -2,10 +2,10 @@ trait <lineMarker descr="*"></lineMarker>A {
     fun <lineMarker descr="<html><body>Is implemented in <br>&nbsp;&nbsp;&nbsp;&nbsp;C</body></html>"></lineMarker>foo(): String = "A"
 
     // TODO: B shoudn't be mentioned
-    val <lineMarker descr="<html><body>Is overridden in <br/>&nbsp;&nbsp;&nbsp;&nbsp;B<br>&nbsp;&nbsp;&nbsp;&nbsp;C</body></html>"></lineMarker>some: String? get() = null
+    val <lineMarker descr="<html><body>Is implemented in <br/>&nbsp;&nbsp;&nbsp;&nbsp;B<br>&nbsp;&nbsp;&nbsp;&nbsp;C</body></html>"></lineMarker>some: String? get() = null
 
     // TODO: B shoudn't be mentioned
-    var <lineMarker descr="<html><body>Is overridden in <br/>&nbsp;&nbsp;&nbsp;&nbsp;B<br>&nbsp;&nbsp;&nbsp;&nbsp;C</body></html>"></lineMarker>other: String?
+    var <lineMarker descr="<html><body>Is implemented in <br/>&nbsp;&nbsp;&nbsp;&nbsp;B<br>&nbsp;&nbsp;&nbsp;&nbsp;C</body></html>"></lineMarker>other: String?
         get() = null
         set(value) {}
 }

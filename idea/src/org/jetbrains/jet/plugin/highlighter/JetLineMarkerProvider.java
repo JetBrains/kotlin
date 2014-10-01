@@ -227,8 +227,12 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         if (declaration.hasModifier(JetTokens.ABSTRACT_KEYWORD)) return true;
 
         PsiElement parent = declaration.getParent();
+        parent = (parent instanceof JetClassBody) ? parent.getParent() : parent;
+
         if (parent instanceof JetClass) {
-            return ((JetClass) parent).isTrait();
+            return ((JetClass) parent).isTrait() &&
+                   (!(declaration instanceof JetDeclarationWithBody) || !((JetDeclarationWithBody)declaration).hasBody()) &&
+                   (!(declaration instanceof JetWithExpressionInitializer) || !((JetWithExpressionInitializer)declaration).hasInitializer());
         }
 
         return false;

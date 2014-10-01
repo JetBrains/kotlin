@@ -3,9 +3,9 @@ package sample
 trait <lineMarker descr="*"></lineMarker>S<T> {
     fun <lineMarker descr="<html><body>Is implemented in <br>&nbsp;&nbsp;&nbsp;&nbsp;sample.S2</body></html>"></lineMarker>foo(t: T): T
 
-    val <lineMarker descr="<html><body>Is overridden in <br/>&nbsp;&nbsp;&nbsp;&nbsp;sample.S2</body></html>"></lineMarker>some: T? get
+    val <lineMarker descr="<html><body>Is implemented in <br/>&nbsp;&nbsp;&nbsp;&nbsp;sample.S2</body></html>"></lineMarker>some: T? get
 
-    var <lineMarker descr="<html><body>Is overridden in <br/>&nbsp;&nbsp;&nbsp;&nbsp;sample.S2</body></html>"></lineMarker>other: T?
+    var <lineMarker descr="<html><body>Is implemented in <br/>&nbsp;&nbsp;&nbsp;&nbsp;sample.S2</body></html>"></lineMarker>other: T?
         get
         set
 }
