@@ -171,8 +171,12 @@ public final class RhinoUtils {
             versionToScope.put(version, parentScope);
         }
         else {
+            // reset declared modules
             NativeObject kotlin = (NativeObject) parentScope.get("Kotlin");
-            kotlin.put("modules", kotlin, new NativeObject());
+            NativeObject modules = (NativeObject) kotlin.get("modules");
+
+            modules.setAttributes("JS_TESTS", 0);
+            modules.remove("JS_TESTS");
         }
         return parentScope;
     }
@@ -183,6 +187,7 @@ public final class RhinoUtils {
         try {
             runFileWithRhino(getKotlinLibFile(version), context, scope);
             runFileWithRhino(pathToTestFilesRoot() + "kotlin_lib.js", context, scope);
+            runFileWithRhino(pathToTestFilesRoot() + "kotlin_lib_compiled.js", context, scope);
             runFileWithRhino(pathToTestFilesRoot() + "maps.js", context, scope);
             runFileWithRhino(pathToTestFilesRoot() + "long.js", context, scope);
             //runFileWithRhino(pathToTestFilesRoot() + "jshint.js", context, scope);
