@@ -32,6 +32,7 @@ import org.jetbrains.android.util.AndroidResourceUtil
 import java.util.ArrayList
 import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
+import org.jetbrains.jet.plugin.util.application.runReadAction
 
 class AndroidFindUsageHandlerDecorator : KotlinFindUsagesHandlerDecorator {
     override fun decorateHandler(element: PsiElement, forHighlightUsages: Boolean, delegate: FindUsagesHandler): FindUsagesHandler {
@@ -86,7 +87,7 @@ class AndroidFindMemberUsagesHandler(
     override fun processElementUsages(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
         assert(isAndroidSyntheticElement(declaration))
 
-        val findUsagesOptions = JavaVariableFindUsagesOptions(element.getProject())
+        val findUsagesOptions = JavaVariableFindUsagesOptions(runReadAction { element.getProject() })
         findUsagesOptions.isSearchForTextOccurrences = false
         findUsagesOptions.isSkipImportStatements = true
         findUsagesOptions.isUsages = true
