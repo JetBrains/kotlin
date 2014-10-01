@@ -19,6 +19,7 @@ package org.jetbrains.jet.generators.tests.reservedWords
 import java.io.File
 import org.jetbrains.jet.renderer.KeywordStringsGenerated
 import com.google.dart.compiler.backend.js.ast.JsFunctionScope
+import org.jetbrains.jet.di.GeneratorsFileUtil.writeFileIfContentChanged
 
 val commonCases: CaseBuilder.(String, String) -> Unit = { (testByName, testByRef) ->
     case("val", "val $KEYWORD_MARKER: Int", " = 0", testByName)
@@ -287,9 +288,15 @@ class TestDataBuilder() {
 
                     val testDataFile = File(testDataDirPath + "/" + fileName)
 
-                    assert(isCreatingFromScratch xor testDataFile.exists(), "Unexpected file name: $fileName")
+                    if (testDataFile.exists()) {
+                        if (isCreatingFromScratch) {
+                            error("The file '$fileName' unexpectedly exists when create test data from scratch.")
+                        }
+                    } else if (!isCreatingFromScratch) {
+                        error("Unexpected new testdata file: '$fileName'. It may cause for example because of bug in stdlib.")
+                    }
 
-                    testDataFile.writeText(out)
+                    writeFileIfContentChanged(testDataFile, out, false)
                 }
             }
         }
