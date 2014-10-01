@@ -26,11 +26,16 @@ import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lexer.JetTokens
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.PsiComment
+import com.google.common.base.Predicate
 
 public class JetDeclarationJoinLinesHandler : JoinRawLinesHandlerDelegate {
 
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {
-        val element = JetPsiUtil.skipSiblingsBackwardByPredicate(file.findElementAt(start), DeclarationUtils.SKIP_DELIMITERS) ?: return -1
+        val element = file.findElementAt(start)
+                              ?.siblings(forward = false, withItself = false)
+                              ?.firstOrNull { !isToSkip(it) }  ?: return -1
 
         val pair = element.parents(withItself = true)
                            .map { getPropertyAndAssignment(it) }
@@ -49,7 +54,8 @@ public class JetDeclarationJoinLinesHandler : JoinRawLinesHandlerDelegate {
         val property = element as? JetProperty ?: return null
         if (property.hasInitializer()) return null
 
-        val assignment = JetPsiUtil.skipSiblingsForwardByPredicate(element, DeclarationUtils.SKIP_DELIMITERS) as? JetBinaryExpression ?: return null
+        val assignment = element.siblings(forward = true, withItself = false)
+                                 .firstOrNull { !isToSkip(it) } as? JetBinaryExpression ?: return null
         if (assignment.getOperationToken() != JetTokens.EQ) return null
 
         val left = assignment.getLeft() as? JetSimpleNameExpression ?: return null
@@ -64,4 +70,6 @@ public class JetDeclarationJoinLinesHandler : JoinRawLinesHandlerDelegate {
         property.getParent()!!.deleteChildRange(property.getNextSibling(), assignment) //TODO: should we remove range?
     }
 
+    private fun isToSkip(element: PsiElement)
+            = element is PsiWhiteSpace || element is PsiComment || element.getNode()!!.getElementType() == JetTokens.SEMICOLON
 }

@@ -16,16 +16,12 @@
 
 package org.jetbrains.jet.plugin.intentions.declarations;
 
-import com.google.common.base.Predicate;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -43,15 +39,6 @@ public class DeclarationUtils {
     public static boolean checkSplitProperty(@NotNull JetProperty property) {
         return property.hasInitializer() && property.isLocal();
     }
-
-    public static final Predicate<PsiElement> SKIP_DELIMITERS = new Predicate<PsiElement>() {
-        @Override
-        public boolean apply(@Nullable PsiElement input) {
-            return input == null
-                   || input instanceof PsiWhiteSpace || input instanceof PsiComment
-                   || input.getNode().getElementType() == JetTokens.SEMICOLON;
-        }
-    };
 
     @Nullable
     private static JetType getPropertyTypeIfNeeded(@NotNull JetProperty property) {
