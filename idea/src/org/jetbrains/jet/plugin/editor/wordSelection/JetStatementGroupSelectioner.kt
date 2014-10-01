@@ -29,8 +29,8 @@ import org.jetbrains.jet.lang.psi.JetWhenEntry
 import org.jetbrains.jet.lang.psi.JetWhenExpression
 import org.jetbrains.jet.lexer.JetTokens
 
-import java.util.ArrayList
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
+import org.jetbrains.jet.lang.psi.psiUtil.siblings
 
 /**
  * Originally from IDEA platform: StatementGroupSelectioner
@@ -41,39 +41,25 @@ public class JetStatementGroupSelectioner : BasicSelectioner() {
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange> {
         val parent = e.getParent()
-        if (parent !is JetBlockExpression && parent !is JetWhenExpression) {
-            return listOf()
-        }
+        if (parent !is JetBlockExpression && parent !is JetWhenExpression) return listOf()
 
-        var startElement = e
-        while (startElement.getPrevSibling() != null) {
-            val sibling = startElement.getPrevSibling()
+        val startElement = e.siblings(forward = false, withItself = false)
+                .firstOrNull { // find preceding '{' or blank line
+                    it is LeafPsiElement && it.getElementType() == JetTokens.LBRACE ||
+                        it is PsiWhiteSpace && it.getText()!!.count { it == '\n' } > 1
+                }
+                ?.siblings(forward = true, withItself = false)
+                ?.dropWhile { it is PsiWhiteSpace } // and take first non-whitespace element after it
+                ?.firstOrNull() ?: parent.getFirstChild()!!
 
-            if (sibling is LeafPsiElement && sibling.getElementType() == JetTokens.LBRACE) break
-
-            if (sibling is PsiWhiteSpace && LineTokenizer.tokenize(sibling.getText()!!.toCharArray(), false).size > 2) break
-
-            startElement = sibling!!
-        }
-
-        while (startElement is PsiWhiteSpace) {
-            startElement = startElement.getNextSibling()!!
-        }
-
-        var endElement = e
-        while (endElement.getNextSibling() != null) {
-            val sibling = endElement.getNextSibling()
-
-            if (sibling is LeafPsiElement && sibling.getElementType() == JetTokens.RBRACE) break
-
-            if (sibling is PsiWhiteSpace && LineTokenizer.tokenize(sibling.getText()!!.toCharArray(), false).size > 2) break
-
-            endElement = sibling!!
-        }
-
-        while (endElement is PsiWhiteSpace) {
-            endElement = endElement.getPrevSibling()!!
-        }
+        val endElement = e.siblings(forward = true, withItself = false)
+                .firstOrNull { // find next '}' or blank line
+                    it is LeafPsiElement && it.getElementType() == JetTokens.RBRACE ||
+                        it is PsiWhiteSpace && it.getText()!!.count { it == '\n' } > 1
+                }
+                ?.siblings(forward = false, withItself = false)
+                ?.dropWhile { it is PsiWhiteSpace } // and take first non-whitespace element before it
+                ?.firstOrNull() ?: parent.getLastChild()!!
 
         return ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(startElement.getTextRange()!!.getStartOffset(), endElement.getTextRange()!!.getEndOffset()))
     }
