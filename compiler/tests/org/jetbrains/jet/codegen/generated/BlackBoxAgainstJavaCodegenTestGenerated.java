@@ -410,6 +410,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
                 doTestAgainstJava(fileName);
             }
             
+            @TestMetadata("kt5912.kt")
+            public void testKt5912() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/kt5912.kt");
+                doTestAgainstJava(fileName);
+            }
+            
             @TestMetadata("nonLiteralAndLiteralRunnable.kt")
             public void testNonLiteralAndLiteralRunnable() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/nonLiteralAndLiteralRunnable.kt");

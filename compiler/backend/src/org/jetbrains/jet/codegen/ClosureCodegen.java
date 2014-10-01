@@ -28,6 +28,7 @@ import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -163,6 +164,21 @@ public class ClosureCodegen extends ParentCodegenAware {
 
         FunctionCodegen fc = new FunctionCodegen(context, cv, state, getParentCodegen());
         fc.generateMethod(OtherOrigin(fun, funDescriptor), jvmMethodSignature, funDescriptor, strategy);
+
+        //TODO: rewrite cause ugly hack
+        if (samType != null) {
+            SimpleFunctionDescriptorImpl descriptorForBridges = SimpleFunctionDescriptorImpl
+                    .create(funDescriptor.getContainingDeclaration(), funDescriptor.getAnnotations(), erasedInterfaceFunction.getName(),
+                            CallableMemberDescriptor.Kind.DECLARATION, funDescriptor.getSource());
+
+            descriptorForBridges
+                    .initialize(null, erasedInterfaceFunction.getDispatchReceiverParameter(), erasedInterfaceFunction.getTypeParameters(),
+                                erasedInterfaceFunction.getValueParameters(), erasedInterfaceFunction.getReturnType(), Modality.OPEN,
+                                erasedInterfaceFunction.getVisibility());
+
+            descriptorForBridges.addOverriddenDescriptor(erasedInterfaceFunction);
+            fc.generateBridges(descriptorForBridges);
+        }
 
         this.constructor = generateConstructor(cv, superClassAsmType);
 
