@@ -18,12 +18,11 @@ package org.jetbrains.jet.lang.resolve.android
 
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiElement
-import com.intellij.openapi.project.Project
-import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiClass
-import org.jetbrains.jet.utils.emptyOrSingletonList
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Computable
 
 trait AndroidResource
 
@@ -49,7 +48,9 @@ fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
 }
 
 public fun isAndroidSyntheticElement(element: PsiElement?): Boolean {
-    return isAndroidSyntheticFile(element?.getContainingFile())
+    return isAndroidSyntheticFile(ApplicationManager.getApplication()!!.runReadAction(Computable {
+        element?.getContainingFile()
+    }))
 }
 
 public fun isRClassField(element: PsiElement): Boolean {

@@ -36,12 +36,12 @@ public fun warnTimeConsuming(logger: Logger) {
     Throwable().printStackTrace()
 }
 
-public fun runReadAction<T: Any>(action: () -> T?): T? {
-    return ApplicationManager.getApplication()?.runReadAction<T>(action)
+public fun runReadAction<T>(action: () -> T): T {
+    return ApplicationManager.getApplication()?.runReadAction<T>(action) as T
 }
 
-public fun runWriteAction<T: Any>(action: () -> T?): T? {
-    return ApplicationManager.getApplication()?.runWriteAction<T>(action)
+public fun runWriteAction<T>(action: () -> T): T {
+    return ApplicationManager.getApplication()?.runWriteAction<T>(action) as T
 }
 
 public fun Project.executeWriteCommand(name: String, command: () -> Unit) {
