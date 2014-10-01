@@ -279,7 +279,7 @@ public final class StaticContext {
                         return declarePropertyOrPropertyAccessorName(descriptor, nameFromAnnotation, false);
                     }
 
-                    String propertyName =  propertyDescriptor.getName().asString();
+                    String propertyName = getSuggestedName(propertyDescriptor);
 
                     if (!isExtension(propertyDescriptor)) {
                         if (propertyDescriptor.getVisibility() == Visibilities.PRIVATE) {
@@ -288,7 +288,7 @@ public final class StaticContext {
                         return declarePropertyOrPropertyAccessorName(descriptor, propertyName, false);
                     } else {
                         if (descriptor instanceof PropertyDescriptor) {
-                            return declarePropertyOrPropertyAccessorName(descriptor, propertyName, true);
+                            return declarePropertyOrPropertyAccessorName(descriptor, propertyName, false);
                         } else {
                             String propertyJsName = getNameForDescriptor(propertyDescriptor).getIdent();
                             boolean isGetter = descriptor instanceof PropertyGetterDescriptor;

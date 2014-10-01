@@ -35,7 +35,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.getJetTypeFqNa
 public class ManglingUtils {
     private ManglingUtils() {}
 
-    public static final Comparator<FunctionDescriptor> OVERLOADED_FUNCTION_COMPARATOR = new OverloadedFunctionComparator();
+    public static final Comparator<CallableMemberDescriptor> OVERLOADED_MEMBER_COMPARATOR = new OverloadedMemberComparator();
 
     @NotNull
     public static String getMangledName(@NotNull PropertyDescriptor descriptor, @NotNull String suggestedName) {
@@ -46,15 +46,17 @@ public class ManglingUtils {
     public static String getSuggestedName(@NotNull DeclarationDescriptor descriptor) {
         String suggestedName = descriptor.getName().asString();
 
-        if (descriptor instanceof FunctionDescriptor) {
-            suggestedName = getMangledName((FunctionDescriptor) descriptor);
+        if (descriptor instanceof FunctionDescriptor ||
+            descriptor instanceof PropertyDescriptor && JsDescriptorUtils.isExtension((PropertyDescriptor) descriptor)
+        ) {
+            suggestedName = getMangledName((CallableMemberDescriptor) descriptor);
         }
 
         return suggestedName;
     }
 
     @NotNull
-    private static String getMangledName(@NotNull FunctionDescriptor descriptor) {
+    private static String getMangledName(@NotNull CallableMemberDescriptor descriptor) {
         if (needsStableMangling(descriptor)) {
             return getStableMangledName(descriptor);
         }
@@ -63,7 +65,7 @@ public class ManglingUtils {
     }
 
     //TODO extend logic for nested/inner declarations
-    private static boolean needsStableMangling(FunctionDescriptor descriptor) {
+    private static boolean needsStableMangling(CallableMemberDescriptor descriptor) {
         // Use stable mangling for overrides because we use stable mangling when any function inside a overridable declaration
         // for avoid clashing names when inheritance.
         if (JsDescriptorUtils.isOverride(descriptor)) {
@@ -84,7 +86,7 @@ public class ManglingUtils {
             }
 
             // valueOf() is created in the library with a mangled name for every enum class
-            if (CodegenUtil.isEnumValueOfMethod(descriptor)) {
+            if (descriptor instanceof FunctionDescriptor && CodegenUtil.isEnumValueOfMethod((FunctionDescriptor) descriptor)) {
                 return true;
             }
 
@@ -123,12 +125,12 @@ public class ManglingUtils {
     }
 
     @NotNull
-    private static String getStableMangledName(@NotNull FunctionDescriptor descriptor) {
+    private static String getStableMangledName(@NotNull CallableDescriptor descriptor) {
         return getStableMangledName(descriptor.getName().asString(), getArgumentTypesAsString(descriptor));
     }
 
     @NotNull
-    private static String getSimpleMangledName(@NotNull final FunctionDescriptor descriptor) {
+    private static String getSimpleMangledName(@NotNull final CallableMemberDescriptor descriptor) {
         DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
 
         JetScope jetScope = null;
@@ -143,30 +145,31 @@ public class ManglingUtils {
 
         if (jetScope != null) {
             Collection<DeclarationDescriptor> declarations = jetScope.getAllDescriptors();
-            List<FunctionDescriptor>
-                    overloadedFunctions = ContainerUtil.mapNotNull(declarations, new Function<DeclarationDescriptor, FunctionDescriptor>() {
+            List<CallableMemberDescriptor>
+                    overloadedFunctions = ContainerUtil.mapNotNull(declarations, new Function<DeclarationDescriptor, CallableMemberDescriptor>() {
                 @Override
-                public FunctionDescriptor fun(DeclarationDescriptor declarationDescriptor) {
-                    if (!(declarationDescriptor instanceof FunctionDescriptor)) return null;
+                public CallableMemberDescriptor fun(DeclarationDescriptor declarationDescriptor) {
+                    if (!(declarationDescriptor instanceof CallableMemberDescriptor)) return null;
 
-                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;
+                    CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declarationDescriptor;
 
-                    String name = AnnotationsUtils.getNameForAnnotatedObjectWithOverrides(functionDescriptor);
+                    String name = AnnotationsUtils.getNameForAnnotatedObjectWithOverrides(callableMemberDescriptor);
 
                     // when name == null it's mean that it's not native.
                     if (name == null) {
                         // skip functions without arguments, because we don't use mangling for them
-                        if (needsStableMangling(functionDescriptor) && !functionDescriptor.getValueParameters().isEmpty()) return null;
+                        if (needsStableMangling(callableMemberDescriptor) && !callableMemberDescriptor.getValueParameters().isEmpty()) return null;
 
-                        name = declarationDescriptor.getName().asString();
+                        // TODO add prefix for property: get_$name and set_$name
+                        name = callableMemberDescriptor.getName().asString();
                     }
 
-                    return descriptor.getName().asString().equals(name) ? functionDescriptor : null;
+                    return descriptor.getName().asString().equals(name) ? callableMemberDescriptor : null;
                 }
             });
 
             if (overloadedFunctions.size() > 1) {
-                Collections.sort(overloadedFunctions, OVERLOADED_FUNCTION_COMPARATOR);
+                Collections.sort(overloadedFunctions, OVERLOADED_MEMBER_COMPARATOR);
                 counter = ContainerUtil.indexOfIdentity(overloadedFunctions, descriptor);
                 assert counter >= 0;
             }
@@ -176,7 +179,7 @@ public class ManglingUtils {
         return counter == 0 ? name : name + '_' + counter;
     }
 
-    private static String getArgumentTypesAsString(FunctionDescriptor descriptor) {
+    private static String getArgumentTypesAsString(CallableDescriptor descriptor) {
         StringBuilder argTypes = new StringBuilder();
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
@@ -201,9 +204,9 @@ public class ManglingUtils {
         return getSuggestedName(functions.iterator().next());
     }
 
-    private static class OverloadedFunctionComparator implements Comparator<FunctionDescriptor> {
+    private static class OverloadedMemberComparator implements Comparator<CallableMemberDescriptor> {
         @Override
-        public int compare(@NotNull FunctionDescriptor a, @NotNull FunctionDescriptor b) {
+        public int compare(@NotNull CallableMemberDescriptor a, @NotNull CallableMemberDescriptor b) {
             // native functions first
             if (isNativeOrOverrideNative(a)) {
                 if (!isNativeOrOverrideNative(b)) return -1;
@@ -230,15 +233,15 @@ public class ManglingUtils {
             return aArguments.compareTo(bArguments);
         }
 
-        private static int arity(FunctionDescriptor descriptor) {
+        private static int arity(CallableMemberDescriptor descriptor) {
             return descriptor.getValueParameters().size() + (descriptor.getExtensionReceiverParameter() == null ? 0 : 1);
         }
 
-        private static boolean isNativeOrOverrideNative(FunctionDescriptor descriptor) {
+        private static boolean isNativeOrOverrideNative(CallableMemberDescriptor descriptor) {
             if (AnnotationsUtils.isNativeObject(descriptor)) return true;
 
-            Set<FunctionDescriptor> declarations = OverrideResolver.getAllOverriddenDeclarations(descriptor);
-            for (FunctionDescriptor memberDescriptor : declarations) {
+            Set<CallableMemberDescriptor> declarations = OverrideResolver.getAllOverriddenDeclarations(descriptor);
+            for (CallableMemberDescriptor memberDescriptor : declarations) {
                 if (AnnotationsUtils.isNativeObject(memberDescriptor)) return true;
             }
             return false;

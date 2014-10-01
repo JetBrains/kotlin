@@ -97,8 +97,8 @@ public final class JsDescriptorUtils {
         return containing;
     }
 
-    public static boolean isExtension(@NotNull CallableDescriptor functionDescriptor) {
-        return (functionDescriptor.getExtensionReceiverParameter() != null);
+    public static boolean isExtension(@NotNull CallableDescriptor descriptor) {
+        return (descriptor.getExtensionReceiverParameter() != null);
     }
 
     public static boolean isOverride(@NotNull CallableMemberDescriptor descriptor) {
