@@ -34,10 +34,10 @@ public class JetListSelectioner : BasicSelectioner() {
     override fun canSelect(e: PsiElement)
             = e is JetParameterList || e is JetValueArgumentList || e is JetTypeParameterList || e is JetTypeArgumentList
 
-    override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange> {
+    override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         val node = e.getNode()!!
-        val startNode = node.findChildByType(TokenSet.create(JetTokens.LPAR, JetTokens.LT)) ?: return listOf()
-        val endNode = node.findChildByType(TokenSet.create(JetTokens.RPAR, JetTokens.GT)) ?: return listOf()
+        val startNode = node.findChildByType(TokenSet.create(JetTokens.LPAR, JetTokens.LT)) ?: return null
+        val endNode = node.findChildByType(TokenSet.create(JetTokens.RPAR, JetTokens.GT)) ?: return null
         return listOf(TextRange(startNode.getStartOffset() + 1, endNode.getStartOffset()))
     }
 }

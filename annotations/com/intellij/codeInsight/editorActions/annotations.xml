@@ -173,10 +173,9 @@
     </item>
     <item
         name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandler java.util.List&lt;com.intellij.openapi.util.TextRange&gt; select(com.intellij.psi.PsiElement, java.lang.CharSequence, int, com.intellij.openapi.editor.Editor)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
         <annotation name='kotlin.jvm.KotlinSignature'>
             <val name="value"
-                 val="&quot;fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List&lt;TextRange&gt;&quot;"/>
+                 val="&quot;fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List&lt;TextRange&gt;?&quot;"/>
         </annotation>
     </item>
     <item
@@ -213,10 +212,9 @@
     </item>
     <item
         name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase java.util.List&lt;com.intellij.openapi.util.TextRange&gt; select(com.intellij.psi.PsiElement, java.lang.CharSequence, int, com.intellij.openapi.editor.Editor)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
         <annotation name='kotlin.jvm.KotlinSignature'>
             <val name="value"
-                 val="&quot;fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List&lt;TextRange&gt;&quot;"/>
+                 val="&quot;fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List&lt;TextRange&gt;?&quot;"/>
         </annotation>
     </item>
     <item

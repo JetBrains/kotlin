@@ -37,7 +37,7 @@ public class JetCodeBlockSelectioner : BasicSelectioner() {
     override fun canSelect(e: PsiElement)
             = e is JetBlockExpression || e is JetWhenExpression
 
-    override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange> {
+    override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         val result = ArrayList<TextRange>()
 
         val node = e.getNode()!!

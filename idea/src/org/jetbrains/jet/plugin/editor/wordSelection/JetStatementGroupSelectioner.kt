@@ -39,9 +39,9 @@ public class JetStatementGroupSelectioner : BasicSelectioner() {
     override fun canSelect(e: PsiElement)
             = e is JetExpression || e is JetWhenEntry
 
-    override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange> {
+    override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         val parent = e.getParent()
-        if (parent !is JetBlockExpression && parent !is JetWhenExpression) return listOf()
+        if (parent !is JetBlockExpression && parent !is JetWhenExpression) return null
 
         val startElement = e.siblings(forward = false, withItself = false)
                 .firstOrNull { // find preceding '{' or blank line
