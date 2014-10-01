@@ -31,19 +31,13 @@ import org.jetbrains.jet.lexer.JetTokens
 import java.util.Arrays
 
 public class JetListSelectioner : BasicSelectioner() {
-    override fun canSelect(e: PsiElement): Boolean {
-        return e is JetParameterList || e is JetValueArgumentList || e is JetTypeParameterList || e is JetTypeArgumentList
-    }
+    override fun canSelect(e: PsiElement)
+            = e is JetParameterList || e is JetValueArgumentList || e is JetTypeParameterList || e is JetTypeArgumentList
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange> {
         val node = e.getNode()!!
-        val startNode = node.findChildByType(TokenSet.create(JetTokens.LPAR, JetTokens.LT))
-        val endNode = node.findChildByType(TokenSet.create(JetTokens.RPAR, JetTokens.GT))
-        if (startNode != null && endNode != null) {
-            return Arrays.asList<TextRange>(TextRange(startNode.getStartOffset() + 1, endNode.getStartOffset()))
-        }
-        else {
-            return Arrays.asList<TextRange>()
-        }
+        val startNode = node.findChildByType(TokenSet.create(JetTokens.LPAR, JetTokens.LT)) ?: return listOf()
+        val endNode = node.findChildByType(TokenSet.create(JetTokens.RPAR, JetTokens.GT)) ?: return listOf()
+        return listOf(TextRange(startNode.getStartOffset() + 1, endNode.getStartOffset()))
     }
 }
