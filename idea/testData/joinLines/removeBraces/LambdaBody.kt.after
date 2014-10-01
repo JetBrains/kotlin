@@ -1,0 +1,4 @@
+fun foo() {
+    run {<caret> bar()
+    }
+}

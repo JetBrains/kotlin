@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/joinLines")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JoinLinesTestGenerated.DeclarationAndAssignment.class})
+@InnerTestClasses({JoinLinesTestGenerated.DeclarationAndAssignment.class, JoinLinesTestGenerated.RemoveBraces.class})
 @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     public void testAllFilesPresentInJoinLines() throws Exception {
@@ -134,6 +134,100 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         @TestMetadata("simpleInitWithType2.kt")
         public void testSimpleInitWithType2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInitWithType2.kt");
+            doTest(fileName);
+        }
+        
+    }
+    
+    @TestMetadata("idea/testData/joinLines/removeBraces")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    public static class RemoveBraces extends AbstractJoinLinesTest {
+        public void testAllFilesPresentInRemoveBraces() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/removeBraces"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("CommentAfterStatement.kt")
+        public void testCommentAfterStatement() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/CommentAfterStatement.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("CommentAfterStatement2.kt")
+        public void testCommentAfterStatement2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/CommentAfterStatement2.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("CommentBeforeStatement.kt")
+        public void testCommentBeforeStatement() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/CommentBeforeStatement.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("CommentBeforeStatement2.kt")
+        public void testCommentBeforeStatement2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/CommentBeforeStatement2.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("DoWhile.kt")
+        public void testDoWhile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/DoWhile.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("Else.kt")
+        public void testElse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/Else.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("For.kt")
+        public void testFor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/For.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("FunctionBody.kt")
+        public void testFunctionBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/FunctionBody.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("If.kt")
+        public void testIf() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/If.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("IfWithElse.kt")
+        public void testIfWithElse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/IfWithElse.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("LambdaBody.kt")
+        public void testLambdaBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/LambdaBody.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("NotSingleLineStatement.kt")
+        public void testNotSingleLineStatement() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/NotSingleLineStatement.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("TwoStatements.kt")
+        public void testTwoStatements() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/TwoStatements.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("While.kt")
+        public void testWhile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/removeBraces/While.kt");
             doTest(fileName);
         }
         

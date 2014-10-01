@@ -432,6 +432,7 @@
                           order="before jetExpression" />
 
     <joinLinesHandler implementation="org.jetbrains.jet.plugin.joinLines.JoinDeclarationAndAssignmentHandler"/>
+    <joinLinesHandler implementation="org.jetbrains.jet.plugin.joinLines.JoinBlockIntoSingleStatementHandler"/>
 
     <targetElementEvaluator
         language="jet"
