@@ -17,9 +17,13 @@
 package org.jetbrains.jet.plugin.intentions.declarations;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.TestMetadata;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.junit.runner.RunWith;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.test.InnerTestClasses;
+import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -28,100 +32,111 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/joinLines")
 @TestDataPath("$PROJECT_ROOT")
+@InnerTestClasses({JoinLinesTestGenerated.DeclarationAndAssignment.class})
 @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     public void testAllFilesPresentInJoinLines() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
-    @TestMetadata("longInit.kt")
-    public void testLongInit() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/longInit.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("longInit2.kt")
-    public void testLongInit2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/longInit2.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("propertyWithAnnotation.kt")
-    public void testPropertyWithAnnotation() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/propertyWithAnnotation.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("simpleInit.kt")
-    public void testSimpleInit() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/simpleInit.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("simpleInit2.kt")
-    public void testSimpleInit2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/simpleInit2.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("simpleInitWithBackticks.kt")
-    public void testSimpleInitWithBackticks() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/simpleInitWithBackticks.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("simpleInitWithBackticks2.kt")
-    public void testSimpleInitWithBackticks2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/simpleInitWithBackticks2.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("simpleInitWithBackticks3.kt")
-    public void testSimpleInitWithBackticks3() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/simpleInitWithBackticks3.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("simpleInitWithComments.kt")
-    public void testSimpleInitWithComments() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/simpleInitWithComments.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("simpleInitWithComments2.kt")
-    public void testSimpleInitWithComments2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/simpleInitWithComments2.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("simpleInitWithSemicolons.kt")
-    public void testSimpleInitWithSemicolons() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/simpleInitWithSemicolons.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("simpleInitWithSemicolons2.kt")
-    public void testSimpleInitWithSemicolons2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/simpleInitWithSemicolons2.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("simpleInitWithSemicolons3.kt")
-    public void testSimpleInitWithSemicolons3() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/simpleInitWithSemicolons3.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("simpleInitWithType.kt")
-    public void testSimpleInitWithType() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/simpleInitWithType.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("simpleInitWithType2.kt")
-    public void testSimpleInitWithType2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/simpleInitWithType2.kt");
-        doTest(fileName);
+    @TestMetadata("idea/testData/joinLines/declarationAndAssignment")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    public static class DeclarationAndAssignment extends AbstractJoinLinesTest {
+        public void testAllFilesPresentInDeclarationAndAssignment() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/declarationAndAssignment"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("longInit.kt")
+        public void testLongInit() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/longInit.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("longInit2.kt")
+        public void testLongInit2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/longInit2.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("propertyWithAnnotation.kt")
+        public void testPropertyWithAnnotation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/propertyWithAnnotation.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleInit.kt")
+        public void testSimpleInit() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInit.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleInit2.kt")
+        public void testSimpleInit2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInit2.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleInitWithBackticks.kt")
+        public void testSimpleInitWithBackticks() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInitWithBackticks.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleInitWithBackticks2.kt")
+        public void testSimpleInitWithBackticks2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInitWithBackticks2.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleInitWithBackticks3.kt")
+        public void testSimpleInitWithBackticks3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInitWithBackticks3.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleInitWithComments.kt")
+        public void testSimpleInitWithComments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInitWithComments.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleInitWithComments2.kt")
+        public void testSimpleInitWithComments2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInitWithComments2.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleInitWithSemicolons.kt")
+        public void testSimpleInitWithSemicolons() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInitWithSemicolons.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleInitWithSemicolons2.kt")
+        public void testSimpleInitWithSemicolons2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInitWithSemicolons2.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleInitWithSemicolons3.kt")
+        public void testSimpleInitWithSemicolons3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInitWithSemicolons3.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleInitWithType.kt")
+        public void testSimpleInitWithType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInitWithType.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("simpleInitWithType2.kt")
+        public void testSimpleInitWithType2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/simpleInitWithType2.kt");
+            doTest(fileName);
+        }
+        
     }
     
 }
