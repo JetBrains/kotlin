@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.intentions.declarations;
 
 import com.google.common.base.Predicate;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
@@ -53,32 +52,6 @@ public class DeclarationUtils {
                    || input.getNode().getElementType() == JetTokens.SEMICOLON;
         }
     };
-
-    @Nullable
-    public static Pair<JetProperty, JetBinaryExpression> checkAndGetPropertyAndInitializer(@NotNull PsiElement element) {
-        JetProperty property = null;
-        JetExpression initializer = null;
-
-        if (element instanceof JetProperty) {
-            PsiElement nextElement = JetPsiUtil.skipSiblingsForwardByPredicate(element, SKIP_DELIMITERS);
-            if (nextElement instanceof JetExpression) {
-                property = (JetProperty) element;
-                initializer = (JetExpression) nextElement;
-            }
-        }
-
-        if (property == null) return null;
-        if (property.hasInitializer()) return null;
-        if (!JetPsiUtil.isOrdinaryAssignment(initializer)) return null;
-
-        JetBinaryExpression assignment = (JetBinaryExpression) initializer;
-
-        if (!(assignment.getLeft() instanceof JetSimpleNameExpression)) return null;
-        if (assignment.getRight() == null) return null;
-        if (!JetPsiUtil.unquoteIdentifier(assignment.getLeft().getText()).equals(property.getName())) return null;
-
-        return new Pair<JetProperty, JetBinaryExpression>(property, assignment);
-    }
 
     @Nullable
     private static JetType getPropertyTypeIfNeeded(@NotNull JetProperty property) {
@@ -139,30 +112,4 @@ public class DeclarationUtils {
         );
     }
 
-    // Returns joined property
-    @NotNull
-    public static JetProperty joinPropertyDeclarationWithInitializer(
-            @NotNull Pair<JetProperty, JetBinaryExpression> propertyAndInitializer
-    ) {
-        JetProperty property = propertyAndInitializer.first;
-        assertNotNull(property);
-
-        JetBinaryExpression assignment = propertyAndInitializer.second;
-        assertNotNull(assignment);
-
-        JetProperty newProperty = changePropertyInitializer(property, assignment.getRight());
-
-        property.getParent().deleteChildRange(property.getNextSibling(), assignment);
-        return (JetProperty) property.replace(newProperty);
-    }
-
-    // Returns joined property
-    @NotNull
-    public static JetProperty joinPropertyDeclarationWithInitializer(@NotNull PsiElement element) {
-        Pair<JetProperty, JetBinaryExpression> propertyAndInitializer = checkAndGetPropertyAndInitializer(element);
-        assertNotNull(propertyAndInitializer);
-
-        //noinspection ConstantConditions
-        return joinPropertyDeclarationWithInitializer(propertyAndInitializer);
-    }
 }

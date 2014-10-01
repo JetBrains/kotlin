@@ -20,22 +20,48 @@ import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.util.ArrayUtil
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.psiUtil.*
+import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.jet.lang.psi.JetBinaryExpression
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.jet.lexer.JetTokens
 
 public class JetDeclarationJoinLinesHandler : JoinRawLinesHandlerDelegate {
 
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {
-        val element = JetPsiUtil.skipSiblingsBackwardByPredicate(file.findElementAt(start), DeclarationUtils.SKIP_DELIMITERS)
+        val element = JetPsiUtil.skipSiblingsBackwardByPredicate(file.findElementAt(start), DeclarationUtils.SKIP_DELIMITERS) ?: return -1
 
-        val target = element?.getParentByTypesAndPredicate<PsiElement>(strict = false) {
-            DeclarationUtils.checkAndGetPropertyAndInitializer(it) != null
-        } ?: return -1
+        val pair = element.parents(withItself = true)
+                           .map { getPropertyAndAssignment(it) }
+                           .filterNotNull()
+                           .firstOrNull() ?: return -1
+        val (property, assignment) = pair
 
-        return DeclarationUtils.joinPropertyDeclarationWithInitializer(target).getTextRange()!!.getStartOffset()
+        return doJoin(property, assignment).getTextRange()!!.getStartOffset()
     }
 
     override fun tryJoinLines(document: Document, file: PsiFile, start: Int, end: Int)
             = -1
+
+    private fun getPropertyAndAssignment(element: PsiElement): Pair<JetProperty, JetBinaryExpression>? {
+        val property = element as? JetProperty ?: return null
+        if (property.hasInitializer()) return null
+
+        val assignment = JetPsiUtil.skipSiblingsForwardByPredicate(element, DeclarationUtils.SKIP_DELIMITERS) as? JetBinaryExpression ?: return null
+        if (assignment.getOperationToken() != JetTokens.EQ) return null
+
+        val left = assignment.getLeft() as? JetSimpleNameExpression ?: return null
+        if (assignment.getRight() == null) return null
+        if (left.getReferencedName() != property.getName()) return null
+
+        return property to assignment
+    }
+
+    private fun doJoin(property: JetProperty, assignment: JetBinaryExpression): JetProperty {
+        val newProperty = DeclarationUtils.changePropertyInitializer(property, assignment.getRight())
+        property.getParent()!!.deleteChildRange(property.getNextSibling(), assignment)
+        return property.replace(newProperty) as JetProperty
+    }
+
 }
