@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.intentions.declarations
+package org.jetbrains.jet.plugin.joinLines
 
+import org.jetbrains.jet.lang.psi.psiUtil.siblings
+import org.jetbrains.jet.lang.psi.psiUtil.parents
 import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate
 import com.intellij.openapi.editor.Document
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.psiUtil.*
+import org.jetbrains.jet.lang.psi.JetFile
+import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lexer.JetTokens
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
-import com.google.common.base.Predicate
+import org.jetbrains.jet.lexer.JetTokens
 
-public class JetDeclarationJoinLinesHandler : JoinRawLinesHandlerDelegate {
+public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
 
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {
+        if (file !is JetFile) return -1
+
         val element = file.findElementAt(start)
                               ?.siblings(forward = false, withItself = false)
                               ?.firstOrNull { !isToSkip(it) }  ?: return -1
@@ -67,7 +69,7 @@ public class JetDeclarationJoinLinesHandler : JoinRawLinesHandlerDelegate {
 
     private fun doJoin(property: JetProperty, assignment: JetBinaryExpression) {
         property.setInitializer(assignment.getRight())
-        property.getParent()!!.deleteChildRange(property.getNextSibling(), assignment) //TODO: should we remove range?
+        property.getParent()!!.deleteChildRange(property.getNextSibling(), assignment) //TODO: should we delete range?
     }
 
     private fun isToSkip(element: PsiElement)
