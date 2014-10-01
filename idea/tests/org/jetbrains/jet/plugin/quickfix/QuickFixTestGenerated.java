@@ -1209,6 +1209,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("beforeInLambdaNoParams.kt")
+                public void testInLambdaNoParams() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/beforeInLambdaNoParams.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInLambdaWithParams.kt")
+                public void testInLambdaWithParams() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/beforeInLambdaWithParams.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInMultiLineLambdaNoParams.kt")
+                public void testInMultiLineLambdaNoParams() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/beforeInMultiLineLambdaNoParams.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeInMultiLineLambdaWithParams.kt")
+                public void testInMultiLineLambdaWithParams() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/beforeInMultiLineLambdaWithParams.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("beforeInWhen.kt")
                 public void testInWhen() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/beforeInWhen.kt");

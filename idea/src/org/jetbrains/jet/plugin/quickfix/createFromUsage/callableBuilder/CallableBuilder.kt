@@ -57,6 +57,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
 import org.jetbrains.jet.plugin.util.application.runWriteAction
+import org.jetbrains.jet.plugin.refactoring.isMultiLine
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -256,9 +257,15 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
                 val newLine = psiFactory.createNewLine()
 
-                fun prepend(element: PsiElement, elementBeforeStart: PsiElement): PsiElement {
+                fun prepend(element: PsiElement, elementBeforeStart: PsiElement, skipInitial: Boolean): PsiElement {
                     val parent = elementBeforeStart.getParent()!!
-                    val anchor = PsiTreeUtil.skipSiblingsForward(elementBeforeStart, javaClass<PsiWhiteSpace>())
+                    val anchor =
+                            if (!skipInitial && elementBeforeStart !is PsiWhiteSpace) {
+                                elementBeforeStart
+                            }
+                            else {
+                                PsiTreeUtil.skipSiblingsForward(elementBeforeStart, javaClass<PsiWhiteSpace>())
+                            }
                     val addedElement = parent.addBefore(element, anchor)!!
                     parent.addAfter(newLine, addedElement)
                     parent.addAfter(newLine, addedElement)
@@ -296,7 +303,18 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                 ?: append(declaration, classBody!!.getLastChild()!!, false)) as JetCallableDeclaration
                     }
 
-                    is JetBlockExpression -> return prepend(declaration, containingElement.getLBrace()!!) as JetCallableDeclaration
+                    is JetBlockExpression -> {
+                        val parent = containingElement.getParent()
+                        if (parent is JetFunctionLiteral) {
+                            if (!parent.isMultiLine()) {
+                                parent.addBefore(newLine, containingElement)
+                                parent.addAfter(newLine, containingElement)
+                            }
+
+                            return prepend(declaration, containingElement.getFirstChild()!!, false) as JetCallableDeclaration
+                        }
+                        return prepend(declaration, containingElement.getLBrace()!!, true) as JetCallableDeclaration
+                    }
 
                     else -> throw AssertionError("Invalid containing element: ${containingElement.getText()}")
                 }
