@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.calls;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -38,7 +39,10 @@ public class TypeParameterAsReifiedCheck implements CallResolverExtension {
         for (Map.Entry<TypeParameterDescriptor, JetType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor parameter = entry.getKey();
             JetType argument = entry.getValue();
-            if (parameter.isReified() && argument.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+            ClassifierDescriptor argumentDeclarationDescription = argument.getConstructor().getDeclarationDescriptor();
+            if (parameter.isReified() && argumentDeclarationDescription instanceof TypeParameterDescriptor &&
+                    !((TypeParameterDescriptor) argumentDeclarationDescription).isReified()
+            ) {
                 JetExpression callee = context.call.getCalleeExpression();
                 PsiElement element = callee != null ? callee : context.call.getCallElement();
                 context.trace.report(Errors.TYPE_PARAMETER_AS_REIFIED.on(element, typeArguments.keySet().iterator().next()));

@@ -76,13 +76,16 @@ public class InlineCodegen implements CallGenerator {
     protected final ParametersBuilder invocationParamBuilder = ParametersBuilder.newBuilder();
     protected final Map<Integer, LambdaInfo> expressionMap = new HashMap<Integer, LambdaInfo>();
 
+    private final ReifiedTypeInliner reifiedTypeInliner;
+
     private LambdaInfo activeLambda;
 
     public InlineCodegen(
             @NotNull ExpressionCodegen codegen,
             @NotNull GenerationState state,
             @NotNull SimpleFunctionDescriptor functionDescriptor,
-            @NotNull JetElement callElement
+            @NotNull JetElement callElement,
+            @Nullable ReifiedTypeParameterMappings typeParameterMappings
     ) {
         assert functionDescriptor.getInlineStrategy().isInline() : "InlineCodegen could inline only inline function but " + functionDescriptor;
 
@@ -91,6 +94,9 @@ public class InlineCodegen implements CallGenerator {
         this.codegen = codegen;
         this.callElement = callElement;
         this.functionDescriptor = functionDescriptor.getOriginal();
+
+        reifiedTypeInliner = new ReifiedTypeInliner(typeParameterMappings);
+
         initialFrameSize = codegen.getFrameMap().getCurrentSize();
 
         context = (MethodContext) getContext(functionDescriptor, state);
@@ -200,6 +206,7 @@ public class InlineCodegen implements CallGenerator {
     }
 
     private InlineResult inlineCall(MethodNode node) {
+        reifiedTypeInliner.reifyInstructions(node.instructions);
         generateClosuresBodies();
 
         //through generation captured parameters will be added to invocationParamBuilder

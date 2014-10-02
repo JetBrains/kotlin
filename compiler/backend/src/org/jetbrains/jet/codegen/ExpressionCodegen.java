@@ -30,9 +30,7 @@ import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.*;
-import org.jetbrains.jet.codegen.inline.InlineCodegen;
-import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
-import org.jetbrains.jet.codegen.inline.NameGenerator;
+import org.jetbrains.jet.codegen.inline.*;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -2186,8 +2184,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall();
         }
 
+        CallGenerator callGenerator = getOrCreateCallGenerator(resolvedCall);
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-        CallGenerator callGenerator = getOrCreateCallGenerator(descriptor, resolvedCall.getCall().getCallElement());
 
         assert callGenerator == defaultCallGenerator || !tailRecursionCodegen.isTailRecursion(resolvedCall) :
                 "Tail recursive method can't be inlined: " + descriptor;
@@ -2230,7 +2228,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    protected CallGenerator getOrCreateCallGenerator(@NotNull CallableDescriptor descriptor, @Nullable JetElement callElement) {
+    protected CallGenerator getOrCreateCallGenerator(
+            @NotNull CallableDescriptor descriptor,
+            @Nullable JetElement callElement,
+            @Nullable ReifiedTypeParameterMappings reifierTypeParameterMappings
+    ) {
         if (callElement == null) return defaultCallGenerator;
 
         boolean isInline = state.isInlineEnabled() &&
@@ -2240,7 +2242,43 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (!isInline) return defaultCallGenerator;
 
         SimpleFunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((SimpleFunctionDescriptor) descriptor.getOriginal());
-        return new InlineCodegen(this, state, original, callElement);
+        return new InlineCodegen(this, state, original, callElement, reifierTypeParameterMappings);
+    }
+
+    @NotNull
+    public CallGenerator getOrCreateCallGenerator(@NotNull FunctionDescriptor descriptor, @Nullable JetNamedFunction function) {
+        return getOrCreateCallGenerator(descriptor, function, null);
+    }
+
+    @NotNull
+    private CallGenerator getOrCreateCallGenerator(@NotNull ResolvedCall<?> resolvedCall) {
+        Map<TypeParameterDescriptor, JetType> typeArguments = resolvedCall.getTypeArguments();
+        ReifiedTypeParameterMappings mappings = new ReifiedTypeParameterMappings(typeArguments.size());
+        for (Map.Entry<TypeParameterDescriptor, JetType> entry : typeArguments.entrySet()) {
+            TypeParameterDescriptor key = entry.getKey();
+            if (!key.isReified()) continue;
+
+            TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(entry.getValue());
+            if (parameterDescriptor == null) {
+                // type is not generic
+                // boxType call needed because inlined method is compiled for T as java/lang/Object
+                mappings.addParameterMappingToType(
+                        key.getIndex(),
+                        key.getName().getIdentifier(),
+                        boxType(asmType(entry.getValue()))
+                );
+            }
+            else {
+                mappings.addParameterMappingToNewParameter(
+                        key.getIndex(),
+                        key.getName().getIdentifier(),
+                        parameterDescriptor.getIndex()
+                );
+            }
+        }
+        return getOrCreateCallGenerator(
+                resolvedCall.getResultingDescriptor(), resolvedCall.getCall().getCallElement(), mappings
+        );
     }
 
     public void generateReceiverValue(@NotNull ReceiverValue receiverValue, @NotNull Type type) {
@@ -3373,6 +3411,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (isArray) {
             gen(args.get(0), Type.INT_TYPE);
+            TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(
+                    arrayType.getArguments().get(0).getType()
+            );
+            if (parameterDescriptor != null && parameterDescriptor.isReified()) {
+                v.iconst(parameterDescriptor.getIndex());
+                v.invokestatic(
+                        IntrinsicMethods.INTRINSICS_CLASS_NAME, ReifiedTypeInliner.NEW_ARRAY_MARKER_METHOD_NAME,
+                        Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE), false
+                );
+            }
             v.newarray(boxType(asmType(arrayType.getArguments().get(0).getType())));
         }
         else {
