@@ -80,6 +80,19 @@ public final class Namer {
     public static final String CAPTURED_VAR_FIELD = "v";
 
     @NotNull
+    public static final JsExpression UNDEFINED_EXPRESSION = new JsPrefixOperation(JsUnaryOperator.VOID, JsNumberLiteral.ZERO);
+
+    public static boolean isUndefined(@NotNull JsExpression expr) {
+        if (expr instanceof JsPrefixOperation) {
+            JsUnaryOperator op = ((JsPrefixOperation) expr).getOperator();
+
+            return op == JsUnaryOperator.VOID;
+        }
+
+        return false;
+    }
+
+    @NotNull
     public static String getReceiverParameterName() {
         return RECEIVER_PARAMETER_NAME;
     }
@@ -212,8 +225,6 @@ public final class Namer {
     @NotNull
     private final JsName callableRefForExtensionProperty;
     @NotNull
-    private final JsExpression undefinedExpression;
-    @NotNull
     private final JsExpression callGetProperty;
     @NotNull
     private final JsExpression callSetProperty;
@@ -243,8 +254,6 @@ public final class Namer {
         callableRefForExtensionProperty = kotlinScope.declareName(CALLABLE_REF_FOR_EXTENSION_PROPERTY);
 
         isTypeName = kotlinScope.declareName("isType");
-
-        undefinedExpression = new JsPrefixOperation(JsUnaryOperator.VOID, rootScope.getProgram().getNumberLiteral(0));
     }
 
     @NotNull
@@ -365,7 +374,7 @@ public final class Namer {
 
     @NotNull
     public JsExpression getUndefinedExpression() {
-        return undefinedExpression;
+        return UNDEFINED_EXPRESSION;
     }
 
     @NotNull
