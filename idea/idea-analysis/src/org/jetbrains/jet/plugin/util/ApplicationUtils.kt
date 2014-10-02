@@ -17,24 +17,8 @@
 package org.jetbrains.jet.plugin.util.application
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.ShutDownTracker
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.CommandProcessor
-
-public fun warnTimeConsuming(logger: Logger) {
-    val application = ApplicationManager.getApplication()!!
-    if (application.isUnitTestMode() || application.isHeadlessEnvironment() || ShutDownTracker.isShutdownHookRunning()) {
-        return
-    }
-
-    if (!application.isDispatchThread()) {
-        return
-    }
-
-    logger.warn("This operation is time consuming and must not be called on EDT.")
-    java.lang.Throwable().printStackTrace()
-}
 
 public fun runReadAction<T: Any>(action: () -> T?): T? {
     return ApplicationManager.getApplication()?.runReadAction<T>(action)

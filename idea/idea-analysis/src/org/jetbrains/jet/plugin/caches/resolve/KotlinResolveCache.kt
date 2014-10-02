@@ -61,7 +61,6 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.jet.plugin.util.application.warnTimeConsuming
 
 public trait CacheExtension<T> {
     public val platform: TargetPlatform
@@ -168,8 +167,6 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
         if (DumbService.isDumb(project)) {
             return AnalyzeExhaust.EMPTY
         }
-
-        warnTimeConsuming(LOG)
 
         try {
             return KotlinResolveDataProvider.analyze(project, resolveSession, analyzableElement)
