@@ -19,15 +19,21 @@ package org.jetbrains.k2js.inline;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.inline.context.*;
+
+import static org.jetbrains.k2js.inline.util.UtilPackage.aliasArgumentsIfNeeded;
 import static org.jetbrains.k2js.inline.util.UtilPackage.collectInstances;
+import static org.jetbrains.k2js.inline.util.UtilPackage.getCallerQualifier;
+import static org.jetbrains.k2js.inline.util.UtilPackage.getSimpleIdent;
+import static org.jetbrains.k2js.inline.util.UtilPackage.hasCallerQualifier;
+import static org.jetbrains.k2js.inline.util.UtilPackage.isCallInvocation;
+import static org.jetbrains.k2js.inline.util.UtilPackage.needToAlias;
+import static org.jetbrains.k2js.inline.util.UtilPackage.renameLocalNames;
 import static org.jetbrains.k2js.inline.util.UtilPackage.replaceReturns;
 import static org.jetbrains.k2js.inline.util.UtilPackage.replaceThisReference;
 import static org.jetbrains.k2js.inline.clean.CleanPackage.removeDefaultInitializers;
 
-import static org.jetbrains.k2js.inline.InlinePackage.*;
-
-import java.util.Collection;
 import java.util.List;
 
 class FunctionInlineMutator {

@@ -25,7 +25,6 @@ import org.jetbrains.k2js.inline.exception.InlineRecursionException;
 import java.util.IdentityHashMap;
 import java.util.Set;
 import java.util.Stack;
-import java.util.List;
 
 import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedLocalFunctionDeclarations;
 import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedFunctionDefinitions;
