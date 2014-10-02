@@ -45,6 +45,18 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/declarationAndAssignment"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("blankLineBetween.kt")
+        public void testBlankLineBetween() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/blankLineBetween.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("commentBetween.kt")
+        public void testCommentBetween() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/commentBetween.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("longInit.kt")
         public void testLongInit() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/joinLines/declarationAndAssignment/longInit.kt");
