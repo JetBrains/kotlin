@@ -11,13 +11,15 @@ import org.jetbrains.annotations.Nullable;
 public final class JsBinaryOperation extends JsExpressionImpl {
     private JsExpression arg1;
     private JsExpression arg2;
+
+    @NotNull
     private final JsBinaryOperator op;
 
-    public JsBinaryOperation(JsBinaryOperator op) {
+    public JsBinaryOperation(@NotNull JsBinaryOperator op) {
         this(op, null, null);
     }
 
-    public JsBinaryOperation(JsBinaryOperator op, @Nullable JsExpression arg1, @Nullable JsExpression arg2) {
+    public JsBinaryOperation(@NotNull JsBinaryOperator op, @Nullable JsExpression arg1, @Nullable JsExpression arg2) {
         this.op = op;
         this.arg1 = arg1;
         this.arg2 = arg2;
@@ -39,6 +41,7 @@ public final class JsBinaryOperation extends JsExpressionImpl {
         this.arg2 = arg2;
     }
 
+    @NotNull
     public JsBinaryOperator getOperator() {
         return op;
     }
