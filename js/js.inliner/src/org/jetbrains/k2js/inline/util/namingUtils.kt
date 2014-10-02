@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.inline
+package org.jetbrains.k2js.inline.util
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.JsVars.JsVar
@@ -25,9 +25,11 @@ import java.util.HashMap
 import java.util.IdentityHashMap
 
 import kotlin.test.assertTrue
+import org.jetbrains.k2js.inline.context.NamingContext
+import org.jetbrains.k2js.inline.util.needToAlias
 
-fun aliasArgumentsIfNeeded(
-        context: RenamingContext<*>,
+public fun aliasArgumentsIfNeeded(
+        context: NamingContext,
         arguments: List<JsExpression>,
         parameters: List<JsParameter>
 ) {
@@ -60,74 +62,12 @@ fun aliasArgumentsIfNeeded(
 /**
  * Makes function local names fresh in context
  */
-fun renameLocalNames(
-        context: RenamingContext<*>,
+public fun renameLocalNames(
+        context: NamingContext,
         function: JsFunction
 ) {
     for (name in collectLocalNames(function)) {
         val freshName = context.getFreshName(name)
         context.replaceName(name, freshName.makeRef())
-    }
-}
-
-private fun isLambdaConstructor(x: JsInvocation): Boolean {
-    val staticRef = (x.getQualifier() as? HasName)?.getName()?.getStaticRef()
-    return when (staticRef) {
-        is JsFunction -> isLambdaConstructor(staticRef)
-        else -> false
-    }
-}
-
-private fun isLambdaConstructor(x: JsFunction): Boolean {
-    return InvocationUtil.getInnerFunction(x) != null;
-}
-
-private fun needToAlias(x: JsExpression): Boolean {
-    val visitor = ShouldBeAliasedVisitor()
-    visitor.accept(x)
-    return visitor.shouldBeAliased
-}
-
-private class ShouldBeAliasedVisitor(): RecursiveJsVisitor() {
-    public var shouldBeAliased: Boolean = false
-        private set
-
-    override fun visitElement(node: JsNode?) {
-        if (!shouldBeAliased) {
-            super<RecursiveJsVisitor>.visitElement(node)
-        }
-    }
-    override fun visitBinaryExpression(x: JsBinaryOperation?) {
-        shouldBeAliased = true
-    }
-
-    override fun visitInvocation(invocation: JsInvocation?) {
-        if (invocation != null && !isLambdaConstructor(invocation)) {
-            shouldBeAliased = true
-        }
-    }
-
-    override fun visitPostfixOperation(x: JsPostfixOperation?) {
-        shouldBeAliased = true
-    }
-
-    override fun visitPrefixOperation(x: JsPrefixOperation?) {
-        shouldBeAliased = true
-    }
-
-    override fun visitObjectLiteral(x: JsObjectLiteral?) {
-        shouldBeAliased = true
-    }
-
-    override fun visitNew(x: JsNew?) {
-        shouldBeAliased = true
-    }
-
-    override fun visitThis(x: JsLiteral.JsThisRef?) {
-        shouldBeAliased = true
-    }
-
-    override fun visitArray(x: JsArrayLiteral?) {
-        shouldBeAliased = true
     }
 }

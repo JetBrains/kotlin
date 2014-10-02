@@ -16,48 +16,69 @@
 
 package org.jetbrains.k2js.inline.util
 
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.RecursiveJsVisitor
-import com.google.dart.compiler.backend.js.ast.JsNode
+import com.google.dart.compiler.backend.js.ast.JsArrayAccess
+import com.google.dart.compiler.backend.js.ast.JsArrayLiteral
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation
+import com.google.dart.compiler.backend.js.ast.JsConditional
+import com.google.dart.compiler.backend.js.ast.JsExpression
+import com.google.dart.compiler.backend.js.ast.JsInvocation
+import com.google.dart.compiler.backend.js.ast.JsLiteral
+import com.google.dart.compiler.backend.js.ast.JsLiteral.JsThisRef
+import com.google.dart.compiler.backend.js.ast.JsLiteral.JsValueLiteral
+import com.google.dart.compiler.backend.js.ast.JsNameRef
+import com.google.dart.compiler.backend.js.ast.JsNew
+import com.google.dart.compiler.backend.js.ast.JsNode
+import com.google.dart.compiler.backend.js.ast.JsObjectLiteral
 import com.google.dart.compiler.backend.js.ast.JsPostfixOperation
 import com.google.dart.compiler.backend.js.ast.JsPrefixOperation
-import com.google.dart.compiler.backend.js.ast.JsNew
-import com.google.dart.compiler.backend.js.ast.JsInvocation
+import com.google.dart.compiler.backend.js.ast.RecursiveJsVisitor
 
-public fun canHaveSideEffect(expression: JsExpression): Boolean {
-    val visitor = SideEffectExpessionVisitor()
-    visitor.accept(expression)
-    return visitor.canHaveSideEffect
+public fun canHaveSideEffect(x: JsExpression): Boolean {
+    return with(SideEffectVisitor()) {
+        accept(x)
+        !sideEffectFree
+    }
 }
 
-private class SideEffectExpessionVisitor() : RecursiveJsVisitor() {
-    public var canHaveSideEffect: Boolean = false
-        private set
+public fun needToAlias(x: JsExpression): Boolean {
+    return with(NeedToAliasVisitor()) {
+        accept(x)
+        !sideEffectFree
+    }
+}
+
+private open class SideEffectVisitor() : RecursiveJsVisitor() {
+    public var sideEffectFree: Boolean = true
+        protected set
 
     override fun visitElement(node: JsNode?) {
-        if (!canHaveSideEffect) {
-            super<RecursiveJsVisitor>.visitElement(node)
+        sideEffectFree = sideEffectFree && isSideEffectFree(node)
+
+        if (sideEffectFree) {
+            super.visitElement(node)
         }
     }
 
-    override fun visitBinaryExpression(x: JsBinaryOperation?) {
-        canHaveSideEffect = true
-    }
+    protected open fun isSideEffectFree(node: JsNode?): Boolean =
+        when (node) {
+            is JsValueLiteral,
+            is JsConditional,
+            is JsBinaryOperation,
+            is JsArrayAccess,
+            is JsArrayLiteral,
+            is JsNameRef -> true
+            else -> false
+        }
+}
 
-    override fun visitPostfixOperation(x: JsPostfixOperation?) {
-        canHaveSideEffect = true
-    }
-
-    override fun visitPrefixOperation(x: JsPrefixOperation?) {
-        canHaveSideEffect = true
-    }
-
-    override fun visitNew(x: JsNew?) {
-        canHaveSideEffect = true
-    }
-
-    override fun visitInvocation(invocation: JsInvocation?) {
-        canHaveSideEffect = true
-    }
+private class NeedToAliasVisitor() : SideEffectVisitor() {
+    override fun isSideEffectFree(node: JsNode?): Boolean =
+        when (node) {
+            is JsThisRef,
+            is JsConditional,
+            is JsBinaryOperation,
+            is JsArrayLiteral -> false
+            is JsInvocation -> isFunctionCreatorInvocation(node)
+            else -> super.isSideEffectFree(node)
+        }
 }
