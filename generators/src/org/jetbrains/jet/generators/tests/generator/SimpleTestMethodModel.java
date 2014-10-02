@@ -27,12 +27,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SimpleTestMethodModel implements TestMethodModel {
+    @NotNull
     private final File rootDir;
+    @NotNull
     private final File file;
+    @NotNull
     private final String doTestMethodName;
+    @NotNull
     private final Pattern filenamePattern;
 
-    public SimpleTestMethodModel(File rootDir, File file, String doTestMethodName, Pattern filenamePattern) {
+    public SimpleTestMethodModel(
+            @NotNull File rootDir,
+            @NotNull File file,
+            @NotNull String doTestMethodName,
+            @NotNull Pattern filenamePattern
+    ) {
         this.rootDir = rootDir;
         this.file = file;
         this.doTestMethodName = doTestMethodName;
@@ -58,6 +67,7 @@ public class SimpleTestMethodModel implements TestMethodModel {
         assert found : file.getName() + " isn't matched by regex " + filenamePattern.pattern();
         assert matcher.groupCount() == 1 : filenamePattern.pattern();
         String extractedName = matcher.group(1);
+        assert extractedName != null : "extractedName should not be null: "  + filenamePattern.pattern();
 
         String unescapedName;
         if (rootDir.equals(file.getParentFile())) {

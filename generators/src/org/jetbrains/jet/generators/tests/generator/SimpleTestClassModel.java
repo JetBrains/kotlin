@@ -39,14 +39,19 @@ public class SimpleTestClassModel implements TestClassModel {
             return o1.getName().compareTo(o2.getName());
         }
     };
+    @NotNull
     private final File rootFile;
     private final boolean recursive;
     private final boolean excludeParentDirs;
+    @NotNull
     private final Pattern filenamePattern;
+    @NotNull
     private final String doTestMethodName;
+    @NotNull
     private final String testClassName;
-
+    @Nullable
     private Collection<TestClassModel> innerTestClasses;
+    @Nullable
     private Collection<TestMethodModel> testMethods;
 
     public SimpleTestClassModel(

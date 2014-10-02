@@ -34,11 +34,15 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class SingleClassTestModel implements TestClassModel {
+    @NotNull
     private final File rootFile;
+    @NotNull
     private final Pattern filenamePattern;
+    @NotNull
     private final String doTestMethodName;
+    @NotNull
     private final String testClassName;
-
+    @Nullable
     private Collection<TestMethodModel> testMethods;
 
     public SingleClassTestModel(
@@ -91,6 +95,7 @@ public class SingleClassTestModel implements TestClassModel {
         return testMethods;
     }
 
+    @NotNull
     protected Collection<TestMethodModel> getTestMethodsFromFile(File file) {
         return Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, file, doTestMethodName, filenamePattern));
     }
