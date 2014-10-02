@@ -48,7 +48,7 @@ public final class Namer {
 
     public static final String CALLEE_NAME = "$fun";
 
-    private static final String CALL_FUNCTION = "call";
+    public static final String CALL_FUNCTION = "call";
     private static final String APPLY_FUNCTION = "apply";
 
     private static final String CLASS_OBJECT_NAME = "createClass";
