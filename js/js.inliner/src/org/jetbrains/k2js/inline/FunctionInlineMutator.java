@@ -19,6 +19,8 @@ package org.jetbrains.k2js.inline;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import static org.jetbrains.k2js.inline.util.UtilPackage.replaceReturns;
+import static org.jetbrains.k2js.inline.util.UtilPackage.replaceThisReference;
 
 import static org.jetbrains.k2js.inline.InlinePackage.*;
 
@@ -83,20 +85,16 @@ class FunctionInlineMutator {
             applyRenaming();
             doDirectInline();
         } else {
-            replaceReturns();
+            processReturns();
             applyRenaming();
         }
     }
 
     private void replaceThis() {
-        if (!hasThisReference(body)) {
-            return;
-        }
+        if (!hasThisReference(body)) return;
 
-        JsExpression thisReplacement = inliningContext.getThisReplacement(call);
-        if (thisReplacement == JsLiteral.THIS) {
-            return;
-        }
+        JsExpression thisReplacement = getThisReplacement(call);
+        if (thisReplacement == null) return;
 
         if (needToAlias(thisReplacement)) {
             JsName thisName = renamingContext.getFreshName(getThisAlias());
@@ -149,7 +147,7 @@ class FunctionInlineMutator {
         }
 
         assert resultExpr == null || resultExpr instanceof JsNameRef;
-        ReplaceReturnVisitor.replaceReturn(body, (JsNameRef) resultExpr, breakLabelRef);
+        replaceReturns(body, (JsNameRef) resultExpr, breakLabelRef);
     }
 
     @NotNull
@@ -188,6 +186,24 @@ class FunctionInlineMutator {
         }
 
         return labelPrefix + "$";
+    }
+
+    @Nullable
+    private static JsExpression getThisReplacement(JsInvocation call) {
+        if (isCallInvocation(call)) {
+            return call.getArguments().get(0);
+        }
+
+        if (hasCallerQualifier(call)) {
+            return getCallerQualifier(call);
+        }
+
+        return null;
+    }
+
+    private static boolean hasThisReference(JsBlock body) {
+        List<JsLiteral.JsThisRef> thisRefs = collectInstances(JsLiteral.JsThisRef.class, body);
+        return !thisRefs.isEmpty();
     }
 
     private static boolean canBeExpression(JsBlock body) {
