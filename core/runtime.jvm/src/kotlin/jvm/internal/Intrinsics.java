@@ -102,6 +102,14 @@ public class Intrinsics {
             "throwParameterIsNullException"
     ));
 
+    private static void throwUndefinedForReified() {
+        throw new UnsupportedOperationException("You should not use functions with reified parameter without inline");
+    }
+
+    public static void reifyNewArray(int parameterTypeIndex) {
+        throwUndefinedForReified();
+    }
+
     public static <T extends Throwable> T sanitizeStackTrace(T throwable) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         ArrayList<StackTraceElement> list = new ArrayList<StackTraceElement>(stackTrace.length);
