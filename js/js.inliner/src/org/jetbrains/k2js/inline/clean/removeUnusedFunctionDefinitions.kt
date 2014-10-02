@@ -62,7 +62,7 @@ private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) 
             if (function.isLocal) {
                 processLocalFunction(name, function)
             } else {
-                processNonLocalFunction(name, function)
+                processNonLocalFunction(function)
             }
 
             processed.add(function)
@@ -101,8 +101,7 @@ private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) 
         }
     }
 
-    // TODO drop name param?
-    private fun processNonLocalFunction(name: JsName, function: JsFunction) {
+    private fun processNonLocalFunction(function: JsFunction) {
         for (referenced in collectFunctionReferencesInside(function)) {
             tracker.markReachable(referenced)
         }
