@@ -35,14 +35,10 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.junit.Assert;
 
 import java.util.*;
@@ -124,9 +120,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
         assertNotNull("Caret should be inside class or object", classOrObject);
 
         final JetFile jetFile = classOrObject.getContainingJetFile();
-        ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession(jetFile);
-        Set<CallableMemberDescriptor> descriptors =
-                handler.collectMethodsToGenerate(classOrObject, resolveSession.resolveToElement(classOrObject));
+        Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject);
 
         final CallableMemberDescriptor singleToOverride;
         if (memberToOverride == null) {
@@ -178,8 +172,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
         assertNotNull("Caret should be inside class or object", classOrObject);
 
         final JetFile jetFile = classOrObject.getContainingJetFile();
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
-        Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
+        Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject);
 
         final List<CallableMemberDescriptor> descriptorsList = new ArrayList<CallableMemberDescriptor>(descriptors);
         Collections.sort(descriptorsList, new Comparator<CallableMemberDescriptor>() {

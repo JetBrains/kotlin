@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class ImplementMethodsHandler extends OverrideImplementMethodsHandler implements IntentionAction {
     @Override
-    protected Set<CallableMemberDescriptor> collectMethodsToGenerate(ClassDescriptor descriptor) {
+    protected Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull ClassDescriptor descriptor) {
         return OverrideResolver.getMissingImplementations(descriptor);
     }
 

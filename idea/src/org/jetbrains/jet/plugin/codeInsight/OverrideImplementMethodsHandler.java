@@ -33,12 +33,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -207,15 +206,15 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     @NotNull
-    public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject, BindingContext bindingContext) {
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
+    public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject) {
+        DeclarationDescriptor descriptor = ResolvePackage.getLazyResolveSession(classOrObject).resolveToDescriptor(classOrObject);
         if (descriptor instanceof ClassDescriptor) {
             return collectMethodsToGenerate((ClassDescriptor) descriptor);
         }
         return Collections.emptySet();
     }
 
-    protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(ClassDescriptor descriptor);
+    protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull ClassDescriptor descriptor);
 
     private MemberChooser<DescriptorClassMember> showOverrideImplementChooser(
             Project project,
@@ -248,9 +247,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
         assert classOrObject != null : "ClassObject should be checked in isValidFor method";
 
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
-
-        Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject, bindingContext);
+        Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject);
         if (missingImplementations.isEmpty() && !implementAll) {
             HintManager.getInstance().showErrorHint(editor, getNoMethodsFoundHint());
             return;
