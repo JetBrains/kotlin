@@ -84,7 +84,10 @@ class FunctionInlineMutator {
         renameLocalNames(namingContext, invokedFunction);
 
         if (canBeExpression(body)) {
-            doDirectInline();
+            resultExpr = asExpression(body);
+            body.getStatements().clear();
+            /** JsExpression can be immutable, so need to reassign */
+            resultExpr = (JsExpression) namingContext.applyRenameTo(resultExpr);
         } else {
             processReturns();
             namingContext.applyRenameTo(body);
@@ -114,11 +117,6 @@ class FunctionInlineMutator {
         } else {
             doReplaceReturns(returnCount);
         }
-    }
-
-    private void doDirectInline() {
-        resultExpr = asExpression(body);
-        body.getStatements().clear();
     }
 
     private void doReplaceReturns(int returnCount) {
