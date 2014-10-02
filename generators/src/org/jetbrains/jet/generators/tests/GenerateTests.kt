@@ -126,6 +126,7 @@ import org.jetbrains.jet.completion.weighers.AbstractSmartCompletionWeigherTest
 import org.jetbrains.jet.generators.tests.reservedWords.generateTestDataForReservedWords
 import org.jetbrains.k2js.test.semantics.AbstractReservedWordTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveInJavaTest
+import org.jetbrains.k2js.test.semantics.AbstractBridgeTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -642,6 +643,12 @@ fun main(args: Array<String>) {
     testGroup("js/js.tests/test", "js/js.translator/testData") {
         testClass(javaClass<AbstractReservedWordTest>()) {
             model("reservedWords/cases")
+        }
+    }
+
+    testGroup("js/js.tests/test", "compiler/testData") {
+        testClass(javaClass<AbstractBridgeTest>()) {
+            model("codegen/box/bridges", targetBackend = TargetBackend.ONLY_JS)
         }
     }
 }
