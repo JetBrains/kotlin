@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -501,7 +502,7 @@ public class AsmUtil {
             return StackValue.cmp(opToken, leftType);
         }
 
-        v.invokestatic("kotlin/jvm/internal/Intrinsics", "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
+        v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
 
         if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
             genInvertBoolean(v);
@@ -578,7 +579,7 @@ public class AsmUtil {
             if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
                 v.load(index, asmType);
                 v.visitLdcInsn(parameter.getName().asString());
-                v.invokestatic("kotlin/jvm/internal/Intrinsics", "checkParameterIsNotNull",
+                v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkParameterIsNotNull",
                                "(Ljava/lang/Object;Ljava/lang/String;)V", false);
             }
         }
@@ -624,7 +625,7 @@ public class AsmUtil {
             v.dup();
             v.visitLdcInsn(descriptor.getContainingDeclaration().getName().asString());
             v.visitLdcInsn(descriptor.getName().asString());
-            v.invokestatic("kotlin/jvm/internal/Intrinsics", assertMethodToCall,
+            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, assertMethodToCall,
                            "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V", false);
         }
     }
