@@ -164,12 +164,17 @@ public final class RhinoUtils {
             versionToScope.put(version, parentScope);
         }
         else {
-            // reset declared modules
             NativeObject kotlin = (NativeObject) parentScope.get("Kotlin");
+            assert kotlin != null;
             NativeObject modules = (NativeObject) kotlin.get("modules");
+            assert modules != null;
+            String stdlibModuleName = "kotlin_lib_compiled";
+            NativeObject stdlibModule = (NativeObject) modules.get(stdlibModuleName);
 
-            modules.setAttributes("JS_TESTS", 0);
-            modules.remove("JS_TESTS");
+            NativeObject newModules = new NativeObject();
+            newModules.put(stdlibModuleName, newModules, stdlibModule);
+
+            kotlin.put("modules", kotlin, newModules);
         }
         return parentScope;
     }
