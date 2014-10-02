@@ -32,6 +32,7 @@ import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedFunctionD
 import static org.jetbrains.k2js.inline.FunctionInlineMutator.getInlineableCallReplacement;
 import static org.jetbrains.k2js.inline.util.UtilPackage.IdentitySet;
 import static org.jetbrains.k2js.inline.util.UtilPackage.collectNamedFunctions;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.flattenStatement;
 
 public class JsInliner extends JsVisitorWithContextImpl {
 
@@ -145,12 +146,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         /** @see #lastStatementWasShifted */
         statementContext.shiftCurrentStatementForward();
         InsertionPoint<JsStatement> insertionPoint = statementContext.getInsertionPoint();
-        if (inlineableBody instanceof JsBlock) {
-            JsBlock block = (JsBlock) inlineableBody;
-            insertionPoint.insertAllAfter(block.getStatements());
-        } else {
-            insertionPoint.insertAfter(inlineableBody);
-        }
+        insertionPoint.insertAllAfter(flattenStatement(inlineableBody));
     }
 
     /**

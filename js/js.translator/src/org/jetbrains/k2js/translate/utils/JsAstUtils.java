@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -455,5 +456,14 @@ public final class JsAstUtils {
             }
             qualifier = (JsNameRef) parent;
         }
+    }
+
+    @NotNull
+    public static List<JsStatement> flattenStatement(@NotNull JsStatement statement) {
+        if (statement instanceof JsBlock) {
+            return ((JsBlock) statement).getStatements();
+        }
+
+        return new SmartList<JsStatement>(statement);
     }
 }
