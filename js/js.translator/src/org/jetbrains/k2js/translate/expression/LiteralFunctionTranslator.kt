@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.descriptors.Visibilities
 import com.google.dart.compiler.backend.js.ast.JsVars.JsVar
 import org.jetbrains.k2js.translate.utils.JsAstUtils
 import com.intellij.util.SmartList
+import org.jetbrains.k2js.inline.util.getInnerFunction
 import org.jetbrains.jet.lang.types.lang.InlineUtil
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
@@ -177,12 +178,7 @@ private fun getFreshNamesInScope(scope: JsScope, suggested: List<JsName?>): List
     return freshNames.toList()
 }
 
-private fun JsFunction.getInnerFunction(): JsFunction? {
-    val outerStatements = this.getBody().getStatements()
-    val outerReturn = outerStatements.get(0) as? JsReturn
-    val innerFunction = outerReturn?.getExpression() as? JsFunction
 
-    return innerFunction
 }
 
 private fun JsFunction.addDeclaration(name: JsName, value: JsExpression?) {
