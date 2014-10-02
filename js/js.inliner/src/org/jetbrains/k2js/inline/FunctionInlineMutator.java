@@ -88,10 +88,12 @@ class FunctionInlineMutator {
         removeDefaultInitializers(arguments, parameters, body);
         aliasArgumentsIfNeeded(namingContext, arguments, parameters);
         renameLocalNames(namingContext, invokedFunction);
+        removeStatementsAfterTopReturn();
 
         if (canBeExpression(body)) {
             resultExpr = asExpression(body);
             body.getStatements().clear();
+
             /** JsExpression can be immutable, so need to reassign */
             resultExpr = (JsExpression) namingContext.applyRenameTo(resultExpr);
         } else {
@@ -113,6 +115,20 @@ class FunctionInlineMutator {
         }
 
         replaceThisReference(body, thisReplacement);
+    }
+
+    private void removeStatementsAfterTopReturn() {
+        List<JsStatement> statements = body.getStatements();
+
+        int statementsSize = statements.size();
+        for (int i = 0; i < statementsSize; i++) {
+            JsStatement statement = statements.get(i);
+
+            if (statement instanceof JsReturn) {
+                statements.subList(i + 1, statementsSize).clear();
+                break;
+            }
+        }
     }
 
     private void processReturns() {
