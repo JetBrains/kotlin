@@ -434,7 +434,7 @@ public class TypeUtils {
         if (TypesPackage.isFlexible(type) && isNullableType(TypesPackage.flexibility(type).getUpperBound())) {
             return true;
         }
-        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+        if (isTypeParameter(type)) {
             return hasNullableSuperType(type);
         }
         return false;
@@ -718,6 +718,18 @@ public class TypeUtils {
                 return substitutionContext.toString();
             }
         });
+    }
+
+    public static boolean isTypeParameter(@NotNull JetType type) {
+        return getTypeParameterDescriptorOrNull(type) != null;
+    }
+
+    @Nullable
+    public static TypeParameterDescriptor getTypeParameterDescriptorOrNull(@NotNull JetType type) {
+        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+            return (TypeParameterDescriptor) type.getConstructor().getDeclarationDescriptor();
+        }
+        return null;
     }
 
     private static abstract class AbstractTypeWithKnownNullability extends AbstractJetType {

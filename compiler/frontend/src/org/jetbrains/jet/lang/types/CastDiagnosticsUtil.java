@@ -47,7 +47,7 @@ public class CastDiagnosticsUtil {
         if (isRelated(lhsType, rhsType, platformToKotlinClassMap)) return true;
         // This is an oversimplification (which does not render the method incomplete):
         // we consider any type parameter capable of taking any value, which may be made more precise if we considered bounds
-        if (isTypeParameter(lhsType) || isTypeParameter(rhsType)) return true;
+        if (TypeUtils.isTypeParameter(lhsType) || TypeUtils.isTypeParameter(rhsType)) return true;
         if (isFinal(lhsType) || isFinal(rhsType)) return false;
         if (isTrait(lhsType) || isTrait(rhsType)) return true;
         return false;
@@ -97,10 +97,6 @@ public class CastDiagnosticsUtil {
         return result;
     }
 
-    private static boolean isTypeParameter(@NotNull JetType type) {
-        return type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor;
-    }
-
     private static boolean isFinal(@NotNull JetType type) {
         return !TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type);
     }
@@ -124,7 +120,7 @@ public class CastDiagnosticsUtil {
         if (typeChecker.isSubtypeOf(supertype, subtype)) return false;
 
         // downcasting to a type parameter is always erased
-        if (isTypeParameter(subtype)) return true;
+        if (TypeUtils.isTypeParameter(subtype)) return true;
 
         // Check that we are actually casting to a generic type
         // NOTE: this does not account for 'as Array<List<T>>'
