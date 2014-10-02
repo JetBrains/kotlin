@@ -33,87 +33,6 @@ import static org.jetbrains.k2js.inline.util.UtilPackage.IdentitySet;
 
 public class JsInliner extends JsVisitorWithContextImpl {
 
-    private class JsInliningContext implements InliningContext {
-        private final FunctionContext functionContext;
-
-        JsInliningContext(JsFunction function) {
-            functionContext = new FunctionContext(function, this) {
-                @Nullable
-                @Override
-                protected JsFunction lookUpStaticFunction(@Nullable JsName functionName) {
-                    return functions.get(functionName);
-                }
-            };
-        }
-
-        @NotNull
-        @Override
-        public <T extends JsNode> RenamingContext<T> getRenamingContext() {
-            return new RenamingContext<T>(getFunctionContext().getScope());
-        }
-
-        @NotNull
-        @Override
-        public StatementContext getStatementContext() {
-            return new StatementContext() {
-                @NotNull
-                @Override
-                public JsContext getCurrentStatementContext() {
-                    return getLastStatementLevelContext();
-                }
-
-                @NotNull
-                @Override
-                protected JsStatement getEmptyStatement() {
-                    return getFunctionContext().getEmpty();
-                }
-
-                @Override
-                public void shiftCurrentStatementForward() {
-                    super.shiftCurrentStatementForward();
-                    lastStatementWasShifted = true;
-                }
-            };
-        }
-
-        @NotNull
-        @Override
-        public FunctionContext getFunctionContext() {
-            return functionContext;
-        }
-
-        @NotNull
-        @Override
-        public JsExpression getThisReplacement(JsInvocation call) {
-            if (InvocationUtil.isCallInvocation(call)) {
-                return call.getArguments().get(0);
-            }
-
-            if (InvocationUtil.hasReceiver(call)) {
-                return InvocationUtil.getReceiver(call);
-            }
-
-            return JsLiteral.THIS;
-        }
-
-        @NotNull
-        @Override
-        public List<JsExpression> getArguments(JsInvocation call) {
-            List<JsExpression> arguments = call.getArguments();
-            if (InvocationUtil.isCallInvocation(call)) {
-                return arguments.subList(1, arguments.size());
-            }
-
-            return arguments;
-        }
-
-        @Override
-        public boolean isResultNeeded(JsInvocation call) {
-            JsStatement currentStatement = getStatementContext().getCurrentStatement();
-            return InvocationUtil.isResultUsed(currentStatement, call);
-        }
-    }
-
     private final IdentityHashMap<JsName, JsFunction> functions;
     private final Stack<JsInliningContext> inliningContexts = new Stack<JsInliningContext>();
     private final Set<JsFunction> processedFunctions = IdentitySet();
@@ -264,5 +183,58 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     private static boolean shouldInline(@NotNull JsInvocation call) {
         return call.getInlineStrategy().isInline();
+    }
+
+
+    private class JsInliningContext implements InliningContext {
+        private final FunctionContext functionContext;
+
+        JsInliningContext(JsFunction function) {
+            functionContext = new FunctionContext(function, this) {
+                @Nullable
+                @Override
+                protected JsFunction lookUpStaticFunction(@Nullable JsName functionName) {
+                    return functions.get(functionName);
+                }
+            };
+        }
+
+        @NotNull
+        @Override
+        public NamingContext newNamingContext() {
+            JsScope scope = getFunctionContext().getScope();
+            InsertionPoint<JsStatement> insertionPoint = getStatementContext().getInsertionPoint();
+            return new NamingContext(scope, insertionPoint);
+        }
+
+        @NotNull
+        @Override
+        public StatementContext getStatementContext() {
+            return new StatementContext() {
+                @NotNull
+                @Override
+                public JsContext getCurrentStatementContext() {
+                    return getLastStatementLevelContext();
+                }
+
+                @NotNull
+                @Override
+                protected JsStatement getEmptyStatement() {
+                    return getFunctionContext().getEmpty();
+                }
+
+                @Override
+                public void shiftCurrentStatementForward() {
+                    super.shiftCurrentStatementForward();
+                    lastStatementWasShifted = true;
+                }
+            };
+        }
+
+        @NotNull
+        @Override
+        public FunctionContext getFunctionContext() {
+            return functionContext;
+        }
     }
 }
