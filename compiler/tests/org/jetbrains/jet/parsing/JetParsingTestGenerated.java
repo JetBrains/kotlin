@@ -118,6 +118,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("CommentsBinding.kt")
+        public void testCommentsBinding() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/CommentsBinding.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("Constructors.kt")
         public void testConstructors() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Constructors.kt");

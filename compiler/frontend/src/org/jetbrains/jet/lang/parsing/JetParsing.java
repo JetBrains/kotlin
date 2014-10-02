@@ -209,6 +209,7 @@ public class JetParsing extends AbstractJetParsing {
             packageDirective = mark();
         }
         packageDirective.done(PACKAGE_DIRECTIVE);
+        packageDirective.setCustomEdgeTokenBinders(null, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
 
         parseImportDirectives();
     }
@@ -314,6 +315,7 @@ public class JetParsing extends AbstractJetParsing {
         }
         consumeIf(SEMICOLON);
         importDirective.done(IMPORT_DIRECTIVE);
+        importDirective.setCustomEdgeTokenBinders(null, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
     }
 
     private boolean closeImportWithErrorIfNewline(PsiBuilder.Marker importDirective, String errorMessage) {
@@ -381,6 +383,7 @@ public class JetParsing extends AbstractJetParsing {
         }
         else {
             decl.done(declType);
+            decl.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
         }
     }
 
@@ -681,6 +684,8 @@ public class JetParsing extends AbstractJetParsing {
             }
             else {
                 entryOrMember.done(type);
+                entryOrMember.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$,
+                                                        TrailingWhitespacesAndCommentsBinder.INSTANCE$);
             }
         }
 
@@ -701,6 +706,8 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker nameAsDeclaration = mark();
         advance(); // IDENTIFIER
         nameAsDeclaration.done(OBJECT_DECLARATION_NAME);
+        nameAsDeclaration.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$,
+                                                    TrailingWhitespacesAndCommentsBinder.INSTANCE$);
 
         if (at(COLON)) {
             advance(); // COLON
@@ -771,6 +778,7 @@ public class JetParsing extends AbstractJetParsing {
         }
         else {
             decl.done(declType);
+            decl.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
         }
     }
 
@@ -869,6 +877,8 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker objectDeclaration = mark();
         parseObject(false, true);
         objectDeclaration.done(OBJECT_DECLARATION);
+        objectDeclaration.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$,
+                                                    TrailingWhitespacesAndCommentsBinder.INSTANCE$);
 
         return CLASS_OBJECT;
     }
@@ -1888,6 +1898,7 @@ public class JetParsing extends AbstractJetParsing {
                         parseModifierList(MODIFIER_LIST, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS); // lazy, out, ref
                         parseTypeRef();
                         valueParameter.done(VALUE_PARAMETER);
+                        valueParameter.setCustomEdgeTokenBinders(null, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
                     }
                 }
                 else {
@@ -1938,6 +1949,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         parameter.done(VALUE_PARAMETER);
+        parameter.setCustomEdgeTokenBinders(null, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
         return true;
     }
 

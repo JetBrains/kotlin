@@ -1,0 +1,391 @@
+JetFile: CommentsBinding.kt
+  PsiComment(BLOCK_COMMENT)('/*\n * Copyright 2010-2014 JetBrains s.r.o.\n */')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+      PsiElement(DOT)('.')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace(' ')
+    PsiComment(EOL_COMMENT)('// package directive')
+  PsiWhiteSpace('\n\n')
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('java')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('util')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('// we need classes from java.util')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('javax')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('// and from here too')
+    PsiWhiteSpace('\n\n')
+    PsiComment(EOL_COMMENT)('// other imports')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('b')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('c')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('d')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' Doc comment for A')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// after class A')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// comment for B 1')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// comment for B 2')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('B')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+    PsiWhiteSpace(' ')
+    PsiComment(EOL_COMMENT)('// end of class B')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(BLOCK_COMMENT)('/* Simple comment */')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('C')
+    PsiWhiteSpace(' ')
+    PsiComment(EOL_COMMENT)('// no body')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('D')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiComment(EOL_COMMENT)('// This is v1')
+        PsiWhiteSpace('\n    ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('v1')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace(' ')
+        PsiComment(EOL_COMMENT)('// use 1')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        KDoc
+          PsiElement(KDOC_START)('/**')
+          PsiElement(KDOC_TEXT)(' v2 doc comment ')
+          PsiElement(KDOC_END)('*/')
+        PsiWhiteSpace('\n    ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('v2')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('2')
+      PsiWhiteSpace('\n\n    ')
+      FUN
+        PsiComment(EOL_COMMENT)('// Function foo()')
+        PsiWhiteSpace('\n    ')
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiComment(BLOCK_COMMENT)('/* parameters */')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('p1')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+            PsiComment(BLOCK_COMMENT)('/* p1 */')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('p2')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+            PsiWhiteSpace(' ')
+            PsiComment(BLOCK_COMMENT)('/* p2 */')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        PsiComment(EOL_COMMENT)('// end of foo')
+      PsiWhiteSpace('\n\n    ')
+      CLASS_OBJECT
+        PsiComment(EOL_COMMENT)('// class object')
+        PsiWhiteSpace('\n    ')
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        OBJECT_DECLARATION
+          PsiElement(object)('object')
+          PsiWhiteSpace(' ')
+          CLASS_BODY
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n    ')
+            PsiElement(RBRACE)('}')
+          PsiWhiteSpace(' ')
+          PsiComment(EOL_COMMENT)('// end of class object')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiComment(EOL_COMMENT)('// This is v')
+    PsiWhiteSpace('\n')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('v')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+    PsiWhiteSpace(' ')
+    PsiComment(EOL_COMMENT)('// one')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiComment(EOL_COMMENT)('// This is fun')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(public)('public')
+    PsiWhiteSpace(' ')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('local')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace(' ')
+        PsiComment(EOL_COMMENT)('// this is local')
+      PsiWhiteSpace('\n    ')
+      PsiComment(EOL_COMMENT)('// declare another local')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('local2')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('2')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+    PsiWhiteSpace(' ')
+    PsiComment(EOL_COMMENT)('// end')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('E')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('A')
+          PsiWhiteSpace(' ')
+          PsiComment(EOL_COMMENT)('// this is A')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          KDoc
+            PsiElement(KDOC_START)('/**')
+            PsiElement(KDOC_TEXT)(' This is B ')
+            PsiElement(KDOC_END)('*/')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('B')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        PsiComment(BLOCK_COMMENT)('/* And this is C */')
+        PsiWhiteSpace(' ')
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('C')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          KDoc
+            PsiElement(KDOC_START)('/**')
+            PsiElement(KDOC_TEXT)(' This is X ')
+            PsiElement(KDOC_END)('*/')
+          PsiWhiteSpace('\n    ')
+          PsiElement(IDENTIFIER)('X')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          FUN
+            MODIFIER_LIST
+              PsiElement(override)('override')
+            PsiWhiteSpace(' ')
+            PsiElement(fun)('fun')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('toString')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              LITERAL_STRING_TEMPLATE_ENTRY
+                PsiElement(REGULAR_STRING_PART)('X')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        PsiComment(EOL_COMMENT)('// end of X')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(var)('var')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('prop')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiComment(EOL_COMMENT)('// Int')
+    PsiWhiteSpace('\n  ')
+    PROPERTY_ACCESSOR
+      PsiElement(get)('get')
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+    PsiWhiteSpace(' ')
+    PsiComment(EOL_COMMENT)('// this is getter')
+    PsiWhiteSpace('\n  ')
+    PROPERTY_ACCESSOR
+      PsiElement(set)('set')
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('value')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+    PsiWhiteSpace(' ')
+    PsiComment(EOL_COMMENT)('// this is setter')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('prop2')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PROPERTY_ACCESSOR
+      PsiElement(get)('get')
+      PsiErrorElement:Accessor body expected
+        <empty list>
+      PsiErrorElement:Expecting '('
+        <empty list>
+      PsiErrorElement:Expecting ')'
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+    PsiWhiteSpace(' ')
+    PsiComment(EOL_COMMENT)('// prop2')

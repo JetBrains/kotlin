@@ -26,9 +26,9 @@ JetFile: FunctionsAndTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('X')
   PsiWhiteSpace('\n')
-  PsiComment(EOL_COMMENT)('// type f1 = {(T) => X}')
-  PsiWhiteSpace('\n')
   TYPEDEF
+    PsiComment(EOL_COMMENT)('// type f1 = {(T) => X}')
+    PsiWhiteSpace('\n')
     PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f2')
@@ -60,9 +60,9 @@ JetFile: FunctionsAndTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('X')
   PsiWhiteSpace('\n')
-  PsiComment(EOL_COMMENT)('// type f2 = {(T, E) => X}')
-  PsiWhiteSpace('\n')
   TYPEDEF
+    PsiComment(EOL_COMMENT)('// type f2 = {(T, E) => X}')
+    PsiWhiteSpace('\n')
     PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f_tuple')
@@ -102,9 +102,9 @@ JetFile: FunctionsAndTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('X')
   PsiWhiteSpace('\n')
-  PsiComment(EOL_COMMENT)('//type f_tuple = {((T, E)) => X}')
-  PsiWhiteSpace('\n')
   TYPEDEF
+    PsiComment(EOL_COMMENT)('//type f_tuple = {((T, E)) => X}')
+    PsiWhiteSpace('\n')
     PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('hof')
@@ -142,9 +142,9 @@ JetFile: FunctionsAndTypes.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Y')
   PsiWhiteSpace('\n')
-  PsiComment(EOL_COMMENT)('//type hof = { (X) => {(T) => Y} }')
-  PsiWhiteSpace('\n')
   TYPEDEF
+    PsiComment(EOL_COMMENT)('//type hof = { (X) => {(T) => Y} }')
+    PsiWhiteSpace('\n')
     PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('hof2')
@@ -246,9 +246,9 @@ JetFile: FunctionsAndTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
   PsiWhiteSpace('\n')
-  PsiComment(EOL_COMMENT)('//type Comparison<in T> = {(a : T, b : T) => Int}')
-  PsiWhiteSpace('\n')
   TYPEDEF
+    PsiComment(EOL_COMMENT)('//type Comparison<in T> = {(a : T, b : T) => Int}')
+    PsiWhiteSpace('\n')
     PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Equality')
@@ -296,9 +296,9 @@ JetFile: FunctionsAndTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Boolean')
   PsiWhiteSpace('\n')
-  PsiComment(EOL_COMMENT)('//type Equality<in T> = {(a : T, b : T) => Boolean}')
-  PsiWhiteSpace('\n')
   TYPEDEF
+    PsiComment(EOL_COMMENT)('//type Equality<in T> = {(a : T, b : T) => Boolean}')
+    PsiWhiteSpace('\n')
     PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('HashFunction')
@@ -335,9 +335,9 @@ JetFile: FunctionsAndTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
   PsiWhiteSpace('\n')
-  PsiComment(EOL_COMMENT)('//type HashFunction<in T> = {(obj : T) => Int}')
-  PsiWhiteSpace('\n')
   TYPEDEF
+    PsiComment(EOL_COMMENT)('//type HashFunction<in T> = {(obj : T) => Int}')
+    PsiWhiteSpace('\n')
     PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Runnable')
@@ -357,9 +357,9 @@ JetFile: FunctionsAndTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n')
-  PsiComment(EOL_COMMENT)('//type Runnable = {() => ()}')
-  PsiWhiteSpace('\n')
   TYPEDEF
+    PsiComment(EOL_COMMENT)('//type Runnable = {() => ()}')
+    PsiWhiteSpace('\n')
     PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Function1')

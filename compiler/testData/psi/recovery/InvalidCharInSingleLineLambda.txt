@@ -1,9 +1,9 @@
 JetFile: InvalidCharInSingleLineLambda.kt
-  PsiComment(EOL_COMMENT)('// checks that invalid characters (inserted e.g. by completion) inside single-line block do not cause wrong scopes for declarations below')
-  PsiWhiteSpace('\n')
   PACKAGE_DIRECTIVE
     <empty list>
   FUN
+    PsiComment(EOL_COMMENT)('// checks that invalid characters (inserted e.g. by completion) inside single-line block do not cause wrong scopes for declarations below')
+    PsiWhiteSpace('\n')
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')

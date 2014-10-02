@@ -409,9 +409,9 @@ JetFile: FunctionsWithFunctionReceivers.kt
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  PsiComment(EOL_COMMENT)('//--------------')
-  PsiWhiteSpace('\n')
   FUN
+    PsiComment(EOL_COMMENT)('//--------------')
+    PsiWhiteSpace('\n')
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')

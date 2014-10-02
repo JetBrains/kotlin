@@ -959,6 +959,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         if (declType != null) {
             decl.done(declType);
+            decl.setCustomEdgeTokenBinders(null/* for local declaration we do not take preceding comments*/,
+                                           TrailingWhitespacesAndCommentsBinder.INSTANCE$);
             return true;
         }
         else {

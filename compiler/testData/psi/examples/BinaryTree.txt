@@ -1596,9 +1596,9 @@ JetFile: BinaryTree.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      PsiComment(EOL_COMMENT)('// Relies on tail-recursion optimization')
-      PsiWhiteSpace('\n  ')
       FUN
+        PsiComment(EOL_COMMENT)('// Relies on tail-recursion optimization')
+        PsiWhiteSpace('\n  ')
         MODIFIER_LIST
           PsiElement(private)('private')
         PsiWhiteSpace(' ')
