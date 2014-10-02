@@ -137,25 +137,4 @@ public class JavaToKotlinActionUtil {
         }
         return null;
     }
-
-    static void renameFiles(@NotNull List<PsiJavaFile> psiFiles) {
-        for (final PsiFile psiFile : psiFiles) {
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        PsiManager manager = psiFile.getManager();
-                        VirtualFile vFile = psiFile.getVirtualFile();
-                        if (vFile != null) {
-                            vFile.copy(manager, vFile.getParent(), vFile.getNameWithoutExtension() + ".java.old");
-                            vFile.delete(manager);
-                        }
-                    }
-                    catch (IOException e) {
-                        MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater();
-                    }
-                }
-            });
-        }
-    }
 }
