@@ -22,6 +22,7 @@ import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
 import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
+import org.jetbrains.jet.lang.resolve.BindingContext
 
 object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -55,9 +56,9 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionF
 
         val receiverType = when (receiver) {
             ReceiverValue.NO_RECEIVER -> TypeInfo.Empty
-            is Qualifier -> when {
-                receiver.classifier != null -> TypeInfo(receiver.expression, Variance.IN_VARIANCE)
-                else -> return null
+            is Qualifier -> {
+                val qualifierType = context[BindingContext.EXPRESSION_TYPE, receiver.expression] ?: return null
+                TypeInfo(qualifierType, Variance.IN_VARIANCE)
             }
             else -> TypeInfo(receiver.getType(), Variance.IN_VARIANCE)
         }

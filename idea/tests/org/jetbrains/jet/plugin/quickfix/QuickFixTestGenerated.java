@@ -760,6 +760,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("beforeFunOnClassNoClassObject.kt")
+                public void testFunOnClassNoClassObject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunOnClassNoClassObject.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("beforeFunOnClassObject.kt")
                 public void testFunOnClassObject() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunOnClassObject.kt");
@@ -1538,6 +1544,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforeTopLevelValNoReceiver.kt")
                 public void testTopLevelValNoReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeTopLevelValNoReceiver.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeValOnClassNoClassObject.kt")
+                public void testValOnClassNoClassObject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeValOnClassNoClassObject.kt");
                     doTest(fileName);
                 }
                 
