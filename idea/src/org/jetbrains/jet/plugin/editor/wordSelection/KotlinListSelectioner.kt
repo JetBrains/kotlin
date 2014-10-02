@@ -30,7 +30,7 @@ import org.jetbrains.jet.lexer.JetTokens
 
 import java.util.Arrays
 
-public class JetListSelectioner : BasicSelectioner() {
+public class KotlinListSelectioner : BasicSelectioner() {
     override fun canSelect(e: PsiElement)
             = e is JetParameterList || e is JetValueArgumentList || e is JetTypeParameterList || e is JetTypeArgumentList
 
