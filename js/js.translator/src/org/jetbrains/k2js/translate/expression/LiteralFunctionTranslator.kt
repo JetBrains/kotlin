@@ -128,8 +128,7 @@ private fun moveCapturedLocalInside(capturingFunction: JsFunction, capturedName:
     when (localFunAlias) {
         is JsNameRef -> {
             /** Local inline function does not capture anything, so just move alias inside */
-            capturedName.setStaticRef(localFunAlias)
-            capturingFunction.getInnerFunction()?.addDeclaration(capturedName, localFunAlias)
+            declareAliasInsideFunction(capturingFunction, capturedName, localFunAlias)
             CapturedArgsParams()
         }
         is JsInvocation ->
@@ -157,28 +156,35 @@ private fun moveCapturedLocalInside(capturingFunction: JsFunction, capturedName:
     val capturedArgs = localFunAlias.getArguments()
 
     val scope = capturingFunction.getInnerFunction()?.getScope()!!
-    val names = capturedArgs.map {(it as JsNameRef).getName()}
-    val freshNames = getFreshNamesInScope(scope, names)
+    val freshNames = getFreshNamesInScope(scope, capturedArgs)
 
     val aliasCallArguments = freshNames.map { it.makeRef() }
     val alias = JsInvocation(localFunAlias.getQualifier(), aliasCallArguments)
-
-    capturedName.setStaticRef(alias)
-    capturingFunction.getInnerFunction()?.addDeclaration(capturedName, alias)
+    declareAliasInsideFunction(capturingFunction, capturedName, alias)
 
     val capturedParameters = freshNames.map {JsParameter(it)}
     return CapturedArgsParams(capturedArgs, capturedParameters)
 }
 
-private fun getFreshNamesInScope(scope: JsScope, suggested: List<JsName?>): List<JsName> {
-    val suggestedNames = suggested.stream().filterNotNull()
-    val suggestedIdents = suggestedNames.map { it.getIdent() }
-    val freshNames = suggestedIdents.map { scope.declareFreshName(it) }
-
-    return freshNames.toList()
+private fun declareAliasInsideFunction(function: JsFunction, name: JsName, alias: JsExpression) {
+    name.setStaticRef(alias)
+    function.getInnerFunction()?.addDeclaration(name, alias)
 }
 
+private fun getFreshNamesInScope(scope: JsScope, suggested: List<JsExpression>): List<JsName> {
+    val freshNames = arrayListOf<JsName>()
 
+    for (suggestion in suggested) {
+        if (suggestion !is JsNameRef) {
+            throw AssertionError("Expected suggestion to be JsNameRef")
+        }
+
+        val ident = suggestion.getIdent()
+        val name = scope.declareFreshName(ident)
+        freshNames.add(name)
+    }
+
+    return freshNames
 }
 
 private fun JsFunction.addDeclaration(name: JsName, value: JsExpression?) {
