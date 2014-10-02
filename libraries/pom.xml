@@ -48,7 +48,6 @@
         <junit-version>4.10</junit-version>
         <kotlin-maven-plugin.version>0.2.3.8</kotlin-maven-plugin.version>
         <kotlin-dist>${project-root}/dist</kotlin-dist>
-        <kotlin-js-lib-srcdir>${project-root}/js/js.libraries/src</kotlin-js-lib-srcdir>
         <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>

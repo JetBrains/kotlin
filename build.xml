@@ -1,4 +1,6 @@
 <project name="Kotlin" default="dist">
+    <include file="jslib_files.xml" />
+
     <property file="resources/manifest.properties"/>
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
@@ -216,42 +218,14 @@
     </target>
 
     <target name="jslib">
-        <path id="js.lib">
-            <fileset dir="${basedir}/js/js.libraries/src">
-                <include name="**/*.kt" />
-            </fileset>
-
-            <fileset dir="${basedir}/core/reflection/src">
-                <include name="kotlin/**"/>
-            </fileset>
-
-            <fileset dir="${basedir}/libraries/stdlib/src">
-                <include name="**/*.kt" />
-
-                <!-- JVM specific -->
-                <exclude name="**/*JVM.kt" />
-                <exclude name="kotlin/jvm/**" />
-                <exclude name="kotlin/beans/**" />
-                <exclude name="kotlin/browser/**" />
-                <exclude name="kotlin/concurrent/**" />
-                <exclude name="kotlin/io/**" />
-                <exclude name="kotlin/math/**" />
-                <exclude name="kotlin/template/**" />
-                <exclude name="kotlin/util/**" />
-
-                <!-- Temporary disabled -->
-                <!--TODO fix: (84, 27) Unresolved reference: copyOf (_SpecialJVM.kt)-->
-                <exclude name="kotlin/collections/ImmutableArrayList.kt" />
-
-                <!-- TODO fix: AllModules is subclass of ThreadLocal. -->
-                <exclude name="kotlin/modules/**" />
-            </fileset>
-        </path>
-
-        <kotlin2js srcRef="js.lib" output="${basedir}/js/js.translator/testData/kotlin_lib_compiled.js" main="noCall" />
+        <kotlin2js output="${basedir}/js/js.translator/testData/kotlin_lib_compiled.js" main="noCall">
+            <src>
+                <resources refid="js.lib.files" />
+            </src>
+        </kotlin2js>
 
         <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar">
-            <path refid="js.lib" />
+            <resources refid="js.lib.files" />
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>

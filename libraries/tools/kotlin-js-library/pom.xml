@@ -27,73 +27,7 @@
                         <phase>process-sources</phase>
                         <configuration>
                             <target>
-                                <delete dir="${project.build.directory}/classes" failonerror="false" />
-                                <delete dir="${project.build.directory}/generated-js-library" failonerror="false" />
-                                <delete dir="${project.build.directory}/generated-js-definitions" failonerror="false" />
-
-                                <mkdir dir="${basedir}/target/generated-js-library"/>
-                                <mkdir dir="${basedir}/target/generated-js-definitions"/>
-                                <copy todir="${basedir}/target/generated-js-definitions">
-                                    <fileset dir="${kotlin-js-lib-srcdir}">
-                                        <exclude name="**/*Code.kt"/>
-                                        <exclude name="core/dom/core.kt"/>
-                                    </fileset>
-                                    <fileset dir="${basedir}/../../../core/reflection/src">
-                                        <include name="kotlin/**"/>
-                                    </fileset>
-                                </copy>
-                                <copy todir="${basedir}/target/generated-js-library">
-                                    <fileset dir="${kotlin-js-lib-srcdir}">
-                                        <include name="**/*Code.kt"/>
-                                    </fileset>
-                                </copy>
-                                <copy todir="${basedir}/target/generated-js-library/kotlin">
-                                    <fileset dir="${basedir}/../../stdlib/src/kotlin/dom">
-                                        <include name="**/*.kt"/>
-                                        <exclude name="**/*JVM.kt"/>
-                                    </fileset>
-                                    <fileset dir="${basedir}/../../stdlib/src/kotlin/test">
-                                        <include name="**/*.kt"/>
-                                        <exclude name="**/*JVM.kt"/>
-                                    </fileset>
-                                    <fileset dir="${basedir}/../../stdlib/src/kotlin">
-                                        <include name="Preconditions.kt"/>
-                                        <include name="Functions.kt"/>
-                                        <include name="Integers.kt"/>
-                                        <include name="collections/AbstractIterator.kt"/>
-                                        <include name="collections/Iterators.kt"/>
-                                        <include name="collections/Arrays.kt"/>
-                                        <include name="collections/JUtil.kt"/>
-                                        <include name="collections/Maps.kt"/>
-                                        <include name="collections/Exceptions.kt"/>
-                                        <include name="collections/Stream.kt"/>
-                                        <include name="collections/MutableCollections.kt"/>
-                                        <include name="Functions.kt"/>
-<!--
-                                        <include name="Ordering.kt"/>
--->
-                                        <include name="Standard.kt"/>
-                                        <include name="text/Strings.kt"/>
-                                        <include name="text/StringBuilder.kt"/>
-                                    </fileset>
-                                    <fileset dir="${basedir}/../../stdlib/src/generated">
-                                        <include name="*.kt"/>
-                                        <exclude name="*JVM.kt"/>
-                                        <exclude name="DownTo.kt"/>
-<!--
-                                        <include name="IteratorsFromJLangIterables.kt"/>
-                                        <include name="IterablesFromCollections.kt"/>
--->
-                                    </fileset>
-                                </copy>
-                                <copy tofile="${basedir}/target/generated-js-library/kotlin-maps.js"
-                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testData/maps.js"/>
-                                <copy tofile="${basedir}/target/generated-js-library/kotlin-long.js"
-                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testData/long.js"/>
-                                <copy tofile="${basedir}/target/generated-js-library/kotlin-lib.js"
-                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testData/kotlin_lib.js"/>
-                               <copy tofile="${basedir}/target/generated-js-library/kotlin-lib-ecma5.js"
-                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testData/kotlin_lib_ecma5.js"/>
+                                <ant antfile="${basedir}/build.xml" dir="${project-root}"/>
                             </target>
                         </configuration>
                         <goals>
