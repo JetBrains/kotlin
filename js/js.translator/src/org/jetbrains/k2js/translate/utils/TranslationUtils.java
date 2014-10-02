@@ -137,13 +137,17 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static String getJetTypeFqName(@NotNull JetType jetType, boolean printTypeArguments) {
+    public static String getJetTypeFqName(@NotNull JetType jetType, final boolean printTypeArguments) {
         ClassifierDescriptor declaration = jetType.getConstructor().getDeclarationDescriptor();
         assert declaration != null;
 
         if (declaration instanceof TypeParameterDescriptor) {
-            TypeParameterDescriptor typeParameter = (TypeParameterDescriptor) declaration;
-            return getJetTypeFqName(typeParameter.getUpperBoundsAsType(), printTypeArguments);
+            return StringUtil.join(((TypeParameterDescriptor) declaration).getUpperBounds(), new Function<JetType, String>() {
+                @Override
+                public String fun(JetType type) {
+                    return getJetTypeFqName(type, printTypeArguments);
+                }
+            }, "&");
         }
 
         List<TypeProjection> typeArguments = jetType.getArguments();
