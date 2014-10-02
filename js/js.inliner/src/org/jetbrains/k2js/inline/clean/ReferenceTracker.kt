@@ -25,7 +25,7 @@ import java.util.ArrayList
 private class ReferenceTracker<Reference, RemoveCandidate : JsNode> {
     private val reachable = IdentityHashMap<Reference, Boolean>()
     private val removableCandidates = IdentityHashMap<Reference, RemoveCandidate>()
-    private val refereceFromTo = IdentityHashMap<Reference, MutableList<Reference>>()
+    private val refereceFromTo = IdentityHashMap<Reference, MutableSet<Reference>>()
     private val visited = IdentitySet<Reference>()
 
     public val removable: List<RemoveCandidate>
@@ -65,8 +65,8 @@ private class ReferenceTracker<Reference, RemoveCandidate : JsNode> {
         reachable[reference] = true
     }
 
-    private fun getReferencedBy(referer: Reference): MutableList<Reference> {
-        return refereceFromTo.getOrPut(referer, { ArrayList<Reference>() })
+    private fun getReferencedBy(referer: Reference): MutableSet<Reference> {
+        return refereceFromTo.getOrPut(referer, { IdentitySet<Reference>() })
     }
 
     private fun isKnown(ref: Reference): Boolean {

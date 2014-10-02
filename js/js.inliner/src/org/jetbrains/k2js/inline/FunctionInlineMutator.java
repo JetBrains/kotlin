@@ -23,6 +23,7 @@ import org.jetbrains.k2js.inline.context.*;
 import static org.jetbrains.k2js.inline.util.UtilPackage.collectInstances;
 import static org.jetbrains.k2js.inline.util.UtilPackage.replaceReturns;
 import static org.jetbrains.k2js.inline.util.UtilPackage.replaceThisReference;
+import static org.jetbrains.k2js.inline.clean.CleanPackage.removeDefaultInitializers;
 
 import static org.jetbrains.k2js.inline.InlinePackage.*;
 
@@ -78,7 +79,7 @@ class FunctionInlineMutator {
         List<JsParameter> parameters = getParameters();
 
         replaceThis();
-        removeRedundantDefaultInitializers(arguments, parameters, body);
+        removeDefaultInitializers(arguments, parameters, body);
         aliasArgumentsIfNeeded(namingContext, arguments, parameters);
         renameLocalNames(namingContext, invokedFunction);
 

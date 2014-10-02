@@ -16,17 +16,24 @@
 
 package org.jetbrains.k2js.inline.clean
 
-import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.JsVisitorWithContextImpl
+import com.google.dart.compiler.backend.js.ast.JsNode
+import com.google.dart.compiler.backend.js.ast.JsContext
 
-private class GenericRemover<T : JsNode>(removable: Collection<T> = listOf()) : NodeRemovingVisitor<T>(removable) {
+private class NodeRemover<T>(val klass: Class<T>, val predicate: (T) -> Boolean): JsVisitorWithContextImpl() {
 
     override fun <T : JsNode?> doTraverse(node: T?, ctx: JsContext?) {
-        if (node == null) return
+        if (node == null || ctx == null) return
 
-        if (shouldRemove(node)) {
-            ctx?.removeMe()
-        } else {
-            super.doTraverse(node, ctx)
+        if (klass.isInstance(node)) {
+            val instance = klass.cast(node)!!
+
+            if (predicate(instance)) {
+                ctx.removeMe()
+                return
+            }
         }
+
+        super.doTraverse(node, ctx)
     }
 }

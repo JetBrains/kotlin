@@ -20,27 +20,36 @@ import com.google.dart.compiler.backend.js.ast.*
 
 import java.util.ArrayList
 import java.util.IdentityHashMap
+import org.jetbrains.k2js
 
-public fun removeUnusedLocalFunctionInstances(root: JsNode) {
+/**
+ * Removes unused local function declarations like:
+ *  var inc = _.foo.f$inc(a)
+ *
+ * Declaration can become unused, if inlining happened.
+ */
+public fun removeUnusedLocalFunctionDeclarations(root: JsNode) {
     val removable =
             with(UnusedInstanceCollector()) {
                 accept(root)
-                removableInstances
+                removableDeclarations
             }
 
-    GenericRemover(removable).accept(root)
+    NodeRemover(javaClass<JsStatement>()) {
+        it in removable
+    }.accept(root)
 }
 
 private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
     private val tracker = ReferenceTracker<JsName, JsStatement>()
 
-    public val removableInstances: List<JsStatement>
+    public val removableDeclarations: List<JsStatement>
         get() = tracker.removable
 
     override fun visit(x: JsVars.JsVar?, ctx: JsContext?): Boolean {
         if (x == null) return false
 
-        if (!isLocalFunctionInstance(x)) return super.visit(x, ctx)
+        if (!isLocalFunctionDeclaration(x)) return super.visit(x, ctx)
 
         val name = x.getName()!!
         val statementContext = getLastStatementLevelContext()
@@ -49,7 +58,7 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
         val currentStatement = currentNode as JsStatement
         tracker.addCandidateForRemoval(name, currentStatement)
 
-        val references = collectReferencesInside(x)
+        val references = k2js.inline.util.collectReferencesInside(x)
         references.filterNotNull()
                   .forEach { tracker.addRemovableReference(name, it) }
 
@@ -66,7 +75,7 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
         return false
     }
 
-    private fun isLocalFunctionInstance(jsVar: JsVars.JsVar): Boolean {
+    private fun isLocalFunctionDeclaration(jsVar: JsVars.JsVar): Boolean {
         val name = jsVar.getName()
         val expr = jsVar.getInitExpression()
         val staticRef = name?.getStaticRef()

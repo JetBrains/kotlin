@@ -21,17 +21,28 @@ import org.jetbrains.k2js.inline.util.IdentitySet
 
 import com.intellij.util.containers.Stack
 import java.util.IdentityHashMap
+import org.jetbrains.k2js
+import org.jetbrains.k2js.inline.util.collectReferencesInside
+import org.jetbrains.k2js.inline.util.collectFunctionReferencesInside
 
-public fun removeUnusedLocalFunctions(root: JsNode, functions: Map<JsName, JsFunction>) {
+/**
+ * Removes unused function definitions:
+ *  f: function() { return 10 }
+ *
+ * At now, it only removes unused local functions and function literals,
+ * because named functions can be referenced from another module.
+ */
+public fun removeUnusedFunctionDefinitions(root: JsNode, functions: Map<JsName, JsFunction>) {
     val removable = with(UnusedLocalFunctionsCollector(functions)) {
         process()
         accept(root)
         removableFunctions
     }
 
-    with(FunctionRemover(removable)) {
-        accept(root)
-    }
+    NodeRemover(javaClass<JsPropertyInitializer>()) {
+        val function = it.getValueExpr() as? JsFunction
+        function in removable
+    }.accept(root)
 }
 
 private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) : JsVisitorWithContextImpl() {

@@ -27,8 +27,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.List;
 
-import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedLocalFunctionInstances;
-import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedLocalFunctions;
+import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedLocalFunctionDeclarations;
+import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedFunctionDefinitions;
 import static org.jetbrains.k2js.inline.FunctionInlineMutator.getInlineableCallReplacement;
 import static org.jetbrains.k2js.inline.util.UtilPackage.IdentitySet;
 import static org.jetbrains.k2js.inline.util.UtilPackage.collectNamedFunctions;
@@ -74,7 +74,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         IdentityHashMap<JsName, JsFunction> functions = collectNamedFunctions(program);
         JsInliner inliner = new JsInliner(functions);
         inliner.accept(program);
-        removeUnusedLocalFunctions(program, functions);
+        removeUnusedFunctionDefinitions(program, functions);
         return program;
     }
 
@@ -95,7 +95,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     @Override
     public void endVisit(JsFunction function, JsContext context) {
         super.endVisit(function, context);
-        removeUnusedLocalFunctionInstances(function);
+        removeUnusedLocalFunctionDeclarations(function);
         processedFunctions.add(function);
 
         assert inProcessFunctions.contains(function);
