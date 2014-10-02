@@ -1,6 +1,5 @@
 package org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.openapi.editor.Editor
@@ -14,8 +13,11 @@ import org.jetbrains.jet.plugin.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
 import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
+import org.jetbrains.jet.lang.psi.JetExpression
 
-public class CreateFunctionFromUsageFix(element: PsiElement, val functionInfo: CallableInfo) : CreateFromUsageFixBase(element) {
+public class CreateFunctionFromUsageFix(
+        originalExpression: JetExpression,
+        val functionInfo: CallableInfo) : CreateFromUsageFixBase(originalExpression) {
     override fun getText(): String {
         val key = when (functionInfo.kind) {
             CallableKind.FUNCTION -> "create.function.from.usage"
@@ -25,7 +27,7 @@ public class CreateFunctionFromUsageFix(element: PsiElement, val functionInfo: C
     }
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
-        val functionBuilder = CallableBuilderConfiguration(functionInfo, file!!, editor!!).createBuilder()
+        val functionBuilder = CallableBuilderConfiguration(functionInfo, element as JetExpression, file!!, editor!!).createBuilder()
 
         fun runBuilder(placement: CallablePlacement) {
             functionBuilder.placement = placement

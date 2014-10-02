@@ -58,6 +58,7 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.jet.plugin.refactoring.isMultiLine
+import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -92,6 +93,7 @@ class TypeCandidate(val theType: JetType, scope: JetScope? = null) {
 
 class CallableBuilderConfiguration(
         val callableInfo: CallableInfo,
+        val originalExpression: JetExpression,
         val currentFile: JetFile,
         val currentEditor: Editor
 )
@@ -241,6 +243,12 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
         private fun createDeclarationSkeleton(): JetCallableDeclaration {
             with (config) {
+                val assignmentToReplace =
+                        if (containingElement is JetBlockExpression && (config.callableInfo as? PropertyInfo)?.writable ?: false) {
+                            originalExpression as JetBinaryExpression
+                        }
+                        else null
+
                 val ownerTypeString = if (isExtension) "${receiverTypeCandidate!!.renderedType!!}." else ""
                 val paramList = when (callableInfo.kind) {
                     CallableKind.FUNCTION ->
@@ -248,7 +256,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     CallableKind.PROPERTY ->
                         ""
                 }
-                val returnTypeString = if (isUnit) "" else ": Any"
+                val returnTypeString = if (isUnit || assignmentToReplace != null) "" else ": Any"
                 val header = "$ownerTypeString${callableInfo.name}$paramList$returnTypeString"
 
                 val psiFactory = JetPsiFactory(currentFile)
@@ -260,6 +268,12 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         psiFactory.createProperty("$valVar $header")
                     }
                 }
+
+                if (assignmentToReplace != null) {
+                    (declaration as JetProperty).setInitializer(assignmentToReplace.getRight())
+                    return assignmentToReplace.replace(declaration) as JetCallableDeclaration
+                }
+
                 val newLine = psiFactory.createNewLine()
 
                 fun prepend(element: PsiElement, elementBeforeStart: PsiElement, skipInitial: Boolean): PsiElement {
@@ -364,8 +378,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
             }
 
-            if (!isUnit) {
-                returnTypeExpression!!
+            if (returnTypeExpression != null) {
                 val returnTypeRef = declaration.getReturnTypeRef()
                 if (returnTypeRef != null) {
                     val returnType = returnTypeExpression.getTypeFromSelection(
@@ -430,8 +443,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             func.getBodyExpression()!!.replace(newBodyExpression)
         }
 
-        private fun setupReturnTypeTemplate(builder: TemplateBuilder, declaration: JetCallableDeclaration): TypeExpression {
-            val returnTypeRef = declaration.getReturnTypeRef()!!
+        private fun setupReturnTypeTemplate(builder: TemplateBuilder, declaration: JetCallableDeclaration): TypeExpression? {
+            val returnTypeRef = declaration.getReturnTypeRef() ?: return null
             val returnTypeExpression = TypeExpression(typeCandidates[config.callableInfo.returnTypeInfo]!!)
             builder.replaceElement(returnTypeRef, returnTypeExpression)
             return returnTypeExpression

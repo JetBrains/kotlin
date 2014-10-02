@@ -37,7 +37,8 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
                 .filter { it is JetBlockExpression || it is JetDeclarationWithBody }
                 .firstOrNull() as? JetElement ?: return null
 
-        val varExpected = refExpr.getAssignmentByLHS() != null
+        val assignment = refExpr.getAssignmentByLHS()
+        val varExpected = assignment != null
         val typeInfo = TypeInfo(
                 refExpr.getExpressionForTypeGuess(),
                 if (varExpected) Variance.INVARIANT else Variance.OUT_VARIANCE
@@ -49,7 +50,7 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
             override fun getText(): String = JetBundle.message("create.local.variable.from.usage", propertyInfo.name)
 
             override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
-                with (CallableBuilderConfiguration(propertyInfo, file!!, editor!!).createBuilder()) {
+                with (CallableBuilderConfiguration(propertyInfo, assignment ?: refExpr, file!!, editor!!).createBuilder()) {
                     val actualContainer = when (container) {
                         is JetBlockExpression -> container
                         else -> ConvertToBlockBodyAction().convert(container as JetDeclarationWithBody).getBodyExpression()!!
