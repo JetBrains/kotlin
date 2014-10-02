@@ -445,9 +445,21 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
         private fun setupReturnTypeTemplate(builder: TemplateBuilder, declaration: JetCallableDeclaration): TypeExpression? {
             val returnTypeRef = declaration.getReturnTypeRef() ?: return null
-            val returnTypeExpression = TypeExpression(typeCandidates[config.callableInfo.returnTypeInfo]!!)
-            builder.replaceElement(returnTypeRef, returnTypeExpression)
-            return returnTypeExpression
+            val candidates = typeCandidates[config.callableInfo.returnTypeInfo]!!
+            return when (candidates.size) {
+                0 -> null
+
+                1 -> {
+                    builder.replaceElement(returnTypeRef, candidates.first().renderedType!!)
+                    null
+                }
+
+                else -> {
+                    val returnTypeExpression = TypeExpression(candidates)
+                    builder.replaceElement(returnTypeRef, returnTypeExpression)
+                    returnTypeExpression
+                }
+            }
         }
 
         private fun setupValVarTemplate(builder: TemplateBuilder, property: JetProperty) {
