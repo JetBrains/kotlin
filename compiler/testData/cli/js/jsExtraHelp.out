@@ -1,5 +1,6 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
+  -Xno-inline                Disable method inlining
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK
