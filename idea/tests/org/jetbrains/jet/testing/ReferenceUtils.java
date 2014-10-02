@@ -20,11 +20,14 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PathUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.junit.Assert;
 
@@ -36,6 +39,14 @@ public final class ReferenceUtils {
 
     public static String renderAsGotoImplementation(@NotNull PsiElement element) {
         PsiElement navigationElement = element.getNavigationElement();
+
+        if (navigationElement instanceof JetObjectDeclaration && ((JetObjectDeclaration) navigationElement).isClassObject()) {
+            //default presenter return null for class object
+            JetClass containingClass = PsiTreeUtil.getParentOfType(navigationElement, JetClass.class);
+            assert containingClass != null;
+            return "class object of " + renderAsGotoImplementation(containingClass);
+        }
+
         Assert.assertTrue(navigationElement instanceof NavigationItem);
         ItemPresentation presentation = ((NavigationItem) navigationElement).getPresentation();
 

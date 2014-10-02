@@ -117,8 +117,8 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
                     return new KotlinLightEnumConstant(myManager, (JetEnumEntry) declaration, ((PsiEnumConstant) field),
                                                        KotlinWrappingLightClass.this);
                 }
-                if (declaration instanceof JetProperty) {
-                    return new KotlinLightFieldForDeclaration(myManager, (JetProperty) declaration, field, KotlinWrappingLightClass.this);
+                if (declaration != null) {
+                    return new KotlinLightFieldForDeclaration(myManager, declaration, field, KotlinWrappingLightClass.this);
                 }
                 return new LightField(myManager, field, KotlinWrappingLightClass.this);
             }

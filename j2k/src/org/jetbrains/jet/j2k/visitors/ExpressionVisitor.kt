@@ -31,12 +31,12 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
-import com.intellij.psi.impl.light.LightField
-import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
 import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.asJava.KotlinLightField
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration
 
 open class ExpressionVisitor(private val converter: Converter) : JavaElementVisitor() {
     private val typeConverter = converter.typeConverter
@@ -339,11 +339,9 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
             identifier = Identifier("size", isNullable).assignNoPrototype()
         }
         else if (qualifier != null) {
-            if (referenceName == JvmAbi.CLASS_OBJECT_FIELD || referenceName == JvmAbi.INSTANCE_FIELD) {
-                if (target is LightField) { //TODO: should be KotlinLightField with check of origin here, see KT-5188
-                    result = converter.convertExpression(qualifier)
-                    return
-                }
+            if (target is KotlinLightField<*, *> && target.getOrigin() is JetObjectDeclaration) {
+                result = converter.convertExpression(qualifier)
+                return
             }
         }
         else {

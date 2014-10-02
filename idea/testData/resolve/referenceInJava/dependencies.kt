@@ -12,3 +12,13 @@ public enum class EnumClass {
 
 public fun topLevelFun() {
 }
+
+public class ClassWithClassObject {
+    class object {
+        fun f() = 1
+    }
+}
+
+public object KotlinObject {
+    fun f() = 1
+}

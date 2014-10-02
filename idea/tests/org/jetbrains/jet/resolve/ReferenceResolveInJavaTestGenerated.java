@@ -44,6 +44,12 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
         doTest(fileName);
     }
     
+    @TestMetadata("ClassObjectField.java")
+    public void testClassObjectField() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/ClassObjectField.java");
+        doTest(fileName);
+    }
+    
     @TestMetadata("Constructor.java")
     public void testConstructor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/Constructor.java");
@@ -65,6 +71,12 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
     @TestMetadata("Method.java")
     public void testMethod() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/Method.java");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("ObjectInstance.java")
+    public void testObjectInstance() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/ObjectInstance.java");
         doTest(fileName);
     }
     
