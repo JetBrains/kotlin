@@ -41,7 +41,7 @@
 
     <target name="jb_update_continuous_local" depends="fetch-third-party,fetch-annotations">
         <execute_update
-            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform13_IdeaTrunk_Installers/${continuous.idea.version}"
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/IDEA_Trunk_Installers/${continuous.idea.version}"
             build.zip="ideaIC-{build.number}.win.zip"/>
     </target>
 
