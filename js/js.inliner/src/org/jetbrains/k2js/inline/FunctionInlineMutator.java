@@ -19,6 +19,7 @@ package org.jetbrains.k2js.inline;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import static org.jetbrains.k2js.inline.util.UtilPackage.collectInstances;
 import static org.jetbrains.k2js.inline.util.UtilPackage.replaceReturns;
 import static org.jetbrains.k2js.inline.util.UtilPackage.replaceThisReference;
 
@@ -112,8 +113,8 @@ class FunctionInlineMutator {
         insertionPoint.insertAllBefore(declarations);
     }
 
-    private void replaceReturns() {
-        int returnCount = ReturnCounter.countReturns(body);
+    private void processReturns() {
+        int returnCount = collectInstances(JsReturn.class, body).size();
         if (returnCount == 0) {
             // TODO return Unit (KT-5647)
             resultExpr = JsLiteral.UNDEFINED;

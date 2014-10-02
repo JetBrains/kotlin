@@ -17,14 +17,44 @@
 package org.jetbrains.k2js.inline.util
 
 import com.google.dart.compiler.backend.js.ast.*
+import org.jetbrains.k2js.inline.util.IdentitySet
 
 import java.util.ArrayList
 import java.util.IdentityHashMap
+import org.jetbrains.k2js.inline.util.collectors.ReferenceNameCollector
+import org.jetbrains.k2js.inline.util.collectors.NameCollector
+import org.jetbrains.k2js.inline.util.collectors.InstanceCollector
 import org.jetbrains.k2js.inline.util.collectors.FunctionCollector
+
+public fun collectFunctionReferencesInside(scope: JsNode): List<JsName> =
+    collectReferencesInside(scope) filter { it.getStaticRef() is JsFunction }
+
+public fun collectReferencesInside(scope: JsNode): List<JsName> {
+    return with(ReferenceNameCollector()) {
+        accept(scope)
+        references
+    }
+}
+
+public fun collectLocalNames(function: JsFunction): List<JsName> {
+    val functionScope = function.getScope()
+
+    return with(NameCollector(functionScope)) {
+        accept(function.getBody())
+        names.values().toList()
+    }
+}
 
 public fun collectNamedFunctions(scope: JsNode): IdentityHashMap<JsName, JsFunction> {
     return with(FunctionCollector()) {
         accept(scope)
         functions
+    }
+}
+
+public fun collectInstances<T : JsNode>(klass: Class<T>, scope: JsNode): List<T> {
+    return with(InstanceCollector(klass)) {
+        accept(scope)
+        collected
     }
 }

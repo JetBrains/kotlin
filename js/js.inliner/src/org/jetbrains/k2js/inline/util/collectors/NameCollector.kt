@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.inline.util
+package org.jetbrains.k2js.inline.util.collectors
 
-import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.JsScope
+import com.google.dart.compiler.backend.js.ast.RecursiveJsVisitor
+import com.google.dart.compiler.backend.js.ast.JsFunction
+import com.google.dart.compiler.backend.js.ast.JsLabel
+import com.google.dart.compiler.backend.js.ast.HasName
+import com.google.dart.compiler.backend.js.ast.JsName
+import com.google.dart.compiler.backend.js.ast.JsVars
 
-import java.util.ArrayList
 import java.util.HashMap
-
-public fun collectLocalNames(function: JsFunction): List<JsName> {
-    val functionScope = function.getScope()
-
-    return with (NameCollector(functionScope)) {
-        accept(function.getBody())
-        names.values().toList()
-    }
-}
 
 class NameCollector(private val scope: JsScope) : RecursiveJsVisitor() {
     public val names: MutableMap<String, JsName> = HashMap()
@@ -58,4 +54,3 @@ class NameCollector(private val scope: JsScope) : RecursiveJsVisitor() {
         names.put(ident, name)
     }
 }
-

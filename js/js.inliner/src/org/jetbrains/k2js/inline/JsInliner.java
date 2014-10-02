@@ -30,6 +30,7 @@ import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedLocalFunc
 import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedLocalFunctions;
 import static org.jetbrains.k2js.inline.FunctionInlineMutator.getInlineableCallReplacement;
 import static org.jetbrains.k2js.inline.util.UtilPackage.IdentitySet;
+import static org.jetbrains.k2js.inline.util.UtilPackage.collectNamedFunctions;
 
 public class JsInliner extends JsVisitorWithContextImpl {
 
@@ -69,7 +70,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     private boolean lastStatementWasShifted = false;
 
     public static JsProgram process(JsProgram program) {
-        IdentityHashMap<JsName, JsFunction> functions = FunctionCollector.collectFunctions(program);
+        IdentityHashMap<JsName, JsFunction> functions = collectNamedFunctions(program);
         JsInliner inliner = new JsInliner(functions);
         inliner.accept(program);
         removeUnusedLocalFunctions(program, functions);
