@@ -39,4 +39,8 @@ public final class OverrideImplementWithLibTest extends AbstractOverrideImplemen
     public void testFakeOverride() {
         doOverrideFileTest();
     }
+
+    public void testGenericSubstituted() {
+        doOverrideFileTest();
+    }
 }
