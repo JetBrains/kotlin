@@ -19,6 +19,7 @@ package org.jetbrains.k2js.inline;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.inline.context.*;
 import org.jetbrains.k2js.inline.exception.InlineRecursionException;
 
 import java.util.IdentityHashMap;

@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.inline
+package org.jetbrains.k2js.inline.context
 
-import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.JsEmpty
+import com.google.dart.compiler.backend.js.ast.JsExpression
+import com.google.dart.compiler.backend.js.ast.JsFunction
+import com.google.dart.compiler.backend.js.ast.JsInvocation
+import com.google.dart.compiler.backend.js.ast.JsLiteral
+import com.google.dart.compiler.backend.js.ast.JsName
+import com.google.dart.compiler.backend.js.ast.JsNameRef
+import com.google.dart.compiler.backend.js.ast.JsScope
+import com.google.dart.compiler.backend.js.ast.JsStatement
+import org.jetbrains.k2js.inline.util.aliasArgumentsIfNeeded
+import org.jetbrains.k2js.inline.util.getInnerFunction
+import org.jetbrains.k2js.inline.util.getSimpleName
+import org.jetbrains.k2js.inline.util.isCallInvocation
+import org.jetbrains.k2js.inline.util.isFunctionCreator
 
 import com.intellij.util.containers.ContainerUtil
-
 import java.util.IdentityHashMap
 
 abstract class FunctionContext(
@@ -55,14 +67,14 @@ abstract class FunctionContext(
         val calls = ContainerUtil.findAll<JsExpression, JsInvocation>(arguments, javaClass<JsInvocation>())
 
         for (call in calls) {
-            val callName = InvocationUtil.getName(call)
+            val callName = getSimpleName(call)
             if (callName == null) continue
 
             val staticRef = callName.getStaticRef()
             if (staticRef !is JsFunction) continue
 
             val functionCalled = staticRef as JsFunction
-            if (InvocationUtil.getInnerFunction(functionCalled) != null) {
+            if (isFunctionCreator(functionCalled)) {
                 declareFunctionConstructorCall(call)
             }
         }
@@ -107,7 +119,7 @@ abstract class FunctionContext(
         var callQualifier = call.getQualifier()
 
         /** remove ending `.call()` */
-        if (InvocationUtil.isCallInvocation(call)) {
+        if (isCallInvocation(call)) {
             callQualifier = (callQualifier as JsNameRef).getQualifier()
         }
 
@@ -158,9 +170,9 @@ abstract class FunctionContext(
 
         if (constructed is JsFunction) return constructed
 
-        val name = InvocationUtil.getName(call)!!
+        val name = getSimpleName(call)!!
         val closureCreator = lookUpStaticFunction(name)!!
-        val innerFunction = InvocationUtil.getInnerFunction(closureCreator)!!
+        val innerFunction = closureCreator.getInnerFunction()!!
 
         val withCapturedArgs = applyCapturedArgs(call, innerFunction, closureCreator)
         functionsWithClosure.put(call, withCapturedArgs)
@@ -171,15 +183,12 @@ abstract class FunctionContext(
     private fun applyCapturedArgs(call: JsInvocation, inner: JsFunction, outer: JsFunction): JsFunction {
         val innerClone = inner.deepCopy()
 
-        val renamingContext = inliningContext.getRenamingContext<JsFunction>()
-        val arguments = call.getArguments()!!
+        val namingContext = inliningContext.newNamingContext()
+        val arguments = call.getArguments()
         val parameters = outer.getParameters()
-        aliasArgumentsIfNeeded(renamingContext, arguments, parameters)
-        val renamingResult = renamingContext.applyRename(innerClone)
+        aliasArgumentsIfNeeded(namingContext, arguments, parameters)
+        namingContext.applyRenameTo(innerClone)
 
-        val declarations = renamingResult.declarations
-        val insertionPoint = inliningContext.getStatementContext().getInsertionPoint<JsStatement>()
-        insertionPoint.insertAllBefore(declarations)
-        return renamingResult.renamed
+        return innerClone
     }
 }

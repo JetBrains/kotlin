@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.inline
+package org.jetbrains.k2js.inline.context
 
 import com.google.dart.compiler.backend.js.ast.JsContext
 import com.google.dart.compiler.backend.js.ast.JsStatement
-import com.google.dart.compiler.backend.js.ast.JsNode
 
 abstract class StatementContext {
     public abstract fun getCurrentStatementContext(): JsContext

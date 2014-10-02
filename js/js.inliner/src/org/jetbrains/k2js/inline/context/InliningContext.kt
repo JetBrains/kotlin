@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.inline;
+package org.jetbrains.k2js.inline.context
 
-import com.google.dart.compiler.backend.js.ast.*;
-import org.jetbrains.annotations.NotNull;
+import com.google.dart.compiler.backend.js.ast.JsNode
 
-import java.util.List;
+trait InliningContext {
+    public val statementContext: StatementContext
+    public val functionContext: FunctionContext
 
-interface InliningContext {
-    @NotNull
-    <T extends JsNode> RenamingContext<T> getRenamingContext();
-
-    @NotNull
-    StatementContext getStatementContext();
-
-    @NotNull
-    FunctionContext getFunctionContext();
-
-    @NotNull
-    JsExpression getThisReplacement(JsInvocation call);
-
-    @NotNull
-    List<JsExpression> getArguments(JsInvocation call);
-
-    boolean isResultNeeded(JsInvocation call);
+    public fun newNamingContext(): NamingContext
 }
+

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.inline
+package org.jetbrains.k2js.inline.context
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.JsVars.JsVar
@@ -23,18 +23,24 @@ import java.util.ArrayList
 import java.util.IdentityHashMap
 
 import org.jetbrains.k2js.translate.utils.JsAstUtils
+import org.jetbrains.k2js.inline.util.replaceNames
 
-
-data class RenamingResult<T : JsNode>(val renamed: T, val declarations: Collection<JsVars>)
-
-class RenamingContext<T : JsNode>(scope: JsScope) {
-    private val scope = scope
+class NamingContext(
+        private val scope: JsScope,
+        private val insertionPoint: InsertionPoint<JsStatement>
+) {
     private val renamings = IdentityHashMap<JsName, JsExpression>()
     private val declarations = ArrayList<JsVars>()
+    private var renamingApplied = false
 
-    public fun applyRename(target : T): RenamingResult<T> {
-        val renamed = RenamingVisitor.rename(target, renamings)
-        return RenamingResult(renamed, declarations)
+    public fun applyRenameTo(target: JsNode): JsNode {
+        if (renamingApplied) throw RuntimeException("RenamingContext has been applied already")
+
+        val result = replaceNames(target, renamings)
+        insertionPoint.insertAllBefore(declarations)
+        renamingApplied = true
+
+        return result
     }
 
     public fun replaceName(name: JsName, replacement: JsExpression) {
