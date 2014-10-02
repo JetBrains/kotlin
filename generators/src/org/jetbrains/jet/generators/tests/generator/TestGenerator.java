@@ -34,6 +34,13 @@ import java.util.Collections;
 import java.util.Set;
 
 public class TestGenerator {
+
+    public static enum TargetBackend {
+        ANY,
+        ONLY_JVM,
+        ONLY_JS
+    }
+
     public static final String NAVIGATION_METADATA = "navigationMetadata";
 
     private static final Set<String> GENERATED_FILES = ContainerUtil.newHashSet();

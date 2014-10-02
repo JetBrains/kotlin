@@ -17,6 +17,7 @@
 package org.jetbrains.jet.generators.tests
 
 import org.jetbrains.jet.generators.tests.generator.TestGenerator
+import org.jetbrains.jet.generators.tests.generator.TestGenerator.TargetBackend
 import java.util.ArrayList
 import org.jetbrains.jet.generators.tests.generator.SimpleTestClassModel
 import java.io.File
@@ -674,15 +675,16 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                 pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
                 testMethod: String = "doTest",
                 singleClass: Boolean = false,
-                testClassName: String? = null
+                testClassName: String? = null,
+                targetBackend: TargetBackend = TargetBackend.ANY
         ) {
             val rootFile = File(testDataRoot + "/" + relativeRootPath)
             val compiledPattern = Pattern.compile(pattern)
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
             testModels.add(if (singleClass)
-                               SingleClassTestModel(rootFile, compiledPattern, testMethod, className)
+                               SingleClassTestModel(rootFile, compiledPattern, testMethod, className, targetBackend)
                            else
-                               SimpleTestClassModel(rootFile, recursive, excludeParentDirs, compiledPattern, testMethod, className))
+                               SimpleTestClassModel(rootFile, recursive, excludeParentDirs, compiledPattern, testMethod, className, targetBackend))
         }
     }
 

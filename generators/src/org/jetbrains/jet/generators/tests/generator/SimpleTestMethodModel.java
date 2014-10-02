@@ -19,12 +19,17 @@ package org.jetbrains.jet.generators.tests.generator;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.jetbrains.jet.generators.tests.generator.TestGenerator.TargetBackend;
 
 public class SimpleTestMethodModel implements TestMethodModel {
     @NotNull
@@ -35,17 +40,21 @@ public class SimpleTestMethodModel implements TestMethodModel {
     private final String doTestMethodName;
     @NotNull
     private final Pattern filenamePattern;
+    @NotNull
+    private final TargetBackend targetBackend;
 
     public SimpleTestMethodModel(
             @NotNull File rootDir,
             @NotNull File file,
             @NotNull String doTestMethodName,
-            @NotNull Pattern filenamePattern
+            @NotNull Pattern filenamePattern,
+            @NotNull TargetBackend targetBackend
     ) {
         this.rootDir = rootDir;
         this.file = file;
         this.doTestMethodName = doTestMethodName;
         this.filenamePattern = filenamePattern;
+        this.targetBackend = targetBackend;
     }
 
     @Override
@@ -58,6 +67,18 @@ public class SimpleTestMethodModel implements TestMethodModel {
     @Override
     public String getDataString() {
         return JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(rootDir, file)));
+    }
+
+    private boolean isIgnored() {
+        if (targetBackend == TargetBackend.ANY) return false;
+
+        try {
+            String fileText = FileUtil.loadFile(file);
+            List<String> backends = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// TARGET_BACKEND: ");
+            return backends.size() > 0 && !targetBackend.name().equals(backends.get(0));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -77,6 +98,6 @@ public class SimpleTestMethodModel implements TestMethodModel {
             String relativePath = FileUtil.getRelativePath(rootDir, file.getParentFile());
             unescapedName = relativePath + "-" + StringUtil.capitalize(extractedName);
         }
-        return "test" + StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
+        return (isIgnored() ? "ignored" : "test") + StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
     }
 }

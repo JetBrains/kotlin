@@ -33,6 +33,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.jet.generators.tests.generator.TestGenerator.TargetBackend;
+
 public class SingleClassTestModel implements TestClassModel {
     @NotNull
     private final File rootFile;
@@ -42,6 +44,8 @@ public class SingleClassTestModel implements TestClassModel {
     private final String doTestMethodName;
     @NotNull
     private final String testClassName;
+    @NotNull
+    private final TargetBackend targetBackend;
     @Nullable
     private Collection<TestMethodModel> testMethods;
 
@@ -49,12 +53,14 @@ public class SingleClassTestModel implements TestClassModel {
             @NotNull File rootFile,
             @NotNull Pattern filenamePattern,
             @NotNull String doTestMethodName,
-            @NotNull String testClassName
+            @NotNull String testClassName,
+            @NotNull TargetBackend targetBackend
     ) {
         this.rootFile = rootFile;
         this.filenamePattern = filenamePattern;
         this.doTestMethodName = doTestMethodName;
         this.testClassName = testClassName;
+        this.targetBackend = targetBackend;
     }
 
     @NotNull
@@ -97,7 +103,8 @@ public class SingleClassTestModel implements TestClassModel {
 
     @NotNull
     protected Collection<TestMethodModel> getTestMethodsFromFile(File file) {
-        return Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, file, doTestMethodName, filenamePattern));
+        return Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, file, doTestMethodName, filenamePattern,
+                                                                                    targetBackend));
     }
 
     @Override
