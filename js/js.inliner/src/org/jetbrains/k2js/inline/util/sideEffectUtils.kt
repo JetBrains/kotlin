@@ -32,6 +32,7 @@ import com.google.dart.compiler.backend.js.ast.JsObjectLiteral
 import com.google.dart.compiler.backend.js.ast.JsPostfixOperation
 import com.google.dart.compiler.backend.js.ast.JsPrefixOperation
 import com.google.dart.compiler.backend.js.ast.RecursiveJsVisitor
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperator
 
 public fun canHaveSideEffect(x: JsExpression): Boolean {
     return with(SideEffectVisitor()) {
@@ -63,11 +64,14 @@ private open class SideEffectVisitor() : RecursiveJsVisitor() {
         when (node) {
             is JsValueLiteral,
             is JsConditional,
-            is JsBinaryOperation,
             is JsArrayAccess,
             is JsArrayLiteral,
-            is JsNameRef -> true
-            else -> false
+            is JsNameRef ->
+                true
+            is JsBinaryOperation ->
+                !node.getOperator().isAssignment()
+            else ->
+                false
         }
 }
 
