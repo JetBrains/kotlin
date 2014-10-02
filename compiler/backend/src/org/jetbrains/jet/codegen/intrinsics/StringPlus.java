@@ -48,7 +48,7 @@ public class StringPlus extends IntrinsicMethod {
             receiver.put(JAVA_STRING_TYPE, v);
             codegen.gen(arguments.get(0)).put(OBJECT_TYPE, v);
         }
-        v.invokestatic("kotlin/jvm/internal/Intrinsics", "stringPlus", "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;", false);
+        v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "stringPlus", "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;", false);
         return JAVA_STRING_TYPE;
     }
 }

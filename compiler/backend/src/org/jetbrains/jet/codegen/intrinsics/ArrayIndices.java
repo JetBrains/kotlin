@@ -42,7 +42,7 @@ public class ArrayIndices extends IntrinsicMethod {
     ) {
         receiver.put(receiver.type, v);
         v.arraylength();
-        v.invokestatic("kotlin/jvm/internal/Intrinsics", "arrayIndices", Type.getMethodDescriptor(INT_RANGE_TYPE, INT_TYPE), false);
+        v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "arrayIndices", Type.getMethodDescriptor(INT_RANGE_TYPE, INT_TYPE), false);
         return INT_RANGE_TYPE;
     }
 }
