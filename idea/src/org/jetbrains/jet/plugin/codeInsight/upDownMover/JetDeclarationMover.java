@@ -129,7 +129,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
 
         PsiElement result = element;
 
-        while (result instanceof PsiWhiteSpace || result instanceof PsiComment || result.getTextLength() == 0) {
+        while (result instanceof PsiWhiteSpace || result.getTextLength() == 0) {
             result = down ? result.getNextSibling() : result.getPrevSibling();
             if (result == null) break;
         }
