@@ -3094,7 +3094,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         Type type = expressionType(expression.getBaseExpression());
         value.put(type, v);
-        callableMethod.invokeWithNotNullAssertion(v, state, resolvedCall);
+        invokeFunction(resolvedCall, StackValue.onStack(type));
 
         value.store(callableMethod.getReturnType(), v);
         value.put(type, v);
@@ -3163,8 +3163,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         else {
             ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(expression, bindingContext);
             Callable callable = resolveToCallable((FunctionDescriptor) op, false);
+            invokeFunction(resolvedCall, StackValue.onStack(type));
             CallableMethod callableMethod = (CallableMethod) callable;
-            callableMethod.invokeWithNotNullAssertion(v, state, resolvedCall);
             storeType = callableMethod.getReturnType();
         }
 
