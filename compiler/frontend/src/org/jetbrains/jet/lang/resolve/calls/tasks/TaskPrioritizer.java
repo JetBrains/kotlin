@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
+import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorCollector;
+import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorCollectors;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;

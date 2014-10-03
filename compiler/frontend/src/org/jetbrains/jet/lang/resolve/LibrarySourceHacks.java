@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
@@ -36,6 +37,7 @@ public class LibrarySourceHacks {
     public static final Key<Boolean> SKIP_TOP_LEVEL_MEMBERS = Key.create("SKIP_TOP_LEVEL_MEMBERS"); // used when analyzing library source
 
 
+    @NotNull
     public static <D extends CallableDescriptor> List<D> filterOutMembersFromLibrarySource(Collection<D> members) {
         List<D> filteredMembers = Lists.newArrayList();
         for (D member : members) {

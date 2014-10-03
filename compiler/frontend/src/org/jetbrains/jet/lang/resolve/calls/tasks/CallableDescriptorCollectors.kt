@@ -14,221 +14,139 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls.tasks;
+package org.jetbrains.jet.lang.resolve.calls.tasks.collectors
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.jet.lang.resolve.BindingTrace
+import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.jet.lang.types.JetType
 
-import java.util.*;
+import org.jetbrains.jet.lang.resolve.LibrarySourceHacks.filterOutMembersFromLibrarySource
 
-import static org.jetbrains.jet.lang.resolve.LibrarySourceHacks.filterOutMembersFromLibrarySource;
+public trait CallableDescriptorCollector<D : CallableDescriptor> {
 
-@SuppressWarnings("unchecked")
-public class CallableDescriptorCollectors<D extends CallableDescriptor> implements Iterable<CallableDescriptorCollector<D>> {
-    private static final CallableDescriptorCollector<FunctionDescriptor> FUNCTIONS_COLLECTOR =
-            new FilteredCollector<FunctionDescriptor>(new FunctionCollector());
-    private static final CallableDescriptorCollector<VariableDescriptor> VARIABLES_COLLECTOR =
-            new FilteredCollector<VariableDescriptor>(new VariableCollector());
-    private static final CallableDescriptorCollector<VariableDescriptor> PROPERTIES_COLLECTOR =
-            new FilteredCollector<VariableDescriptor>(new PropertyCollector());
+    public fun getNonExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D>
 
-    public static final CallableDescriptorCollectors<CallableDescriptor> FUNCTIONS_AND_VARIABLES =
-            new CallableDescriptorCollectors(FUNCTIONS_COLLECTOR, VARIABLES_COLLECTOR);
-    public static final CallableDescriptorCollectors<CallableDescriptor> FUNCTIONS =
-            new CallableDescriptorCollectors(FUNCTIONS_COLLECTOR);
-    public static final CallableDescriptorCollectors<VariableDescriptor> VARIABLES =
-            new CallableDescriptorCollectors(VARIABLES_COLLECTOR);
-    public static final CallableDescriptorCollectors<VariableDescriptor> PROPERTIES =
-            new CallableDescriptorCollectors(PROPERTIES_COLLECTOR);
+    public fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<D>
 
-    private static class FunctionCollector implements CallableDescriptorCollector<FunctionDescriptor> {
+    public fun getNonMembersByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D>
+}
 
-        @NotNull
-        @Override
-        public Collection<FunctionDescriptor> getNonExtensionsByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
-            Set<FunctionDescriptor> functions = Sets.newLinkedHashSet();
-            for (FunctionDescriptor function : scope.getFunctions(name)) {
-                if (function.getExtensionReceiverParameter() == null) {
-                    functions.add(function);
-                }
-            }
-            addConstructors(scope, name, functions);
-            return functions;
-        }
+private val FUNCTIONS_COLLECTOR = FilteredCollector(FunctionCollector)
+private val VARIABLES_COLLECTOR = FilteredCollector(VariableCollector)
+private val PROPERTIES_COLLECTOR = FilteredCollector(PropertyCollector)
 
-        @NotNull
-        @Override
-        public Collection<FunctionDescriptor> getMembersByName(@NotNull JetType receiverType, Name name, @NotNull BindingTrace bindingTrace) {
-            JetScope receiverScope = receiverType.getMemberScope();
-            Set<FunctionDescriptor> members = Sets.newHashSet(receiverScope.getFunctions(name));
-            addConstructors(receiverScope, name, members);
-            return members;
-        }
+public class CallableDescriptorCollectors<D : CallableDescriptor>(vararg collectors: CallableDescriptorCollector<D>) : Iterable<CallableDescriptorCollector<D>> {
+    private val collectors = collectors.toList()
+    override fun iterator(): Iterator<CallableDescriptorCollector<D>> = collectors.iterator()
 
-        @NotNull
-        @Override
-        public Collection<FunctionDescriptor> getNonMembersByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
-            return scope.getFunctions(name);
-        }
+    [suppress("UNCHECKED_CAST")]
+    class object {
+        public val FUNCTIONS_AND_VARIABLES: CallableDescriptorCollectors<CallableDescriptor> =
+                CallableDescriptorCollectors(FUNCTIONS_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>,
+                                             VARIABLES_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>)
+        public val FUNCTIONS: CallableDescriptorCollectors<CallableDescriptor> =
+                CallableDescriptorCollectors(FUNCTIONS_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>)
+        public val VARIABLES: CallableDescriptorCollectors<VariableDescriptor> = CallableDescriptorCollectors(VARIABLES_COLLECTOR)
+        public val PROPERTIES: CallableDescriptorCollectors<VariableDescriptor> = CallableDescriptorCollectors(PROPERTIES_COLLECTOR)
+    }
+}
 
-        private static void addConstructors(JetScope scope, Name name, Collection<FunctionDescriptor> functions) {
-            ClassifierDescriptor classifier = scope.getClassifier(name);
-            if (!(classifier instanceof ClassDescriptor) || ErrorUtils.isError(classifier)) return;
-            ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
-            if (classDescriptor.getKind().isSingleton()) {
-                // Constructors of singletons shouldn't be callable from the code
-                return;
-            }
-            functions.addAll(classDescriptor.getConstructors());
-        }
+private object FunctionCollector : CallableDescriptorCollector<FunctionDescriptor> {
 
-        @Override
-        public String toString() {
-            return "FUNCTIONS";
-        }
+    override fun getNonExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
+        return scope.getFunctions(name).filter { it.getExtensionReceiverParameter() == null } + getConstructors(scope, name)
     }
 
-    private static class VariableCollector implements CallableDescriptorCollector<VariableDescriptor> {
-
-        private static void addFakeDescriptorForObject(JetScope scope, Name name, Collection<VariableDescriptor> variables) {
-            ClassifierDescriptor classifier = scope.getClassifier(name);
-            if (!(classifier instanceof ClassDescriptor)) return;
-            JetType classObjectType = classifier.getClassObjectType();
-            if (classObjectType == null) return;
-
-            variables.add(new FakeCallableDescriptorForObject((ClassDescriptor) classifier));
-        }
-
-        @NotNull
-        @Override
-        public Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
-            VariableDescriptor localVariable = scope.getLocalVariable(name);
-            if (localVariable != null) {
-                return Collections.singleton(localVariable);
-            }
-
-            Set<VariableDescriptor> variables = Sets.newLinkedHashSet();
-            for (VariableDescriptor variable : scope.getProperties(name)) {
-                if (variable.getExtensionReceiverParameter() == null) {
-                    variables.add(variable);
-                }
-            }
-            addFakeDescriptorForObject(scope, name, variables);
-            return variables;
-        }
-
-        @NotNull
-        @Override
-        public Collection<VariableDescriptor> getMembersByName(@NotNull JetType receiverType, Name name, @NotNull BindingTrace bindingTrace) {
-            JetScope memberScope = receiverType.getMemberScope();
-            Collection<VariableDescriptor> members = Lists.newArrayList();
-            members.addAll(memberScope.getProperties(name));
-            addFakeDescriptorForObject(memberScope, name, members);
-            return members;
-        }
-
-        @NotNull
-        @Override
-        public Collection<VariableDescriptor> getNonMembersByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
-            Collection<VariableDescriptor> result = Sets.newLinkedHashSet();
-
-            VariableDescriptor localVariable = scope.getLocalVariable(name);
-            if (localVariable != null) {
-                result.add(localVariable);
-            }
-            result.addAll(scope.getProperties(name));
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "VARIABLES";
-        }
+    override fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
+        val receiverScope = receiver.getMemberScope()
+        return receiverScope.getFunctions(name) + getConstructors(receiverScope, name)
     }
 
-    private static class PropertyCollector implements CallableDescriptorCollector<VariableDescriptor> {
-        private static Collection<VariableDescriptor> filterProperties(Collection<? extends VariableDescriptor> variableDescriptors) {
-            List<VariableDescriptor> properties = Lists.newArrayList();
-            for (VariableDescriptor descriptor : variableDescriptors) {
-                if (descriptor instanceof PropertyDescriptor) {
-                    properties.add(descriptor);
-                }
-            }
-            return properties;
-        }
-
-        @NotNull
-        @Override
-        public Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
-            return filterProperties(VARIABLES_COLLECTOR.getNonExtensionsByName(scope, name, bindingTrace));
-        }
-
-        @NotNull
-        @Override
-        public Collection<VariableDescriptor> getMembersByName(@NotNull JetType receiver, Name name, @NotNull BindingTrace bindingTrace) {
-            return filterProperties(VARIABLES_COLLECTOR.getMembersByName(receiver, name, bindingTrace));
-        }
-
-        @NotNull
-        @Override
-        public Collection<VariableDescriptor> getNonMembersByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
-            return filterProperties(VARIABLES_COLLECTOR.getNonMembersByName(scope, name, bindingTrace));
-        }
-
-        @Override
-        public String toString() {
-            return "PROPERTIES";
-        }
-    }
-    
-    private static class FilteredCollector<D extends CallableDescriptor> implements CallableDescriptorCollector<D> {
-        private final CallableDescriptorCollector<D> delegate;
-
-        private FilteredCollector(CallableDescriptorCollector<D> delegate) {
-            this.delegate = delegate;
-        }
-
-        @NotNull
-        @Override
-        public Collection<D> getNonExtensionsByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
-            return filterOutMembersFromLibrarySource(delegate.getNonExtensionsByName(scope, name, bindingTrace));
-        }
-
-        @NotNull
-        @Override
-        public Collection<D> getMembersByName(@NotNull JetType receiver, Name name, @NotNull BindingTrace bindingTrace) {
-            return filterOutMembersFromLibrarySource(delegate.getMembersByName(receiver, name, bindingTrace));
-        }
-
-        @NotNull
-        @Override
-        public Collection<D> getNonMembersByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
-            return filterOutMembersFromLibrarySource(delegate.getNonMembersByName(scope, name, bindingTrace));
-        }
-
-        @Override
-        public String toString() {
-            return delegate.toString();
-        }
+    override fun getNonMembersByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
+        return scope.getFunctions(name)
     }
 
-    private final Collection<CallableDescriptorCollector<D>> collectors;
-
-    private CallableDescriptorCollectors(CallableDescriptorCollector<D>... collectors) {
-        this.collectors = Lists.newArrayList(collectors);
+    private fun getConstructors(scope: JetScope, name: Name): Collection<FunctionDescriptor> {
+        val classifier = scope.getClassifier(name)
+        if (classifier !is ClassDescriptor || ErrorUtils.isError(classifier)
+            // Constructors of singletons shouldn't be callable from the code
+            || classifier.getKind().isSingleton()) {
+            return listOf()
+        }
+        return classifier.getConstructors()
     }
 
-    @NotNull
-    @Override
-    public Iterator<CallableDescriptorCollector<D>> iterator() {
-        return collectors.iterator();
+    override fun toString() = "FUNCTIONS"
+}
+
+private object VariableCollector : CallableDescriptorCollector<VariableDescriptor> {
+
+    private fun getFakeDescriptorForObject(scope: JetScope, name: Name): VariableDescriptor? {
+        val classifier = scope.getClassifier(name)
+        if (classifier !is ClassDescriptor || classifier.getClassObjectType() == null) return null
+
+        return FakeCallableDescriptorForObject(classifier as ClassDescriptor)
+    }
+
+    override fun getNonExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
+        val localVariable = scope.getLocalVariable(name)
+        if (localVariable != null) {
+            return setOf(localVariable)
+        }
+        return (scope.getProperties(name).filter { it.getExtensionReceiverParameter() == null } + getFakeDescriptorForObject(scope, name))
+                .filterNotNull()
+    }
+
+    override fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
+        val memberScope = receiver.getMemberScope()
+        return (memberScope.getProperties(name) + getFakeDescriptorForObject(memberScope, name)).filterNotNull()
+    }
+
+    override fun getNonMembersByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
+        return (listOf(scope.getLocalVariable(name)) + scope.getProperties(name)).filterNotNull()
+    }
+
+    override fun toString() = "VARIABLES"
+}
+
+private object PropertyCollector : CallableDescriptorCollector<VariableDescriptor> {
+    private fun filterProperties(variableDescriptors: Collection<VariableDescriptor>) =
+            variableDescriptors.filter { it is PropertyDescriptor }
+
+    override fun getNonExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
+        return filterProperties(VARIABLES_COLLECTOR.getNonExtensionsByName(scope, name, bindingTrace))
+    }
+
+    override fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
+        return filterProperties(VARIABLES_COLLECTOR.getMembersByName(receiver, name, bindingTrace))
+    }
+
+    override fun getNonMembersByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
+        return filterProperties(VARIABLES_COLLECTOR.getNonMembersByName(scope, name, bindingTrace))
+    }
+
+    override fun toString() = "PROPERTIES"
+}
+
+private class FilteredCollector<D : CallableDescriptor>(private val delegate: CallableDescriptorCollector<D>) : CallableDescriptorCollector<D> {
+
+    override fun getNonExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D> {
+        return filterOutMembersFromLibrarySource(delegate.getNonExtensionsByName(scope, name, bindingTrace))
+    }
+
+    override fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<D> {
+        return filterOutMembersFromLibrarySource(delegate.getMembersByName(receiver, name, bindingTrace))
+    }
+
+    override fun getNonMembersByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D> {
+        return filterOutMembersFromLibrarySource(delegate.getNonMembersByName(scope, name, bindingTrace))
+    }
+
+    override fun toString(): String {
+        return delegate.toString()
     }
 }
