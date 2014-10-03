@@ -45,16 +45,6 @@ public abstract class AbstractJetUpDownMover extends LineMover {
             @NotNull LineRange oldRange
     );
 
-    protected PsiElement adjustElement(PsiElement element, Editor editor, boolean first) {
-        return element;
-    }
-
-    protected final Pair<PsiElement, PsiElement> adjustElementRange(Pair<PsiElement, PsiElement> elementRange, Editor editor) {
-        PsiElement first = adjustElement(elementRange.first, editor, true);
-        PsiElement second = adjustElement(elementRange.second, editor, false);
-        return new Pair<PsiElement, PsiElement>(first, second);
-    }
-
     @Nullable
     protected LineRange getSourceRange(
             @NotNull PsiElement firstElement,
@@ -101,18 +91,13 @@ public abstract class AbstractJetUpDownMover extends LineMover {
         if (parent == null) return null;
 
         Pair<PsiElement, PsiElement> originalRange = getElementRange(parent, firstElement, lastElement);
-        Pair<PsiElement, PsiElement> combinedRange = adjustElementRange(originalRange, editor);
 
-        if (combinedRange == null
-            || !checkSourceElement(originalRange.first)
-            || !checkSourceElement(originalRange.second)) {
-            return null;
-        }
+        if (!checkSourceElement(originalRange.first) || !checkSourceElement(originalRange.second)) return null;
 
-        LineRange lineRange1 = getElementSourceLineRange(combinedRange.first, editor, oldRange);
+        LineRange lineRange1 = getElementSourceLineRange(originalRange.first, editor, oldRange);
         if (lineRange1 == null) return null;
 
-        LineRange lineRange2 = getElementSourceLineRange(combinedRange.second, editor, oldRange);
+        LineRange lineRange2 = getElementSourceLineRange(originalRange.second, editor, oldRange);
         if (lineRange2 == null) return null;
 
         LineRange parentLineRange = getElementSourceLineRange(parent, editor, oldRange);
@@ -126,8 +111,8 @@ public abstract class AbstractJetUpDownMover extends LineMover {
             sourceRange.firstElement = sourceRange.lastElement = parent;
         }
         else {
-            sourceRange.firstElement = combinedRange.first;
-            sourceRange.lastElement = combinedRange.second;
+            sourceRange.firstElement = originalRange.first;
+            sourceRange.lastElement = originalRange.second;
         }
 
         return sourceRange;
