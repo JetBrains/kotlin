@@ -357,7 +357,7 @@ public interface Errors {
     DiagnosticFactory1<JetElement, ValueParameterDescriptor> NO_VALUE_FOR_PARAMETER = DiagnosticFactory1.create(ERROR, VALUE_ARGUMENTS);
 
     DiagnosticFactory1<JetExpression, JetType> MISSING_RECEIVER = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory0<JetExpression> NO_RECEIVER_ADMITTED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetExpression> NO_RECEIVER_ALLOWED = DiagnosticFactory0.create(ERROR);
 
     // Call resolution
 

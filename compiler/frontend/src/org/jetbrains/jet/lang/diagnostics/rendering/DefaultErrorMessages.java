@@ -459,7 +459,7 @@ public class DefaultErrorMessages {
 
         MAP.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter {0}", NAME);
         MAP.put(MISSING_RECEIVER, "A receiver of type {0} is required", RENDER_TYPE);
-        MAP.put(NO_RECEIVER_ADMITTED, "No receiver can be passed to this function or property");
+        MAP.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property");
 
         MAP.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class");
 

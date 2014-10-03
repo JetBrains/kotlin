@@ -93,7 +93,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
 
     @Override
     public void noReceiverAllowed(@NotNull BindingTrace trace) {
-        trace.report(NO_RECEIVER_ADMITTED.on(reference));
+        trace.report(NO_RECEIVER_ALLOWED.on(reference));
     }
 
     @Override
