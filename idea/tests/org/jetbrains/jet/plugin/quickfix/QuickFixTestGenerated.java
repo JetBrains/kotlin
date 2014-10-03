@@ -2219,6 +2219,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("beforeDoNotLooseAnnotations.kt")
+            public void testDoNotLooseAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/override/nothingToOverride/beforeDoNotLooseAnnotations.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("beforeNoOpenSuperFunction.kt")
             public void testNoOpenSuperFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/override/nothingToOverride/beforeNoOpenSuperFunction.kt");

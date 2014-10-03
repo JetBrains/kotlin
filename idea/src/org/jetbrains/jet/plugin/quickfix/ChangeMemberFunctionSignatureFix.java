@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetChangeFunctionSignatureAction;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 
 import java.util.*;
 
@@ -68,17 +67,14 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     public String getText() {
         if (possibleSignatures.size() == 1)
             return JetBundle.message("change.function.signature.action.single",
-                                     getFunctionSignatureString(
-                                             possibleSignatures.get(0),
-                                             /* shortTypeNames = */ true));
+                                     getFunctionSignatureString(possibleSignatures.get(0)));
         else
             return JetBundle.message("change.function.signature.action.multiple");
     }
 
     @NotNull
-    private static String getFunctionSignatureString(@NotNull FunctionDescriptor functionSignature, boolean shortTypeNames) {
-        return CodeInsightUtils.createFunctionSignatureStringFromDescriptor(
-                functionSignature, shortTypeNames);
+    private static String getFunctionSignatureString(@NotNull FunctionDescriptor functionSignature) {
+        return JetChangeFunctionSignatureAction.SIGNATURE_RENDERER.render(functionSignature);
     }
 
     @NotNull
@@ -107,7 +103,11 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
      * Computes all the signatures a 'functionElement' could be changed to in order to remove NOTHING_TO_OVERRIDE error.
      */
     @NotNull
-    private static List<FunctionDescriptor> computePossibleSignatures(JetNamedFunction functionElement) {
+    private static List<FunctionDescriptor> computePossibleSignatures(@NotNull JetNamedFunction functionElement) {
+        if (functionElement.getValueParameterList() == null) { // we won't be able to modify its signature
+            return Collections.emptyList();
+        }
+
         BindingContext context = ResolvePackage.getBindingContext(functionElement);
         FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionElement);
         if (functionDescriptor == null) return Lists.newArrayList();
@@ -116,7 +116,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         for (FunctionDescriptor superFunction : superFunctions) {
             if (!superFunction.getKind().isReal()) continue;
             FunctionDescriptor signature = changeSignatureToMatch(functionDescriptor, superFunction);
-            possibleSignatures.put(getFunctionSignatureString(signature, /* shortTypeNames = */ false), signature);
+            possibleSignatures.put(getFunctionSignatureString(signature), signature);
         }
         return Lists.newArrayList(possibleSignatures.values());
     }
