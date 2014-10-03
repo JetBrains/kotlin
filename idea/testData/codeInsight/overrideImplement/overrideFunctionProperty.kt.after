@@ -3,7 +3,9 @@ open class A() {
 }
 
 fun some() : A {
-    return object : A() {
+    return object : A() {<caret>
         override val method: () -> Unit? = ?
     }
 }
+
+// TODO: need better selection and caret

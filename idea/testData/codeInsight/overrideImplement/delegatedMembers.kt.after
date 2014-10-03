@@ -5,7 +5,7 @@ trait T {
 
 class C(t :T) : T by t {
     override fun bar() {
-        throw UnsupportedOperationException()
+        <selection><caret>throw UnsupportedOperationException()</selection>
     }
     override fun equals(other: Any?): Boolean {
         return super<T>.equals(other)

@@ -5,6 +5,6 @@ trait T {
 
 class C : T {
     override fun Foo(): (String) -> Unit {
-        throw UnsupportedOperationException()
+        <selection><caret>throw UnsupportedOperationException()</selection>
     }
 }

@@ -25,6 +25,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
@@ -39,6 +40,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.quickfix.QuickfixPackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
@@ -78,32 +80,50 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     public static void generateMethods(
-            @NotNull Editor editor,
-            @NotNull JetClassOrObject classOrObject,
-            @NotNull List<DescriptorClassMember> selectedElements
+            @NotNull final Editor editor,
+            @NotNull final JetClassOrObject classOrObject,
+            @NotNull final List<DescriptorClassMember> selectedElements
     ) {
-        JetClassBody body = classOrObject.getBody();
-        if (body == null) {
-            JetPsiFactory psiFactory = JetPsiFactory(classOrObject);
-            classOrObject.add(psiFactory.createWhiteSpace());
-            body = (JetClassBody) classOrObject.add(psiFactory.createEmptyClassBody());
+        PsiElement firstGenerated = ApplicationManager.getApplication().runWriteAction(new Computable<PsiElement>() {
+            @Override
+            public PsiElement compute() {
+                JetClassBody body = classOrObject.getBody();
+                if (body == null) {
+                    JetPsiFactory psiFactory = JetPsiFactory(classOrObject);
+                    classOrObject.add(psiFactory.createWhiteSpace());
+                    body = (JetClassBody) classOrObject.add(psiFactory.createEmptyClassBody());
+                }
+
+                PsiElement afterAnchor = findInsertAfterAnchor(editor, body);
+
+                if (afterAnchor == null) {
+                    return null;
+                }
+
+                PsiElement firstGenerated = null;
+
+                List<JetElement> elementsToCompact = new ArrayList<JetElement>();
+                JetFile file = classOrObject.getContainingJetFile();
+                for (JetElement element : generateOverridingMembers(selectedElements, file)) {
+                    PsiElement added = body.addAfter(element, afterAnchor);
+
+                    if (firstGenerated == null) {
+                        firstGenerated = added;
+                    }
+
+                    afterAnchor = added;
+                    elementsToCompact.add((JetElement) added);
+                }
+
+                ShortenReferences.INSTANCE$.process(elementsToCompact);
+
+                return firstGenerated;
+            }
+        });
+
+        if (firstGenerated != null) {
+            QuickfixPackage.moveCaretIntoGeneratedElement(editor, firstGenerated);
         }
-
-        PsiElement afterAnchor = findInsertAfterAnchor(editor, body);
-
-        if (afterAnchor == null) {
-            return;
-        }
-
-        List<JetElement> elementsToCompact = new ArrayList<JetElement>();
-        JetFile file = classOrObject.getContainingJetFile();
-        for (JetElement element : generateOverridingMembers(selectedElements, file)) {
-            PsiElement added = body.addAfter(element, afterAnchor);
-            afterAnchor = added;
-            elementsToCompact.add((JetElement) added);
-        }
-
-        ShortenReferences.INSTANCE$.process(elementsToCompact);
     }
 
     @Nullable
@@ -270,9 +290,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
     protected abstract String getNoMethodsFoundHint();
 
-    public void invoke(@NotNull Project project, @NotNull final Editor editor, @NotNull PsiFile file, boolean implementAll) {
+    public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, boolean implementAll) {
         PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
-        final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
+        JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
 
         assert classOrObject != null : "ClassObject should be checked in isValidFor method";
 
@@ -283,7 +303,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         }
         List<DescriptorClassMember> members = membersFromDescriptors((JetFile) file, missingImplementations);
 
-        final List<DescriptorClassMember> selectedElements;
+        List<DescriptorClassMember> selectedElements;
         if (implementAll) {
             selectedElements = members;
         }
@@ -302,12 +322,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                generateMethods(editor, classOrObject, selectedElements);
-            }
-        });
+        generateMethods(editor, classOrObject, selectedElements);
     }
 
     @Override

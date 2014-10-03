@@ -6,7 +6,7 @@ trait Test {
 class SomeTest : Test {
     val hello = 12
     override fun test() {
-        throw UnsupportedOperationException()
+        <selection><caret>throw UnsupportedOperationException()</selection>
     }
     override val testProp: Int = 0
     /**

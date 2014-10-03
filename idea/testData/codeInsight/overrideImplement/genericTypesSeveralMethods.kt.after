@@ -2,6 +2,6 @@
 
 class MyClass<A: Comparable<A>> : Iterable<A> {
     override fun iterator(): Iterator<A> {
-        throw UnsupportedOperationException()
+        <selection><caret>throw UnsupportedOperationException()</selection>
     }
 }

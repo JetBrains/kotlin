@@ -4,6 +4,6 @@ trait Some {
 
 class SomeOther : Some {
     override fun foo(some: Int?): Int {
-        throw UnsupportedOperationException()
+        <selection><caret>throw UnsupportedOperationException()</selection>
     }
 }

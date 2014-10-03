@@ -6,3 +6,5 @@ trait A {
 fun some() : A {
     return object : A {<caret>}
 }
+
+// TODO: need better selection and caret
