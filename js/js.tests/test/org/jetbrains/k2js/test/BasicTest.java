@@ -35,6 +35,7 @@ import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
@@ -42,8 +43,10 @@ import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.config.LibrarySourcesConfigWithCaching;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.jetbrains.k2js.test.utils.JsTestUtils;
+import org.jetbrains.k2js.translate.context.Namer;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -280,5 +283,14 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             libFiles.add((JetFile) psiFile);
         }
         return libFiles;
+    }
+
+    @NotNull
+    protected String getPackageName(@NotNull String filename) throws IOException {
+        String content = FileUtil.loadFile(new File(filename), true);
+        JetPsiFactory psiFactory = new JetPsiFactory(getProject());
+        JetFile jetFile = psiFactory.createFile(content);
+        String packageName = jetFile.getPackageFqName().asString();
+        return packageName.isEmpty() ? Namer.getRootPackageName() : packageName;
     }
 }

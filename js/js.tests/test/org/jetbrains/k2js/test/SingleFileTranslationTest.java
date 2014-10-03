@@ -82,6 +82,14 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         runFunctionOutputTest(versions, filename, TEST_PACKAGE, TEST_FUNCTION, "OK");
     }
 
+    protected void checkBlackBoxIsOk(@NotNull String filename) throws Exception {
+        checkBlackBoxIsOk(DEFAULT_ECMA_VERSIONS, filename);
+    }
+
+    protected void checkBlackBoxIsOk(@NotNull Iterable<EcmaVersion> versions, @NotNull String filename) throws Exception {
+        runFunctionOutputTest(versions, filename, getPackageName(filename), TEST_FUNCTION, "OK");
+    }
+
     protected void checkOutput(@NotNull String kotlinFilename,
             @NotNull String expectedResult,
             @NotNull String... args) throws Exception {
