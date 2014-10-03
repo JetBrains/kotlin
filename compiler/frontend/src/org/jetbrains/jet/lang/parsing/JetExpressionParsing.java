@@ -18,10 +18,12 @@ package org.jetbrains.jet.lang.parsing;
 
 import com.google.common.collect.ImmutableMap;
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.WhitespacesAndCommentsBinder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeType;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -959,7 +961,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         if (declType != null) {
             decl.done(declType);
-            decl.setCustomEdgeTokenBinders(null/* for local declaration we do not take preceding comments*/,
+            // we do not attach preceding comments to local variables because they are likely commenting a few statements below
+            WhitespacesAndCommentsBinder leftBinder = declType == JetNodeTypes.PROPERTY || declType == JetNodeTypes.MULTI_VARIABLE_DECLARATION
+                                                      ? null
+                                                      : PrecedingWhitespacesAndCommentsBinder.INSTANCE$;
+            decl.setCustomEdgeTokenBinders(leftBinder,
                                            TrailingWhitespacesAndCommentsBinder.INSTANCE$);
             return true;
         }

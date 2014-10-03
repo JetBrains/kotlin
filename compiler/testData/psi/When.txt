@@ -58,9 +58,9 @@ JetFile: When.kt
                 PsiElement(RBRACE)('}')
             PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      PsiComment(EOL_COMMENT)('// foo')
-      PsiWhiteSpace('\n  ')
       FUN
+        PsiComment(EOL_COMMENT)('// foo')
+        PsiWhiteSpace('\n  ')
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('b')

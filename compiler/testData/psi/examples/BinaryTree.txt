@@ -602,11 +602,11 @@ JetFile: BinaryTree.kt
             BOOLEAN_CONSTANT
               PsiElement(false)('false')
           PsiWhiteSpace('\n\n    ')
-          PsiComment(EOL_COMMENT)('// In principle, this has access to item anyway, but then it's unreachable code')
-          PsiWhiteSpace('\n    ')
-          PsiComment(EOL_COMMENT)('// BAD: the naive implementation of ref will create H(T) ref objects, but can be optimized to create only one')
-          PsiWhiteSpace('\n    ')
           FUN
+            PsiComment(EOL_COMMENT)('// In principle, this has access to item anyway, but then it's unreachable code')
+            PsiWhiteSpace('\n    ')
+            PsiComment(EOL_COMMENT)('// BAD: the naive implementation of ref will create H(T) ref objects, but can be optimized to create only one')
+            PsiWhiteSpace('\n    ')
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('add')
@@ -832,9 +832,9 @@ JetFile: BinaryTree.kt
               PsiWhiteSpace('\n    ')
               PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n\n    ')
-          PsiComment(EOL_COMMENT)('// In principle, this has access to item anyway')
-          PsiWhiteSpace('\n    ')
           FUN
+            PsiComment(EOL_COMMENT)('// In principle, this has access to item anyway')
+            PsiWhiteSpace('\n    ')
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('addNoRef')

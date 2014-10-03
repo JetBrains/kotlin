@@ -175,6 +175,60 @@ JetFile: CommentsBinding.kt
         PsiWhiteSpace(' ')
         BLOCK
           PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          PsiComment(EOL_COMMENT)('// before local var')
+          PsiWhiteSpace('\n        ')
+          PROPERTY
+            PsiElement(val)('val')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('local')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+            PsiWhiteSpace(' ')
+            PsiComment(EOL_COMMENT)('// local var')
+          PsiWhiteSpace('\n        ')
+          FUN
+            PsiComment(EOL_COMMENT)('// before local fun')
+            PsiWhiteSpace('\n        ')
+            PsiElement(fun)('fun')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('localFun')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+            PsiWhiteSpace(' ')
+            PsiComment(EOL_COMMENT)('// local fun')
+          PsiWhiteSpace('\n        ')
+          CLASS
+            PsiComment(EOL_COMMENT)('// before local class')
+            PsiWhiteSpace('\n        ')
+            PsiElement(class)('class')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('Local')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
+            PsiWhiteSpace(' ')
+            PsiComment(EOL_COMMENT)('// local class')
+          PsiWhiteSpace('\n        ')
+          PsiComment(EOL_COMMENT)('// before statement')
+          PsiWhiteSpace('\n        ')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiComment(EOL_COMMENT)('// statement')
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace(' ')

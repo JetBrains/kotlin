@@ -31,6 +31,14 @@ class D {
 
     // Function foo()
     fun foo(/* parameters */ p1: Int/* p1 */, p2: Int /* p2 */) {
+        // before local var
+        val local = 1 // local var
+        // before local fun
+        fun localFun() = 1 // local fun
+        // before local class
+        class Local{} // local class
+        // before statement
+        foo() // statement
     } // end of foo
 
     // class object
