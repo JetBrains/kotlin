@@ -1,4 +1,6 @@
 JetFile: TextRightAfterLeadAsterisks.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiWhiteSpace('\n')
@@ -6,5 +8,3 @@ JetFile: TextRightAfterLeadAsterisks.kt
     PsiElement(KDOC_TEXT)('test')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')
-  PACKAGE_DIRECTIVE
-    <empty list>

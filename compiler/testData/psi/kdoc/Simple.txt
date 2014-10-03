@@ -1,4 +1,6 @@
 JetFile: Simple.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiElement(KDOC_TEXT)(' line 0')
@@ -19,5 +21,3 @@ JetFile: Simple.kt
     PsiElement(KDOC_LEADING_ASTERISK)('**')
     PsiElement(KDOC_TEXT)(' line 6 ')
     PsiElement(KDOC_END)('*/')
-  PACKAGE_DIRECTIVE
-    <empty list>

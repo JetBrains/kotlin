@@ -1,7 +1,7 @@
 JetFile: Incomplete.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiWhiteSpace('\n      ')
     PsiElement(KDOC_TEXT)('contents')
-  PACKAGE_DIRECTIVE
-    <empty list>

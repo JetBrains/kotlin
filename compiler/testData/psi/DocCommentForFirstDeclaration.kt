@@ -1,0 +1,4 @@
+/**
+ * Doc comment
+ */
+fun foo() {}

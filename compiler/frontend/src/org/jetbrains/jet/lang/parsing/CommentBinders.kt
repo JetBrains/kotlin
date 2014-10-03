@@ -40,6 +40,7 @@ object PrecedingWhitespacesAndCommentsBinder : WhitespacesAndCommentsBinder {
             }
             else if (tokenType in JetTokens.COMMENTS && tokenType != JetTokens.DOC_COMMENT) {
                 if (atStreamEdge ||
+                    idx == 0 ||
                     idx > 0 && tokens[idx - 1] == JetTokens.WHITE_SPACE && StringUtil.containsLineBreak(getter[idx - 1])) {
                     result = idx
                 }

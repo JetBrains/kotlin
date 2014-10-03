@@ -269,16 +269,16 @@ JetFile: CommentsBinding.kt
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('A')
-          PsiWhiteSpace(' ')
-          PsiComment(EOL_COMMENT)('// this is A')
+        PsiWhiteSpace(' ')
+        PsiComment(EOL_COMMENT)('// this is A')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
+        KDoc
+          PsiElement(KDOC_START)('/**')
+          PsiElement(KDOC_TEXT)(' This is B ')
+          PsiElement(KDOC_END)('*/')
+        PsiWhiteSpace(' ')
         OBJECT_DECLARATION_NAME
-          KDoc
-            PsiElement(KDOC_START)('/**')
-            PsiElement(KDOC_TEXT)(' This is B ')
-            PsiElement(KDOC_END)('*/')
-          PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('B')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
@@ -288,12 +288,12 @@ JetFile: CommentsBinding.kt
           PsiElement(IDENTIFIER)('C')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
+        KDoc
+          PsiElement(KDOC_START)('/**')
+          PsiElement(KDOC_TEXT)(' This is X ')
+          PsiElement(KDOC_END)('*/')
+        PsiWhiteSpace('\n    ')
         OBJECT_DECLARATION_NAME
-          KDoc
-            PsiElement(KDOC_START)('/**')
-            PsiElement(KDOC_TEXT)(' This is X ')
-            PsiElement(KDOC_END)('*/')
-          PsiWhiteSpace('\n    ')
           PsiElement(IDENTIFIER)('X')
         PsiWhiteSpace(' ')
         CLASS_BODY

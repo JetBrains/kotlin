@@ -136,6 +136,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("DocCommentAfterFileAnnotations.kt")
+        public void testDocCommentAfterFileAnnotations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DocCommentAfterFileAnnotations.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("DocCommentForFirstDeclaration.kt")
+        public void testDocCommentForFirstDeclaration() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DocCommentForFirstDeclaration.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("DoubleColon.kt")
         public void testDoubleColon() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DoubleColon.kt");
@@ -289,6 +301,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestMetadata("Labels.kt")
         public void testLabels() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Labels.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("LineCommentAfterFileAnnotations.kt")
+        public void testLineCommentAfterFileAnnotations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/LineCommentAfterFileAnnotations.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("LineCommentForFirstDeclaration.kt")
+        public void testLineCommentForFirstDeclaration() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/LineCommentForFirstDeclaration.kt");
             doParsingTest(fileName);
         }
 

@@ -199,6 +199,9 @@ public class JetParsing extends AbstractJetParsing {
             firstEntry.drop();
 
             consumeIf(SEMICOLON);
+
+            packageDirective.done(PACKAGE_DIRECTIVE);
+            packageDirective.setCustomEdgeTokenBinders(null, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
         }
         else {
             // When package directive is omitted we should not report error on non-file annotations at the beginning of the file.
@@ -207,9 +210,10 @@ public class JetParsing extends AbstractJetParsing {
 
             parseFileAnnotationList(FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED);
             packageDirective = mark();
+            packageDirective.done(PACKAGE_DIRECTIVE);
+            // this is necessary to allow comments at the start of the file to be bound to the first declaration:
+            packageDirective.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$, null);
         }
-        packageDirective.done(PACKAGE_DIRECTIVE);
-        packageDirective.setCustomEdgeTokenBinders(null, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
 
         parseImportDirectives();
     }
@@ -706,8 +710,6 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker nameAsDeclaration = mark();
         advance(); // IDENTIFIER
         nameAsDeclaration.done(OBJECT_DECLARATION_NAME);
-        nameAsDeclaration.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$,
-                                                    TrailingWhitespacesAndCommentsBinder.INSTANCE$);
 
         if (at(COLON)) {
             advance(); // COLON

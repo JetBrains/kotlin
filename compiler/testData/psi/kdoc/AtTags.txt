@@ -1,4 +1,6 @@
 JetFile: AtTags.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiWhiteSpace('\n ')
@@ -13,5 +15,3 @@ JetFile: AtTags.kt
     PsiElement(KDOC_TEXT)(' @')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')
-  PACKAGE_DIRECTIVE
-    <empty list>

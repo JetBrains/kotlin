@@ -1,7 +1,7 @@
 JetFile: DocCommentAtBeginningOfFile2.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiWhiteSpace('\n')
     PsiElement(KDOC_TEXT)('/**')
-  PACKAGE_DIRECTIVE
-    <empty list>
