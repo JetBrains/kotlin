@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
@@ -112,13 +114,20 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionElement);
         if (functionDescriptor == null) return Lists.newArrayList();
         List<FunctionDescriptor> superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor);
-        Map<String, FunctionDescriptor> possibleSignatures = Maps.newHashMap();
+        final Map<String, FunctionDescriptor> possibleSignatures = Maps.newHashMap();
         for (FunctionDescriptor superFunction : superFunctions) {
             if (!superFunction.getKind().isReal()) continue;
             FunctionDescriptor signature = changeSignatureToMatch(functionDescriptor, superFunction);
             possibleSignatures.put(getFunctionSignatureString(signature), signature);
         }
-        return Lists.newArrayList(possibleSignatures.values());
+        List<String> keys = new ArrayList<String>(possibleSignatures.keySet());
+        Collections.sort(keys);
+        return new ArrayList<FunctionDescriptor>(Collections2.transform(keys, new Function<String, FunctionDescriptor>() {
+            @Override
+            public FunctionDescriptor apply(String key) {
+                return possibleSignatures.get(key);
+            }
+        }));
     }
 
     /**

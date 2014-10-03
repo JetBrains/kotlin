@@ -50,9 +50,8 @@ import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 public class JetChangeFunctionSignatureAction implements QuestionAction {
     public static final DescriptorRenderer SIGNATURE_RENDERER = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
-            .setModifiers(DescriptorRenderer.Modifier.OVERRIDE)
+            .setModifiers()
             .setShortNames(true)
-            .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE)
             .setUnitReturnType(false).build();
 
     private final Project project;
