@@ -7,8 +7,8 @@ JetFile: PackageRecovery.kt
     PsiElement(DOT)('.')
     PsiErrorElement:Package name must be a '.'-separated identifier list placed on a single line
       <empty list>
-    PsiWhiteSpace(' ')
-    PsiComment(EOL_COMMENT)('// Hello')
+  PsiWhiteSpace(' ')
+  PsiComment(EOL_COMMENT)('// Hello')
   PsiWhiteSpace('\n\n')
   PROPERTY
     PsiElement(val)('val')

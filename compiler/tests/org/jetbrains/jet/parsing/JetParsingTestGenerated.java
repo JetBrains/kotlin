@@ -148,6 +148,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("DocCommentOnPackageDirectiveLine.kt")
+        public void testDocCommentOnPackageDirectiveLine() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DocCommentOnPackageDirectiveLine.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("DoubleColon.kt")
         public void testDoubleColon() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DoubleColon.kt");

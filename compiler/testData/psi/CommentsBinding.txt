@@ -10,8 +10,8 @@ JetFile: CommentsBinding.kt
       PsiElement(DOT)('.')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('bar')
-    PsiWhiteSpace(' ')
-    PsiComment(EOL_COMMENT)('// package directive')
+  PsiWhiteSpace(' ')
+  PsiComment(EOL_COMMENT)('// package directive')
   PsiWhiteSpace('\n\n')
   IMPORT_LIST
     IMPORT_DIRECTIVE

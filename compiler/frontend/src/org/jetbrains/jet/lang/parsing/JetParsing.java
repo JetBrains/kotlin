@@ -201,7 +201,6 @@ public class JetParsing extends AbstractJetParsing {
             consumeIf(SEMICOLON);
 
             packageDirective.done(PACKAGE_DIRECTIVE);
-            packageDirective.setCustomEdgeTokenBinders(null, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
         }
         else {
             // When package directive is omitted we should not report error on non-file annotations at the beginning of the file.
