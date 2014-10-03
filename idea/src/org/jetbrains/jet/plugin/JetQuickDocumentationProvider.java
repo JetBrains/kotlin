@@ -32,6 +32,7 @@ import org.jetbrains.jet.kdoc.psi.api.KDoc;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -141,8 +142,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
 
     @Nullable
     private static KDoc findElementKDoc(@NotNull JetElement element) {
-        PsiElement comment = JetPsiUtil.skipSiblingsBackwardByPredicate(element, SKIP_WHITESPACE_AND_EMPTY_PACKAGE);
-        return comment instanceof KDoc ? (KDoc) comment : null;
+        return (KDoc) JetPsiUtil.findChildByType(element, JetTokens.DOC_COMMENT);
     }
 
     private static String kDocToHtml(@NotNull KDoc comment) {
