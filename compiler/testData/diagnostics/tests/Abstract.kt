@@ -1,6 +1,7 @@
 // FILE: b.kt
 package MyPackage
     //properties
+
     <!MUST_BE_INITIALIZED!>val a: Int<!>
     val a1: Int = 1
     <!MUST_BE_INITIALIZED!><!ILLEGAL_MODIFIER!>abstract<!> val a2: Int<!>
@@ -22,12 +23,14 @@ package MyPackage
     <!ILLEGAL_MODIFIER!>abstract<!> val e3: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>; get() = a
 
     //methods
+
     <!NON_MEMBER_FUNCTION_NO_BODY!>fun f()<!>
     fun g() {}
     <!ILLEGAL_MODIFIER!>abstract<!> fun h()
     <!ILLEGAL_MODIFIER!>abstract<!> fun j() {}
 
     //property accessors
+
     var i: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
     var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 

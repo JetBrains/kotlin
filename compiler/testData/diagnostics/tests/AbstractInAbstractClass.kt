@@ -2,6 +2,7 @@ package abstract
 
 abstract class MyAbstractClass() {
     //properties
+
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val a: Int<!>
     val a1: Int = 1
     abstract val a2: Int
@@ -23,12 +24,14 @@ abstract class MyAbstractClass() {
     abstract val e3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = a<!>
 
     //methods
+
     <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun f()<!>
     fun g() {}
     abstract fun h()
     <!ABSTRACT_FUNCTION_WITH_BODY!>abstract<!> fun j() {}
 
     //property accessors
+
     var i: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
     var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 

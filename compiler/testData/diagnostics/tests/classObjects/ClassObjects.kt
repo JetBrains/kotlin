@@ -17,7 +17,7 @@ class B() {
 object b {
   <!CLASS_OBJECT_NOT_ALLOWED!>class object {
     val x = 1
-  }<!> // error
+  } // error<!>
 }
 
 val a = A.x
