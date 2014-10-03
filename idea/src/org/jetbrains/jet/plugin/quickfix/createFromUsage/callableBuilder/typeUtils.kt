@@ -23,6 +23,9 @@ import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.types.TypeProjectionImpl
 import org.jetbrains.jet.lang.types.JetTypeImpl
 import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.psi.JetDeclaration
 
 private fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
@@ -72,6 +75,8 @@ fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
 }
 
 fun JetExpression.guessTypes(context: BindingContext): Array<JetType> {
+    if (this !is JetDeclaration && isUsedAsStatement(context)) return array(KotlinBuiltIns.getInstance().getUnitType())
+
     // if we know the actual type of the expression
     val theType1 = context[BindingContext.EXPRESSION_TYPE, this]
     if (theType1 != null) {
