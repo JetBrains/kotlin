@@ -91,6 +91,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             before(FUN).lineBreakInCode()
             before(PROPERTY).lineBreakInCode()
 
+
+            after(DOC_COMMENT).lineBreakInCode()
+
             // =============== Spacing ================
             betweenInside(LBRACE, RBRACE, CLASS_BODY).spaces(0)
 

@@ -30,6 +30,8 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.kdoc.lexer.KDocTokens;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.ArrayList;
@@ -150,6 +152,15 @@ public class JetBlock extends AbstractBlock {
     private static ASTNode getPrevWithoutWhitespace(ASTNode node) {
         node = node.getTreePrev();
         while (node != null && node.getElementType() == TokenType.WHITE_SPACE) {
+            node = node.getTreePrev();
+        }
+
+        return node;
+    }
+
+    private static ASTNode getPrevWithoutWhitespaceAndComments(ASTNode node) {
+        node = node.getTreePrev();
+        while (node != null && (node.getElementType() == TokenType.WHITE_SPACE || JetTokens.COMMENTS.contains(node.getElementType()))) {
             node = node.getTreePrev();
         }
 
@@ -386,6 +397,14 @@ public class JetBlock extends AbstractBlock {
         // SCRIPT: Avoid indenting script top BLOCK contents
         if (childParent != null && childParent.getTreeParent() != null) {
             if (childParent.getElementType() == BLOCK && childParent.getTreeParent().getElementType() == SCRIPT) {
+                return Indent.getNoneIndent();
+            }
+        }
+
+        // do not indent child after heading comments inside declaration
+        if (childParent != null && childParent.getPsi() instanceof JetDeclaration) {
+            ASTNode prev = getPrevWithoutWhitespace(child);
+            if (prev != null && JetTokens.COMMENTS.contains(prev.getElementType()) && getPrevWithoutWhitespaceAndComments(prev) == null) {
                 return Indent.getNoneIndent();
             }
         }

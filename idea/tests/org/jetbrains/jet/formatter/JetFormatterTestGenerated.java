@@ -136,6 +136,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DocComments.after.kt")
+        public void testDocComments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/DocComments.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ElseOnNewLine.after.kt")
         public void testElseOnNewLine() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ElseOnNewLine.after.kt");
