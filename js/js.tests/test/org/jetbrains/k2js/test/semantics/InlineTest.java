@@ -17,19 +17,15 @@
 package org.jetbrains.k2js.test.semantics;
 
 import com.google.dart.compiler.backend.js.ast.JsNode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.k2js.config.Config;
-import org.jetbrains.k2js.facade.MainCallParameters;
+import com.intellij.util.Consumer;
 import org.jetbrains.k2js.inline.exception.InlineRecursionException;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
-import org.jetbrains.k2js.test.utils.*;
-
-import java.io.File;
-import java.util.List;
+import org.jetbrains.k2js.test.utils.InlineTestUtils;
+import org.jetbrains.k2js.test.utils.JsTestUtils;
+import org.jetbrains.k2js.test.utils.MemoizeConsumer;
 
 public final class InlineTest extends SingleFileTranslationTest {
-    private JsNode lastJsNode;
+    private final MemoizeConsumer<JsNode> nodeConsumer = new MemoizeConsumer<JsNode>();
 
     public InlineTest() {
         super("inline/");
@@ -38,7 +34,7 @@ public final class InlineTest extends SingleFileTranslationTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        lastJsNode = null;
+        nodeConsumer.consume(null);
     }
 
     public void testInlineSimpleAssignment() throws Exception {
@@ -262,16 +258,14 @@ public final class InlineTest extends SingleFileTranslationTest {
         String fileName = getInputFilePath(getTestName(true) + ".kt");
         String fileText = JsTestUtils.readFile(fileName);
 
+        JsNode lastJsNode = nodeConsumer.getLastValue();
+        assert lastJsNode != null;
+
         InlineTestUtils.processDirectives(lastJsNode, fileText);
     }
 
     @Override
-    protected void translateFiles(
-            @NotNull List<JetFile> jetFiles,
-            @NotNull File outputFile,
-            @NotNull MainCallParameters mainCallParameters,
-            @NotNull Config config
-    ) throws Exception {
-        lastJsNode = TranslationUtils.translateFilesAndGetAst(mainCallParameters, jetFiles, outputFile, null, null, config);
+    protected Consumer<JsNode> getConsumer() {
+        return nodeConsumer;
     }
 }

@@ -43,7 +43,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
             @NotNull String functionName,
             @NotNull Object expectedResult) throws Exception {
         generateJavaScriptFiles(kotlinFilename, MainCallParameters.noCall(), ecmaVersions);
-        runRhinoTests(kotlinFilename, ecmaVersions, new RhinoFunctionResultChecker(packageName, functionName, expectedResult));
+        runRhinoTests(kotlinFilename, ecmaVersions, new RhinoFunctionResultChecker(TEST_MODULE, packageName, functionName, expectedResult));
     }
 
     public void checkFooBoxIsTrue(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
@@ -100,7 +100,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
             @NotNull String testName,
             @NotNull String testId,
             @NotNull String... args) throws Exception {
-        checkOutput(testName + ".kt", readFile(expected(testName + testId)), ecmaVersions, args);
+        checkOutput(testName + ".kt", readFile(expectedFilePath(testName + testId)), ecmaVersions, args);
     }
 
     protected void performTestWithMain(@NotNull String testName, @NotNull String testId, @NotNull String... args) throws Exception {

@@ -18,7 +18,6 @@ package org.jetbrains.k2js.test.semantics;
 
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.test.BasicTest;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.translate.context.Namer;
 
@@ -41,7 +40,7 @@ public final class ExamplesTest extends SingleFileTranslationTest {
 
     public static Test suite() throws Exception {
         return TranslatorTestCaseBuilder
-                .suiteForDirectory(BasicTest.pathToTestFilesRoot() + "examples/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
+                .suiteForDirectory(TEST_DATA_DIR_PATH + "examples/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
                     @NotNull
                     @Override
                     public Test createTest(@NotNull String filename) {

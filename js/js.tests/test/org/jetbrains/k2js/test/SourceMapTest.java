@@ -18,8 +18,6 @@ package org.jetbrains.k2js.test;
 
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.test.config.TestConfig;
-import org.jetbrains.k2js.test.config.TestConfigFactory;
 import org.jetbrains.k2js.test.semantics.TranslatorTestCaseBuilder;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
@@ -33,10 +31,9 @@ public final class SourceMapTest extends SingleFileTranslationTest {
         this.filename = filename;
     }
 
-    @NotNull
     @Override
-    protected TestConfigFactory getConfigFactory() {
-        return TestConfig.FACTORY_WITH_SOURCEMAP;
+    protected boolean shouldGenerateSourcemap() {
+        return true;
     }
 
     @Override
@@ -46,7 +43,7 @@ public final class SourceMapTest extends SingleFileTranslationTest {
 
     public static Test suite() throws Exception {
         return TranslatorTestCaseBuilder
-                .suiteForDirectory(BasicTest.pathToTestFilesRoot() + "sourcemap/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
+                .suiteForDirectory(TEST_DATA_DIR_PATH + "sourcemap/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
                     @NotNull
                     @Override
                     public Test createTest(@NotNull String filename) {

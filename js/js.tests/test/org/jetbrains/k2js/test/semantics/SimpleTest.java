@@ -18,7 +18,6 @@ package org.jetbrains.k2js.test.semantics;
 
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.test.BasicTest;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
@@ -40,7 +39,7 @@ public final class SimpleTest extends SingleFileTranslationTest {
 
     public static Test suite() throws Exception {
         return TranslatorTestCaseBuilder
-                .suiteForDirectory(BasicTest.pathToTestFilesRoot() + "simple/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
+                .suiteForDirectory(TEST_DATA_DIR_PATH + "simple/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
                     @NotNull
                     @Override
                     public Test createTest(@NotNull String filename) {

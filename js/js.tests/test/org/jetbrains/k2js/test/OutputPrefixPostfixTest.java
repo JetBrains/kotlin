@@ -17,19 +17,13 @@
 package org.jetbrains.k2js.test;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Consumer;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.semantics.TranslatorTestCaseBuilder;
-import org.jetbrains.k2js.test.utils.TranslationUtils;
 
 import java.io.File;
-import java.util.List;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class OutputPrefixPostfixTest extends SingleFileTranslationTest {
@@ -52,14 +46,13 @@ public final class OutputPrefixPostfixTest extends SingleFileTranslationTest {
     }
 
     @Override
-    protected void translateFiles(
-            @NotNull List<JetFile> jetFiles,
-            @NotNull File outputFile,
-            @NotNull MainCallParameters mainCallParameters,
-            @NotNull Config config
-    ) throws Exception {
-        //noinspection unchecked
-        TranslationUtils.translateFiles(mainCallParameters, jetFiles, outputFile, outputPrefixFile, outputPostfixFile, config, Consumer.EMPTY_CONSUMER);
+    protected File getOutputPostfixFile() {
+        return outputPostfixFile;
+    }
+
+    @Override
+    protected File getOutputPrefixFile() {
+        return outputPrefixFile;
     }
 
     @Override
@@ -90,7 +83,7 @@ public final class OutputPrefixPostfixTest extends SingleFileTranslationTest {
 
     public static Test suite() throws Exception {
         return TranslatorTestCaseBuilder
-                .suiteForDirectory(BasicTest.pathToTestFilesRoot() + "outputPrefixPostfix/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
+                .suiteForDirectory(TEST_DATA_DIR_PATH + "outputPrefixPostfix/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
                     @NotNull
                     @Override
                     public Test createTest(@NotNull String filename) {

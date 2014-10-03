@@ -19,23 +19,19 @@ package org.jetbrains.k2js.test.semantics;
 import com.google.common.collect.Lists;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.MultipleFilesTranslationTest;
 import org.jetbrains.k2js.test.config.JsUnitTestReporter;
-import org.jetbrains.k2js.test.config.TestConfigWithUnitTests;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
 import org.jetbrains.k2js.test.rhino.RhinoUtils;
 
 import java.util.*;
 
-import static org.jetbrains.k2js.test.utils.LibraryFilePathsUtil.getAdditionalLibraryFiles;
-
 public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
 
     @NotNull
-    private static final String JS_TESTS = pathToTestFilesRoot() + "jsTester/";
+    private static final String JS_TESTS = TEST_DATA_DIR_PATH + "jsTester/";
     @NotNull
     protected static final String JS_TESTS_KT = JS_TESTS + "jsTester.kt";
     @NotNull
@@ -51,8 +47,8 @@ public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
 
     @NotNull
     @Override
-    protected List<String> additionalJSFiles(@NotNull EcmaVersion ecmaVersion) {
-        ArrayList<String> result = Lists.newArrayList(super.additionalJSFiles(ecmaVersion));
+    protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
+        ArrayList<String> result = Lists.newArrayList(super.additionalJsFiles(ecmaVersion));
         result.add(JS_TESTS_JS);
         return result;
     }
@@ -60,21 +56,21 @@ public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
     @NotNull
     @Override
     protected List<String> additionalKotlinFiles() {
-        List<String> result = Lists.newArrayList();
-        List<String> additionalLibraryFiles = getAdditionalLibraryFiles();
-        additionalLibraryFiles.add(JS_TESTS_KT);
-        boolean removed = additionalLibraryFiles.remove(Config.LIBRARIES_LOCATION + "/stdlib/testCode.kt");
-        assert removed;
-        result.addAll(additionalLibraryFiles);
-        result.add(Config.LIBRARIES_LOCATION + "/stdlib/TuplesCode.kt");
+        List<String> result = Lists.newArrayList(super.additionalKotlinFiles());
+        result.add(JS_TESTS_KT);
         return result;
+    }
+
+    @Override
+    protected boolean shouldBeTranslateAsUnitTestClass() {
+        return true;
     }
 
     public void runTestFile(@NotNull String pathToTestFile) throws Exception {
         Iterable<EcmaVersion> versions = DEFAULT_ECMA_VERSIONS;
         String testName = pathToTestFile.substring(pathToTestFile.lastIndexOf("/"));
-        generateJavaScriptFiles(Lists.newArrayList(pathToTestFile), testName, MainCallParameters.noCall(), versions,
-                                TestConfigWithUnitTests.FACTORY);
+
+        generateJavaScriptFiles(Collections.singletonList(pathToTestFile), testName, MainCallParameters.noCall(), versions);
         runRhinoTests(testName, versions, new RhinoSystemOutputChecker(""));
     }
 
