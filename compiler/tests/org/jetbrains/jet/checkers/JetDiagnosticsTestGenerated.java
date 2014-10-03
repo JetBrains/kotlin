@@ -5979,6 +5979,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("kt5854.kt")
+            public void testKt5854() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/kt5854.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("localClass.kt")
             public void testLocalClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/localClass.kt");

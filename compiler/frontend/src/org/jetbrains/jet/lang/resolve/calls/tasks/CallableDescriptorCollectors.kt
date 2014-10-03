@@ -25,12 +25,15 @@ import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.types.JetType
 
 import org.jetbrains.jet.lang.resolve.LibrarySourceHacks.filterOutMembersFromLibrarySource
+import org.jetbrains.jet.lang.resolve.DescriptorUtils.isStaticNestedClass
 
 public trait CallableDescriptorCollector<D : CallableDescriptor> {
 
     public fun getNonExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D>
 
     public fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<D>
+
+    public fun getStaticMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<D>
 
     public fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D>
 }
@@ -63,16 +66,22 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
 
     override fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
         val receiverScope = receiver.getMemberScope()
-        return receiverScope.getFunctions(name) + getConstructors(receiverScope, name)
+        return receiverScope.getFunctions(name) + getConstructors(receiverScope, name, { !isStaticNestedClass(it) })
+    }
+
+    override fun getStaticMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
+        return getConstructors(receiver.getMemberScope(), name, { isStaticNestedClass(it) })
     }
 
     override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
         return scope.getFunctions(name).filter { it.getExtensionReceiverParameter() != null }
     }
 
-    private fun getConstructors(scope: JetScope, name: Name): Collection<FunctionDescriptor> {
+    private fun getConstructors(
+            scope: JetScope, name: Name, filterClassPredicate: (ClassDescriptor) -> Boolean = { true }
+    ): Collection<FunctionDescriptor> {
         val classifier = scope.getClassifier(name)
-        if (classifier !is ClassDescriptor || ErrorUtils.isError(classifier)
+        if (classifier !is ClassDescriptor || ErrorUtils.isError(classifier) || !filterClassPredicate(classifier)
             // Constructors of singletons shouldn't be callable from the code
             || classifier.getKind().isSingleton()) {
             return listOf()
@@ -106,6 +115,10 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
         return (memberScope.getProperties(name) + getFakeDescriptorForObject(memberScope, name)).filterNotNull()
     }
 
+    override fun getStaticMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
+        return listOf()
+    }
+
     override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
         // property may have an extension function type, we check the applicability later to avoid an early computing of deferred types
         return (listOf(scope.getLocalVariable(name)) + scope.getProperties(name)).filterNotNull()
@@ -126,6 +139,10 @@ private object PropertyCollector : CallableDescriptorCollector<VariableDescripto
         return filterProperties(VARIABLES_COLLECTOR.getMembersByName(receiver, name, bindingTrace))
     }
 
+    override fun getStaticMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
+        return filterProperties(VARIABLES_COLLECTOR.getStaticMembersByName(receiver, name, bindingTrace))
+    }
+
     override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
         return filterProperties(VARIABLES_COLLECTOR.getExtensionsByName(scope, name, bindingTrace))
     }
@@ -141,6 +158,10 @@ private class FilteredCollector<D : CallableDescriptor>(private val delegate: Ca
 
     override fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<D> {
         return filterOutMembersFromLibrarySource(delegate.getMembersByName(receiver, name, bindingTrace))
+    }
+
+    override fun getStaticMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<D> {
+        return filterOutMembersFromLibrarySource(delegate.getStaticMembersByName(receiver, name, bindingTrace))
     }
 
     override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D> {
