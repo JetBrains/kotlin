@@ -144,7 +144,7 @@ public class CodeInsightUtils {
 
         PsiElement stopElement = element2.getNextSibling();
         List<PsiElement> array = new ArrayList<PsiElement>();
-        for (PsiElement currentElement = element1; currentElement != stopElement; currentElement = currentElement.getNextSibling()) {
+        for (PsiElement currentElement = element1; currentElement != stopElement && currentElement != null; currentElement = currentElement.getNextSibling()) {
             if (aClass.isInstance(currentElement)) {
                 array.add(currentElement);
             }
