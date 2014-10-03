@@ -4,7 +4,6 @@ trait A {
 }
 
 class C : A {
-
     override fun bar(): String {
         return super<A>.bar()
     }

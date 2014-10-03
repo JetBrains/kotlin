@@ -2,7 +2,6 @@
 import lib.ArrayFactory
 
 public class Impl : ArrayFactory {
-
     override fun create(): lib.Array {
         throw UnsupportedOperationException()
     }

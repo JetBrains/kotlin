@@ -1,7 +1,6 @@
 package foo
 
 class Impl : Bar() {
-
     override fun f(): Any {
         return super<Bar>.f()
     }

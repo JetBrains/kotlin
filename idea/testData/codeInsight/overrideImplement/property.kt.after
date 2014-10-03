@@ -3,6 +3,5 @@ trait T {
 }
 
 class GC() : T {
-
     override val v: Int = 0
 }

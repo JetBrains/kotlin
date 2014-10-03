@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.ide.util.MemberChooser;
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageCodeInsightActionHandler;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -25,9 +26,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,9 +38,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,9 +78,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     public static void generateMethods(
-            Editor editor,
-            JetClassOrObject classOrObject,
-            List<DescriptorClassMember> selectedElements
+            @NotNull Editor editor,
+            @NotNull JetClassOrObject classOrObject,
+            @NotNull List<DescriptorClassMember> selectedElements
     ) {
         JetClassBody body = classOrObject.getBody();
         if (body == null) {
@@ -106,24 +109,50 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     @Nullable
     private static PsiElement findInsertAfterAnchor(Editor editor, final JetClassBody body) {
         PsiElement afterAnchor = body.getLBrace();
-        if (afterAnchor == null) {
-            return null;
-        }
+        if (afterAnchor == null) return null;
 
         int offset = editor.getCaretModel().getOffset();
-        PsiElement offsetCursorElement = PsiTreeUtil.findFirstParent(body.getContainingFile().findElementAt(offset),
-                                                                     new Condition<PsiElement>() {
-                                                                         @Override
-                                                                         public boolean value(PsiElement element) {
-                                                                             return element.getParent() == body;
-                                                                         }
-                                                                     });
+        PsiElement offsetCursorElement = PsiTreeUtil.findFirstParent(
+                body.getContainingFile().findElementAt(offset),
+                new Condition<PsiElement>() {
+                    @Override
+                    public boolean value(PsiElement element) {
+                        return element.getParent() == body;
+                    }
+                });
+
+        if (offsetCursorElement instanceof PsiWhiteSpace) {
+            return removeAfterOffset(offset, (PsiWhiteSpace) offsetCursorElement);
+        }
 
         if (offsetCursorElement != null && offsetCursorElement != body.getRBrace()) {
-            afterAnchor = offsetCursorElement;
+            return offsetCursorElement;
         }
 
         return afterAnchor;
+    }
+
+    private static PsiElement removeAfterOffset(int offset, PsiWhiteSpace whiteSpace) {
+        ASTNode spaceNode = whiteSpace.getNode();
+        if (spaceNode.getTextRange().contains(offset)) {
+            String beforeWhiteSpaceText = spaceNode.getText().substring(0, offset - spaceNode.getStartOffset());
+            if (!StringUtil.containsLineBreak(beforeWhiteSpaceText)) {
+                // Prevent insertion on same line
+                beforeWhiteSpaceText += "\n";
+            }
+
+            JetPsiFactory factory = JetPsiFactory(whiteSpace.getProject());
+
+            PsiElement insertAfter = whiteSpace.getPrevSibling();
+            whiteSpace.delete();
+
+            PsiElement beforeSpace = factory.createWhiteSpace(beforeWhiteSpaceText);
+            insertAfter.getParent().addAfter(beforeSpace, insertAfter);
+
+            return insertAfter.getNextSibling();
+        }
+
+        return whiteSpace;
     }
 
     private static List<JetElement> generateOverridingMembers(List<DescriptorClassMember> selectedElements, JetFile file) {

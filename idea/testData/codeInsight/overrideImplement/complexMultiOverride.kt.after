@@ -5,7 +5,6 @@ open class Base<A, B, C>() {
 }
 
 class C : Base<String, C, Unit>() {
-
     override fun bar(value: () -> Unit): (String) -> Unit {
         return super<Base>.bar(value)
     }

@@ -3,7 +3,6 @@ trait A {
 }
 
 class B : A {
-
     override var Int.foo: Double
         get() = 0.0
         set(value) {

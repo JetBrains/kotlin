@@ -3,7 +3,6 @@ trait A {
 }
 
 class B : A {
-
     override fun String.foo() {
         throw UnsupportedOperationException()
     }

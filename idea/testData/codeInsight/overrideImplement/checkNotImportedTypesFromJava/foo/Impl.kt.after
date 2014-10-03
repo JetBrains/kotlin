@@ -5,7 +5,6 @@ import bar.Other
 import bar.Bar
 
 class Impl: Foo() {
-
     override fun foo(list: ArrayList<Int>?, other: Other?): Bar? {
         throw UnsupportedOperationException()
     }

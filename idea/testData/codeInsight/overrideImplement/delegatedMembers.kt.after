@@ -4,7 +4,6 @@ trait T {
 }
 
 class C(t :T) : T by t {
-
     override fun bar() {
         throw UnsupportedOperationException()
     }
