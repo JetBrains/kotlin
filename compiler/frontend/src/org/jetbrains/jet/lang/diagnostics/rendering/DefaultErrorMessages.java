@@ -252,7 +252,7 @@ public class DefaultErrorMessages {
         MAP.put(ABSTRACT_SUPER_CALL, "Abstract member cannot be accessed directly");
         MAP.put(NOT_A_SUPERTYPE, "Not a supertype");
         MAP.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, "Type arguments do not need to be specified in a 'super' qualifier");
-        MAP.put(USELESS_CAST_STATIC_ASSERT_IS_FINE, "No cast needed, use ':' instead");
+        MAP.put(USELESS_CAST_STATIC_ASSERT_IS_FINE, "No cast needed. You can use ':' if you need a cast to a super type");
         MAP.put(USELESS_CAST, "No cast needed");
         MAP.put(CAST_NEVER_SUCCEEDS, "This cast can never succeed");
         MAP.put(USELESS_NULLABLE_CHECK, "Non-null type is checked for instance of nullable type");

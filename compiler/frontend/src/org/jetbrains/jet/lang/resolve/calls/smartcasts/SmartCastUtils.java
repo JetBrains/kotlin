@@ -80,9 +80,7 @@ public class SmartCastUtils {
             return collectSmartCastReceiverValues(dataFlowInfo, dataFlowValue);
         }
         else if (receiverToCast instanceof ExpressionReceiver) {
-            ExpressionReceiver receiver = (ExpressionReceiver) receiverToCast;
-            DataFlowValue dataFlowValue =
-                    DataFlowValueFactory.createDataFlowValue(receiver.getExpression(), receiver.getType(), bindingContext);
+            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverToCast, bindingContext);
             return collectSmartCastReceiverValues(dataFlowInfo, dataFlowValue);
         }
         return Collections.emptyList();

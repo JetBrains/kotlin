@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -45,7 +44,6 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImp
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValue;
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.Nullability;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
@@ -76,6 +74,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
+import static org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory.createDataFlowValue;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.resolve.source.SourcePackage.toSourceElement;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -174,7 +173,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, subjectType);
             dataFlowInfo = typeInfo.getDataFlowInfo();
             if (operationType == AS_KEYWORD) {
-                DataFlowValue value = DataFlowValueFactory.createDataFlowValue(left, subjectType, context.trace.getBindingContext());
+                DataFlowValue value = createDataFlowValue(left, subjectType, context.trace.getBindingContext());
                 dataFlowInfo = dataFlowInfo.establishSubtyping(value, targetType);
             }
         }
@@ -199,10 +198,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(UNSUPPORTED.on(operationSign, "binary operation with type RHS"));
             return;
         }
-        checkForCastImpossibility(expression, actualType, targetType, context);
+        checkForCastImpossibilityOrRedundancy(expression, actualType, targetType, context);
     }
 
-    private void checkForCastImpossibility(
+    private void checkForCastImpossibilityOrRedundancy(
             JetBinaryExpressionWithTypeRHS expression,
             JetType actualType,
             JetType targetType,
@@ -212,23 +211,24 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         if (!CastDiagnosticsUtil.isCastPossible(actualType, targetType, components.platformToKotlinClassMap)) {
             context.trace.report(CAST_NEVER_SUCCEEDS.on(expression.getOperationReference()));
+            return;
         }
-        else {
-            JetTypeChecker typeChecker = JetTypeChecker.DEFAULT;
-            // Upcast?
-            if (typeChecker.isSubtypeOf(actualType, targetType)) {
-                if (!typeChecker.isSubtypeOf(targetType, actualType)) {
-                    // proper upcast: String as Any
-                    context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression.getOperationReference()));
-                }
-                else {
-                    // cast to itself: String as String
-                    context.trace.report(USELESS_CAST.on(expression.getOperationReference()));
-                }
+        JetTypeChecker typeChecker = JetTypeChecker.DEFAULT;
+        if (actualType.equals(targetType)) {
+            // cast to itself: String as String
+            context.trace.report(USELESS_CAST.on(expression.getOperationReference()));
+            return;
+        }
+        Collection<JetType> possibleTypes = DataFlowUtils.getAllPossibleTypes(
+                expression.getLeft(), context.dataFlowInfo, actualType, context.trace.getBindingContext());
+        for (JetType possibleType : possibleTypes) {
+            if (typeChecker.isSubtypeOf(possibleType, targetType)) {
+                context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression.getOperationReference()));
+                return;
             }
-            else if (CastDiagnosticsUtil.isCastErased(actualType, targetType, typeChecker)) {
-                context.trace.report(Errors.UNCHECKED_CAST.on(expression, actualType, targetType));
-            }
+        }
+        if (CastDiagnosticsUtil.isCastErased(actualType, targetType, typeChecker)) {
+            context.trace.report(UNCHECKED_CAST.on(expression, actualType, targetType));
         }
     }
 
@@ -803,7 +803,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, baseType));
         }
         else {
-            DataFlowValue value = DataFlowValueFactory.createDataFlowValue(baseExpression, baseType, context.trace.getBindingContext());
+            DataFlowValue value = createDataFlowValue(baseExpression, baseType, context.trace.getBindingContext());
             dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
         }
         return JetTypeInfo.create(TypeUtils.makeNotNullable(baseType), dataFlowInfo);
@@ -835,7 +835,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private static boolean isKnownToBeNotNull(JetExpression expression, JetType jetType, ExpressionTypingContext context) {
-        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, jetType, context.trace.getBindingContext());
+        DataFlowValue dataFlowValue = createDataFlowValue(expression, jetType, context.trace.getBindingContext());
         return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
     }
 
@@ -1075,7 +1075,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         DataFlowInfo dataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
         if (leftType != null && rightType != null && KotlinBuiltIns.getInstance().isNothingOrNullableNothing(rightType) && !rightType.isNullable()) {
-            DataFlowValue value = DataFlowValueFactory.createDataFlowValue(left, leftType, context.trace.getBindingContext());
+            DataFlowValue value = createDataFlowValue(left, leftType, context.trace.getBindingContext());
             dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
         }
         JetType type = resolvedCall.getResultingDescriptor().getReturnType();
@@ -1158,7 +1158,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType type = facade.getTypeInfo(expr, context).getType();
         if (type == null || type.isError()) return;
 
-        DataFlowValue value = DataFlowValueFactory.createDataFlowValue(expr, type, context.trace.getBindingContext());
+        DataFlowValue value = createDataFlowValue(expr, type, context.trace.getBindingContext());
         Nullability nullability = context.dataFlowInfo.getNullability(value);
 
         boolean expressionIsAlways;
