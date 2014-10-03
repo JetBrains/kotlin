@@ -104,10 +104,7 @@ public class CandidateResolver {
             ValueArgumentsToParametersMapper.Status argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(
                     context.call, context.tracing, candidateCall, unmappedArguments);
             if (!argumentMappingStatus.isSuccess()) {
-                //For the expressions like '42.(f)()' where f: () -> Unit we'd like to generate an error 'no receiver admitted',
-                //not to throw away the candidate.
-                if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR
-                            && !CallResolverUtil.isInvokeCallOnExpressionWithBothReceivers(context.call)) {
+                if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
                     candidateCall.addStatus(RECEIVER_PRESENCE_ERROR);
                     checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS);
                     return;

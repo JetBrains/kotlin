@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls.tasks;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -27,14 +28,18 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.FUNCTION_EXPECTED;
+import static org.jetbrains.jet.lang.diagnostics.Errors.NO_RECEIVER_ALLOWED;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
 public class TracingStrategyForInvoke extends AbstractTracingStrategy {
+    private static final Logger LOG = Logger.getInstance(TracingStrategyForInvoke.class);
+
     private final JetType calleeType;
 
     public TracingStrategyForInvoke(
@@ -74,13 +79,26 @@ public class TracingStrategyForInvoke extends AbstractTracingStrategy {
 
     @Override
     public void unresolvedReference(@NotNull BindingTrace trace) {
-        trace.report(FUNCTION_EXPECTED.on(reference, reference, calleeType));
+        functionExpectedOrNoReceiverAllowed(trace);
     }
 
     @Override
     public <D extends CallableDescriptor> void unresolvedReferenceWrongReceiver(
             @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> candidates
     ) {
-        trace.report(FUNCTION_EXPECTED.on(reference, reference, calleeType));
+        functionExpectedOrNoReceiverAllowed(trace);
+    }
+
+    private void functionExpectedOrNoReceiverAllowed(BindingTrace trace) {
+        if (KotlinBuiltIns.getInstance().isFunctionType(calleeType)) {
+            //LOG.assert
+            if (!call.getExplicitReceiver().exists()) {
+                LOG.error("'Invoke' is not found on expression of function type (" + calleeType + "): " + call.getCallElement().getText());
+            }
+            trace.report(NO_RECEIVER_ALLOWED.on(reference));
+        }
+        else {
+            trace.report(FUNCTION_EXPECTED.on(reference, reference, calleeType));
+        }
     }
 }

@@ -153,7 +153,7 @@ public class TaskPrioritizer {
             }
             //extensions
             Collection<ResolutionCandidate<D>> extensions = convertWithImpliedThis(
-                    c.scope, explicitReceiver, callableDescriptorCollector.getNonMembersByName(c.scope, c.name, c.context.trace),
+                    c.scope, explicitReceiver, callableDescriptorCollector.getExtensionsByName(c.scope, c.name, c.context.trace),
                     createKind(EXTENSION_RECEIVER, isExplicit), c.context.call);
             c.result.addCandidates(extensions);
         }
@@ -170,7 +170,7 @@ public class TaskPrioritizer {
             @NotNull CallableDescriptorCollector<D> callableDescriptorCollector, TaskPrioritizerContext<D, F> c,
             @NotNull ExplicitReceiverKind receiverKind
     ) {
-        Collection<D> memberExtensions = callableDescriptorCollector.getNonMembersByName(
+        Collection<D> memberExtensions = callableDescriptorCollector.getExtensionsByName(
                 dispatchReceiver.getType().getMemberScope(), c.name, c.context.trace);
         c.result.addCandidates(convertWithReceivers(
                 memberExtensions, dispatchReceiver, receiverParameter, receiverKind, c.context.call));
