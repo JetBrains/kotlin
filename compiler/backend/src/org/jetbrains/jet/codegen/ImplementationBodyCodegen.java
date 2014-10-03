@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.backend.common.DataClassMethodGenerator;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
-import org.jetbrains.jet.codegen.bridges.BridgesPackage;
 import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -1409,33 +1408,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateTraitMethods() {
         if (JetPsiUtil.isTrait(myClass)) return;
 
-        for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
-            if (!(declaration instanceof CallableMemberDescriptor)) continue;
-
-            CallableMemberDescriptor inheritedMember = (CallableMemberDescriptor) declaration;
-            CallableMemberDescriptor traitMember = BridgesPackage.findTraitImplementation(inheritedMember);
-            if (traitMember == null) continue;
-
-            assert traitMember.getModality() != Modality.ABSTRACT : "Cannot delegate to abstract trait method: " + inheritedMember;
-
-            // inheritedMember can be abstract here. In order for FunctionCodegen to generate the method body, we're creating a copy here
-            // with traitMember's modality
-            CallableMemberDescriptor copy =
-                    inheritedMember.copy(inheritedMember.getContainingDeclaration(), traitMember.getModality(), Visibilities.PUBLIC,
-                                         CallableMemberDescriptor.Kind.DECLARATION, true);
-
-            if (traitMember instanceof SimpleFunctionDescriptor) {
-                generateDelegationToTraitImpl((FunctionDescriptor) traitMember, (FunctionDescriptor) copy);
-            }
-            else if (traitMember instanceof PropertyDescriptor) {
-                for (PropertyAccessorDescriptor traitAccessor : ((PropertyDescriptor) traitMember).getAccessors()) {
-                    for (PropertyAccessorDescriptor inheritedAccessor : ((PropertyDescriptor) copy).getAccessors()) {
-                        if (inheritedAccessor.getClass() == traitAccessor.getClass()) { // same accessor kind
-                            generateDelegationToTraitImpl(traitAccessor, inheritedAccessor);
-                        }
-                    }
-                }
-            }
+        for(Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getTraitMethods(descriptor).entrySet()) {
+            generateDelegationToTraitImpl(entry.getKey(), entry.getValue());
         }
     }
 
