@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.LinkedList;
@@ -109,7 +108,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             changeFunctionLiteralReturnTypeFix.invoke(project, editor, file);
         }
         else {
-            SpecifyTypeExplicitlyAction.removeTypeAnnotation(element);
+            element.setReturnTypeRef(null);
             if (!(KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody())) {
                 addReturnTypeAnnotation(element, renderedType);
             }

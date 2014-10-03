@@ -61,7 +61,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+    public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement element) {
         JetTypeReference typeRefParent = PsiTreeUtil.getTopmostParentOfType(element, JetTypeReference.class);
         if (typeRefParent != null) {
             element = typeRefParent;
@@ -74,7 +74,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
                 addTypeAnnotation(project, editor, property, type);
             }
             else {
-                removeTypeAnnotation(property);
+                property.setTypeRef(null);
             }
         }
         else if (parent instanceof JetParameter) {
@@ -83,7 +83,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
                 addTypeAnnotation(project, editor, parameter, type);
             }
             else {
-                removeTypeAnnotation(parameter);
+                parameter.setTypeRef(null);
             }
         }
         else if (parent instanceof JetNamedFunction) {
@@ -97,7 +97,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+    public boolean isAvailable(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement element) {
         if (element.getContainingFile() instanceof JetCodeFragment) {
             return false;
         }
@@ -181,43 +181,33 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             @NotNull JetProperty property,
             @NotNull JetType exprType
     ) {
-        if (property.getTypeRef() != null) {
-            return;
-        }
+        if (property.getTypeRef() != null) return;
 
-        PsiElement anchor = property.getNameIdentifier();
-        if (anchor == null) {
-            return;
-        }
-
-        addTypeAnnotation(project, editor, property, anchor, exprType);
+        addTypeAnnotationWithTemplate(project, editor, property, exprType);
     }
 
     public static void addTypeAnnotation(Project project, @Nullable Editor editor, JetFunction function, @NotNull JetType exprType) {
-        JetParameterList valueParameterList = function.getValueParameterList();
-        assert valueParameterList != null;
         if (editor != null) {
-            addTypeAnnotation(project, editor, function, valueParameterList, exprType);
+            addTypeAnnotationWithTemplate(project, editor, function, exprType);
         }
         else {
-            addTypeAnnotationSilently(project, function, valueParameterList);
+            function.setReturnTypeRef(anyTypeRef(project));
         }
     }
 
     public static void addTypeAnnotation(Project project, @Nullable Editor editor, JetParameter parameter, @NotNull JetType exprType) {
         if (editor != null) {
-            addTypeAnnotation(project, editor, parameter, parameter.getNameIdentifier(), exprType);
+            addTypeAnnotationWithTemplate(project, editor, parameter, exprType);
         }
         else {
-            addTypeAnnotationSilently(project, parameter, parameter.getNameIdentifier());
+            parameter.setTypeRef(anyTypeRef(project));
         }
     }
 
-    private static void addTypeAnnotation(
+    private static void addTypeAnnotationWithTemplate(
             @NotNull Project project,
             @NotNull Editor editor,
             @NotNull final JetNamedDeclaration namedDeclaration,
-            @NotNull PsiElement anchor,
             @NotNull JetType exprType
     ) {
         assert !exprType.isError() : "Unexpected error type: " + namedDeclaration.getText();
@@ -245,12 +235,13 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             }
         };
 
-        addTypeAnnotationSilently(project, namedDeclaration, anchor);
+        setTypeRef(namedDeclaration, anyTypeRef(project));
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument());
 
         JetTypeReference newTypeRef = getTypeRef(namedDeclaration);
+        assert newTypeRef != null;
         TemplateBuilderImpl builder = new TemplateBuilderImpl(newTypeRef);
         builder.replaceElement(newTypeRef, expression);
 
@@ -260,15 +251,15 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         manager.startTemplate(editor, builder.buildInlineTemplate(), new TemplateEditingAdapter() {
             @Override
             public void templateFinished(Template template, boolean brokenOff) {
-                ShortenReferences.INSTANCE$.process(getTypeRef(namedDeclaration));
+                JetTypeReference typeRef = getTypeRef(namedDeclaration);
+                assert typeRef != null;
+                ShortenReferences.INSTANCE$.process(typeRef);
             }
         });
     }
 
-    private static void addTypeAnnotationSilently(Project project, JetNamedDeclaration namedDeclaration, PsiElement anchor) {
-        JetPsiFactory psiFactory = JetPsiFactory(namedDeclaration);
-        namedDeclaration.addAfter(psiFactory.createType("Any"), anchor);
-        namedDeclaration.addAfter(psiFactory.createColon(), anchor);
+    private static JetTypeReference anyTypeRef(@NotNull Project project) {
+        return JetPsiFactory(project).createType("Any");
     }
 
     @Nullable
@@ -286,24 +277,18 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         return null;
     }
 
-    private static void removeTypeAnnotation(@Nullable PsiElement removeAfter, @Nullable JetTypeReference typeReference) {
-        if (removeAfter == null) return;
-        if (typeReference == null) return;
-        PsiElement sibling = removeAfter.getNextSibling();
-        if (sibling == null) return;
-        PsiElement nextSibling = typeReference.getNextSibling();
-        sibling.getParent().getNode().removeRange(sibling.getNode(), nextSibling == null ? null : nextSibling.getNode());
-    }
-
-    public static void removeTypeAnnotation(JetVariableDeclaration property) {
-        removeTypeAnnotation(property.getNameIdentifier(), property.getTypeRef());
-    }
-
-    public static void removeTypeAnnotation(JetParameter parameter) {
-        removeTypeAnnotation(parameter.getNameIdentifier(), parameter.getTypeReference());
-    }
-
-    public static void removeTypeAnnotation(JetFunction function) {
-        removeTypeAnnotation(function.getValueParameterList(), function.getReturnTypeRef());
+    @Nullable
+    private static JetTypeReference setTypeRef(@NotNull JetNamedDeclaration namedDeclaration, @Nullable JetTypeReference typeRef) {
+        if (namedDeclaration instanceof JetProperty) {
+            return ((JetProperty) namedDeclaration).setTypeRef(typeRef);
+        }
+        else if (namedDeclaration instanceof JetParameter) {
+            return ((JetParameter) namedDeclaration).setTypeRef(typeRef);
+        }
+        else if (namedDeclaration instanceof JetFunction) {
+            return ((JetFunction) namedDeclaration).setReturnTypeRef(typeRef);
+        }
+        assert false : "Wrong namedDeclaration: " + namedDeclaration.getText();
+        return null;
     }
 }

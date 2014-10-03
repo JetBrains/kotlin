@@ -27,4 +27,7 @@ public interface JetVariableDeclaration extends JetDeclaration, JetWithExpressio
 
     @Nullable
     JetTypeReference getTypeRef();
+
+    @Nullable
+    JetTypeReference setTypeRef(@Nullable JetTypeReference typeRef);
 }
