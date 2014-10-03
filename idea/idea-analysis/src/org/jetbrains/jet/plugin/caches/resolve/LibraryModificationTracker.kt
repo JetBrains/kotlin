@@ -26,6 +26,9 @@ import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.openapi.vfs.VirtualFileMoveEvent
 import com.intellij.openapi.roots.ProjectFileIndex
 import kotlin.platform.platformStatic
+import com.intellij.codeInsight.ExternalAnnotationsManager
+import com.intellij.codeInsight.ExternalAnnotationsListener
+import com.intellij.psi.PsiModifierListOwner
 
 class LibraryModificationTracker(project: Project) : SimpleModificationTracker() {
     class object {
@@ -42,6 +45,14 @@ class LibraryModificationTracker(project: Project) : SimpleModificationTracker()
                     override fun beforeFileDeletion(event: VirtualFileEvent) = processEvent(event)
                 }
         ))
+
+        connection.subscribe(ExternalAnnotationsManager.TOPIC, object : ExternalAnnotationsListener {
+            override fun afterExternalAnnotationChanging(owner: PsiModifierListOwner, annotationFQName: String, successful: Boolean) {
+                if (successful) incModificationCount()
+            }
+
+            override fun externalAnnotationsChangedExternally() = incModificationCount()
+        })
     }
 
     val projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
