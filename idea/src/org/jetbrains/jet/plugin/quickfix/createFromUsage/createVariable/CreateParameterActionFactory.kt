@@ -37,8 +37,9 @@ import org.jetbrains.jet.plugin.refactoring.changeSignature.JetValVar
 import org.jetbrains.jet.lang.psi.JetEnumEntry
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
 
 object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
     private fun JetType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, context: BindingContext): Boolean {
@@ -69,7 +70,9 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
         val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetSimpleNameExpression>()) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
 
-        val paramType = refExpr.guessTypes(context).let {
+        val varExpected = refExpr.getAssignmentByLHS() != null
+
+        val paramType = refExpr.getExpressionForTypeGuess().guessTypes(context).let {
             when (it.size) {
                 0 -> KotlinBuiltIns.getInstance().getAnyType()
                 1 -> it.first()
@@ -80,7 +83,7 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
         val parameterInfo = JetParameterInfo(refExpr.getReferencedName(), paramType)
 
         fun chooseContainingClass(it: PsiElement): JetClass? {
-            parameterInfo.setValOrVar(JetValVar.Val)
+            parameterInfo.setValOrVar(if (varExpected) JetValVar.Var else JetValVar.Val)
             return it.parents(false).filterIsInstance(javaClass<JetClassOrObject>()).firstOrNull() as? JetClass
         }
 
@@ -89,11 +92,11 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
                 .filter { it is JetNamedFunction || it is JetPropertyAccessor || it is JetClassBody || it is JetClassInitializer }
                 .firstOrNull()
                 ?.let {
-                    when (it) {
-                        is JetPropertyAccessor -> chooseContainingClass(it)
-                        is JetClassInitializer ->
-                            it.getParent()?.getParent() as? JetClass
-                        is JetClassBody -> {
+                    when {
+                        it is JetNamedFunction && varExpected,
+                        it is JetPropertyAccessor -> chooseContainingClass(it)
+                        it is JetClassInitializer -> it.getParent()?.getParent() as? JetClass
+                        it is JetClassBody -> {
                             val klass = it.getParent() as? JetClass
                             when {
                                 klass is JetEnumEntry -> chooseContainingClass(klass)

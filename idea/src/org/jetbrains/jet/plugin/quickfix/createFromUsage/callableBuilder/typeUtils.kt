@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.types.TypeProjectionImpl
 import org.jetbrains.jet.lang.types.JetTypeImpl
+import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
 
 private fun JetType.contains(inner: JetType): Boolean {
     return this == inner || getArguments().any { inner in it.getType() }
@@ -180,3 +181,5 @@ private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Vari
         return JetTypeImpl(getAnnotations(), getConstructor(), isNullable(), newArguments, getMemberScope())
     }
 }
+
+fun JetExpression.getExpressionForTypeGuess() = getAssignmentByLHS()?.getRight() ?: this

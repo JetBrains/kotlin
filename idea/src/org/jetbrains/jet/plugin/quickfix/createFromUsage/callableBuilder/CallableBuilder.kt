@@ -243,8 +243,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             with (config) {
                 val ownerTypeString = if (isExtension) "${receiverTypeCandidate!!.renderedType!!}." else ""
                 val paramList = when (callableInfo.kind) {
-                    CallableKind.FUNCTION -> "(${callableInfo.parameterInfos.indices.map { i -> "p$i: Any" }.joinToString(", ")})"
-                    CallableKind.PROPERTY -> ""
+                    CallableKind.FUNCTION ->
+                        "(${(callableInfo as FunctionInfo).parameterInfos.indices.map { i -> "p$i: Any" }.joinToString(", ")})"
+                    CallableKind.PROPERTY ->
+                        ""
                 }
                 val returnTypeString = if (isUnit) "" else ": Any"
                 val header = "$ownerTypeString${callableInfo.name}$paramList$returnTypeString"
@@ -253,7 +255,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 val declaration = when (callableInfo.kind) {
                     CallableKind.FUNCTION -> psiFactory.createFunction("fun $header {}")
-                    CallableKind.PROPERTY -> psiFactory.createProperty("val $header")
+                    CallableKind.PROPERTY -> {
+                        val valVar = if ((callableInfo as PropertyInfo).writable) "var" else "val"
+                        psiFactory.createProperty("$valVar $header")
+                    }
                 }
                 val newLine = psiFactory.createNewLine()
 
@@ -433,7 +438,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         }
 
         private fun setupValVarTemplate(builder: TemplateBuilder, property: JetProperty) {
-            builder.replaceElement(property.getValOrVarNode().getPsi()!!, ValVarExpression)
+            if (!(config.callableInfo as PropertyInfo).writable) {
+                builder.replaceElement(property.getValOrVarNode().getPsi()!!, ValVarExpression)
+            }
         }
 
         private fun setupTypeParameterListTemplate(builder: TemplateBuilderImpl, declaration: JetCallableDeclaration): TypeParameterListExpression {

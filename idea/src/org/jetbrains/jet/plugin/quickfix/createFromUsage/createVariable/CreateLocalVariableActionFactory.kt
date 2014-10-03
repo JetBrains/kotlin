@@ -12,7 +12,6 @@ import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElement
 import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.createPropertyInfo
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallableBuilderConfiguration
@@ -20,13 +19,14 @@ import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.createB
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallablePlacement
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.jet.lang.psi.psiUtil.parents
-import org.jetbrains.jet.lang.psi.JetFunction
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.intentions.ConvertToBlockBodyAction
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
 import org.jetbrains.jet.lang.psi.JetClassBody
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.PropertyInfo
+import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
 
 object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -37,9 +37,13 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
                 .filter { it is JetBlockExpression || it is JetDeclarationWithBody }
                 .firstOrNull() as? JetElement ?: return null
 
+        val varExpected = refExpr.getAssignmentByLHS() != null
+        val typeInfo = TypeInfo(
+                refExpr.getExpressionForTypeGuess(),
+                if (varExpected) Variance.INVARIANT else Variance.OUT_VARIANCE
+        )
         val containers = refExpr.getExtractionContainers().filterNot { it is JetClassBody || it is JetFile }
-        val propertyInfo =
-                createPropertyInfo(refExpr.getReferencedName(), TypeInfo.Empty, TypeInfo(refExpr, Variance.OUT_VARIANCE), containers)
+        val propertyInfo = PropertyInfo(refExpr.getReferencedName(), TypeInfo.Empty, typeInfo, varExpected, containers)
 
         return object: CreateFromUsageFixBase(refExpr) {
             override fun getText(): String = JetBundle.message("create.local.variable.from.usage", propertyInfo.name)

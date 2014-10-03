@@ -20,6 +20,6 @@ object CreateGetFunctionActionFactory : JetSingleIntentionActionFactory() {
         }
 
         val returnType = TypeInfo(accessExpr, Variance.OUT_VARIANCE)
-        return CreateFunctionFromUsageFix(accessExpr, createFunctionInfo("get", arrayType, returnType, Collections.emptyList(), parameters))
+        return CreateFunctionFromUsageFix(accessExpr, FunctionInfo("get", arrayType, returnType, Collections.emptyList(), parameters))
     }
 }

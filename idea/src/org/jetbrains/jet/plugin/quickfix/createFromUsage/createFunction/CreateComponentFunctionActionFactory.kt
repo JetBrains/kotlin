@@ -34,6 +34,6 @@ object CreateComponentFunctionActionFactory : JetSingleIntentionActionFactory() 
         val entry = entries[componentNumber]
         val returnType = TypeInfo(entry, Variance.OUT_VARIANCE)
 
-        return CreateFunctionFromUsageFix(multiDeclaration!!, createFunctionInfo(name.getIdentifier(), ownerType, returnType))
+        return CreateFunctionFromUsageFix(multiDeclaration!!, FunctionInfo(name.getIdentifier(), ownerType, returnType))
     }
 }

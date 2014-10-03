@@ -21,6 +21,7 @@ import java.util.Collections
 import org.jetbrains.jet.plugin.refactoring.getExtractionContainers
 import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
 
 object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -70,8 +71,6 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionF
                 }
                 else Collections.emptyList()
 
-        val returnType = TypeInfo(fullCallExpr, Variance.OUT_VARIANCE)
-
         val callableInfo = when (callExpr) {
             is JetCallExpression -> {
                 val anyType = KotlinBuiltIns.getInstance().getNullableAnyType()
@@ -81,10 +80,18 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionF
                             it.getArgumentName()?.getReferenceExpression()?.getReferencedName()
                     )
                 }
-                createFunctionInfo(calleeExpr.getReferencedName(), receiverType, returnType, possibleContainers, parameters)
+                val returnType = TypeInfo(fullCallExpr, Variance.OUT_VARIANCE)
+                FunctionInfo(calleeExpr.getReferencedName(), receiverType, returnType, possibleContainers, parameters)
             }
 
-            is JetSimpleNameExpression -> createPropertyInfo(calleeExpr.getReferencedName(), receiverType, returnType, possibleContainers)
+            is JetSimpleNameExpression -> {
+                val varExpected = fullCallExpr.getAssignmentByLHS() != null
+                val returnType = TypeInfo(
+                        fullCallExpr.getExpressionForTypeGuess(),
+                        if (varExpected) Variance.INVARIANT else Variance.OUT_VARIANCE
+                )
+                PropertyInfo(calleeExpr.getReferencedName(), receiverType, returnType, varExpected, possibleContainers)
+            }
 
             else -> return null
         }

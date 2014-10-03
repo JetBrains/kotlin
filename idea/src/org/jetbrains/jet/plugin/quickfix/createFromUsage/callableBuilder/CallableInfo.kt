@@ -71,30 +71,31 @@ enum class CallableKind {
     PROPERTY
 }
 
-class CallableInfo (
+abstract class CallableInfo (
         val name: String,
-        val kind: CallableKind,
         val receiverTypeInfo: TypeInfo,
         val returnTypeInfo: TypeInfo,
-        val possibleContainers: List<JetElement>,
-        val parameterInfos: List<ParameterInfo> = Collections.emptyList()
+        val possibleContainers: List<JetElement>
 ) {
-    {
-        if (kind == CallableKind.PROPERTY) assert (parameterInfos.isEmpty(), "$kind: Parameters are not allowed")
-    }
+    abstract val kind: CallableKind
+    abstract val parameterInfos: List<ParameterInfo>
 }
 
-fun createFunctionInfo(name: String,
-                       receiverTypeInfo: TypeInfo,
-                       returnTypeInfo: TypeInfo,
-                       possibleContainers: List<JetElement> = Collections.emptyList(),
-                       parameterInfos: List<ParameterInfo> = Collections.emptyList()): CallableInfo {
-    return CallableInfo(name, CallableKind.FUNCTION, receiverTypeInfo, returnTypeInfo, possibleContainers, parameterInfos)
+class FunctionInfo(name: String,
+                   receiverTypeInfo: TypeInfo,
+                   returnTypeInfo: TypeInfo,
+                   possibleContainers: List<JetElement> = Collections.emptyList(),
+                   override val parameterInfos: List<ParameterInfo> = Collections.emptyList()
+) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers) {
+    override val kind: CallableKind get() = CallableKind.FUNCTION
 }
 
-fun createPropertyInfo(name: String,
-                       receiverTypeInfo: TypeInfo,
-                       returnTypeInfo: TypeInfo,
-                       possibleContainers: List<JetElement>): CallableInfo {
-    return CallableInfo(name, CallableKind.PROPERTY, receiverTypeInfo, returnTypeInfo, possibleContainers)
+class PropertyInfo(name: String,
+                   receiverTypeInfo: TypeInfo,
+                   returnTypeInfo: TypeInfo,
+                   val writable: Boolean,
+                   possibleContainers: List<JetElement> = Collections.emptyList() 
+) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers) {
+    override val kind: CallableKind get() = CallableKind.PROPERTY
+    override val parameterInfos: List<ParameterInfo> get() = Collections.emptyList()
 }
