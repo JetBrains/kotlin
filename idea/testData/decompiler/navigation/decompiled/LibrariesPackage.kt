@@ -3,15 +3,15 @@
 
 package testData.libraries
 
-[public val globalVal: testData.libraries.Pair<kotlin.Int, kotlin.String>] /* compiled code */
+[public val globalVal: testData.libraries.Pair<kotlin.Int, kotlin.String> /* compiled code */]
 
-[public val globalValWithGetter: kotlin.Long] /* compiled code */
+[public val globalValWithGetter: kotlin.Long /* compiled code */]
 
-[public val kotlin.Int.exProp: kotlin.Int] /* compiled code */
+[public val kotlin.Int.exProp: kotlin.Int /* compiled code */]
 
-[public val kotlin.String.exProp: kotlin.String] /* compiled code */
+[public val kotlin.String.exProp: kotlin.String /* compiled code */]
 
-[public val <T> testData.libraries.Pair<T, T>.exProp: kotlin.String] /* compiled code */
+[public val <T> testData.libraries.Pair<T, T>.exProp: kotlin.String /* compiled code */]
 
 [public fun <T : kotlin.CharSequence> funWithTypeParam(t: T): kotlin.Unit { /* compiled code */ }]
 

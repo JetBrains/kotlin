@@ -115,12 +115,12 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
             if ((descriptor as MemberDescriptor).getModality() != Modality.ABSTRACT) {
                 if (descriptor is FunctionDescriptor) {
                     builder.append(" { ").append(DECOMPILED_COMMENT).append(" }")
-                    endOffset = builder.length()
                 }
                 else {
                     // descriptor instanceof PropertyDescriptor
                     builder.append(" ").append(DECOMPILED_COMMENT)
                 }
+                endOffset = builder.length()
             }
         }
         else

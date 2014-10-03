@@ -8,13 +8,13 @@ package testData.libraries
 
     [public abstract var abstractVar: kotlin.String]
 
-    [public open val openVal: kotlin.String] /* compiled code */
+    [public open val openVal: kotlin.String /* compiled code */]
 
-    [public open val openValWithGetter: kotlin.String] /* compiled code */
+    [public open val openValWithGetter: kotlin.String /* compiled code */]
 
-    [public open var openVar: kotlin.String] /* compiled code */
+    [public open var openVar: kotlin.String /* compiled code */]
 
-    [public open var openVarWithGetter: kotlin.String] /* compiled code */
+    [public open var openVarWithGetter: kotlin.String /* compiled code */]
 
     [public abstract fun abstractFun(): kotlin.Unit]
 
