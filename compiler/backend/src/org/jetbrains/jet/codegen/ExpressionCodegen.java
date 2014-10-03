@@ -3095,10 +3095,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         Type type = expressionType(expression.getBaseExpression());
         value.put(type, v);
-        invokeFunction(resolvedCall, StackValue.onStack(type));
-
-        CallableMethod callableMethod = (CallableMethod) callable;
-        value.store(callableMethod.getReturnType(), v);
+        StackValue result = invokeFunction(resolvedCall, StackValue.onStack(type));
+        value.store(result.type, v);
         value.put(type, v);
         return StackValue.onStack(type);
     }
@@ -3166,10 +3164,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             storeType = type;
         }
         else {
-            Callable callable = resolveToCallable((FunctionDescriptor) op, false);
-            invokeFunction(resolvedCall, StackValue.onStack(type));
-            CallableMethod callableMethod = (CallableMethod) callable;
-            storeType = callableMethod.getReturnType();
+            StackValue result = invokeFunction(resolvedCall, StackValue.onStack(type));
+            storeType = result.type;
         }
 
         value.store(storeType, v);
