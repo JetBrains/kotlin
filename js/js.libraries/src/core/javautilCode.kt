@@ -39,3 +39,11 @@ public fun LinkedHashMap<K, V>(m: Map<K, V>): LinkedHashMap<K, V> {
     map.putAll(m)
     return map
 }
+
+public fun ArrayList<E>(c: Collection<E>): ArrayList<E> {
+    val result = ArrayList<E>()
+    for (element in c) {
+        result.add(element)
+    }
+    return result
+}
