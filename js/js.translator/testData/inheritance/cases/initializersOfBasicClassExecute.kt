@@ -8,6 +8,7 @@ class B() : A() {
 
 }
 
-fun box(): Int {
-    return (B().a)
+fun box(): String {
+    val a = B().a
+    return if (a == 3) "OK" else "Fail, a = $a"
 }

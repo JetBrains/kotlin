@@ -25,7 +25,7 @@ public final class ClassInheritanceTest extends SingleFileTranslationTest {
     }
 
     public void testInitializersOfBasicClassExecute() throws Exception {
-        fooBoxIsValue(3);
+        checkFooBoxIsOk();
     }
 
     public void testMethodOverride() throws Exception {

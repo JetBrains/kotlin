@@ -9,6 +9,7 @@ fun f(a: Int): Int {
     return y
 }
 
-fun box(): Int {
-    return f(y)
+fun box(): String {
+    val r = f(y)
+    return if (r == 50) "OK" else "Fail, r = $r"
 }

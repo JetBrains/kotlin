@@ -27,10 +27,7 @@ import org.mozilla.javascript.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.utils.UtilsPackage.rethrow;
 import static org.jetbrains.k2js.test.BasicTest.TEST_DATA_DIR_PATH;
@@ -111,12 +108,7 @@ public final class RhinoUtils {
     }
 
     public static void runRhinoTest(@NotNull List<String> fileNames, @NotNull RhinoResultChecker checker) throws Exception {
-        runRhinoTest(fileNames, checker, EcmaVersion.defaultVersion());
-    }
-
-    public static void runRhinoTest(@NotNull List<String> fileNames, @NotNull RhinoResultChecker checker, @NotNull EcmaVersion ecmaVersion)
-            throws Exception {
-        runRhinoTest(fileNames, checker, null, ecmaVersion);
+        runRhinoTest(fileNames, checker, null, EcmaVersion.defaultVersion());
     }
 
     public static void runRhinoTest(@NotNull List<String> fileNames,
@@ -134,6 +126,7 @@ public final class RhinoUtils {
             @NotNull List<String> jsLibraries) throws Exception {
         Context context = createContext(ecmaVersion);
 
+        context.setOptimizationLevel(OPTIMIZATION_OFF);
         if (variables != null) {
             context.setOptimizationLevel(getOptimizationLevel(variables));
         }
