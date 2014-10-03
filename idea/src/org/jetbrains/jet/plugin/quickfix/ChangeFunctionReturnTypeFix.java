@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -108,24 +107,13 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             changeFunctionLiteralReturnTypeFix.invoke(project, editor, file);
         }
         else {
-            element.setReturnTypeRef(null);
             if (!(KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody())) {
-                addReturnTypeAnnotation(element, renderedType);
+                element.setReturnTypeRef(JetPsiFactory(project).createType(renderedType));
+            }
+            else {
+                element.setReturnTypeRef(null);
             }
         }
-    }
-
-    public static void addReturnTypeAnnotation(JetFunction function, String typeText) {
-        PsiElement elementToPrecedeType = function.getValueParameterList();
-        if (elementToPrecedeType == null) elementToPrecedeType = function.getNameIdentifier();
-        assert elementToPrecedeType != null : "Return type of function without name can't mismatch anything";
-        if (elementToPrecedeType.getNextSibling() instanceof PsiErrorElement) {
-            // if a function doesn't have a value parameter list, a syntax error is raised, and it should follow the function name
-            elementToPrecedeType = elementToPrecedeType.getNextSibling();
-        }
-        JetPsiFactory psiFactory = JetPsiFactory(function);
-        function.addAfter(psiFactory.createType(typeText), elementToPrecedeType);
-        function.addAfter(psiFactory.createColon(), elementToPrecedeType);
     }
 
     @NotNull

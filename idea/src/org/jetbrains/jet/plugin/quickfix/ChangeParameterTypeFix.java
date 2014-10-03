@@ -65,8 +65,6 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetTypeReference typeReference = element.getTypeReference();
-        assert typeReference != null : "Parameter without type annotation cannot cause type mismatch";
-        typeReference.replace(JetPsiFactory(file).createType(renderedType));
+        element.setTypeRef(JetPsiFactory(file).createType(renderedType));
     }
 }

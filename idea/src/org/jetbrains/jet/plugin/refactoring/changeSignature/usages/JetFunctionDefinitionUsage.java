@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.quickfix.AddModifierFix;
-import org.jetbrains.jet.plugin.quickfix.ChangeFunctionReturnTypeFix;
 import org.jetbrains.jet.plugin.quickfix.ChangeVisibilityModifierFix;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo;
@@ -62,8 +61,9 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
                 String returnTypeText = changeInfo.getNewReturnTypeText();
 
                 //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
-                if (!KotlinBuiltIns.getInstance().getUnitType().toString().equals(returnTypeText))
-                    ChangeFunctionReturnTypeFix.addReturnTypeAnnotation(function, returnTypeText);
+                if (!KotlinBuiltIns.getInstance().getUnitType().toString().equals(returnTypeText)) {
+                    function.setReturnTypeRef(JetPsiFactory(function).createType(returnTypeText));
+                }
             }
         }
         else
@@ -138,11 +138,8 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
         }
 
         if (parameterInfo.isTypeChanged()) {
-            JetTypeReference newType = psiFactory.createType(parameterInfo.getTypeText());
-            JetTypeReference typeReference = parameter.getTypeReference();
-
-            if (typeReference != null)
-                typeReference.replace(newType);
+            JetTypeReference newTypeRef = psiFactory.createType(parameterInfo.getTypeText());
+            parameter.setTypeRef(newTypeRef);
         }
 
         PsiElement identifier = parameter.getNameIdentifier();
