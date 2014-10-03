@@ -108,12 +108,6 @@ public class JetPropertyAccessor extends JetDeclarationStub<PsiJetPropertyAccess
         return true;
     }
 
-    @NotNull
-    @Override
-    public JetElement asElement() {
-        return this;
-    }
-
     @Nullable
     public JetTypeReference getReturnTypeReference() {
         return getStubOrPsiChild(JetStubElementTypes.TYPE_REFERENCE);

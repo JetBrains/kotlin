@@ -195,12 +195,6 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
         return null;
     }
 
-    @NotNull
-    @Override
-    public JetElement asElement() {
-        return this;
-    }
-
     @Override
     public boolean isLocal() {
         PsiElement parent = getParent();

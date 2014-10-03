@@ -36,9 +36,6 @@ public interface JetDeclarationWithBody extends JetDeclaration {
     boolean hasDeclaredReturnType();
 
     @NotNull
-    JetElement asElement();
-
-    @NotNull
     List<JetParameter> getValueParameters();
 }
 
