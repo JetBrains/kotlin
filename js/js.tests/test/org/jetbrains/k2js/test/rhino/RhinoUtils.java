@@ -27,9 +27,15 @@ import org.mozilla.javascript.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.jet.utils.UtilsPackage.rethrow;
+import static org.jetbrains.k2js.config.LibrarySourcesConfig.STDLIB_JS_FILE_NAME;
+import static org.jetbrains.k2js.config.LibrarySourcesConfig.STDLIB_JS_MODULE_NAME;
+import static org.jetbrains.k2js.test.BasicTest.DIST_DIR_PATH;
 import static org.jetbrains.k2js.test.BasicTest.TEST_DATA_DIR_PATH;
 
 public final class RhinoUtils {
@@ -168,11 +174,10 @@ public final class RhinoUtils {
             assert kotlin != null;
             NativeObject modules = (NativeObject) kotlin.get("modules");
             assert modules != null;
-            String stdlibModuleName = "kotlin_lib_compiled";
-            NativeObject stdlibModule = (NativeObject) modules.get(stdlibModuleName);
+            NativeObject stdlibModule = (NativeObject) modules.get(STDLIB_JS_MODULE_NAME);
 
             NativeObject newModules = new NativeObject();
-            newModules.put(stdlibModuleName, newModules, stdlibModule);
+            newModules.put(STDLIB_JS_MODULE_NAME, newModules, stdlibModule);
 
             kotlin.put("modules", kotlin, newModules);
         }
@@ -185,9 +190,9 @@ public final class RhinoUtils {
         try {
             runFileWithRhino(getKotlinLibFile(version), context, scope);
             runFileWithRhino(TEST_DATA_DIR_PATH + "kotlin_lib.js", context, scope);
-            runFileWithRhino(TEST_DATA_DIR_PATH + "kotlin_lib_compiled.js", context, scope);
             runFileWithRhino(TEST_DATA_DIR_PATH + "maps.js", context, scope);
             runFileWithRhino(TEST_DATA_DIR_PATH + "long.js", context, scope);
+            runFileWithRhino(DIST_DIR_PATH + STDLIB_JS_FILE_NAME, context, scope);
             //runFileWithRhino(pathToTestFilesRoot() + "jshint.js", context, scope);
             for (String jsLibrary : jsLibraries) {
                 runFileWithRhino(jsLibrary, context, scope);

@@ -37,7 +37,7 @@ import java.util.List;
 
 public class LibrarySourcesConfigWithCaching extends LibrarySourcesConfig {
     public static final List<String> JS_STDLIB =
-            Arrays.asList("@" + "kotlin_lib_compiled", PathUtil.getKotlinPathsForDistDirectory().getJsLibJarPath().getAbsolutePath());
+            Arrays.asList("@" + STDLIB_JS_MODULE_NAME, PathUtil.getKotlinPathsForDistDirectory().getJsLibJarPath().getAbsolutePath());
 
     private static List<JetFile> jsLibFiles;
     private static AnalyzeExhaust exhaust;
