@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
-import org.jetbrains.jet.testing.HighlightTestDataUtil;
+import org.jetbrains.jet.testing.TagsTestDataUtil;
 
 import java.io.File;
 import java.util.List;
@@ -53,7 +53,7 @@ public abstract class AbstractHighlightingTest extends JetLightCodeInsightFixtur
                     DaemonCodeAnalyzerImpl.getHighlights(myFixture.getDocument(myFixture.getFile()), null, myFixture.getProject());
             String text = myFixture.getFile().getText();
 
-            System.out.println(HighlightTestDataUtil.insertInfoTags(highlights, text));
+            System.out.println(TagsTestDataUtil.insertInfoTags(highlights, text));
             throw e;
         }
     }

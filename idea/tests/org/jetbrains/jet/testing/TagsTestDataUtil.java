@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class HighlightTestDataUtil {
+public class TagsTestDataUtil {
     public static String insertInfoTags(List<LineMarkerInfo> lineMarkers, boolean withDescription, String text) {
         List<LineMarkerTagPoint> lineMarkerPoints = Lists.newArrayList();
         for (LineMarkerInfo markerInfo : lineMarkers) {
@@ -46,13 +46,13 @@ public class HighlightTestDataUtil {
         return insertTagsInText(highlightPoints, text);
     }
 
-    private static String insertTagsInText(List<? extends HighlightTag> tags, String text) {
+    public static String insertTagsInText(List<? extends TagInfo> tags, String text) {
         StringBuilder builder = new StringBuilder(text);
 
-        List<? extends HighlightTag> sortedTagPoints = Ordering.natural().reverse().sortedCopy(tags);
+        List<? extends TagInfo> sortedTagPoints = Ordering.natural().reverse().sortedCopy(tags);
 
         // Insert tags into text starting from the end for preventing invalidating previous tags offsets
-        for (HighlightTag point : sortedTagPoints) {
+        for (TagInfo point : sortedTagPoints) {
             String tagText;
             if (point.isStart) {
                 String attributesString = point.getAttributesString();
@@ -73,19 +73,19 @@ public class HighlightTestDataUtil {
         return builder.toString();
     }
 
-    private static abstract class HighlightTag<Data> implements Comparable<HighlightTag<?>> {
+    public static class TagInfo<Data> implements Comparable<TagInfo<?>> {
         protected final int offset;
         protected final boolean isStart;
         protected final Data data;
 
-        private HighlightTag(int offset, boolean start, Data data) {
+        public TagInfo(int offset, boolean start, Data data) {
             this.offset = offset;
             isStart = start;
             this.data = data;
         }
 
         @Override
-        public int compareTo(@NotNull HighlightTag<?> other) {
+        public int compareTo(@NotNull TagInfo<?> other) {
             if (offset != other.offset) {
                 return ((Integer) offset).compareTo(other.offset);
             }
@@ -103,13 +103,17 @@ public class HighlightTestDataUtil {
         }
 
         @NotNull
-        abstract String getName();
+        public String getName() {
+            return data.toString();
+        }
 
         @NotNull
-        abstract String getAttributesString();
+        public String getAttributesString() {
+            return "";
+        }
     }
 
-    private static class HighlightTagPoint extends HighlightTag<HighlightInfo> {
+    private static class HighlightTagPoint extends TagInfo<HighlightInfo> {
         private final HighlightInfo highlightInfo;
 
         private HighlightTagPoint(int offset, boolean start, HighlightInfo info) {
@@ -127,7 +131,7 @@ public class HighlightTestDataUtil {
 
         @NotNull
         @Override
-        String getAttributesString() {
+        public String getAttributesString() {
             if (isStart) {
                 if (highlightInfo.getDescription() != null) {
                     return String.format("textAttributesKey=\"%s\" descr=%s",
@@ -144,7 +148,7 @@ public class HighlightTestDataUtil {
         }
     }
 
-    private static class LineMarkerTagPoint extends HighlightTag<LineMarkerInfo> {
+    private static class LineMarkerTagPoint extends TagInfo<LineMarkerInfo> {
         private final boolean withDescription;
 
         public LineMarkerTagPoint(int offset, boolean start, LineMarkerInfo info, boolean withDescription) {
@@ -154,13 +158,13 @@ public class HighlightTestDataUtil {
 
         @NotNull
         @Override
-        String getName() {
+        public String getName() {
             return "lineMarker";
         }
 
         @NotNull
         @Override
-        String getAttributesString() {
+        public String getAttributesString() {
             return withDescription ? String.format("descr=\"%s\"", data.getLineMarkerTooltip()) : "descr=\"*\"";
         }
     }

@@ -35,8 +35,8 @@ import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.highlighter.markers.SuperDeclarationMarkerNavigationHandler;
 import org.jetbrains.jet.plugin.navigation.NavigationTestUtils;
-import org.jetbrains.jet.testing.HighlightTestDataUtil;
 import org.jetbrains.jet.testing.ReferenceUtils;
+import org.jetbrains.jet.testing.TagsTestDataUtil;
 import org.junit.Assert;
 
 import java.io.File;
@@ -75,7 +75,7 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
             }
             catch (AssertionError error) {
                 try {
-                    String actualTextWithTestData = HighlightTestDataUtil.insertInfoTags(markers, true, myFixture.getFile().getText());
+                    String actualTextWithTestData = TagsTestDataUtil.insertInfoTags(markers, true, myFixture.getFile().getText());
                     JetTestUtils.assertEqualsToFile(new File(getTestDataPath(), fileName()), actualTextWithTestData);
                 }
                 catch (FileComparisonFailure failure) {
