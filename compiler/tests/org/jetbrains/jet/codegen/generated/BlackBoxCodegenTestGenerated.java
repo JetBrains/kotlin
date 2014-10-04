@@ -374,9 +374,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("fakeGenericContravariantOverride1.kt")
+        public void testFakeGenericContravariantOverride1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/fakeGenericContravariantOverride1.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("fakeGenericContravariantOverride2.kt")
+        public void testFakeGenericContravariantOverride2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/fakeGenericContravariantOverride2.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("fakeGenericCovariantOverride.kt")
         public void testFakeGenericCovariantOverride() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/fakeGenericCovariantOverride.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("fakeGenericCovariantOverrideWithDelegation.kt")
+        public void testFakeGenericCovariantOverrideWithDelegation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/fakeGenericCovariantOverrideWithDelegation.kt");
             doTest(fileName);
         }
         
