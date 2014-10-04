@@ -21,6 +21,7 @@ import com.google.common.collect.Ordering;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.openapi.editor.Editor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -44,6 +45,17 @@ public class TagsTestDataUtil {
         }
 
         return insertTagsInText(highlightPoints, text);
+    }
+
+    public static String generateTextWithCaretAndSelection(@NotNull Editor editor) {
+        List<TagInfo> points = Lists.newArrayList();
+        points.add(new TagInfo<String>(editor.getCaretModel().getOffset(), true, "caret"));
+        if (editor.getSelectionModel().hasSelection()) {
+            points.add(new TagInfo<String>(editor.getSelectionModel().getSelectionStart(), true, "selection"));
+            points.add(new TagInfo<String>(editor.getSelectionModel().getSelectionEnd(), false, "selection"));
+        }
+
+        return insertTagsInText(points, editor.getDocument().getText());
     }
 
     public static String insertTagsInText(List<? extends TagInfo> tags, String text) {
