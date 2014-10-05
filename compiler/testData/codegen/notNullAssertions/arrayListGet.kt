@@ -1,8 +1,8 @@
 import java.util.ArrayList
 
-fun foo() {
+fun foo(): Any {
     val a = ArrayList<String>()
-    a.get(0)
+    return a.get(0)
 }
 
 fun bar(a: ArrayList<String>) {

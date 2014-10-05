@@ -32,4 +32,14 @@ public class A {
     public Object get(Object o) {
         return null;
     }
+
+    public A a() { return this; }
+
+    public static class B {
+        public static B b() { return null; }
+    }
+
+    public static class C {
+        public static C c() { return null; }
+    }
 }

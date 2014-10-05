@@ -103,3 +103,15 @@ val arr: Array<Bar> = javaArrayMethod() // assert value "is Bar[]"
 `a++` stands for `a = a.inc()`, so
 - check a to satisfy the `a.inc()` conditions for receiver
 - check `a.inc()` result for assignability to `a`
+
+## Assertion Generation
+
+Constructs in question: anything that provides an expected type, i.e.
+ - assignments
+ - parameter default values
+ - delegation by: supertypes and properties
+ - dereferencing: x.foo
+ - all kinds of calls (foo, foo(), x[], x foo y, x + y, x++, x += 3, for loop, multi-declarations, invoke-convention, ...)
+ - explicit expected type (foo: Bar)
+ - for booleans: if (foo), foo || bar, foo && bar (!foo is a call)
+ - argument of throw

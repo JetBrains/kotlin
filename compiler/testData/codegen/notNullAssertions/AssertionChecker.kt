@@ -1,5 +1,5 @@
 class AssertionChecker(val illegalStateExpected: Boolean) {
-    fun invoke(name: String, f: () -> Unit) {
+    fun invoke(name: String, f: () -> Any) {
         try {
             f()
         } catch (e: IllegalStateException) {
@@ -44,15 +44,32 @@ fun checkAssertions(illegalStateExpected: Boolean) {
     // binary expression
     check("plus") { A() + A() }
     
-    // postfix expression
-    check("inc") { var a = A(); a++ }
-    
-    // prefix expression
-    check("inc") { var a = A(); ++a }
-    
     // field
-    check("NULL") { val a = A().NULL }
+    check("NULL") { A().NULL }
     
     // static field
-    check("STATIC_NULL") { val a = A.STATIC_NULL }
+    check("STATIC_NULL") { A.STATIC_NULL }
+
+    // postfix expression
+    // TODO:
+//    check("inc") { var a = A().a(); a++ }
+
+    // prefix expression
+    check("inc-b") { var a = A.B.b(); a++ }
+
+    // prefix expression
+    check("inc-c") { var a = A.C.c(); a++ }
+
+    // prefix expression
+    check("inc") { var a = A().a(); ++a }
+
+    // prefix expression
+    check("inc-b") { var a = A.B.b(); ++a }
+
+    // prefix expression
+    // TODO:
+//    check("inc-c") { var a = A.C.c(); ++a }
 }
+
+fun A.C.inc(): A.C = A.C()
+fun <T> T.inc(): T = null as T

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,12 +34,12 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantChecker;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeInfo;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
@@ -157,14 +158,47 @@ public class DataFlowUtils {
     }
 
     @Nullable
-    public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expressionToCheck,
-            @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace
+    public static JetType checkType(@Nullable final JetType expressionType, @NotNull JetExpression expressionToCheck,
+            @NotNull JetType expectedType, @NotNull final DataFlowInfo dataFlowInfo, @NotNull final BindingTrace trace
     ) {
-        JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck, false);
+        final JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck, false);
         recordExpectedType(trace, expression, expectedType);
 
-        if (expressionType == null || noExpectedType(expectedType) || !expectedType.getConstructor().isDenotable() ||
+        if (expressionType == null) return null;
+
+        if (noExpectedType(expectedType) || !expectedType.getConstructor().isDenotable() ||
             JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)) {
+
+            if (!noExpectedType(expectedType)) {
+                Approximation.Info approximationInfo = TypesPackage.getApproximationTo(expressionType, expectedType,
+                        new Approximation.DataFlowExtras() {
+                            private DataFlowValue getDataFlowValue() {
+                                return DataFlowValueFactory.createDataFlowValue(expression, expressionType, trace.getBindingContext());
+                            }
+
+                            @Override
+                            public boolean getCanBeNull() {
+                                return dataFlowInfo.getNullability(getDataFlowValue()).canBeNull();
+                            }
+
+                            @NotNull
+                            @Override
+                            public Set<JetType> getPossibleTypes() {
+                                return dataFlowInfo.getPossibleTypes(getDataFlowValue());
+                            }
+
+                            @NotNull
+                            @Override
+                            public String getPresentableText() {
+                                return StringUtil.trimMiddle(expression.getText(), 50);
+                            }
+                        }
+                );
+                if (approximationInfo != null) {
+                    trace.record(BindingContext.EXPRESSION_RESULT_APPROXIMATION, expression, approximationInfo);
+                }
+            }
+
             return expressionType;
         }
 
@@ -178,6 +212,7 @@ public class DataFlowUtils {
         }
 
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, trace.getBindingContext());
+
         for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {
             if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, expectedType)) {
                 SmartCastUtils.recordCastOrError(expression, possibleType, trace, dataFlowValue.isStableIdentifier(), false);

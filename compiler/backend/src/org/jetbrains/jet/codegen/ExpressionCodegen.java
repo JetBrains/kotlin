@@ -61,6 +61,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
+import org.jetbrains.jet.lang.types.Approximation;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -242,7 +243,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 }
             }
 
-            return selector.accept(visitor, receiver);
+            StackValue stackValue = selector.accept(visitor, receiver);
+
+            Approximation.Info approximationInfo = null;
+            if (selector instanceof JetExpression) {
+                approximationInfo = bindingContext.get(BindingContext.EXPRESSION_RESULT_APPROXIMATION, (JetExpression) selector);
+            }
+
+            return genNotNullAssertions(state, stackValue, approximationInfo);
         }
         catch (ProcessCanceledException e) {
             throw e;
