@@ -35,6 +35,7 @@ import org.jetbrains.jet.backend.common.CodegenUtil
 import java.util.HashMap
 import org.jetbrains.k2js.translate.declaration.propertyTranslator.addGetterAndSetter
 import org.jetbrains.k2js.translate.utils.ManglingUtils.getMangledMemberNameForExplicitDelegation
+import org.jetbrains.k2js.translate.utils.generateDelegateCall
 
 public class DelegationTranslator(
         private val classDeclaration: JetClassOrObject,
@@ -181,31 +182,8 @@ public class DelegationTranslator(
             delegateName: String,
             properties: MutableList<JsPropertyInitializer>
     ) {
-        val delegateMemberFunctionName = context().getNameForDescriptor(descriptor)
-        val overriddenMemberFunctionName = context().getNameForDescriptor(overriddenDescriptor)
         val delegateRefName = context().getScopeForDescriptor(descriptor).declareName(delegateName)
         val delegateRef = JsNameRef(delegateRefName, JsLiteral.THIS)
-        val overriddenMemberFunctionRef = JsNameRef(overriddenMemberFunctionName, delegateRef)
-
-        val parameters = SmartList<JsParameter>()
-        val args = SmartList<JsExpression>()
-        val functionScope = context().getScopeForDescriptor(descriptor);
-
-        if (JsDescriptorUtils.isExtension(descriptor)) {
-            val extensionFunctionReceiverName = functionScope.declareName(Namer.getReceiverParameterName())
-            parameters.add(JsParameter(extensionFunctionReceiverName))
-            args.add(JsNameRef(extensionFunctionReceiverName))
-        }
-
-        for (param in descriptor.getValueParameters()) {
-            val paramName = param.getName().asString()
-            val jsParamName = functionScope.declareName(paramName)
-            parameters.add(JsParameter(jsParamName))
-            args.add(JsNameRef(jsParamName))
-        }
-
-        val functionObject = simpleReturnFunction(context().getScopeForDescriptor(descriptor), JsInvocation(overriddenMemberFunctionRef, args))
-        functionObject.getParameters().addAll(parameters)
-        properties.add(JsPropertyInitializer(delegateMemberFunctionName.makeRef(), functionObject))
+        properties.add(generateDelegateCall(descriptor, overriddenDescriptor, delegateRef, context()));
     }
 }
