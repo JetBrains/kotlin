@@ -484,21 +484,19 @@ public class PropertyCodegen {
         return JvmAbi.SETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName.asString());
     }
 
-    public void genDelegate(@NotNull PropertyDescriptor delegate, @NotNull PropertyDescriptor overridden, @NotNull StackValue field) {
-        ClassDescriptor toClass = (ClassDescriptor) overridden.getContainingDeclaration();
+    public void genDelegate(@NotNull PropertyDescriptor delegate, @NotNull PropertyDescriptor delegateTo, @NotNull StackValue field) {
+        ClassDescriptor toClass = (ClassDescriptor) delegateTo.getContainingDeclaration();
 
         PropertyGetterDescriptor getter = delegate.getGetter();
         if (getter != null) {
             //noinspection ConstantConditions
-            functionCodegen.genDelegate(getter, toClass, field,
-                                        typeMapper.mapSignature(getter), typeMapper.mapSignature(overridden.getGetter().getOriginal()));
+            functionCodegen.genDelegate(getter, delegateTo.getGetter().getOriginal(), toClass, field);
         }
 
         PropertySetterDescriptor setter = delegate.getSetter();
         if (setter != null) {
             //noinspection ConstantConditions
-            functionCodegen.genDelegate(setter, toClass, field,
-                                        typeMapper.mapSignature(setter), typeMapper.mapSignature(overridden.getSetter().getOriginal()));
+            functionCodegen.genDelegate(setter, delegateTo.getSetter().getOriginal(), toClass, field);
         }
     }
 }

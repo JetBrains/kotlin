@@ -126,26 +126,6 @@ public class CodegenUtil {
                Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor));
     }
 
-    public static Map<CallableMemberDescriptor, CallableMemberDescriptor> getDelegates(ClassDescriptor descriptor, ClassDescriptor toClass) {
-        Map<CallableMemberDescriptor, CallableMemberDescriptor> result = new LinkedHashMap<CallableMemberDescriptor, CallableMemberDescriptor>();
-        for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
-            if (declaration instanceof CallableMemberDescriptor) {
-                CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declaration;
-                if (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION) {
-                    Set<? extends CallableMemberDescriptor> overriddenDescriptors = callableMemberDescriptor.getOverriddenDescriptors();
-                    for (CallableMemberDescriptor overriddenDescriptor : overriddenDescriptors) {
-                        if (overriddenDescriptor.getContainingDeclaration() == toClass) {
-                            assert !result.containsKey(callableMemberDescriptor) :
-                                    "overridden is already set for " + callableMemberDescriptor;
-                            result.put(callableMemberDescriptor, overriddenDescriptor);
-                        }
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
     @NotNull
     public static Map<FunctionDescriptor, FunctionDescriptor> getTraitMethods(ClassDescriptor descriptor) {
         Map<FunctionDescriptor, FunctionDescriptor> result = new LinkedHashMap<FunctionDescriptor, FunctionDescriptor>();
