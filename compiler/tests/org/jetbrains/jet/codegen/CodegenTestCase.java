@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
@@ -84,7 +85,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     @NotNull
-    protected String loadFile(@NotNull String name) {
+    protected String loadFile(@NotNull @TestDataFile String name) {
         return loadFileByFullPath(JetTestCaseBuilder.getTestDataPathBase() + "/codegen/" + name);
     }
 
