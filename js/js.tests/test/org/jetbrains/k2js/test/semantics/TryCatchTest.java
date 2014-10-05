@@ -34,6 +34,10 @@ public class TryCatchTest extends AbstractExpressionTest {
         checkFooBoxIsOk();
     }
 
+    public void testTryCatchExpressionWithMessage() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testMultipleCatchBlocks() throws Exception {
         checkFooBoxIsOk();
     }
