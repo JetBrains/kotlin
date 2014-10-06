@@ -151,6 +151,18 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
         doImplementDirectoryTest();
     }
 
+    public void testOverrideFromFunctionPosition() {
+        doMultiOverrideFileTest();
+    }
+
+    public void testOverrideFromClassName() {
+        doMultiOverrideFileTest();
+    }
+
+    public void testOverrideFromLBrace() {
+        doMultiOverrideFileTest();
+    }
+
     public void testCheckNotImportedTypesFromJava() {
         boolean oldValue = CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY;
         try {
