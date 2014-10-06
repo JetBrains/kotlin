@@ -37,12 +37,16 @@ public class CreateCallableFromUsageFix(
         val popupTitle = JetBundle.message("choose.target.class.or.trait.title")
         val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfo.receiverTypeInfo)
         if (receiverTypeCandidates.isNotEmpty()) {
-            val toPsi: (TypeCandidate) -> JetClassOrObject = {
-                val descriptor = DescriptorUtils.getClassDescriptorForType(it.theType)
-                DescriptorToDeclarationUtil.getDeclaration(file, descriptor) as JetClassOrObject
-            }
-            chooseContainerElementIfNecessary(receiverTypeCandidates, editor, popupTitle, false, toPsi) {
-                runBuilder(CallablePlacement.WithReceiver(it))
+            // TODO: Support generation of Java class members
+            val containers = receiverTypeCandidates
+                    .map { candidate ->
+                        val descriptor = DescriptorUtils.getClassDescriptorForType(candidate.theType)
+                        (DescriptorToDeclarationUtil.getDeclaration(file, descriptor) as? JetClassOrObject)?.let { candidate to it }
+                    }
+                    .filterNotNull()
+
+            chooseContainerElementIfNecessary(containers, editor, popupTitle, false, { it.second }) {
+                runBuilder(CallablePlacement.WithReceiver(it.first))
             }
         }
         else {
