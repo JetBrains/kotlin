@@ -3810,7 +3810,7 @@ The "returned" value of try expression with no finally is either the last expres
         return StackValue.onStack(type);
     }
 
-    private void putReifierMarkerIfTypeIsReifiedParameter(@NotNull JetType type, @NotNull String markerMethodName) {
+    public void putReifierMarkerIfTypeIsReifiedParameter(@NotNull JetType type, @NotNull String markerMethodName) {
         TypeParameterDescriptor typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
         if (typeParameterDescriptor != null && typeParameterDescriptor.isReified()) {
             v.iconst(typeParameterDescriptor.getIndex());
