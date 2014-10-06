@@ -356,6 +356,18 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/sam/adapters"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("bridgesForOverridden.kt")
+            public void testBridgesForOverridden() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/bridgesForOverridden.kt");
+                doTestAgainstJava(fileName);
+            }
+            
+            @TestMetadata("bridgesForOverriddenComplex.kt")
+            public void testBridgesForOverriddenComplex() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/bridgesForOverriddenComplex.kt");
+                doTestAgainstJava(fileName);
+            }
+            
             @TestMetadata("callAbstractAdapter.kt")
             public void testCallAbstractAdapter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/callAbstractAdapter.kt");
@@ -407,12 +419,6 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             @TestMetadata("inheritedSimple.kt")
             public void testInheritedSimple() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/inheritedSimple.kt");
-                doTestAgainstJava(fileName);
-            }
-            
-            @TestMetadata("kt5912.kt")
-            public void testKt5912() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/kt5912.kt");
                 doTestAgainstJava(fileName);
             }
             

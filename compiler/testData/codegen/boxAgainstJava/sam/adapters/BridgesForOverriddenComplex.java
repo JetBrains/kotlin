@@ -1,4 +1,5 @@
-public class kt5912<T> {
+// KT-5912
+class JavaClass<T> {
     public static interface Action<T> {
         void call(T t);
     }
