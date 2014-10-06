@@ -35,6 +35,8 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
 
     class object {
         public val NEW_ARRAY_MARKER_METHOD_NAME: String = "reifyNewArray"
+        public val CHECKCAST_MARKER_METHOD_NAME: String = "reifyCheckcast"
+        public val INSTANCEOF_MARKER_METHOD_NAME: String = "reifyInstanceof"
     }
 
     public fun reifyInstructions(instructions: InsnList) {
@@ -54,9 +56,12 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
     private fun processReifyMarker(insn: MethodInsnNode, instructions: InsnList) {
         val mapping = getTypeParameterMapping(insn) ?: return
 
-        if (mapping.asmType != null) {
+        val asmType = mapping.asmType
+        if (asmType != null) {
             if (!when (insn.name) {
-                NEW_ARRAY_MARKER_METHOD_NAME -> processNewArray(insn, mapping.asmType)
+                NEW_ARRAY_MARKER_METHOD_NAME -> processNewArray(insn, asmType)
+                CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, asmType)
+                INSTANCEOF_MARKER_METHOD_NAME -> processInstanceof(insn, asmType)
                 else -> false
             }) {
                 return
@@ -68,10 +73,18 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         }
     }
 
-    private fun processNewArray(insn: MethodInsnNode, parameter: Type): Boolean {
-        if (insn.getNext()?.getOpcode() != Opcodes.ANEWARRAY) return false
-        val next = insn.getNext() as TypeInsnNode
-        next.desc = parameter.getInternalName()
+    private fun processNewArray(insn: MethodInsnNode, parameter: Type) =
+        processNextTypeInsn(insn, parameter, Opcodes.ANEWARRAY)
+
+    private fun processCheckcast(insn: MethodInsnNode, parameter: Type) =
+        processNextTypeInsn(insn, parameter, Opcodes.CHECKCAST)
+
+    private fun processInstanceof(insn: MethodInsnNode, parameter: Type) =
+        processNextTypeInsn(insn, parameter, Opcodes.INSTANCEOF)
+
+    private fun processNextTypeInsn(insn: MethodInsnNode, parameter: Type, expectedNextOpcode: Int): Boolean {
+        if (insn.getNext()?.getOpcode() != expectedNextOpcode) return false
+        (insn.getNext() as TypeInsnNode).desc = parameter.getInternalName()
         return true
     }
 
