@@ -5808,6 +5808,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("safeCallOnLong.kt")
+        public void testSafeCallOnLong() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/safeCall/safeCallOnLong.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("staticCall.kt")
         public void testStaticCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/safeCall/staticCall.kt");

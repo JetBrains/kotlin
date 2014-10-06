@@ -413,10 +413,16 @@ public abstract class StackValue {
                 put(type, v);
             }
             else if (depth == 1) {
-                if (this.type.getSize() != 1) {
+                int size = this.type.getSize();
+                if (size == 1) {
+                    v.swap();
+                } else if (size == 2) {
+                    v.dupX2();
+                    v.pop();
+                } else {
                     throw new UnsupportedOperationException("don't know how to move type " + type + " to top of stack");
                 }
-                v.swap();
+
                 coerceTo(type, v);
             }
             else {
