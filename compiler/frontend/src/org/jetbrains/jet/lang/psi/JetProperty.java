@@ -149,6 +149,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         return TypeRefHelpersPackage.getTypeRef(this);
     }
 
+    @Override
     @Nullable
     public JetTypeReference setTypeRef(@Nullable JetTypeReference typeRef) {
         return TypeRefHelpersPackage.setTypeRef(this, getNameIdentifier(), typeRef);

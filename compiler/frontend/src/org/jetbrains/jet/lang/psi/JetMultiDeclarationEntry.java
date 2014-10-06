@@ -38,6 +38,7 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
         return TypeRefHelpersPackage.getTypeRef(this);
     }
 
+    @Override
     @Nullable
     public JetTypeReference setTypeRef(@Nullable JetTypeReference typeRef) {
         return TypeRefHelpersPackage.setTypeRef(this, getNameIdentifier(), typeRef);

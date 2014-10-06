@@ -29,6 +29,7 @@ import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetParameterList;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -143,8 +144,8 @@ public class JetChangeFunctionSignatureAction implements QuestionAction {
                             ShortenReferences.INSTANCE$.process(newTypeRef);
                         }
 
-                        function.getValueParameterList().replace(patternFunction.getValueParameterList());
-                        ShortenReferences.INSTANCE$.process(function.getValueParameterList());
+                        JetParameterList newParameterList = (JetParameterList) function.getValueParameterList().replace(patternFunction.getValueParameterList());
+                        ShortenReferences.INSTANCE$.process(newParameterList);
                     }
                 });
             }
