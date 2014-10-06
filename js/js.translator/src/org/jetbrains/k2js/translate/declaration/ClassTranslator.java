@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.codegen.bridges.Bridge;
 import org.jetbrains.jet.codegen.bridges.BridgesPackage;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -146,6 +147,8 @@ public final class ClassTranslator extends AbstractTranslator {
             JsFunction function = simpleReturnFunction(declarationContext.getScopeForDescriptor(descriptor), enumEntries);
             invocationArguments.add(function);
         }
+
+        generateTraitMethods(properties);
 
         if (!DescriptorUtils.isTrait(descriptor)) {
             for (DeclarationDescriptor memberDescriptor : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
@@ -284,6 +287,16 @@ public final class ClassTranslator extends AbstractTranslator {
             !toDescriptor.getKind().isReal()) return;
 
         properties.add(generateDelegateCall(fromDescriptor, toDescriptor, JsLiteral.THIS, context()));
+    }
+
+    private void generateTraitMethods(@NotNull List<JsPropertyInitializer> properties) {
+        if (isTrait()) return;
+
+        for(Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getTraitMethods(descriptor).entrySet()) {
+            if (!areNamesEqual(entry.getKey(), entry.getValue())) {
+                properties.add(generateDelegateCall(entry.getValue(), entry.getKey(), JsLiteral.THIS, context()));
+            }
+        }
     }
 
     private boolean areNamesEqual(@NotNull FunctionDescriptor first, @NotNull FunctionDescriptor second) {
