@@ -40,7 +40,7 @@ public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
         for (DeclarationDescriptor member : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             if (member instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor callable = (CallableMemberDescriptor) member;
-                if (callable.getKind().isReal()) {
+                if (callable.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
                     superMethods.removeAll(callable.getOverriddenDescriptors());
                 }
             }

@@ -107,6 +107,10 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
         doMultiOverrideFileTest();
     }
 
+    public void testDelegatedMembers() {
+        doMultiOverrideFileTest();
+    }
+
     public void testOverrideExplicitFunction() {
         doOverrideFileTest();
     }
