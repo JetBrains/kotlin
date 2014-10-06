@@ -1,2 +1,7 @@
 <idea-plugin>
+    <application-components>
+        <component>
+            <implementation-class>org.jetbrains.jet.android.OutputParserInitializer</implementation-class>
+        </component>
+    </application-components>
 </idea-plugin>

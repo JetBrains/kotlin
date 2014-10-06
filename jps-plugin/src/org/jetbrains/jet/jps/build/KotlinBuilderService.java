@@ -17,6 +17,7 @@
 package org.jetbrains.jet.jps.build;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.android.AndroidPackage;
 import org.jetbrains.jps.incremental.BuilderService;
 import org.jetbrains.jps.incremental.ModuleLevelBuilder;
 
@@ -24,6 +25,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class KotlinBuilderService extends BuilderService {
+    public KotlinBuilderService() {
+        AndroidPackage.initializeOutputParser();
+    }
+
     @NotNull
     @Override
     public List<? extends ModuleLevelBuilder> createModuleLevelBuilders() {
