@@ -217,13 +217,13 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
     }
 
     private void checkResultByFile(String fileName) {
+        File expectedFile = new File(myFixture.getTestDataPath(), fileName);
         try {
+            Assert.assertTrue(expectedFile.exists());
             myFixture.checkResultByFile(fileName);
         }
         catch (AssertionError error) {
-            JetTestUtils.assertEqualsToFile(
-                    new File(myFixture.getTestDataPath(), fileName),
-                    TagsTestDataUtil.generateTextWithCaretAndSelection(myFixture.getEditor()));
+            JetTestUtils.assertEqualsToFile(expectedFile, TagsTestDataUtil.generateTextWithCaretAndSelection(myFixture.getEditor()));
         }
     }
 }
