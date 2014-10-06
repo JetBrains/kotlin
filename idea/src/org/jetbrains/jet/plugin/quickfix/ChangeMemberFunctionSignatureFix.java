@@ -60,6 +60,12 @@ import java.util.*;
  * Fix that changes member function's signature to match one of super functions' signatures.
  */
 public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunction> {
+    private static final DescriptorRenderer SIGNATURE_RENDERER = new DescriptorRendererBuilder()
+            .setWithDefinedIn(false)
+            .setModifiers()
+            .setShortNames(true)
+            .setUnitReturnType(false).build();
+
     private final List<FunctionDescriptor> possibleSignatures;
 
     public ChangeMemberFunctionSignatureFix(@NotNull JetNamedFunction element) {
@@ -75,11 +81,12 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     @NotNull
     @Override
     public String getText() {
-        if (possibleSignatures.size() == 1)
-            return JetBundle.message("change.function.signature.action.single",
-                                     SIGNATURE_RENDERER.render(possibleSignatures.get(0)));
-        else
+        if (possibleSignatures.size() == 1) {
+            return JetBundle.message("change.function.signature.action.single", SIGNATURE_RENDERER.render(possibleSignatures.get(0)));
+        }
+        else {
             return JetBundle.message("change.function.signature.action.multiple");
+        }
     }
 
     @NotNull
@@ -89,19 +96,13 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     }
 
     @Override
-    protected void invoke(@NotNull final Project project, @NotNull final Editor editor, JetFile file)
-            throws IncorrectOperationException {
+    protected void invoke(@NotNull final Project project, final Editor editor, JetFile file) throws IncorrectOperationException {
         CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
             @Override
             public void run() {
-                createAction(project, editor).execute();
+                new MyAction(project, editor, element, possibleSignatures).execute();
             }
         });
-    }
-
-    @NotNull
-    private JetChangeFunctionSignatureAction createAction(@NotNull Project project, @NotNull Editor editor) {
-        return new JetChangeFunctionSignatureAction(project, editor, element, possibleSignatures);
     }
 
     /**
@@ -294,46 +295,31 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         return true;
     }
 
-    private static final DescriptorRenderer SIGNATURE_RENDERER = new DescriptorRendererBuilder()
-            .setWithDefinedIn(false)
-            .setModifiers()
-            .setShortNames(true)
-            .setUnitReturnType(false).build();
-
-    private static class JetChangeFunctionSignatureAction {
-
+    private static class MyAction {
         private final Project project;
         private final Editor editor;
-        private final JetNamedFunction element;
+        private final JetNamedFunction function;
         private final List<FunctionDescriptor> signatures;
 
-        /**
-         * @param project Project where action takes place.
-         * @param editor Editor where modification should be done.
-         * @param element Function element which signature should be changed.
-         * @param signatures Variants for new function signature.
-         */
-        public JetChangeFunctionSignatureAction(
+        public MyAction(
                 @NotNull Project project,
                 @NotNull Editor editor,
-                @NotNull JetNamedFunction element,
-                @NotNull Collection<FunctionDescriptor> signatures
+                @NotNull JetNamedFunction function,
+                @NotNull List<FunctionDescriptor> signatures
         ) {
             this.project = project;
             this.editor = editor;
-            this.element = element;
-            this.signatures = new ArrayList<FunctionDescriptor>(signatures);
+            this.function = function;
+            this.signatures = signatures;
         }
 
         public boolean execute() {
             PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-            if (!element.isValid() || signatures.isEmpty()) {
-                return false;
-            }
+            if (!function.isValid() || signatures.isEmpty()) return false;
 
             if (signatures.size() == 1 || !editor.getComponent().isShowing()) {
-                changeSignature(element, project, signatures.get(0));
+                changeSignature(signatures.get(0));
             }
             else {
                 chooseSignatureAndChange();
@@ -353,7 +339,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
                 @Override
                 public PopupStep onChosen(FunctionDescriptor selectedValue, boolean finalChoice) {
                     if (finalChoice) {
-                        changeSignature(element, project, selectedValue);
+                        changeSignature(selectedValue);
                     }
                     return FINAL_CHOICE;
                 }
@@ -371,7 +357,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
             };
         }
 
-        private static void changeSignature(final JetNamedFunction function, Project project, FunctionDescriptor patternDescriptor) {
+        private void changeSignature(FunctionDescriptor patternDescriptor) {
             final String signatureString = DescriptorRenderer.SOURCE_CODE.render(patternDescriptor);
 
             PsiDocumentManager.getInstance(project).commitAllDocuments();
