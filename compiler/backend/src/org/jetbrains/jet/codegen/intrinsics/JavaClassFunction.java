@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.codegen.inline.ReifiedTypeInliner;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
@@ -49,7 +50,12 @@ public class JavaClassFunction extends IntrinsicMethod {
                 (JetElement) element, codegen.getBindingContext());
         JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
         assert returnType != null;
-        putJavaLangClassInstance(v, codegen.getState().getTypeMapper().mapType(returnType.getArguments().get(0).getType()));
+
+        JetType type = returnType.getArguments().get(0).getType();
+
+        codegen.putReifierMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.JAVA_CLASS_MARKER_METHOD_NAME);
+
+        putJavaLangClassInstance(v, codegen.getState().getTypeMapper().mapType(type));
 
         return getType(Class.class);
     }

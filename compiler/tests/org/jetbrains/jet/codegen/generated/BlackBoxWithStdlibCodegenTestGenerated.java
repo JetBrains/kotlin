@@ -2426,6 +2426,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("defaultJavaClass.kt")
+        public void testDefaultJavaClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/defaultJavaClass.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("filterIsInstance.kt")
         public void testFilterIsInstance() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/filterIsInstance.kt");
@@ -2435,6 +2441,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("instanceof.kt")
         public void testInstanceof() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/instanceof.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("javaClass.kt")
+        public void testJavaClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/javaClass.kt");
             doTestWithStdlib(fileName);
         }
 

@@ -37,6 +37,7 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         public val NEW_ARRAY_MARKER_METHOD_NAME: String = "reifyNewArray"
         public val CHECKCAST_MARKER_METHOD_NAME: String = "reifyCheckcast"
         public val INSTANCEOF_MARKER_METHOD_NAME: String = "reifyInstanceof"
+        public val JAVA_CLASS_MARKER_METHOD_NAME: String = "reifyJavaClass"
     }
 
     public fun reifyInstructions(instructions: InsnList) {
@@ -62,6 +63,7 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
                 NEW_ARRAY_MARKER_METHOD_NAME -> processNewArray(insn, asmType)
                 CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, asmType)
                 INSTANCEOF_MARKER_METHOD_NAME -> processInstanceof(insn, asmType)
+                JAVA_CLASS_MARKER_METHOD_NAME -> processJavaClass(insn, asmType)
                 else -> false
             }) {
                 return
@@ -85,6 +87,13 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
     private fun processNextTypeInsn(insn: MethodInsnNode, parameter: Type, expectedNextOpcode: Int): Boolean {
         if (insn.getNext()?.getOpcode() != expectedNextOpcode) return false
         (insn.getNext() as TypeInsnNode).desc = parameter.getInternalName()
+        return true
+    }
+
+    private fun processJavaClass(insn: MethodInsnNode, parameter: Type): Boolean {
+        val next = insn.getNext()
+        if (next !is LdcInsnNode) return false
+        next.cst = parameter
         return true
     }
 

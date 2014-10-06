@@ -118,6 +118,10 @@ public class Intrinsics {
         throwUndefinedForReified();
     }
 
+    public static void reifyJavaClass(int parameterTypeIndex) {
+        throwUndefinedForReified();
+    }
+
     public static <T extends Throwable> T sanitizeStackTrace(T throwable) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         ArrayList<StackTraceElement> list = new ArrayList<StackTraceElement>(stackTrace.length);
