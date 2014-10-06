@@ -490,6 +490,10 @@ public class JetControlFlowProcessor {
 
             if (setResolvedCall == null) {
                 generateArrayAccess(lhs, null);
+
+                List<PseudoValue> arguments = Arrays.asList(getBoundOrUnreachableValue(lhs), rhsDeferredValue.invoke());
+                builder.magic(parentExpression, parentExpression, arguments, defaultTypeMap(arguments), MagicKind.UNRESOLVED_CALL);
+
                 return;
             }
 
@@ -570,6 +574,7 @@ public class JetControlFlowProcessor {
         }
 
         private void generateArrayAccess(JetArrayAccessExpression arrayAccessExpression, @Nullable ResolvedCall<?> resolvedCall) {
+            if (builder.getBoundValue(arrayAccessExpression) != null) return;
             mark(arrayAccessExpression);
             if (!checkAndGenerateCall(arrayAccessExpression, resolvedCall)) {
                 generateArrayAccessWithoutCall(arrayAccessExpression);
@@ -1276,11 +1281,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression) {
-            mark(expression);
-            ResolvedCall<FunctionDescriptor> getMethodResolvedCall = trace.get(BindingContext.INDEXED_LVALUE_GET, expression);
-            if (!checkAndGenerateCall(expression, getMethodResolvedCall)) {
-                generateArrayAccess(expression, getMethodResolvedCall);
-            }
+            generateArrayAccess(expression, trace.get(BindingContext.INDEXED_LVALUE_GET, expression));
         }
 
         @Override
