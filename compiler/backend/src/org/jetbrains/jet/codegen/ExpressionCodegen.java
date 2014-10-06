@@ -1785,16 +1785,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return StackValue.none();
         }
 
-        if (descriptor instanceof TypeParameterDescriptor) {
-            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
-            v.invokevirtual("jet/TypeInfo", "getClassObject", "()Ljava/lang/Object;", false);
-            JetType type = typeParameterDescriptor.getClassObjectType();
-            assert type != null;
-            v.checkcast(asmType(type));
-
-            return StackValue.onStack(OBJECT_TYPE);
-        }
-
         StackValue localOrCaptured = findLocalOrCapturedValue(descriptor);
         if (localOrCaptured != null) {
             return localOrCaptured;
