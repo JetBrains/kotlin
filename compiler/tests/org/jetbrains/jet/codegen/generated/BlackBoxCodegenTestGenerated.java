@@ -5790,6 +5790,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("kt3430.kt")
+        public void testKt3430() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/safeCall/kt3430.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("kt4733.kt")
+        public void testKt4733() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/safeCall/kt4733.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("primitive.kt")
         public void testPrimitive() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/safeCall/primitive.kt");
