@@ -533,6 +533,11 @@ public class TypeUtils {
     ) {
         if (type == null) return false;
         if (isSpecialType.invoke(type)) return true;
+        Flexibility flexibility = type.getCapability(Flexibility.class);
+        if (flexibility != null
+                && (containsSpecialType(flexibility.getLowerBound(), isSpecialType) || containsSpecialType(flexibility.getUpperBound(), isSpecialType))) {
+            return true;
+        }
         for (TypeProjection projection : type.getArguments()) {
             if (containsSpecialType(projection.getType(), isSpecialType)) return true;
         }
