@@ -2420,6 +2420,24 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reified"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("checkcast.kt")
+        public void testCheckcast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/checkcast.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("filterIsInstance.kt")
+        public void testFilterIsInstance() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/filterIsInstance.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("instanceof.kt")
+        public void testInstanceof() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/instanceof.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("newArrayInt.kt")
         public void testNewArrayInt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/newArrayInt.kt");
@@ -2429,6 +2447,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("recursiveNewArray.kt")
         public void testRecursiveNewArray() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/recursiveNewArray.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("safecast.kt")
+        public void testSafecast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/safecast.kt");
             doTestWithStdlib(fileName);
         }
 

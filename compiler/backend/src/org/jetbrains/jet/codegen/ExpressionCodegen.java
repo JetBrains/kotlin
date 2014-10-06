@@ -3401,16 +3401,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (isArray) {
             gen(args.get(0), Type.INT_TYPE);
-            TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(
-                    arrayType.getArguments().get(0).getType()
+            putReifierMarkerIfTypeIsReifiedParameter(
+                    arrayType.getArguments().get(0).getType(),
+                    ReifiedTypeInliner.NEW_ARRAY_MARKER_METHOD_NAME
             );
-            if (parameterDescriptor != null && parameterDescriptor.isReified()) {
-                v.iconst(parameterDescriptor.getIndex());
-                v.invokestatic(
-                        IntrinsicMethods.INTRINSICS_CLASS_NAME, ReifiedTypeInliner.NEW_ARRAY_MARKER_METHOD_NAME,
-                        Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE), false
-                );
-            }
             v.newarray(boxType(asmType(arrayType.getArguments().get(0).getType())));
         }
         else {
@@ -3702,7 +3696,6 @@ The "returned" value of try expression with no finally is either the last expres
             JetTypeReference typeReference = expression.getRight();
             JetType rightType = bindingContext.get(TYPE, typeReference);
             assert rightType != null;
-            Type rightTypeAsm = boxType(asmType(rightType));
             JetExpression left = expression.getLeft();
             DeclarationDescriptor descriptor = rightType.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptor) {
@@ -3724,7 +3717,7 @@ The "returned" value of try expression with no finally is either the last expres
                 }
                 else {
                     v.dup();
-                    v.instanceOf(rightTypeAsm);
+                    generateInstanceOfInstruction(rightType);
                     Label ok = new Label();
                     v.ifne(ok);
                     v.pop();
@@ -3732,8 +3725,7 @@ The "returned" value of try expression with no finally is either the last expres
                     v.mark(ok);
                 }
 
-                v.checkcast(rightTypeAsm);
-                return StackValue.onStack(rightTypeAsm);
+                return generateCheckCastInstruction(rightType);
             }
             else {
                 throw new UnsupportedOperationException("Don't know how to handle non-class types in as/as? : " + descriptor);
@@ -3786,14 +3778,13 @@ The "returned" value of try expression with no finally is either the last expres
         if (leaveExpressionOnStack) {
             v.dup();
         }
-        Type type = boxType(asmType(jetType));
         if (jetType.isNullable()) {
             Label nope = new Label();
             Label end = new Label();
 
             v.dup();
             v.ifnull(nope);
-            v.instanceOf(type);
+            generateInstanceOfInstruction(jetType);
             v.goTo(end);
             v.mark(nope);
             v.pop();
@@ -3801,7 +3792,32 @@ The "returned" value of try expression with no finally is either the last expres
             v.mark(end);
         }
         else {
-            v.instanceOf(type);
+            generateInstanceOfInstruction(jetType);
+        }
+    }
+
+    private void generateInstanceOfInstruction(@NotNull JetType jetType) {
+        Type type = boxType(asmType(jetType));
+        putReifierMarkerIfTypeIsReifiedParameter(jetType, ReifiedTypeInliner.INSTANCEOF_MARKER_METHOD_NAME);
+        v.instanceOf(type);
+    }
+
+    @NotNull
+    private StackValue generateCheckCastInstruction(@NotNull JetType jetType) {
+        Type type = boxType(asmType(jetType));
+        putReifierMarkerIfTypeIsReifiedParameter(jetType, ReifiedTypeInliner.CHECKCAST_MARKER_METHOD_NAME);
+        v.checkcast(type);
+        return StackValue.onStack(type);
+    }
+
+    private void putReifierMarkerIfTypeIsReifiedParameter(@NotNull JetType type, @NotNull String markerMethodName) {
+        TypeParameterDescriptor typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
+        if (typeParameterDescriptor != null && typeParameterDescriptor.isReified()) {
+            v.iconst(typeParameterDescriptor.getIndex());
+            v.invokestatic(
+                    IntrinsicMethods.INTRINSICS_CLASS_NAME, markerMethodName,
+                    Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE), false
+            );
         }
     }
 

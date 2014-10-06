@@ -110,6 +110,14 @@ public class Intrinsics {
         throwUndefinedForReified();
     }
 
+    public static void reifyCheckcast(int parameterTypeIndex) {
+        throwUndefinedForReified();
+    }
+
+    public static void reifyInstanceof(int parameterTypeIndex) {
+        throwUndefinedForReified();
+    }
+
     public static <T extends Throwable> T sanitizeStackTrace(T throwable) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         ArrayList<StackTraceElement> list = new ArrayList<StackTraceElement>(stackTrace.length);
