@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxAgainstJava")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BlackBoxAgainstJavaCodegenTestGenerated.Annotations.class, BlackBoxAgainstJavaCodegenTestGenerated.CallableReference.class, BlackBoxAgainstJavaCodegenTestGenerated.Constructor.class, BlackBoxAgainstJavaCodegenTestGenerated.Delegation.class, BlackBoxAgainstJavaCodegenTestGenerated.Enum.class, BlackBoxAgainstJavaCodegenTestGenerated.Functions.class, BlackBoxAgainstJavaCodegenTestGenerated.InnerClass.class, BlackBoxAgainstJavaCodegenTestGenerated.NotNullAssertions.class, BlackBoxAgainstJavaCodegenTestGenerated.Property.class, BlackBoxAgainstJavaCodegenTestGenerated.Reflection.class, BlackBoxAgainstJavaCodegenTestGenerated.Sam.class, BlackBoxAgainstJavaCodegenTestGenerated.StaticFun.class, BlackBoxAgainstJavaCodegenTestGenerated.Visibility.class})
+@InnerTestClasses({BlackBoxAgainstJavaCodegenTestGenerated.Annotations.class, BlackBoxAgainstJavaCodegenTestGenerated.CallableReference.class, BlackBoxAgainstJavaCodegenTestGenerated.Constructor.class, BlackBoxAgainstJavaCodegenTestGenerated.Delegation.class, BlackBoxAgainstJavaCodegenTestGenerated.Enum.class, BlackBoxAgainstJavaCodegenTestGenerated.Functions.class, BlackBoxAgainstJavaCodegenTestGenerated.InnerClass.class, BlackBoxAgainstJavaCodegenTestGenerated.NotNullAssertions.class, BlackBoxAgainstJavaCodegenTestGenerated.PlatformTypes.class, BlackBoxAgainstJavaCodegenTestGenerated.Property.class, BlackBoxAgainstJavaCodegenTestGenerated.Reflection.class, BlackBoxAgainstJavaCodegenTestGenerated.Sam.class, BlackBoxAgainstJavaCodegenTestGenerated.StaticFun.class, BlackBoxAgainstJavaCodegenTestGenerated.Visibility.class})
 @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxAgainstJava() throws Exception {
@@ -276,6 +276,22 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
         @TestMetadata("Delegation.kt")
         public void testDelegation() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/notNullAssertions/Delegation.kt");
+            doTestAgainstJava(fileName);
+        }
+        
+    }
+    
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/platformTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    public static class PlatformTypes extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInPlatformTypes() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/platformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("GenericUnit.kt")
+        public void testGenericUnit() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/platformTypes/GenericUnit.kt");
             doTestAgainstJava(fileName);
         }
         

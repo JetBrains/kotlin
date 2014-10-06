@@ -159,7 +159,9 @@ public class JetTypeMapper {
     private Type mapReturnType(@NotNull CallableDescriptor descriptor, @Nullable BothSignatureWriter sw) {
         JetType returnType = descriptor.getReturnType();
         assert returnType != null : "Function has no return type: " + descriptor;
-        if (returnType.equals(KotlinBuiltIns.getInstance().getUnitType()) && !(descriptor instanceof PropertyGetterDescriptor)) {
+        if (returnType.equals(KotlinBuiltIns.getInstance().getUnitType())
+            && !TypeUtils.isNullableType(returnType)
+            && !(descriptor instanceof PropertyGetterDescriptor)) {
             if (sw != null) {
                 sw.writeAsmType(Type.VOID_TYPE);
             }
