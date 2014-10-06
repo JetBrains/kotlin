@@ -1151,7 +1151,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor);
-        FunctionCodegen.generateConstructorWithoutParametersIfNeeded(state, callableMethod, constructorDescriptor, v);
+        FunctionCodegen.generateConstructorWithoutParametersIfNeeded(state, callableMethod, constructorDescriptor, v, myClass);
 
         if (isClassObject(descriptor)) {
             context.recordSyntheticAccessorIfNeeded(constructorDescriptor, bindingContext);

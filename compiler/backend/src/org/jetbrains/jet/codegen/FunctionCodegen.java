@@ -25,6 +25,7 @@ import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.bridges.Bridge;
 import org.jetbrains.jet.codegen.bridges.BridgesPackage;
@@ -36,6 +37,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -514,9 +516,10 @@ public class FunctionCodegen extends ParentCodegenAware {
             @NotNull GenerationState state,
             @NotNull CallableMethod method,
             @NotNull ConstructorDescriptor constructorDescriptor,
-            @NotNull ClassBuilder classBuilder
+            @NotNull ClassBuilder classBuilder,
+            @NotNull JetClassOrObject classOrObject
     ) {
-        if (!isDefaultConstructorNeeded(state.getBindingContext(), constructorDescriptor)) {
+        if (!isEmptyConstructorNeeded(state.getBindingContext(), constructorDescriptor, classOrObject)) {
             return;
         }
         int flags = getVisibilityAccessFlag(constructorDescriptor);
@@ -550,7 +553,7 @@ public class FunctionCodegen extends ParentCodegenAware {
         String desc = JetTypeMapper.getDefaultDescriptor(method.getAsmMethod(), false);
         v.invokespecial(methodOwner.getInternalName(), "<init>", desc, false);
         v.areturn(Type.VOID_TYPE);
-        endVisit(mv, "default constructor for " + methodOwner.getInternalName(), null);
+        endVisit(mv, "default constructor for " + methodOwner.getInternalName(), classOrObject);
     }
 
     void generateDefaultIfNeeded(
@@ -739,8 +742,14 @@ public class FunctionCodegen extends ParentCodegenAware {
         return needed;
     }
 
-    private static boolean isDefaultConstructorNeeded(@NotNull BindingContext context, @NotNull ConstructorDescriptor constructorDescriptor) {
+    private static boolean isEmptyConstructorNeeded(
+            @NotNull BindingContext context,
+            @NotNull ConstructorDescriptor constructorDescriptor,
+            @NotNull JetClassOrObject classOrObject
+    ) {
         ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
+
+        if (classOrObject.isLocal()) return false;
 
         if (CodegenBinding.canHaveOuter(context, classDescriptor)) return false;
 
