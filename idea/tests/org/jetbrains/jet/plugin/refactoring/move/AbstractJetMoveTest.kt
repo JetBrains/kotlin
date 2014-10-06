@@ -93,7 +93,7 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
         doTest { rootDir, rootAfter ->
             val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
             val mainPsiFile = PsiManager.getInstance(getProject()!!).findFile(mainFile)!!
-            val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
+            val document = FileDocumentManager.getInstance()!!.getDocument(mainFile)!!
             val editor = EditorFactory.getInstance()!!.createEditor(document, getProject()!!)!!
 
             val caretOffset = extractCaretOffset(document)
@@ -116,7 +116,7 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
             }
             finally {
                 PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()
-                FileDocumentManager.getInstance().saveAllDocuments()
+                FileDocumentManager.getInstance()!!.saveAllDocuments()
 
                 EditorFactory.getInstance()!!.releaseEditor(editor)
             }

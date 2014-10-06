@@ -209,7 +209,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
                 protected void run(@NotNull Result result) throws Throwable {
                     OverrideImplementMethodsHandler.generateMethods(myFixture.getEditor(), classOrObject, descriptorsToGenerate);
                 }
-            }.performCommand();
+            }.execute();
         }
         catch (Throwable throwable) {
             throw UtilsPackage.rethrow(throwable);

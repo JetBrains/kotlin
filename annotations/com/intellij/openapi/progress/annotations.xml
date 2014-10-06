@@ -1,0 +1,5 @@
+<root>
+    <item name='com.intellij.openapi.progress.ProgressManager com.intellij.openapi.progress.ProgressManager getInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

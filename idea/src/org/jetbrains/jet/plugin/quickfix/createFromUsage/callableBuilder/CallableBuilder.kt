@@ -536,7 +536,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(containingFileEditor.getDocument())
 
             val caretModel = containingFileEditor.getCaretModel()
-            caretModel.moveToOffset(containingFile.getNode().getStartOffset())
+            caretModel.moveToOffset(containingFile.getNode()!!.getStartOffset())
 
             val builder = TemplateBuilderImpl(containingFile)
             if (declaration is JetProperty) {
