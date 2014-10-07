@@ -48,7 +48,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
@@ -69,7 +69,8 @@ public class JetRefactoringUtil {
     private JetRefactoringUtil() {
     }
 
-    public static JetKeywordToken getVisibilityToken(Visibility visibility) {
+    @NotNull
+    public static JetModifierKeywordToken getVisibilityToken(@NotNull Visibility visibility) {
         if (visibility == Visibilities.PUBLIC) {
             return JetTokens.PUBLIC_KEYWORD;
         }

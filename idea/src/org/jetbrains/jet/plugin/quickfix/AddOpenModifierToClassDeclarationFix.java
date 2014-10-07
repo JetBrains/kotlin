@@ -78,7 +78,7 @@ public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<Jet
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        classDeclaration.replace(AddModifierFix.addModifierWithDefaultReplacement(classDeclaration, JetTokens.OPEN_KEYWORD, project, false));
+        classDeclaration.addModifier(JetTokens.OPEN_KEYWORD);
     }
 
     @NotNull

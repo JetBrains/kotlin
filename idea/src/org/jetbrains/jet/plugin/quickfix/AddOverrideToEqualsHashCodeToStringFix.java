@@ -25,11 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
-import org.jetbrains.jet.lexer.JetModifierKeywordToken;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
@@ -37,11 +33,10 @@ import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lexer.JetTokens.*;
+import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
+import static org.jetbrains.jet.lexer.JetTokens.PUBLIC_KEYWORD;
 
 public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<PsiElement> {
-    private static final JetModifierKeywordToken[] MODIFIERS_TO_REPLACE = {PUBLIC_KEYWORD, OPEN_KEYWORD};
-
     public AddOverrideToEqualsHashCodeToStringFix(@NotNull PsiElement element) {
         super(element);
     }
@@ -90,10 +85,11 @@ public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<P
             for (Diagnostic diagnostic : ResolvePackage.getBindingContext(jetFile).getDiagnostics()) {
                 if (diagnostic.getFactory() != Errors.VIRTUAL_MEMBER_HIDDEN) continue;
 
-                PsiElement element = diagnostic.getPsiElement();
+                JetModifierListOwner element = (JetModifierListOwner) diagnostic.getPsiElement();
                 if (!isEqualsHashCodeOrToString(element)) continue;
 
-                element.replace(AddModifierFix.addModifier(element, OVERRIDE_KEYWORD, MODIFIERS_TO_REPLACE, project, false));
+                element.addModifier(OVERRIDE_KEYWORD);
+                element.removeModifier(PUBLIC_KEYWORD);
             }
         }
     }

@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.JetCallableDeclaration;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -43,7 +44,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorT
 import static org.jetbrains.jet.lexer.JetTokens.OPEN_KEYWORD;
 
 public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclaration> {
-    private final List<PsiElement> overriddenNonOverridableMembers = new ArrayList<PsiElement>();
+    private final List<JetCallableDeclaration> overriddenNonOverridableMembers = new ArrayList<JetCallableDeclaration>();
     private final List<String> containingDeclarationsNames = new ArrayList<String>();
 
     public MakeOverriddenMemberOpenFix(@NotNull JetDeclaration declaration) {
@@ -68,11 +69,11 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
                 (CallableMemberDescriptor) descriptor)) {
             assert overriddenDescriptor.getKind() == DECLARATION : "Can only be applied to declarations.";
             PsiElement overriddenMember = descriptorToDeclaration(overriddenDescriptor);
-            if (overriddenMember == null || !QuickFixUtil.canModifyElement(overriddenMember)) {
+            if (overriddenMember == null || !QuickFixUtil.canModifyElement(overriddenMember) || !(overriddenMember instanceof JetCallableDeclaration)) {
                 return false;
             }
             String containingDeclarationName = overriddenDescriptor.getContainingDeclaration().getName().asString();
-            overriddenNonOverridableMembers.add(overriddenMember);
+            overriddenNonOverridableMembers.add((JetCallableDeclaration) overriddenMember);
             containingDeclarationsNames.add(containingDeclarationName);
         }
         return overriddenNonOverridableMembers.size() > 0;
@@ -142,8 +143,8 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        for (PsiElement overriddenMember : overriddenNonOverridableMembers) {
-            overriddenMember.replace(AddModifierFix.addModifierWithDefaultReplacement(overriddenMember, OPEN_KEYWORD, project, false));
+        for (JetCallableDeclaration overriddenMember : overriddenNonOverridableMembers) {
+            overriddenMember.addModifier(OPEN_KEYWORD);
         }
     }
 

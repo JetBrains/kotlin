@@ -21,8 +21,10 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.addRemoveModifier.AddRemoveModifierPackage;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,9 +45,19 @@ public class JetModifierListOwnerStub<T extends StubElement> extends JetElementI
     }
 
     @Override
-    public boolean hasModifier(JetModifierKeywordToken modifier) {
+    public boolean hasModifier(@NotNull JetModifierKeywordToken modifier) {
         JetModifierList modifierList = getModifierList();
         return modifierList != null && modifierList.hasModifier(modifier);
+    }
+
+    @Override
+    public void addModifier(@NotNull JetModifierKeywordToken modifier) {
+        AddRemoveModifierPackage.addModifier(this, modifier, JetTokens.INTERNAL_KEYWORD);
+    }
+
+    @Override
+    public void removeModifier(@NotNull JetModifierKeywordToken modifier) {
+        AddRemoveModifierPackage.removeModifier(this, modifier);
     }
 
     @Override

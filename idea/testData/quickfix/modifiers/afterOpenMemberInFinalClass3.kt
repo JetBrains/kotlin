@@ -1,0 +1,4 @@
+// "Make 'A' open" "true"
+public open class A() {
+    <caret>open fun foo() {}
+}

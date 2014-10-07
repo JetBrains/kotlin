@@ -1,0 +1,4 @@
+// "Make 'A' abstract" "true"
+public abstract class A() {
+    <caret>abstract var i : Int
+}

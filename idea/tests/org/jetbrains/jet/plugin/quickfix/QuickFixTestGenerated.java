@@ -79,6 +79,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
         
+        @TestMetadata("beforeAbstractPropertyInNonAbstractClass3.kt")
+        public void testAbstractPropertyInNonAbstractClass3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/abstract/beforeAbstractPropertyInNonAbstractClass3.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("beforeAbstractPropertyInPrimaryConstructorParameters.kt")
         public void testAbstractPropertyInPrimaryConstructorParameters() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/abstract/beforeAbstractPropertyInPrimaryConstructorParameters.kt");
@@ -1765,6 +1771,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeOpenMemberInFinalClass2.kt")
         public void testOpenMemberInFinalClass2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeOpenMemberInFinalClass2.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("beforeOpenMemberInFinalClass3.kt")
+        public void testOpenMemberInFinalClass3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeOpenMemberInFinalClass3.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("beforeOpenMemberInFinalClass4.kt")
+        public void testOpenMemberInFinalClass4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeOpenMemberInFinalClass4.kt");
             doTest(fileName);
         }
         

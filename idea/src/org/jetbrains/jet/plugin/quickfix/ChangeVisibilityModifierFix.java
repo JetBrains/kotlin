@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
@@ -31,7 +32,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -66,11 +66,13 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierL
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetKeywordToken modifier = findVisibilityChangeTo(file);
-        element.replace(AddModifierFix.addModifier(element, modifier, VISIBILITY_TOKENS, project, true));
+        JetModifierKeywordToken modifier = findVisibilityChangeTo(file);
+        assert modifier != null;
+        element.addModifier(modifier);
     }
 
-    private JetKeywordToken findVisibilityChangeTo(JetFile file) {
+    @Nullable
+    private JetModifierKeywordToken findVisibilityChangeTo(JetFile file) {
         BindingContext bindingContext = ResolvePackage.getBindingContext(file);
         DeclarationDescriptor descriptor;
         if (element instanceof JetParameter) {

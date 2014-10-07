@@ -20,7 +20,9 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.addRemoveModifier.AddRemoveModifierPackage;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,9 +39,19 @@ abstract class JetDeclarationImpl extends JetExpressionImpl implements JetDeclar
     }
 
     @Override
-    public boolean hasModifier(JetModifierKeywordToken modifier) {
+    public boolean hasModifier(@NotNull JetModifierKeywordToken modifier) {
         JetModifierList modifierList = getModifierList();
         return modifierList != null && modifierList.hasModifier(modifier);
+    }
+
+    @Override
+    public void addModifier(@NotNull JetModifierKeywordToken modifier) {
+        AddRemoveModifierPackage.addModifier(this, modifier, JetTokens.INTERNAL_KEYWORD);
+    }
+
+    @Override
+    public void removeModifier(@NotNull JetModifierKeywordToken modifier) {
+        AddRemoveModifierPackage.removeModifier(this, modifier);
     }
 
     @NotNull

@@ -27,9 +27,11 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.addRemoveModifier.AddRemoveModifierPackage;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.ArrayList;
@@ -88,6 +90,31 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
     @Nullable
     public JetModifierList getPrimaryConstructorModifierList() {
         return getStubOrPsiChild(JetStubElementTypes.PRIMARY_CONSTRUCTOR_MODIFIER_LIST);
+    }
+
+    public void addPrimaryConstructorModifier(@NotNull JetModifierKeywordToken modifier) {
+        JetModifierList modifierList = getPrimaryConstructorModifierList();
+        if (modifierList != null) {
+            AddRemoveModifierPackage.addModifier(modifierList, modifier, JetTokens.PUBLIC_KEYWORD);
+        }
+        else {
+            if (modifier == JetTokens.PUBLIC_KEYWORD) return;
+
+            JetParameterList parameterList = getPrimaryConstructorParameterList();
+            assert parameterList != null;
+            JetModifierList newModifierList = new JetPsiFactory(getProject()).createModifierList(modifier);
+            addBefore(newModifierList, parameterList);
+        }
+    }
+
+    public void removePrimaryConstructorModifier(@NotNull JetModifierKeywordToken modifier) {
+        JetModifierList list = getPrimaryConstructorModifierList();
+        if (list != null) {
+            PsiElement token = list.getModifier(modifier);
+            if (token != null) {
+                token.delete();
+            }
+        }
     }
 
     @Override
