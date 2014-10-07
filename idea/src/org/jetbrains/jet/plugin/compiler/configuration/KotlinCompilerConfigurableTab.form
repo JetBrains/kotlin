@@ -44,7 +44,9 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <dialogCaption resource-bundle="org/jetbrains/jet/plugin/JetBundle" key="kotlin.compiler.option.additional.command.line.parameters.dialog.title"/>
+            </properties>
           </component>
         </children>
       </grid>

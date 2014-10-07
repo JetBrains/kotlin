@@ -58,8 +58,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         this.compilerSettings = KotlinCompilerSettings.getInstance(ep.getProject()).getSettings();
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
-        additionalArgsOptionsField.setDialogCaption(JetBundle.message("kotlin.compiler.option.additional.command.line.parameters.dialog.title"));
-        
+
         setupFileChooser(labelForOutputPrefixFile, outputPrefixFile,
                          JetBundle.message("kotlin.compiler.js.option.output.prefix.browse.title"));
         setupFileChooser(labelForOutputPostfixFile, outputPostfixFile,
