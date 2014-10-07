@@ -62,11 +62,11 @@ fun getFunctionForExtractedFragment(
                 ErrorMessage.SUPER_CALL -> "Cannot perform an action for expression with super call"
                 ErrorMessage.DENOTABLE_TYPES -> "Cannot perform an action because following types are unavailable from debugger scope"
                 ErrorMessage.ERROR_TYPES -> "Cannot perform an action because this code fragment contains erroneous types"
+                ErrorMessage.MULTIPLE_EXIT_POINTS,
                 ErrorMessage.DECLARATIONS_OUT_OF_SCOPE,
                 ErrorMessage.OUTPUT_AND_EXIT_POINT,
-                ErrorMessage.MULTIPLE_EXIT_POINTS,
                 ErrorMessage.DECLARATIONS_ARE_USED_OUTSIDE -> "Cannot perform an action for this expression"
-                else -> throw AssertionError("Unexpected error: $errorMessage")
+                ErrorMessage.MULTIPLE_OUTPUT -> throw AssertionError("Unexpected error: $errorMessage")
             }
             errorMessage.additionalInfo?.let { "$message: ${it.joinToString(", ")}" } ?: message
         }.joinToString(", ")
