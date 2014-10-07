@@ -32,7 +32,7 @@ public class JetWhenConditionIsPattern extends JetWhenCondition {
     }
 
     @Nullable @IfNotParsed
-    public JetTypeReference getTypeRef() {
+    public JetTypeReference getTypeReference() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 

@@ -73,7 +73,7 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
         return declaration != null
                && declaration.getParent() instanceof JetClassBody
                && declaration.getParent().getParent() instanceof JetClass
-               && declaration.getReceiverTypeRef() == null;
+               && declaration.getReceiverTypeReference() == null;
     }
 
     private static JetCallableDeclaration getTarget(Editor editor, PsiFile file) {

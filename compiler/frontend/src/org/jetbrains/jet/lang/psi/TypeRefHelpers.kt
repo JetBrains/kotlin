@@ -26,15 +26,15 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import com.intellij.psi.PsiErrorElement
 
-fun getTypeRef(declaration: JetDeclaration): JetTypeReference? {
+fun getTypeReference(declaration: JetDeclaration): JetTypeReference? {
     return declaration.getFirstChild()!!.siblings(forward = true)
             .dropWhile { it.getNode()!!.getElementType() != JetTokens.COLON }
             .filterIsInstance(javaClass<JetTypeReference>())
             .firstOrNull()
 }
 
-fun setTypeRef(declaration: JetNamedDeclaration, addAfter: PsiElement?, typeRef: JetTypeReference?): JetTypeReference? {
-    val oldTypeRef = getTypeRef(declaration)
+fun setTypeReference(declaration: JetNamedDeclaration, addAfter: PsiElement?, typeRef: JetTypeReference?): JetTypeReference? {
+    val oldTypeRef = getTypeReference(declaration)
     if (typeRef != null) {
         if (oldTypeRef != null) {
             return oldTypeRef.replace(typeRef) as JetTypeReference

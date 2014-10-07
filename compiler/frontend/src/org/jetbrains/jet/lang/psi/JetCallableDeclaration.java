@@ -23,7 +23,7 @@ public interface JetCallableDeclaration extends JetNamedDeclaration, JetTypePara
     JetParameterList getValueParameterList();
 
     @Nullable
-    JetTypeReference getReceiverTypeRef();
+    JetTypeReference getReceiverTypeReference();
 
     @Nullable
     JetTypeReference getTypeReference();

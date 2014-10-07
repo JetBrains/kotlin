@@ -212,7 +212,7 @@ public class ArgumentTypeResolver {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         JetType returnType = resolveTypeRefWithDefault(functionLiteral.getTypeReference(), scope, temporaryTrace, DONT_CARE);
         assert returnType != null;
-        JetType receiverType = resolveTypeRefWithDefault(functionLiteral.getReceiverTypeRef(), scope, temporaryTrace, null);
+        JetType receiverType = resolveTypeRefWithDefault(functionLiteral.getReceiverTypeReference(), scope, temporaryTrace, null);
         return KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes,
                                                             returnType);
     }

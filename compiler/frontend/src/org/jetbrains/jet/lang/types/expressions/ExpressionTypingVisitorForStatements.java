@@ -97,7 +97,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitProperty(@NotNull JetProperty property, ExpressionTypingContext typingContext) {
         ExpressionTypingContext context = typingContext.replaceContextDependency(INDEPENDENT).replaceScope(scope);
-        JetTypeReference receiverTypeRef = property.getReceiverTypeRef();
+        JetTypeReference receiverTypeRef = property.getReceiverTypeReference();
         if (receiverTypeRef != null) {
             context.trace.report(LOCAL_EXTENSION_PROPERTY.on(receiverTypeRef));
         }

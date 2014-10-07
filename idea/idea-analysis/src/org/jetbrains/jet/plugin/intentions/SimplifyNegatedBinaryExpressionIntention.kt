@@ -78,7 +78,7 @@ public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingIntentio
                 when (expression) {
                     is JetIsExpression -> {
                         psiFactory.createExpression(
-                                "${expression.getLeftHandSide().getText() ?: ""} ${invertedOperation.getValue()} ${expression.getTypeRef()?.getText() ?: ""}"
+                                "${expression.getLeftHandSide().getText() ?: ""} ${invertedOperation.getValue()} ${expression.getTypeReference()?.getText() ?: ""}"
                         )
                     }
                     is JetBinaryExpression -> psiFactory.createBinaryExpression(

@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -25,7 +23,6 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
@@ -44,7 +41,7 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
     @Override
     public PsiJetFunctionStub createStub(@NotNull JetNamedFunction psi, @NotNull StubElement parentStub) {
         boolean isTopLevel = psi.getParent() instanceof JetFile;
-        boolean isExtension = psi.getReceiverTypeRef() != null;
+        boolean isExtension = psi.getReceiverTypeReference() != null;
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         boolean hasBlockBody = psi.hasBlockBody();
         boolean hasBody = psi.hasBody();

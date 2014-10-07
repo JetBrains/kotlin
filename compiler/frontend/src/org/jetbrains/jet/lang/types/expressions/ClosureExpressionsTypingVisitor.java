@@ -130,7 +130,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             boolean functionTypeExpected
     ) {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
-        JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
+        JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeReference();
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
                 context.scope.getContainingDeclaration(), Annotations.EMPTY, CallableMemberDescriptor.Kind.DECLARATION,
                 toSourceElement(functionLiteral)

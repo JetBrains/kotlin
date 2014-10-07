@@ -38,7 +38,7 @@ public class JetIsExpression extends JetExpressionImpl implements JetOperationEx
     }
 
     @Nullable @IfNotParsed
-    public JetTypeReference getTypeRef() {
+    public JetTypeReference getTypeReference() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 

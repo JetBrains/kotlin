@@ -72,7 +72,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
                         JetTypeParameterList typeParameterList = function.getTypeParameterList();
                         if (typeParameterList != null) memberSuspects.add(typeParameterList);
 
-                        JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
+                        JetTypeReference receiverTypeRef = function.getReceiverTypeReference();
                         if (receiverTypeRef != null) memberSuspects.add(receiverTypeRef);
 
                         JetTypeReference returnTypeRef = function.getTypeReference();
@@ -87,7 +87,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
                         JetTypeParameterList typeParameterList = property.getTypeParameterList();
                         if (typeParameterList != null) memberSuspects.add(typeParameterList);
 
-                        JetTypeReference receiverTypeRef = property.getReceiverTypeRef();
+                        JetTypeReference receiverTypeRef = property.getReceiverTypeReference();
                         if (receiverTypeRef != null) memberSuspects.add(receiverTypeRef);
 
                         JetTypeReference returnTypeRef = property.getTypeReference();

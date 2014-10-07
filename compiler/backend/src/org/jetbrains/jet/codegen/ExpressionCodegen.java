@@ -3692,7 +3692,7 @@ The "returned" value of try expression with no finally is either the last expres
     @Override
     public StackValue visitIsExpression(@NotNull JetIsExpression expression, StackValue receiver) {
         StackValue match = StackValue.expression(OBJECT_TYPE, expression.getLeftHandSide(), this);
-        return generateIsCheck(match, expression.getTypeRef(), expression.isNegated());
+        return generateIsCheck(match, expression.getTypeReference(), expression.isNegated());
     }
 
     private StackValue generateExpressionMatch(StackValue expressionToMatch, JetExpression patternExpression) {
@@ -3844,7 +3844,7 @@ The "returned" value of try expression with no finally is either the last expres
         StackValue.Local match = subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType);
         if (condition instanceof JetWhenConditionIsPattern) {
             JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
-            return generateIsCheck(match, patternCondition.getTypeRef(), patternCondition.isNegated());
+            return generateIsCheck(match, patternCondition.getTypeReference(), patternCondition.isNegated());
         }
         else if (condition instanceof JetWhenConditionWithExpression) {
             JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();

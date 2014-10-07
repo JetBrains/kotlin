@@ -55,10 +55,10 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         JetTypeInfo typeInfo = facade.safeGetTypeInfo(leftHandSide, context.replaceScope(context.scope));
         JetType knownType = typeInfo.getType();
         DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
-        if (expression.getTypeRef() != null) {
+        if (expression.getTypeReference() != null) {
             DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(leftHandSide, knownType,
                                                                                    context.trace.getBindingContext());
-            DataFlowInfo conditionInfo = checkTypeForIs(context, knownType, expression.getTypeRef(), dataFlowValue).thenInfo;
+            DataFlowInfo conditionInfo = checkTypeForIs(context, knownType, expression.getTypeReference(), dataFlowValue).thenInfo;
             DataFlowInfo newDataFlowInfo = conditionInfo.and(dataFlowInfo);
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo);
         }
@@ -191,8 +191,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 if (subjectExpression == null) {
                     context.trace.report(EXPECTED_CONDITION.on(condition));
                 }
-                if (condition.getTypeRef() != null) {
-                    DataFlowInfos result = checkTypeForIs(context, subjectType, condition.getTypeRef(), subjectDataFlowValue);
+                if (condition.getTypeReference() != null) {
+                    DataFlowInfos result = checkTypeForIs(context, subjectType, condition.getTypeReference(), subjectDataFlowValue);
                     if (condition.isNegated()) {
                         newDataFlowInfo.set(new DataFlowInfos(result.elseInfo, result.thenInfo));
                     }

@@ -46,7 +46,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
                 parentStub, StringRef.fromString(psi.getName()),
                 psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
                 psi.hasDelegateExpression(), psi.hasInitializer(),
-                psi.getReceiverTypeRef() != null, psi.getTypeReference() != null,
+                psi.getReceiverTypeReference() != null, psi.getTypeReference() != null,
                 ResolveSessionUtils.safeFqNameForLazyResolve(psi)
         );
     }

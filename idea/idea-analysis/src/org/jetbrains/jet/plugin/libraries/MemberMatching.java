@@ -43,10 +43,10 @@ public class MemberMatching {
     @Nullable
     private static JetTypeReference getReceiverType(@NotNull JetNamedDeclaration propertyOrFunction) {
         if (propertyOrFunction instanceof JetNamedFunction) {
-            return ((JetNamedFunction) propertyOrFunction).getReceiverTypeRef();
+            return ((JetNamedFunction) propertyOrFunction).getReceiverTypeReference();
         }
         if (propertyOrFunction instanceof JetProperty) {
-            return ((JetProperty) propertyOrFunction).getReceiverTypeRef();
+            return ((JetProperty) propertyOrFunction).getReceiverTypeReference();
         }
         throw new IllegalArgumentException("Neither function nor declaration: " + propertyOrFunction.getClass().getName());
     }
@@ -83,7 +83,7 @@ public class MemberMatching {
                 KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
                 int parameterCount = type.getParameters().size();
 
-                if (type.getReceiverTypeRef() == null) {
+                if (type.getReceiverTypeReference() == null) {
                     return builtIns.getFunction(parameterCount).getName().asString();
                 }
                 else {

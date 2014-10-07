@@ -38,13 +38,13 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
 
     @Override
     public JetTypeReference getTypeReference() {
-        return TypeRefHelpersPackage.getTypeRef(this);
+        return TypeRefHelpersPackage.getTypeReference(this);
     }
 
     @Override
     @Nullable
     public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
-        return TypeRefHelpersPackage.setTypeRef(this, getNameIdentifier(), typeRef);
+        return TypeRefHelpersPackage.setTypeReference(this, getNameIdentifier(), typeRef);
     }
 
     @Nullable
@@ -55,7 +55,7 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
 
     @Nullable
     @Override
-    public JetTypeReference getReceiverTypeRef() {
+    public JetTypeReference getReceiverTypeReference() {
         return null;
     }
 

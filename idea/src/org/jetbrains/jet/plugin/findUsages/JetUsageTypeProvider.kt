@@ -64,7 +64,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
                     property.getTypeReference().isAncestor(refExpr) ->
                         return if (property.isLocal()) UsageType.CLASS_LOCAL_VAR_DECLARATION else JetUsageTypes.NON_LOCAL_PROPERTY_TYPE
 
-                    property.getReceiverTypeRef().isAncestor(refExpr) ->
+                    property.getReceiverTypeReference().isAncestor(refExpr) ->
                         return JetUsageTypes.EXTENSION_RECEIVER_TYPE
                 }
             }
@@ -74,7 +74,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
                 when {
                     function.getTypeReference().isAncestor(refExpr) ->
                         return JetUsageTypes.FUNCTION_RETURN_TYPE
-                    function.getReceiverTypeRef().isAncestor(refExpr) ->
+                    function.getReceiverTypeReference().isAncestor(refExpr) ->
                         return JetUsageTypes.EXTENSION_RECEIVER_TYPE
                 }
             }
@@ -97,7 +97,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
                 refExpr.getParentByTypeAndBranch(javaClass<JetParameter>()) { getTypeReference() } != null ->
                     JetUsageTypes.VALUE_PARAMETER_TYPE
 
-                refExpr.getParentByTypeAndBranch(javaClass<JetIsExpression>()) { getTypeRef() } != null ->
+                refExpr.getParentByTypeAndBranch(javaClass<JetIsExpression>()) { getTypeReference() } != null ->
                     JetUsageTypes.IS
 
                 with(refExpr.getParentByTypeAndBranch(javaClass<JetBinaryExpressionWithTypeRHS>()) { getRight() }) {

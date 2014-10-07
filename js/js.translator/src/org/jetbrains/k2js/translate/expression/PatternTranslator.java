@@ -52,7 +52,7 @@ public final class PatternTranslator extends AbstractTranslator {
     @NotNull
     public JsExpression translateIsExpression(@NotNull JetIsExpression expression) {
         JsExpression left = Translation.translateAsExpression(expression.getLeftHandSide(), context());
-        JetTypeReference typeReference = expression.getTypeRef();
+        JetTypeReference typeReference = expression.getTypeReference();
         assert typeReference != null;
         JsExpression result = translateIsCheck(left, typeReference);
         if (expression.isNegated()) {

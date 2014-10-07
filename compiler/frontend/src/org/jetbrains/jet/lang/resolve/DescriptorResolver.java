@@ -317,7 +317,7 @@ public class DescriptorResolver {
         resolveGenericBounds(function, functionDescriptor, innerScope, typeParameterDescriptors, trace);
 
         JetType receiverType = null;
-        JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
+        JetTypeReference receiverTypeRef = function.getReceiverTypeReference();
         if (receiverTypeRef != null) {
             JetScope scopeForReceiver =
                     function.hasTypeParameterListBeforeFunctionName()
@@ -952,7 +952,7 @@ public class DescriptorResolver {
                 scopeWithTypeParameters = writableScope;
             }
 
-            JetTypeReference receiverTypeRef = property.getReceiverTypeRef();
+            JetTypeReference receiverTypeRef = property.getReceiverTypeReference();
             if (receiverTypeRef != null) {
                 receiverType = typeResolver.resolveType(scopeWithTypeParameters, receiverTypeRef, trace, true);
             }

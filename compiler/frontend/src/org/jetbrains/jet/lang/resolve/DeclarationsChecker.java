@@ -475,7 +475,7 @@ public class DeclarationsChecker {
             if (!backingFieldRequired) {
                 trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer));
             }
-            else if (property.getReceiverTypeRef() != null) {
+            else if (property.getReceiverTypeReference() != null) {
                 trace.report(EXTENSION_PROPERTY_WITH_BACKING_FIELD.on(initializer));
             }
         }

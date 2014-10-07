@@ -83,7 +83,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             return false;
         }
         JetProperty property = (JetProperty) element;
-        return !property.isVar() && property.getGetter() == null && property.getReceiverTypeRef() == null;
+        return !property.isVar() && property.getGetter() == null && property.getReceiverTypeReference() == null;
     }
 
     @Override

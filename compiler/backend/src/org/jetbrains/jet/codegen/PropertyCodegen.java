@@ -142,7 +142,7 @@ public class PropertyCodegen {
         if (declaration == null) return true;
 
         // Delegated or extension properties can only be referenced via accessors
-        if (declaration.hasDelegate() || declaration.getReceiverTypeRef() != null) return true;
+        if (declaration.hasDelegate() || declaration.getReceiverTypeReference() != null) return true;
 
         // Class object properties always should have accessors, because their backing fields are moved/copied to the outer class
         if (isClassObject(descriptor.getContainingDeclaration())) return true;

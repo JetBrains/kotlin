@@ -107,7 +107,7 @@ public class JetIconProvider extends IconProvider {
         }
 
         if (psiElement instanceof JetNamedFunction) {
-            if (((JetFunction) psiElement).getReceiverTypeRef() != null) {
+            if (((JetFunction) psiElement).getReceiverTypeReference() != null) {
                 return JetIcons.EXTENSION_FUNCTION;
             }
 

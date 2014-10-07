@@ -49,7 +49,7 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
 
     @Nullable
     public JetTypeReference setTypeRef(@Nullable JetTypeReference typeRef) {
-        return TypeRefHelpersPackage.setTypeRef(this, getNameIdentifier(), typeRef);
+        return TypeRefHelpersPackage.setTypeReference(this, getNameIdentifier(), typeRef);
     }
 
     public boolean hasDefaultValue() {

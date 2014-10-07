@@ -83,7 +83,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
 
     @Override
     public JetType visitFunctionType(@NotNull JetFunctionType type, Void data) {
-        return visitCommonType(type.getReceiverTypeRef() == null
+        return visitCommonType(type.getReceiverTypeReference() == null
                 ? KotlinBuiltIns.getInstance().getFunction(type.getParameters().size())
                 : KotlinBuiltIns.getInstance().getExtensionFunction(type.getParameters().size()), type);
     }

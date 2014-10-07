@@ -69,7 +69,7 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
             }
             else if (declaration instanceof JetFunction) {
                 JetFunction function = (JetFunction) declaration;
-                JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
+                JetTypeReference receiverTypeRef = function.getReceiverTypeReference();
                 if (receiverTypeRef != null) {
                     text = receiverTypeRef.getText() + "." + text;
                 }

@@ -80,7 +80,7 @@ public class MakeTypeImplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
     }
 
     private fun hasExplicitReceiverType(element: JetFunctionLiteralExpression): Boolean {
-        return element.getFunctionLiteral().getReceiverTypeRef() != null
+        return element.getFunctionLiteral().getReceiverTypeReference() != null
     }
 
     private fun hasExplicitParamType(element: JetFunctionLiteralExpression): Boolean {

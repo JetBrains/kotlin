@@ -372,7 +372,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val receiverTypeRef = JetPsiFactory(declaration).createType(receiverTypeCandidate!!.theType.renderLong(typeParameterNameMap))
                 replaceWithLongerName(receiverTypeRef, receiverTypeCandidate.theType)
 
-                val funcReceiverTypeRef = declaration.getReceiverTypeRef()
+                val funcReceiverTypeRef = declaration.getReceiverTypeReference()
                 if (funcReceiverTypeRef != null) {
                     typeRefsToShorten.add(funcReceiverTypeRef)
                 }

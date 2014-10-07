@@ -61,7 +61,7 @@ abstract public class JetFunctionNotStubbed extends JetTypeParameterListOwnerNot
 
     @Override
     @Nullable
-    public JetTypeReference getReceiverTypeRef() {
+    public JetTypeReference getReceiverTypeReference() {
         PsiElement child = getFirstChild();
         while (child != null) {
             IElementType tt = child.getNode().getElementType();
@@ -78,13 +78,13 @@ abstract public class JetFunctionNotStubbed extends JetTypeParameterListOwnerNot
     @Override
     @Nullable
     public JetTypeReference getTypeReference() {
-        return TypeRefHelpersPackage.getTypeRef(this);
+        return TypeRefHelpersPackage.getTypeReference(this);
     }
 
     @Nullable
     @Override
     public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
-        return TypeRefHelpersPackage.setTypeRef(this, getValueParameterList(), typeRef);
+        return TypeRefHelpersPackage.setTypeReference(this, getValueParameterList(), typeRef);
     }
 
     @Override

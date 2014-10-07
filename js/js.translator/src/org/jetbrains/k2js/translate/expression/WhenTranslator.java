@@ -175,7 +175,7 @@ public final class WhenTranslator extends AbstractTranslator {
         JsExpression expressionToMatch = getExpressionToMatch();
         assert expressionToMatch != null : "An is-check is not allowed in when() without subject.";
 
-        JetTypeReference typeReference = conditionIsPattern.getTypeRef();
+        JetTypeReference typeReference = conditionIsPattern.getTypeReference();
         assert typeReference != null : "An is-check must have a type reference.";
 
         return Translation.patternTranslator(context).translateIsCheck(expressionToMatch, typeReference);

@@ -86,7 +86,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
 
     @Override
     @Nullable
-    public JetTypeReference getReceiverTypeRef() {
+    public JetTypeReference getReceiverTypeReference() {
         PsiJetPropertyStub stub = getStub();
         if (stub != null) {
             if (!stub.hasReceiverTypeRef()) {
@@ -133,13 +133,13 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
                 return typeReferences.get(returnTypeRefPositionInPsi);
             }
         }
-        return TypeRefHelpersPackage.getTypeRef(this);
+        return TypeRefHelpersPackage.getTypeReference(this);
     }
 
     @Override
     @Nullable
     public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
-        return TypeRefHelpersPackage.setTypeRef(this, getNameIdentifier(), typeRef);
+        return TypeRefHelpersPackage.setTypeReference(this, getNameIdentifier(), typeRef);
     }
 
     @NotNull
