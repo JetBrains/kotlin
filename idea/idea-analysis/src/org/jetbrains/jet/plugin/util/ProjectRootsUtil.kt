@@ -42,10 +42,14 @@ public object ProjectRootsUtil {
             if (virtualFile == null) return@runReadAction false
 
             val index = ProjectFileIndex.SERVICE.getInstance(element.getProject())
-            return@runReadAction if (includeLibrarySources)
+            val isInSourceRoot = if (includeLibrarySources)
                 index.isInSource(virtualFile)
             else
                 index.isInSourceContent(virtualFile)
+
+            if (!isInSourceRoot) return@runReadAction false
+
+            return@runReadAction !JetModuleTypeManager.getInstance()!!.isKtFileInGradleProjectInWrongFolder(element)
         }!!
     }
 
