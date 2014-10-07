@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.util
+package org.jetbrains.jet.plugin.util.string
 
 fun String.collapseSpaces(): String {
     val builder = StringBuilder()
