@@ -49,7 +49,7 @@ public abstract class AbstractJetType implements JetType {
 
         JetType type = (JetType) obj;
 
-        return isNullable() == type.isNullable() && JetTypeChecker.DEFAULT.equalTypes(this, type);
+        return isNullable() == type.isNullable() && JetTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(this, type);
     }
 
     @Override

@@ -118,7 +118,7 @@ public class TypeCheckingProcedure {
         return true;
     }
 
-    private boolean heterogeneousEquivalence(JetType inflexibleType, JetType flexibleType) {
+    protected boolean heterogeneousEquivalence(JetType inflexibleType, JetType flexibleType) {
         // This is to account for the case when we have Collection<X> vs (Mutable)Collection<X>! or K(java.util.Collection<? extends X>)
         assert !TypesPackage.isFlexible(inflexibleType) : "Only inflexible types are allowed here: " + inflexibleType;
         return isSubtypeOf(TypesPackage.flexibility(flexibleType).getLowerBound(), inflexibleType)

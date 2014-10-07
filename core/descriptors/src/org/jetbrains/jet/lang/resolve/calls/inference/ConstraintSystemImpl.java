@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 import org.jetbrains.jet.lang.types.checker.TypingConstraints;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -388,7 +389,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
         // can be equal for the recursive invocations:
         // fun <T> foo(i: Int) : T { ... return foo(i); } => T <: T
-        if (subType.equals(superType)) return;
+        if (JetTypeChecker.DEFAULT.equalTypes(subType, superType)) return;
 
         assert !isMyTypeVariable(subType) || !isMyTypeVariable(superType) :
                 "The constraint shouldn't contain different type variables on both sides: " + subType + " <: " + superType;

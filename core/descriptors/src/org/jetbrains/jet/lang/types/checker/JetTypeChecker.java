@@ -28,6 +28,13 @@ public class JetTypeChecker {
 
     public static final JetTypeChecker DEFAULT = new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerTypingConstraints()));
 
+    public static final JetTypeChecker FLEXIBLE_UNEQUAL_TO_INFLEXIBLE = new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerTypingConstraints()) {
+        @Override
+        protected boolean heterogeneousEquivalence(JetType inflexibleType, JetType flexibleType) {
+            return false;
+        }
+    });
+
     @NotNull
     public static JetTypeChecker withAxioms(@NotNull final TypeConstructorEquality equalityAxioms) {
         return new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerTypingConstraints() {

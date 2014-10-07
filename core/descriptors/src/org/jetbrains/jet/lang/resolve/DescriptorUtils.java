@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.LazyType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.ArrayList;
@@ -397,9 +398,9 @@ public class DescriptorUtils {
 
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         return builtIns.isPrimitiveType(type) ||
-               builtIns.getStringType().equals(type) ||
-               builtIns.getNumber().getDefaultType().equals(type) ||
-               builtIns.getAnyType().equals(type);
+               JetTypeChecker.DEFAULT.equalTypes(builtIns.getStringType(), type) ||
+               JetTypeChecker.DEFAULT.equalTypes(builtIns.getNumber().getDefaultType(), type) ||
+               JetTypeChecker.DEFAULT.equalTypes(builtIns.getAnyType(), type);
     }
 
     public static boolean classCanHaveAbstractMembers(@NotNull ClassDescriptor classDescriptor) {

@@ -4865,6 +4865,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("immutableArrayList.kt")
+            public void testImmutableArrayList() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/immutableArrayList.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("inferInFunctionLiterals.kt")
             public void testInferInFunctionLiterals() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/inferInFunctionLiterals.kt");
@@ -7796,6 +7802,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("stringOrNull.kt")
                 public void testStringOrNull() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/stringOrNull.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("typeOfElvis.kt")
+                public void testTypeOfElvis() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/typeOfElvis.kt");
                     doTest(fileName);
                 }
                 

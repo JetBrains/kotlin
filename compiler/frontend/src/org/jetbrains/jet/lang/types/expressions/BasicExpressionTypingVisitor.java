@@ -1081,7 +1081,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType type = resolvedCall.getResultingDescriptor().getReturnType();
         if (type == null || rightType == null) return JetTypeInfo.create(null, dataFlowInfo);
 
-        return JetTypeInfo.create(TypeUtils.makeNullableAsSpecified(type, rightType.isNullable()), dataFlowInfo);
+        // Sometimes return type for special call for elvis operator might be nullable,
+        // but result is not nullable if the right type is not nullable
+        if (!TypeUtils.isNullableType(rightType) && TypeUtils.isNullableType(type)) {
+            type = TypeUtils.makeNotNullable(type);
+        }
+        return JetTypeInfo.create(type, dataFlowInfo);
     }
 
     @NotNull
