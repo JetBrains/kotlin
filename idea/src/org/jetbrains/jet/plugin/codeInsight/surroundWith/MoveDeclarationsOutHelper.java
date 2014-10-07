@@ -125,7 +125,7 @@ public class MoveDeclarationsOutHelper {
 
     @NotNull
     private static JetProperty createProperty(@NotNull JetProperty property, @NotNull JetType propertyType, @Nullable String initializer) {
-        JetTypeReference typeRef = property.getTypeRef();
+        JetTypeReference typeRef = property.getTypeReference();
         String typeString = null;
         if (typeRef != null) {
             typeString = typeRef.getText();

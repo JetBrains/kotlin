@@ -56,7 +56,7 @@ abstract public class JetFunctionNotStubbed extends JetTypeParameterListOwnerNot
 
     @Override
     public boolean hasDeclaredReturnType() {
-        return getReturnTypeRef() != null;
+        return getTypeReference() != null;
     }
 
     @Override
@@ -77,13 +77,13 @@ abstract public class JetFunctionNotStubbed extends JetTypeParameterListOwnerNot
 
     @Override
     @Nullable
-    public JetTypeReference getReturnTypeRef() {
+    public JetTypeReference getTypeReference() {
         return TypeRefHelpersPackage.getTypeRef(this);
     }
 
     @Nullable
     @Override
-    public JetTypeReference setReturnTypeRef(@Nullable JetTypeReference typeRef) {
+    public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
         return TypeRefHelpersPackage.setTypeRef(this, getValueParameterList(), typeRef);
     }
 

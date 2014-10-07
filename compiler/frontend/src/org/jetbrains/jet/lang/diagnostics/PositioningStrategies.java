@@ -72,12 +72,12 @@ public class PositioningStrategies {
             PsiElement nameIdentifierOrPlaceholder = null;
             if (declaration instanceof JetNamedFunction) {
                 JetFunction function = (JetNamedFunction) declaration;
-                returnTypeRef = function.getReturnTypeRef();
+                returnTypeRef = function.getTypeReference();
                 nameIdentifierOrPlaceholder = function.getNameIdentifier();
             }
             else if (declaration instanceof JetProperty) {
                 JetProperty property = (JetProperty) declaration;
-                returnTypeRef = property.getTypeRef();
+                returnTypeRef = property.getTypeReference();
                 nameIdentifierOrPlaceholder = property.getNameIdentifier();
             }
             else if (declaration instanceof JetPropertyAccessor) {
@@ -148,7 +148,7 @@ public class PositioningStrategies {
                 JetNamedFunction function = (JetNamedFunction)element;
                 PsiElement endOfSignatureElement;
                 JetParameterList valueParameterList = function.getValueParameterList();
-                JetElement returnTypeRef = function.getReturnTypeRef();
+                JetElement returnTypeRef = function.getTypeReference();
                 PsiElement nameIdentifier = function.getNameIdentifier();
                 if (returnTypeRef != null) {
                     endOfSignatureElement = returnTypeRef;
@@ -167,7 +167,7 @@ public class PositioningStrategies {
             else if (element instanceof JetProperty) {
                 JetProperty property = (JetProperty) element;
                 PsiElement endOfSignatureElement;
-                JetTypeReference propertyTypeRef = property.getTypeRef();
+                JetTypeReference propertyTypeRef = property.getTypeReference();
                 PsiElement nameIdentifier = property.getNameIdentifier();
                 if (propertyTypeRef != null) {
                     endOfSignatureElement = propertyTypeRef;

@@ -517,7 +517,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     private static JetType getFunctionExpectedReturnType(@NotNull FunctionDescriptor descriptor, @NotNull JetElement function) {
         JetType expectedType;
         if (function instanceof JetFunction) {
-            if (((JetFunction) function).getReturnTypeRef() != null || ((JetFunction) function).hasBlockBody()) {
+            if (((JetFunction) function).getTypeReference() != null || ((JetFunction) function).hasBlockBody()) {
                 expectedType = descriptor.getReturnType();
             }
             else {

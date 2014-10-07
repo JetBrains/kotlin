@@ -331,7 +331,7 @@ public class DescriptorResolver {
 
         innerScope.changeLockLevel(WritableScope.LockLevel.READING);
 
-        JetTypeReference returnTypeRef = function.getReturnTypeRef();
+        JetTypeReference returnTypeRef = function.getTypeReference();
         JetType returnType;
         if (returnTypeRef != null) {
             returnType = typeResolver.resolveType(innerScope, returnTypeRef, trace, true);
@@ -1005,7 +1005,7 @@ public class DescriptorResolver {
             boolean notLocal,
             @NotNull final BindingTrace trace
     ) {
-        JetTypeReference propertyTypeRef = variable.getTypeRef();
+        JetTypeReference propertyTypeRef = variable.getTypeReference();
 
         boolean hasDelegate = variable instanceof JetProperty && ((JetProperty) variable).hasDelegateExpression();
         if (propertyTypeRef == null) {

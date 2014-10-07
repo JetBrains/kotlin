@@ -53,7 +53,7 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
         try {
             checkForSyntaxErrors(altPropertyDeclaration);
             checkFieldAnnotation(altPropertyDeclaration, field, isVar);
-            altReturnType = computeReturnType(originalReturnType, altPropertyDeclaration.getTypeRef(),
+            altReturnType = computeReturnType(originalReturnType, altPropertyDeclaration.getTypeReference(),
                                               new HashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>());
         }
         catch (AlternativeSignatureMismatchException e) {
@@ -73,7 +73,7 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
                                                             field.getName().asString(), altProperty.getName());
         }
 
-        if (altProperty.getTypeRef() == null) {
+        if (altProperty.getTypeReference() == null) {
             throw new AlternativeSignatureMismatchException("Field annotation for shouldn't have type reference");
         }
 

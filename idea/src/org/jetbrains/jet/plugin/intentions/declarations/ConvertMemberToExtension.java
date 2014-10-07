@@ -104,7 +104,7 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
         String name = identifier == null ? "" : identifier.getText();
 
         JetParameterList valueParameterList = member.getValueParameterList();
-        JetTypeReference returnTypeRef = member.getReturnTypeRef();
+        JetTypeReference returnTypeRef = member.getTypeReference();
 
         String extensionText = modifiers(member) +
                                memberType(member) + " " +

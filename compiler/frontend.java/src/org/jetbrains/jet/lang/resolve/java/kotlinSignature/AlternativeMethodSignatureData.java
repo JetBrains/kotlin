@@ -89,7 +89,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             computeValueParameters(valueParameters);
 
             if (originalReturnType != null) {
-                altReturnType = computeReturnType(originalReturnType, altFunDeclaration.getReturnTypeRef(), originalToAltTypeParameters);
+                altReturnType = computeReturnType(originalReturnType, altFunDeclaration.getTypeReference(), originalToAltTypeParameters);
             }
 
             if (hasSuperMethods) {

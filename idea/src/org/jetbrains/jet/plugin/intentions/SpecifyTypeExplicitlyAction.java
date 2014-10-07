@@ -70,11 +70,11 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         JetType type = getTypeForDeclaration((JetNamedDeclaration) parent);
         if (parent instanceof JetProperty) {
             JetProperty property = (JetProperty) parent;
-            if (property.getTypeRef() == null) {
+            if (property.getTypeReference() == null) {
                 addTypeAnnotation(project, editor, property, type);
             }
             else {
-                property.setTypeRef(null);
+                property.setTypeReference(null);
             }
         }
         else if (parent instanceof JetParameter) {
@@ -88,7 +88,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         }
         else if (parent instanceof JetNamedFunction) {
             JetNamedFunction function = (JetNamedFunction) parent;
-            assert function.getReturnTypeRef() == null;
+            assert function.getTypeReference() == null;
             addTypeAnnotation(project, editor, function, type);
         }
         else {
@@ -113,7 +113,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         JetNamedDeclaration declaration = (JetNamedDeclaration) parent;
 
         if (declaration instanceof JetProperty && !PsiTreeUtil.isAncestor(((JetProperty) declaration).getInitializer(), element, false)) {
-            if (((JetProperty) declaration).getTypeRef() != null) {
+            if (((JetProperty) declaration).getTypeReference() != null) {
                 setText(JetBundle.message("specify.type.explicitly.remove.action.name"));
                 return true;
             }
@@ -121,7 +121,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
                 setText(JetBundle.message("specify.type.explicitly.add.action.name"));
             }
         }
-        else if (declaration instanceof JetNamedFunction && ((JetNamedFunction) declaration).getReturnTypeRef() == null
+        else if (declaration instanceof JetNamedFunction && ((JetNamedFunction) declaration).getTypeReference() == null
                  && !((JetNamedFunction) declaration).hasBlockBody()) {
             setText(JetBundle.message("specify.type.explicitly.add.return.type.action.name"));
         }
@@ -181,7 +181,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             @NotNull JetProperty property,
             @NotNull JetType exprType
     ) {
-        if (property.getTypeRef() != null) return;
+        if (property.getTypeReference() != null) return;
 
         addTypeAnnotationWithTemplate(project, editor, property, exprType);
     }
@@ -191,7 +191,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             addTypeAnnotationWithTemplate(project, editor, function, exprType);
         }
         else {
-            function.setReturnTypeRef(anyTypeRef(project));
+            function.setTypeReference(anyTypeRef(project));
         }
     }
 
@@ -265,13 +265,13 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     @Nullable
     private static JetTypeReference getTypeRef(@NotNull JetNamedDeclaration namedDeclaration) {
         if (namedDeclaration instanceof JetProperty) {
-            return ((JetProperty) namedDeclaration).getTypeRef();
+            return ((JetProperty) namedDeclaration).getTypeReference();
         }
         else if (namedDeclaration instanceof JetParameter) {
             return ((JetParameter) namedDeclaration).getTypeReference();
         }
         else if (namedDeclaration instanceof JetFunction) {
-            return ((JetFunction) namedDeclaration).getReturnTypeRef();
+            return ((JetFunction) namedDeclaration).getTypeReference();
         }
         assert false : "Wrong namedDeclaration: " + namedDeclaration.getText();
         return null;
@@ -280,13 +280,13 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     @Nullable
     private static JetTypeReference setTypeRef(@NotNull JetNamedDeclaration namedDeclaration, @Nullable JetTypeReference typeRef) {
         if (namedDeclaration instanceof JetProperty) {
-            return ((JetProperty) namedDeclaration).setTypeRef(typeRef);
+            return ((JetProperty) namedDeclaration).setTypeReference(typeRef);
         }
         else if (namedDeclaration instanceof JetParameter) {
             return ((JetParameter) namedDeclaration).setTypeRef(typeRef);
         }
         else if (namedDeclaration instanceof JetFunction) {
-            return ((JetFunction) namedDeclaration).setReturnTypeRef(typeRef);
+            return ((JetFunction) namedDeclaration).setTypeReference(typeRef);
         }
         assert false : "Wrong namedDeclaration: " + namedDeclaration.getText();
         return null;

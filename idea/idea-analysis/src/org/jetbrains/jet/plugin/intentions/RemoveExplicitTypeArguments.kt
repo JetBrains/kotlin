@@ -60,7 +60,7 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgu
         // therefore we should resolve outer call with erased type arguments for inner call
         val parent = callExpression.getParent()
         val expectedTypeIsExplicitInCode = when (parent) {
-            is JetProperty -> parent.getInitializer() == callExpression && parent.getTypeRef() != null
+            is JetProperty -> parent.getInitializer() == callExpression && parent.getTypeReference() != null
             is JetDeclarationWithBody -> parent.getBodyExpression() == callExpression
             is JetReturnExpression -> true
             else -> false

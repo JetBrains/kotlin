@@ -161,8 +161,8 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
     private fun implicitlyTypedDeclarationFromInitializer(expression: JetExpression): JetDeclaration? {
         val parent = expression.getParent()
         when (parent) {
-            is JetVariableDeclaration -> if (expression == parent.getInitializer() && parent.getTypeRef() == null) return parent
-            is JetNamedFunction -> if (expression == parent.getInitializer() && parent.getReturnTypeRef() == null) return parent
+            is JetVariableDeclaration -> if (expression == parent.getInitializer() && parent.getTypeReference() == null) return parent
+            is JetNamedFunction -> if (expression == parent.getInitializer() && parent.getTypeReference() == null) return parent
         }
         return null
     }

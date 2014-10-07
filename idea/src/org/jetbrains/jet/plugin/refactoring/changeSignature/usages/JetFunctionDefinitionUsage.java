@@ -57,12 +57,12 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
                 }
             }
             if (changeInfo.isReturnTypeChanged()) {
-                function.setReturnTypeRef(null);
+                function.setTypeReference(null);
                 String returnTypeText = changeInfo.getNewReturnTypeText();
 
                 //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
                 if (!KotlinBuiltIns.getInstance().getUnitType().toString().equals(returnTypeText)) {
-                    function.setReturnTypeRef(JetPsiFactory(function).createType(returnTypeText));
+                    function.setTypeReference(JetPsiFactory(function).createType(returnTypeText));
                 }
             }
         }

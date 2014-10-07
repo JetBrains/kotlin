@@ -19,15 +19,9 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.Nullable;
 
-public interface JetVariableDeclaration extends JetDeclaration, JetWithExpressionInitializer, JetNamedDeclaration {
+public interface JetVariableDeclaration extends JetCallableDeclaration, JetWithExpressionInitializer {
     boolean isVar();
 
     @Nullable
     ASTNode getValOrVarNode();
-
-    @Nullable
-    JetTypeReference getTypeRef();
-
-    @Nullable
-    JetTypeReference setTypeRef(@Nullable JetTypeReference typeRef);
 }

@@ -126,7 +126,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
 
     @Override
     public boolean hasDeclaredReturnType() {
-        return getReturnTypeRef() != null;
+        return getTypeReference() != null;
     }
 
     @Override
@@ -165,7 +165,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
 
     @Override
     @Nullable
-    public JetTypeReference getReturnTypeRef() {
+    public JetTypeReference getTypeReference() {
         PsiJetFunctionStub stub = getStub();
         if (stub != null) {
             List<JetTypeReference> typeReferences = getStubOrPsiChildrenAsList(JetStubElementTypes.TYPE_REFERENCE);
@@ -180,7 +180,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
 
     @Override
     @Nullable
-    public JetTypeReference setReturnTypeRef(@Nullable JetTypeReference typeRef) {
+    public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
         return TypeRefHelpersPackage.setTypeRef(this, getValueParameterList(), typeRef);
     }
 

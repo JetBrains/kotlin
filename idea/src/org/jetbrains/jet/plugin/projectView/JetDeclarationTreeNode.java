@@ -59,7 +59,7 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
 
             if (declaration instanceof JetProperty) {
                 JetProperty property = (JetProperty) declaration;
-                JetTypeReference ref = property.getTypeRef();
+                JetTypeReference ref = property.getTypeReference();
                 if (ref != null) {
                     if (settings.SPACE_BEFORE_TYPE_COLON) text += " ";
                     text += ":";
@@ -90,7 +90,7 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
                 }
                 if (parameters.size() > 0) text = text.substring(0, text.length() - 2);
                 text += ")";
-                JetTypeReference typeReference = function.getReturnTypeRef();
+                JetTypeReference typeReference = function.getTypeReference();
                 if (typeReference != null) {
                     if (settings.SPACE_BEFORE_TYPE_COLON) text += " ";
                     text += ":";

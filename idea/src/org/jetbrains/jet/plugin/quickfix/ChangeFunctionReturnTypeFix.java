@@ -108,10 +108,10 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
         }
         else {
             if (!(KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody())) {
-                element.setReturnTypeRef(JetPsiFactory(project).createType(renderedType));
+                element.setTypeReference(JetPsiFactory(project).createType(renderedType));
             }
             else {
-                element.setReturnTypeRef(null);
+                element.setTypeReference(null);
             }
         }
     }
@@ -137,7 +137,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 if (resolvedCall == null) return null;
                 JetFunction componentFunction = (JetFunction) DescriptorToSourceUtils
                         .descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
-                JetType expectedType = context.get(BindingContext.TYPE, entry.getTypeRef());
+                JetType expectedType = context.get(BindingContext.TYPE, entry.getTypeReference());
                 if (componentFunction != null && expectedType != null) {
                     return new ChangeFunctionReturnTypeFix(componentFunction, expectedType);
                 }

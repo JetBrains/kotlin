@@ -68,7 +68,7 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createType(`type`: String): JetTypeReference {
-        return createProperty("val x : $`type`").getTypeRef()!!
+        return createProperty("val x : $`type`").getTypeReference()!!
     }
 
     public fun createStar(): PsiElement {

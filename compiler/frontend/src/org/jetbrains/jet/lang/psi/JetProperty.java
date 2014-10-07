@@ -37,8 +37,7 @@ import java.util.List;
 import static org.jetbrains.jet.JetNodeTypes.PROPERTY_DELEGATE;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStub> implements JetVariableDeclaration,
-                                                                                              JetCallableDeclaration {
+public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStub> implements JetVariableDeclaration {
 
     private static final Logger LOG = Logger.getInstance(JetProperty.class);
 
@@ -116,21 +115,9 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         return null;
     }
 
-    @Nullable
-    @Override
-    public JetTypeReference getReturnTypeRef() {
-        return getTypeRef();
-    }
-
-    @Nullable
-    @Override
-    public JetTypeReference setReturnTypeRef(@Nullable JetTypeReference typeRef) {
-        return setTypeRef(typeRef);
-    }
-
     @Override
     @Nullable
-    public JetTypeReference getTypeRef() {
+    public JetTypeReference getTypeReference() {
         PsiJetPropertyStub stub = getStub();
         if (stub != null) {
             if (!stub.hasReturnTypeRef()) {
@@ -151,7 +138,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
 
     @Override
     @Nullable
-    public JetTypeReference setTypeRef(@Nullable JetTypeReference typeRef) {
+    public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
         return TypeRefHelpersPackage.setTypeRef(this, getNameIdentifier(), typeRef);
     }
 
@@ -242,7 +229,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         }
         else {
             if (initializer != null) {
-                PsiElement addAfter = getTypeRef();
+                PsiElement addAfter = getTypeReference();
                 if (addAfter == null) {
                     addAfter = getNameIdentifier();
                 }

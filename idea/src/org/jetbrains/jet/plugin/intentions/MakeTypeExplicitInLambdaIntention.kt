@@ -90,7 +90,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
             val returnTypeExpr = psiFactory.createType(DescriptorRenderer.SOURCE_CODE.renderType(expectedReturnType))
             functionLiteral.addAfter(returnTypeExpr, paramList)
             functionLiteral.addAfter(returnTypeColon, paramList)
-            ShortenReferences.process(functionLiteral.getReturnTypeRef()!!)
+            ShortenReferences.process(functionLiteral.getTypeReference()!!)
         }
 
         // Step 3: make the receiver type explicit

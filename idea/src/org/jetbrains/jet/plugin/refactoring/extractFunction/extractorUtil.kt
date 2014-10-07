@@ -241,7 +241,7 @@ private fun makeCall(
                 block.addBefore(newLine, anchorInBlock)
             }
 
-            val entries = declarationsToMerge.map { p -> p.getName() + (p.getTypeRef()?.let { ": ${it.getText()}" } ?: "") }
+            val entries = declarationsToMerge.map { p -> p.getName() + (p.getTypeReference()?.let { ": ${it.getText()}" } ?: "") }
             anchorInBlock?.replace(
                     psiFactory.createDeclaration("${if (isVar) "var" else "val"} (${entries.joinToString()}) = $callText")
             )

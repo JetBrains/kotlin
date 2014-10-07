@@ -97,7 +97,7 @@ fun JetExpression.guessTypes(context: BindingContext): Array<JetType> {
         }
         this is JetMultiDeclarationEntry -> {
             // expression is on the lhs of a multi-declaration
-            val typeRef = getTypeRef()
+            val typeRef = getTypeReference()
             if (typeRef != null) {
                 // and has a specified type
                 array(context[BindingContext.TYPE, typeRef]!!)
@@ -122,7 +122,7 @@ fun JetExpression.guessTypes(context: BindingContext): Array<JetType> {
         getParent() is JetVariableDeclaration -> {
             // the expression is the RHS of a variable assignment with a specified type
             val variable = getParent() as JetVariableDeclaration
-            val typeRef = variable.getTypeRef()
+            val typeRef = variable.getTypeReference()
             if (typeRef != null) {
                 // and has a specified type
                 array(context[BindingContext.TYPE, typeRef]!!)

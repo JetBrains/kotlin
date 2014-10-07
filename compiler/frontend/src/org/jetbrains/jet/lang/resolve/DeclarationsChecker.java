@@ -362,12 +362,12 @@ public class DeclarationsChecker {
     private void checkDeclaredTypeInPublicMember(JetNamedDeclaration member, CallableMemberDescriptor memberDescriptor) {
         boolean hasDeferredType;
         if (member instanceof JetProperty) {
-            hasDeferredType = ((JetProperty) member).getTypeRef() == null && DescriptorResolver.hasBody((JetProperty) member);
+            hasDeferredType = ((JetProperty) member).getTypeReference() == null && DescriptorResolver.hasBody((JetProperty) member);
         }
         else {
             assert member instanceof JetFunction;
             JetFunction function = (JetFunction) member;
-            hasDeferredType = function.getReturnTypeRef() == null && function.hasBody() && !function.hasBlockBody();
+            hasDeferredType = function.getTypeReference() == null && function.hasBody() && !function.hasBlockBody();
         }
         if ((memberDescriptor.getVisibility().isPublicAPI()) && memberDescriptor.getOverriddenDescriptors().size() == 0 && hasDeferredType) {
             trace.report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(member));
@@ -425,7 +425,7 @@ public class DeclarationsChecker {
                                             (setter != null && setter.hasBody());
 
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
-            if (!property.hasDelegateExpressionOrInitializer() && property.getTypeRef() == null) {
+            if (!property.hasDelegateExpressionOrInitializer() && property.getTypeReference() == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
             return;
@@ -454,7 +454,7 @@ public class DeclarationsChecker {
                     trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property));
                 }
             }
-            if (!error && property.getTypeRef() == null) {
+            if (!error && property.getTypeReference() == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
             if (inTrait && property.hasModifier(JetTokens.FINAL_KEYWORD) && backingFieldRequired) {

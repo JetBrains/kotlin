@@ -468,7 +468,7 @@ public class JetPsiUnifier(
                 desc2: CallableDescriptor): Status? {
             fun needToCompareReturnTypes(): Boolean {
                 if (decl1 !is JetCallableDeclaration) return true
-                return decl1.getReturnTypeRef() != null || (decl2 as JetCallableDeclaration).getReturnTypeRef() != null
+                return decl1.getTypeReference() != null || (decl2 as JetCallableDeclaration).getTypeReference() != null
             }
 
             if (desc1 is VariableDescriptor && desc1.isVar() != (desc2 as VariableDescriptor).isVar()) return UNMATCHED

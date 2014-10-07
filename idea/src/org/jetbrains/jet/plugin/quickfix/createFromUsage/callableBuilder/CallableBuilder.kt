@@ -379,7 +379,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
 
             if (returnTypeExpression != null) {
-                val returnTypeRef = declaration.getReturnTypeRef()
+                val returnTypeRef = declaration.getTypeReference()
                 if (returnTypeRef != null) {
                     val returnType = returnTypeExpression.getTypeFromSelection(
                             returnTypeRef.getText()
@@ -388,7 +388,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     if (returnType != null) {
                         // user selected a given type
                         replaceWithLongerName(returnTypeRef, returnType)
-                        typeRefsToShorten.add(declaration.getReturnTypeRef()!!)
+                        typeRefsToShorten.add(declaration.getTypeReference()!!)
                     }
                 }
             }
@@ -420,7 +420,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         private fun setupFunctionBody(func: JetNamedFunction) {
             val fileTemplate = FileTemplateManager.getInstance()!!.getCodeTemplate(TEMPLATE_FROM_USAGE_FUNCTION_BODY)
             val properties = Properties()
-            properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, if (isUnit) "Unit" else func.getReturnTypeRef()!!.getText())
+            properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, if (isUnit) "Unit" else func.getTypeReference()!!.getText())
             receiverClassDescriptor?.let {
                 properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFqName(it).asString())
                 properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, it.getName().asString())
@@ -444,7 +444,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         }
 
         private fun setupReturnTypeTemplate(builder: TemplateBuilder, declaration: JetCallableDeclaration): TypeExpression? {
-            val returnTypeRef = declaration.getReturnTypeRef() ?: return null
+            val returnTypeRef = declaration.getTypeReference() ?: return null
             val candidates = typeCandidates[config.callableInfo.returnTypeInfo]!!
             return when (candidates.size) {
                 0 -> null
@@ -476,7 +476,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 typeParameterMap[it.renderedType!!] = it.typeParameterNames!!
             }
 
-            if (declaration.getReturnTypeRef() != null) {
+            if (declaration.getTypeReference() != null) {
                 typeCandidates[config.callableInfo.returnTypeInfo]!!.forEach {
                     typeParameterMap[it.renderedType!!] = it.typeParameterNames!!
                 }

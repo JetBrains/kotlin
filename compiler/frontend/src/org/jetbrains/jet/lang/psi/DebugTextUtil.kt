@@ -266,7 +266,7 @@ private object DebugTextBuildingVisitor : JetVisitor<String, Unit>() {
                 appendInn(typeParameterList)
             }
             appendInn(function.getValueParameterList())
-            appendInn(function.getReturnTypeRef(), prefix = ": ")
+            appendInn(function.getTypeReference(), prefix = ": ")
             appendInn(function.getTypeConstraintList(), prefix = " ")
         }
     }
@@ -302,7 +302,7 @@ private object DebugTextBuildingVisitor : JetVisitor<String, Unit>() {
             appendInn(property.getModifierList(), suffix = " ")
             append(if (property.isVar()) "var " else "val ")
             appendInn(property.getNameAsName())
-            appendInn(property.getTypeRef(), prefix = ": ")
+            appendInn(property.getTypeReference(), prefix = ": ")
         }
     }
 

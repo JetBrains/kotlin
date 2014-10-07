@@ -124,7 +124,7 @@ private class TypeParameterListExpression(private val typeParameterNamesFromRece
                 }
             }
         }
-        val returnTypeRef = func.getReturnTypeRef()
+        val returnTypeRef = func.getTypeReference()
         if (returnTypeRef != null) {
             val typeParameterNamesFromReturnType = parameterTypeToTypeParameterNamesMap[returnTypeRef.getText()]
             if (typeParameterNamesFromReturnType != null) {

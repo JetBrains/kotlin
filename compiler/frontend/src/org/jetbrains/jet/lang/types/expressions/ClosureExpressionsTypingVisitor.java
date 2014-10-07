@@ -275,7 +275,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         assert bodyExpression != null;
 
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
-        JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
+        JetTypeReference returnTypeRef = functionLiteral.getTypeReference();
         JetType declaredReturnType = null;
         if (returnTypeRef != null) {
             declaredReturnType = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);

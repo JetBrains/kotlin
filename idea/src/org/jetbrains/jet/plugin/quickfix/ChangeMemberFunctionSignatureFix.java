@@ -371,7 +371,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
                         public void run() {
                             JetNamedFunction patternFunction = psiFactory.createFunction(signatureString);
 
-                            JetTypeReference newTypeRef = function.setReturnTypeRef(patternFunction.getReturnTypeRef());
+                            JetTypeReference newTypeRef = function.setTypeReference(patternFunction.getTypeReference());
                             if (newTypeRef != null) {
                                 ShortenReferences.INSTANCE$.process(newTypeRef);
                             }

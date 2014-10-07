@@ -42,7 +42,7 @@ public class DeclarationUtils {
 
     @Nullable
     private static JetType getPropertyTypeIfNeeded(@NotNull JetProperty property) {
-        if (property.getTypeRef() != null) return null;
+        if (property.getTypeReference() != null) return null;
 
         JetType type = AnalyzerFacadeWithCache.getContextForElement(property).get(
                 BindingContext.EXPRESSION_TYPE, property.getInitializer()
@@ -74,7 +74,7 @@ public class DeclarationUtils {
 
         String typeStr = inferredType != null
                          ? DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(inferredType)
-                         : JetPsiUtil.getNullableText(property.getTypeRef());
+                         : JetPsiUtil.getNullableText(property.getTypeReference());
 
         //noinspection ConstantConditions
         property = (JetProperty) property.replace(
@@ -82,7 +82,7 @@ public class DeclarationUtils {
         );
 
         if (inferredType != null) {
-            ShortenReferences.INSTANCE$.process(property.getTypeRef());
+            ShortenReferences.INSTANCE$.process(property.getTypeReference());
         }
 
         return newInitializer;

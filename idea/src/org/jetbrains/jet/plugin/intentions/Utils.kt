@@ -34,7 +34,7 @@ fun specifyTypeExplicitly(declaration: JetNamedFunction, `type`: JetType) {
     if (`type`.isError()) return
     val typeReference = JetPsiFactory(declaration).createType(DescriptorRenderer.SOURCE_CODE.renderType(`type`))
     specifyTypeExplicitly(declaration, typeReference)
-    ShortenReferences.process(declaration.getReturnTypeRef()!!)
+    ShortenReferences.process(declaration.getTypeReference()!!)
 }
 
 fun specifyTypeExplicitly(declaration: JetNamedFunction, typeReference: JetTypeReference) {
