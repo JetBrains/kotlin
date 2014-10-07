@@ -9,7 +9,7 @@ fun bar(any: Any): <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Iterable<Int><!>
     val <!UNUSED_VARIABLE!>c<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<String><!>? = null
 
     if (any is <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<*><!>) {
-        <!DEBUG_INFO_AUTOCAST!>any<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<*><!>
+        <!DEBUG_INFO_SMARTCAST!>any<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<*><!>
     }
     any as <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<*><!>
     return null

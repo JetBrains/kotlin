@@ -33,8 +33,6 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
@@ -42,6 +40,8 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -203,7 +203,7 @@ public class ExpressionTypingUtils {
             return false;
         }
 
-        List<JetType> types = AutoCastUtils.getAutoCastVariants(receiverArgument, bindingContext, dataFlowInfo);
+        List<JetType> types = SmartCastUtils.getSmartCastVariants(receiverArgument, bindingContext, dataFlowInfo);
 
         for (JetType type : types) {
             if (checkReceiverResolution(receiverArgument, type, callableDescriptor)) return true;
@@ -221,7 +221,7 @@ public class ExpressionTypingUtils {
             @NotNull JetType receiverType,
             @NotNull CallableDescriptor callableDescriptor
     ) {
-        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getExtensionReceiverParameter();
 
         if (!receiverArgument.exists() && receiverParameter == null) {
             // Both receivers do not exist

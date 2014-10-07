@@ -23,12 +23,12 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.rendering.Renderers;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemCompleter;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -224,7 +224,7 @@ public class DelegatedPropertyResolver {
                 expressionTypingServices, trace, scope,
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
-        boolean hasThis = propertyDescriptor.getReceiverParameter() != null || propertyDescriptor.getExpectedThisObject() != null;
+        boolean hasThis = propertyDescriptor.getExtensionReceiverParameter() != null || propertyDescriptor.getDispatchReceiverParameter() != null;
 
         List<JetExpression> arguments = Lists.newArrayList();
         JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
@@ -358,11 +358,11 @@ public class DelegatedPropertyResolver {
             }
 
             private void addConstraintForThisValue(ConstraintSystem constraintSystem, FunctionDescriptor resultingDescriptor) {
-                ReceiverParameterDescriptor receiverParameter = propertyDescriptor.getReceiverParameter();
-                ReceiverParameterDescriptor thisObject = propertyDescriptor.getExpectedThisObject();
+                ReceiverParameterDescriptor extensionReceiver = propertyDescriptor.getExtensionReceiverParameter();
+                ReceiverParameterDescriptor dispatchReceiver = propertyDescriptor.getDispatchReceiverParameter();
                 JetType typeOfThis =
-                        receiverParameter != null ? receiverParameter.getType() :
-                        thisObject != null ? thisObject.getType() :
+                        extensionReceiver != null ? extensionReceiver.getType() :
+                        dispatchReceiver != null ? dispatchReceiver.getType() :
                         KotlinBuiltIns.getInstance().getNullableNothingType();
 
                 List<ValueParameterDescriptor> valueParameters = resultingDescriptor.getValueParameters();

@@ -1,0 +1,13 @@
+trait Some {
+    fun foo()
+}
+
+class <caret>Other {
+    fun test() {
+        val a = 1
+    }
+    fun otherTest() {
+
+    }
+}
+

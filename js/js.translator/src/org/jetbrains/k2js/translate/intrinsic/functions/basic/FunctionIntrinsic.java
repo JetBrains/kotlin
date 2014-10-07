@@ -47,10 +47,10 @@ public abstract class FunctionIntrinsic {
 
     @Nullable
     protected static JsExpression getThisOrReceiverOrNull(@NotNull CallInfo callInfo) {
-        if (callInfo.getThisObject() != null) {
-            return callInfo.getThisObject();
+        if (callInfo.getDispatchReceiver() != null) {
+            return callInfo.getDispatchReceiver();
         } else {
-            return callInfo.getReceiverObject();
+            return callInfo.getExtensionReceiver();
         }
     }
 

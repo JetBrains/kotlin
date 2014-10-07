@@ -4,18 +4,22 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class JsBinaryOperation extends JsExpressionImpl {
     private JsExpression arg1;
     private JsExpression arg2;
+
+    @NotNull
     private final JsBinaryOperator op;
 
-    public JsBinaryOperation(JsBinaryOperator op) {
+    public JsBinaryOperation(@NotNull JsBinaryOperator op) {
         this(op, null, null);
     }
 
-    public JsBinaryOperation(JsBinaryOperator op, @Nullable JsExpression arg1, @Nullable JsExpression arg2) {
+    public JsBinaryOperation(@NotNull JsBinaryOperator op, @Nullable JsExpression arg1, @Nullable JsExpression arg2) {
         this.op = op;
         this.arg1 = arg1;
         this.arg2 = arg2;
@@ -29,6 +33,15 @@ public final class JsBinaryOperation extends JsExpressionImpl {
         return arg2;
     }
 
+    public void setArg1(JsExpression arg1) {
+        this.arg1 = arg1;
+    }
+
+    public void setArg2(JsExpression arg2) {
+        this.arg2 = arg2;
+    }
+
+    @NotNull
     public JsBinaryOperator getOperator() {
         return op;
     }
@@ -47,5 +60,24 @@ public final class JsBinaryOperation extends JsExpressionImpl {
             visitor.accept(arg1);
         }
         visitor.accept(arg2);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            if (op.isAssignment()) {
+                arg1 = v.acceptLvalue(arg1);
+            } else {
+                arg1 = v.accept(arg1);
+            }
+            arg2 = v.accept(arg2);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsExpression deepCopy() {
+        return new JsBinaryOperation(op, AstUtil.deepCopy(arg1), AstUtil.deepCopy(arg2)).withMetadataFrom(this);
     }
 }

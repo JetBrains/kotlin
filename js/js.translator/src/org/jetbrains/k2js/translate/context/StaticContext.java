@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 import org.jetbrains.k2js.translate.context.generator.Generator;
@@ -40,20 +41,20 @@ import java.util.Map;
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMangledName;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName;
+import static org.jetbrains.k2js.translate.utils.ManglingUtils.getMangledName;
+import static org.jetbrains.k2js.translate.utils.ManglingUtils.getSuggestedName;
 
 /**
  * Aggregates all the static parts of the context.
  */
 public final class StaticContext {
 
-    public static StaticContext generateStaticContext(@NotNull BindingContext bindingContext, @NotNull EcmaVersion ecmaVersion, @NotNull ModuleDescriptor moduleDescriptor) {
+    public static StaticContext generateStaticContext(@NotNull BindingContext bindingContext, @NotNull Config config, @NotNull ModuleDescriptor moduleDescriptor) {
         JsProgram program = new JsProgram("main");
         Namer namer = Namer.newInstance(program.getRootScope());
         Intrinsics intrinsics = new Intrinsics();
         StandardClasses standardClasses = StandardClasses.bindImplementations(namer.getKotlinScope());
-        return new StaticContext(program, bindingContext, namer, intrinsics, standardClasses, program.getRootScope(), ecmaVersion, moduleDescriptor);
+        return new StaticContext(program, bindingContext, namer, intrinsics, standardClasses, program.getRootScope(), config, moduleDescriptor);
     }
 
     @NotNull
@@ -91,19 +92,23 @@ public final class StaticContext {
     private final Map<JsScope, JsFunction> scopeToFunction = Maps.newHashMap();
 
     @NotNull
+    private final Config config;
+
+    @NotNull
     private final EcmaVersion ecmaVersion;
 
     //TODO: too many parameters in constructor
     private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
             @NotNull Namer namer, @NotNull Intrinsics intrinsics,
-            @NotNull StandardClasses standardClasses, @NotNull JsScope rootScope, @NotNull EcmaVersion ecmaVersion, @NotNull ModuleDescriptor moduleDescriptor) {
+            @NotNull StandardClasses standardClasses, @NotNull JsScope rootScope, @NotNull Config config, @NotNull ModuleDescriptor moduleDescriptor) {
         this.program = program;
         this.bindingContext = bindingContext;
         this.namer = namer;
         this.intrinsics = intrinsics;
         this.rootScope = rootScope;
         this.standardClasses = standardClasses;
-        this.ecmaVersion = ecmaVersion;
+        this.config = config;
+        this.ecmaVersion = config.getTarget();
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
     }
 
@@ -214,6 +219,10 @@ public final class StaticContext {
         return result;
     }
 
+    public Config getConfig() {
+        return config;
+    }
+
     private final class NameGenerator extends Generator<JsName> {
 
         public NameGenerator() {
@@ -270,7 +279,7 @@ public final class StaticContext {
                         return declarePropertyOrPropertyAccessorName(descriptor, nameFromAnnotation, false);
                     }
 
-                    String propertyName =  propertyDescriptor.getName().asString();
+                    String propertyName = getSuggestedName(propertyDescriptor);
 
                     if (!isExtension(propertyDescriptor)) {
                         if (propertyDescriptor.getVisibility() == Visibilities.PRIVATE) {
@@ -279,7 +288,7 @@ public final class StaticContext {
                         return declarePropertyOrPropertyAccessorName(descriptor, propertyName, false);
                     } else {
                         if (descriptor instanceof PropertyDescriptor) {
-                            return declarePropertyOrPropertyAccessorName(descriptor, propertyName, true);
+                            return declarePropertyOrPropertyAccessorName(descriptor, propertyName, false);
                         } else {
                             String propertyJsName = getNameForDescriptor(propertyDescriptor).getIdent();
                             boolean isGetter = descriptor instanceof PropertyGetterDescriptor;

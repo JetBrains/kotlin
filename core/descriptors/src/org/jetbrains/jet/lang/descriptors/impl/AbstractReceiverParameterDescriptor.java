@@ -54,13 +54,13 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
 
     @Nullable
     @Override
-    public ReceiverParameterDescriptor getReceiverParameter() {
+    public ReceiverParameterDescriptor getExtensionReceiverParameter() {
         return null;
     }
 
     @Nullable
     @Override
-    public ReceiverParameterDescriptor getExpectedThisObject() {
+    public ReceiverParameterDescriptor getDispatchReceiverParameter() {
         return null;
     }
 

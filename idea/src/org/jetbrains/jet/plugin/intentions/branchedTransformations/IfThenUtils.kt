@@ -31,7 +31,7 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import com.intellij.psi.search.searches.ReferencesSearch

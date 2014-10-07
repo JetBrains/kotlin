@@ -83,7 +83,7 @@ public class MemberDeserializer {
         property.setType(
                 local.getTypeDeserializer().type(proto.getReturnType()),
                 typeParameters,
-                getExpectedThisObject(),
+                getDispatchReceiverParameter(),
                 local.getTypeDeserializer().typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null)
         );
 
@@ -161,7 +161,7 @@ public class MemberDeserializer {
         DeserializationContextWithTypes local = context.childContext(function, proto.getTypeParameterList(), typeParameters);
         function.initialize(
                 local.getTypeDeserializer().typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
-                getExpectedThisObject(),
+                getDispatchReceiverParameter(),
                 typeParameters,
                 local.getDeserializer().valueParameters(proto, AnnotatedCallableKind.FUNCTION),
                 local.getTypeDeserializer().type(proto.getReturnType()),
@@ -172,7 +172,7 @@ public class MemberDeserializer {
     }
 
     @Nullable
-    private ReceiverParameterDescriptor getExpectedThisObject() {
+    private ReceiverParameterDescriptor getDispatchReceiverParameter() {
         DeclarationDescriptor containingDeclaration = context.getContainingDeclaration();
         return containingDeclaration instanceof ClassDescriptor
                ? ((ClassDescriptor) containingDeclaration).getThisAsReceiverParameter() : null;

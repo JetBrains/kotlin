@@ -4,13 +4,17 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 public final class JsExpressionStatement extends AbstractNode implements JsStatement {
+    @NotNull
     private JsExpression expression;
 
-    public JsExpressionStatement(JsExpression expression) {
+    public JsExpressionStatement(@NotNull JsExpression expression) {
         this.expression = expression;
     }
 
+    @NotNull
     public JsExpression getExpression() {
         return expression;
     }
@@ -38,5 +42,19 @@ public final class JsExpressionStatement extends AbstractNode implements JsState
     @Override
     public JsNode source(Object info) {
         throw new IllegalStateException("You must not set source info for JsExpressionStatement, set for expression");
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            expression = v.accept(expression);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsExpressionStatement deepCopy() {
+        return new JsExpressionStatement(expression.deepCopy()).withMetadataFrom(this);
     }
 }

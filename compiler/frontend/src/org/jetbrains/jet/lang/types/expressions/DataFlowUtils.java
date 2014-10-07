@@ -25,11 +25,11 @@ import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantChecker;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
@@ -41,7 +41,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 
@@ -181,7 +180,7 @@ public class DataFlowUtils {
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, trace.getBindingContext());
         for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {
             if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, expectedType)) {
-                AutoCastUtils.recordCastOrError(expression, possibleType, trace, dataFlowValue.isStableIdentifier(), false);
+                SmartCastUtils.recordCastOrError(expression, possibleType, trace, dataFlowValue.isStableIdentifier(), false);
                 return possibleType;
             }
         }

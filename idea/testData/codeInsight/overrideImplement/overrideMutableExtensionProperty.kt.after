@@ -3,9 +3,8 @@ trait A {
 }
 
 class B : A {
-
     override var Int.foo: Double
-        get() = 0.0
+        get() = <selection><caret>0.0</selection>
         set(value) {
         }
 }

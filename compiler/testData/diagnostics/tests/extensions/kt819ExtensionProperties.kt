@@ -3,10 +3,10 @@
 import java.io.*
 
 inline val InputStream.buffered : BufferedInputStream
-    get() = if(this is BufferedInputStream) <!DEBUG_INFO_AUTOCAST!>this<!> else BufferedInputStream(this)
+    get() = if(this is BufferedInputStream) <!DEBUG_INFO_SMARTCAST!>this<!> else BufferedInputStream(this)
 
 inline val Reader.buffered : BufferedReader
-    get() = if(this is BufferedReader) <!DEBUG_INFO_AUTOCAST!>this<!> else BufferedReader(this)
+    get() = if(this is BufferedReader) <!DEBUG_INFO_SMARTCAST!>this<!> else BufferedReader(this)
 
 
 //more tests

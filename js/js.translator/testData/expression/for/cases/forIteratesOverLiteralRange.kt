@@ -48,5 +48,15 @@ fun box(): String {
     }
     assertEquals("AB", global)
 
+    var sLong = 0L
+    for(i in 0L..10L)
+        sLong += i
+    assertEquals(55L, sLong)
+
+    var sDouble = 0.0
+    for(i in 0L..10.0)
+        sDouble += i
+    assertEquals(55.0, sDouble)
+
     return "OK"
 }

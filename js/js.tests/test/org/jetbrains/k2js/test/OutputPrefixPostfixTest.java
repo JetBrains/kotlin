@@ -16,23 +16,14 @@
 
 package org.jetbrains.k2js.test;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.K2JSTranslator;
-import org.jetbrains.k2js.facade.MainCallParameters;
-import org.jetbrains.k2js.test.config.TestConfigFactory;
 import org.jetbrains.k2js.test.semantics.TranslatorTestCaseBuilder;
-import org.jetbrains.k2js.test.utils.TranslationUtils;
 
 import java.io.File;
-import java.util.List;
-
-import static org.jetbrains.k2js.test.utils.TranslationUtils.createJetFileList;
-import static org.jetbrains.k2js.test.utils.TranslationUtils.getConfig;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class OutputPrefixPostfixTest extends SingleFileTranslationTest {
@@ -55,17 +46,13 @@ public final class OutputPrefixPostfixTest extends SingleFileTranslationTest {
     }
 
     @Override
-    protected void translateFiles(
-            @NotNull Project project,
-            @NotNull List<String> files,
-            @NotNull String outputFile,
-            @NotNull MainCallParameters mainCallParameters,
-            @NotNull EcmaVersion version,
-            @NotNull TestConfigFactory configFactory
-    ) throws Exception {
-        TranslationUtils.translateFiles(mainCallParameters, createJetFileList(project, files, null),
-                                        outputFile, outputPrefixFile, outputPostfixFile,
-                                        getConfig(project, version, configFactory));
+    protected File getOutputPostfixFile() {
+        return outputPostfixFile;
+    }
+
+    @Override
+    protected File getOutputPrefixFile() {
+        return outputPrefixFile;
     }
 
     @Override
@@ -96,7 +83,7 @@ public final class OutputPrefixPostfixTest extends SingleFileTranslationTest {
 
     public static Test suite() throws Exception {
         return TranslatorTestCaseBuilder
-                .suiteForDirectory(BasicTest.pathToTestFilesRoot() + "outputPrefixPostfix/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
+                .suiteForDirectory(TEST_DATA_DIR_PATH + "outputPrefixPostfix/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
                     @NotNull
                     @Override
                     public Test createTest(@NotNull String filename) {

@@ -4,7 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
 import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -34,5 +36,19 @@ public final class JsArrayLiteral extends JsLiteral {
     @Override
     public void acceptChildren(JsVisitor visitor) {
         visitor.acceptWithInsertRemove(expressions);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            v.acceptList(expressions);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsArrayLiteral deepCopy() {
+        return new JsArrayLiteral(AstUtil.deepCopy(expressions)).withMetadataFrom(this);
     }
 }

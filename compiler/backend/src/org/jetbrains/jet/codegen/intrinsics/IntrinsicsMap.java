@@ -106,7 +106,7 @@ class IntrinsicsMap {
 
     @Nullable
     private static FqNameUnsafe getReceiverParameterFqName(@NotNull CallableMemberDescriptor descriptor) {
-        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter == null) return null;
 
         ClassifierDescriptor classifier = receiverParameter.getType().getConstructor().getDeclarationDescriptor();

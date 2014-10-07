@@ -41,15 +41,6 @@ public fun CharSequence.iterator(): CharIterator = object : CharIterator() {
 /** Returns the string if it is not null or the empty string if its null */
 public fun String?.orEmpty(): String = this ?: ""
 
-
-// "Extension functions" for CharSequence
-
-public val CharSequence.size: Int
-    get() = this.length
-
-public val String.size: Int
-    get() = length()
-
 public val String.indices: IntRange
     get() = 0..length() - 1
 

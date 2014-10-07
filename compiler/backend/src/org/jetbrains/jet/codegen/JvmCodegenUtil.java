@@ -172,7 +172,7 @@ public class JvmCodegenUtil {
         if (!isCallInsideSameClassAsDeclared(property, context) && !isDebuggerContext(context)) return false;
 
         // Delegated and extension properties have no backing fields
-        if (isDelegated || property.getReceiverParameter() != null) return false;
+        if (isDelegated || property.getExtensionReceiverParameter() != null) return false;
 
         // Class object properties cannot be accessed directly because their backing fields are stored in the containing class
         if (DescriptorUtils.isClassObject(property.getContainingDeclaration())) return false;
@@ -203,7 +203,7 @@ public class JvmCodegenUtil {
     }
 
     @Nullable
-    public static ClassDescriptor getExpectedThisObjectForConstructorCall(
+    public static ClassDescriptor getDispatchReceiverParameterForConstructorCall(
             @NotNull ConstructorDescriptor descriptor,
             @Nullable CalculatedClosure closure
     ) {
@@ -214,10 +214,10 @@ public class JvmCodegenUtil {
 
         //for compilation against binaries
         //TODO: It's best to use this code also for compilation against sources
-        // but sometimes structures that have expectedThisObject (bug?) mapped to static classes
-        ReceiverParameterDescriptor expectedThisObject = descriptor.getExpectedThisObject();
-        if (expectedThisObject != null) {
-            ClassDescriptor expectedThisClass = (ClassDescriptor) expectedThisObject.getContainingDeclaration();
+        // but sometimes structures that have dispatchReceiver (bug?) mapped to static classes
+        ReceiverParameterDescriptor dispatchReceiver = descriptor.getDispatchReceiverParameter();
+        if (dispatchReceiver != null) {
+            ClassDescriptor expectedThisClass = (ClassDescriptor) dispatchReceiver.getContainingDeclaration();
             if (!expectedThisClass.getKind().isSingleton()) {
                 return expectedThisClass;
             }

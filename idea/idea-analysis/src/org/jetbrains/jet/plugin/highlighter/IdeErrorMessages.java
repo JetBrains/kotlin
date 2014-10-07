@@ -104,7 +104,7 @@ public class IdeErrorMessages {
         MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, "<html>Overload resolution ambiguity on method ''{0}''. All these functions match. <ul>{1}</ul></html>", STRING, HTML_AMBIGUOUS_CALLS);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, "<html>Property delegate must have a ''{0}'' method. None of the following functions is suitable. <ul>{1}</ul></html>",
                 STRING, HTML_NONE_APPLICABLE_CALLS);
-        MAP.put(DELEGATE_PD_METHOD_NONE_APPLICABLE, "''{0}'' method may be missing. None of the following functions will be called: <ul>{1}</ul></html>",
+        MAP.put(DELEGATE_PD_METHOD_NONE_APPLICABLE, "<html>''{0}'' method may be missing. None of the following functions will be called: <ul>{1}</ul></html>",
                 STRING, HTML_NONE_APPLICABLE_CALLS);
 
         MAP.put(CONFLICTING_JVM_DECLARATIONS, "<html>Platform declaration clash: {0}</html>", HTML_CONFLICTING_JVM_DECLARATIONS_DATA);

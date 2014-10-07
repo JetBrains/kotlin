@@ -63,9 +63,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xno-param-assertions", description = "Don't generate not-null assertions on parameters of methods accessible from Java")
     public boolean noParamAssertions;
 
-    @Argument(value = "Xno-inline", description = "Disable method inlining")
-    public boolean noInline;
-
     @Argument(value = "Xno-optimize", description = "Disable optimizations")
     public boolean noOptimize;
 

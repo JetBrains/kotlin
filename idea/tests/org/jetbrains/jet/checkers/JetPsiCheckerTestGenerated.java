@@ -656,12 +656,6 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
-        @TestMetadata("Autocasts.kt")
-        public void testAutocasts() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/infos/Autocasts.kt");
-            doTestWithInfos(fileName);
-        }
-        
         @TestMetadata("CapturedInInlinedClosure.kt")
         public void testCapturedInInlinedClosure() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/infos/CapturedInInlinedClosure.kt");
@@ -671,6 +665,12 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
         @TestMetadata("PropertiesWithBackingFields.kt")
         public void testPropertiesWithBackingFields() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/infos/PropertiesWithBackingFields.kt");
+            doTestWithInfos(fileName);
+        }
+        
+        @TestMetadata("SmartCasts.kt")
+        public void testSmartCasts() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCasts.kt");
             doTestWithInfos(fileName);
         }
         

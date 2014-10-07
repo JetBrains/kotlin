@@ -1,5 +1,0 @@
-fun foo(n: Int) {
-    // foo3
-    <caret>val x: String = "" // bar3
-    /* baz */
-}

@@ -13,8 +13,8 @@ Candidate descriptor: fun <T> foo(t: T, l: List<T>): Unit defined in root packag
 Resulting descriptor: fun <T> foo(t: Comparable<out Any?>, l: List<Comparable<out Any?>>): Unit defined in root package
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
-This object = NO_RECEIVER
-Receiver argument = NO_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 

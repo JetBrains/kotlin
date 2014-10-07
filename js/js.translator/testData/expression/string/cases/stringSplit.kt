@@ -1,9 +1,5 @@
 package foo
 
-// todo drop
-class Pair<F, S>(val first: F, val second: S)
-fun <F, S> F.to(second: S): Pair<F, S> = Pair(this, second)
-
 fun box(): String {
     val testInput = "test data\t1foo  2 bar"
     val tests = array(

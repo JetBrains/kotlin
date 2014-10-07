@@ -20,26 +20,35 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.PathUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.KotlinLightClass;
-import org.jetbrains.jet.plugin.presentation.JetLightClassListCellRenderer;
+import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.junit.Assert;
+
+import java.util.List;
 
 public final class ReferenceUtils {
     private ReferenceUtils() {
     }
 
     public static String renderAsGotoImplementation(@NotNull PsiElement element) {
-        if (element instanceof KotlinLightClass) {
-            KotlinLightClass jetLightClass = (KotlinLightClass) element;
-            JetLightClassListCellRenderer renderer = new JetLightClassListCellRenderer();
-            String elementText = renderer.getElementText(jetLightClass);
-            String containerText = JetLightClassListCellRenderer.getContainerTextStatic(jetLightClass);
-            return (containerText != null) ? containerText + "." + elementText : elementText;
+        PsiElement navigationElement = element.getNavigationElement();
+
+        if (navigationElement instanceof JetObjectDeclaration && ((JetObjectDeclaration) navigationElement).isClassObject()) {
+            //default presenter return null for class object
+            JetClass containingClass = PsiTreeUtil.getParentOfType(navigationElement, JetClass.class);
+            assert containingClass != null;
+            return "class object of " + renderAsGotoImplementation(containingClass);
         }
 
-        Assert.assertTrue(element instanceof NavigationItem);
-        ItemPresentation presentation = ((NavigationItem) element).getPresentation();
+        Assert.assertTrue(navigationElement instanceof NavigationItem);
+        ItemPresentation presentation = ((NavigationItem) navigationElement).getPresentation();
 
         if (presentation == null) {
             return element.getText();
@@ -47,8 +56,23 @@ public final class ReferenceUtils {
 
         String presentableText = presentation.getPresentableText();
         String locationString = presentation.getLocationString();
-        return locationString == null || element instanceof PsiPackage // for PsiPackage, presentableText is FQ name of current package
+        return locationString == null || navigationElement instanceof PsiPackage
+               // for PsiPackage, presentableText is FQ name of current package
                ? presentableText
                : locationString + "." + presentableText;
+    }
+
+    // purpose of this helper is to deal with the case when navigation element is a file
+    // see ReferenceResolveInJavaTestGenerated.testPackageFacade()
+    @NotNull
+    public static List<String> getExpectedReferences(@NotNull String text) {
+        List<String> prefixes = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// REF:");
+        return KotlinPackage.map(prefixes, new Function1<String, String>() {
+            @Override
+            public String invoke(String s) {
+                String replaced = s.replace("<test dir>", PluginTestCaseBase.getTestDataPathBase());
+                return PathUtil.toSystemDependentName(replaced).replace("//", "/"); //happens on Unix
+            }
+        });
     }
 }

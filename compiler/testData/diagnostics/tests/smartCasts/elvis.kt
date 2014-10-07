@@ -7,5 +7,5 @@ fun test(a: C?, nn: () -> Nothing?) {
     a<!UNSAFE_CALL!>.<!>foo()
 
     a ?: return
-    <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
+    <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
 }

@@ -38,46 +38,30 @@ fun box(): String {
 
     // Check that same Dat's have the same hashcode.
     val sameDs = listOf(Dat("a", "b"), Dat("a", "b"))
-    assertAllEqual(map(sameDs, hashCoder))
+    assertAllEqual(sameDs.map(hashCoder))
 
     // Check that different Dat's have different hashcodes (at least some of them).
     val differentDs = listOf(Dat("a", "b"), Dat("a", "c"), Dat("a", "d"))
-    assertSomeNotEqual(map(differentDs, hashCoder))
+    assertSomeNotEqual(differentDs.map(hashCoder))
 
     // Check the same on Obj's, which should be always different and with different hashcodes.
     val sameOs = listOf(Obj("a", "b"), Obj("a", "b"), Obj("a", "b"))
     val differentOs = listOf(Obj("a", "b"), Obj("a", "b"), Obj("a", "b"))
 
     // Obj's are always different.
-    assertSomeNotEqual(map(sameOs, hashCoder))
-    assertSomeNotEqual(map(differentOs, hashCoder))
+    assertSomeNotEqual(sameOs.map(hashCoder))
+    assertSomeNotEqual(differentOs.map(hashCoder))
 
     // Both Dat's and Obj's wrapped as Holder should retain their hashcode relations.
-    val sameHDs = map(sameDs, wrapInH)
-    assertAllEqual(map(sameHDs, hashCoder))
-    val differentHDs = map(differentDs, wrapInH)
-    assertSomeNotEqual(map(differentHDs, hashCoder))
+    val sameHDs = sameDs.map(wrapInH)
+    assertAllEqual(sameHDs.map(hashCoder))
+    val differentHDs = differentDs.map(wrapInH)
+    assertSomeNotEqual(differentHDs.map(hashCoder))
 
-    val sameHOs = map(sameOs, wrapInH)
-    assertSomeNotEqual(map(sameHOs, hashCoder))
-    val differentHOs = map(differentOs, wrapInH)
-    assertSomeNotEqual(map(differentHOs, hashCoder))
+    val sameHOs = sameOs.map(wrapInH)
+    assertSomeNotEqual(sameHOs.map(hashCoder))
+    val differentHOs = differentOs.map(wrapInH)
+    assertSomeNotEqual(differentHOs.map(hashCoder))
 
     return "OK"
-}
-
-fun listOf<T>(vararg a: T): List<T> {
-    val list = ArrayList<T>()
-    for (e in a) {
-        list.add(e)
-    }
-    return list
-}
-
-fun map<T, S>(c : Iterable<T>, transform : (T) -> S) : List<S> {
-    val list = ArrayList<S>()
-    for (t in c) {
-        list.add(transform(t))
-    }
-    return list
 }

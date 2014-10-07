@@ -13,3 +13,6 @@ fun foo(f: () -> Unit) {
 }
 
 // PRINT_FRAME
+
+// EXPRESSION: var1
+// RESULT: 1: I

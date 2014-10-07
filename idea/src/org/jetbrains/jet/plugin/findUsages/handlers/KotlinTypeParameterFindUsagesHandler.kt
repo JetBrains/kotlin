@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinTypeParameterFindUsages
 import org.jetbrains.jet.plugin.search.usagesSearch.DefaultSearchHelper
 import org.jetbrains.jet.plugin.findUsages.toSearchTarget
 import org.jetbrains.jet.plugin.search.usagesSearch.search
-import org.jetbrains.jet.plugin.refactoring.runReadAction
+import org.jetbrains.jet.plugin.util.application.runReadAction
 
 public class KotlinTypeParameterFindUsagesHandler(
         element: JetNamedDeclaration,
@@ -46,7 +46,7 @@ public class KotlinTypeParameterFindUsagesHandler(
         return runReadAction {
             val target = options.toSearchTarget(element as JetNamedDeclaration, true)
             val request = DefaultSearchHelper<JetNamedDeclaration>().newRequest(target)
-            request.search().all {ref -> KotlinFindUsagesHandler.processUsage(processor, ref)}
+            request.search().all { ref -> KotlinFindUsagesHandler.processUsage(processor, ref) }
         }!!
     }
 

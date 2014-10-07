@@ -18,6 +18,11 @@ package org.jetbrains.jet.plugin.util
 
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
 fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
+
+fun JetType.supertypes(): Set<JetType> = TypeUtils.getAllSupertypes(this)
+
+fun JetType.isUnit(): Boolean = KotlinBuiltIns.getInstance().isUnit(this)

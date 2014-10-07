@@ -65,7 +65,7 @@
       <filterchain>
         <tokenfilter>
           <filetokenizer/>
-          <replaceregex pattern="^(.*)(http://download\.jetbrains\.com/idea/ideaIC\-[\d\.]+tar\.gz)(.*)$" replace="\2" flags="s"/>
+          <replaceregex pattern="^(.*)(http://download\.jetbrains\.com/idea/ideaIC\-[\w\-\.]+tar\.gz)(.*)$" replace="\2" flags="s"/>
         </tokenfilter>
       </filterchain>
     </loadresource>
@@ -84,7 +84,17 @@
     <!-- Download and extract IDEA -->
     <echo message="Downloading IDEA from ${download.url}"/>
     <get src="${download.url}" dest="${verify.dir}/ideaIC.tar.gz" usetimestamp="true"/>
-    <untar src="${verify.dir}/ideaIC.tar.gz" dest="${verify.dir}" overwrite="on" compression="gzip"/>
+
+    <!-- Ant 1.9.4+ may automatically un-gzip file when downloading it via "get" task.
+         It is out of our control. We need to know if we need to un-gzip downloaded file or not. -->
+    <condition property="compression.of.downloaded.tar.gz" value="gzip">
+      <not><antversion atleast="1.9.4" /></not>
+    </condition>
+    <condition property="compression.of.downloaded.tar.gz" value="none">
+      <antversion atleast="1.9.4" />
+    </condition>
+
+    <untar src="${verify.dir}/ideaIC.tar.gz" dest="${verify.dir}" overwrite="on" compression="${compression.of.downloaded.tar.gz}"/>
 
     <!-- Get extracted IDEA directory -->
     <pathconvert property="idea.dir">

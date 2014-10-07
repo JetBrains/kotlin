@@ -17,75 +17,39 @@
 package org.jetbrains.k2js.test.semantics;
 
 import com.google.common.collect.Lists;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.js.K2JSCompiler;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
-import org.jetbrains.k2js.test.utils.LibraryFilePathsUtil;
+import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+// TODO: should be dropped with derived classes?
 abstract class StdLibTestBase extends SingleFileTranslationTest {
     protected StdLibTestBase() {
         super("stdlib/");
     }
 
-    protected void performStdLibTest(@NotNull Iterable<EcmaVersion> ecmaVersions,
-            @NotNull String sourceDir, @NotNull String... stdLibFiles) throws Exception {
-        List<String> files = constructFilesToCompileList(sourceDir, stdLibFiles);
-        compileFiles(ecmaVersions, files);
-    }
+    @Nullable
+    protected abstract RhinoResultChecker getResultChecker();
 
-    private void compileFiles(@NotNull Iterable<EcmaVersion> ecmaVersions, @NotNull List<String> files) throws Exception {
-        List<String> libFiles = LibraryFilePathsUtil.getBasicLibraryFiles();
-        for (EcmaVersion version : ecmaVersions) {
-            String outputFilePath = getOutputFilePath(getTestName(false) + ".compiler.kt", version);
-            invokeCompiler(files, libFiles, version, outputFilePath);
-            performChecksOnGeneratedJavaScript(outputFilePath, version);
-        }
-    }
-
-    /**
-     * Strategy method allowing the generated JS file to be invoked
-     */
-    protected void performChecksOnGeneratedJavaScript(String path, EcmaVersion version) throws Exception {
-    }
-
-    protected String moduleIdFromOutputFile(String path) {
-        String moduleId = new File(path).getName();
-        if (moduleId.endsWith(".js")) {
-            moduleId = moduleId.substring(0, moduleId.length() - 3);
-        }
-        return moduleId;
-    }
-
-    //TODO: reuse this in CompileMavenGeneratedJSLibrary
-    private static void invokeCompiler(
-            @NotNull List<String> files,
-            @NotNull List<String> libFiles,
-            @NotNull EcmaVersion version,
-            @NotNull String outputFilePath
-    ) {
-        System.out.println("Compiling with version: " + version + " to: " + outputFilePath);
-
-        List<String> args = new ArrayList<String>(Arrays.asList("-output", outputFilePath, "-verbose", "-library-files"));
-        args.addAll(libFiles);
-        args.addAll(files);
-        ExitCode answer = new K2JSCompiler().exec(System.out, ArrayUtil.toStringArray(args));
-
-        assertEquals("Compile failed", ExitCode.OK, answer);
-    }
-
-    @NotNull
-    private static List<String> constructFilesToCompileList(@NotNull String sourceDir, @NotNull String[] stdLibFiles) {
+    protected void performStdLibTest(
+            @NotNull Iterable<EcmaVersion> ecmaVersions,
+            @NotNull String sourceDir,
+            @NotNull String... stdLibFiles
+    ) throws Exception {
         List<String> files = filesFromDir(sourceDir, stdLibFiles);
-        files.addAll(LibraryFilePathsUtil.getAdditionalLibraryFiles());
-        return files;
+        String testFileName = getTestName(true) + ".kt";
+
+        generateJavaScriptFiles(files, testFileName, MainCallParameters.noCall(), ecmaVersions);
+
+        RhinoResultChecker checker = getResultChecker();
+        if (checker != null) {
+            runRhinoTests(testFileName, ecmaVersions, checker);
+        }
     }
 
     @NotNull

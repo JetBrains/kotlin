@@ -23,6 +23,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.refactoring.EmptyValidator;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
@@ -92,7 +93,7 @@ public class JetNameSuggesterTest extends LightCodeInsightFixtureTestCase {
             JetRefactoringUtil.selectExpression(myFixture.getEditor(), file, new JetRefactoringUtil.SelectExpressionCallback() {
                 @Override
                 public void run(@Nullable JetExpression expression) {
-                    String[] names = JetNameSuggester.suggestNames(expression, JetNameValidator.getEmptyValidator(getProject()), "value");
+                    String[] names = JetNameSuggester.suggestNames(expression, EmptyValidator.INSTANCE$, "value");
                     Arrays.sort(names);
                     String result = StringUtil.join(names, "\n").trim();
                     assertEquals(expectedResultText, result);

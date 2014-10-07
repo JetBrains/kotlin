@@ -12,5 +12,5 @@ Resolved call:
 Resulting descriptor: val foo: Int.() -> Unit defined in A
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
-This object = Class{A}
-Receiver argument = NO_RECEIVER
+Dispatch receiver = Class{A}
+Extension receiver = NO_RECEIVER

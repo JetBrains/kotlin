@@ -50,15 +50,15 @@ import org.jetbrains.k2js.translate.context.TranslationContext
 val CallInfo.callableDescriptor: CallableDescriptor
     get() = resolvedCall.getResultingDescriptor().getOriginal()
 
-fun CallInfo.isExtension(): Boolean = receiverObject != null
+fun CallInfo.isExtension(): Boolean = extensionReceiver != null
 
-fun CallInfo.isMemberCall(): Boolean = thisObject != null
+fun CallInfo.isMemberCall(): Boolean = dispatchReceiver != null
 
 fun CallInfo.isNative(): Boolean = AnnotationsUtils.isNativeObject(callableDescriptor)
 
 fun CallInfo.isSuperInvocation(): Boolean {
-    val thisObject = resolvedCall.getThisObject()
-    return thisObject is ExpressionReceiver && ((thisObject as ExpressionReceiver)).getExpression() is JetSuperExpression
+    val dispatchReceiver = resolvedCall.getDispatchReceiver()
+    return dispatchReceiver is ExpressionReceiver && ((dispatchReceiver as ExpressionReceiver)).getExpression() is JetSuperExpression
 }
 
 val VariableAccessInfo.variableDescriptor: VariableDescriptor

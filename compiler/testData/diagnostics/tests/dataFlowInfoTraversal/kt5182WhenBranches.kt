@@ -8,6 +8,6 @@ class B: A() {
 
 fun foo(a: A) = when {
     a !is B -> 2
-    true -> <!DEBUG_INFO_AUTOCAST!>a<!>.foo() //'foo' is unresolved, smart cast doesn't work
-    else -> <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
+    true -> <!DEBUG_INFO_SMARTCAST!>a<!>.foo() //'foo' is unresolved, smart cast doesn't work
+    else -> <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
 }

@@ -215,7 +215,7 @@ public class SignaturesPropagationData {
                     new Function<FunctionDescriptor, TypeAndName>() {
                         @Override
                         public TypeAndName fun(FunctionDescriptor superFunction) {
-                            ReceiverParameterDescriptor receiver = superFunction.getReceiverParameter();
+                            ReceiverParameterDescriptor receiver = superFunction.getExtensionReceiverParameter();
                             int index = receiver != null ? originalIndex - 1 : originalIndex;
                             if (index == -1) {
                                 assert receiver != null : "can't happen: index is -1, while function is not extension";
@@ -318,7 +318,7 @@ public class SignaturesPropagationData {
         boolean someSupersNotExtension = false;
 
         for (FunctionDescriptor superFunction : superFunctions) {
-            if (superFunction.getReceiverParameter() != null)  {
+            if (superFunction.getExtensionReceiverParameter() != null)  {
                 someSupersExtension = true;
             }
             else {
@@ -343,7 +343,7 @@ public class SignaturesPropagationData {
         boolean someSupersNotVararg = false;
         for (FunctionDescriptor superFunction : superFunctions) {
             int originalIndex = originalParam.getIndex();
-            int index = superFunction.getReceiverParameter() != null ? originalIndex - 1 : originalIndex;
+            int index = superFunction.getExtensionReceiverParameter() != null ? originalIndex - 1 : originalIndex;
             if (index != -1 && superFunction.getValueParameters().get(index).getVarargElementType() != null) {
                 someSupersVararg = true;
             }

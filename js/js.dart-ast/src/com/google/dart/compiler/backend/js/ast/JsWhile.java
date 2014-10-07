@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A JavaScript <code>while</code> statement.
  */
@@ -44,5 +47,23 @@ public class JsWhile extends SourceInfoAwareJsNode implements JsStatement {
     public void acceptChildren(JsVisitor visitor) {
         visitor.accept(condition);
         visitor.accept(body);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            condition = v.accept(condition);
+            body = v.acceptStatement(body);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsWhile deepCopy() {
+        JsExpression conditionCopy = AstUtil.deepCopy(condition);
+        JsStatement bodyCopy = AstUtil.deepCopy(body);
+
+        return new JsWhile(conditionCopy, bodyCopy).withMetadataFrom(this);
     }
 }

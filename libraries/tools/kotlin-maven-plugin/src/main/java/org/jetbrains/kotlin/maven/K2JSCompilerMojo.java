@@ -42,6 +42,7 @@ import java.util.List;
  */
 public class K2JSCompilerMojo extends KotlinCompileMojo {
     public static final String KOTLIN_JS_MAPS = "kotlin-maps.js";
+    public static final String KOTLIN_JS_LONG = "kotlin-long.js";
     public static final String KOTLIN_JS_LIB = "kotlin-lib.js";
     public static final String KOTLIN_JS_LIB_ECMA3 = "kotlin-lib-ecma3.js";
     public static final String KOTLIN_JS_LIB_ECMA5 = "kotlin-lib-ecma5.js";
@@ -91,6 +92,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
                 appendFile(KOTLIN_JS_LIB_ECMA3, builder);
                 appendFile(KOTLIN_JS_LIB, builder);
                 appendFile(KOTLIN_JS_MAPS, builder);
+                appendFile(KOTLIN_JS_LONG, builder);
                 builder.append("\n");
                 builder.append(text);
                 Files.write(builder.toString(), file, charset);
@@ -102,6 +104,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
             getLog().info("Copying kotlin JS library to " + outputKotlinJSDir);
 
             copyJsLibraryFile(KOTLIN_JS_MAPS);
+            copyJsLibraryFile(KOTLIN_JS_LONG);
             copyJsLibraryFile(KOTLIN_JS_LIB);
             copyJsLibraryFile(KOTLIN_JS_LIB_ECMA3);
             copyJsLibraryFile(KOTLIN_JS_LIB_ECMA5);

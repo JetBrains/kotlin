@@ -1,0 +1,33 @@
+<project>
+    <union id="js.lib.files">
+        <fileset dir="${basedir}/js/js.libraries/src">
+            <include name="**/*.kt" />
+        </fileset>
+
+        <fileset dir="${basedir}/core/reflection/src">
+            <include name="kotlin/**/*.kt"/>
+        </fileset>
+
+        <fileset dir="${basedir}/libraries/stdlib/src">
+            <include name="**/*.kt" />
+
+            <!-- JVM specific -->
+            <exclude name="**/*JVM.kt" />
+            <exclude name="kotlin/jvm/**" />
+            <exclude name="kotlin/beans/**" />
+            <exclude name="kotlin/browser/**" />
+            <exclude name="kotlin/concurrent/**" />
+            <exclude name="kotlin/io/**" />
+            <exclude name="kotlin/math/**" />
+            <exclude name="kotlin/template/**" />
+            <exclude name="kotlin/util/**" />
+
+            <!-- Temporary disabled -->
+            <!--TODO fix: (84, 27) Unresolved reference: copyOf (_SpecialJVM.kt)-->
+            <exclude name="kotlin/collections/ImmutableArrayList.kt" />
+
+            <!-- TODO fix: AllModules is subclass of ThreadLocal. -->
+            <exclude name="kotlin/modules/**" />
+        </fileset>
+    </union>
+</project>

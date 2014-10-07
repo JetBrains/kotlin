@@ -39,7 +39,6 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                       val visibilityFilter: (DeclarationDescriptor) -> Boolean,
                       val originalFile: JetFile) {
     private val bindingContext = resolveSession.resolveToElement(expression)
-    private val moduleDescriptor = resolveSession.getModuleDescriptor()
     private val project = expression.getProject()
 
     public data class Result(val declarationFilter: ((DeclarationDescriptor) -> Collection<LookupElement>)?,
@@ -98,7 +97,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         else
             filteredExpectedInfos
 
-        val typesWithAutoCasts: (DeclarationDescriptor) -> Iterable<JetType> = TypesWithAutoCasts(bindingContext).calculate(expressionWithType, receiver)
+        val typesWithSmartCasts: (DeclarationDescriptor) -> Iterable<JetType> = TypesWithSmartCasts(bindingContext).calculate(expressionWithType, receiver)
 
         val itemsToSkip = calcItemsToSkip(expressionWithType)
 
@@ -107,7 +106,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
             val result = ArrayList<LookupElement>()
             if (!itemsToSkip.contains(descriptor)) {
-                val types = typesWithAutoCasts(descriptor)
+                val types = typesWithSmartCasts(descriptor)
                 val nonNullTypes = types.map { it.makeNotNullable() }
                 val classifier = { (expectedInfo: ExpectedInfo) ->
                     when {
@@ -136,6 +135,8 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             LambdaItems.addToCollection(additionalItems, functionExpectedInfos)
 
             KeywordValues.addToCollection(additionalItems, filteredExpectedInfos/* use filteredExpectedInfos to not include null after == */, expressionWithType)
+
+            MultipleArgumentsItemProvider(bindingContext, typesWithSmartCasts).addToCollection(additionalItems, expectedInfos, expression)
         }
 
         return Result(::filterDeclaration, additionalItems)
@@ -154,7 +155,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             }
         }
 
-        return ExpectedInfos(bindingContext, moduleDescriptor).calculate(expression)
+        return ExpectedInfos(bindingContext, resolveSession).calculate(expression)
     }
 
     private fun implicitlyTypedDeclarationFromInitializer(expression: JetExpression): JetDeclaration? {
@@ -172,7 +173,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             is JetProperty -> {
                 //TODO: this can be filtered out by ordinary completion
                 if (expression == parent.getInitializer()) {
-                    return resolveSession.resolveToElement(parent)[BindingContext.DECLARATION_TO_DESCRIPTOR, parent].toSet()
+                    return resolveSession.resolveToDescriptor(parent).toSet()
                 }
             }
 

@@ -19,9 +19,7 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
@@ -42,13 +40,12 @@ import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
+import static org.jetbrains.k2js.translate.utils.ManglingUtils.getStableMangledNameForDescriptor;
 
 public final class TopLevelFIF extends CompositeFIF {
     public static final DescriptorPredicate EQUALS_IN_ANY = pattern("kotlin", "Any", "equals");
@@ -95,7 +92,7 @@ public final class TopLevelFIF extends CompositeFIF {
         @Nullable
         @Override
         protected ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall) {
-            ReceiverValue result = resolvedCall.getThisObject();
+            ReceiverValue result = resolvedCall.getDispatchReceiver();
             return result instanceof ExpressionReceiver ? (ExpressionReceiver) result : null;
         }
 
@@ -119,7 +116,7 @@ public final class TopLevelFIF extends CompositeFIF {
         @Nullable
         @Override
         protected ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall) {
-            ReceiverValue result = resolvedCall.getReceiverArgument();
+            ReceiverValue result = resolvedCall.getExtensionReceiver();
             return result instanceof ExpressionReceiver ? (ExpressionReceiver) result : null;
         }
 
@@ -132,13 +129,6 @@ public final class TopLevelFIF extends CompositeFIF {
             return ArrayFIF.SET_INTRINSIC.apply(receiver, arguments, context);
         }
     };
-
-    @NotNull
-    private static String getStableMangledBuiltInName(@NotNull ClassDescriptor descriptor, @NotNull String functionName) {
-        Collection<FunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier(functionName));
-        assert functions.size() == 1 : "Can't select a single function: " + functionName + " in " + descriptor;
-        return TranslationUtils.getSuggestedName(functions.iterator().next());
-    }
 
     private static final FunctionIntrinsic PROPERTY_METADATA_IMPL = new FunctionIntrinsic() {
         @NotNull
@@ -220,7 +210,7 @@ public final class TopLevelFIF extends CompositeFIF {
                 }
             }
 
-            String mangledName = getStableMangledBuiltInName(KotlinBuiltIns.getInstance().getMutableMap(), operationName());
+            String mangledName = getStableMangledNameForDescriptor(KotlinBuiltIns.getInstance().getMutableMap(), operationName());
 
             return new JsInvocation(new JsNameRef(mangledName, thisOrReceiver), arguments);
         }
@@ -242,14 +232,20 @@ public final class TopLevelFIF extends CompositeFIF {
         ) {
             JetType keyType = callInfo.getResolvedCall().getTypeArguments().values().iterator().next();
             Name keyTypeName = JsDescriptorUtils.getNameIfStandardType(keyType);
-            String collectionClassName;
-            if (keyTypeName != null &&
-                (NamePredicate.PRIMITIVE_NUMBERS.apply(keyTypeName) ||
-                 keyTypeName.asString().equals("String") ||
-                 PrimitiveType.BOOLEAN.getTypeName().equals(keyTypeName))) {
-                collectionClassName = isSet ? "PrimitiveHashSet" : "PrimitiveHashMap";
+            String collectionClassName = null;
+            if (keyTypeName != null) {
+                if (NamePredicate.PRIMITIVE_NUMBERS.apply(keyTypeName)) {
+                    collectionClassName = isSet ? "PrimitiveNumberHashSet" : "PrimitiveNumberHashMap";
+                }
+                else if (PrimitiveType.BOOLEAN.getTypeName().equals(keyTypeName)) {
+                    collectionClassName = isSet ? "PrimitiveBooleanHashSet" : "PrimitiveBooleanHashMap";
+                }
+                else if (keyTypeName.asString().equals("String")) {
+                    collectionClassName = isSet ? "DefaultPrimitiveHashSet" : "DefaultPrimitiveHashMap";
+                }
             }
-            else {
+
+            if (collectionClassName == null ) {
                 collectionClassName = isSet ? "ComplexHashSet" : "ComplexHashMap";
             }
 

@@ -38,7 +38,7 @@ class C {
                 break;
             }
         }
-        <!DEBUG_INFO_AUTOCAST!>a<!>.compareTo("2")
+        <!DEBUG_INFO_SMARTCAST!>a<!>.compareTo("2")
     }
 
     fun containsBreakWithLabel(a: String?) {
@@ -52,7 +52,7 @@ class C {
         @loop while(a == null) {
             <!NOT_A_LOOP_LABEL!>break<!UNRESOLVED_REFERENCE!>@label<!><!>
         }
-        <!DEBUG_INFO_AUTOCAST!>a<!>.compareTo("2")
+        <!DEBUG_INFO_SMARTCAST!>a<!>.compareTo("2")
     }
 
     fun containsBreakToOuterLoop(a: String?, b: String?) {
@@ -60,7 +60,7 @@ class C {
             while(a == null) {
                 break@loop
             }
-            <!DEBUG_INFO_AUTOCAST!>a<!>.compareTo("2")
+            <!DEBUG_INFO_SMARTCAST!>a<!>.compareTo("2")
         }
     }
 

@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 public class JsThrow extends SourceInfoAwareJsNode implements JsStatement {
     private JsExpression expression;
 
@@ -30,5 +33,19 @@ public class JsThrow extends SourceInfoAwareJsNode implements JsStatement {
     @Override
     public void acceptChildren(JsVisitor visitor) {
         visitor.accept(expression);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            expression = v.accept(expression);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsThrow deepCopy() {
+        return new JsThrow(AstUtil.deepCopy(expression)).withMetadataFrom(this);
     }
 }

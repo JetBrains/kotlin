@@ -20,7 +20,7 @@ fun testExclExcl() {
 
 fun testDataFlowInfoAfterExclExcl(a: Int?) {
     doInt(a!!)
-    <!DEBUG_INFO_AUTOCAST!>a<!> + 1
+    <!DEBUG_INFO_SMARTCAST!>a<!> + 1
 }
 
 fun testUnnecessaryExclExcl(a: Int) {

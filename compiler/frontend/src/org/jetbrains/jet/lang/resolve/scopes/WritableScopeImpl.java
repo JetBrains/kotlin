@@ -210,7 +210,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             checkForPropertyRedeclaration(name, variableDescriptor);
             getPropertyGroups().put(name, variableDescriptor);
         }
-        if (variableDescriptor.getReceiverParameter() == null) {
+        if (variableDescriptor.getExtensionReceiverParameter() == null) {
             checkForRedeclaration(name, variableDescriptor);
             // TODO : Should this always happen?
             getVariableOrClassDescriptors().put(name, variableDescriptor);
@@ -347,9 +347,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     
     private void checkForPropertyRedeclaration(@NotNull Name name, VariableDescriptor variableDescriptor) {
         Set<VariableDescriptor> properties = getPropertyGroups().get(name);
-        ReceiverParameterDescriptor receiverParameter = variableDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = variableDescriptor.getExtensionReceiverParameter();
         for (VariableDescriptor oldProperty : properties) {
-            ReceiverParameterDescriptor receiverParameterForOldVariable = oldProperty.getReceiverParameter();
+            ReceiverParameterDescriptor receiverParameterForOldVariable = oldProperty.getExtensionReceiverParameter();
             if (((receiverParameter != null && receiverParameterForOldVariable != null) &&
                  (JetTypeChecker.DEFAULT.equalTypes(receiverParameter.getType(), receiverParameterForOldVariable.getType())))) {
                 redeclarationHandler.handleRedeclaration(oldProperty, variableDescriptor);

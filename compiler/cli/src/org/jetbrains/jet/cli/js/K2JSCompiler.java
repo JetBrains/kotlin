@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
@@ -48,7 +49,6 @@ import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.*;
-import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
 
 import java.io.File;
@@ -58,6 +58,7 @@ import java.util.List;
 import static org.jetbrains.jet.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.jet.cli.common.ExitCode.OK;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
+import static org.jetbrains.k2js.facade.K2JSTranslator.translateWithMainCallParameters;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
@@ -170,7 +171,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @Nullable File outputPostfix
     ) {
         try {
-            return K2JSTranslator.translateWithMainCallParameters(mainCall, sourceFiles, outputFile, outputPrefix, outputPostfix, config);
+            //noinspection unchecked
+            return translateWithMainCallParameters(mainCall, sourceFiles, outputFile, outputPrefix, outputPostfix, config, Consumer.EMPTY_CONSUMER);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
@@ -196,12 +198,14 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
         EcmaVersion ecmaVersion = EcmaVersion.defaultVersion();
         String moduleId = FileUtil.getNameWithoutExtension(new File(arguments.outputFile));
+        boolean inlineEnabled = !arguments.noInline;
+
         if (arguments.libraryFiles != null) {
-            return new LibrarySourcesConfig(project, moduleId, Arrays.asList(arguments.libraryFiles), ecmaVersion, arguments.sourceMap);
+            return new LibrarySourcesConfig(project, moduleId, Arrays.asList(arguments.libraryFiles), ecmaVersion, arguments.sourceMap, inlineEnabled);
         }
         else {
             // lets discover the JS library definitions on the classpath
-            return new ClassPathLibraryDefintionsConfig(project, moduleId, ecmaVersion, arguments.sourceMap);
+            return new ClassPathLibraryDefintionsConfig(project, moduleId, ecmaVersion, arguments.sourceMap, inlineEnabled);
         }
     }
 

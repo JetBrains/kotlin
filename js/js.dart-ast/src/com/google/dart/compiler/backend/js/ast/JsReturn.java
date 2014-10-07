@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A JavaScript return statement.
  */
@@ -35,5 +38,21 @@ public final class JsReturn extends SourceInfoAwareJsNode implements JsStatement
         if (expression != null) {
             visitor.accept(expression);
         }
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            if (expression != null) {
+                expression = v.accept(expression);
+            }
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsReturn deepCopy() {
+        return new JsReturn(AstUtil.deepCopy(expression)).withMetadataFrom(this);
     }
 }

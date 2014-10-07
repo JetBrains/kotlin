@@ -9,5 +9,5 @@ fun foo() {
 
     A().bar(<!TYPE_MISMATCH!>x<!>)
     if (x == null) return
-    A().bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
+    A().bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }

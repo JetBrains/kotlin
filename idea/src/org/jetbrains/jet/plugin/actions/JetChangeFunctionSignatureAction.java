@@ -28,12 +28,13 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -47,6 +48,11 @@ import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
  * Based on {@link JetAddImportAction}
  */
 public class JetChangeFunctionSignatureAction implements QuestionAction {
+    public static final DescriptorRenderer SIGNATURE_RENDERER = new DescriptorRendererBuilder()
+            .setWithDefinedIn(false)
+            .setModifiers()
+            .setShortNames(true)
+            .setUnitReturnType(false).build();
 
     private final Project project;
     private final Editor editor;
@@ -113,46 +119,32 @@ public class JetChangeFunctionSignatureAction implements QuestionAction {
             @NotNull
             @Override
             public String getTextFor(FunctionDescriptor aValue) {
-                return CodeInsightUtils.createFunctionSignatureStringFromDescriptor(
-                        aValue,
-                        /* shortTypeNames = */ true);
+                return SIGNATURE_RENDERER.render(aValue);
             }
         };
     }
 
-    private static void changeSignature(final JetNamedFunction element, Project project, FunctionDescriptor signature) {
-        final String signatureString = CodeInsightUtils.createFunctionSignatureStringFromDescriptor(
-                signature,
-                /* shortTypeNames = */ false);
+    private static void changeSignature(final JetNamedFunction function, Project project, FunctionDescriptor patternDescriptor) {
+        final String signatureString = DescriptorRenderer.SOURCE_CODE.render(patternDescriptor);
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-        final JetPsiFactory psiFactory = JetPsiFactory(element);
+        final JetPsiFactory psiFactory = JetPsiFactory(project);
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
             @Override
             public void run() {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override
                     public void run() {
-                        JetExpression bodyExpression = element.getBodyExpression();
-                        JetNamedFunction newElement;
+                        JetNamedFunction patternFunction = psiFactory.createFunction(signatureString);
 
-                        if (bodyExpression != null) {
-                            if (element.hasBlockBody()) {
-                                newElement = psiFactory.createFunction(signatureString + "{}");
-                            }
-                            else {
-                                newElement = psiFactory.createFunction(signatureString + "= \"dummy\"");
-                            }
-                            JetExpression newBodyExpression = newElement.getBodyExpression();
-                            assert newBodyExpression != null;
-                            newBodyExpression.replace(bodyExpression);
+                        JetTypeReference newTypeRef = function.setReturnTypeRef(patternFunction.getReturnTypeRef());
+                        if (newTypeRef != null) {
+                            ShortenReferences.INSTANCE$.process(newTypeRef);
                         }
-                        else {
-                            newElement = psiFactory.createFunction(signatureString);
-                        }
-                        newElement = (JetNamedFunction) element.replace(newElement);
-                        ShortenReferences.INSTANCE$.process(newElement);
+
+                        function.getValueParameterList().replace(patternFunction.getValueParameterList());
+                        ShortenReferences.INSTANCE$.process(function.getValueParameterList());
                     }
                 });
             }

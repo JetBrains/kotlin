@@ -4,6 +4,11 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
 /**
  * Represents a JavaScript block in the global scope.
  */
@@ -16,4 +21,13 @@ public class JsGlobalBlock extends JsBlock {
   public boolean isGlobalBlock() {
     return true;
   }
+
+    @NotNull
+    @Override
+    public JsGlobalBlock deepCopy() {
+        JsGlobalBlock globalBlockCopy = new JsGlobalBlock();
+        List<JsStatement> statementscopy = AstUtil.deepCopy(getStatements());
+        globalBlockCopy.getStatements().addAll(statementscopy);
+        return globalBlockCopy.withMetadataFrom(this);
+    }
 }

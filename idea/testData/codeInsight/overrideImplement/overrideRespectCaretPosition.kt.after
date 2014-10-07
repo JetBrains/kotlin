@@ -6,7 +6,7 @@ open class A() {
 class C : A() {
     val constant = 42
     // Some comment
-    override val bar: Int = 0
+    override val bar: Int = <selection><caret>0</selection>
     override fun equals(other: Any?): Boolean {
         return super<A>.equals(other)
     }
@@ -19,7 +19,6 @@ class C : A() {
     override fun toString(): String {
         return super<A>.toString()
     }
-
     /*
         Some another comment
     */

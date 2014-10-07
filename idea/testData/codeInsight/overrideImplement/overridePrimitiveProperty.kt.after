@@ -10,7 +10,7 @@ trait T {
 }
 
 class C : T {
-    override val a1: Byte = 0
+    override val a1: Byte = <selection><caret>0</selection>
     override val a2: Short = 0
     override val a3: Int = 0
     override val a4: Long = 0

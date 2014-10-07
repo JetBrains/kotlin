@@ -1,0 +1,23 @@
+<project name="maven-antrun-" default="main">
+
+<import file="${basedir}/jslib_files.xml"/>
+
+<target name="main">
+    <delete dir="${project.build.directory}/classes" failonerror="false" />
+    <delete dir="${project.build.directory}/generated-js-library" failonerror="false" />
+
+    <copy todir="${project.build.directory}/generated-js-library">
+        <resources refid="js.lib.files" />
+    </copy>
+
+    <copy tofile="${project.build.directory}/generated-js-library/kotlin-maps.js"
+          file="${basedir}/js/js.translator/testData/maps.js"/>
+    <copy tofile="${project.build.directory}/generated-js-library/kotlin-long.js"
+          file="${basedir}/js/js.translator/testData/long.js"/>
+    <copy tofile="${project.build.directory}/generated-js-library/kotlin-lib.js"
+          file="${basedir}/js/js.translator/testData/kotlin_lib.js"/>
+    <copy tofile="${project.build.directory}/generated-js-library/kotlin-lib-ecma5.js"
+          file="${basedir}/js/js.translator/testData/kotlin_lib_ecma5.js"/>
+
+</target>
+</project>

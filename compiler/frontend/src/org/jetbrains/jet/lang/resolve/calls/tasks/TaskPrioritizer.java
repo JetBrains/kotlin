@@ -25,8 +25,8 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
@@ -109,7 +109,7 @@ public class TaskPrioritizer {
     ) {
         ProgressIndicatorProvider.checkCanceled();
 
-        boolean resolveInvoke = c.context.call.getThisObject().exists();
+        boolean resolveInvoke = c.context.call.getDispatchReceiver().exists();
         if (resolveInvoke) {
             addCandidatesForInvoke(receiver, c);
             return;
@@ -129,7 +129,7 @@ public class TaskPrioritizer {
             boolean isExplicit
     ) {
 
-        List<JetType> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(explicitReceiver, c.context);
+        List<JetType> variantsForExplicitReceiver = SmartCastUtils.getSmartCastVariants(explicitReceiver, c.context);
 
         //members
         for (CallableDescriptorCollector<D> callableDescriptorCollector : c.callableDescriptorCollectors) {
@@ -138,7 +138,7 @@ public class TaskPrioritizer {
                 Collection<D> membersForThisVariant =
                         callableDescriptorCollector.getMembersByName(type, c.name, c.context.trace);
                 convertWithReceivers(membersForThisVariant, explicitReceiver,
-                                     NO_RECEIVER, members, createKind(THIS_OBJECT, isExplicit), c.context.call);
+                                     NO_RECEIVER, members, createKind(DISPATCH_RECEIVER, isExplicit), c.context.call);
             }
             c.result.addCandidates(members);
         }
@@ -147,12 +147,12 @@ public class TaskPrioritizer {
             //member extensions
             for (ReceiverValue implicitReceiver : implicitReceivers) {
                 addMemberExtensionCandidates(implicitReceiver, explicitReceiver,
-                                             callableDescriptorCollector, c, createKind(RECEIVER_ARGUMENT, isExplicit));
+                                             callableDescriptorCollector, c, createKind(EXTENSION_RECEIVER, isExplicit));
             }
             //extensions
             Collection<ResolutionCandidate<D>> extensions = convertWithImpliedThis(
                     c.scope, explicitReceiver, callableDescriptorCollector.getNonMembersByName(c.scope, c.name, c.context.trace),
-                    createKind(RECEIVER_ARGUMENT, isExplicit), c.context.call);
+                    createKind(EXTENSION_RECEIVER, isExplicit), c.context.call);
             c.result.addCandidates(extensions);
         }
     }
@@ -163,15 +163,15 @@ public class TaskPrioritizer {
     }
 
     private static <D extends CallableDescriptor, F extends D> void addMemberExtensionCandidates(
-            @NotNull ReceiverValue thisObject,
+            @NotNull ReceiverValue dispatchReceiver,
             @NotNull ReceiverValue receiverParameter,
             @NotNull CallableDescriptorCollector<D> callableDescriptorCollector, TaskPrioritizerContext<D, F> c,
             @NotNull ExplicitReceiverKind receiverKind
     ) {
         Collection<D> memberExtensions = callableDescriptorCollector.getNonMembersByName(
-                thisObject.getType().getMemberScope(), c.name, c.context.trace);
+                dispatchReceiver.getType().getMemberScope(), c.name, c.context.trace);
         c.result.addCandidates(convertWithReceivers(
-                memberExtensions, thisObject, receiverParameter, receiverKind, c.context.call));
+                memberExtensions, dispatchReceiver, receiverParameter, receiverKind, c.context.call));
     }
 
     private static <D extends CallableDescriptor, F extends D> void addCandidatesForNoReceiver(
@@ -214,7 +214,7 @@ public class TaskPrioritizer {
 
         // For 'a.foo()' where foo has function type,
         // a is explicitReceiver, foo is variableReceiver.
-        ReceiverValue variableReceiver = c.context.call.getThisObject();
+        ReceiverValue variableReceiver = c.context.call.getDispatchReceiver();
         assert variableReceiver.exists() : "'Invoke' call hasn't got variable receiver";
 
         // For invocation a.foo() explicit receiver 'a'
@@ -239,45 +239,45 @@ public class TaskPrioritizer {
         }
         // with (a) { foo() }
         for (ReceiverValue implicitReceiver : implicitReceivers) {
-            addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(variableReceiver, implicitReceiver, c, THIS_OBJECT);
+            addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(variableReceiver, implicitReceiver, c, DISPATCH_RECEIVER);
         }
     }
 
     private static <D extends CallableDescriptor, F extends D> void addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(
-            @NotNull ReceiverValue thisObject,
+            @NotNull ReceiverValue dispatchReceiver,
             @NotNull ReceiverValue receiverParameter,
             @NotNull TaskPrioritizerContext<D, F> c,
             @NotNull ExplicitReceiverKind receiverKind
     ) {
         for (CallableDescriptorCollector<D> callableDescriptorCollector : c.callableDescriptorCollectors) {
-            addMemberExtensionCandidates(thisObject, receiverParameter, callableDescriptorCollector, c, receiverKind);
+            addMemberExtensionCandidates(dispatchReceiver, receiverParameter, callableDescriptorCollector, c, receiverKind);
         }
     }
 
     private static <D extends CallableDescriptor> Collection<ResolutionCandidate<D>> convertWithReceivers(
             @NotNull Collection<D> descriptors,
-            @NotNull ReceiverValue thisObject,
-            @NotNull ReceiverValue receiverParameter,
+            @NotNull ReceiverValue dispatchReceiver,
+            @NotNull ReceiverValue extensionReceiver,
             @NotNull ExplicitReceiverKind explicitReceiverKind,
             @NotNull Call call
     ) {
         Collection<ResolutionCandidate<D>> result = Lists.newArrayList();
-        convertWithReceivers(descriptors, thisObject, receiverParameter, result, explicitReceiverKind, call);
+        convertWithReceivers(descriptors, dispatchReceiver, extensionReceiver, result, explicitReceiverKind, call);
         return result;
     }
 
     private static <D extends CallableDescriptor> void convertWithReceivers(
             @NotNull Collection<D> descriptors,
-            @NotNull ReceiverValue thisObject,
-            @NotNull ReceiverValue receiverParameter,
+            @NotNull ReceiverValue dispatchReceiver,
+            @NotNull ReceiverValue extensionReceiver,
             @NotNull Collection<ResolutionCandidate<D>> result,
             @NotNull ExplicitReceiverKind explicitReceiverKind,
             @NotNull Call call
     ) {
         for (D descriptor : descriptors) {
             ResolutionCandidate<D> candidate = ResolutionCandidate.create(call, descriptor);
-            candidate.setThisObject(thisObject);
-            candidate.setReceiverArgument(receiverParameter);
+            candidate.setDispatchReceiver(dispatchReceiver);
+            candidate.setExtensionReceiver(extensionReceiver);
             candidate.setExplicitReceiverKind(explicitReceiverKind);
             result.add(candidate);
         }
@@ -301,7 +301,7 @@ public class TaskPrioritizer {
         Collection<ResolutionCandidate<D>> result = Lists.newArrayList();
         for (D descriptor : descriptors) {
             ResolutionCandidate<D> candidate = ResolutionCandidate.create(call, descriptor);
-            candidate.setReceiverArgument(receiverParameter);
+            candidate.setExtensionReceiver(receiverParameter);
             candidate.setExplicitReceiverKind(receiverKind);
             if (setImpliedThis(scope, candidate)) {
                 result.add(candidate);
@@ -314,13 +314,13 @@ public class TaskPrioritizer {
             @NotNull JetScope scope,
             @NotNull ResolutionCandidate<D> candidate
     ) {
-        ReceiverParameterDescriptor expectedThisObject = candidate.getDescriptor().getExpectedThisObject();
-        if (expectedThisObject == null) return true;
+        ReceiverParameterDescriptor dispatchReceiver = candidate.getDescriptor().getDispatchReceiverParameter();
+        if (dispatchReceiver == null) return true;
         List<ReceiverParameterDescriptor> receivers = scope.getImplicitReceiversHierarchy();
         for (ReceiverParameterDescriptor receiver : receivers) {
-            if (JetTypeChecker.DEFAULT.isSubtypeOf(receiver.getType(), expectedThisObject.getType())) {
-                // TODO : Autocasts & nullability
-                candidate.setThisObject(expectedThisObject.getValue());
+            if (JetTypeChecker.DEFAULT.isSubtypeOf(receiver.getType(), dispatchReceiver.getType())) {
+                // TODO : Smartcasts & nullability
+                candidate.setDispatchReceiver(dispatchReceiver.getValue());
                 return true;
             }
         }

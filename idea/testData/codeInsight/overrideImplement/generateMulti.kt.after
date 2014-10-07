@@ -7,9 +7,8 @@ trait Some<T> {
 }
 
 class SomeOther<S> : Some<S> {
-
     override fun someFoo() {
-        throw UnsupportedOperationException()
+        <selection><caret>throw UnsupportedOperationException()</selection>
     }
     override fun someGenericFoo(): S {
         throw UnsupportedOperationException()

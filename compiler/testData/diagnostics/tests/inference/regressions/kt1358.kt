@@ -1,4 +1,4 @@
-//KT-1358 Overload resolution ambiguity with autocast and generic function
+//KT-1358 Overload resolution ambiguity with smartcast and generic function
 package d
 
 fun bar(a: Any?) {

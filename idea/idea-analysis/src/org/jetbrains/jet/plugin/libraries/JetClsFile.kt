@@ -33,7 +33,7 @@ public class JetClsFile(val provider: JetClassFileViewProvider) : ClsFileImpl(pr
     override fun getDecompiledPsiFile() = decompiledFile
 
     public fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor): JetDeclaration? {
-        val key = descriptorToKey(descriptor)
+        val key = descriptorToKey(descriptor.getOriginal())
         val range = provider.decompiledText.renderedDescriptorsToRange[key]
         if (range == null) {
             return null

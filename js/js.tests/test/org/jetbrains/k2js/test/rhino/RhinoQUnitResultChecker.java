@@ -16,36 +16,25 @@
 
 package org.jetbrains.k2js.test.rhino;
 
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.k2js.test.config.TestConfig;
-import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
 
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.flushSystemOut;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
  * Runs the QUnit test cases in headless mode (without requiring a browser) and asserts they all PASS
  */
 public class RhinoQUnitResultChecker implements RhinoResultChecker {
-
-    private final String moduleId;
-
-    public RhinoQUnitResultChecker(@Nullable String moduleId) {
-        this.moduleId = moduleId;
-    }
-
     @Override
     public void runChecks(Context context, Scriptable scope) throws Exception {
         Object result = evaluateFunction(context, scope);
         flushSystemOut(context, scope);
-        assertResultValid(result, context);
+        assertResultValid(result);
     }
 
-    protected void assertResultValid(Object result, Context context) {
+    protected void assertResultValid(Object result) {
         if (result instanceof NativeArray) {
             NativeArray array = (NativeArray) result;
             StringBuffer buffer = new StringBuffer();

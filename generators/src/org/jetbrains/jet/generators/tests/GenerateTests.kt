@@ -17,6 +17,7 @@
 package org.jetbrains.jet.generators.tests
 
 import org.jetbrains.jet.generators.tests.generator.TestGenerator
+import org.jetbrains.jet.generators.tests.generator.TestGenerator.TargetBackend
 import java.util.ArrayList
 import org.jetbrains.jet.generators.tests.generator.SimpleTestClassModel
 import java.io.File
@@ -88,6 +89,7 @@ import org.jetbrains.jet.completion.AbstractCompiledKotlinInJavaCompletionTest
 import org.jetbrains.jet.completion.AbstractKotlinSourceInJavaCompletionTest
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithStdLib
 import org.jetbrains.jet.plugin.codeInsight.AbstractInsertImportOnPasteTest
+import org.jetbrains.jet.plugin.codeInsight.AbstractLineMarkersTest
 import org.jetbrains.jet.resolve.AbstractReferenceToJavaWithWrongFileStructureTest
 import org.jetbrains.jet.plugin.navigation.AbstractKotlinGotoTest
 import org.jetbrains.jet.plugin.AbstractExpressionSelectionTest
@@ -123,6 +125,8 @@ import org.jetbrains.jet.completion.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.jet.completion.weighers.AbstractSmartCompletionWeigherTest
 import org.jetbrains.jet.generators.tests.reservedWords.generateTestDataForReservedWords
 import org.jetbrains.k2js.test.semantics.AbstractReservedWordTest
+import org.jetbrains.jet.resolve.AbstractReferenceResolveInJavaTest
+import org.jetbrains.k2js.test.semantics.AbstractBridgeTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -462,6 +466,10 @@ fun main(args: Array<String>) {
             model("resolve/references", pattern = """^([^\.]+)\.kt$""")
         }
 
+        testClass(javaClass<AbstractReferenceResolveInJavaTest>()) {
+            model("resolve/referenceInJava", extension = "java")
+        }
+
         testClass(javaClass<AbstractReferenceResolveWithLibTest>()) {
             model("resolve/referenceWithLib", recursive = false)
         }
@@ -532,6 +540,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractInsertImportOnPasteTest>()) {
             model("copyPaste/imports", pattern = """^([^\.]+)\.kt$""", testMethod = "doTestCopy", testClassName = "Copy", recursive = false)
             model("copyPaste/imports", pattern = """^([^\.]+)\.kt$""", testMethod = "doTestCut", testClassName = "Cut", recursive = false)
+        }
+
+        testClass(javaClass<AbstractLineMarkersTest>()) {
+            model("codeInsight/lineMarker")
         }
 
         testClass(javaClass<AbstractShortenRefsTest>()) {
@@ -633,6 +645,12 @@ fun main(args: Array<String>) {
             model("reservedWords/cases")
         }
     }
+
+    testGroup("js/js.tests/test", "compiler/testData") {
+        testClass(javaClass<AbstractBridgeTest>()) {
+            model("codegen/box/bridges", targetBackend = TargetBackend.ONLY_JS)
+        }
+    }
 }
 
 private class TestGroup(val testsRoot: String, val testDataRoot: String) {
@@ -664,15 +682,16 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                 pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
                 testMethod: String = "doTest",
                 singleClass: Boolean = false,
-                testClassName: String? = null
+                testClassName: String? = null,
+                targetBackend: TargetBackend = TargetBackend.ANY
         ) {
             val rootFile = File(testDataRoot + "/" + relativeRootPath)
             val compiledPattern = Pattern.compile(pattern)
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
             testModels.add(if (singleClass)
-                               SingleClassTestModel(rootFile, compiledPattern, testMethod, className)
+                               SingleClassTestModel(rootFile, compiledPattern, testMethod, className, targetBackend)
                            else
-                               SimpleTestClassModel(rootFile, recursive, excludeParentDirs, compiledPattern, testMethod, className))
+                               SimpleTestClassModel(rootFile, recursive, excludeParentDirs, compiledPattern, testMethod, className, targetBackend))
         }
     }
 

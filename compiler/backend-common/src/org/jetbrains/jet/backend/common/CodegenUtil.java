@@ -18,6 +18,7 @@ package org.jetbrains.jet.backend.common;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.bridges.BridgesPackage;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -137,6 +138,40 @@ public class CodegenUtil {
                             assert !result.containsKey(callableMemberDescriptor) :
                                     "overridden is already set for " + callableMemberDescriptor;
                             result.put(callableMemberDescriptor, overriddenDescriptor);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    @NotNull
+    public static Map<FunctionDescriptor, FunctionDescriptor> getTraitMethods(ClassDescriptor descriptor) {
+        Map<FunctionDescriptor, FunctionDescriptor> result = new LinkedHashMap<FunctionDescriptor, FunctionDescriptor>();
+        for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            if (!(declaration instanceof CallableMemberDescriptor)) continue;
+
+            CallableMemberDescriptor inheritedMember = (CallableMemberDescriptor) declaration;
+            CallableMemberDescriptor traitMember = BridgesPackage.findTraitImplementation(inheritedMember);
+            if (traitMember == null) continue;
+
+            assert traitMember.getModality() != Modality.ABSTRACT : "Cannot delegate to abstract trait method: " + inheritedMember;
+
+            // inheritedMember can be abstract here. In order for FunctionCodegen to generate the method body, we're creating a copy here
+            // with traitMember's modality
+            CallableMemberDescriptor copy =
+                    inheritedMember.copy(inheritedMember.getContainingDeclaration(), traitMember.getModality(), Visibilities.PUBLIC,
+                                         CallableMemberDescriptor.Kind.DECLARATION, true);
+
+            if (traitMember instanceof SimpleFunctionDescriptor) {
+                result.put((FunctionDescriptor) traitMember, (FunctionDescriptor) copy);
+            }
+            else if (traitMember instanceof PropertyDescriptor) {
+                for (PropertyAccessorDescriptor traitAccessor : ((PropertyDescriptor) traitMember).getAccessors()) {
+                    for (PropertyAccessorDescriptor inheritedAccessor : ((PropertyDescriptor) copy).getAccessors()) {
+                        if (inheritedAccessor.getClass() == traitAccessor.getClass()) { // same accessor kind
+                            result.put(traitAccessor, inheritedAccessor);
                         }
                     }
                 }

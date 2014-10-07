@@ -1,8 +1,7 @@
 import foo.A
 
 class C : A() {
-
     override fun getAnswer(array: Array<out String>?, number: Int, value: Any?): Int {
-        return super<A>.getAnswer(array, number, value)
+        <selection><caret>return super<A>.getAnswer(array, number, value)</selection>
     }
 }

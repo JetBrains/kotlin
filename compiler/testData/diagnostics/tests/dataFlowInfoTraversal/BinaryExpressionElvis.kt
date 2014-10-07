@@ -1,8 +1,8 @@
 fun foo(x: Int?): Int = x!!
 
 fun elvis(x: Number?): Int {
-    val result = (x as Int?) ?: foo(<!DEBUG_INFO_AUTOCAST!>x<!>)
-    <!DEBUG_INFO_AUTOCAST!>x<!> : Int?
+    val result = (x as Int?) ?: foo(<!DEBUG_INFO_SMARTCAST!>x<!>)
+    <!DEBUG_INFO_SMARTCAST!>x<!> : Int?
     return result
 }
 

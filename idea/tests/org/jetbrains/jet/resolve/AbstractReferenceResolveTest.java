@@ -85,7 +85,7 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
         }
     }
 
-    protected void doTest(String path) {
+    protected void doTest(@NotNull String path) {
         assert path.endsWith(".kt") : path;
         UtilPackage.configureWithExtraFile(myFixture, path, ".Data");
         performChecks();
@@ -110,7 +110,7 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
     }
 
     protected void doMultiResolveTest() {
-        List<String> expectedReferences = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.getFile().getText(), "REF:");
+        List<String> expectedReferences = ReferenceUtils.getExpectedReferences(myFixture.getFile().getText());
 
         PsiReference psiReference = myFixture.getFile().findReferenceAt(myFixture.getEditor().getCaretModel().getOffset());
 
@@ -134,7 +134,7 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
     @NotNull
     public static ExpectedResolveData readResolveData(String fileText) {
         boolean shouldBeUnresolved = InTextDirectivesUtils.isDirectiveDefined(fileText, REF_EMPTY);
-        List<String> refs = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "REF:");
+        List<String> refs = ReferenceUtils.getExpectedReferences(fileText);
 
         String referenceToString;
         if (shouldBeUnresolved) {

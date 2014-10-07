@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.jet.lang.psi.typeRefHelpers.TypeRefHelpersPackage;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
@@ -40,9 +41,15 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
         return visitor.visitParameter(this, data);
     }
 
+    //TODO: rename it to getTypeRef for consistency
     @Nullable
     public JetTypeReference getTypeReference() {
         return getStubOrPsiChild(JetStubElementTypes.TYPE_REFERENCE);
+    }
+
+    @Nullable
+    public JetTypeReference setTypeRef(@Nullable JetTypeReference typeRef) {
+        return TypeRefHelpersPackage.setTypeRef(this, getNameIdentifier(), typeRef);
     }
 
     public boolean hasDefaultValue() {

@@ -4,24 +4,28 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata;
 import com.google.dart.compiler.common.Symbol;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An abstract base class for named JavaScript objects.
  */
-public class JsName implements Symbol {
+public class JsName extends HasMetadata implements Symbol {
   private final JsScope enclosing;
+
+  @NotNull
   private final String ident;
 
   /**
    * @param ident the unmangled ident to use for this name
    */
-  JsName(JsScope enclosing, String ident) {
+  JsName(JsScope enclosing, @NotNull String ident) {
     this.enclosing = enclosing;
     this.ident = ident;
   }
 
+  @NotNull
   public String getIdent() {
     return ident;
   }

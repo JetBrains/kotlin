@@ -47,6 +47,9 @@ public final class ArrayFIF extends CompositeFIF {
     private static final NamePredicate BOOLEAN_ARRAY;
 
     @NotNull
+    private static final NamePredicate LONG_ARRAY;
+
+    @NotNull
     private static final NamePredicate ARRAY;
 
     @NotNull
@@ -60,7 +63,7 @@ public final class ArrayFIF extends CompositeFIF {
         List<Name> arrayFactoryMethodNames = Lists.newArrayList(Name.identifier("array"));
         for (PrimitiveType type : PrimitiveType.values()) {
             Name arrayTypeName = type.getArrayTypeName();
-            if (type != PrimitiveType.CHAR && type != PrimitiveType.BOOLEAN) {
+            if (type != PrimitiveType.CHAR && type != PrimitiveType.BOOLEAN && type != PrimitiveType.LONG) {
                 arrayTypeNames.add(arrayTypeName);
             }
             arrayFactoryMethodNames.add(Name.identifier(decapitalize(arrayTypeName.asString())));
@@ -69,14 +72,17 @@ public final class ArrayFIF extends CompositeFIF {
         Name arrayName = Name.identifier("Array");
         Name booleanArrayName = PrimitiveType.BOOLEAN.getArrayTypeName();
         Name charArrayName = PrimitiveType.CHAR.getArrayTypeName();
+        Name longArrayName = PrimitiveType.LONG.getArrayTypeName();
 
         NUMBER_ARRAY = new NamePredicate(arrayTypeNames);
         CHAR_ARRAY = new NamePredicate(charArrayName);
         BOOLEAN_ARRAY = new NamePredicate(booleanArrayName);
+        LONG_ARRAY = new NamePredicate(longArrayName);
         ARRAY = new NamePredicate(arrayName);
 
         arrayTypeNames.add(charArrayName);
         arrayTypeNames.add(booleanArrayName);
+        arrayTypeNames.add(longArrayName);
         arrayTypeNames.add(arrayName);
         ARRAYS = new NamePredicate(arrayTypeNames);
         ARRAY_FACTORY_METHODS = pattern(Namer.KOTLIN_LOWER_NAME, new NamePredicate(arrayFactoryMethodNames));
@@ -138,6 +144,7 @@ public final class ArrayFIF extends CompositeFIF {
         add(pattern(NUMBER_ARRAY, "<init>"),new KotlinFunctionIntrinsic("numberArrayOfSize"));
         add(pattern(CHAR_ARRAY, "<init>"), new KotlinFunctionIntrinsic("charArrayOfSize"));
         add(pattern(BOOLEAN_ARRAY, "<init>"), new KotlinFunctionIntrinsic("booleanArrayOfSize"));
+        add(pattern(LONG_ARRAY, "<init>"), new KotlinFunctionIntrinsic("longArrayOfSize"));
         add(ARRAY_FACTORY_METHODS, ARRAY_INTRINSIC);
     }
 }

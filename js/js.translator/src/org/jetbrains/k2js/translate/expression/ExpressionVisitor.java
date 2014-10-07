@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -30,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -48,6 +50,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.k2js.translate.context.Namer.getCapturedVarAccessor;
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
+import static org.jetbrains.k2js.translate.reference.CallExpressionTranslator.shouldBeInlined;
 import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
@@ -76,6 +79,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         Object value = getCompileTimeValue(context.bindingContext(), expression, compileTimeValue);
         if (value instanceof Integer || value instanceof Short || value instanceof Byte) {
             return context.program().getNumberLiteral(((Number) value).intValue());
+        }
+        else if (value instanceof Long) {
+            return JsAstUtils.newLong((Long) value, context);
         }
         else if (value instanceof Number) {
             return context.program().getNumberLiteral(((Number) value).doubleValue());
@@ -182,7 +188,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitCallExpression(@NotNull JetCallExpression expression,
             @NotNull TranslationContext context) {
-        if (InlinedCallExpressionTranslator.shouldBeInlined(expression, context) &&
+        if (shouldBeInlined(expression, context) &&
             BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext())) {
             TemporaryVariable temporaryVariable = context.declareTemporary(null);
             JsExpression callResult = CallExpressionTranslator.translate(expression, null, context).source(expression);
@@ -285,7 +291,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     ) {
         JetExpression baseExpression = expression.getBaseExpression();
         assert baseExpression != null;
-        JsName name = context.scope().declareName(getReferencedName(expression.getTargetLabel()));
+        JsScope scope = context.scope();
+        assert scope instanceof JsFunctionScope: "Labeled statement is unexpected outside of function scope";
+        JsName name = ((JsFunctionScope) scope).declareNameUnsafe(getReferencedName(expression.getTargetLabel()));
         JsStatement baseStatement = Translation.translateAsStatement(baseExpression, context);
         return new JsLabel(name, baseStatement).source(expression);
     }
@@ -353,10 +361,10 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     private static String getReferencedName(JetSimpleNameExpression expression) {
         return expression.getReferencedName()
                 .replaceAll("^@", "")
-                .replaceAll("(?:^`(.*)`$)", "$1");
+                .replaceAll("(?:^`(.*)`$)", "$1") + "$";
     }
 
-    private static String getTargetLabel(JetExpressionWithLabel expression, TranslationContext context) {
+    private static JsNameRef getTargetLabel(JetExpressionWithLabel expression, TranslationContext context) {
         JetSimpleNameExpression labelElement = expression.getTargetLabel();
         if (labelElement == null) {
             return null;
@@ -364,7 +372,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         else {
             JsName name = context.scope().findName(getReferencedName(labelElement));
             assert name != null;
-            return name.getIdent();
+            return name.makeRef();
         }
     }
 
@@ -395,6 +403,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
         FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
         JsName name = context.getNameForDescriptor(descriptor);
+        if (InlineUtil.getInlineType(descriptor).isInline()) {
+            MetadataPackage.setStaticRef(name, alias);
+        }
 
         return new JsVars(new JsVars.JsVar(name, alias)).source(expression);
     }
@@ -406,7 +417,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                 getDescriptorForReferenceExpression(context.bindingContext(), expression.getInstanceReference());
         assert thisExpression != null : "This expression must reference a descriptor: " + expression.getText();
 
-        return context.getThisObject(getReceiverParameterForDeclaration(thisExpression)).source(expression);
+        return context.getDispatchReceiver(getReceiverParameterForDeclaration(thisExpression)).source(expression);
     }
 
     @Override

@@ -230,7 +230,7 @@ public class ClosureCodegen extends ParentCodegenAware {
         InstructionAdapter iv = new InstructionAdapter(mv);
         iv.load(0, asmType);
 
-        ReceiverParameterDescriptor receiver = funDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiver = funDescriptor.getExtensionReceiverParameter();
         int count = 1;
         if (receiver != null) {
             StackValue.local(count, bridge.getArgumentTypes()[count - 1]).put(typeMapper.mapType(receiver.getType()), iv);
@@ -328,7 +328,7 @@ public class ClosureCodegen extends ParentCodegenAware {
     @NotNull
     public static FunctionDescriptor getErasedInvokeFunction(@NotNull FunctionDescriptor funDescriptor) {
         int arity = funDescriptor.getValueParameters().size();
-        ClassDescriptor funClass = funDescriptor.getReceiverParameter() == null
+        ClassDescriptor funClass = funDescriptor.getExtensionReceiverParameter() == null
                                    ? KotlinBuiltIns.getInstance().getFunction(arity)
                                    : KotlinBuiltIns.getInstance().getExtensionFunction(arity);
         return funClass.getDefaultType().getMemberScope().getFunctions(Name.identifier("invoke")).iterator().next();

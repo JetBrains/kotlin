@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 public final class JsConditional extends JsExpressionImpl {
     private JsExpression testExpression;
     private JsExpression elseExpression;
@@ -52,5 +55,25 @@ public final class JsConditional extends JsExpressionImpl {
         visitor.accept(testExpression);
         visitor.accept(thenExpression);
         visitor.accept(elseExpression);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            testExpression = v.accept(testExpression);
+            thenExpression = v.accept(thenExpression);
+            elseExpression = v.accept(elseExpression);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsConditional deepCopy() {
+        JsExpression testCopy = AstUtil.deepCopy(testExpression);
+        JsExpression thenCopy = AstUtil.deepCopy(thenExpression);
+        JsExpression elseCopy = AstUtil.deepCopy(elseExpression);
+
+        return new JsConditional(testCopy, thenCopy, elseCopy).withMetadataFrom(this);
     }
 }

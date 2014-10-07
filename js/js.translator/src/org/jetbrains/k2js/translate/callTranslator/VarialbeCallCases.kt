@@ -28,12 +28,12 @@ import org.jetbrains.k2js.translate.context.Namer.getCapturedVarAccessor
 
 
 object NativeVariableAccessCase : VariableAccessCase {
-    override fun VariableAccessInfo.receiverArgument(): JsExpression {
-        return constructAccessExpression(JsNameRef(variableName, receiverObject!!))
+    override fun VariableAccessInfo.extensionReceiver(): JsExpression {
+        return constructAccessExpression(JsNameRef(variableName, extensionReceiver!!))
     }
 
-    override fun VariableAccessInfo.thisObject(): JsExpression {
-        return constructAccessExpression(JsNameRef(variableName, thisObject!!))
+    override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
+        return constructAccessExpression(JsNameRef(variableName, dispatchReceiver!!))
     }
 
     override fun VariableAccessInfo.noReceivers(): JsExpression {
@@ -57,27 +57,27 @@ object DefaultVariableAccessCase : VariableAccessCase {
         return constructAccessExpression(ref)
     }
 
-    override fun VariableAccessInfo.thisObject(): JsExpression {
-        return constructAccessExpression(JsNameRef(variableName, thisObject!!))
+    override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
+        return constructAccessExpression(JsNameRef(variableName, dispatchReceiver!!))
     }
 
-    override fun VariableAccessInfo.receiverArgument(): JsExpression {
+    override fun VariableAccessInfo.extensionReceiver(): JsExpression {
         val functionRef = context.aliasOrValue(callableDescriptor) {
             JsNameRef(getAccessFunctionName(), context.getQualifierForDescriptor(variableDescriptor))
         }
         return if (isGetAccess()) {
-            JsInvocation(functionRef, receiverObject!!)
+            JsInvocation(functionRef, extensionReceiver!!)
         } else {
-            JsInvocation(functionRef, receiverObject!!, value!!)
+            JsInvocation(functionRef, extensionReceiver!!, value!!)
         }
     }
 
     override fun VariableAccessInfo.bothReceivers(): JsExpression {
-        val funRef = JsNameRef(getAccessFunctionName(), thisObject!!)
+        val funRef = JsNameRef(getAccessFunctionName(), dispatchReceiver!!)
         return if (isGetAccess()) {
-            JsInvocation(funRef, receiverObject!!)
+            JsInvocation(funRef, extensionReceiver!!)
         } else {
-            JsInvocation(funRef, receiverObject!!, value!!)
+            JsInvocation(funRef, extensionReceiver!!, value!!)
         }
     }
 }
@@ -108,12 +108,12 @@ object DelegatePropertyAccessIntrinsic : DelegateIntrinsic<VariableAccessInfo> {
 }
 
 object SuperPropertyAccessCase : VariableAccessCase {
-    override fun VariableAccessInfo.thisObject(): JsExpression {
+    override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
         val variableName = context.program().getStringLiteral(this.variableName.getIdent())
         return if (isGetAccess())
-            JsInvocation(context.namer().getCallGetProperty(), JsLiteral.THIS, thisObject!!, variableName)
+            JsInvocation(context.namer().getCallGetProperty(), JsLiteral.THIS, dispatchReceiver!!, variableName)
         else
-            JsInvocation(context.namer().getCallSetProperty(), JsLiteral.THIS, thisObject!!, variableName, value!!)
+            JsInvocation(context.namer().getCallSetProperty(), JsLiteral.THIS, dispatchReceiver!!, variableName, value!!)
     }
 }
 

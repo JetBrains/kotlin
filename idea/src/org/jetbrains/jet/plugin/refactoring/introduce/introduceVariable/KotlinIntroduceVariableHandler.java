@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -60,7 +60,6 @@ import org.jetbrains.jet.plugin.refactoring.introduce.KotlinIntroduceHandlerBase
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange;
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiUnifier;
 import org.jetbrains.jet.plugin.util.psi.patternMatching.PatternMatchingPackage;
-import org.jetbrains.jet.plugin.util.psi.patternMatching.UnifierParameter;
 import org.jetbrains.jet.plugin.util.psiModificationUtil.PsiModificationUtilPackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 

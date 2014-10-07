@@ -1,8 +1,7 @@
 import foo.Intf
 
 class Impl(): Intf {
-
     override fun getFooBar(): String? {
-        throw UnsupportedOperationException()
+        <selection><caret>throw UnsupportedOperationException()</selection>
     }
 }

@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 public final class JsPostfixOperation extends JsUnaryOperation {
   public JsPostfixOperation(JsUnaryOperator op) {
     this(op, null);
@@ -17,4 +20,18 @@ public final class JsPostfixOperation extends JsUnaryOperation {
   public void accept(JsVisitor v) {
     v.visitPostfixOperation(this);
   }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            super.traverse(v, ctx);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsPostfixOperation deepCopy() {
+        return new JsPostfixOperation(getOperator(), AstUtil.deepCopy(getArg())).withMetadataFrom(this);
+    }
 }

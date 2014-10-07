@@ -33,10 +33,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.TemporaryTraceAndCache;
@@ -47,6 +43,10 @@ import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowValueFactory;
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.Nullability;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
@@ -481,21 +481,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         if (descriptor == null) return null;
 
-        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
-        ReceiverParameterDescriptor expectedThisObject = descriptor.getExpectedThisObject();
-        if (receiverParameter != null && expectedThisObject != null && descriptor instanceof CallableMemberDescriptor) {
+        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
+        ReceiverParameterDescriptor dispatchReceiver = descriptor.getDispatchReceiverParameter();
+        if (extensionReceiver != null && dispatchReceiver != null && descriptor instanceof CallableMemberDescriptor) {
             context.trace.report(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED.on(reference, (CallableMemberDescriptor) descriptor));
             return null;
         }
 
         JetType receiverType = null;
-        if (receiverParameter != null) {
-            receiverType = receiverParameter.getType();
+        if (extensionReceiver != null) {
+            receiverType = extensionReceiver.getType();
         }
-        else if (expectedThisObject != null) {
-            receiverType = expectedThisObject.getType();
+        else if (dispatchReceiver != null) {
+            receiverType = dispatchReceiver.getType();
         }
-        boolean isExtension = receiverParameter != null;
+        boolean isExtension = extensionReceiver != null;
 
         if (descriptor instanceof FunctionDescriptor) {
             return createFunctionReferenceType(expression, context, (FunctionDescriptor) descriptor, receiverType, isExtension);
@@ -972,9 +972,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 if (key == right && slice == EXPRESSION_TYPE) return false;
 
                 // a hack due to KT-678
-                // without this line an autocast is reported on the receiver (if it was previously checked for not-null)
+                // without this line an smartcast is reported on the receiver (if it was previously checked for not-null)
                 // with not-null check the resolution result changes from 'fun Any?.equals' to 'equals' member
-                if (key == left && slice == AUTOCAST) return false;
+                if (key == left && slice == SMARTCAST) return false;
 
                 return true;
             }

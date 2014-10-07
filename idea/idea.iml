@@ -42,6 +42,7 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="eval4j" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />
+    <orderEntry type="module" module-name="kotlin-android-plugin" />
   </component>
 </module>
 

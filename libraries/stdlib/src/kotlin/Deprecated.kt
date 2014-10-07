@@ -1,7 +1,6 @@
 package kotlin
 
 import java.util.*
-import java.util.concurrent.Callable
 
 deprecated("Use firstOrNull function instead.")
 public inline fun <T> Array<out T>.find(predicate: (T) -> Boolean): T? = firstOrNull(predicate)
@@ -21,27 +20,8 @@ public fun <K, V> hashMap(vararg values: Pair<K, V>): HashMap<K, V> = hashMapOf(
 deprecated("Use listOf(...) or linkedListOf(...) instead")
 public fun linkedList<T>(vararg values: T): LinkedList<T> = linkedListOf(*values)
 
-deprecated("Use sortedSetOf(...) instead")
-public fun sortedSet<T>(vararg values: T): TreeSet<T> = sortedSetOf(*values)
-
-deprecated("Use sortedSetOf(...) instead")
-public fun sortedSet<T>(comparator: Comparator<T>, vararg values: T): TreeSet<T> = sortedSetOf(comparator, *values)
-
-deprecated("Use sortedMapOf(...) instead")
-public fun <K, V> sortedMap(vararg values: Pair<K, V>): SortedMap<K, V> = sortedMapOf(*values)
-
 deprecated("Use linkedMapOf(...) instead")
 public fun <K, V> linkedMap(vararg values: Pair<K, V>): LinkedHashMap<K, V> = linkedMapOf(*values)
-
-/**
- * A helper method for creating a [[Callable]] from a function
- */
-deprecated("Use SAM constructor: Callable(...)")
-public /*inline*/ fun <T> callable(action: () -> T): Callable<T> {
-    return object: Callable<T> {
-        public override fun call() = action()
-    }
-}
 
 /**
  * A helper method for creating a [[Runnable]] from a function

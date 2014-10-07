@@ -11,9 +11,8 @@ trait B {
 }
 
 class C : A(), B {
-
     override fun equals(other: Any?): Boolean {
-        return super<A>.equals(other)
+        <selection><caret>return super<A>.equals(other)</selection>
     }
     override fun hashCode(): Int {
         return super<A>.hashCode()

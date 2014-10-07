@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.jetbrains.jet.plugin.findUsages.toSearchTarget
 import org.jetbrains.jet.plugin.findUsages.toClassHelper
 import org.jetbrains.jet.plugin.findUsages.toClassDeclarationsHelper
 import org.jetbrains.jet.plugin.search.usagesSearch.search
-import org.jetbrains.jet.plugin.refactoring.runReadAction
+import org.jetbrains.jet.plugin.util.application.runReadAction
 
 public class KotlinFindClassUsagesHandler(
         jetClass: JetClassOrObject,
@@ -80,7 +80,7 @@ public class KotlinFindClassUsagesHandler(
             val classUsages = kotlinOptions.toClassHelper().newRequest(target).search()
             val declarationUsages = kotlinOptions.toClassDeclarationsHelper().newRequest(target).search()
 
-            (classUsages + declarationUsages).all { ref -> KotlinFindUsagesHandler.processUsage(processor, ref)} && processInheritors()
+            (classUsages + declarationUsages).all { ref -> KotlinFindUsagesHandler.processUsage(processor, ref) } && processInheritors()
         }!!
     }
 

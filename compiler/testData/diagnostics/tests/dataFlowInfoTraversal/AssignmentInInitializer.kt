@@ -10,12 +10,12 @@ fun baz(b: B) = b
 
 fun bar1(a: A) {
     val b = a as B
-    <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
+    <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
     b.foo()
 }
 
 fun bar2(a: A) {
     val b = baz(a as B)
-    <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
+    <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
     b.foo()
 }

@@ -40,7 +40,7 @@ public abstract class LazyJavaStaticScope(
         descriptor: ClassOrPackageFragmentDescriptor
 ) : LazyJavaMemberScope(c.withTypes(), descriptor) {
 
-    override fun getExpectedThisObject() = null
+    override fun getDispatchReceiverParameter() = null
 
     // Package fragments are not nested
     override fun getPackage(name: Name) = null

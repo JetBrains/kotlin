@@ -1,0 +1,3 @@
+<caret>fun foo() {
+    bar()
+}

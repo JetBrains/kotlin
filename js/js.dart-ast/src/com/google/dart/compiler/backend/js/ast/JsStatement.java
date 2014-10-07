@@ -4,5 +4,10 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface JsStatement extends JsNode {
+    @NotNull
+    @Override
+    JsStatement deepCopy();
 }

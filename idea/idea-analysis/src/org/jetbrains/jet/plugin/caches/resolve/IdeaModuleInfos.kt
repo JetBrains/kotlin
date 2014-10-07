@@ -133,13 +133,18 @@ public data class LibraryInfo(val project: Project, val library: Library) : Idea
     override fun contentScope() = LibraryWithoutSourceScope(project, library)
 
     override fun dependencies(): List<IdeaModuleInfo> {
-        //TODO: (module refactoring) heuristic dependencies for libraries
-        val orderEntry = ModuleManager.getInstance(project).getModules().stream().flatMap {
-            ModuleRootManager.getInstance(it).getOrderEntries().stream()
-        }.firstOrNull { it is JdkOrderEntry } as? JdkOrderEntry
-        val sdk = orderEntry?.getJdk()
-        return if (sdk != null) listOf(SdkInfo(project, sdk), this) else listOf(this)
+        val result = LinkedHashSet<IdeaModuleInfo>()
+        result.add(this)
+
+        val (libraries, sdks) = LibraryDependenciesCache(project).getLibrariesAndSdksUsedWith(library)
+
+        sdks.mapTo(result) { SdkInfo(project, it) }
+        libraries.mapTo(result) { LibraryInfo(project, it) }
+
+        return result.toList()
     }
+
+    override fun toString() = "LibraryInfo(libraryName=${library.getName()})"
 }
 
 private data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaModuleInfo() {
@@ -150,10 +155,12 @@ private data class LibrarySourceInfo(val project: Project, val library: Library)
     override fun dependencies(): List<IdeaModuleInfo> {
         return listOf(this) + LibraryInfo(project, library).dependencies()
     }
+
+    override fun toString() = "LibrarySourceInfo(libraryName=${library.getName()})"
 }
 
 //TODO: (module refactoring) there should be separate SdkSourceInfo but there are no kotlin source in existing sdks for now :)
-private data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo() {
+public data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo() {
     override val name: Name = Name.special("<library ${sdk.getName()}>")
 
     override fun contentScope() = SdkScope(project, sdk)

@@ -20,7 +20,7 @@
       <option name="FONT_TYPE" value="1" />
     </value>
   </option>
-  <option name="KOTLIN_AUTO_CASTED_VALUE">
+  <option name="KOTLIN_SMART_CAST_VALUE">
     <value>
       <option name="BACKGROUND" value="dbffdb" />
     </value>

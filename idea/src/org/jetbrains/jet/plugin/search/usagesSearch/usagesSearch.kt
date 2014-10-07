@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ import java.util.Collections
 import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.psi.impl.cache.impl.id.IdIndex
-import org.jetbrains.jet.plugin.refactoring.runReadAction
+import org.jetbrains.jet.plugin.util.application.runReadAction
 import com.intellij.psi.search.TextOccurenceProcessor
 import org.jetbrains.jet.plugin.references.JetMultiDeclarationReference
 import com.intellij.psi.PsiManager
@@ -142,7 +142,7 @@ public class KotlinPsiSearchHelper(private val project: Project): PsiSearchHelpe
         val entries = Collections.singletonList(IdIndexEntry(text, caseSensitively))
         val index = FileIndexFacade.getInstance(project)
         val checker: (Int?) -> Boolean = { (it!! and searchContext.toInt()) != 0 }
-        return runReadAction{
+        return runReadAction {
             FileBasedIndex.getInstance().processFilesContainingAllKeys(IdIndex.NAME, entries, scope, checker) { file ->
                 !index.shouldBeFound(scope, file) || processor.process(file)
             }

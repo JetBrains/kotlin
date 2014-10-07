@@ -29,6 +29,7 @@ import org.jetbrains.k2js.translate.utils.ErrorReportingUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
+import static org.jetbrains.k2js.translate.reference.CallExpressionTranslator.shouldBeInlined;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getNotNullSimpleNameSelector;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelector;
@@ -69,7 +70,7 @@ public final class QualifiedExpressionTranslator {
             return VariableAccessTranslator.newInstance(context, (JetSimpleNameExpression)selector, receiver).translateAsGet();
         }
         if (selector instanceof JetCallExpression) {
-            if (InlinedCallExpressionTranslator.shouldBeInlined((JetCallExpression) selector, context) &&
+            if (shouldBeInlined((JetCallExpression) selector, context) &&
                 BindingContextUtilPackage.isUsedAsExpression(selector, context.bindingContext())) {
                 TemporaryVariable temporaryVariable = context.declareTemporary(null);
                 JsExpression result = invokeCallExpressionTranslator(receiver, selector, context);

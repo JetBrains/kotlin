@@ -8,6 +8,6 @@ Resolved call:
 
 Resulting descriptor: val EMPTY: IntRange defined in kotlin.IntRange.<class-object-for-IntRange>
 
-Explicit receiver kind = THIS_OBJECT
-This object = IntRange {<class-object-for-IntRange>}
-Receiver argument = NO_RECEIVER
+Explicit receiver kind = DISPATCH_RECEIVER
+Dispatch receiver = IntRange {<class-object-for-IntRange>}
+Extension receiver = NO_RECEIVER

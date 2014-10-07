@@ -33,4 +33,15 @@ public class JsEmptyExpression extends JsExpressionImpl {
     public void accept(JsVisitor visitor) {
         throw new IllegalArgumentException("empty expression should not be here during generating Javascript code");
     }
+
+    @Override
+    public void traverse(JsVisitorWithContext visitor, JsContext ctx) {
+        throw new IllegalArgumentException("empty expression should not be here during generating Javascript code");
+    }
+
+    @NotNull
+    @Override
+    public JsEmptyExpression deepCopy() {
+        return new JsEmptyExpression();
+    }
 }

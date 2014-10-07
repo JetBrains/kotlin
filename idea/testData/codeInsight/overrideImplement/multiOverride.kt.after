@@ -4,9 +4,8 @@ trait A {
 }
 
 class C : A {
-
     override fun bar(): String {
-        return super<A>.bar()
+        <selection><caret>return super<A>.bar()</selection>
     }
     override fun equals(other: Any?): Boolean {
         return super<A>.equals(other)

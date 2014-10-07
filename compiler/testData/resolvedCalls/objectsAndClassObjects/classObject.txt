@@ -13,6 +13,6 @@ Resolved call:
 
 Resulting descriptor: val baz: Foo defined in Foo.<class-object-for-Foo>
 
-Explicit receiver kind = THIS_OBJECT
-This object = Foo {<class-object-for-Foo>}
-Receiver argument = NO_RECEIVER
+Explicit receiver kind = DISPATCH_RECEIVER
+Dispatch receiver = Foo {<class-object-for-Foo>}
+Extension receiver = NO_RECEIVER

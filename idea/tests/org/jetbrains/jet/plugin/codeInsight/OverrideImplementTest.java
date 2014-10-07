@@ -107,6 +107,10 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
         doMultiOverrideFileTest();
     }
 
+    public void testDelegatedMembers() {
+        doMultiOverrideFileTest();
+    }
+
     public void testOverrideExplicitFunction() {
         doOverrideFileTest();
     }
@@ -145,6 +149,18 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
 
     public void testImplementSamAdapters() {
         doImplementDirectoryTest();
+    }
+
+    public void testOverrideFromFunctionPosition() {
+        doMultiOverrideFileTest();
+    }
+
+    public void testOverrideFromClassName() {
+        doMultiOverrideFileTest();
+    }
+
+    public void testOverrideFromLBrace() {
+        doMultiOverrideFileTest();
     }
 
     public void testCheckNotImportedTypesFromJava() {

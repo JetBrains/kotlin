@@ -39,8 +39,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     private final PropertyDescriptor original;
     private final Kind kind;
 
-    private ReceiverParameterDescriptor expectedThisObject;
-    private ReceiverParameterDescriptor receiverParameter;
+    private ReceiverParameterDescriptor dispatchReceiverParameter;
+    private ReceiverParameterDescriptor extensionReceiverParameter;
     private List<TypeParameterDescriptor> typeParameters;
     private PropertyGetterDescriptorImpl getter;
     private PropertySetterDescriptor setter;
@@ -82,25 +82,25 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     public void setType(
             @NotNull JetType outType,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @Nullable ReceiverParameterDescriptor expectedThisObject,
+            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @Nullable JetType receiverType
     ) {
-        ReceiverParameterDescriptor receiverParameter = DescriptorFactory.createReceiverParameterForCallable(this, receiverType);
-        setType(outType, typeParameters, expectedThisObject, receiverParameter);
+        ReceiverParameterDescriptor extensionReceiverParameter = DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverType);
+        setType(outType, typeParameters, dispatchReceiverParameter, extensionReceiverParameter);
     }
 
     public void setType(
             @NotNull JetType outType,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @Nullable ReceiverParameterDescriptor expectedThisObject,
-            @Nullable ReceiverParameterDescriptor receiverParameter
+            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
+            @Nullable ReceiverParameterDescriptor extensionReceiverParameter
     ) {
         setOutType(outType);
 
         this.typeParameters = new ArrayList<TypeParameterDescriptor>(typeParameters);
 
-        this.receiverParameter = receiverParameter;
-        this.expectedThisObject = expectedThisObject;
+        this.extensionReceiverParameter = extensionReceiverParameter;
+        this.dispatchReceiverParameter = dispatchReceiverParameter;
     }
 
     public void initialize(@Nullable PropertyGetterDescriptorImpl getter, @Nullable PropertySetterDescriptor setter) {
@@ -124,14 +124,14 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
 
     @Override
     @Nullable
-    public ReceiverParameterDescriptor getReceiverParameter() {
-        return receiverParameter;
+    public ReceiverParameterDescriptor getExtensionReceiverParameter() {
+        return extensionReceiverParameter;
     }
 
     @Nullable
     @Override
-    public ReceiverParameterDescriptor getExpectedThisObject() {
-        return expectedThisObject;
+    public ReceiverParameterDescriptor getDispatchReceiverParameter() {
+        return dispatchReceiverParameter;
     }
 
     @NotNull
@@ -220,26 +220,26 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         }
 
 
-        ReceiverParameterDescriptor substitutedExpectedThisObject;
-        ReceiverParameterDescriptor expectedThisObject = getExpectedThisObject();
-        if (expectedThisObject != null) {
-            substitutedExpectedThisObject = expectedThisObject.substitute(substitutor);
-            if (substitutedExpectedThisObject == null) return null;
+        ReceiverParameterDescriptor substitutedDispatchReceiver;
+        ReceiverParameterDescriptor dispatchReceiver = getDispatchReceiverParameter();
+        if (dispatchReceiver != null) {
+            substitutedDispatchReceiver = dispatchReceiver.substitute(substitutor);
+            if (substitutedDispatchReceiver == null) return null;
         }
         else {
-            substitutedExpectedThisObject = null;
+            substitutedDispatchReceiver = null;
         }
 
         JetType substitutedReceiverType;
-        if (receiverParameter != null) {
-            substitutedReceiverType = substitutor.substitute(receiverParameter.getType(), Variance.IN_VARIANCE);
+        if (extensionReceiverParameter != null) {
+            substitutedReceiverType = substitutor.substitute(extensionReceiverParameter.getType(), Variance.IN_VARIANCE);
             if (substitutedReceiverType == null) return null;
         }
         else {
             substitutedReceiverType = null;
         }
 
-        substitutedDescriptor.setType(outType, substitutedTypeParameters, substitutedExpectedThisObject, substitutedReceiverType);
+        substitutedDescriptor.setType(outType, substitutedTypeParameters, substitutedDispatchReceiver, substitutedReceiverType);
 
         PropertyGetterDescriptorImpl newGetter = getter == null ? null : new PropertyGetterDescriptorImpl(
                 substitutedDescriptor, getter.getAnnotations(), newModality, convertVisibility(getter.getVisibility(), newVisibility),

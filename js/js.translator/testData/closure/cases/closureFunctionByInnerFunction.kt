@@ -1,7 +1,5 @@
 package foo
 
-fun run<T>(f: () -> T) = f()
-
 val r = "OK"
 
 fun simple(s: String? = null): String {

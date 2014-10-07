@@ -23,6 +23,7 @@ import com.intellij.debugger.PositionManager;
 import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.engine.DebugProcessEvents;
+import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.jdi.VirtualMachineProxyImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -61,6 +62,8 @@ public abstract class AbstractJetPositionManagerTest extends MultiFileTestCase {
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase();
     }
+
+    private DebugProcessImpl debugProcess;
 
     @NotNull
     @Override
@@ -111,7 +114,7 @@ public abstract class AbstractJetPositionManagerTest extends MultiFileTestCase {
 
         Map<String, ReferenceType> referencesByName = getReferenceMap(state.getFactory());
 
-        DebugProcess debugProcess = createDebugProcess(referencesByName);
+        debugProcess = createDebugProcess(referencesByName);
 
         final PositionManager positionManager = createPositionManager(debugProcess, files, state);
 
@@ -128,6 +131,15 @@ public abstract class AbstractJetPositionManagerTest extends MultiFileTestCase {
                 }
             }
         });
+
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        if (debugProcess != null) {
+            debugProcess.dispose();
+        }
+        super.tearDown();
     }
 
     private static Collection<Breakpoint> extractBreakpointsInfo(JetFile file, String fileContent) {
@@ -175,7 +187,7 @@ public abstract class AbstractJetPositionManagerTest extends MultiFileTestCase {
         assertNotNull(classes);
         assertEquals(1, classes.size());
         ReferenceType type = classes.get(0);
-        assertTrue("Type name " + type.name() + " doesn't match " + breakpoint.classNameRegexp,
+        assertTrue("Type name " + type.name() + " doesn't match " + breakpoint.classNameRegexp + " for line " + (breakpoint.lineNumber + 1),
                    type.name().matches(breakpoint.classNameRegexp));
 
         // JDI names are of form "package.Class$InnerClass"

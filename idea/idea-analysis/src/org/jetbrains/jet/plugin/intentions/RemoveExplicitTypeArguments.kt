@@ -21,12 +21,10 @@ import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.psi.JetTypeProjection
 import org.jetbrains.jet.lang.psi.Call
-import java.util.ArrayList
 import org.jetbrains.jet.di.InjectorForMacros
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession

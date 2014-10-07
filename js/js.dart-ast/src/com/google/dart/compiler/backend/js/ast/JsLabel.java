@@ -5,6 +5,8 @@
 package com.google.dart.compiler.backend.js.ast;
 
 import com.google.dart.compiler.common.Symbol;
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a JavaScript label statement.
@@ -49,5 +51,19 @@ public class JsLabel extends SourceInfoAwareJsNode implements JsStatement, HasNa
     @Override
     public void acceptChildren(JsVisitor visitor) {
         visitor.accept(statement);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            statement = v.acceptStatement(statement);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsLabel deepCopy() {
+        return new JsLabel(label, AstUtil.deepCopy(statement.deepCopy())).withMetadataFrom(this);
     }
 }

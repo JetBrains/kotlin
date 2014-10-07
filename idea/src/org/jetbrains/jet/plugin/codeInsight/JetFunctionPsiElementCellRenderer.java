@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,9 @@ public class JetFunctionPsiElementCellRenderer extends DefaultPsiElementCellRend
     public String getElementText(PsiElement element) {
         if (element instanceof JetNamedFunction) {
             JetNamedFunction function = (JetNamedFunction) element;
-            SimpleFunctionDescriptor fd =
-                    bindingContext.get(BindingContext.FUNCTION, function);
+            SimpleFunctionDescriptor fd = bindingContext.get(BindingContext.FUNCTION, function);
             assert fd != null;
-            return DescriptorRenderer.FQ_NAMES_IN_TYPES.render(fd);
+            return DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(fd);
         }
         return super.getElementText(element);
     }

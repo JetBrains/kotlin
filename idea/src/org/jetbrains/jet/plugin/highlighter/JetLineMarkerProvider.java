@@ -16,61 +16,43 @@
 
 package org.jetbrains.jet.plugin.highlighter;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.codeHighlighting.Pass;
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
-import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper;
 import com.intellij.codeInsight.daemon.impl.LineMarkerNavigator;
 import com.intellij.codeInsight.daemon.impl.MarkerType;
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
-import com.intellij.codeInsight.hint.HintUtil;
-import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.util.DefaultPsiElementCellRenderer;
-import com.intellij.ide.util.PsiClassListCellRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.PsiElementProcessor;
-import com.intellij.psi.search.PsiElementProcessorAdapter;
-import com.intellij.psi.search.searches.AllOverridingMethodsSearch;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
-import com.intellij.psi.search.searches.OverridingMethodsSearch;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.*;
-import gnu.trove.THashSet;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.util.NullableFunction;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.ProjectRootsUtil;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDefinitionsSearcher;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.plugin.highlighter.markers.MarkersPackage;
+import org.jetbrains.jet.plugin.highlighter.markers.ResolveWithParentsResult;
+import org.jetbrains.jet.plugin.highlighter.markers.SuperDeclarationMarkerNavigationHandler;
+import org.jetbrains.jet.plugin.highlighter.markers.SuperDeclarationMarkerTooltip;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class JetLineMarkerProvider implements LineMarkerProvider {
     public static final Icon OVERRIDING_MARK = AllIcons.Gutter.OverridingMethod;
@@ -82,7 +64,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             new NullableFunction<PsiElement, String>() {
                 @Override
                 public String fun(@Nullable PsiElement element) {
-                    PsiClass psiClass = getPsiClass(element);
+                    PsiClass psiClass = MarkersPackage.getPsiClass(element);
                     return psiClass != null ? MarkerType.getSubclassedClassTooltip(psiClass) : null;
                 }
             },
@@ -90,7 +72,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             new LineMarkerNavigator() {
                 @Override
                 public void browse(@Nullable MouseEvent e, @Nullable PsiElement element) {
-                    PsiClass psiClass = getPsiClass(element);
+                    PsiClass psiClass = MarkersPackage.getPsiClass(element);
                     if (psiClass != null) {
                         MarkerType.navigateToSubclassedClass(e, psiClass);
                     }
@@ -102,17 +84,17 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             new NullableFunction<PsiElement, String>() {
                 @Override
                 public String fun(@Nullable PsiElement element) {
-                    PsiMethod psiMethod = getPsiMethod(element);
-                    return psiMethod != null ? MarkerType.getOverriddenMethodTooltip(psiMethod) : null;
+                    PsiMethod psiMethod = MarkersPackage.getPsiMethod(element);
+                    return psiMethod != null ? MarkersPackage.getOverriddenMethodTooltip(psiMethod) : null;
                 }
             },
 
             new LineMarkerNavigator() {
                 @Override
                 public void browse(@Nullable MouseEvent e, @Nullable PsiElement element) {
-                    PsiMethod psiMethod = getPsiMethod(element);
+                    PsiMethod psiMethod = MarkersPackage.getPsiMethod(element);
                     if (psiMethod != null) {
-                        MarkerType.navigateToOverriddenMethod(e, psiMethod);
+                        MarkersPackage.navigateToOverriddenMethod(e, psiMethod);
                     }
                 }
             }
@@ -127,248 +109,48 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                     assert element.getParent() instanceof JetProperty : "This tooltip provider should be placed only on identifies in properties";
                     JetProperty property = (JetProperty) element.getParent();
 
-                    PsiElementProcessor.CollectElementsWithLimit<PsiClass> processor = new PsiElementProcessor.CollectElementsWithLimit<PsiClass>(5);
-                    Processor<PsiMethod> consumer = new AdapterProcessor<PsiMethod, PsiClass>(
-                            new CommonProcessors.UniqueProcessor<PsiClass>(new PsiElementProcessorAdapter<PsiClass>(processor)),
-                            new Function<PsiMethod, PsiClass>() {
-                                @Override
-                                public PsiClass fun(PsiMethod method) {
-                                    return method.getContainingClass();
-                                }
-                            });
-
-                    for (PsiMethod method : LightClassUtil.getLightClassPropertyMethods(property)) {
-                        if (!processor.isOverflow()) {
-                            OverridingMethodsSearch.search(method, true).forEach(consumer);
-                        }
-                    }
-
-                    boolean isImplemented = isImplemented(property);
-                    if (processor.isOverflow()) {
-                        return isImplemented ?
-                               JetBundle.message("property.is.implemented.too.many") :
-                               JetBundle.message("property.is.overridden.too.many");
-                    }
-
-                    List<PsiClass> collectedClasses = Lists.newArrayList(processor.getCollection());
-                    if (collectedClasses.isEmpty()) return null;
-
-                    Collections.sort(collectedClasses, new PsiClassListCellRenderer().getComparator());
-
-                    String start = isImplemented ?
-                                   JetBundle.message("property.is.implemented.header") :
-                                   JetBundle.message("property.is.overridden.header");
-
-                    @NonNls String pattern = "&nbsp;&nbsp;&nbsp;&nbsp;{0}";
-                    return GutterIconTooltipHelper.composeText(collectedClasses, start, pattern);
+                    return MarkersPackage.getOverriddenPropertyTooltip(property);
                 }
             },
 
             new LineMarkerNavigator() {
                 @Override
-                public void browse(@Nullable MouseEvent e, @Nullable final PsiElement element) {
+                public void browse(@Nullable MouseEvent e, @Nullable PsiElement element) {
                     if (element == null) return;
 
                     assert element.getParent() instanceof JetProperty : "This marker navigator should be placed only on identifies in properties";
                     JetProperty property = (JetProperty) element.getParent();
 
-                    if (DumbService.isDumb(element.getProject())) {
-                        DumbService.getInstance(element.getProject()).showDumbModeNotification("Navigation to overriding classes is not possible during index update");
-                        return;
-                    }
-
-                    final LightClassUtil.PropertyAccessorsPsiMethods psiPropertyMethods =
-                            LightClassUtil.getLightClassPropertyMethods((JetProperty) element.getParent());
-
-                    final CommonProcessors.CollectUniquesProcessor<PsiElement> elementProcessor = new CommonProcessors.CollectUniquesProcessor<PsiElement>();
-                    Runnable jetPsiMethodProcessor = new Runnable() {
-                        @Override
-                        public void run() {
-                            KotlinDefinitionsSearcher.processPropertyImplementationsMethods(psiPropertyMethods, GlobalSearchScope.allScope(element.getProject()), elementProcessor);
-                        }
-                    };
-
-                    if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                            jetPsiMethodProcessor,
-                            MarkerType.SEARCHING_FOR_OVERRIDING_METHODS, true,
-                            element.getProject(),
-                            e != null ? (JComponent) e.getComponent() : null)) {
-                        return;
-                    }
-
-                    DefaultPsiElementCellRenderer renderer = new DefaultPsiElementCellRenderer();
-                    List<PsiElement> elements = Ordering.from(renderer.getComparator()).sortedCopy(elementProcessor.getResults());
-
-                    NavigatablePsiElement[] navigatableElements = Iterables.toArray(
-                            Iterables.filter(elements, NavigatablePsiElement.class), NavigatablePsiElement.class);
-
-                    PsiElementListNavigator.openTargets(e, navigatableElements,
-                                                        JetBundle.message("navigation.title.overriding.property", property.getName()),
-                                                        JetBundle.message("navigation.findUsages.title.overriding.property", property.getName()),
-                                                        renderer);
+                    MarkersPackage.navigateToPropertyOverriddenDeclarations(e, property);
                 }
             }
     );
 
-    @Nullable
-    private static PsiClass getPsiClass(@Nullable PsiElement element) {
-        if (element == null) return null;
-        if (element instanceof PsiClass) return (PsiClass) element;
-
-        if (!(element instanceof JetClass)) {
-            element = element.getParent();
-            if (!(element instanceof JetClass)) {
-                return null;
-            }
-        }
-
-        return LightClassUtil.getPsiClass((JetClass) element);
-    }
-
-    @Nullable
-    private static PsiMethod getPsiMethod(@Nullable PsiElement element) {
-        if (element == null) return null;
-        if (element instanceof PsiMethod) return (PsiMethod) element;
-        if (element.getParent() instanceof JetNamedFunction) return LightClassUtil.getLightClassMethod((JetNamedFunction) element.getParent());
+    @Override
+    public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
+        // all Kotlin markers are added in slow marker pass
         return null;
     }
 
-    @Override
-    public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
-        JetFile file = (JetFile)element.getContainingFile();
-        if (file == null) return null;
+    private static boolean isImplementsAndNotOverrides(
+            CallableMemberDescriptor descriptor,
+            Collection<? extends CallableMemberDescriptor> overriddenMembers
+    ) {
+        if (descriptor.getModality() == Modality.ABSTRACT) return false;
 
-        if (!(element instanceof JetNamedFunction || element instanceof JetProperty)) return null;
-
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-
-        if (!(descriptor instanceof CallableMemberDescriptor)) {
-            return null;
-        }
-
-        Set<? extends CallableMemberDescriptor> overriddenMembers = OverrideResolver.getDirectlyOverriddenDeclarations(
-                (CallableMemberDescriptor) descriptor);
-        if (overriddenMembers.size() == 0) {
-            return null;
-        }
-
-        boolean allOverriddenAbstract = true;
         for (CallableMemberDescriptor function : overriddenMembers) {
-            allOverriddenAbstract &= function.getModality() == Modality.ABSTRACT;
+            if (function.getModality() != Modality.ABSTRACT) return false;
         }
 
-        // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
-        // clearing the whole BindingTrace.
-        return new LineMarkerInfo<PsiElement>(
-                element,
-                element.getTextOffset(),
-                allOverriddenAbstract ? IMPLEMENTING_MARK : OVERRIDING_MARK,
-                Pass.UPDATE_ALL,
-                new Function<PsiElement, String>() {
-                    @Override
-                    public String fun(PsiElement element) {
-                        return calculateTooltipString(element);
-                    }
-                },
-                new GutterIconNavigationHandler<PsiElement>() {
-                    @Override
-                    public void navigate(MouseEvent event, PsiElement elt) {
-                        iconNavigatorHandler(event, elt);
-                    }
-                }
-        );
-    }
-
-    private static void iconNavigatorHandler(MouseEvent event, PsiElement elt) {
-        JetFile file = (JetFile)elt.getContainingFile();
-        assert file != null;
-
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) elt);
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, elt);
-        if (!(descriptor instanceof CallableMemberDescriptor)) {
-            return;
-        }
-
-        Set<CallableMemberDescriptor> overriddenMembers = OverrideResolver
-                .getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
-        if (overriddenMembers.size() == 0) {
-            return;
-        }
-
-        if (overriddenMembers.isEmpty()) return;
-        List<PsiElement> list = Lists.newArrayList();
-        for (CallableMemberDescriptor overriddenMember : overriddenMembers) {
-            PsiElement declarationPsiElement = DescriptorToSourceUtils.descriptorToDeclaration(overriddenMember);
-            list.add(declarationPsiElement);
-        }
-        if (list.isEmpty()) {
-            String myEmptyText = "empty text";
-            JComponent renderer = HintUtil.createErrorLabel(myEmptyText);
-            JBPopup popup = JBPopupFactory.getInstance().createComponentPopupBuilder(renderer, renderer).createPopup();
-            if (event != null) {
-                popup.show(new RelativePoint(event));
-            }
-            return;
-        }
-        if (list.size() == 1) {
-            PsiNavigateUtil.navigate(list.iterator().next());
-        }
-        else {
-            JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilCore.toPsiElementArray(list),
-                                                              new JetFunctionPsiElementCellRenderer(bindingContext),
-                                                              DescriptorRenderer.FQ_NAMES_IN_TYPES.render(descriptor));
-            if (event != null) {
-                popup.show(new RelativePoint(event));
-            }
-        }
-    }
-
-    private static String calculateTooltipString(PsiElement element) {
-        JetFile file = (JetFile)element.getContainingFile();
-        if (file == null) return "";
-
-        BindingContext bindingContext = ResolvePackage.getBindingContext(file);
-
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-        if (!(descriptor instanceof CallableMemberDescriptor)) {
-            return "";
-        }
-
-        Set<CallableMemberDescriptor> overriddenMembers = OverrideResolver
-                .getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
-        if (overriddenMembers.size() == 0) {
-            return "";
-        }
-
-        boolean allOverriddenAbstract = true;
-        for (CallableMemberDescriptor function : overriddenMembers) {
-            allOverriddenAbstract &= function.getModality() == Modality.ABSTRACT;
-        }
-
-        String implementsOrOverrides = allOverriddenAbstract ? "implements" : "overrides";
-        String memberKind = element instanceof JetNamedFunction ? "function" : "property";
-
-
-        StringBuilder builder = new StringBuilder();
-        builder.append(DescriptorRenderer.HTML.render(descriptor));
-        int overrideCount = overriddenMembers.size();
-        if (overrideCount >= 1) {
-            builder.append("<br/>").append(implementsOrOverrides).append("<br/>");
-            builder.append(DescriptorRenderer.HTML.render(overriddenMembers.iterator().next()));
-        }
-        if (overrideCount > 1) {
-            int otherCount = overrideCount - 1;
-            builder.append("<br/>and ").append(otherCount).append(" other ").append(StringUtil.pluralize(memberKind, otherCount));
-        }
-
-        return builder.toString();
+        return true;
     }
 
     @Override
     public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
-        if (elements.isEmpty() ||
-            DumbService.getInstance(elements.get(0).getProject()).isDumb() ||
+        if (elements.isEmpty()) return;
+
+        PsiElement first = KotlinPackage.first(elements);
+        if (DumbService.getInstance(first.getProject()).isDumb() ||
             !ProjectRootsUtil.isInSourceWithGradleCheck(elements.get(0))) {
             return;
         }
@@ -378,15 +160,19 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         for (PsiElement element : elements) {
             if (element instanceof JetClass) {
-                collectInheritingClasses((JetClass) element, result);
+                collectInheritedClassMarker((JetClass) element, result);
             }
+            else if (element instanceof JetNamedFunction) {
+                JetNamedFunction function = (JetNamedFunction) element;
 
-            if (element instanceof JetNamedFunction) {
-                functions.add((JetNamedFunction) element);
+                functions.add(function);
+                collectSuperDeclarationMarkers(function, result);
             }
+            else if (element instanceof JetProperty) {
+                JetProperty property = (JetProperty) element;
 
-            if (element instanceof JetProperty) {
-                properties.add((JetProperty) element);
+                properties.add(property);
+                collectSuperDeclarationMarkers(property, result);
             }
         }
 
@@ -394,17 +180,39 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         collectOverridingPropertiesAccessors(properties, result);
     }
 
-    private static void collectInheritingClasses(JetClass element, Collection<LineMarkerInfo> result) {
+    private static void collectSuperDeclarationMarkers(JetDeclaration declaration, Collection<LineMarkerInfo> result) {
+        assert (declaration instanceof JetNamedFunction || declaration instanceof JetProperty);
+
+        if (!declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return;
+
+        ResolveWithParentsResult resolveWithParents = MarkersPackage.resolveDeclarationWithParents(declaration);
+        if (resolveWithParents.getOverriddenDescriptors().isEmpty()) return;
+
+        // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
+        // clearing the whole BindingTrace.
+        LineMarkerInfo<JetElement> marker = new LineMarkerInfo<JetElement>(
+                declaration,
+                declaration.getTextOffset(),
+                isImplementsAndNotOverrides(resolveWithParents.getDescriptor(), resolveWithParents.getOverriddenDescriptors()) ?
+                IMPLEMENTING_MARK :
+                OVERRIDING_MARK,
+                Pass.UPDATE_OVERRIDEN_MARKERS,
+                SuperDeclarationMarkerTooltip.INSTANCE$,
+                new SuperDeclarationMarkerNavigationHandler()
+        );
+
+        result.add(marker);
+    }
+
+    private static void collectInheritedClassMarker(JetClass element, Collection<LineMarkerInfo> result) {
         boolean isTrait = element.isTrait();
-        if (!(isTrait ||
-              element.hasModifier(JetTokens.OPEN_KEYWORD) ||
-              element.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
+        if (!(isTrait || element.hasModifier(JetTokens.OPEN_KEYWORD) || element.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
             return;
         }
+
         PsiClass lightClass = LightClassUtil.getPsiClass(element);
-        if (lightClass == null) {
-            return;
-        }
+        if (lightClass == null) return;
+
         PsiClass inheritor = ClassInheritorsSearch.search(lightClass, false).findFirst();
         if (inheritor != null) {
             PsiElement nameIdentifier = element.getNameIdentifier();
@@ -415,26 +223,16 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         }
     }
 
-    private static boolean isOverridableHeuristic(JetNamedDeclaration declaration) {
-        PsiElement parent = declaration.getParent();
-        if (parent instanceof JetFile) return false;
-        if (parent instanceof JetClassBody && parent.getParent() instanceof JetClass) {
-            // Not all open or abstract declarations are actually overridable, but this is heuristic
-            return declaration.hasModifier(JetTokens.ABSTRACT_KEYWORD) ||
-                   declaration.hasModifier(JetTokens.OPEN_KEYWORD) ||
-                   declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD) ||
-                   ((JetClass) parent.getParent()).isTrait();
-        }
-
-        return false;
-    }
-
-    private static boolean isImplemented(JetNamedDeclaration declaration) {
+    public static boolean isImplemented(JetNamedDeclaration declaration) {
         if (declaration.hasModifier(JetTokens.ABSTRACT_KEYWORD)) return true;
 
         PsiElement parent = declaration.getParent();
+        parent = (parent instanceof JetClassBody) ? parent.getParent() : parent;
+
         if (parent instanceof JetClass) {
-            return ((JetClass) parent).isTrait();
+            return ((JetClass) parent).isTrait() &&
+                   (!(declaration instanceof JetDeclarationWithBody) || !((JetDeclarationWithBody)declaration).hasBody()) &&
+                   (!(declaration instanceof JetWithExpressionInitializer) || !((JetWithExpressionInitializer)declaration).hasInitializer());
         }
 
         return false;
@@ -443,7 +241,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     private static void collectOverridingPropertiesAccessors(Collection<JetProperty> properties, Collection<LineMarkerInfo> result) {
         Map<PsiMethod, JetProperty> mappingToJava = Maps.newHashMap();
         for (JetProperty property : properties) {
-            if (isOverridableHeuristic(property)) {
+            if (PsiUtilPackage.isOverridable(property)) {
                 LightClassUtil.PropertyAccessorsPsiMethods accessorsPsiMethods = LightClassUtil.getLightClassPropertyMethods(property);
                 for (PsiMethod psiMethod : accessorsPsiMethods) {
                     mappingToJava.put(psiMethod, property);
@@ -451,9 +249,9 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             }
         }
 
-        Set<PsiClass> classes = collectContainingClasses(mappingToJava.keySet());
+        Set<PsiClass> classes = MarkersPackage.collectContainingClasses(mappingToJava.keySet());
 
-        for (JetProperty property : getOverriddenDeclarations(mappingToJava, classes)) {
+        for (JetProperty property : MarkersPackage.getOverriddenDeclarations(mappingToJava, classes)) {
             ProgressManager.checkCanceled();
 
             PsiElement anchor = property.getNameIdentifier();
@@ -463,7 +261,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                     anchor, anchor.getTextOffset(),
                     isImplemented(property) ? IMPLEMENTED_MARK : OVERRIDDEN_MARK,
                     Pass.UPDATE_OVERRIDEN_MARKERS,
-                    OVERRIDDEN_PROPERTY.getTooltip(), OVERRIDDEN_PROPERTY.getNavigationHandler(),
+                    OVERRIDDEN_PROPERTY.getTooltip(),
+                    OVERRIDDEN_PROPERTY.getNavigationHandler(),
                     GutterIconRenderer.Alignment.RIGHT);
 
             result.add(info);
@@ -473,7 +272,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     private static void collectOverridingAccessors(Collection<JetNamedFunction> functions, Collection<LineMarkerInfo> result) {
         Map<PsiMethod, JetNamedFunction> mappingToJava = Maps.newHashMap();
         for (JetNamedFunction function : functions) {
-            if (isOverridableHeuristic(function)) {
+            if (PsiUtilPackage.isOverridable(function)) {
                 PsiMethod method = LightClassUtil.getLightClassMethod(function);
                 if (method != null) {
                     mappingToJava.put(method, function);
@@ -481,9 +280,9 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             }
         }
 
-        Set<PsiClass> classes = collectContainingClasses(mappingToJava.keySet());
+        Set<PsiClass> classes = MarkersPackage.collectContainingClasses(mappingToJava.keySet());
 
-        for (JetNamedFunction function : getOverriddenDeclarations(mappingToJava, classes)) {
+        for (JetNamedFunction function : MarkersPackage.getOverriddenDeclarations(mappingToJava, classes)) {
             ProgressManager.checkCanceled();
 
             PsiElement anchor = function.getNameIdentifier();
@@ -498,41 +297,5 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
             result.add(info);
         }
-    }
-
-    private static Set<PsiClass> collectContainingClasses(Collection<PsiMethod> methods) {
-        Set<PsiClass> classes = new THashSet<PsiClass>();
-        for (PsiMethod method : methods) {
-            ProgressManager.checkCanceled();
-            PsiClass parentClass = method.getContainingClass();
-            if (parentClass != null && !CommonClassNames.JAVA_LANG_OBJECT.equals(parentClass.getQualifiedName())) {
-                classes.add(parentClass);
-            }
-        }
-        return classes;
-    }
-
-    private static <T> Set<T> getOverriddenDeclarations(final Map<PsiMethod, T> mappingToJava, Set<PsiClass> classes) {
-        final Set<T> overridden = Sets.newHashSet();
-        for (PsiClass aClass : classes) {
-            AllOverridingMethodsSearch.search(aClass).forEach(new Processor<Pair<PsiMethod, PsiMethod>>() {
-                @Override
-                public boolean process(Pair<PsiMethod, PsiMethod> pair) {
-                    ProgressManager.checkCanceled();
-
-                    PsiMethod superMethod = pair.getFirst();
-
-                    T declaration = mappingToJava.get(superMethod);
-                    if (declaration != null) {
-                        mappingToJava.remove(superMethod);
-                        overridden.add(declaration);
-                    }
-
-                    return !mappingToJava.isEmpty();
-                }
-            });
-        }
-
-        return overridden;
     }
 }

@@ -75,8 +75,8 @@ public class Visibilities {
     public static final Visibility INTERNAL = new Visibility("internal", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            DeclarationDescriptor fromOrModule = from instanceof PackageViewDescriptor ? ((PackageViewDescriptor) from).getModule() : from;
-            return isInFriendModule(what, fromOrModule);
+            //NOTE: supposedly temporarily
+            return PUBLIC.isVisible(what, from);
         }
     };
 
@@ -119,6 +119,7 @@ public class Visibilities {
         return findInvisibleMember(what, from) == null;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     private static boolean isInFriendModule(@NotNull DeclarationDescriptor what, @NotNull DeclarationDescriptor from) {
         return DescriptorUtils.getContainingModule(what).isFriend(DescriptorUtils.getContainingModule(from));
     }

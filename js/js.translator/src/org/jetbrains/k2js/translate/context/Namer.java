@@ -21,9 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;
+import static org.jetbrains.k2js.translate.utils.ManglingUtils.getStableMangledNameForDescriptor;
 
 /**
  * Encapuslates different types of constants and naming conventions.
@@ -33,9 +35,20 @@ public final class Namer {
     public static final String KOTLIN_LOWER_NAME = KOTLIN_NAME.toLowerCase();
     public static final JsNameRef KOTLIN_OBJECT_REF = new JsNameRef(KOTLIN_NAME);
 
+    public static final String EQUALS_METHOD_NAME = getStableMangledNameForDescriptor(KotlinBuiltIns.getInstance().getAny(), "equals");
+    public static final String COMPARE_TO_METHOD_NAME = getStableMangledNameForDescriptor(KotlinBuiltIns.getInstance().getComparable(), "compareTo");
+    public static final String NUMBER_RANGE = "NumberRange";
+    public static final String CHAR_RANGE = "CharRange";
+    public static final String LONG_FROM_NUMBER = "fromNumber";
+    public static final String LONG_TO_NUMBER = "toNumber";
+    public static final String LONG_FROM_INT = "fromInt";
+    public static final String PRIMITIVE_COMPARE_TO = "primitiveCompareTo";
+    public static final String IS_CHAR = "isChar";
+    public static final String IS_NUMBER = "isNumber";
+
     public static final String CALLEE_NAME = "$fun";
 
-    private static final String CALL_FUNCTION = "call";
+    public static final String CALL_FUNCTION = "call";
     private static final String APPLY_FUNCTION = "apply";
 
     private static final String CLASS_OBJECT_NAME = "createClass";
@@ -65,6 +78,19 @@ public final class Namer {
     private static final String CLASS_OBJECT_INITIALIZER = "object_initializer$";
     private static final String PROTOTYPE_NAME = "prototype";
     public static final String CAPTURED_VAR_FIELD = "v";
+
+    @NotNull
+    public static final JsExpression UNDEFINED_EXPRESSION = new JsPrefixOperation(JsUnaryOperator.VOID, JsNumberLiteral.ZERO);
+
+    public static boolean isUndefined(@NotNull JsExpression expr) {
+        if (expr instanceof JsPrefixOperation) {
+            JsUnaryOperator op = ((JsPrefixOperation) expr).getOperator();
+
+            return op == JsUnaryOperator.VOID;
+        }
+
+        return false;
+    }
 
     @NotNull
     public static String getReceiverParameterName() {
@@ -199,8 +225,6 @@ public final class Namer {
     @NotNull
     private final JsName callableRefForExtensionProperty;
     @NotNull
-    private final JsExpression undefinedExpression;
-    @NotNull
     private final JsExpression callGetProperty;
     @NotNull
     private final JsExpression callSetProperty;
@@ -230,8 +254,6 @@ public final class Namer {
         callableRefForExtensionProperty = kotlinScope.declareName(CALLABLE_REF_FOR_EXTENSION_PROPERTY);
 
         isTypeName = kotlinScope.declareName("isType");
-
-        undefinedExpression = new JsPrefixOperation(JsUnaryOperator.VOID, rootScope.getProgram().getNumberLiteral(0));
     }
 
     @NotNull
@@ -352,7 +374,7 @@ public final class Namer {
 
     @NotNull
     public JsExpression getUndefinedExpression() {
-        return undefinedExpression;
+        return UNDEFINED_EXPRESSION;
     }
 
     @NotNull

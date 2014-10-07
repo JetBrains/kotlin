@@ -346,3 +346,8 @@ public fun PsiElement.parents(withItself: Boolean = true): Stream<PsiElement> {
     val stream = stream(this) { if (it is PsiFile) null else it.getParent() }
     return if (withItself) stream else stream.drop(1)
 }
+
+public fun JetExpression.getAssignmentByLHS(): JetBinaryExpression? {
+    val parent = getParent() as? JetBinaryExpression ?: return null
+    return if (JetPsiUtil.isAssignment(parent) && parent.getLeft() == this) parent else null
+}

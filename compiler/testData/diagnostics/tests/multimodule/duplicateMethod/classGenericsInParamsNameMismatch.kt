@@ -31,6 +31,6 @@ import p.*
 
 fun <Y> test(b: B<Y>?, y: Y) {
     if (b is C) {
-        <!DEBUG_INFO_AUTOCAST!>b<!>?.foo(y)
+        <!DEBUG_INFO_SMARTCAST!>b<!>?.foo(y)
     }
 }

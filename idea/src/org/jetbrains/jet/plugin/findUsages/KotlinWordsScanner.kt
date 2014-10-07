@@ -41,16 +41,21 @@ class KotlinWordsScanner() : WordsScanner {
         lexer.start(fileText)
 
         val occurrence = WordOccurrence(null, 0, 0, null)
+        var valOrVarBefore: Boolean = false
 
         stream { lexer.getTokenType() }.forEach { elementType ->
             // todo: replace with when
-            if (ALL_SEARCHABLE_OPERATIONS.contains(elementType)) {
+            if (ALL_SEARCHABLE_OPERATIONS.contains(elementType) || (valOrVarBefore && elementType == JetTokens.LPAR)) {
                 occurrence.init(lexer.getBufferSequence(), lexer.getTokenStart(), lexer.getTokenEnd(), WordOccurrence.Kind.CODE)
                 processor.process(occurrence)
             }
             else if (JetTokens.COMMENTS.contains(elementType)) scanWords(WordOccurrence.Kind.COMMENTS, processor)
             else if (JetTokens.STRINGS.contains(elementType)) scanWords(WordOccurrence.Kind.LITERALS, processor)
             else scanWords(WordOccurrence.Kind.CODE, processor)
+
+            if (elementType !in JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET) {
+                valOrVarBefore = elementType == JetTokens.VAL_KEYWORD || elementType == JetTokens.VAR_KEYWORD
+            }
 
             lexer.advance()
         }

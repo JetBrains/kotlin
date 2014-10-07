@@ -4,6 +4,6 @@ fun foo() {
     val x: Int? = null
 
     bar(x ?: 0)
-    if (x != null) bar(<!USELESS_ELVIS!>x<!> ?: <!DEBUG_INFO_AUTOCAST!>x<!>)
+    if (x != null) bar(<!USELESS_ELVIS!>x<!> ?: <!DEBUG_INFO_SMARTCAST!>x<!>)
     bar(<!TYPE_MISMATCH!>x<!>)
 }

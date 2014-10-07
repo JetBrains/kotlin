@@ -1,4 +1,4 @@
-// "Change function signature to 'override fun f(y: S, x: List<Set<R>>)'" "true"
+// "Change function signature to 'fun f(y: S, x: List<Set<R>>)'" "true"
 trait A<P,Q> {
     fun f(a: Q, b: List<Set<P>>)
 }

@@ -34,14 +34,14 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
     private final PropertyDescriptor calleeDescriptor;
 
     public AccessorForPropertyDescriptor(@NotNull PropertyDescriptor pd, @NotNull DeclarationDescriptor containingDeclaration, int index) {
-        this(pd, pd.getType(), DescriptorUtils.getReceiverParameterType(pd.getReceiverParameter()), pd.getExpectedThisObject(), containingDeclaration, index);
+        this(pd, pd.getType(), DescriptorUtils.getReceiverParameterType(pd.getExtensionReceiverParameter()), pd.getDispatchReceiverParameter(), containingDeclaration, index);
     }
 
     protected AccessorForPropertyDescriptor(
             @NotNull PropertyDescriptor original,
             @NotNull JetType propertyType,
             @Nullable JetType receiverType,
-            @Nullable ReceiverParameterDescriptor expectedThisObject,
+            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull DeclarationDescriptor containingDeclaration,
             int index
     ) {
@@ -50,7 +50,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
               Kind.DECLARATION, SourceElement.NO_SOURCE);
 
         this.calleeDescriptor = original;
-        setType(propertyType, Collections.<TypeParameterDescriptorImpl>emptyList(), expectedThisObject, receiverType);
+        setType(propertyType, Collections.<TypeParameterDescriptorImpl>emptyList(), dispatchReceiverParameter, receiverType);
         initialize(new Getter(this), new Setter(this));
     }
 

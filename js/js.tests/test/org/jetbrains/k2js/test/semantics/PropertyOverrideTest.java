@@ -51,4 +51,20 @@ public class PropertyOverrideTest extends SingleFileTranslationTest {
     public void testOverrideExtensionProperty() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testInitOverrideInConstructor() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testInitOverrideInConstructorExplicitThis() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testInitOverrideInConstructorComplex() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testInitOverrideVarInConstructor() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

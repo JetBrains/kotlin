@@ -19,13 +19,14 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.backend.common.CodegenUtil;
+import org.jetbrains.jet.codegen.bridges.Bridge;
+import org.jetbrains.jet.codegen.bridges.BridgesPackage;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -37,6 +38,7 @@ import org.jetbrains.k2js.translate.expression.ExpressionPackage;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -48,6 +50,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescrip
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction;
+import static org.jetbrains.k2js.translate.utils.UtilsPackage.*;
 
 /**
  * Generates a definition of a single class.
@@ -99,6 +102,7 @@ public final class ClassTranslator extends AbstractTranslator {
         return descriptor.getKind().equals(ClassKind.TRAIT);
     }
 
+    @NotNull
     private List<JsExpression> getClassCreateInvocationArguments(@NotNull TranslationContext declarationContext) {
         List<JsExpression> invocationArguments = new ArrayList<JsExpression>();
 
@@ -142,6 +146,16 @@ public final class ClassTranslator extends AbstractTranslator {
             JsObjectLiteral enumEntries = new JsObjectLiteral(bodyVisitor.getEnumEntryList(), true);
             JsFunction function = simpleReturnFunction(declarationContext.getScopeForDescriptor(descriptor), enumEntries);
             invocationArguments.add(function);
+        }
+
+        generateTraitMethods(properties);
+
+        if (!DescriptorUtils.isTrait(descriptor)) {
+            for (DeclarationDescriptor memberDescriptor : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+                if (memberDescriptor instanceof FunctionDescriptor) {
+                    generateBridges((FunctionDescriptor) memberDescriptor, properties);
+                }
+            }
         }
 
         boolean hasStaticProperties = !staticProperties.isEmpty();
@@ -246,5 +260,48 @@ public final class ClassTranslator extends AbstractTranslator {
         fun.getBody().getStatements().add(new JsReturn(translate(funContext)));
 
         return ExpressionPackage.withCapturedParameters(fun, funContext, outerClassContext, descriptor);
+    }
+
+    private void generateBridges(
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull List<JsPropertyInitializer> properties
+    ) {
+        Set<Bridge<FunctionDescriptor>> bridgesToGenerate =
+                BridgesPackage.generateBridgesForFunctionDescriptor(descriptor, UtilsPackage.<FunctionDescriptor>getID());
+
+        for (Bridge<FunctionDescriptor> bridge : bridgesToGenerate) {
+            generateBridge(bridge, properties);
+        }
+    }
+
+    private void generateBridge(
+            @NotNull Bridge<FunctionDescriptor> bridge,
+            @NotNull List<JsPropertyInitializer> properties
+    ) {
+        FunctionDescriptor fromDescriptor = bridge.getFrom();
+        FunctionDescriptor toDescriptor = bridge.getTo();
+        if (areNamesEqual(fromDescriptor, toDescriptor)) return;
+
+        if (fromDescriptor.getKind().isReal() &&
+            fromDescriptor.getModality() != Modality.ABSTRACT &&
+            !toDescriptor.getKind().isReal()) return;
+
+        properties.add(generateDelegateCall(fromDescriptor, toDescriptor, JsLiteral.THIS, context()));
+    }
+
+    private void generateTraitMethods(@NotNull List<JsPropertyInitializer> properties) {
+        if (isTrait()) return;
+
+        for(Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getTraitMethods(descriptor).entrySet()) {
+            if (!areNamesEqual(entry.getKey(), entry.getValue())) {
+                properties.add(generateDelegateCall(entry.getValue(), entry.getKey(), JsLiteral.THIS, context()));
+            }
+        }
+    }
+
+    private boolean areNamesEqual(@NotNull FunctionDescriptor first, @NotNull FunctionDescriptor second) {
+        JsName firstName = context().getNameForDescriptor(first);
+        JsName secondName = context().getNameForDescriptor(second);
+        return firstName.getIdent().equals(secondName.getIdent());
     }
 }

@@ -54,30 +54,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/common"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
-        @TestMetadata("AutoCastAfterIf.kt")
-        public void testAutoCastAfterIf() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/AutoCastAfterIf.kt");
-            doTest(fileName);
-        }
-        
-        @TestMetadata("AutoCastAfterIfMethod.kt")
-        public void testAutoCastAfterIfMethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/AutoCastAfterIfMethod.kt");
-            doTest(fileName);
-        }
-        
-        @TestMetadata("AutoCastForThis.kt")
-        public void testAutoCastForThis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/AutoCastForThis.kt");
-            doTest(fileName);
-        }
-        
-        @TestMetadata("AutoCastInWhen.kt")
-        public void testAutoCastInWhen() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/AutoCastInWhen.kt");
-            doTest(fileName);
-        }
-        
         @TestMetadata("BasicAny.kt")
         public void testBasicAny() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/BasicAny.kt");
@@ -585,6 +561,30 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("ShortClassNamesInTypePosition.kt")
         public void testShortClassNamesInTypePosition() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ShortClassNamesInTypePosition.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("SmartCastAfterIf.kt")
+        public void testSmartCastAfterIf() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SmartCastAfterIf.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("SmartCastAfterIfMethod.kt")
+        public void testSmartCastAfterIfMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SmartCastAfterIfMethod.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("SmartCastForThis.kt")
+        public void testSmartCastForThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SmartCastForThis.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("SmartCastInWhen.kt")
+        public void testSmartCastInWhen() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/SmartCastInWhen.kt");
             doTest(fileName);
         }
         

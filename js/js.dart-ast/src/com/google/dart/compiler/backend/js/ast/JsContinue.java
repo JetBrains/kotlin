@@ -4,26 +4,54 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class JsContinue extends SourceInfoAwareJsNode implements JsStatement {
-    protected final String label;
+    protected JsNameRef label;
 
     public JsContinue() {
         this(null);
     }
 
-    public JsContinue(@Nullable String label) {
+    public JsContinue(@Nullable JsNameRef label) {
         super();
         this.label = label;
     }
 
-    public String getLabel() {
+    public JsNameRef getLabel() {
         return label;
     }
 
     @Override
     public void accept(JsVisitor v) {
         v.visitContinue(this);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor v) {
+        if (label != null){
+            v.accept(label);
+        }
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            if (label != null){
+                label = v.accept(label);
+            }
+        }
+
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsContinue deepCopy() {
+        if (label == null) return new JsContinue();
+
+        return new JsContinue(AstUtil.deepCopy(label)).withMetadataFrom(this);
     }
 }

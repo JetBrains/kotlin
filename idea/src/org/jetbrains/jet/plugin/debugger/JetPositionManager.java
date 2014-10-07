@@ -39,11 +39,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
@@ -208,6 +208,29 @@ public class JetPositionManager implements PositionManager {
                 return asmType.getInternalName();
             }
         }
+        else if (element instanceof JetClassInitializer) {
+            PsiElement parent = getElementToCalculateClassName(element.getParent());
+            // Class-object initializer
+            if (parent instanceof JetObjectDeclaration && ((JetObjectDeclaration) parent).isClassObject()) {
+                return getClassNameForElement(parent.getParent(), typeMapper, file, isInLibrary);
+            }
+            return getClassNameForElement(element, typeMapper, file, isInLibrary);
+        }
+        else if (element instanceof JetProperty && (!((JetProperty) element).isTopLevel() || !isInLibrary)) {
+            if (isInPropertyAccessor(notPositionedElement)) {
+                JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class);
+                if (classOrObject != null) {
+                    return getJvmInternalNameForImpl(typeMapper, classOrObject);
+                }
+            }
+
+            VariableDescriptor descriptor = (VariableDescriptor) typeMapper.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+            if (!(descriptor instanceof PropertyDescriptor)) {
+                return getClassNameForElement(element.getParent(), typeMapper, file, isInLibrary);
+            }
+
+            return getJvmInternalNameForPropertyOwner(typeMapper, (PropertyDescriptor) descriptor);
+        }
         else if (element instanceof JetNamedFunction) {
             PsiElement parent = getElementToCalculateClassName(element);
             if (parent instanceof JetClassOrObject) {
@@ -230,14 +253,31 @@ public class JetPositionManager implements PositionManager {
     }
 
     @Nullable
-    private static JetNamedDeclaration getElementToCalculateClassName(@Nullable PsiElement notPositionedElement) {
+    private static JetDeclaration getElementToCalculateClassName(@Nullable PsiElement notPositionedElement) {
         //noinspection unchecked
-        return PsiTreeUtil.getParentOfType(notPositionedElement, JetClassOrObject.class, JetFunctionLiteral.class, JetNamedFunction.class);
+        return PsiTreeUtil.getParentOfType(notPositionedElement,
+                                           JetClassOrObject.class,
+                                           JetFunctionLiteral.class, JetNamedFunction.class,
+                                           JetProperty.class,
+                                           JetClassInitializer.class);
+    }
+
+    @NotNull
+    public static String getJvmInternalNameForPropertyOwner(@NotNull JetTypeMapper typeMapper, @NotNull PropertyDescriptor descriptor) {
+        return typeMapper.mapOwner(
+                AsmUtil.isPropertyWithBackingFieldInOuterClass(descriptor) ? descriptor.getContainingDeclaration() : descriptor,
+                true)
+                .getInternalName();
+    }
+
+    private static boolean isInPropertyAccessor(@Nullable PsiElement element) {
+        //noinspection unchecked
+        return element instanceof  JetPropertyAccessor || ((JetElement) PsiTreeUtil.getParentOfType(element, JetProperty.class, JetPropertyAccessor.class)) instanceof JetPropertyAccessor;
     }
 
     @Nullable
-    private static JetElement getElementToCreateTypeMapperForLibraryFile(@Nullable PsiElement notPositionedElement) {
-        return PsiTreeUtil.getParentOfType(notPositionedElement, JetElement.class);
+    private static JetElement getElementToCreateTypeMapperForLibraryFile(@Nullable PsiElement element) {
+        return element instanceof JetElement ? (JetElement) element : PsiTreeUtil.getParentOfType(element, JetElement.class);
     }
 
     @Nullable

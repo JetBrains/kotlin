@@ -207,6 +207,9 @@ public class LockBasedStorageManager implements StorageManager {
         try {
             return computable.invoke();
         }
+        catch (Throwable throwable) {
+            throw exceptionHandlingStrategy.handleException(throwable);
+        }
         finally {
             lock.unlock();
         }

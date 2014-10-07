@@ -1,4 +1,4 @@
-// "Change function signature to 'override fun f(a: Int): Int'" "true"
+// "Change function signature to 'fun f(a: Int): Int'" "true"
 open class A {
     open fun f(a: Int): Int {
         return 0

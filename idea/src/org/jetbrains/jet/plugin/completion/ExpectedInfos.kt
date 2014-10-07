@@ -26,7 +26,6 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode
 import org.jetbrains.jet.lang.resolve.calls.CompositeExtension
@@ -35,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lexer.JetTokens
@@ -44,7 +42,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetContainerNode
 import org.jetbrains.jet.plugin.completion.smart.isSubtypeOf
 import org.jetbrains.jet.lang.resolve.calls.callUtil.noErrorsInValueArguments
-import org.jetbrains.jet.lang.resolve.calls.callUtil.hasUnmappedParameters
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.plugin.util.makeNotNullable
@@ -62,16 +59,14 @@ import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
 import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.psi.JetFunction
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
-import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.jet.lang.psi.JetReturnExpression
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.jet.plugin.completion.smart.toList
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 
 enum class Tail {
     COMMA
@@ -79,9 +74,19 @@ enum class Tail {
     ELSE
 }
 
-data class ExpectedInfo(val `type`: JetType, val name: String?, val tail: Tail?)
+open data class ExpectedInfo(val `type`: JetType, val name: String?, val tail: Tail?)
 
-class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: ModuleDescriptor) {
+class PositionalArgumentExpectedInfo(`type`: JetType, name: String?, tail: Tail?, val function: FunctionDescriptor, val argumentIndex: Int)
+  : ExpectedInfo(`type`, name, tail) {
+
+    override fun equals(other: Any?)
+            = other is PositionalArgumentExpectedInfo && super.equals(other) && function == other.function && argumentIndex == other.argumentIndex
+
+    override fun hashCode()
+            = function.hashCode()
+}
+
+class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         return calculateForArgument(expressionWithType)
             ?: calculateForFunctionLiteralArgument(expressionWithType)
@@ -156,13 +161,13 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                 CheckValueArgumentsMode.ENABLED,
                 CompositeExtension(listOf()),
                 false).replaceCollectAllCandidates(true)
-        val callResolver = InjectorForMacros(callElement.getProject(), moduleDescriptor).getCallResolver()!!
+        val callResolver = InjectorForMacros(callElement.getProject(), resolveSession.getModuleDescriptor()).getCallResolver()!!
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
         val expectedInfos = HashSet<ExpectedInfo>()
         for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
             // consider only candidates with more arguments than in the truncated call and with all arguments before the current one matched
-            if (candidate.noErrorsInValueArguments() && (isFunctionLiteralArgument || candidate.hasUnmappedParameters())) {
+            if (candidate.noErrorsInValueArguments() && (candidate.getCandidateDescriptor().getValueParameters().size > argumentIndex || isFunctionLiteralArgument)) {
                 val descriptor = candidate.getResultingDescriptor()
                 if (!Visibilities.isVisible(descriptor, resolutionScope.getContainingDeclaration())) continue
 
@@ -172,7 +177,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                 val tail = if (isFunctionLiteralArgument)
                     null
                 else if (argumentIndex == parameters.lastIndex)
-                    Tail.RPARENTH
+                    Tail.RPARENTH //TODO: support square brackets
                 else if (parameters.drop(argumentIndex + 1).all { it.hasDefaultValue() || it.getVarargElementType() != null })
                     null
                 else
@@ -180,7 +185,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
 
                 val parameter = parameters[argumentIndex]
                 val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
-                expectedInfos.add(ExpectedInfo(parameter.getType(), expectedName, tail))
+                expectedInfos.add(PositionalArgumentExpectedInfo(parameter.getType(), expectedName, tail, descriptor, argumentIndex))
             }
         }
         return expectedInfos
@@ -273,14 +278,14 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
     private fun calculateForInitializer(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val property = expressionWithType.getParent() as? JetProperty ?: return null
         if (expressionWithType != property.getInitializer()) return null
-        val propertyDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptor ?: return null
+        val propertyDescriptor = resolveSession.resolveToDescriptor(property) as? VariableDescriptor ?: return null
         return listOf(ExpectedInfo(propertyDescriptor.getType(), propertyDescriptor.getName().asString(), null))
     }
 
     private fun calculateForExpressionBody(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val declaration = expressionWithType.getParent() as? JetDeclarationWithBody ?: return null
         if (expressionWithType != declaration.getBodyExpression() || declaration.hasBlockBody()) return null
-        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? FunctionDescriptor ?: return null
+        val descriptor = resolveSession.resolveToDescriptor(declaration) as? FunctionDescriptor ?: return null
         return functionReturnValueExpectedInfo(descriptor).toList()
     }
 

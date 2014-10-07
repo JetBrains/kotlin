@@ -1,8 +1,7 @@
 package foo
 
 class Impl: B() {
-
     override fun foo(r: Runnable?) {
-        super<B>.foo(r)
+        <selection><caret>super<B>.foo(r)</selection>
     }
 }

@@ -7,8 +7,7 @@ public open class B() : A() {
 }
 
 public open class C() : B() {
-
     override fun foo() {
-        super<B>.foo()
+        <selection><caret>super<B>.foo()</selection>
     }
 }

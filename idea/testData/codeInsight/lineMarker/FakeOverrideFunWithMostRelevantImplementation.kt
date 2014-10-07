@@ -9,5 +9,5 @@ trait <lineMarker></lineMarker>B : A {
 trait <lineMarker></lineMarker>C : B, A
 
 class SomeClass() : C {
-    override fun <lineMarker descr="<b>internal</b> <b>open</b> <b>fun</b> f(): kotlin.Unit <i>defined in</i> SomeClass<br/>overrides<br/><b>internal</b> <b>open</b> <b>fun</b> f(): kotlin.Unit <i>defined in</i> B"></lineMarker>f() {}
+    override fun <lineMarker descr="Overrides function in 'B'"></lineMarker>f() {}
 }

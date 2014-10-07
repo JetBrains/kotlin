@@ -4,7 +4,7 @@ trait B
 class Test {
     fun test(a: A?, b: B, list: MutableList<Pair<A, B>>) {
         if (a != null) {
-            list.add(<!DEBUG_INFO_AUTOCAST!>a<!> to b)
+            list.add(<!DEBUG_INFO_SMARTCAST!>a<!> to b)
         }
     }
 }

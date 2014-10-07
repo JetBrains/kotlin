@@ -12,10 +12,10 @@ class Test {
             useInt(<!TYPE_MISMATCH!>foo<!>)
         }
         if (this.foo != null) {
-            useInt(<!DEBUG_INFO_AUTOCAST!>foo<!>)
+            useInt(<!DEBUG_INFO_SMARTCAST!>foo<!>)
         }
         if (foo != null) {
-            useInt(<!DEBUG_INFO_AUTOCAST!>this.foo<!>)
+            useInt(<!DEBUG_INFO_SMARTCAST!>this.foo<!>)
         }
     }
 

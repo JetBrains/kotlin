@@ -228,7 +228,7 @@ public class Renderers {
              .text("None of the following substitutions");
 
         for (CallableDescriptor substitutedDescriptor : substitutedDescriptors) {
-            JetType receiverType = DescriptorUtils.getReceiverParameterType(substitutedDescriptor.getReceiverParameter());
+            JetType receiverType = DescriptorUtils.getReceiverParameterType(substitutedDescriptor.getExtensionReceiverParameter());
 
             final Collection<ConstraintPosition> errorPositions = Sets.newHashSet();
             List<JetType> parameterTypes = Lists.newArrayList();

@@ -1,0 +1,24 @@
+trait T {
+    fun foo()
+    fun bar()
+}
+
+class C(t :T) : T by t {
+    override fun bar() {
+        <selection><caret>throw UnsupportedOperationException()</selection>
+    }
+    override fun equals(other: Any?): Boolean {
+        return super<T>.equals(other)
+    }
+    override fun foo() {
+        throw UnsupportedOperationException()
+    }
+    override fun hashCode(): Int {
+        return super<T>.hashCode()
+    }
+    override fun toString(): String {
+        return super<T>.toString()
+    }
+}
+
+// KT-5103

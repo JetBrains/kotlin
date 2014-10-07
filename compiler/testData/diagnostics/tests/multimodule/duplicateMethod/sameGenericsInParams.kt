@@ -38,6 +38,6 @@ import p.*
 
 fun test(b: B?, a: G1<Int>, b1: G2<B, String>) {
     if (b is C) {
-        <!DEBUG_INFO_AUTOCAST!>b<!>?.foo(a, b1)
+        <!DEBUG_INFO_SMARTCAST!>b<!>?.foo(a, b1)
     }
 }

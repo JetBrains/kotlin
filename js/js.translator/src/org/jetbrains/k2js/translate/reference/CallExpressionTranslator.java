@@ -17,9 +17,20 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.jet.lang.types.lang.InlineStrategy;
+import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
@@ -31,10 +42,42 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             @Nullable JsExpression receiver,
             @NotNull TranslationContext context
     ) {
-        if (InlinedCallExpressionTranslator.shouldBeInlined(expression, context)) {
-            return InlinedCallExpressionTranslator.translate(expression, receiver, context);
+        JsExpression callExpression = (new CallExpressionTranslator(expression, receiver, context)).translate();
+
+        if (shouldBeInlined(expression, context)
+            && callExpression instanceof JsInvocation) {
+
+            MetadataPackage.setInlineStrategy((JsInvocation) callExpression, InlineStrategy.IN_PLACE);
         }
-        return (new CallExpressionTranslator(expression, receiver, context)).translate();
+
+        return callExpression;
+    }
+
+    public static boolean shouldBeInlined(@NotNull JetCallExpression expression, @NotNull TranslationContext context) {
+        if (!context.getConfig().isInlineEnabled()) return false;
+
+        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context.bindingContext());
+        assert resolvedCall != null;
+
+        CallableDescriptor descriptor;
+
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            descriptor = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getCandidateDescriptor();
+        } else {
+            descriptor = resolvedCall.getCandidateDescriptor();
+        }
+
+        if (descriptor instanceof SimpleFunctionDescriptor) {
+            return ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
+        }
+
+        if (descriptor instanceof ValueParameterDescriptor) {
+            DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
+            return InlineUtil.getInlineType(containingDescriptor).isInline()
+                   && !InlineUtil.hasNoinlineAnnotation(descriptor);
+        }
+
+        return false;
     }
 
     private CallExpressionTranslator(

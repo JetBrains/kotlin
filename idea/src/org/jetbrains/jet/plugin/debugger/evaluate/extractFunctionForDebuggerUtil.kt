@@ -29,7 +29,7 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Statu
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import org.jetbrains.jet.plugin.refactoring.extractFunction.validate
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions
-import org.jetbrains.jet.plugin.refactoring.runReadAction
+import org.jetbrains.jet.plugin.util.application.runReadAction
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import org.jetbrains.jet.lang.psi.*

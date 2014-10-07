@@ -4,6 +4,8 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface JsNode {
     /**
      * Causes this object to have the visitor visit itself and its children.
@@ -27,4 +29,15 @@ public interface JsNode {
     void setSource(Object info);
 
     JsNode source(Object info);
+
+    @NotNull
+    JsNode deepCopy();
+
+    /**
+     * Causes this object to have the visitor visit itself and its children.
+     *
+     * @param visitor the visitor that should traverse this node
+     * @param ctx the context of an existing traversal
+     */
+    void traverse(JsVisitorWithContext visitor, JsContext ctx);
 }

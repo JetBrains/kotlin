@@ -27,16 +27,10 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import java.util.Collections
-import java.util.HashSet
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
-import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.jet.lang.psi.JetReferenceExpression
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.utils.keysToMap
-import org.jetbrains.jet.plugin.search.allScope
-import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
 public trait JetReference : PsiPolyVariantReference {
     public fun resolveToDescriptors(): Collection<DeclarationDescriptor>
@@ -89,12 +83,12 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
 
     override fun resolveMap(): Map<DeclarationDescriptor, Collection<PsiElement>> {
         val context = AnalyzerFacadeWithCache.getContextForElement(expression)
-        return getTargetDescriptors(context) keysToMap { resolveToPsiElements(it) }
+        return getTargetDescriptors(context) keysToMap { DescriptorToDeclarationUtil.resolveToPsiElements(expression.getProject(), it) }
     }
 
     private fun resolveToPsiElements(context: BindingContext, targetDescriptors: Collection<DeclarationDescriptor>): Collection<PsiElement> {
         if (targetDescriptors.isNotEmpty()) {
-            return targetDescriptors flatMap { target -> resolveToPsiElements(target) }
+            return targetDescriptors flatMap { target -> DescriptorToDeclarationUtil.resolveToPsiElements(expression.getProject(), target) }
         }
 
         val labelTargets = getLabelTargets(context)
@@ -103,23 +97,6 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
         }
 
         return Collections.emptySet()
-    }
-
-    private fun resolveToPsiElements(targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
-        val result = HashSet<PsiElement>()
-        val project = expression.getProject()
-        // todo: remove getOriginal()
-        val originalDescriptor = targetDescriptor.getOriginal()
-        result.addAll(DescriptorToSourceUtils.descriptorToDeclarations(originalDescriptor))
-        result.addAll(DescriptorToDeclarationUtil.findDecompiledAndBuiltInDeclarations(project, originalDescriptor))
-
-        if (originalDescriptor is PackageViewDescriptor) {
-            val psiFacade = JavaPsiFacade.getInstance(project)
-            val fqName = (originalDescriptor as PackageViewDescriptor).getFqName().asString()
-            ContainerUtil.addIfNotNull(result, psiFacade.findPackage(fqName))
-            ContainerUtil.addIfNotNull(result, psiFacade.findClass(fqName, project.allScope()))
-        }
-        return result
     }
 
     protected abstract fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor>

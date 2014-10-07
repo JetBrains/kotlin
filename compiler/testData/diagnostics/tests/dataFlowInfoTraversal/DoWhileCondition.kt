@@ -4,7 +4,7 @@ fun simpleDoWhile(x: Int?, y0: Int) {
         x : Int?
         y++
     } while (x!! == y)
-    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
+    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
 }
 
 fun doWhileWithBreak(x: Int?, y0: Int) {

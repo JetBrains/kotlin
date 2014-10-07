@@ -5,4 +5,4 @@ package java
 
 val c : lang.Class<*>? = null
 
-val <T> Array<T>?.length : Int get() = if (this != null) <!DEBUG_INFO_AUTOCAST!>this<!>.size else throw NullPointerException()
+val <T> Array<T>?.length : Int get() = if (this != null) <!DEBUG_INFO_SMARTCAST!>this<!>.size else throw NullPointerException()

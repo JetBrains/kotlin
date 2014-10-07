@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents a javascript expression for array access.
  */
@@ -45,5 +48,23 @@ public final class JsArrayAccess extends JsExpressionImpl {
     public void acceptChildren(JsVisitor visitor) {
         visitor.accept(arrayExpression);
         visitor.accept(indexExpression);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            arrayExpression = v.accept(arrayExpression);
+            indexExpression = v.accept(indexExpression);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsArrayAccess deepCopy() {
+        JsExpression arrayCopy = AstUtil.deepCopy(arrayExpression);
+        JsExpression indexCopy = AstUtil.deepCopy(indexExpression);
+
+        return new JsArrayAccess(arrayCopy, indexCopy).withMetadataFrom(this);
     }
 }

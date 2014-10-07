@@ -10,4 +10,8 @@ public interface JsExpression extends JsNode {
 
     @Override
     JsExpression source(Object info);
+
+    @NotNull
+    @Override
+    JsExpression deepCopy();
 }

@@ -33,15 +33,24 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.utils.UtilsPackage.rethrow;
-import static org.jetbrains.k2js.test.BasicTest.pathToTestFilesRoot;
+import static org.jetbrains.k2js.config.LibrarySourcesConfig.STDLIB_JS_FILE_NAME;
+import static org.jetbrains.k2js.config.LibrarySourcesConfig.STDLIB_JS_MODULE_NAME;
+import static org.jetbrains.k2js.test.BasicTest.DIST_DIR_PATH;
+import static org.jetbrains.k2js.test.BasicTest.TEST_DATA_DIR_PATH;
 
 public final class RhinoUtils {
-    private static final String KOTLIN_JS_LIB_ECMA_5 = pathToTestFilesRoot() + "kotlin_lib_ecma5.js";
+    private static final String KOTLIN_JS_LIB_ECMA_5 = TEST_DATA_DIR_PATH + "kotlin_lib_ecma5.js";
 
     private static final Set<String> IGNORED_JSHINT_WARNINGS = Sets.newHashSet();
     
     private static final NativeObject JSHINT_OPTIONS = new NativeObject();
-    
+
+    public static final String OPTIMIZATION_LEVEL_TEST_VARIABLE = "rhinoOptimizationLevel";
+
+    public static final int OPTIMIZATION_OFF = -1;
+
+    public static final int OPTIMIZATION_DEFAULT = 0;
+
     @NotNull
     private static final Map<EcmaVersion, ScriptableObject> versionToScope = ContainerUtil.newHashMap();
 
@@ -105,12 +114,7 @@ public final class RhinoUtils {
     }
 
     public static void runRhinoTest(@NotNull List<String> fileNames, @NotNull RhinoResultChecker checker) throws Exception {
-        runRhinoTest(fileNames, checker, EcmaVersion.defaultVersion());
-    }
-
-    public static void runRhinoTest(@NotNull List<String> fileNames, @NotNull RhinoResultChecker checker, @NotNull EcmaVersion ecmaVersion)
-            throws Exception {
-        runRhinoTest(fileNames, checker, null, ecmaVersion);
+        runRhinoTest(fileNames, checker, null, EcmaVersion.defaultVersion());
     }
 
     public static void runRhinoTest(@NotNull List<String> fileNames,
@@ -127,16 +131,22 @@ public final class RhinoUtils {
             @NotNull EcmaVersion ecmaVersion,
             @NotNull List<String> jsLibraries) throws Exception {
         Context context = createContext(ecmaVersion);
+
+        context.setOptimizationLevel(OPTIMIZATION_OFF);
+        if (variables != null) {
+            context.setOptimizationLevel(getOptimizationLevel(variables));
+        }
+
         try {
             ScriptableObject scope = getScope(ecmaVersion, context, jsLibraries);
             putGlobalVariablesIntoScope(scope, variables);
             for (String filename : fileNames) {
                 runFileWithRhino(filename, context, scope);
-                String problems = lintIt(context, filename, scope);
-                if (problems != null) {
-                    //fail(problems);
-                    System.out.print(problems);
-                }
+                //String problems = lintIt(context, filename, scope);
+                //if (problems != null) {
+                //    //fail(problems);
+                //    System.out.print(problems);
+                //}
             }
             checker.runChecks(context, scope);
         }
@@ -161,7 +171,15 @@ public final class RhinoUtils {
         }
         else {
             NativeObject kotlin = (NativeObject) parentScope.get("Kotlin");
-            kotlin.put("modules", kotlin, new NativeObject());
+            assert kotlin != null;
+            NativeObject modules = (NativeObject) kotlin.get("modules");
+            assert modules != null;
+            NativeObject stdlibModule = (NativeObject) modules.get(STDLIB_JS_MODULE_NAME);
+
+            NativeObject newModules = new NativeObject();
+            newModules.put(STDLIB_JS_MODULE_NAME, newModules, stdlibModule);
+
+            kotlin.put("modules", kotlin, newModules);
         }
         return parentScope;
     }
@@ -171,9 +189,11 @@ public final class RhinoUtils {
         ScriptableObject scope = context.initStandardObjects();
         try {
             runFileWithRhino(getKotlinLibFile(version), context, scope);
-            runFileWithRhino(pathToTestFilesRoot() + "kotlin_lib.js", context, scope);
-            runFileWithRhino(pathToTestFilesRoot() + "maps.js", context, scope);
-            runFileWithRhino(pathToTestFilesRoot() + "jshint.js", context, scope);
+            runFileWithRhino(TEST_DATA_DIR_PATH + "kotlin_lib.js", context, scope);
+            runFileWithRhino(TEST_DATA_DIR_PATH + "maps.js", context, scope);
+            runFileWithRhino(TEST_DATA_DIR_PATH + "long.js", context, scope);
+            runFileWithRhino(DIST_DIR_PATH + STDLIB_JS_FILE_NAME, context, scope);
+            //runFileWithRhino(pathToTestFilesRoot() + "jshint.js", context, scope);
             for (String jsLibrary : jsLibraries) {
                 runFileWithRhino(jsLibrary, context, scope);
             }
@@ -266,5 +286,15 @@ public final class RhinoUtils {
             return ((Number) obj).intValue();
         }
         return -1;
+    }
+
+    private static int getOptimizationLevel(@NotNull Map<String, Object> testVariables) {
+        Object optimizationLevel = testVariables.get(OPTIMIZATION_LEVEL_TEST_VARIABLE);
+
+        if (optimizationLevel instanceof Integer) {
+            return (Integer) optimizationLevel;
+        }
+
+        return OPTIMIZATION_DEFAULT;
     }
 }

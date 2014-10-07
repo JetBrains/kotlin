@@ -12,8 +12,8 @@ Candidate descriptor: fun <T, S, R> foo(t: T, f: (T) -> S, g: (S) -> R): Unit de
 Resulting descriptor: fun <T, S, R> foo(t: Int, f: (Int) -> String, g: (String) -> Int): Unit defined in root package
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
-This object = NO_RECEIVER
-Receiver argument = NO_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 

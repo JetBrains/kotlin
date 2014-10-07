@@ -524,7 +524,7 @@ public class JetTypeMapper {
         Type calleeType = isLocalNamedFun(functionDescriptor) ? owner : null;
 
         Type receiverParameterType;
-        ReceiverParameterDescriptor receiverParameter = functionDescriptor.getOriginal().getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = functionDescriptor.getOriginal().getExtensionReceiverParameter();
         if (receiverParameter != null) {
             receiverParameterType = mapType(receiverParameter.getType());
         }
@@ -624,7 +624,7 @@ public class JetTypeMapper {
             sw.writeParametersStart();
             writeThisIfNeeded(f, kind, sw);
 
-            ReceiverParameterDescriptor receiverParameter = f.getReceiverParameter();
+            ReceiverParameterDescriptor receiverParameter = f.getExtensionReceiverParameter();
             if (receiverParameter != null) {
                 writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.getType());
             }
@@ -664,7 +664,7 @@ public class JetTypeMapper {
     public Method mapDefaultMethod(@NotNull FunctionDescriptor functionDescriptor, @NotNull OwnerKind kind, @NotNull CodegenContext<?> context) {
         Method jvmSignature = mapSignature(functionDescriptor, kind).getAsmMethod();
         Type ownerType = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context, getOutDirectory()));
-        String descriptor = getDefaultDescriptor(jvmSignature, functionDescriptor.getReceiverParameter() != null);
+        String descriptor = getDefaultDescriptor(jvmSignature, functionDescriptor.getExtensionReceiverParameter() != null);
         boolean isConstructor = "<init>".equals(jvmSignature.getName());
         if (!isStaticMethod(kind, functionDescriptor) && !isConstructor) {
             descriptor = descriptor.replace("(", "(" + ownerType.getDescriptor());
@@ -713,7 +713,7 @@ public class JetTypeMapper {
         if (kind == OwnerKind.TRAIT_IMPL) {
             thisType = getTraitImplThisParameterClass((ClassDescriptor) descriptor.getContainingDeclaration());
         }
-        else if (isAccessor(descriptor) && descriptor.getExpectedThisObject() != null) {
+        else if (isAccessor(descriptor) && descriptor.getDispatchReceiverParameter() != null) {
             thisType = (ClassDescriptor) descriptor.getContainingDeclaration();
         }
         else return;
@@ -804,7 +804,7 @@ public class JetTypeMapper {
     private void writeAdditionalConstructorParameters(@NotNull ConstructorDescriptor descriptor, @NotNull BothSignatureWriter sw) {
         CalculatedClosure closure = bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration());
 
-        ClassDescriptor captureThis = getExpectedThisObjectForConstructorCall(descriptor, closure);
+        ClassDescriptor captureThis = getDispatchReceiverParameterForConstructorCall(descriptor, closure);
         if (captureThis != null) {
             writeParameter(sw, JvmMethodParameterKind.OUTER, captureThis.getDefaultType());
         }
@@ -930,7 +930,7 @@ public class JetTypeMapper {
             return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
         }
         else if (descriptor instanceof PropertyDescriptor || descriptor instanceof FunctionDescriptor) {
-            ReceiverParameterDescriptor receiverParameter = ((CallableDescriptor) descriptor).getReceiverParameter();
+            ReceiverParameterDescriptor receiverParameter = ((CallableDescriptor) descriptor).getExtensionReceiverParameter();
             assert receiverParameter != null : "Callable should have a receiver parameter: " + descriptor;
             return StackValue.sharedTypeForType(mapType(receiverParameter.getType()));
         }

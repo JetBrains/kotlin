@@ -48,7 +48,7 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static ReceiverParameterDescriptor getExpectedThisObjectIfNeeded(@NotNull DeclarationDescriptor containingDeclaration) {
+    public static ReceiverParameterDescriptor getDispatchReceiverParameterIfNeeded(@NotNull DeclarationDescriptor containingDeclaration) {
         if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
             return classDescriptor.getThisAsReceiverParameter();
@@ -139,7 +139,7 @@ public class DescriptorUtils {
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         return container instanceof PackageFragmentDescriptor ||
-               (container instanceof ClassDescriptor && descriptor.getExpectedThisObject() == null);
+               (container instanceof ClassDescriptor && descriptor.getDispatchReceiverParameter() == null);
     }
 
     // WARNING! Don't use this method in JVM backend, use JvmCodegenUtil.isCallInsideSameModuleAsDeclared() instead.

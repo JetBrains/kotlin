@@ -1,7 +1,5 @@
 package foo
 
-fun run<T>(f: () -> T) = f()
-
 class Foo {
     val OK = "OK";
     var result: String = ""

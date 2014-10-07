@@ -213,16 +213,30 @@ fun getAnnotations(project: Project, logger: Logger): Collection<File> {
 
 class GradleMessageCollector(val logger : Logger): MessageCollector {
     public override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
-        val path = location.getPath()
-        val hasLocation = path != null && location.getLine() > 0 && location.getColumn() > 0
-        val text: String
-        if (hasLocation) {
-            val warningPrefix = if (severity == CompilerMessageSeverity.WARNING) "warning:" else ""
-            val errorMarkerLine = "${" ".repeat(location.getColumn() - 1)}^"
-            text = "$path:${location.getLine()}:$warningPrefix$message\n${errorMarkerLine}"
-        }
-        else {
-            text = "${severity.name().toLowerCase()}:$message"
+        val text = with(StringBuilder()) {
+            append(when (severity) {
+                in CompilerMessageSeverity.VERBOSE -> "v"
+                in CompilerMessageSeverity.ERRORS -> "e"
+                CompilerMessageSeverity.INFO -> "i"
+                CompilerMessageSeverity.WARNING -> "w"
+                else -> throw IllegalArgumentException("Unknown CompilerMessageSeverity: $severity")
+            })
+            append(": ")
+
+            val path = location.getPath()
+            if (path != null) {
+                append(path)
+                append(": ")
+                append("(")
+                append(location.getLine())
+                append(", ")
+                append(location.getColumn())
+                append("): ")
+            }
+
+            append(message)
+
+            toString()
         }
         when (severity) {
             in CompilerMessageSeverity.VERBOSE -> logger.debug(text)

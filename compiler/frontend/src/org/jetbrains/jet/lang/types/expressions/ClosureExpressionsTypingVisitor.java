@@ -111,7 +111,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected);
         functionDescriptor.setReturnType(safeReturnType);
 
-        JetType receiver = DescriptorUtils.getReceiverParameterType(functionDescriptor.getReceiverParameter());
+        JetType receiver = DescriptorUtils.getReceiverParameterType(functionDescriptor.getExtensionReceiverParameter());
         List<JetType> valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(functionDescriptor.getValueParameters());
         JetType resultType = KotlinBuiltIns.getInstance().getFunctionType(
                 Annotations.EMPTY, receiver, valueParametersTypes, safeReturnType);

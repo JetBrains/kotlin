@@ -11,9 +11,9 @@ public fun publicInM2() {
 
 fun access() {
     <error descr="[INVISIBLE_MEMBER] Cannot access 'privateInM1': it is 'private' in 'shared'">privateInM1</error>()
-    <error descr="[INVISIBLE_MEMBER] Cannot access 'internalInM1': it is 'internal' in 'shared'">internalInM1</error>()
+    internalInM1()
     publicInM1()
-    
+
     <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: privateInM1Test">privateInM1Test</error>()
     <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: internalInM1Test">internalInM1Test</error>()
     <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: publicInM1Test">publicInM1Test</error>()

@@ -4,9 +4,9 @@ package a
 fun main(args: Array<String>) {
     val value: String? = ""
     if (value != null) {
-        foo(Pair("val", <!DEBUG_INFO_AUTOCAST!>value<!>))
+        foo(Pair("val", <!DEBUG_INFO_SMARTCAST!>value<!>))
         foo(Pair("val", value<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>))
-        foo(Pair<String, String>("val", <!DEBUG_INFO_AUTOCAST!>value<!>))
+        foo(Pair<String, String>("val", <!DEBUG_INFO_SMARTCAST!>value<!>))
     }
 }
 

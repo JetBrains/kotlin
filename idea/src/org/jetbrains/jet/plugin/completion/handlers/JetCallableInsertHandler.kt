@@ -61,7 +61,7 @@ public abstract class JetCallableInsertHandler : BaseDeclarationInsertHandler() 
                 val descriptor = o.descriptor as? CallableDescriptor
                 if (descriptor != null) {
                     if (PsiTreeUtil.getParentOfType(element, javaClass<JetQualifiedExpression>()) != null &&
-                        descriptor.getReceiverParameter() == null) {
+                        descriptor.getExtensionReceiverParameter() == null) {
                         return@runReadAction
                     }
 

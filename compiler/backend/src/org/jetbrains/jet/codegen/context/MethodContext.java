@@ -59,7 +59,7 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     public StackValue getReceiverExpression(JetTypeMapper typeMapper) {
         assert getCallableDescriptorWithReceiver() != null;
         @SuppressWarnings("ConstantConditions")
-        Type asmType = typeMapper.mapType(getCallableDescriptorWithReceiver().getReceiverParameter().getType());
+        Type asmType = typeMapper.mapType(getCallableDescriptorWithReceiver().getExtensionReceiverParameter().getType());
         return StackValue.local(AsmUtil.getReceiverIndex(this, getContextDescriptor()), asmType);
     }
 

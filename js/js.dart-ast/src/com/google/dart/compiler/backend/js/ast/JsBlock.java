@@ -4,11 +4,11 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import com.intellij.util.SmartList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,11 +23,11 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
     }
 
     public JsBlock(JsStatement statement) {
-        this(Collections.singletonList(statement));
+        this(new SmartList<JsStatement>(statement));
     }
 
     public JsBlock(JsStatement... statements) {
-        this(Arrays.asList(statements));
+        this(new SmartList<JsStatement>(statements));
     }
 
     public JsBlock(@NotNull List<JsStatement> statements) {
@@ -55,5 +55,19 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
     @Override
     public void acceptChildren(JsVisitor visitor) {
         visitor.acceptWithInsertRemove(statements);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            v.acceptStatementList(statements);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsBlock deepCopy() {
+        return new JsBlock(AstUtil.deepCopy(statements)).withMetadataFrom(this);
     }
 }

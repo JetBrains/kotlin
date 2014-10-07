@@ -108,7 +108,7 @@ public class DescriptorFactory {
     }
 
     @Nullable
-    public static ReceiverParameterDescriptor createReceiverParameterForCallable(
+    public static ReceiverParameterDescriptor createExtensionReceiverParameterForCallable(
             @NotNull CallableDescriptor owner,
             @Nullable JetType receiverParameterType
     ) {

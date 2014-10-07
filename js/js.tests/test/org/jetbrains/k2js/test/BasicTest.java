@@ -17,26 +17,41 @@
 package org.jetbrains.k2js.test;
 
 import com.google.common.collect.Lists;
+import com.google.dart.compiler.backend.js.ast.JsNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.StandardFileSystems;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.VirtualFileSystem;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.OutputFileCollection;
+import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
-import org.jetbrains.k2js.test.config.TestConfig;
-import org.jetbrains.k2js.test.config.TestConfigFactory;
+import org.jetbrains.k2js.test.config.LibrarySourcesConfigWithCaching;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.jetbrains.k2js.test.utils.JsTestUtils;
-import org.jetbrains.k2js.test.utils.TranslationUtils;
+import org.jetbrains.k2js.translate.context.Namer;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.k2js.facade.K2JSTranslator.translateWithMainCallParameters;
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 import static org.jetbrains.k2js.test.utils.JsTestUtils.convertFileNameToDotJsFile;
 
@@ -45,31 +60,31 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     protected static final Iterable<EcmaVersion> DEFAULT_ECMA_VERSIONS = Lists.newArrayList(EcmaVersion.v5);
 
     private static final boolean DELETE_OUT = false;
-    private static final String TEST_FILES = "js/js.translator/testData/";
+
+    public static final String TEST_DATA_DIR_PATH = "js/js.translator/testData/";
+    public static final String DIST_DIR_PATH = "dist/";
+
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
     private static final String EXPECTED = "expected/";
     private static final String COMMON_FILES_DIR = "_commonFiles/";
 
+    public static final String TEST_MODULE = "JS_TESTS";
     public static final String TEST_PACKAGE = "foo";
     public static final String TEST_FUNCTION = "box";
+    public static final boolean IS_INLINE_ENABLED = true;
 
     @NotNull
-    private String mainDirectory = "";
+    private String relativePathToTestDir = "";
 
     @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-    public BasicTest(@NotNull String main) {
-        this.mainDirectory = main;
+    public BasicTest(@NotNull String relativePathToTestDir) {
+        this.relativePathToTestDir = relativePathToTestDir;
     }
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
         return JetCoreEnvironment.createForTests(getTestRootDisposable(), new CompilerConfiguration());
-    }
-
-    @NotNull
-    public String getMainDirectory() {
-        return mainDirectory;
     }
 
     protected boolean shouldCreateOut() {
@@ -100,29 +115,13 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         assert success;
     }
 
-    @NotNull
-    protected List<String> additionalJSFiles(@NotNull EcmaVersion ecmaVersion) {
-        return Lists.newArrayList();
-    }
-
-    protected void generateJavaScriptFiles(@NotNull String kotlinFilename,
-            @NotNull MainCallParameters mainCallParameters,
-            @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
-        generateJavaScriptFiles(Collections.singletonList(getInputFilePath(kotlinFilename)), kotlinFilename, mainCallParameters,
-                                ecmaVersions);
-    }
-
     protected void generateJavaScriptFiles(
-            @NotNull List<String> files,
-            @NotNull String testName,
+            @NotNull String kotlinFilename,
             @NotNull MainCallParameters mainCallParameters,
-            @NotNull Iterable<EcmaVersion> ecmaVersions,
-            @NotNull TestConfigFactory configFactory
+            @NotNull Iterable<EcmaVersion> ecmaVersions
     ) throws Exception {
-        for (EcmaVersion version : ecmaVersions) {
-            translateFiles(getProject(), withAdditionalFiles(files), getOutputFilePath(testName, version), mainCallParameters,
-                           version, configFactory);
-        }
+        generateJavaScriptFiles(Collections.singletonList(getInputFilePath(kotlinFilename)),
+                                kotlinFilename, mainCallParameters, ecmaVersions);
     }
 
     protected void generateJavaScriptFiles(
@@ -131,36 +130,65 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             @NotNull MainCallParameters mainCallParameters,
             @NotNull Iterable<EcmaVersion> ecmaVersions
     ) throws Exception {
-        generateJavaScriptFiles(files, testName, mainCallParameters, ecmaVersions, getConfigFactory());
+        Project project = getProject();
+        List<String> allFiles = withAdditionalKotlinFiles(files);
+        List<JetFile> jetFiles = createJetFileList(project, allFiles, null);
+
+        for (EcmaVersion version : ecmaVersions) {
+            Config config = createConfig(getProject(), TEST_MODULE, version);
+            File outputFile = new File(getOutputFilePath(testName, version));
+
+            translateFiles(jetFiles, outputFile, mainCallParameters, config);
+        }
     }
 
     protected void translateFiles(
-            @NotNull Project project,
-            @NotNull List<String> files,
-            @NotNull String outputFile,
+            @NotNull List<JetFile> jetFiles,
+            @NotNull File outputFile,
             @NotNull MainCallParameters mainCallParameters,
-            @NotNull EcmaVersion version,
-            @NotNull TestConfigFactory configFactory
+            @NotNull Config config
     ) throws Exception {
-        TranslationUtils.translateFiles(project, mainCallParameters, files, outputFile, version, configFactory);
+        //noinspection unchecked
+        OutputFileCollection outputFiles =
+                translateWithMainCallParameters(mainCallParameters, jetFiles, outputFile,
+                                                getOutputPrefixFile(), getOutputPostfixFile(),
+                                                config, getConsumer());
+
+        File outputDir = outputFile.getParentFile();
+        assert outputDir != null : "Parent file for output file should not be null, outputFilePath: " + outputFile.getPath();
+        OutputUtilsPackage.writeAllTo(outputFiles, outputDir);
     }
 
-    @NotNull
-    protected TestConfigFactory getConfigFactory() {
-        return TestConfig.FACTORY_WITHOUT_SOURCEMAP;
+    protected File getOutputPostfixFile() {
+        return null;
     }
 
-    @NotNull
-    private List<String> withAdditionalFiles(@NotNull List<String> files) {
-        List<String> result = Lists.newArrayList(files);
-        result.addAll(additionalKotlinFiles());
-        return result;
+    protected File getOutputPrefixFile() {
+        return null;
     }
 
-    protected void runRhinoTests(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions,
-            @NotNull RhinoResultChecker checker) throws Exception {
+    protected boolean shouldBeTranslateAsUnitTestClass() {
+        return false;
+    }
+
+    protected boolean shouldGenerateSourcemap() {
+        return false;
+    }
+
+    protected Consumer<JsNode> getConsumer() {
+        //noinspection unchecked
+        return Consumer.EMPTY_CONSUMER;
+    }
+
+    protected void runRhinoTests(
+            @NotNull String filename, 
+            @NotNull Iterable<EcmaVersion> ecmaVersions,
+            @NotNull RhinoResultChecker checker
+    ) throws Exception {
         for (EcmaVersion ecmaVersion : ecmaVersions) {
-            runRhinoTest(withAdditionalFiles(getOutputFilePath(filename, ecmaVersion), ecmaVersion), checker, getRhinoTestVariables(),
+            runRhinoTest(withAdditionalJsFiles(getOutputFilePath(filename, ecmaVersion), ecmaVersion),
+                         checker,
+                         getRhinoTestVariables(),
                          ecmaVersion);
         }
     }
@@ -172,68 +200,97 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     @NotNull
     protected List<String> additionalKotlinFiles() {
         List<String> additionalFiles = Lists.newArrayList();
-        additionalFiles.addAll(JsTestUtils.kotlinFilesInDirectory(pathToTestFilesRoot() + COMMON_FILES_DIR));
-        additionalFiles.addAll(JsTestUtils.kotlinFilesInDirectory(pathToTestFiles() + COMMON_FILES_DIR));
+        additionalFiles.addAll(JsTestUtils.kotlinFilesInDirectory(TEST_DATA_DIR_PATH + COMMON_FILES_DIR));
+        additionalFiles.addAll(JsTestUtils.kotlinFilesInDirectory(pathToTestDir() + COMMON_FILES_DIR));
         return additionalFiles;
     }
 
-    protected static String casesDirectoryName() {
-        return CASES;
+    @NotNull
+    protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
+        return Lists.newArrayList();
     }
 
-    private static String outDirectoryName() {
-        return OUT;
-    }
+    // helpers
 
-    private static String expectedDirectoryName() {
-        return EXPECTED;
+    @NotNull
+    protected final String pathToTestDir() {
+        return TEST_DATA_DIR_PATH + relativePathToTestDir;
     }
 
     @NotNull
-    protected String pathToTestFiles() {
-        return pathToTestFilesRoot() + getMainDirectory();
-    }
-
-    @NotNull
-    public static String pathToTestFilesRoot() {
-        return TEST_FILES;
-    }
-
-    @NotNull
-    private String getOutputPath() {
-        return pathToTestFiles() + outDirectoryName();
-    }
-
-    @NotNull
-    public String getInputPath() {
-        return pathToTestFiles() + casesDirectoryName();
-    }
-
-    @NotNull
-    private String getExpectedPath() {
-        return pathToTestFiles() + expectedDirectoryName();
-    }
-
-    @NotNull
-    protected List<String> withAdditionalFiles(@NotNull String inputFile, @NotNull EcmaVersion ecmaVersion) {
-        List<String> allFiles = Lists.newArrayList(additionalJSFiles(ecmaVersion));
-        allFiles.add(inputFile);
-        return allFiles;
-    }
-
-    @NotNull
-    protected String getOutputFilePath(@NotNull String filename, @NotNull EcmaVersion ecmaVersion) {
+    protected final String getOutputFilePath(@NotNull String filename, @NotNull EcmaVersion ecmaVersion) {
         return getOutputPath() + convertFileNameToDotJsFile(filename, ecmaVersion);
     }
 
     @NotNull
-    protected String getInputFilePath(@NotNull String filename) {
+    protected final String getInputFilePath(@NotNull String filename) {
         return getInputPath() + filename;
     }
 
     @NotNull
-    protected String expected(@NotNull String testName) {
+    protected final String expectedFilePath(@NotNull String testName) {
         return getExpectedPath() + testName + ".out";
     }
 
+    @NotNull
+    private Config createConfig(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion ecmaVersion) {
+        return new LibrarySourcesConfigWithCaching(project, moduleId, ecmaVersion,
+                                                   shouldGenerateSourcemap(), IS_INLINE_ENABLED, shouldBeTranslateAsUnitTestClass());
+    }
+
+    @NotNull
+    private String getOutputPath() {
+        return pathToTestDir() + OUT;
+    }
+
+    @NotNull
+    protected String getInputPath() {
+        return pathToTestDir() + CASES;
+    }
+
+    @NotNull
+    private String getExpectedPath() {
+        return pathToTestDir() + EXPECTED;
+    }
+
+    @NotNull
+    private List<String> withAdditionalKotlinFiles(@NotNull List<String> files) {
+        List<String> result = Lists.newArrayList(files);
+        result.addAll(additionalKotlinFiles());
+        return result;
+    }
+
+    @NotNull
+    private List<String> withAdditionalJsFiles(@NotNull String inputFile, @NotNull EcmaVersion ecmaVersion) {
+        List<String> allFiles = Lists.newArrayList(additionalJsFiles(ecmaVersion));
+        allFiles.add(inputFile);
+        return allFiles;
+    }
+
+    private static List<JetFile> createJetFileList(@NotNull Project project, @NotNull List<String> list, @Nullable String root) {
+        List<JetFile> libFiles = Lists.newArrayList();
+
+        PsiManager psiManager = PsiManager.getInstance(project);
+        VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
+
+        VirtualFile rootFile = root == null ? null : fileSystem.findFileByPath(root);
+
+        for (String libFileName : list) {
+            VirtualFile virtualFile = rootFile == null ? fileSystem.findFileByPath(libFileName) : rootFile.findFileByRelativePath(libFileName);
+            //TODO logging?
+            assert virtualFile != null;
+            PsiFile psiFile = psiManager.findFile(virtualFile);
+            libFiles.add((JetFile) psiFile);
+        }
+        return libFiles;
+    }
+
+    @NotNull
+    protected String getPackageName(@NotNull String filename) throws IOException {
+        String content = FileUtil.loadFile(new File(filename), true);
+        JetPsiFactory psiFactory = new JetPsiFactory(getProject());
+        JetFile jetFile = psiFactory.createFile(content);
+        String packageName = jetFile.getPackageFqName().asString();
+        return packageName.isEmpty() ? Namer.getRootPackageName() : packageName;
+    }
 }

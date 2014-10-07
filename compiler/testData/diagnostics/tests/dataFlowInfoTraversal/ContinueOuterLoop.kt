@@ -5,7 +5,7 @@ fun whileLoop(x: Int?) {
         }
         <!TYPE_MISMATCH!>x<!> : Int
     }
-    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
+    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
 }
 
 fun doWhileLoop(x: Int?) {
@@ -15,7 +15,7 @@ fun doWhileLoop(x: Int?) {
         } while (x == null)
         <!TYPE_MISMATCH!>x<!> : Int
     }
-    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
+    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
 }
 
 fun whileLoopContinueInnerOuter(x: Int?) {
@@ -26,7 +26,7 @@ fun whileLoopContinueInnerOuter(x: Int?) {
             }
             <!TYPE_MISMATCH!>x<!> : Int
         }
-        <!DEBUG_INFO_AUTOCAST!>x<!> : Int
+        <!DEBUG_INFO_SMARTCAST!>x<!> : Int
     }
-    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
+    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
 }

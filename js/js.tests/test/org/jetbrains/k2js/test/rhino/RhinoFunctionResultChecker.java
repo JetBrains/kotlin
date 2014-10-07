@@ -16,8 +16,8 @@
 
 package org.jetbrains.k2js.test.rhino;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -32,19 +32,11 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     private final String functionName;
     private final Object expectedResult;
 
-    public RhinoFunctionResultChecker(@Nullable String packageName, String functionName, Object expectedResult) {
-        this(Config.REWRITABLE_MODULE_NAME, packageName, functionName, expectedResult);
-    }
-
-    public RhinoFunctionResultChecker(@Nullable String moduleId, @Nullable String packageName, String functionName, Object expectedResult) {
+    public RhinoFunctionResultChecker(@NotNull String moduleId, @Nullable String packageName, @NotNull String functionName, @NotNull Object expectedResult) {
         this.moduleId = moduleId;
         this.packageName = packageName;
         this.functionName = functionName;
         this.expectedResult = expectedResult;
-    }
-
-    public RhinoFunctionResultChecker(String functionName, Object expectedResult) {
-        this(null, functionName, expectedResult);
     }
 
     @Override
@@ -57,8 +49,6 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     protected void assertResultValid(Object result, Context context) {
         String ecmaVersion = context.getLanguageVersion() == Context.VERSION_1_8 ? "ecma5" : "ecma3";
         assertEquals("Result of " + packageName + "." + functionName + "() is not what expected (" + ecmaVersion + ")!", expectedResult, result);
-        String report = packageName + "." + functionName + "() = " + Context.toString(result);
-        System.out.println(report);
     }
 
     private Object evaluateFunction(Context cx, Scriptable scope) {

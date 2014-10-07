@@ -1,0 +1,16 @@
+class A {
+    fun foo() {}
+}
+
+fun bar(a: A) {
+    a.<caret>foo()
+}
+
+
+Resolved call:
+
+Resulting descriptor: fun foo(): Unit defined in A
+
+Explicit receiver kind = DISPATCH_RECEIVER
+Dispatch receiver = a {A}
+Extension receiver = NO_RECEIVER

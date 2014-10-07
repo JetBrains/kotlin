@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A <code>for</code> statement. If specified at all, the initializer part is
  * either a declaration of one or more variables, in which case
@@ -94,5 +97,45 @@ public class JsFor extends SourceInfoAwareJsNode implements JsStatement {
             visitor.accept(incrementExpression);
         }
         visitor.accept(body);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            assert (!(initExpression != null && initVars != null));
+
+            if (initExpression != null) {
+                initExpression = v.accept(initExpression);
+            } else if (initVars != null) {
+                initVars = v.accept(initVars);
+            }
+
+            if (condition != null) {
+                condition = v.accept(condition);
+            }
+
+            if (incrementExpression != null) {
+                incrementExpression = v.accept(incrementExpression);
+            }
+            body = v.acceptStatement(body);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsFor deepCopy() {
+        JsStatement bodyCopy = AstUtil.deepCopy(body);
+        JsExpression conditionCopy = AstUtil.deepCopy(condition);
+        JsExpression incrementalExprCopy = AstUtil.deepCopy(incrementExpression);
+
+        JsFor result;
+        if (initVars != null) {
+            result = new JsFor(initVars.deepCopy(), conditionCopy, incrementalExprCopy, bodyCopy);
+        } else {
+            result = new JsFor(initExpression.deepCopy(), conditionCopy, incrementExpression, bodyCopy);
+        }
+
+        return result.withMetadataFrom(this);
     }
 }

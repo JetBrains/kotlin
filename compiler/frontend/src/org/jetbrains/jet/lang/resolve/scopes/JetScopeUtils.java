@@ -64,7 +64,7 @@ public final class JetScopeUtils {
         for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
             if (descriptor instanceof CallableDescriptor) {
                 CallableDescriptor callDescriptor = (CallableDescriptor) descriptor;
-                if (callDescriptor.getReceiverParameter() != null) {
+                if (callDescriptor.getExtensionReceiverParameter() != null) {
                     result.add(callDescriptor);
                 }
             }
@@ -81,7 +81,7 @@ public final class JetScopeUtils {
         JetScope propertyDeclarationInnerScope =
                 getPropertyDeclarationInnerScope(propertyDescriptor, parentScope,
                                                  propertyDescriptor.getTypeParameters(),
-                                                 propertyDescriptor.getReceiverParameter(), trace);
+                                                 propertyDescriptor.getExtensionReceiverParameter(), trace);
         WritableScope accessorScope = new WritableScopeImpl(propertyDeclarationInnerScope, parentScope.getContainingDeclaration(),
                                                             new TraceBasedRedeclarationHandler(trace), "Accessor Scope");
         accessorScope.changeLockLevel(WritableScope.LockLevel.READING);

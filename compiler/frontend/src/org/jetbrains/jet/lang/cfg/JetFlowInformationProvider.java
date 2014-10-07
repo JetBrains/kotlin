@@ -794,9 +794,9 @@ public class JetFlowInformationProvider {
                                 new TailRecursionDetector(subroutine, callInstruction)
                         );
 
-                        boolean sameThisObject = sameThisObject(resolvedCall);
+                        boolean sameDispatchReceiver = sameDispatchReceiver(resolvedCall);
 
-                        TailRecursionKind kind = isTail && sameThisObject ? TAIL_CALL : NON_TAIL;
+                        TailRecursionKind kind = isTail && sameDispatchReceiver ? TAIL_CALL : NON_TAIL;
 
                         KindAndCall kindAndCall = calls.get(element);
                         calls.put(element,
@@ -831,31 +831,31 @@ public class JetFlowInformationProvider {
         }
     }
 
-    private boolean sameThisObject(ResolvedCall<?> resolvedCall) {
+    private boolean sameDispatchReceiver(ResolvedCall<?> resolvedCall) {
         // A tail call is not allowed to change dispatch receiver
         //   class C {
         //       fun foo(other: C) {
         //           other.foo(this) // not a tail call
         //       }
         //   }
-        ReceiverParameterDescriptor thisObject = resolvedCall.getResultingDescriptor().getExpectedThisObject();
-        ReceiverValue thisObjectValue = resolvedCall.getThisObject();
-        if (thisObject == null || !thisObjectValue.exists()) return true;
+        ReceiverParameterDescriptor dispatchReceiverParameter = resolvedCall.getResultingDescriptor().getDispatchReceiverParameter();
+        ReceiverValue dispatchReceiverValue = resolvedCall.getDispatchReceiver();
+        if (dispatchReceiverParameter == null || !dispatchReceiverValue.exists()) return true;
 
         DeclarationDescriptor classDescriptor = null;
-        if (thisObjectValue instanceof ThisReceiver) {
+        if (dispatchReceiverValue instanceof ThisReceiver) {
             // foo() -- implicit receiver
-            classDescriptor = ((ThisReceiver) thisObjectValue).getDeclarationDescriptor();
+            classDescriptor = ((ThisReceiver) dispatchReceiverValue).getDeclarationDescriptor();
         }
-        else if (thisObjectValue instanceof ExpressionReceiver) {
-            JetExpression expression = JetPsiUtil.deparenthesize(((ExpressionReceiver) thisObjectValue).getExpression());
+        else if (dispatchReceiverValue instanceof ExpressionReceiver) {
+            JetExpression expression = JetPsiUtil.deparenthesize(((ExpressionReceiver) dispatchReceiverValue).getExpression());
             if (expression instanceof JetThisExpression) {
                 // this.foo() -- explicit receiver
                 JetThisExpression thisExpression = (JetThisExpression) expression;
                 classDescriptor = trace.get(BindingContext.REFERENCE_TARGET, thisExpression.getInstanceReference());
             }
         }
-        return thisObject.getContainingDeclaration() == classDescriptor;
+        return dispatchReceiverParameter.getContainingDeclaration() == classDescriptor;
     }
 
     private static TailRecursionKind combineKinds(TailRecursionKind kind, @Nullable TailRecursionKind existingKind) {

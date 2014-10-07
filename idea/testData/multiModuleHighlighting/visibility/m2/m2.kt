@@ -5,20 +5,20 @@ import m1.*
 fun testVisibility() {
     PublicClassInM1()
 
-    <error descr="[INVISIBLE_MEMBER] Cannot access 'InternalClassInM1': it is 'internal' in 'm1'">InternalClassInM1</error>()
+    InternalClassInM1()
 
     <error descr="[INVISIBLE_MEMBER] Cannot access 'PrivateClassInM1': it is 'private' in 'm1'">PrivateClassInM1</error>()
 
     publicFunInM1()
 
-    <error descr="[INVISIBLE_MEMBER] Cannot access 'internalFunInM1': it is 'internal' in 'm1'">internalFunInM1</error>()
+    internalFunInM1()
 
     <error descr="[INVISIBLE_MEMBER] Cannot access 'privateFunInM1': it is 'private' in 'm1'">privateFunInM1</error>()
 }
 
 public class ClassInM2
 
-public class B: <error descr="[INVISIBLE_MEMBER] Cannot access '<init>': it is 'internal' in 'A'">A</error>() {
+public class B: A() {
 
     fun accessA(<warning>a</warning>: A) {}
 
@@ -29,6 +29,6 @@ public class B: <error descr="[INVISIBLE_MEMBER] Cannot access '<init>': it is '
 
         pub()
 
-        <error descr="[INVISIBLE_MEMBER] Cannot access 'int': it is 'invisible_fake' in 'B'">int</error>()
+        int()
     }
 }

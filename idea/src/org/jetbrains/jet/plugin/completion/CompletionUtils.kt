@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 enum class ItemPriority {
+    MULTIPLE_ARGUMENTS_ITEM
     DEFAULT
     NAMED_PARAMETER
 }

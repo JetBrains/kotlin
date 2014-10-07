@@ -1,0 +1,31 @@
+LineBreakpoint created at frameSharedVarLocalVar.kt:7
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameSharedVarLocalVar.FrameSharedVarLocalVarPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+frameSharedVarLocalVar.kt:6
+Compile bytecode for var1
+package frameSharedVarLocalVar
+
+fun main(args: Array<String>) {
+    var var1 = 1
+    foo {
+        //Breakpoint!
+        var1 = 2
+    }
+}
+
+inline fun foo(f: () -> Unit) {
+    f()
+}
+
+// PRINT_FRAME
+
+// EXPRESSION: var1
+// RESULT: 1: I
+ frame    = main():7, FrameSharedVarLocalVarPackage$@packagePartHASH {frameSharedVarLocalVar}
+   static   = static = frameSharedVarLocalVar.FrameSharedVarLocalVarPackage$@packagePartHASH
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID}
+   local    = var1: kotlin.jvm.internal.Ref$IntRef = {kotlin.jvm.internal.Ref$IntRef@uniqueID}1
+     field    = element: int = 1
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

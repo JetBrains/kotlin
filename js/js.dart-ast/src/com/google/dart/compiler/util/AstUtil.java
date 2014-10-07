@@ -5,6 +5,12 @@
 package com.google.dart.compiler.util;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class AstUtil {
     private AstUtil() {
@@ -25,5 +31,25 @@ public final class AstUtil {
             result = new JsBinaryOperation(JsBinaryOperator.COMMA, exprs[i], result);
         }
         return (JsBinaryOperation) result;
+    }
+
+    @Nullable
+    public static <T extends JsNode> T deepCopy(@Nullable T node) {
+        if (node == null) return null;
+
+        //noinspection unchecked
+        return (T) node.deepCopy();
+    }
+
+    @NotNull
+    public static <T extends JsNode> List<T> deepCopy(@Nullable List<T> nodes) {
+        if (nodes == null) return new SmartList<T>();
+
+        List<T> nodesCopy = new ArrayList<T>(nodes.size());
+        for (T node : nodes) {
+            nodesCopy.add(deepCopy(node));
+        }
+
+        return nodesCopy;
     }
 }

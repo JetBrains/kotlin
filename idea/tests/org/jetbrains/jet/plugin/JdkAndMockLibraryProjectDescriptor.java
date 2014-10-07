@@ -37,7 +37,7 @@ public class JdkAndMockLibraryProjectDescriptor extends JetLightProjectDescripto
 
     @Override
     public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
-        File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, withSources);
+        File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, "myKotlinLib,", withSources);
         String jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.getAbsolutePath()) + "!/";
 
         Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary("myKotlinLib").getModifiableModel();

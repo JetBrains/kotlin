@@ -121,7 +121,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         for (ValueParameterDescriptor parameter : parameters) {
             hasInlinable |= checkInlinableParameter(parameter, function.getValueParameters().get(index++), functionDescriptor, trace);
         }
-        ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = functionDescriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
             JetTypeReference receiver = function.getReceiverTypeRef();
             assert receiver != null : "Descriptor has a receiver but psi doesn't " + function.getText();

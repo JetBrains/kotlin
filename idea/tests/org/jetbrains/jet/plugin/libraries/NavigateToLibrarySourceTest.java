@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,18 @@
 package org.jetbrains.jet.plugin.libraries;
 
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.util.containers.MultiMap;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
+import org.jetbrains.jet.plugin.navigation.NavigationTestUtils;
 import org.jetbrains.jet.plugin.references.JetReference;
 
 import java.util.*;
@@ -109,7 +108,8 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
 
     private void checkAnnotatedLibraryCode(boolean forceResolve) {
         JetSourceNavigationHelper.setForceResolve(forceResolve);
-        String actualCode = getActualAnnotatedLibraryCode();
+        String actualCode = NavigationTestUtils
+                .getNavigateElementsText(myFixture.getProject(), collectInterestingNavigationElements());
         String expectedCode = getExpectedAnnotatedLibraryCode();
         assertSameLines(expectedCode, actualCode);
     }
@@ -134,63 +134,15 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
         return referenceContainersToReferences.values();
     }
 
-    private String getActualAnnotatedLibraryCode() {
-        MultiMap<PsiFile, Pair<Integer, Integer>> filesToNumbersAndOffsets = new MultiMap<PsiFile, Pair<Integer, Integer>>();
-        int refNumber = 1;
-        for (JetReference ref : collectInterestingReferences()) {
-            PsiElement target = ref.resolve();
-            assertNotNull(target);
-            PsiElement navigationElement = target.getNavigationElement();
-            Pair<Integer, Integer> numberAndOffset = new Pair<Integer, Integer>(refNumber++, navigationElement.getTextOffset());
-            filesToNumbersAndOffsets.putValue(navigationElement.getContainingFile(), numberAndOffset);
-        }
-
-        if (filesToNumbersAndOffsets.isEmpty()) {
-            return "<no references>";
-        }
-
-        List<PsiFile> files = new ArrayList<PsiFile>(filesToNumbersAndOffsets.keySet());
-        Collections.sort(files, new Comparator<PsiFile>() {
+    private Collection<PsiElement> collectInterestingNavigationElements() {
+        return ContainerUtil.map(collectInterestingReferences(), new Function<JetReference, PsiElement>() {
             @Override
-            public int compare(PsiFile o1, PsiFile o2) {
-                return o1.getName().compareTo(o2.getName());
+            public PsiElement fun(JetReference reference) {
+                PsiElement target = reference.resolve();
+                assertNotNull(target);
+                return target.getNavigationElement();
             }
         });
-
-        StringBuilder result = new StringBuilder();
-        for (PsiFile file : files) {
-            List<Pair<Integer, Integer>> numbersAndOffsets = new ArrayList<Pair<Integer, Integer>>(filesToNumbersAndOffsets.get(file));
-
-            Collections.sort(numbersAndOffsets, Collections.reverseOrder(new Comparator<Pair<Integer, Integer>>() {
-                @Override
-                public int compare(Pair<Integer, Integer> t1, Pair<Integer, Integer> t2) {
-                    int offsets = t1.second.compareTo(t2.second);
-                    return offsets == 0 ? t1.first.compareTo(t2.first) : offsets;
-                }
-            }));
-
-            Document document = PsiDocumentManager.getInstance(getProject()).getDocument(file);
-            assertNotNull(document);
-            StringBuilder resultForFile = new StringBuilder(document.getText());
-            for (Pair<Integer, Integer> numberOffset : numbersAndOffsets) {
-                resultForFile.insert(numberOffset.second, String.format("<%d>", numberOffset.first));
-            }
-
-            int minLine = Integer.MAX_VALUE;
-            int maxLine = Integer.MIN_VALUE;
-            for (Pair<Integer, Integer> numberOffset : numbersAndOffsets) {
-                int lineNumber = document.getLineNumber(numberOffset.second);
-                minLine = Math.min(minLine, lineNumber);
-                maxLine = Math.max(maxLine, lineNumber);
-            }
-
-            Document annotated = EditorFactory.getInstance().createDocument(resultForFile);
-            String filePart = annotated.getText().substring(annotated.getLineStartOffset(minLine),
-                                                             annotated.getLineEndOffset(maxLine));
-            result.append(" ").append(file.getName()).append("\n");
-            result.append(filePart).append("\n");
-        }
-        return result.toString();
     }
 
     private String getExpectedAnnotatedLibraryCode() {
@@ -198,7 +150,6 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
         assertNotNull(document);
         return JetTestUtils.getLastCommentedLines(document);
     }
-
 
     @NotNull
     @Override

@@ -49,11 +49,16 @@ public abstract class MultipleFilesTranslationTest extends BasicTest {
             @NotNull Object expectedResult
     ) throws Exception {
         generateJsFromDir(dirName, ecmaVersions);
-        runRhinoTests(dirName + ".kt", ecmaVersions, new RhinoFunctionResultChecker(packageName, functionName, expectedResult));
+        runRhinoTests(dirName + ".kt", ecmaVersions, new RhinoFunctionResultChecker(TEST_MODULE, packageName, functionName, expectedResult));
     }
 
     public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
         runMultiFileTest(dirName, TEST_PACKAGE, TEST_FUNCTION, true);
+    }
+
+    public void checkFooBoxIsOk() throws Exception {
+        String dir = getTestName(true);
+        runMultiFileTest(dir, TEST_PACKAGE, TEST_FUNCTION, "OK");
     }
 }
 

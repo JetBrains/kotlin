@@ -22,14 +22,14 @@ class B
 import p.*
 
 fun test() {
-    val _a = <!INVISIBLE_MEMBER!>a<!>
-    val _v = <!INVISIBLE_MEMBER!>v<!>
-    <!INVISIBLE_MEMBER!>a<!>()
-    <!INVISIBLE_MEMBER!>B<!>()
+    val _a = a
+    val _v = v
+    a()
+    B()
 
     val inst = A()
-    val ia = inst.<!INVISIBLE_MEMBER!>a<!>
-    val iv = inst.<!INVISIBLE_MEMBER!>v<!>
-    inst.<!INVISIBLE_MEMBER!>a<!>()
-    inst.<!INVISIBLE_MEMBER!>B<!>()
+    val ia = inst.a
+    val iv = inst.v
+    inst.a()
+    inst.B()
 }

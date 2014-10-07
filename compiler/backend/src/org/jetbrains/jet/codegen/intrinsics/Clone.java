@@ -58,8 +58,8 @@ public class Clone extends IntrinsicMethod {
     }
 
     private static boolean isSuperCall(@NotNull ResolvedCall<?> resolvedCall) {
-        ReceiverValue thisObject = resolvedCall.getThisObject();
-        return thisObject instanceof ExpressionReceiver &&
-               ((ExpressionReceiver) thisObject).getExpression() instanceof JetSuperExpression;
+        ReceiverValue dispatchReceiver = resolvedCall.getDispatchReceiver();
+        return dispatchReceiver instanceof ExpressionReceiver &&
+               ((ExpressionReceiver) dispatchReceiver).getExpression() instanceof JetSuperExpression;
     }
 }

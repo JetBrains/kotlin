@@ -168,4 +168,20 @@
       name='com.intellij.codeInsight.editorActions.CopyPasteReferenceProcessor void restoreReferences(com.intellij.codeInsight.editorActions.ReferenceData[], TRef[]) 1'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.JoinLinesHandlerDelegate int tryJoinLines(com.intellij.openapi.editor.Document, com.intellij.psi.PsiFile, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.JoinLinesHandlerDelegate int tryJoinLines(com.intellij.openapi.editor.Document, com.intellij.psi.PsiFile, int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate int tryJoinRawLines(com.intellij.openapi.editor.Document, com.intellij.psi.PsiFile, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate int tryJoinRawLines(com.intellij.openapi.editor.Document, com.intellij.psi.PsiFile, int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
 </root>

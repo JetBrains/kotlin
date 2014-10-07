@@ -86,9 +86,9 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
     
-    @TestMetadata("ExtensionsForAutoCasted")
-    public void testExtensionsForAutoCasted() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/ExtensionsForAutoCasted/");
+    @TestMetadata("ExtensionsForSmartCast")
+    public void testExtensionsForSmartCast() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/ExtensionsForSmartCast/");
         doTest(fileName);
     }
     

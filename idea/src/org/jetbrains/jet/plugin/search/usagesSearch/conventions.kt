@@ -58,7 +58,6 @@ public fun Name.getOperationSymbolsToSearch(): Set<JetToken> {
         EQUALS -> return EQUALS_OPERATIONS
         IDENTITY_EQUALS -> return IDENTITY_EQUALS_OPERATIONS
         CONTAINS -> return IN_OPERATIONS_TO_SEARCH
-        INVOKE_OPERATION_NAME -> return ImmutableSet.of<JetToken>(JetTokens.LPAR)
         ITERATOR_OPERATION_NAME -> return ImmutableSet.of<JetToken>(JetTokens.IN_KEYWORD)
         in INDEXING_OPERATION_NAMES -> return ImmutableSet.of<JetToken>(JetTokens.LBRACKET)
     }

@@ -1,7 +1,5 @@
 package foo
 
-fun run<T>(f: ()->T) = f()
-
 fun box(): String {
     val t = run {
                 object {

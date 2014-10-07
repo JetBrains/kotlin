@@ -39,10 +39,18 @@ public class ArrayGet extends IntrinsicMethod {
             List<JetExpression> arguments,
             StackValue receiver
     ) {
+        int argumentIndex;
+        if (receiver == null || receiver == StackValue.none()) {
+            receiver = codegen.gen(arguments.get(0));
+            argumentIndex = 1;
+        } else {
+            argumentIndex = 0;
+        }
         receiver.put(receiver.type, v);
+
         Type type = correctElementType(receiver.type);
 
-        codegen.gen(arguments.get(0), Type.INT_TYPE);
+        codegen.gen(arguments.get(argumentIndex), Type.INT_TYPE);
 
         v.aload(type);
 

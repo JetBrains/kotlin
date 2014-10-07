@@ -3,8 +3,7 @@ trait G<T> {
 }
 
 class GC<T>() : G<T> {
-
     override fun foo(t: T): T {
-        throw UnsupportedOperationException()
+        <selection><caret>throw UnsupportedOperationException()</selection>
     }
 }

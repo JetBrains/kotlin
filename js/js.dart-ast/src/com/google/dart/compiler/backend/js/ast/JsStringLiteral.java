@@ -6,14 +6,14 @@ package com.google.dart.compiler.backend.js.ast;
 
 public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
 
-  private final String value;
+    private final String value;
 
-  // These only get created by JsProgram so that they can be interned.
-  JsStringLiteral(String value) {
+    // These only get created by JsProgram so that they can be interned.
+    JsStringLiteral(String value) {
     this.value = value;
   }
 
-  public String getValue() {
+    public String getValue() {
     return value;
   }
 
@@ -21,4 +21,10 @@ public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
   public void accept(JsVisitor v) {
     v.visitString(this);
   }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        v.visit(this, ctx);
+        v.endVisit(this, ctx);
+    }
 }

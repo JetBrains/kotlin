@@ -31,20 +31,20 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
+import org.jetbrains.jet.testing.TagsTestDataUtil;
+import org.jetbrains.jet.utils.UtilsPackage;
 import org.junit.Assert;
 
+import java.io.File;
 import java.util.*;
 
 public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightFixtureTestCase {
@@ -98,13 +98,13 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
     private void doFileTest(OverrideImplementMethodsHandler handler) {
         myFixture.configureByFile(getTestName(true) + ".kt");
         doOverrideImplement(handler, null);
-        myFixture.checkResultByFile(getTestName(true) + ".kt.after");
+        checkResultByFile(getTestName(true) + ".kt.after");
     }
 
     private void doMultiFileTest(OverrideImplementMethodsHandler handler) {
         myFixture.configureByFile(getTestName(true) + ".kt");
         doMultiOverrideImplement(handler);
-        myFixture.checkResultByFile(getTestName(true) + ".kt.after");
+        checkResultByFile(getTestName(true) + ".kt.after");
     }
 
     protected void doDirectoryTest(OverrideImplementMethodsHandler handler) {
@@ -115,20 +115,18 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
         myFixture.copyDirectoryToProject(getTestName(true), "");
         myFixture.configureFromTempProjectFile("foo/Impl.kt");
         doOverrideImplement(handler, memberToOverride);
-        myFixture.checkResultByFile(getTestName(true) + "/foo/Impl.kt.after");
+        checkResultByFile(getTestName(true) + "/foo/Impl.kt.after");
     }
 
     private void doOverrideImplement(OverrideImplementMethodsHandler handler, @Nullable String memberToOverride) {
         PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
-        final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
+        JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
 
-        final JetFile jetFile = classOrObject.getContainingJetFile();
-        ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession(jetFile);
-        Set<CallableMemberDescriptor> descriptors =
-                handler.collectMethodsToGenerate(classOrObject, resolveSession.resolveToElement(classOrObject));
+        JetFile jetFile = classOrObject.getContainingJetFile();
+        Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject);
 
-        final CallableMemberDescriptor singleToOverride;
+        CallableMemberDescriptor singleToOverride;
         if (memberToOverride == null) {
             // Filter out fake overrides of members of Any (equals, hashCode, toString)
             List<CallableMemberDescriptor> filtered = KotlinPackage.filter(descriptors, new Function1<CallableMemberDescriptor, Boolean>() {
@@ -162,26 +160,19 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
             singleToOverride = candidateToOverride;
         }
 
-        new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
-            @Override
-            protected void run(@NotNull Result result) throws Throwable {
-                OverrideImplementMethodsHandler.generateMethods(myFixture.getEditor(), classOrObject,
-                        OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, Collections.singletonList(singleToOverride))
-                );
-            }
-        }.execute();
+        performGenerateCommand(classOrObject,
+                               OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, Collections.singletonList(singleToOverride)));
     }
 
     private void doMultiOverrideImplement(OverrideImplementMethodsHandler handler) {
         PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
-        final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
+        JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
 
-        final JetFile jetFile = classOrObject.getContainingJetFile();
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
-        Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
+        JetFile jetFile = classOrObject.getContainingJetFile();
+        Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject);
 
-        final List<CallableMemberDescriptor> descriptorsList = new ArrayList<CallableMemberDescriptor>(descriptors);
+        List<CallableMemberDescriptor> descriptorsList = new ArrayList<CallableMemberDescriptor>(descriptors);
         Collections.sort(descriptorsList, new Comparator<CallableMemberDescriptor>() {
             @Override
             public int compare(@NotNull CallableMemberDescriptor desc1, @NotNull CallableMemberDescriptor desc2) {
@@ -189,14 +180,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
             }
         });
 
-        new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
-            @Override
-            protected void run(@NotNull Result result) throws Throwable {
-                OverrideImplementMethodsHandler.generateMethods(
-                        myFixture.getEditor(), classOrObject,
-                        OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, descriptorsList));
-            }
-        }.execute();
+        performGenerateCommand(classOrObject, OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, descriptorsList));
     }
 
     private void generateImplementation(@NotNull final PsiMethod method) {
@@ -213,5 +197,33 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
                 PostprocessReformattingAspect.getInstance(myFixture.getProject()).doPostponedFormatting();
             }
         });
+    }
+
+    private void performGenerateCommand(
+            final JetClassOrObject classOrObject,
+            final List<DescriptorClassMember> descriptorsToGenerate
+    ) {
+        try {
+            new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
+                @Override
+                protected void run(@NotNull Result result) throws Throwable {
+                    OverrideImplementMethodsHandler.generateMethods(myFixture.getEditor(), classOrObject, descriptorsToGenerate);
+                }
+            }.performCommand();
+        }
+        catch (Throwable throwable) {
+            throw UtilsPackage.rethrow(throwable);
+        }
+    }
+
+    private void checkResultByFile(String fileName) {
+        File expectedFile = new File(myFixture.getTestDataPath(), fileName);
+        try {
+            Assert.assertTrue(expectedFile.exists());
+            myFixture.checkResultByFile(fileName);
+        }
+        catch (AssertionError error) {
+            JetTestUtils.assertEqualsToFile(expectedFile, TagsTestDataUtil.generateTextWithCaretAndSelection(myFixture.getEditor()));
+        }
     }
 }

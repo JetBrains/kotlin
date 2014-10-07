@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.LibrarySourceHacks.filterOutMembersFromLibrarySource;
-import static org.jetbrains.jet.lang.resolve.descriptorUtil.DescriptorUtilPackage.getClassObjectReferenceTarget;
 
 @SuppressWarnings("unchecked")
 public class CallableDescriptorCollectors<D extends CallableDescriptor> implements Iterable<CallableDescriptorCollector<D>> {
@@ -57,7 +56,7 @@ public class CallableDescriptorCollectors<D extends CallableDescriptor> implemen
         public Collection<FunctionDescriptor> getNonExtensionsByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
             Set<FunctionDescriptor> functions = Sets.newLinkedHashSet();
             for (FunctionDescriptor function : scope.getFunctions(name)) {
-                if (function.getReceiverParameter() == null) {
+                if (function.getExtensionReceiverParameter() == null) {
                     functions.add(function);
                 }
             }
@@ -118,7 +117,7 @@ public class CallableDescriptorCollectors<D extends CallableDescriptor> implemen
 
             Set<VariableDescriptor> variables = Sets.newLinkedHashSet();
             for (VariableDescriptor variable : scope.getProperties(name)) {
-                if (variable.getReceiverParameter() == null) {
+                if (variable.getExtensionReceiverParameter() == null) {
                     variables.add(variable);
                 }
             }

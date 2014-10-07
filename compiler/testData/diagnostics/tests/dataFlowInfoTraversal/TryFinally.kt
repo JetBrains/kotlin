@@ -3,7 +3,7 @@ fun tryFinally(x: Int?) {
     } finally {
         x!!
     }
-    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
+    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
 }
 
 fun tryCatchFinally(x: Int?) {
@@ -15,5 +15,5 @@ fun tryCatchFinally(x: Int?) {
         <!TYPE_MISMATCH!>x<!> : Int
         x!!
     }
-    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
+    <!DEBUG_INFO_SMARTCAST!>x<!> : Int
 }

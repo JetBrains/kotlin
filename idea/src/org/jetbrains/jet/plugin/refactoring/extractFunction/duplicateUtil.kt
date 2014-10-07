@@ -33,7 +33,7 @@ import com.intellij.codeInsight.highlighting.HighlightManager
 import com.intellij.codeInsight.folding.CodeFoldingManager
 import com.intellij.ui.ReplacePromptDialog
 import com.intellij.find.FindManager
-import org.jetbrains.jet.plugin.refactoring.executeWriteCommand
+import org.jetbrains.jet.plugin.util.application.executeWriteCommand
 import com.intellij.refactoring.util.duplicates.MethodDuplicatesHandler
 import com.intellij.refactoring.RefactoringBundle
 

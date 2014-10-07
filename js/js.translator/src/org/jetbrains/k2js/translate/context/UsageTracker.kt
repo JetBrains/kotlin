@@ -19,7 +19,7 @@ package org.jetbrains.k2js.translate.context
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isAncestor
 import com.google.dart.compiler.backend.js.ast.JsName
-import org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName
+import org.jetbrains.k2js.translate.utils.ManglingUtils.getSuggestedName
 import com.google.dart.compiler.backend.js.ast.JsFunctionScope
 
 private val CAPTURED_RECEIVER_NAME_PREFIX : String = "this$"

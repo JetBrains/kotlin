@@ -36,4 +36,8 @@ public final class NameClashesTest extends SingleFileTranslationTest {
     public void testDifferenceInCapitalization() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testMethodOverloadInClassWithTwoUpperBounds() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

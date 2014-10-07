@@ -35,12 +35,12 @@ import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilit
 
 public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
     @Override
-    protected Set<CallableMemberDescriptor> collectMethodsToGenerate(ClassDescriptor descriptor) {
+    protected Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull ClassDescriptor descriptor) {
         Set<CallableMemberDescriptor> superMethods = collectSuperMethods(descriptor);
         for (DeclarationDescriptor member : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             if (member instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor callable = (CallableMemberDescriptor) member;
-                if (callable.getKind().isReal()) {
+                if (callable.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
                     superMethods.removeAll(callable.getOverriddenDescriptors());
                 }
             }

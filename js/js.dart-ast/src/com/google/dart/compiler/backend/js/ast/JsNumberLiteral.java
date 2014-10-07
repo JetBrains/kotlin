@@ -5,6 +5,8 @@
 package com.google.dart.compiler.backend.js.ast;
 
 public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
+    public static final JsIntLiteral ZERO = new JsIntLiteral(0);
+
     public static final class JsDoubleLiteral extends JsNumberLiteral {
         public final double value;
 
@@ -19,6 +21,12 @@ public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
 
         public String toString() {
             return String.valueOf(value);
+        }
+
+        @Override
+        public void traverse(JsVisitorWithContext v, JsContext ctx) {
+            v.visit(this, ctx);
+            v.endVisit(this, ctx);
         }
     }
 
@@ -36,6 +44,12 @@ public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
 
         public String toString() {
             return String.valueOf(value);
+        }
+
+        @Override
+        public void traverse(JsVisitorWithContext v, JsContext ctx) {
+            v.visit(this, ctx);
+            v.endVisit(this, ctx);
         }
     }
 }

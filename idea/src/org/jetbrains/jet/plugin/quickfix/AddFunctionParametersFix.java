@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.refactoring.SimpleCollectingValidator;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData;
@@ -116,7 +117,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
             public void configure(@NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext) {
                 List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
                 List<? extends ValueArgument> arguments = callElement.getValueArguments();
-                JetNameValidator validator = JetNameValidator.createCollectingValidator(callElement.getProject());
+                JetNameValidator validator = new SimpleCollectingValidator();
 
                 for (int i = 0; i < arguments.size(); i ++) {
                     ValueArgument argument = arguments.get(i);

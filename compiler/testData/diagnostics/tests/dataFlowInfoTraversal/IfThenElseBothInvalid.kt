@@ -12,5 +12,5 @@ fun foo() {
         if (<!SENSELESS_COMPARISON!>x == null<!>) return
         2<!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>
     }
-    bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
+    bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }

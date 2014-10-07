@@ -29,7 +29,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testLocalProperty() throws Exception {
-        fooBoxIsValue(50);
+        checkFooBoxIsOk();
     }
 
     public void testIntRange() throws Exception {

@@ -41,7 +41,8 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.ExpectedInfos
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
-import org.jetbrains.jet.plugin.refactoring.runWriteAction
+import org.jetbrains.jet.plugin.util.application.runWriteAction
+import org.jetbrains.jet.plugin.refactoring.EmptyValidator
 
 fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: JetType) {
     val explicitParameterTypes = needExplicitParameterTypes(context, placeholderRange, lambdaType)
@@ -87,7 +88,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
 
     val resolveSession = file.getLazyResolveSession()
     val bindingContext = resolveSession.resolveToElement(expression)
-    val expectedInfos = ExpectedInfos(bindingContext, resolveSession.getModuleDescriptor()).calculate(expression) ?: return false
+    val expectedInfos = ExpectedInfos(bindingContext, resolveSession).calculate(expression) ?: return false
     val functionTypes = expectedInfos.map { it.`type` }.filter { KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(it) }.toSet()
     if (functionTypes.size <= 1) return false
 
@@ -97,8 +98,6 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
 
 private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, project: Project): Template {
     val parameterTypes = functionParameterTypes(lambdaType)
-
-    val nameValidator = JetNameValidator.getEmptyValidator(project) //TODO: check for names in scope
 
     val useParenthesis = explicitParameterTypes || parameterTypes.size != 1
 
@@ -116,7 +115,8 @@ private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, 
         if (i > 0) {
             template.addTextSegment(", ")
         }
-        template.addVariable(ParameterNameExpression(JetNameSuggester.suggestNames(parameterType, nameValidator, "p")), true)
+        //TODO: check for names in scope
+        template.addVariable(ParameterNameExpression(JetNameSuggester.suggestNames(parameterType, EmptyValidator, "p")), true)
         if (explicitParameterTypes) {
             template.addTextSegment(": " + DescriptorRenderer.SOURCE_CODE.renderType(parameterType))
         }

@@ -1,0 +1,19 @@
+<component name="libraryTable">
+  <library name="android-plugin">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/annotations" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/android/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/android/android/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/android/android/common/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/android/android/rt/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/android/android/jps-plugin/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/android/android/ultimate/src" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/android/lib" recursive="false" />
+  </library>
+</component>

@@ -66,7 +66,7 @@ public class ObservableProperty<T>(
     }
 }
 
-private val NULL_VALUE: Any = Any()
+private object NULL_VALUE {}
 
 private fun escape(value: Any?): Any {
     return value ?: NULL_VALUE

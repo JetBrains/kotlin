@@ -108,9 +108,9 @@ public class CheckerTestUtil {
         });
         // this code is used in tests and in internal action 'copy current file as diagnostic test'
         //noinspection TestOnlyProblems
-        for (JetExpression expression : bindingContext.getSliceContents(BindingContext.AUTOCAST).keySet()) {
+        for (JetExpression expression : bindingContext.getSliceContents(BindingContext.SMARTCAST).keySet()) {
             if (PsiTreeUtil.isAncestor(root, expression, false)) {
-                debugAnnotations.add(new DebugInfoDiagnostic(expression, DebugInfoDiagnosticFactory.AUTOCAST));
+                debugAnnotations.add(new DebugInfoDiagnostic(expression, DebugInfoDiagnosticFactory.SMARTCAST));
             }
         }
         return debugAnnotations;
@@ -411,7 +411,7 @@ public class CheckerTestUtil {
     }
 
     public static class DebugInfoDiagnosticFactory extends DiagnosticFactory<DebugInfoDiagnostic> {
-        public static final DebugInfoDiagnosticFactory AUTOCAST = new DebugInfoDiagnosticFactory("AUTOCAST");
+        public static final DebugInfoDiagnosticFactory SMARTCAST = new DebugInfoDiagnosticFactory("SMARTCAST");
         public static final DebugInfoDiagnosticFactory ELEMENT_WITH_ERROR_TYPE = new DebugInfoDiagnosticFactory("ELEMENT_WITH_ERROR_TYPE");
         public static final DebugInfoDiagnosticFactory UNRESOLVED_WITH_TARGET = new DebugInfoDiagnosticFactory("UNRESOLVED_WITH_TARGET");
         public static final DebugInfoDiagnosticFactory MISSING_UNRESOLVED = new DebugInfoDiagnosticFactory("MISSING_UNRESOLVED");

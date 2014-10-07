@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents the JavaScript case statement.
  */
@@ -31,5 +34,24 @@ public final class JsCase extends JsSwitchMember {
     public void acceptChildren(JsVisitor visitor) {
         visitor.accept(caseExpression);
         super.acceptChildren(visitor);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            caseExpression = v.accept(caseExpression);
+            v.acceptStatementList(statements);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsCase deepCopy() {
+        JsCase caseCopy = new JsCase();
+        caseCopy.caseExpression = AstUtil.deepCopy(caseExpression);
+        caseCopy.statements.addAll(AstUtil.deepCopy(statements));
+
+        return caseCopy.withMetadataFrom(this);
     }
 }

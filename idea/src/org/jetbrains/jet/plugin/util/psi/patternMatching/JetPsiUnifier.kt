@@ -182,7 +182,7 @@ public class JetPsiUnifier(
 
         private fun matchCalls(call1: Call, call2: Call): Boolean {
             return matchReceivers(call1.getExplicitReceiver(), call2.getExplicitReceiver()) &&
-                   matchReceivers(call1.getThisObject(), call2.getThisObject())
+                   matchReceivers(call1.getDispatchReceiver(), call2.getDispatchReceiver())
         }
 
         private fun matchArguments(arg1: ValueArgument, arg2: ValueArgument): Status {
@@ -238,13 +238,13 @@ public class JetPsiUnifier(
             fun checkImplicitReceiver(implicitCall: ResolvedCall<*>, explicitCall: ResolvedCall<*>): Boolean {
                 val (implicitReceiver, explicitReceiver) =
                         when (explicitCall.getExplicitReceiverKind()) {
-                            ExplicitReceiverKind.RECEIVER_ARGUMENT ->
-                                (implicitCall.getReceiverArgument() as? ThisReceiver) to
-                                        (explicitCall.getReceiverArgument() as? ExpressionReceiver)
+                            ExplicitReceiverKind.EXTENSION_RECEIVER ->
+                                (implicitCall.getExtensionReceiver() as? ThisReceiver) to
+                                        (explicitCall.getExtensionReceiver() as? ExpressionReceiver)
 
-                            ExplicitReceiverKind.THIS_OBJECT ->
-                                (implicitCall.getThisObject() as? ThisReceiver) to
-                                        (explicitCall.getThisObject() as? ExpressionReceiver)
+                            ExplicitReceiverKind.DISPATCH_RECEIVER ->
+                                (implicitCall.getDispatchReceiver() as? ThisReceiver) to
+                                        (explicitCall.getDispatchReceiver() as? ExpressionReceiver)
 
                             else ->
                                 null to null
@@ -262,8 +262,8 @@ public class JetPsiUnifier(
             fun checkReceivers(): Boolean {
                 return when {
                     rc1.getExplicitReceiverKind() == rc2.getExplicitReceiverKind() -> {
-                        matchReceivers(rc1.getReceiverArgument(), rc2.getReceiverArgument()) &&
-                        (rc1.getExplicitReceiverKind() == ExplicitReceiverKind.BOTH_RECEIVERS || matchReceivers(rc1.getThisObject(), rc2.getThisObject()))
+                        matchReceivers(rc1.getExtensionReceiver(), rc2.getExtensionReceiver()) &&
+                        (rc1.getExplicitReceiverKind() == ExplicitReceiverKind.BOTH_RECEIVERS || matchReceivers(rc1.getDispatchReceiver(), rc2.getDispatchReceiver()))
                     }
 
                     rc1.getExplicitReceiverKind() == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> checkImplicitReceiver(rc1, rc2)
@@ -485,8 +485,8 @@ public class JetPsiUnifier(
                 }
             }
 
-            if (!matchReceiverParameters(desc1.getReceiverParameter(), desc2.getReceiverParameter())) return UNMATCHED
-            if (!matchReceiverParameters(desc1.getExpectedThisObject(), desc2.getExpectedThisObject())) return UNMATCHED
+            if (!matchReceiverParameters(desc1.getExtensionReceiverParameter(), desc2.getExtensionReceiverParameter())) return UNMATCHED
+            if (!matchReceiverParameters(desc1.getDispatchReceiverParameter(), desc2.getDispatchReceiverParameter())) return UNMATCHED
 
             val params1 = desc1.getValueParameters()
             val params2 = desc2.getValueParameters()

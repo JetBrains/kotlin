@@ -380,11 +380,11 @@
         /**
          * @param {Hashtable.<Key, Value>} hashtable
          */
-        this.putAll_za3j1t$ = hashMapPutAll;
+        this.putAll_48yl7j$ = hashMapPutAll;
 
         this.clone = function () {
             var clone = new Hashtable(hashingFunctionParam, equalityFunctionParam);
-            clone.putAll_za3j1t$(that);
+            clone.putAll_48yl7j$(that);
             return clone;
         };
 
@@ -481,7 +481,7 @@
      * @constructor
      * @template Key, Value
      */
-    Kotlin.PrimitiveHashMap = Kotlin.createClassNow(Kotlin.Map,
+    Kotlin.AbstractPrimitiveHashMap = Kotlin.createClassNow(Kotlin.Map,
         function () {
             this.$size = 0;
             this.map = Object.create(null);
@@ -530,7 +530,7 @@
                 this.$size = 0;
                 this.map = {};
             },
-            putAll_za3j1t$: hashMapPutAll,
+            putAll_48yl7j$: hashMapPutAll,
             entrySet: function () {
                 var result = new Kotlin.ComplexHashSet();
                 var map = this.map;
@@ -541,8 +541,11 @@
 
                 return result;
             },
+            getKeySetClass: function () {
+                throw new Error("Kotlin.AbstractPrimitiveHashMap.getKetSetClass is abstract");
+            },
             keySet: function () {
-                var result = new Kotlin.PrimitiveHashSet();
+                var result = new (this.getKeySetClass())();
                 var map = this.map;
                 for (var key in map) {
                     //noinspection JSUnfilteredForInLoop
@@ -556,6 +559,34 @@
             },
             toJSON: function () {
                 return this.map;
+            }
+    });
+
+    Kotlin.DefaultPrimitiveHashMap = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashMap,
+        function () {
+            Kotlin.AbstractPrimitiveHashMap.call(this);
+        }, {
+            getKeySetClass: function () {
+                return Kotlin.DefaultPrimitiveHashSet;
+            }
+    });
+
+    Kotlin.PrimitiveNumberHashMap = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashMap,
+        function () {
+            Kotlin.AbstractPrimitiveHashMap.call(this);
+            this.$keySetClass$ = Kotlin.PrimitiveNumberHashSet;
+        }, {
+            getKeySetClass: function () {
+                return Kotlin.PrimitiveNumberHashSet;
+            }
+    });
+
+    Kotlin.PrimitiveBooleanHashMap = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashMap,
+        function () {
+            Kotlin.AbstractPrimitiveHashMap.call(this);
+        }, {
+            getKeySetClass: function () {
+                return Kotlin.PrimitiveBooleanHashSet;
             }
     });
 
@@ -688,13 +719,13 @@ var SetIterator = Kotlin.createClassNow(Kotlin.Iterator,
  * @extends {Kotlin.Collection.<T>}
  * @template T
  */
-Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
+Kotlin.AbstractPrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
     /** @constructs */
     function () {
         this.$size = 0;
         this.map = {};
     },
-    /** @lends {Kotlin.PrimitiveHashSet.prototype} */
+    /** @lends {Kotlin.AbstractPrimitiveHashSet.prototype} */
     {
         size: function () {
             return this.$size;
@@ -730,8 +761,51 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
             this.$size = 0;
             this.map = {};
         },
+        convertKeyToKeyType: function (key) {
+            throw new Error("Kotlin.AbstractPrimitiveHashSet.convertKeyToKeyType is abstract");
+        },
+        toArray: function () {
+            var result = Object.keys(this.map);
+            for(var i=0; i<result.length; i++) {
+                result[i] = this.convertKeyToKeyType(result[i]);
+            }
+            return result;
+        }
+});
+
+Kotlin.DefaultPrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashSet,
+    /** @constructs */
+    function () {
+        Kotlin.AbstractPrimitiveHashSet.call(this);
+    },
+    {
+    /** @lends {Kotlin.DefaultPrimitiveHashSet.prototype} */
         toArray: function () {
             return Object.keys(this.map);
+        }
+});
+
+Kotlin.PrimitiveNumberHashSet = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashSet,
+    /** @constructs */
+    function () {
+        Kotlin.AbstractPrimitiveHashSet.call(this);
+    },
+    /** @lends {Kotlin.PrimitiveNumberHashSet.prototype} */
+    {
+        convertKeyToKeyType: function (key) {
+            return +key;
+        }
+});
+
+Kotlin.PrimitiveBooleanHashSet = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashSet,
+    /** @constructs */
+    function () {
+        Kotlin.AbstractPrimitiveHashSet.call(this);
+    },
+    /** @lends {Kotlin.PrimitiveBooleanHashSet.prototype} */
+    {
+        convertKeyToKeyType: function (key) {
+            return key == "true";
         }
 });
 
@@ -746,10 +820,10 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
     function HashSet(hashingFunction, equalityFunction) {
         var hashTable = new Kotlin.HashTable(hashingFunction, equalityFunction);
 
-        this.addAll_xeylzf$ = Kotlin.AbstractCollection.prototype.addAll_xeylzf$;
-        this.removeAll_xeylzf$ = Kotlin.AbstractCollection.prototype.removeAll_xeylzf$;
-        this.retainAll_xeylzf$ = Kotlin.AbstractCollection.prototype.retainAll_xeylzf$;
-        this.containsAll_xeylzf$ = Kotlin.AbstractCollection.prototype.containsAll_xeylzf$;
+        this.addAll_4fm7v2$ = Kotlin.AbstractCollection.prototype.addAll_4fm7v2$;
+        this.removeAll_4fm7v2$ = Kotlin.AbstractCollection.prototype.removeAll_4fm7v2$;
+        this.retainAll_4fm7v2$ = Kotlin.AbstractCollection.prototype.retainAll_4fm7v2$;
+        this.containsAll_4fm7v2$ = Kotlin.AbstractCollection.prototype.containsAll_4fm7v2$;
 
         this.add_za3rmp$ = function (o) {
             return !hashTable.put_wn2jw4$(o, true);
@@ -786,7 +860,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
 
         this.clone = function () {
             var h = new HashSet(hashingFunction, equalityFunction);
-            h.addAll_xeylzf$(hashTable.keys());
+            h.addAll_4fm7v2$(hashTable.keys());
             return h;
         };
 

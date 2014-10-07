@@ -108,7 +108,7 @@ data class ExtractionData(
 
     val originalStartOffset = originalElements.first?.let { e -> e.getTextRange()!!.getStartOffset() }
 
-    private val itFakeDeclaration by Delegates.lazy { JetPsiFactory(originalFile).createParameter("it", "Any?") }
+    private val itFakeDeclaration by Delegates.lazy { JetPsiFactory(originalFile).createParameter("it: Any?") }
 
     val refOffsetToDeclaration by Delegates.lazy {
         fun isExtractableIt(descriptor: DeclarationDescriptor, context: BindingContext): Boolean {
@@ -156,7 +156,7 @@ data class ExtractionData(
             val parent = ref.getParent()
             if (parent is JetQualifiedExpression && parent.getSelectorExpression() == ref) {
                 val receiverDescriptor =
-                        (originalResolveResult.resolvedCall?.getThisObject() as? ThisReceiver)?.getDeclarationDescriptor()
+                        (originalResolveResult.resolvedCall?.getDispatchReceiver() as? ThisReceiver)?.getDeclarationDescriptor()
                 if ((receiverDescriptor as? ClassDescriptor)?.getKind() != ClassKind.CLASS_OBJECT
                         && parent.getReceiverExpression() !is JetSuperExpression) continue
             }

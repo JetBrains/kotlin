@@ -1,13 +1,13 @@
 fun f1(s: String?) {
     if (s!! == "");
-    <!DEBUG_INFO_AUTOCAST!>s<!> : String
+    <!DEBUG_INFO_SMARTCAST!>s<!> : String
 }
 
 fun f2(s: Number?) {
     if (s is Int);
     <!TYPE_MISMATCH!>s<!> : Int
     if (s as Int == 42);
-    <!DEBUG_INFO_AUTOCAST!>s<!> : Int
+    <!DEBUG_INFO_SMARTCAST!>s<!> : Int
 }
 
 fun f3(s: Number?) {

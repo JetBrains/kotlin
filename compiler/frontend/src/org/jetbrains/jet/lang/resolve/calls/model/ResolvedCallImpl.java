@@ -71,8 +71,8 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private final Call call;
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
-    private final ReceiverValue thisObject; // receiver object of a method
-    private final ReceiverValue receiverArgument; // receiver of an extension function
+    private final ReceiverValue dispatchReceiver; // receiver object of a method
+    private final ReceiverValue extensionReceiver; // receiver of an extension function
     private final ExplicitReceiverKind explicitReceiverKind;
     private final boolean isSafeCall;
 
@@ -96,8 +96,8 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     ) {
         this.call = candidate.getCall();
         this.candidateDescriptor = candidate.getDescriptor();
-        this.thisObject = candidate.getThisObject();
-        this.receiverArgument = candidate.getReceiverArgument();
+        this.dispatchReceiver = candidate.getDispatchReceiver();
+        this.extensionReceiver = candidate.getExtensionReceiver();
         this.explicitReceiverKind = candidate.getExplicitReceiverKind();
         this.isSafeCall = candidate.isSafeCall();
         this.trace = trace;
@@ -212,14 +212,14 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @Override
     @NotNull
-    public ReceiverValue getReceiverArgument() {
-        return receiverArgument;
+    public ReceiverValue getExtensionReceiver() {
+        return extensionReceiver;
     }
 
     @Override
     @NotNull
-    public ReceiverValue getThisObject() {
-        return thisObject;
+    public ReceiverValue getDispatchReceiver() {
+        return dispatchReceiver;
     }
 
     @Override

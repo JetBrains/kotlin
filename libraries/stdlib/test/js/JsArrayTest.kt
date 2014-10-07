@@ -2,6 +2,7 @@ package jstest
 
 import org.junit.Test as test
 import kotlin.test.*
+import java.util.ArrayList;
 
 class JsArrayTest {
 
@@ -18,5 +19,15 @@ class JsArrayTest {
         assertEquals("[foo]", a2.toList().toString())
         assertEquals("[foo, bar]", a3.toList().toString())
 
+    }
+
+    test fun arrayListFromCollection() {
+        var c: Collection<String>  = array("A", "B", "C").toList()
+        var a = ArrayList(c)
+
+        assertEquals(3, a.size)
+        assertEquals("A", a[0])
+        assertEquals("B", a[1])
+        assertEquals("C", a[2])
     }
 }

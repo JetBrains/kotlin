@@ -42,15 +42,15 @@ public final class InvokeConventionTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
-    public void testInvokeWithReceiverArgument() throws Exception {
+    public void testInvokeWithExtensionReceiver() throws Exception {
         fooBoxTest();
     }
 
-    public void testInvokeWithThisObject() throws Exception {
+    public void testInvokeWithDispatchReceiver() throws Exception {
         fooBoxTest();
     }
 
-    public void testInvokeWithThisObjectAndReceiver() throws Exception {
+    public void testInvokeWithDispatchAndExtensionReceivers() throws Exception {
         fooBoxTest();
     }
 

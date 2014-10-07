@@ -4,6 +4,8 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 public abstract class JsLiteral extends JsExpressionImpl {
     public static final JsValueLiteral THIS = new JsThisRef();
     public static final JsNameRef UNDEFINED = new JsNameRef("undefined");
@@ -26,24 +28,36 @@ public abstract class JsLiteral extends JsExpressionImpl {
         public void accept(JsVisitor v) {
             v.visitThis(this);
         }
+
+        @Override
+        public void traverse(JsVisitorWithContext v, JsContext ctx) {
+            v.visit(this, ctx);
+            v.endVisit(this, ctx);
+        }
     }
 
     public static final class JsBooleanLiteral extends JsValueLiteral {
-      private final boolean value;
+        private final boolean value;
 
-      // Should be interned by JsProgram
-      private JsBooleanLiteral(boolean value) {
+        // Should be interned by JsProgram
+        private JsBooleanLiteral(boolean value) {
         this.value = value;
       }
 
-      public boolean getValue() {
+        public boolean getValue() {
         return value;
       }
 
-      @Override
-      public void accept(JsVisitor v) {
+        @Override
+        public void accept(JsVisitor v) {
         v.visitBoolean(this);
       }
+
+        @Override
+        public void traverse(JsVisitorWithContext v, JsContext ctx) {
+            v.visit(this, ctx);
+            v.endVisit(this, ctx);
+        }
     }
 
     /**
@@ -56,6 +70,12 @@ public abstract class JsLiteral extends JsExpressionImpl {
         @Override
         public final boolean isLeaf() {
             return true;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression deepCopy() {
+            return this;
         }
     }
 }

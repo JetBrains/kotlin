@@ -21,6 +21,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.typeRefHelpers.TypeRefHelpersPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -34,7 +35,12 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
 
     @Override
     public JetTypeReference getTypeRef() {
-        return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
+        return TypeRefHelpersPackage.getTypeRef(this);
+    }
+
+    @Nullable
+    public JetTypeReference setTypeRef(@Nullable JetTypeReference typeRef) {
+        return TypeRefHelpersPackage.setTypeRef(this, getNameIdentifier(), typeRef);
     }
 
     @Override

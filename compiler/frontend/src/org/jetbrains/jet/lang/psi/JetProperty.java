@@ -29,11 +29,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.jet.lang.psi.typeRefHelpers.TypeRefHelpersPackage;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
-import static org.jetbrains.jet.JetNodeTypes.PROPERTY_ACCESSOR;
 import static org.jetbrains.jet.JetNodeTypes.PROPERTY_DELEGATE;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
@@ -122,6 +122,12 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         return getTypeRef();
     }
 
+    @Nullable
+    @Override
+    public JetTypeReference setReturnTypeRef(@Nullable JetTypeReference typeRef) {
+        return setTypeRef(typeRef);
+    }
+
     @Override
     @Nullable
     public JetTypeReference getTypeRef() {
@@ -140,25 +146,12 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
                 return typeReferences.get(returnTypeRefPositionInPsi);
             }
         }
-        return getTypeRefByTree();
+        return TypeRefHelpersPackage.getTypeRef(this);
     }
 
     @Nullable
-    private JetTypeReference getTypeRefByTree() {
-        ASTNode node = getNode().getFirstChildNode();
-        boolean passedColon = false;
-        while (node != null) {
-            IElementType tt = node.getElementType();
-            if (tt == JetTokens.COLON) {
-                passedColon = true;
-            }
-            else if (tt == JetNodeTypes.TYPE_REFERENCE && passedColon) {
-                return (JetTypeReference) node.getPsi();
-            }
-            node = node.getTreeNext();
-        }
-
-        return null;
+    public JetTypeReference setTypeRef(@Nullable JetTypeReference typeRef) {
+        return TypeRefHelpersPackage.setTypeRef(this, getNameIdentifier(), typeRef);
     }
 
     @NotNull
@@ -231,6 +224,34 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
 
     public boolean hasDelegateExpressionOrInitializer() {
         return hasDelegateExpression() || hasInitializer();
+    }
+
+    @Nullable
+    public JetExpression setInitializer(@Nullable JetExpression initializer) {
+        JetExpression oldInitializer = getInitializer();
+
+        if (oldInitializer != null) {
+            if (initializer != null) {
+                return (JetExpression) oldInitializer.replace(initializer);
+            }
+            else {
+                deleteChildRange(findChildByType(EQ), oldInitializer);
+                return null;
+            }
+        }
+        else {
+            if (initializer != null) {
+                PsiElement addAfter = getTypeRef();
+                if (addAfter == null) {
+                    addAfter = getNameIdentifier();
+                }
+                PsiElement eq = addAfter(new JetPsiFactory(getProject()).createEQ(), addAfter);
+                return (JetExpression) addAfter(initializer, eq);
+            }
+            else {
+                return null;
+            }
+        }
     }
 
     @Nullable

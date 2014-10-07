@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;
@@ -127,7 +128,7 @@ public abstract class JsScope {
         return name;
     }
 
-    protected boolean hasOwnName(@NotNull String name) {
+    public boolean hasOwnName(@NotNull String name) {
         return names.containsKey(name);
     }
 
@@ -154,8 +155,18 @@ public abstract class JsScope {
         }
     }
 
+    public void copyOwnNames(JsScope other) {
+        names = new HashMap<String, JsName>(names);
+        names.putAll(other.names);
+    }
+
     @NotNull
-    protected JsName doCreateName(String ident) {
+    public String getDescription() {
+        return description;
+    }
+
+    @NotNull
+    protected JsName doCreateName(@NotNull String ident) {
         JsName name = new JsName(this, ident);
         names = Maps.put(names, ident, name);
         return name;

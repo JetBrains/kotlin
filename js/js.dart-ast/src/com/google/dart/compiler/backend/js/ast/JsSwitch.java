@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +15,17 @@ import java.util.List;
  */
 public class JsSwitch extends SourceInfoAwareJsNode implements JsStatement {
 
-    private final List<JsSwitchMember> cases = new ArrayList<JsSwitchMember>();
+    private final List<JsSwitchMember> cases;
     private JsExpression expression;
 
     public JsSwitch() {
         super();
+        cases = new ArrayList<JsSwitchMember>();
+    }
+
+    public JsSwitch(JsExpression expression, List<JsSwitchMember> cases) {
+        this.expression = expression;
+        this.cases = cases;
     }
 
     public List<JsSwitchMember> getCases() {
@@ -40,5 +49,23 @@ public class JsSwitch extends SourceInfoAwareJsNode implements JsStatement {
     public void acceptChildren(JsVisitor visitor) {
         visitor.accept(expression);
         visitor.acceptWithInsertRemove(cases);
+    }
+
+    @Override
+    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            expression = v.accept(expression);
+            v.acceptList(cases);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsSwitch deepCopy() {
+        JsExpression expressionCopy = AstUtil.deepCopy(expression);
+        List<JsSwitchMember> casesCopy = AstUtil.deepCopy(cases);
+
+        return new JsSwitch(expressionCopy, casesCopy).withMetadataFrom(this);
     }
 }

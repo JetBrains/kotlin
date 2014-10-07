@@ -48,11 +48,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] HEX_DIGITS = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-    /**
-     * How many lines of code to print inside of a JsBlock when printing terse.
-     */
-    private static final int JSBLOCK_LINES_TO_PRINT = 3;
-
     public static CharSequence javaScriptString(String value) {
         return javaScriptString(value, false);
     }
@@ -278,7 +273,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitBlock(JsBlock x) {
-        printJsBlock(x, true, true);
+        printJsBlock(x, true);
     }
 
     @Override
@@ -304,10 +299,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     private void continueOrBreakLabel(JsContinue x) {
-        String label = x.getLabel();
-        if (label != null) {
+        JsNameRef label = x.getLabel();
+        if (label != null && label.getIdent() != null) {
             space();
-            p.print(label);
+            p.print(label.getIdent());
         }
     }
 
@@ -927,7 +922,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
     }
 
-    protected void printJsBlock(JsBlock x, boolean truncate, boolean finalNewline) {
+    protected void printJsBlock(JsBlock x, boolean finalNewline) {
         if (!lineBreakAfterBlock) {
             finalNewline = false;
             lineBreakAfterBlock = true;
@@ -938,16 +933,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             blockOpen();
         }
 
-        int count = 0;
         Iterator<JsStatement> iterator = x.getStatements().iterator();
         while (iterator.hasNext()) {
             boolean isGlobal = x.isGlobalBlock() || globalBlocks.contains(x);
 
-            if (truncate && count > JSBLOCK_LINES_TO_PRINT) {
-                p.print("[...]");
-                newlineOpt();
-                break;
-            }
             JsStatement statement = iterator.next();
             if (statement instanceof JsEmpty) {
                 continue;
@@ -999,7 +988,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                     newlineOpt();
                 }
             }
-            ++count;
         }
 
         if (needBraces) {

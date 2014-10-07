@@ -1,6 +1,6 @@
 fun foo(x: Number, y: Int) {
     when (x) {
-        is Int -> <!DEBUG_INFO_AUTOCAST!>x<!> : Int
+        is Int -> <!DEBUG_INFO_SMARTCAST!>x<!> : Int
         y -> {}
         else -> {}
     }
@@ -9,7 +9,7 @@ fun foo(x: Number, y: Int) {
 
 fun bar(x: Number) {
     when (x) {
-        is Int -> <!DEBUG_INFO_AUTOCAST!>x<!> : Int
+        is Int -> <!DEBUG_INFO_SMARTCAST!>x<!> : Int
         else -> {}
     }
     <!TYPE_MISMATCH!>x<!> : Int
@@ -17,7 +17,7 @@ fun bar(x: Number) {
 
 fun whenWithoutSubject(x: Number) {
     when {
-        (x is Int) -> <!DEBUG_INFO_AUTOCAST!>x<!> : Int
+        (x is Int) -> <!DEBUG_INFO_SMARTCAST!>x<!> : Int
         else -> {}
     }
     <!TYPE_MISMATCH!>x<!> : Int

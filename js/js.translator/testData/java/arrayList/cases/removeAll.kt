@@ -3,17 +3,6 @@ package foo
 import java.util.ArrayList;
 
 
-// TODO: drop when listOf will be available here.
-fun listOf<T>(vararg a: T): List<T> {
-    val list = ArrayList<T>();
-
-    for (e in a) {
-        list.add(e)
-    }
-
-    return list
-}
-
 fun test<T>(a: List<T>, b: List<T>, removed: Boolean, expected: List<T>): String? {
     val t = ArrayList<T>(a.size())
     t.addAll(a)

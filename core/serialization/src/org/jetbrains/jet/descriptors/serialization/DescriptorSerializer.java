@@ -214,7 +214,7 @@ public class DescriptorSerializer {
             builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
         }
 
-        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
             builder.setReceiverType(local.type(receiverParameter.getType()));
         }

@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.google.common.collect.Sets;
 import com.intellij.extapi.psi.ASTDelegatePsiElement;
-import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
@@ -39,11 +38,8 @@ import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.presentation.JetClassPresenter;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.Set;
 
 public class QuickFixUtil {
@@ -198,30 +194,5 @@ public class QuickFixUtil {
         }
 
         return usedParameters;
-    }
-
-    static class ClassCandidateListCellRenderer extends PsiElementListCellRenderer<JetClass> {
-        private final JetClassPresenter presenter = new JetClassPresenter();
-
-        @Override
-        public String getElementText(JetClass element) {
-            return presenter.getPresentation(element).getPresentableText();
-        }
-
-        @Nullable
-        @Override
-        protected String getContainerText(JetClass element, String name) {
-            return presenter.getPresentation(element).getLocationString();
-        }
-
-        @Override
-        protected int getIconFlags() {
-            return 0;
-        }
-
-        @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            return super.getListCellRendererComponent(list, ((ClassCandidate) value).getJetClass(), index, isSelected, cellHasFocus);
-        }
     }
 }

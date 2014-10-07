@@ -39,6 +39,7 @@ public final class JetDescriptorIconProvider {
     private JetDescriptorIconProvider() {
     }
 
+    @NotNull
     public static Icon getIcon(@NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration, @Iconable.IconFlags int flags) {
         if (declaration != null && !isKotlinDeclaration(declaration)) {
             return declaration.getIcon(flags);
@@ -85,7 +86,7 @@ public final class JetDescriptorIconProvider {
         }
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-            if (functionDescriptor.getReceiverParameter() != null) {
+            if (functionDescriptor.getExtensionReceiverParameter() != null) {
                 return JetIcons.EXTENSION_FUNCTION;
             }
 

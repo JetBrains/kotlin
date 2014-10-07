@@ -3,8 +3,7 @@ trait A {
 }
 
 class C : A {
-
     override fun foo(value: String) {
-        super<A>.foo(value)
+        <selection><caret>super<A>.foo(value)</selection>
     }
 }

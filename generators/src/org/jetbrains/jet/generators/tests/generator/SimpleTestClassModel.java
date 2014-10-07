@@ -32,6 +32,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.jet.generators.tests.generator.TestGenerator.TargetBackend;
+
 public class SimpleTestClassModel implements TestClassModel {
     private static final Comparator<TestEntityModel> BY_NAME = new Comparator<TestEntityModel>() {
         @Override
@@ -39,14 +41,21 @@ public class SimpleTestClassModel implements TestClassModel {
             return o1.getName().compareTo(o2.getName());
         }
     };
+    @NotNull
     private final File rootFile;
     private final boolean recursive;
     private final boolean excludeParentDirs;
+    @NotNull
     private final Pattern filenamePattern;
+    @NotNull
     private final String doTestMethodName;
+    @NotNull
     private final String testClassName;
-
+    @NotNull
+    private final TargetBackend targetBackend;
+    @Nullable
     private Collection<TestClassModel> innerTestClasses;
+    @Nullable
     private Collection<TestMethodModel> testMethods;
 
     public SimpleTestClassModel(
@@ -55,7 +64,8 @@ public class SimpleTestClassModel implements TestClassModel {
             boolean excludeParentDirs,
             @NotNull Pattern filenamePattern,
             @NotNull String doTestMethodName,
-            @NotNull String testClassName
+            @NotNull String testClassName,
+            @NotNull TargetBackend targetBackend
     ) {
         this.rootFile = rootFile;
         this.recursive = recursive;
@@ -63,6 +73,7 @@ public class SimpleTestClassModel implements TestClassModel {
         this.filenamePattern = filenamePattern;
         this.doTestMethodName = doTestMethodName;
         this.testClassName = testClassName;
+        this.targetBackend = targetBackend;
     }
 
     @NotNull
@@ -80,7 +91,8 @@ public class SimpleTestClassModel implements TestClassModel {
                     if (file.isDirectory()) {
                         if (dirHasFilesInside(file)) {
                             String innerTestClassName = TestGeneratorUtil.fileNameToJavaIdentifier(file);
-                            children.add(new SimpleTestClassModel(file, true, excludeParentDirs, filenamePattern, doTestMethodName, innerTestClassName));
+                            children.add(new SimpleTestClassModel(file, true, excludeParentDirs, filenamePattern, doTestMethodName, innerTestClassName,
+                                                                  targetBackend));
                         }
                     }
                 }
@@ -118,7 +130,8 @@ public class SimpleTestClassModel implements TestClassModel {
     public Collection<TestMethodModel> getTestMethods() {
         if (testMethods == null) {
             if (!rootFile.isDirectory()) {
-                testMethods = Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, rootFile, doTestMethodName, filenamePattern));
+                testMethods = Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, rootFile, doTestMethodName, filenamePattern,
+                                                                                                   targetBackend));
             }
             else {
                 List<TestMethodModel> result = Lists.newArrayList();
@@ -134,7 +147,7 @@ public class SimpleTestClassModel implements TestClassModel {
                                 continue;
                             }
 
-                            result.add(new SimpleTestMethodModel(rootFile, file, doTestMethodName, filenamePattern));
+                            result.add(new SimpleTestMethodModel(rootFile, file, doTestMethodName, filenamePattern, targetBackend));
                         }
                     }
                 }

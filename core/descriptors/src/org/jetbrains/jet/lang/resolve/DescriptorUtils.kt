@@ -31,4 +31,4 @@ public fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescripto
         if (this is ConstructorDescriptor || DescriptorUtils.isClassObject(this)) getContainingDeclaration()!! else this
 
 public val DeclarationDescriptor.isExtension: Boolean
-    get() = this is CallableDescriptor && getReceiverParameter() != null
+    get() = this is CallableDescriptor && getExtensionReceiverParameter() != null

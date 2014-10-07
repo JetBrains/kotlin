@@ -86,18 +86,6 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
     
-    @TestMetadata("AutoCastedType.kt")
-    public void testAutoCastedType() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/AutoCastedType.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("AutoCastedTypeWithQualifier.kt")
-    public void testAutoCastedTypeWithQualifier() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/AutoCastedTypeWithQualifier.kt");
-        doTest(fileName);
-    }
-    
     @TestMetadata("AutoNotNullType.kt")
     public void testAutoNotNullType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/AutoNotNullType.kt");
@@ -410,6 +398,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
     
+    @TestMetadata("kt5873.kt")
+    public void testKt5873() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/kt5873.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("Lambda1.kt")
     public void testLambda1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/Lambda1.kt");
@@ -443,6 +437,72 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("MethodCallArgument.kt")
     public void testMethodCallArgument() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/MethodCallArgument.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("MultipleArgsItem1.kt")
+    public void testMultipleArgsItem1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/MultipleArgsItem1.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("MultipleArgsItem10.kt")
+    public void testMultipleArgsItem10() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/MultipleArgsItem10.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("MultipleArgsItem11.kt")
+    public void testMultipleArgsItem11() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/MultipleArgsItem11.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("MultipleArgsItem2.kt")
+    public void testMultipleArgsItem2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/MultipleArgsItem2.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("MultipleArgsItem3.kt")
+    public void testMultipleArgsItem3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/MultipleArgsItem3.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("MultipleArgsItem4.kt")
+    public void testMultipleArgsItem4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/MultipleArgsItem4.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("MultipleArgsItem5.kt")
+    public void testMultipleArgsItem5() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/MultipleArgsItem5.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("MultipleArgsItem6.kt")
+    public void testMultipleArgsItem6() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/MultipleArgsItem6.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("MultipleArgsItem7.kt")
+    public void testMultipleArgsItem7() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/MultipleArgsItem7.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("MultipleArgsItem8.kt")
+    public void testMultipleArgsItem8() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/MultipleArgsItem8.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("MultipleArgsItem9.kt")
+    public void testMultipleArgsItem9() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/MultipleArgsItem9.kt");
         doTest(fileName);
     }
     
@@ -542,6 +602,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
     
+    @TestMetadata("ParameterWithDefaultValue.kt")
+    public void testParameterWithDefaultValue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ParameterWithDefaultValue.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("PrivateConstructorForAbstract.kt")
     public void testPrivateConstructorForAbstract() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/PrivateConstructorForAbstract.kt");
@@ -605,6 +671,18 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("SkipUnresolvedTypes.kt")
     public void testSkipUnresolvedTypes() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/SkipUnresolvedTypes.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("SmartCastType.kt")
+    public void testSmartCastType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/SmartCastType.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("SmartCastTypeWithQualifier.kt")
+    public void testSmartCastTypeWithQualifier() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/SmartCastTypeWithQualifier.kt");
         doTest(fileName);
     }
     

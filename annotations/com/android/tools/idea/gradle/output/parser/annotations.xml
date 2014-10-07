@@ -1,0 +1,9 @@
+<root>
+    <item
+        name='com.android.tools.idea.gradle.output.parser.PatternAwareOutputParser boolean parse(java.lang.String, com.android.tools.idea.gradle.output.parser.OutputLineReader, java.util.List&lt;com.android.tools.idea.gradle.output.GradleMessage&gt;)'>
+        <annotation name='kotlin.jvm.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun parse(line: String, reader: OutputLineReader, messages: MutableList&lt;GradleMessage&gt;): Boolean&quot;"/>
+        </annotation>
+    </item>
+</root>

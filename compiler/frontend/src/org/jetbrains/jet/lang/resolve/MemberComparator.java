@@ -37,7 +37,7 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
             return 6;
         }
         else if (descriptor instanceof PropertyDescriptor) {
-            if (((PropertyDescriptor)descriptor).getReceiverParameter() == null) {
+            if (((PropertyDescriptor)descriptor).getExtensionReceiverParameter() == null) {
                 return 5;
             }
             else {
@@ -45,7 +45,7 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
             }
         }
         else if (descriptor instanceof FunctionDescriptor) {
-            if (((FunctionDescriptor)descriptor).getReceiverParameter() == null) {
+            if (((FunctionDescriptor)descriptor).getExtensionReceiverParameter() == null) {
                 return 3;
             }
             else {
@@ -74,8 +74,8 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
             CallableDescriptor c1 = (CallableDescriptor) o1;
             CallableDescriptor c2 = (CallableDescriptor) o2;
 
-            ReceiverParameterDescriptor c1ReceiverParameter = c1.getReceiverParameter();
-            ReceiverParameterDescriptor c2ReceiverParameter = c2.getReceiverParameter();
+            ReceiverParameterDescriptor c1ReceiverParameter = c1.getExtensionReceiverParameter();
+            ReceiverParameterDescriptor c2ReceiverParameter = c2.getExtensionReceiverParameter();
             assert (c1ReceiverParameter != null) == (c2ReceiverParameter != null);
             if (c1ReceiverParameter != null) {
                 String r1 = RENDERER.renderType(c1ReceiverParameter.getType());

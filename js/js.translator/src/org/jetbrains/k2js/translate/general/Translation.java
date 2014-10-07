@@ -34,6 +34,7 @@ import org.jetbrains.k2js.facade.exceptions.MainFunctionNotFoundException;
 import org.jetbrains.k2js.facade.exceptions.TranslationException;
 import org.jetbrains.k2js.facade.exceptions.TranslationInternalException;
 import org.jetbrains.k2js.facade.exceptions.UnsupportedFeatureException;
+import org.jetbrains.k2js.inline.JsInliner;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.StaticContext;
@@ -167,7 +168,8 @@ public final class Translation {
             @NotNull Config config)
             throws TranslationException {
         try {
-            return doGenerateAst(bindingContext, files, mainCallParameters, moduleDescriptor, config);
+            JsProgram program = doGenerateAst(bindingContext, files, mainCallParameters, moduleDescriptor, config);
+            return config.isInlineEnabled() ? JsInliner.process(program) : program;
         }
         catch (UnsupportedOperationException e) {
             throw new UnsupportedFeatureException("Unsupported feature used.", e);
@@ -182,7 +184,7 @@ public final class Translation {
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Config config) throws MainFunctionNotFoundException {
-        StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, config.getTarget(), moduleDescriptor);
+        StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, config, moduleDescriptor);
         JsProgram program = staticContext.getProgram();
         JsBlock block = program.getGlobalBlock();
 

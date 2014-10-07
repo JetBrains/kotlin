@@ -100,10 +100,10 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
 
     @Override
     @NotNull
-    protected List<String> additionalJSFiles(@NotNull EcmaVersion ecmaVersion) {
-        List<String> result = Lists.newArrayList(super.additionalJSFiles(ecmaVersion));
+    protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
+        List<String> result = Lists.newArrayList(super.additionalJsFiles(ecmaVersion));
         if (getName().equals("testEnumerable")) {
-            result.add(pathToTestFiles() + "enumerate.js");
+            result.add(pathToTestDir() + "enumerate.js");
         }
         return result;
     }

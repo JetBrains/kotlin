@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,29 @@ package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.ide.util.MemberChooser;
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageCodeInsightActionHandler;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.quickfix.QuickfixPackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
@@ -63,7 +67,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     ) {
         List<DescriptorClassMember> members = new ArrayList<DescriptorClassMember>();
         for (CallableMemberDescriptor memberDescriptor : missingImplementations) {
-            PsiElement declaration = DescriptorToDeclarationUtil.getDeclaration(file, memberDescriptor);
+            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(file, memberDescriptor);
             if (declaration == null) {
                 LOG.error("Can not find declaration for descriptor " + memberDescriptor);
             }
@@ -76,55 +80,99 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     public static void generateMethods(
-            Editor editor,
-            JetClassOrObject classOrObject,
-            List<DescriptorClassMember> selectedElements
+            @NotNull final Editor editor,
+            @NotNull final JetClassOrObject classOrObject,
+            @NotNull final List<DescriptorClassMember> selectedElements
     ) {
-        JetClassBody body = classOrObject.getBody();
-        if (body == null) {
-            JetPsiFactory psiFactory = JetPsiFactory(classOrObject);
-            classOrObject.add(psiFactory.createWhiteSpace());
-            body = (JetClassBody) classOrObject.add(psiFactory.createEmptyClassBody());
+        PsiElement firstGenerated = ApplicationManager.getApplication().runWriteAction(new Computable<PsiElement>() {
+            @Override
+            public PsiElement compute() {
+                JetClassBody body = classOrObject.getBody();
+                if (body == null) {
+                    JetPsiFactory psiFactory = JetPsiFactory(classOrObject);
+                    classOrObject.add(psiFactory.createWhiteSpace());
+                    body = (JetClassBody) classOrObject.add(psiFactory.createEmptyClassBody());
+                }
+
+                PsiElement afterAnchor = findInsertAfterAnchor(editor, body);
+
+                if (afterAnchor == null) {
+                    return null;
+                }
+
+                PsiElement firstGenerated = null;
+
+                List<JetElement> elementsToCompact = new ArrayList<JetElement>();
+                JetFile file = classOrObject.getContainingJetFile();
+                for (JetElement element : generateOverridingMembers(selectedElements, file)) {
+                    PsiElement added = body.addAfter(element, afterAnchor);
+
+                    if (firstGenerated == null) {
+                        firstGenerated = added;
+                    }
+
+                    afterAnchor = added;
+                    elementsToCompact.add((JetElement) added);
+                }
+
+                ShortenReferences.INSTANCE$.process(elementsToCompact);
+
+                return firstGenerated;
+            }
+        });
+
+        if (firstGenerated != null) {
+            QuickfixPackage.moveCaretIntoGeneratedElement(editor, firstGenerated);
         }
-
-        PsiElement afterAnchor = findInsertAfterAnchor(editor, body);
-
-        if (afterAnchor == null) {
-            return;
-        }
-
-        List<JetElement> elementsToCompact = new ArrayList<JetElement>();
-        JetFile file = classOrObject.getContainingJetFile();
-        for (JetElement element : generateOverridingMembers(selectedElements, file)) {
-            PsiElement added = body.addAfter(element, afterAnchor);
-            afterAnchor = added;
-            elementsToCompact.add((JetElement) added);
-        }
-
-        ShortenReferences.INSTANCE$.process(elementsToCompact);
     }
 
     @Nullable
     private static PsiElement findInsertAfterAnchor(Editor editor, final JetClassBody body) {
         PsiElement afterAnchor = body.getLBrace();
-        if (afterAnchor == null) {
-            return null;
-        }
+        if (afterAnchor == null) return null;
 
         int offset = editor.getCaretModel().getOffset();
-        PsiElement offsetCursorElement = PsiTreeUtil.findFirstParent(body.getContainingFile().findElementAt(offset),
-                                                                     new Condition<PsiElement>() {
-                                                                         @Override
-                                                                         public boolean value(PsiElement element) {
-                                                                             return element.getParent() == body;
-                                                                         }
-                                                                     });
+        PsiElement offsetCursorElement = PsiTreeUtil.findFirstParent(
+                body.getContainingFile().findElementAt(offset),
+                new Condition<PsiElement>() {
+                    @Override
+                    public boolean value(PsiElement element) {
+                        return element.getParent() == body;
+                    }
+                });
+
+        if (offsetCursorElement instanceof PsiWhiteSpace) {
+            return removeAfterOffset(offset, (PsiWhiteSpace) offsetCursorElement);
+        }
 
         if (offsetCursorElement != null && offsetCursorElement != body.getRBrace()) {
-            afterAnchor = offsetCursorElement;
+            return offsetCursorElement;
         }
 
         return afterAnchor;
+    }
+
+    private static PsiElement removeAfterOffset(int offset, PsiWhiteSpace whiteSpace) {
+        ASTNode spaceNode = whiteSpace.getNode();
+        if (spaceNode.getTextRange().contains(offset)) {
+            String beforeWhiteSpaceText = spaceNode.getText().substring(0, offset - spaceNode.getStartOffset());
+            if (!StringUtil.containsLineBreak(beforeWhiteSpaceText)) {
+                // Prevent insertion on same line
+                beforeWhiteSpaceText += "\n";
+            }
+
+            JetPsiFactory factory = JetPsiFactory(whiteSpace.getProject());
+
+            PsiElement insertAfter = whiteSpace.getPrevSibling();
+            whiteSpace.delete();
+
+            PsiElement beforeSpace = factory.createWhiteSpace(beforeWhiteSpaceText);
+            insertAfter.getParent().addAfter(beforeSpace, insertAfter);
+
+            return insertAfter.getNextSibling();
+        }
+
+        return whiteSpace;
     }
 
     private static List<JetElement> generateOverridingMembers(List<DescriptorClassMember> selectedElements, JetFile file) {
@@ -154,7 +202,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         StringBuilder body = new StringBuilder();
         String defaultInitializer = CodeInsightUtils.defaultInitializer(descriptor.getType());
         String initializer = defaultInitializer != null ? " = " + defaultInitializer : " = ?";
-        if (descriptor.getReceiverParameter() != null) {
+        if (descriptor.getExtensionReceiverParameter() != null) {
             body.append("\nget()");
             body.append(initializer);
             if (descriptor.isVar()) {
@@ -207,15 +255,15 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     @NotNull
-    public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject, BindingContext bindingContext) {
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
+    public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject) {
+        DeclarationDescriptor descriptor = ResolvePackage.getLazyResolveSession(classOrObject).resolveToDescriptor(classOrObject);
         if (descriptor instanceof ClassDescriptor) {
             return collectMethodsToGenerate((ClassDescriptor) descriptor);
         }
         return Collections.emptySet();
     }
 
-    protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(ClassDescriptor descriptor);
+    protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull ClassDescriptor descriptor);
 
     private MemberChooser<DescriptorClassMember> showOverrideImplementChooser(
             Project project,
@@ -242,22 +290,20 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
     protected abstract String getNoMethodsFoundHint();
 
-    public void invoke(@NotNull Project project, @NotNull final Editor editor, @NotNull PsiFile file, boolean implementAll) {
+    public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, boolean implementAll) {
         PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
-        final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
+        JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
 
         assert classOrObject != null : "ClassObject should be checked in isValidFor method";
 
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
-
-        Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject, bindingContext);
+        Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject);
         if (missingImplementations.isEmpty() && !implementAll) {
             HintManager.getInstance().showErrorHint(editor, getNoMethodsFoundHint());
             return;
         }
         List<DescriptorClassMember> members = membersFromDescriptors((JetFile) file, missingImplementations);
 
-        final List<DescriptorClassMember> selectedElements;
+        List<DescriptorClassMember> selectedElements;
         if (implementAll) {
             selectedElements = members;
         }
@@ -276,12 +322,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                generateMethods(editor, classOrObject, selectedElements);
-            }
-        });
+        generateMethods(editor, classOrObject, selectedElements);
     }
 
     @Override

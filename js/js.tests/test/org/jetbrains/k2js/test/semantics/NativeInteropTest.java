@@ -35,10 +35,10 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
 
     @NotNull
     @Override
-    protected List<String> additionalJSFiles(@NotNull EcmaVersion ecmaVersion) {
-        List<String> result = Lists.newArrayList(super.additionalJSFiles(ecmaVersion));
+    protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
+        List<String> result = Lists.newArrayList(super.additionalJsFiles(ecmaVersion));
 
-        String jsFilePath = pathToTestFiles() + NATIVE + "/" + getTestName(true) + ".js";
+        String jsFilePath = pathToTestDir() + NATIVE + "/" + getTestName(true) + ".js";
         File jsFile = new File(jsFilePath);
         if (jsFile.exists() && jsFile.isFile()) {
             result.add(jsFilePath);

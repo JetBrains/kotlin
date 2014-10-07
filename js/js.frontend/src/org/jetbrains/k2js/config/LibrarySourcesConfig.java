@@ -28,6 +28,7 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.jet.utils.LibraryUtils.isJsRuntimeLibrary;
 
 public class LibrarySourcesConfig extends Config {
     @NotNull
@@ -47,6 +49,8 @@ public class LibrarySourcesConfig extends Config {
 
     @NotNull
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.k2js.config.LibrarySourcesConfig");
+    public static final String STDLIB_JS_MODULE_NAME = "stdlib";
+    public static final String STDLIB_JS_FILE_NAME = STDLIB_JS_MODULE_NAME + ".js";
 
     @NotNull
     private final List<String> files;
@@ -56,9 +60,10 @@ public class LibrarySourcesConfig extends Config {
             @NotNull String moduleId,
             @NotNull List<String> files,
             @NotNull EcmaVersion ecmaVersion,
-            boolean sourcemap
+            boolean sourcemap,
+            boolean inlineEnabled
     ) {
-        super(project, moduleId, ecmaVersion, sourcemap);
+        super(project, moduleId, ecmaVersion, sourcemap, inlineEnabled);
         this.files = files;
     }
 
@@ -79,8 +84,10 @@ public class LibrarySourcesConfig extends Config {
                 moduleName = path.substring(1);
             }
             else if (path.endsWith(".jar") || path.endsWith(".zip")) {
+                String actualModuleName = isJsRuntimeLibrary(new File(path)) ? STDLIB_JS_MODULE_NAME : moduleName;
+
                 try {
-                    jetFiles.addAll(readZip(path));
+                    jetFiles.addAll(readZip(path, actualModuleName));
                 }
                 catch (IOException e) {
                     LOG.error(e);
@@ -104,10 +111,10 @@ public class LibrarySourcesConfig extends Config {
         return jetFiles;
     }
 
-    private List<JetFile> readZip(String file) throws IOException {
+    private List<JetFile> readZip(String file, String moduleName) throws IOException {
         ZipFile zipFile = new ZipFile(file);
         try {
-            return traverseArchive(zipFile);
+            return traverseArchive(zipFile, moduleName);
         }
         finally {
             zipFile.close();
@@ -115,16 +122,16 @@ public class LibrarySourcesConfig extends Config {
     }
 
     @NotNull
-    private List<JetFile> traverseArchive(@NotNull ZipFile file) throws IOException {
+    private List<JetFile> traverseArchive(@NotNull ZipFile zipFile, String moduleName) throws IOException {
         List<JetFile> result = Lists.newArrayList();
-        Enumeration<? extends ZipEntry> zipEntries = file.entries();
+        Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
         while (zipEntries.hasMoreElements()) {
             ZipEntry entry = zipEntries.nextElement();
             if (!entry.isDirectory() && entry.getName().endsWith(".kt")) {
-                InputStream stream = file.getInputStream(entry);
+                InputStream stream = zipFile.getInputStream(entry);
                 String text = StringUtil.convertLineSeparators(FileUtil.loadTextAndClose(stream));
                 JetFile jetFile = JetPsiFactory(getProject()).createFile(entry.getName(), text);
-                jetFile.putUserData(EXTERNAL_MODULE_NAME, UNKNOWN_EXTERNAL_MODULE_NAME);
+                jetFile.putUserData(EXTERNAL_MODULE_NAME, moduleName);
                 result.add(jetFile);
             }
         }

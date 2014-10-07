@@ -1,0 +1,16 @@
+class A {}
+
+fun A.foo() {}
+
+fun A.bar() {
+    <caret>foo()
+}
+
+
+Resolved call:
+
+Resulting descriptor: fun A.foo(): Unit defined in root package
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = AExt{fun A.bar(): Unit defined in root package}

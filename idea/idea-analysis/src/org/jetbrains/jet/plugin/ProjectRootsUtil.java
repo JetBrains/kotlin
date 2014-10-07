@@ -16,12 +16,13 @@
 
 package org.jetbrains.jet.plugin;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetCodeFragment;
 import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager;
 
 public class ProjectRootsUtil {
@@ -29,17 +30,22 @@ public class ProjectRootsUtil {
         return isInSource(element, true);
     }
 
-    public static boolean isInSource(@NotNull PsiElement element, boolean includeLibrarySources) {
-        PsiFile containingFile = element.getContainingFile();
-        if (containingFile == null) {
-            return false;
-        }
-        VirtualFile virtualFile = containingFile.getVirtualFile();
-        if (virtualFile == null) {
-            return false;
-        }
-        ProjectFileIndex index = ProjectFileIndex.SERVICE.getInstance(element.getProject());
-        return includeLibrarySources ? index.isInSource(virtualFile) : index.isInSourceContent(virtualFile);
+    public static boolean isInSource(@NotNull final PsiElement element, final boolean includeLibrarySources) {
+        return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
+            @Override
+            public Boolean compute() {
+                PsiFile containingFile = element.getContainingFile();
+                if (containingFile == null) {
+                    return false;
+                }
+                VirtualFile virtualFile = containingFile.getVirtualFile();
+                if (virtualFile == null) {
+                    return false;
+                }
+                ProjectFileIndex index = ProjectFileIndex.SERVICE.getInstance(element.getProject());
+                return includeLibrarySources ? index.isInSource(virtualFile) : index.isInSourceContent(virtualFile);
+            }
+        });
     }
 
     public static boolean isInSourceWithGradleCheck(@NotNull PsiElement element) {

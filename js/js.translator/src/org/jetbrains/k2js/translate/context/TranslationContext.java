@@ -20,11 +20,15 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.MemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
@@ -247,6 +251,11 @@ public class TranslationContext {
     }
 
     @NotNull
+    public Config getConfig() {
+        return staticContext.getConfig();
+    }
+
+    @NotNull
     public JsScope scope() {
         return dynamicContext.getScope();
     }
@@ -307,7 +316,7 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsExpression getThisObject(@NotNull ReceiverParameterDescriptor descriptor) {
+    public JsExpression getDispatchReceiver(@NotNull ReceiverParameterDescriptor descriptor) {
         JsExpression alias = getAliasForDescriptor(descriptor);
         return alias == null ? JsLiteral.THIS : alias;
     }

@@ -8,8 +8,8 @@ Resolved call:
 Resulting descriptor: constructor MyA(i: Int) defined in MyA
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
-This object = NO_RECEIVER
-Receiver argument = NO_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 

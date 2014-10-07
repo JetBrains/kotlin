@@ -5,6 +5,7 @@
 package com.google.dart.compiler.backend.js.ast;
 
 import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -26,4 +27,8 @@ public abstract class JsSwitchMember extends SourceInfoAwareJsNode {
     public void acceptChildren(JsVisitor visitor) {
         visitor.acceptWithInsertRemove(statements);
     }
+
+    @NotNull
+    @Override
+    public abstract JsSwitchMember deepCopy();
 }

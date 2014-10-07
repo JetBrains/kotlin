@@ -23,7 +23,7 @@ import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.debugger.engine.BasicStepMethodFilter
-import org.jetbrains.jet.plugin.refactoring.runReadAction
+import org.jetbrains.jet.plugin.util.application.runReadAction
 import org.jetbrains.jet.InTextDirectivesUtils.*
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File

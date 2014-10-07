@@ -159,36 +159,43 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
+    @NotNull
     public DescriptorRendererBuilder setIncludePropertyConstant(boolean includePropertyConstant) {
         this.includePropertyConstant = includePropertyConstant;
         return this;
     }
 
+    @NotNull
     public DescriptorRendererBuilder setIncludeSynthesizedParameterNames(boolean includeSynthesizedParameterNames) {
         this.includeSynthesizedParameterNames = includeSynthesizedParameterNames;
         return this;
     }
 
+    @NotNull
     public DescriptorRendererBuilder setWithoutTypeParameters(boolean withoutTypeParameters) {
         this.withoutTypeParameters = withoutTypeParameters;
         return this;
     }
 
+    @NotNull
     public DescriptorRendererBuilder setWithoutFunctionParameterNames(boolean withoutFunctionParameterNames) {
         this.withoutFunctionParameterNames = withoutFunctionParameterNames;
         return this;
     }
 
+    @NotNull
     public DescriptorRendererBuilder setReceiverAfterName(boolean receiverAfterName) {
         this.receiverAfterName = receiverAfterName;
         return this;
     }
 
+    @NotNull
     public DescriptorRendererBuilder setRenderClassObjectName(boolean renderClassObjectName) {
         this.renderClassObjectName = renderClassObjectName;
         return this;
     }
 
+    @NotNull
     public DescriptorRendererBuilder setWithoutSuperTypes(boolean withoutSuperTypes) {
         this.withoutSuperTypes = withoutSuperTypes;
         return this;

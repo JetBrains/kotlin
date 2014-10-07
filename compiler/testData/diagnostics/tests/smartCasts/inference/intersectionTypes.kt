@@ -12,16 +12,16 @@ trait C: A
 
 fun test(a: A, b: B, c: C) {
     if (a is B && a is C) {
-        val d: C = id(<!DEBUG_INFO_AUTOCAST!>a<!>)
+        val d: C = id(<!DEBUG_INFO_SMARTCAST!>a<!>)
         val e: Any = id(a)
         val f = id(a)
         f: A
-        val g = two(<!DEBUG_INFO_AUTOCAST!>a<!>, b)
+        val g = two(<!DEBUG_INFO_SMARTCAST!>a<!>, b)
         g: B
         g: A
 
-        // auto cast isn't needed, but is reported due to KT-4294
-        val h: Any = two(<!DEBUG_INFO_AUTOCAST!>a<!>, b)
+        // smart cast isn't needed, but is reported due to KT-4294
+        val h: Any = two(<!DEBUG_INFO_SMARTCAST!>a<!>, b)
 
         val k = three(a, b, c)
         k: A
@@ -46,7 +46,7 @@ fun testErrorMessages(a: A, ml: MutableList<String>) {
 
 fun rr(s: String?) {
     if (s != null) {
-        val l = arrayListOf("", <!DEBUG_INFO_AUTOCAST!>s<!>)
+        val l = arrayListOf("", <!DEBUG_INFO_SMARTCAST!>s<!>)
         l: MutableList<String>
         <!TYPE_MISMATCH!>l<!>: MutableList<String?>
     }

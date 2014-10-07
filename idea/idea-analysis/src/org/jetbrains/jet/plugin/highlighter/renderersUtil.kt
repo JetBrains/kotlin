@@ -76,7 +76,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
     }
 
     val resultingDescriptor = resolvedCall.getResultingDescriptor()
-    val receiverParameter = resultingDescriptor.getReceiverParameter()
+    val receiverParameter = resultingDescriptor.getExtensionReceiverParameter()
     if (receiverParameter != null) {
         append(htmlRenderer.renderType(receiverParameter.getType())).append(".")
     }
