@@ -83,7 +83,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
                 addTypeAnnotation(project, editor, parameter, type);
             }
             else {
-                parameter.setTypeRef(null);
+                parameter.setTypeReference(null);
             }
         }
         else if (parent instanceof JetNamedFunction) {
@@ -200,17 +200,17 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             addTypeAnnotationWithTemplate(project, editor, parameter, exprType);
         }
         else {
-            parameter.setTypeRef(anyTypeRef(project));
+            parameter.setTypeReference(anyTypeRef(project));
         }
     }
 
     private static void addTypeAnnotationWithTemplate(
             @NotNull Project project,
             @NotNull Editor editor,
-            @NotNull final JetNamedDeclaration namedDeclaration,
+            @NotNull final JetCallableDeclaration declaration,
             @NotNull JetType exprType
     ) {
-        assert !exprType.isError() : "Unexpected error type: " + namedDeclaration.getText();
+        assert !exprType.isError() : "Unexpected error type: " + declaration.getText();
 
         ClassifierDescriptor descriptor = exprType.getConstructor().getDeclarationDescriptor();
         boolean isAnonymous = descriptor != null && DescriptorUtils.isAnonymousObject(descriptor);
@@ -235,12 +235,12 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             }
         };
 
-        setTypeRef(namedDeclaration, anyTypeRef(project));
+        declaration.setTypeReference(anyTypeRef(project));
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument());
 
-        JetTypeReference newTypeRef = getTypeRef(namedDeclaration);
+        JetTypeReference newTypeRef = declaration.getTypeReference();
         assert newTypeRef != null;
         TemplateBuilderImpl builder = new TemplateBuilderImpl(newTypeRef);
         builder.replaceElement(newTypeRef, expression);
@@ -251,7 +251,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         manager.startTemplate(editor, builder.buildInlineTemplate(), new TemplateEditingAdapter() {
             @Override
             public void templateFinished(Template template, boolean brokenOff) {
-                JetTypeReference typeRef = getTypeRef(namedDeclaration);
+                JetTypeReference typeRef = declaration.getTypeReference();
                 assert typeRef != null;
                 ShortenReferences.INSTANCE$.process(typeRef);
             }
@@ -260,35 +260,5 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     private static JetTypeReference anyTypeRef(@NotNull Project project) {
         return JetPsiFactory(project).createType("Any");
-    }
-
-    @Nullable
-    private static JetTypeReference getTypeRef(@NotNull JetNamedDeclaration namedDeclaration) {
-        if (namedDeclaration instanceof JetProperty) {
-            return ((JetProperty) namedDeclaration).getTypeReference();
-        }
-        else if (namedDeclaration instanceof JetParameter) {
-            return ((JetParameter) namedDeclaration).getTypeReference();
-        }
-        else if (namedDeclaration instanceof JetFunction) {
-            return ((JetFunction) namedDeclaration).getTypeReference();
-        }
-        assert false : "Wrong namedDeclaration: " + namedDeclaration.getText();
-        return null;
-    }
-
-    @Nullable
-    private static JetTypeReference setTypeRef(@NotNull JetNamedDeclaration namedDeclaration, @Nullable JetTypeReference typeRef) {
-        if (namedDeclaration instanceof JetProperty) {
-            return ((JetProperty) namedDeclaration).setTypeReference(typeRef);
-        }
-        else if (namedDeclaration instanceof JetParameter) {
-            return ((JetParameter) namedDeclaration).setTypeRef(typeRef);
-        }
-        else if (namedDeclaration instanceof JetFunction) {
-            return ((JetFunction) namedDeclaration).setTypeReference(typeRef);
-        }
-        assert false : "Wrong namedDeclaration: " + namedDeclaration.getText();
-        return null;
     }
 }

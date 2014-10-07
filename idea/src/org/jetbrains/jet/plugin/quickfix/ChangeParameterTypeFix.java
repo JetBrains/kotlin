@@ -65,6 +65,6 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        element.setTypeRef(JetPsiFactory(file).createType(renderedType));
+        element.setTypeReference(JetPsiFactory(file).createType(renderedType));
     }
 }

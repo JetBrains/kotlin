@@ -139,7 +139,7 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
 
         if (parameterInfo.isTypeChanged()) {
             JetTypeReference newTypeRef = psiFactory.createType(parameterInfo.getTypeText());
-            parameter.setTypeRef(newTypeRef);
+            parameter.setTypeReference(newTypeRef);
         }
 
         PsiElement identifier = parameter.getNameIdentifier();
