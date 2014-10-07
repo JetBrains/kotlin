@@ -122,7 +122,12 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             throw e
         }
         catch (e: Exception) {
-            logger.error("Couldn't evaluate expression:\nfileText = ${sourcePosition.getFile().getText()}\nline = ${sourcePosition.getLine()}\ncodeFragment = ${codeFragment.getText()}", e)
+            logger.error("Couldn't evaluate expression:\n" +
+                         "FILE NAME: ${sourcePosition.getFile().getName()}\n" +
+                         "BREAKPOINT LINE: ${sourcePosition.getLine()}\n" +
+                         "CODE FRAGMENT:\n${codeFragment.getText()}\n" +
+                         "FILE TEXT: \n${sourcePosition.getFile().getText()}\n", e)
+
             val cause = if (e.getMessage() != null) ": ${e.getMessage()}" else ""
             exception("An exception occurs during Evaluate Expression Action $cause")
         }
@@ -136,7 +141,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         private fun extractAndCompile(codeFragment: JetCodeFragment, sourcePosition: SourcePosition): CompiledDataDescriptor {
             val extractedFunction = getFunctionForExtractedFragment(codeFragment, sourcePosition.getFile(), sourcePosition.getLine())
             if (extractedFunction == null) {
-                throw IllegalStateException("Code fragment cannot be extracted to function: ${sourcePosition.getFile().getText()}:${sourcePosition.getLine()},\ncodeFragment = ${codeFragment.getText()}")
+                throw IllegalStateException("Code fragment cannot be extracted to function")
             }
 
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction)
