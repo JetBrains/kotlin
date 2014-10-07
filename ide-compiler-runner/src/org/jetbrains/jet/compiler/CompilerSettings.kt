@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler;
-
-import org.jetbrains.annotations.NotNull;
+package org.jetbrains.jet.compiler
 
 public class CompilerSettings {
-    private static final String DEFAULT_ADDITIONAL_ARGUMENTS = "-version";
+    public var additionalArguments: String = DEFAULT_ADDITIONAL_ARGUMENTS
 
-    @NotNull
-    private String additionalArguments = DEFAULT_ADDITIONAL_ARGUMENTS;
-
-    @NotNull
-    public String getAdditionalArguments() {
-        return additionalArguments;
+    class object {
+        private val DEFAULT_ADDITIONAL_ARGUMENTS = "-version"
     }
-
-    public void setAdditionalArguments(@NotNull String additionalArguments) {
-        this.additionalArguments = additionalArguments;
-    }
-
 }
