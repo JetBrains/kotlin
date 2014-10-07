@@ -212,9 +212,10 @@ public class CallExpressionResolver {
                     context, "trace to resolve as variable with 'invoke' call", callExpression);
             JetType type = getVariableType((JetSimpleNameExpression) calleeExpression, receiver, callOperationNode,
                                            context.replaceTraceAndCache(temporaryForVariable), result);
-            if (result[0]) {
+            Qualifier qualifier = temporaryForVariable.trace.get(BindingContext.QUALIFIER, calleeExpression);
+            if (result[0] && (qualifier == null || qualifier.getPackageView() == null)) {
                 temporaryForVariable.commit();
-                context.trace.report(FUNCTION_EXPECTED.on((JetReferenceExpression) calleeExpression, calleeExpression,
+                context.trace.report(FUNCTION_EXPECTED.on(calleeExpression, calleeExpression,
                                                           type != null ? type : ErrorUtils.createErrorType("")));
                 return JetTypeInfo.create(null, context.dataFlowInfo);
             }
