@@ -23,12 +23,15 @@ import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.psi.JetTypeReference
 
 object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val diagElement = diagnostic.getPsiElement()
+        if (diagElement.getParentByType(javaClass<JetTypeReference>()) != null) return null
+
         val callExpr = when (diagnostic.getFactory()) {
-            in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS -> {
+            in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS, Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND -> {
                 val parent = diagElement.getParent()
                 if (parent is JetCallExpression && parent.getCalleeExpression() == diagElement) parent else diagElement
             }
@@ -52,10 +55,10 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionF
                 if (callParent is JetQualifiedExpression && callParent.getSelectorExpression() == callExpr) callParent else callExpr
 
         val context = AnalyzerFacadeWithCache.getContextForElement(callExpr)
-        val receiver = callExpr.getCall(context)?.getExplicitReceiver() ?: return null
+        val receiver = callExpr.getCall(context)?.getExplicitReceiver()
 
         val receiverType = when (receiver) {
-            ReceiverValue.NO_RECEIVER -> TypeInfo.Empty
+            null, ReceiverValue.NO_RECEIVER -> TypeInfo.Empty
             is Qualifier -> {
                 val qualifierType = context[BindingContext.EXPRESSION_TYPE, receiver.expression] ?: return null
                 TypeInfo(qualifierType, Variance.IN_VARIANCE)

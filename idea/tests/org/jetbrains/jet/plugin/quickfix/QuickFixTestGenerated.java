@@ -814,6 +814,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("beforeFunWithPackageName.kt")
+                public void testFunWithPackageName() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunWithPackageName.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("beforeInLambda.kt")
                 public void testInLambda() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeInLambda.kt");
@@ -1263,6 +1269,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("beforeLocalWithPackageName.kt")
+                public void testLocalWithPackageName() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/beforeLocalWithPackageName.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("beforeOnTopLevel.kt")
                 public void testOnTopLevel() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/beforeOnTopLevel.kt");
@@ -1495,6 +1507,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("beforeWithPackageName.kt")
+                public void testWithPackageName() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeWithPackageName.kt");
+                    doTest(fileName);
+                }
+                
             }
             
             @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable/property")
@@ -1562,6 +1580,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforeTopLevelValNoReceiver.kt")
                 public void testTopLevelValNoReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeTopLevelValNoReceiver.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeTopLevelValWithPackageName.kt")
+                public void testTopLevelValWithPackageName() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeTopLevelValWithPackageName.kt");
                     doTest(fileName);
                 }
                 
