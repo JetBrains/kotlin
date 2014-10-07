@@ -23,7 +23,7 @@ import java.util.ArrayList
 import org.jetbrains.jet.j2k.ast.Element
 import kotlin.platform.platformName
 import org.jetbrains.jet.j2k.ast.CommentsAndSpacesInheritance
-import com.intellij.psi.impl.light.LightElement
+import com.intellij.openapi.util.text.StringUtil
 
 fun<T> CodeBuilder.append(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     if (generators.isNotEmpty()) {
@@ -263,8 +263,8 @@ class CodeBuilder(private val topElement: PsiElement?) {
 
     private fun PsiElement.isEmptyElement() = getFirstChild() == null && getTextLength() == 0
 
-    private fun PsiWhiteSpace.newLinesCount() = getText()!!.count { it == '\n' } //TODO: this is not correct!!
+    private fun PsiWhiteSpace.newLinesCount() = StringUtil.getLineBreakCount(getText()!!)
 
-    private fun PsiWhiteSpace.hasNewLines() = getText()!!.any { it == '\n' || it == '\r' }
+    private fun PsiWhiteSpace.hasNewLines() = StringUtil.containsLineBreak(getText()!!)
 }
 
