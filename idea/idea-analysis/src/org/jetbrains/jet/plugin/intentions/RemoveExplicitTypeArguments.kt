@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.psi.psiUtil.getTextWithLocation
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.jet.plugin.util.approximateFlexibleTypes
 
 public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgumentList>(
         "remove.explicit.type.arguments", javaClass()) {
@@ -80,7 +81,7 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgu
         val args = originalCall.getTypeArguments()
         val newArgs = resolutionResults?.getResultingCall()?.getTypeArguments()
 
-        return args == newArgs
+        return args == newArgs?.mapValues { approximateFlexibleTypes(it.getValue(), false) }
     }
 
     private class CallWithoutTypeArgs(call: Call) : DelegatingCall(call) {
