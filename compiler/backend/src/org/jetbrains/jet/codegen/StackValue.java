@@ -358,6 +358,10 @@ public abstract class StackValue {
         return field(info.getFieldType(), Type.getObjectType(info.getOwnerInternalName()), info.getFieldName(), true);
     }
 
+    public static boolean couldSkipReceiverOnStaticCall(StackValue value) {
+        return value instanceof Local || value instanceof Constant;
+    }
+
     private static class None extends StackValue {
         public static final None INSTANCE = new None();
 
