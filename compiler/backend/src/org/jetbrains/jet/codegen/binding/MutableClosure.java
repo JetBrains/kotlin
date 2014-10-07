@@ -85,7 +85,9 @@ public final class MutableClosure implements CalculatedClosure {
     @Override
     public JetType getCaptureReceiverType() {
         if (captureReceiver) {
-            return getEnclosingReceiverDescriptor().getType();
+            ReceiverParameterDescriptor parameter = getEnclosingReceiverDescriptor();
+            assert parameter != null : "Receiver parameter should exist in " + enclosingFunWithReceiverDescriptor;
+            return parameter.getType();
         }
 
         return null;
@@ -124,10 +126,8 @@ public final class MutableClosure implements CalculatedClosure {
         captureVariables.put(value.getDescriptor(), value);
     }
 
-    @NotNull
+    @Nullable
     public ReceiverParameterDescriptor getEnclosingReceiverDescriptor() {
-        ReceiverParameterDescriptor parameter = enclosingFunWithReceiverDescriptor.getExtensionReceiverParameter();
-        assert parameter != null : "Receiver parameter should exist in " + enclosingFunWithReceiverDescriptor;
-        return parameter;
+        return enclosingFunWithReceiverDescriptor != null ? enclosingFunWithReceiverDescriptor.getExtensionReceiverParameter() : null;
     }
 }
