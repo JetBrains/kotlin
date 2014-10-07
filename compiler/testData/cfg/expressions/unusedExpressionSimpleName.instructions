@@ -9,7 +9,6 @@ L0:
     magic[FAKE_INITIALIZER](arg : Array<String>) -> <v0>
     w(arg|<v0>)
   2 mark({ a })
-    error(a, No resolved call)
     magic[UNRESOLVED_CALL](a) -> <v1>
 L1:
   1 <END>                                                   NEXT:[<SINK>]

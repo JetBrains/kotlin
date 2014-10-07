@@ -105,10 +105,6 @@ public open class InstructionVisitor() {
         visitOperation(instruction)
     }
 
-    public open fun visitCompilationErrorInstruction(instruction: CompilationErrorInstruction) {
-        visitInstructionWithNext(instruction)
-    }
-
     public open fun visitMarkInstruction(instruction: MarkInstruction) {
         visitInstructionWithNext(instruction)
     }

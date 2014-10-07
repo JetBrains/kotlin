@@ -6,7 +6,6 @@ fun <T> foo() {
 L0:
   1 <START>
   2 mark({ T })
-    error(T, No resolved call)
     magic[UNRESOLVED_CALL](T) -> <v0>
 L1:
   1 <END>                                NEXT:[<SINK>]

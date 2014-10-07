@@ -157,8 +157,6 @@ public interface JetControlFlowBuilder {
             @NotNull List<PseudoValue> inputValues
     );
 
-    void compilationError(@NotNull JetElement element, @NotNull String message);
-
     void write(
             @NotNull JetElement assignment,
             @NotNull JetElement lValue,

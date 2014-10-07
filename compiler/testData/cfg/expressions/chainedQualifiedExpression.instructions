@@ -212,7 +212,6 @@ L0:
     mark(add(OUT_KEYWORD, inTopLevel))
     call(add(OUT_KEYWORD, inTopLevel), add|<v99>, <v100>, <v101>) -> <v102>
     r(OBJECT_KEYWORD) -> <v103>
-    error(unresolvedCode, No resolved call)
     magic[UNRESOLVED_CALL](unresolvedCode) -> <v104>
     mark(add(OBJECT_KEYWORD, unresolvedCode))
     call(add(OBJECT_KEYWORD, unresolvedCode), add|<v102>, <v103>, <v104>) -> <v105>

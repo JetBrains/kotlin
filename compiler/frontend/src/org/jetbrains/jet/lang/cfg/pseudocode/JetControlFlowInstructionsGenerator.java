@@ -530,11 +530,6 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             }
         }
 
-        @Override
-        public void compilationError(@NotNull JetElement element, @NotNull String message) {
-            add(new CompilationErrorInstruction(element, getCurrentScope(), message));
-        }
-
         @NotNull
         private ReadValueInstruction read(
                 @NotNull JetExpression expression,

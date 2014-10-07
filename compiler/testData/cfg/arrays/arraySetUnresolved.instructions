@@ -22,7 +22,6 @@ L0:
     w(a|<v0>)
   2 mark({ a[1] = 2 })
     mark(a[1])
-    error(a[1], No resolved call)
     r(a) -> <v1>
     r(1) -> <v2>
     magic[UNRESOLVED_CALL](a[1]|<v1>, <v2>) -> <v3>
