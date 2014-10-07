@@ -16,15 +16,11 @@
 
 package org.jetbrains.jet.plugin.util
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.openapi.util.Computable
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager
 import kotlin.platform.platformStatic
 import org.jetbrains.jet.plugin.util.application.runReadAction
+import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 
 public object ProjectRootsUtil {
     platformStatic
@@ -36,15 +32,9 @@ public object ProjectRootsUtil {
             val virtualFile = containingFile.getVirtualFile()
             if (virtualFile == null) return@runReadAction false
 
-            val index = ProjectFileIndex.SERVICE.getInstance(element.getProject())
-            val isInSourceRoot = if (includeLibrarySources)
-                index.isInSource(virtualFile)
-            else
-                index.isInSourceContent(virtualFile)
-
-            if (!isInSourceRoot) return@runReadAction false
-
-            return@runReadAction !JetModuleTypeManager.getInstance()!!.isKtFileInGradleProjectInWrongFolder(element)
+            val project = element.getProject()
+            val index = ProjectFileIndex.SERVICE.getInstance(project)
+            return@runReadAction JetSourceFilterScope.isInProjectSources(project, virtualFile, index, false, includeLibrarySources)
         }!!
     }
 

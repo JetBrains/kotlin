@@ -59,12 +59,22 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
             return false;
         }
 
-        if (index.isInSourceContent(file)) {
+        return isInProjectSources(project, file, index, /* withClassesRoots */ true, includeLibraries);
+    }
+
+    public static boolean isInProjectSources(
+            @NotNull Project project,
+            @NotNull VirtualFile file,
+            @NotNull ProjectFileIndex fileIndex,
+            boolean withClassesRoots,
+            boolean withLibraries
+    ) {
+        if (fileIndex.isInSourceContent(file)) {
             return !JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(file, project);
         }
 
-        if (!includeLibraries) return false;
+        if (!withLibraries) return false;
 
-        return index.isInLibraryClasses(file) || index.isInLibrarySource(file);
+        return (withClassesRoots && fileIndex.isInLibraryClasses(file)) || fileIndex.isInLibrarySource(file);
     }
 }

@@ -47,7 +47,7 @@ class ModuleTypeCacheManager private (project: Project) {
     fun isGradleModule(module: Module) = getModuleType(module) == ModuleType.GRADLE
 
     private fun getModuleType(module: Module): ModuleType? {
-        return cachedValue?.getValue(module)
+        return cachedValue.getValue(module)
     }
 
     private class VfsModificationTracker(project: Project): SimpleModificationTracker() {
