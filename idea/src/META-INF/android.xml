@@ -1,2 +1,5 @@
 <idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <gotoDeclarationHandler implementation="org.jetbrains.jet.android.navigation.KotlinAndroidGotoDeclarationHandler"/>
+    </extensions>
 </idea-plugin>
