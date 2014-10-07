@@ -63,6 +63,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
+import com.intellij.openapi.progress.ProcessCanceledException
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData>() {
@@ -105,6 +106,12 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
                     collectReferenceDataFromElement(element, file, startOffset, startOffsets, endOffsets)
                 }
             }
+        }
+        catch (e: ProcessCanceledException) {
+            // supposedly session can only be canceled from another thread
+            // do not log ProcessCanceledException as it is rethrown by IdeaLogger and code won't be copied
+            LOG.error("ProcessCanceledException while analyzing references in ${file.getName()}. References can't be processed.")
+            return listOf()
         }
         catch (e: Throwable) {
             LOG.error("Exception in processing references for copy paste in file ${file.getName()}}", e)
