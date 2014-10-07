@@ -52,7 +52,7 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
         Project project = context.getProject();
         PsiElement leaf = location.getPsiElement();
 
-        if (!ProjectRootsUtil.isInSource(leaf, true)) {
+        if (!ProjectRootsUtil.isInSource(leaf)) {
             return false;
         }
 

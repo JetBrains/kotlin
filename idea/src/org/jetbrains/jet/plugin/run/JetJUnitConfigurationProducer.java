@@ -51,7 +51,7 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
     protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
         PsiElement leaf = location.getPsiElement();
 
-        if (!ProjectRootsUtil.isInSource(leaf, true)) {
+        if (!ProjectRootsUtil.isInSource(leaf)) {
             return null;
         }
 
