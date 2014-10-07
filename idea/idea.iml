@@ -28,7 +28,6 @@
     <orderEntry type="library" scope="PROVIDED" name="testng-plugin" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="copyright-plugin" level="project" />
     <orderEntry type="module" module-name="j2k" />
-    <orderEntry type="module" module-name="js.translator" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
     <orderEntry type="module" module-name="ide-compiler-runner" />
     <orderEntry type="module" module-name="cli-common" />
@@ -43,6 +42,7 @@
     <orderEntry type="module" module-name="eval4j" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />
     <orderEntry type="module" module-name="kotlin-android-plugin" />
+    <orderEntry type="module" module-name="js.frontend" />
   </component>
 </module>
 
