@@ -29,7 +29,7 @@ import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.asJava.KotlinLightMethod;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.plugin.ProjectRootsUtil;
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.search.usagesSearch.*;
 
 public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {

@@ -48,7 +48,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.openapi.module.ModuleUtilCore
-import org.jetbrains.jet.plugin.ProjectRootsUtil
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.asJava.unwrapped
 import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
 
