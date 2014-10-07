@@ -68,7 +68,7 @@ import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData>() {
 
     override fun extractTransferableData(content: Transferable): List<ReferenceTransferableData> {
-        if (CodeInsightSettings.getInstance()!!.ADD_IMPORTS_ON_PASTE != CodeInsightSettings.NO) {
+        if (CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE != CodeInsightSettings.NO) {
             try {
                 val flavor = ReferenceData.getDataFlavor()
                 if (flavor != null) {
@@ -94,7 +94,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             startOffsets: IntArray,
             endOffsets: IntArray
     ): List<ReferenceTransferableData> {
-        if (file !is JetFile) {
+        if (file !is JetFile || DumbService.getInstance(file.getProject()).isDumb()) {
             return listOf()
         }
 
@@ -184,7 +184,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             indented: Ref<Boolean>,
             values: List<ReferenceTransferableData>
     ) {
-        if (DumbService.getInstance(project)!!.isDumb()) {
+        if (DumbService.getInstance(project).isDumb()) {
             return
         }
         val document = editor.getDocument()
@@ -289,7 +289,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
     }
 
     private fun showRestoreReferencesDialog(project: Project, referencesToRestore: List<ReferenceToRestoreData>): Collection<ReferenceToRestoreData> {
-        val shouldShowDialog = CodeInsightSettings.getInstance()!!.ADD_IMPORTS_ON_PASTE == CodeInsightSettings.ASK
+        val shouldShowDialog = CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.ASK
         if (!shouldShowDialog || referencesToRestore.isEmpty()) {
             return referencesToRestore
         }
