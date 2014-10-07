@@ -89,6 +89,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
         val converter = Converter.create(fileCopiedFrom.getProject(),
                                          ConverterSettings.defaultSettings,
                                          FilesConversionScope(listOf(fileCopiedFrom)),
+                                         ReferenceSearcherImpl,
                                          J2kPostProcessor(fileCopiedTo))
         val startOffsets = code.startOffsets
         val endOffsets = code.endOffsets

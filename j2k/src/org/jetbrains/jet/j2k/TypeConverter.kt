@@ -126,7 +126,7 @@ class TypeConverter(val converter: Converter) {
         }
 
         if (nullability == Nullability.Default) {
-            if (variable is PsiField && variable.hasModifierProperty(PsiModifier.PRIVATE) && shouldGenerateDefaultInitializer(variable)) {
+            if (variable is PsiField && variable.hasModifierProperty(PsiModifier.PRIVATE) && shouldGenerateDefaultInitializer(converter.referenceSearcher, variable)) {
                 return Nullability.Nullable
             }
         }
@@ -134,7 +134,7 @@ class TypeConverter(val converter: Converter) {
         if (nullability == Nullability.Default) {
             val scope = searchScope(variable)
             if (scope != null) {
-                if (findVariableUsages(variable, scope).any { isNullableFromUsage(it) }) {
+                if (converter.referenceSearcher.findVariableUsages(variable, scope).any { isNullableFromUsage(it) }) {
                     nullability = Nullability.Nullable
                 }
             }
@@ -147,7 +147,7 @@ class TypeConverter(val converter: Converter) {
                 if (scope != null) {
                     val parameters = method.getParameterList().getParameters()
                     val parameterIndex = parameters.indexOf(variable)
-                    for (call in findMethodCalls(method, scope)) {
+                    for (call in converter.referenceSearcher.findMethodCalls(method, scope)) {
                         val args = call.getArgumentList().getExpressions()
                         if (args.size == parameters.size) {
                             if (args[parameterIndex].nullability() == Nullability.Nullable) {
@@ -211,7 +211,7 @@ class TypeConverter(val converter: Converter) {
         if (nullability == Nullability.Default) {
             val scope = searchScope(method)
             if (scope != null) {
-                if (findMethodCalls(method, scope).any { isNullableFromUsage(it) }) {
+                if (converter.referenceSearcher.findMethodCalls(method, scope).any { isNullableFromUsage(it) }) {
                     nullability = Nullability.Nullable
                 }
             }
@@ -275,8 +275,8 @@ class TypeConverter(val converter: Converter) {
     private fun PsiVariable.isEffectivelyFinal(): Boolean {
         if (hasModifierProperty(PsiModifier.FINAL)) return true
         return when(this) {
-            is PsiLocalVariable -> !hasWriteAccesses(getContainingMethod())
-            is PsiField -> if (hasModifierProperty(PsiModifier.PRIVATE)) !hasWriteAccesses(getContainingClass()) else false
+            is PsiLocalVariable -> !hasWriteAccesses(converter.referenceSearcher, getContainingMethod())
+            is PsiField -> if (hasModifierProperty(PsiModifier.PRIVATE)) !hasWriteAccesses(converter.referenceSearcher, getContainingClass()) else false
             else -> false
         }
     }

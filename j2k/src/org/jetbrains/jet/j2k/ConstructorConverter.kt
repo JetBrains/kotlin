@@ -266,7 +266,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
                 val (field, `type`) = parameterToField[parameter]!!
                 Parameter(field.declarationIdentifier(),
                           `type`,
-                          if (isVal(field)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
+                          if (isVal(converter.referenceSearcher, field)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
                           converter.convertAnnotations(parameter) + converter.convertAnnotations(field),
                           converter.convertModifiers(field).filter { it in ACCESS_MODIFIERS },
                           defaultValue).assignPrototypes(listOf(parameter, field), CommentsAndSpacesInheritance(blankLinesBefore = false))
@@ -278,7 +278,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
     private fun findBackingFieldForConstructorParameter(parameter: PsiParameter, constructor: PsiMethod): Pair<PsiField, PsiStatement>? {
         val body = constructor.getBody() ?: return null
 
-        val refs = findVariableUsages(parameter, body)
+        val refs = converter.referenceSearcher.findVariableUsages(parameter, body)
 
         if (refs.any { PsiUtil.isAccessedForWriting(it) }) return null
 
@@ -297,7 +297,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
             if (statement.getParent() != body) continue
 
             // and no other assignments to field should exist in the constructor
-            if (findVariableUsages(field, body).any { it != assignee && PsiUtil.isAccessedForWriting(it) && isQualifierEmptyOrThis(it) }) continue
+            if (converter.referenceSearcher.findVariableUsages(field, body).any { it != assignee && PsiUtil.isAccessedForWriting(it) && isQualifierEmptyOrThis(it) }) continue
             //TODO: check access to field before assignment
 
             return field to statement
