@@ -73,7 +73,7 @@ public class AndroidDeclarationsProvider(private val project: Project) : Externa
 }
 
 public class AndroidExpressionCodegen : ExpressionCodegenExtension {
-    override fun apply(resolvedCall: ResolvedCall<out CallableDescriptor?>, c: ExpressionCodegenExtension.Context): StackValue? {
+    override fun apply(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue? {
             if (resolvedCall.getResultingDescriptor() !is PropertyDescriptor) return null
 
             val propertyDescriptor = resolvedCall.getResultingDescriptor() as PropertyDescriptor
@@ -85,7 +85,7 @@ public class AndroidExpressionCodegen : ExpressionCodegenExtension {
             if (androidPackage == null) return null
 
             val retType = c.typeMapper.mapType(propertyDescriptor.getReturnType()!!)
-            c.v.load(0, Type.getType("Landroid/app/Activity;"))
+            receiver.put(Type.getType("Landroid/app/Activity;"), c.v)
             c.v.getstatic(androidPackage.replace(".", "/") + "/R\$id", propertyDescriptor.getName().asString(), "I")
             c.v.invokevirtual("android/app/Activity", "findViewById", "(I)" + "Landroid/view/View;", false)
             c.v.checkcast(retType)

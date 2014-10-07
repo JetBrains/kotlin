@@ -1732,7 +1732,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
             for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.OBJECT$.getInstances(state.getProject())) {
-                StackValue result = extension.apply(resolvedCall, new ExpressionCodegenExtension.Context(typeMapper, v));
+                StackValue result = extension.apply(receiver, resolvedCall, new ExpressionCodegenExtension.Context(typeMapper, v));
 
                 if (result != null) return result;
             }

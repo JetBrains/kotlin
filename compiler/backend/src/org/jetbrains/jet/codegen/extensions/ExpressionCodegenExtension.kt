@@ -31,5 +31,5 @@ public trait ExpressionCodegenExtension {
     )
 
     // return null if not applicable
-    public fun apply(resolvedCall: ResolvedCall<*>, c: Context): StackValue?
+    public fun apply(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue?
 }
