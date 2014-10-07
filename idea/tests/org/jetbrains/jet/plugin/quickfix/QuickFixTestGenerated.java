@@ -814,6 +814,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("beforeFunWithNullableParamType.kt")
+                public void testFunWithNullableParamType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunWithNullableParamType.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeFunWithNullableType.kt")
+                public void testFunWithNullableType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunWithNullableType.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeFunWithNullableTypeParameter.kt")
+                public void testFunWithNullableTypeParameter() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunWithNullableTypeParameter.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("beforeFunWithPackageName.kt")
                 public void testFunWithPackageName() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunWithPackageName.kt");
@@ -1287,6 +1305,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("beforeNullableType.kt")
+                public void testNullableType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/beforeNullableType.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("beforeOnTopLevel.kt")
                 public void testOnTopLevel() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/beforeOnTopLevel.kt");
@@ -1513,6 +1537,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("beforeNullableType.kt")
+                public void testNullableType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeNullableType.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("beforeQualifiedInFun.kt")
                 public void testQualifiedInFun() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/beforeQualifiedInFun.kt");
@@ -1652,6 +1682,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforeValOnUserTypeWithTypeParams.kt")
                 public void testValOnUserTypeWithTypeParams() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeValOnUserTypeWithTypeParams.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeValWithNullableType.kt")
+                public void testValWithNullableType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeValWithNullableType.kt");
                     doTest(fileName);
                 }
                 

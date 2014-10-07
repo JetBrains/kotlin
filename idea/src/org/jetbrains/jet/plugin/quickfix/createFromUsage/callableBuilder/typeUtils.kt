@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
 import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.jet.plugin.util.makeNotNullable
 
 private fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
@@ -51,7 +52,8 @@ private fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, St
     val arguments = getArguments().map { it.getType().render(typeParameterNameMap, fq) }
     val typeString = getConstructor().getDeclarationDescriptor()!!.render(typeParameterNameMap, fq)
     val typeArgumentString = if (arguments.notEmpty) arguments.joinToString(", ", "<", ">") else ""
-    return "$typeString$typeArgumentString"
+    val nullifier = if (isNullable()) "?" else ""
+    return "$typeString$typeArgumentString$nullifier"
 }
 
 private fun JetType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
@@ -192,12 +194,15 @@ private fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetTyp
 private class JetTypeSubstitution(public val forType: JetType, public val byType: JetType)
 
 private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Variance): JetType {
+    val nullable = isNullable()
+    val currentType = makeNotNullable()
+
     if (when (variance) {
-        Variance.INVARIANT      -> JetTypeChecker.DEFAULT.equalTypes(this, substitution.forType)
-        Variance.IN_VARIANCE    -> JetTypeChecker.DEFAULT.isSubtypeOf(this, substitution.forType)
-        Variance.OUT_VARIANCE   -> JetTypeChecker.DEFAULT.isSubtypeOf(substitution.forType, this)
+        Variance.INVARIANT      -> JetTypeChecker.DEFAULT.equalTypes(currentType, substitution.forType)
+        Variance.IN_VARIANCE    -> JetTypeChecker.DEFAULT.isSubtypeOf(currentType, substitution.forType)
+        Variance.OUT_VARIANCE   -> JetTypeChecker.DEFAULT.isSubtypeOf(substitution.forType, currentType)
     }) {
-        return substitution.byType
+        return TypeUtils.makeNullableAsSpecified(substitution.byType, nullable)
     }
     else {
         val newArguments = getArguments().zip(getConstructor().getParameters()).map { pair ->
