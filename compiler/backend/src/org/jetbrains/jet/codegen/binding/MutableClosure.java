@@ -33,7 +33,7 @@ public final class MutableClosure implements CalculatedClosure {
     private final ResolvedCall<ConstructorDescriptor> superCall;
 
     private final ClassDescriptor enclosingClass;
-    private final CallableDescriptor enclosingReceiverDescriptor;
+    private final CallableDescriptor enclosingFunWithReceiverDescriptor;
 
     private boolean captureThis;
     private boolean captureReceiver;
@@ -48,7 +48,7 @@ public final class MutableClosure implements CalculatedClosure {
     ) {
         this.enclosingClass = enclosingClass;
         this.superCall = superCall;
-        this.enclosingReceiverDescriptor = enclosingExtensionMemberForClass(classDescriptor);
+        this.enclosingFunWithReceiverDescriptor = enclosingExtensionMemberForClass(classDescriptor);
     }
 
     @Nullable
@@ -85,18 +85,15 @@ public final class MutableClosure implements CalculatedClosure {
     @Override
     public JetType getCaptureReceiverType() {
         if (captureReceiver) {
-            //noinspection ConstantConditions
-            ReceiverParameterDescriptor parameter = enclosingReceiverDescriptor.getExtensionReceiverParameter();
-            assert parameter != null : "Receiver parameter should exist in " + enclosingReceiverDescriptor;
-            return parameter.getType();
+            return getEnclosingReceiverDescriptor().getType();
         }
 
         return null;
     }
 
     public void setCaptureReceiver() {
-        if (enclosingReceiverDescriptor == null) {
-            throw new IllegalStateException();
+        if (enclosingFunWithReceiverDescriptor == null) {
+            throw new IllegalStateException("Extension receiver parameter should exist");
         }
         this.captureReceiver = true;
     }
@@ -127,7 +124,10 @@ public final class MutableClosure implements CalculatedClosure {
         captureVariables.put(value.getDescriptor(), value);
     }
 
-    public CallableDescriptor getEnclosingReceiverDescriptor() {
-        return enclosingReceiverDescriptor;
+    @NotNull
+    public ReceiverParameterDescriptor getEnclosingReceiverDescriptor() {
+        ReceiverParameterDescriptor parameter = enclosingFunWithReceiverDescriptor.getExtensionReceiverParameter();
+        assert parameter != null : "Receiver parameter should exist in " + enclosingFunWithReceiverDescriptor;
+        return parameter;
     }
 }

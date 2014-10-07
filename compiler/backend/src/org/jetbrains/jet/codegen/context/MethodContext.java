@@ -25,13 +25,12 @@ import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
+
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     private final boolean isInliningLambda;
@@ -70,6 +69,15 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         }
 
         return getParentContext().lookupInContext(d, result, state, ignoreNoOuter);
+    }
+
+    @Nullable
+    public StackValue generateReceiver(@NotNull CallableDescriptor descriptor, @NotNull GenerationState state, boolean ignoreNoOuter) {
+        if (getCallableDescriptorWithReceiver() == descriptor) {
+            return getReceiverExpression(state.getTypeMapper());
+        }
+        ReceiverParameterDescriptor parameter = descriptor.getExtensionReceiverParameter();
+        return lookupInContext(parameter, StackValue.local(0, OBJECT_TYPE), state, ignoreNoOuter);
     }
 
     @Override

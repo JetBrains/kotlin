@@ -2272,11 +2272,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     private StackValue generateReceiver(@NotNull CallableDescriptor descriptor) {
-        if (context.getCallableDescriptorWithReceiver() == descriptor) {
-            return context.getReceiverExpression(typeMapper);
-        }
-
-        return context.lookupInContext(descriptor, StackValue.local(0, OBJECT_TYPE), state, false);
+        return context.generateReceiver(descriptor, state, false);
     }
 
     // SCRIPT: generate script, move to ScriptingUtil
@@ -3495,6 +3491,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue visitThisExpression(@NotNull JetThisExpression expression, StackValue receiver) {
         DeclarationDescriptor descriptor = bindingContext.get(REFERENCE_TARGET, expression.getInstanceReference());
         if (descriptor instanceof ClassDescriptor) {
+            //TODO rewrite with context.lookupInContext()
             return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, false, true);
         }
         if (descriptor instanceof CallableDescriptor) {
