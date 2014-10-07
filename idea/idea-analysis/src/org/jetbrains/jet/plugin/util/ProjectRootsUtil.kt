@@ -28,11 +28,6 @@ import org.jetbrains.jet.plugin.util.application.runReadAction
 
 public object ProjectRootsUtil {
     platformStatic
-    private fun isInSource(element: PsiElement): Boolean {
-        return isInSource(element, true)
-    }
-
-    platformStatic
     public fun isInSource(element: PsiElement, includeLibrarySources: Boolean): Boolean {
         return runReadAction { (): Boolean ->
             val containingFile = element.getContainingFile()
@@ -54,7 +49,7 @@ public object ProjectRootsUtil {
     }
 
     platformStatic
-    public fun isInSourceWithGradleCheck(element: PsiElement): Boolean {
-        return isInSource(element) && !JetModuleTypeManager.getInstance()!!.isKtFileInGradleProjectInWrongFolder(element)
+    public fun isInSource(element: PsiElement): Boolean {
+        return isInSource(element, true)
     }
 }

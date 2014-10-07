@@ -54,7 +54,7 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
             PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
             if (file == null) return null;
 
-            if (!ProjectRootsUtil.isInSourceWithGradleCheck(file)) return null;
+            if (!ProjectRootsUtil.isInSource(file)) return null;
 
             PsiElement target = TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().getAllAccepted());
 

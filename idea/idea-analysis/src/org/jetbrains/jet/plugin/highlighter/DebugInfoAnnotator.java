@@ -41,7 +41,7 @@ public class DebugInfoAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
-        if (!isDebugInfoEnabled() || !ProjectRootsUtil.isInSourceWithGradleCheck(element)) {
+        if (!isDebugInfoEnabled() || !ProjectRootsUtil.isInSource(element)) {
             return;
         }
 

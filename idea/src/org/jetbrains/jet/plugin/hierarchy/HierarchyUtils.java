@@ -60,7 +60,7 @@ public class HierarchyUtils {
             PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
             if (file == null) return null;
 
-            if (!ProjectRootsUtil.isInSourceWithGradleCheck(file)) return null;
+            if (!ProjectRootsUtil.isInSource(file)) return null;
 
             return TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().getAllAccepted());
         }

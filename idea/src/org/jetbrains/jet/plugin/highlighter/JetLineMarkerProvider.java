@@ -151,7 +151,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         PsiElement first = KotlinPackage.first(elements);
         if (DumbService.getInstance(first.getProject()).isDumb() ||
-            !ProjectRootsUtil.isInSourceWithGradleCheck(elements.get(0))) {
+            !ProjectRootsUtil.isInSource(elements.get(0))) {
             return;
         }
 

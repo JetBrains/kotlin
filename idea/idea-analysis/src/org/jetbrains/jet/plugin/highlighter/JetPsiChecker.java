@@ -93,7 +93,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!(ProjectRootsUtil.isInSourceWithGradleCheck(element) || element.getContainingFile() instanceof JetCodeFragment)) return;
+        if (!(ProjectRootsUtil.isInSource(element) || element.getContainingFile() instanceof JetCodeFragment)) return;
 
         for (HighlightingVisitor visitor : getBeforeAnalysisVisitors(holder)) {
             element.accept(visitor);
