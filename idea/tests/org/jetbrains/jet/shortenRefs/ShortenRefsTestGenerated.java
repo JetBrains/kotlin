@@ -17,13 +17,10 @@
 package org.jetbrains.jet.shortenRefs;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -37,6 +34,12 @@ import java.util.regex.Pattern;
 public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     public void testAllFilesPresentInShortenRefs() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+    }
+    
+    @TestMetadata("ClassNameConflict.kt")
+    public void testClassNameConflict() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/ClassNameConflict.kt");
+        doTest(fileName);
     }
     
     @TestMetadata("classObject.kt")
