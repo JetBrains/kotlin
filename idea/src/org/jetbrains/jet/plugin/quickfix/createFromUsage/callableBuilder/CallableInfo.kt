@@ -29,7 +29,7 @@ abstract class TypeInfo(val variance: Variance) {
         }
 
         override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
-                expression.guessTypes(builder.currentFileContext).flatMap { it.getPossibleSupertypes(variance) }
+                expression.guessTypes(builder.currentFileContext, builder.currentFileModule).flatMap { it.getPossibleSupertypes(variance) }
     }
 
     class ByType(val theType: JetType, variance: Variance, val keepUnsubstituted: Boolean = false): TypeInfo(variance) {

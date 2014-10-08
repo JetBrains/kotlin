@@ -844,6 +844,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("beforeMemberValDelegateRuntime.kt")
+                public void testMemberValDelegateRuntime() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeMemberValDelegateRuntime.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeMemberVarDelegateRuntime.kt")
+                public void testMemberVarDelegateRuntime() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeMemberVarDelegateRuntime.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("beforeObjectMemberFunNoReceiver.kt")
                 public void testObjectMemberFunNoReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeObjectMemberFunNoReceiver.kt");
@@ -1541,9 +1553,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("beforeMemberValDelegateRuntime.kt")
+                public void testMemberValDelegateRuntime() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeMemberValDelegateRuntime.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("beforeMemberValNoReceiver.kt")
                 public void testMemberValNoReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeMemberValNoReceiver.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("beforeMemberVarDelegateRuntime.kt")
+                public void testMemberVarDelegateRuntime() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/beforeMemberVarDelegateRuntime.kt");
                     doTest(fileName);
                 }
                 

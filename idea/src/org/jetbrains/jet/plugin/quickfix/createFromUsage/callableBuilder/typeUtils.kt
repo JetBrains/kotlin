@@ -26,6 +26,13 @@ import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.psi.JetPropertyDelegate
+import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.jet.lang.resolve.name.FqName
+import kotlin.properties.Delegates
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 
 private fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
@@ -74,8 +81,10 @@ fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
     return typeParameters
 }
 
-fun JetExpression.guessTypes(context: BindingContext): Array<JetType> {
-    if (this !is JetDeclaration && isUsedAsStatement(context)) return array(KotlinBuiltIns.getInstance().getUnitType())
+fun JetExpression.guessTypes(context: BindingContext, module: ModuleDescriptor?): Array<JetType> {
+    val builtIns = KotlinBuiltIns.getInstance()
+
+    if (this !is JetDeclaration && isUsedAsStatement(context)) return array(builtIns.getUnitType())
 
     // if we know the actual type of the expression
     val theType1 = context[BindingContext.EXPRESSION_TYPE, this]
@@ -89,15 +98,16 @@ fun JetExpression.guessTypes(context: BindingContext): Array<JetType> {
         return array(theType2)
     }
 
+    val parent = getParent()
     return when {
         this is JetTypeConstraint -> {
             // expression itself is a type assertion
             val constraint = (this as JetTypeConstraint)
             array(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
         }
-        getParent() is JetTypeConstraint -> {
+        parent is JetTypeConstraint -> {
             // expression is on the left side of a type assertion
-            val constraint = (getParent() as JetTypeConstraint)
+            val constraint = (parent as JetTypeConstraint)
             array(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
         }
         this is JetMultiDeclarationEntry -> {
@@ -124,9 +134,9 @@ fun JetExpression.guessTypes(context: BindingContext): Array<JetType> {
                 guessType(context)
             }
         }
-        getParent() is JetVariableDeclaration -> {
+        parent is JetVariableDeclaration -> {
             // the expression is the RHS of a variable assignment with a specified type
-            val variable = getParent() as JetVariableDeclaration
+            val variable = parent as JetVariableDeclaration
             val typeRef = variable.getTypeReference()
             if (typeRef != null) {
                 // and has a specified type
@@ -136,6 +146,17 @@ fun JetExpression.guessTypes(context: BindingContext): Array<JetType> {
                 // otherwise guess, based on LHS
                 variable.guessType(context)
             }
+        }
+        parent is JetPropertyDelegate && module != null -> {
+            val property = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.getParent() as JetProperty] as PropertyDescriptor
+            val delegateClassName = if (property.isVar() ) "ReadWriteProperty" else "ReadOnlyProperty"
+            val delegateClass =
+                    ResolveSessionUtils.getClassDescriptorsByFqName(module, FqName("kotlin.properties.$delegateClassName")).firstOrNull()
+                    ?: return array(builtIns.getAnyType())
+            val receiverType = (property.getExtensionReceiverParameter() ?: property.getDispatchReceiverParameter())?.getType()
+                               ?: builtIns.getNullableNothingType()
+            val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(property.getType()))
+            array(TypeUtils.substituteProjectionsForParameters(delegateClass, typeArguments))
         }
         else -> array() // can't infer anything
     }
