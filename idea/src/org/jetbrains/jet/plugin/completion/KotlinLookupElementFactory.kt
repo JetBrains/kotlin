@@ -37,7 +37,6 @@ import org.jetbrains.jet.plugin.completion.handlers.JetPropertyInsertHandler
 import com.intellij.psi.PsiClass
 import org.jetbrains.jet.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils
-import org.jetbrains.jet.plugin.completion.handlers.KotlinJavaClassInsertHandler
 import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement
 
 public object KotlinLookupElementFactory {
@@ -50,7 +49,7 @@ public object KotlinLookupElementFactory {
     }
 
     public fun createLookupElementForJavaClass(psiClass: PsiClass): LookupElement {
-        return JavaPsiClassReferenceElement(psiClass).setInsertHandler(KotlinJavaClassInsertHandler)
+        return JavaPsiClassReferenceElement(psiClass).setInsertHandler(KotlinClassInsertHandler)
     }
 
     private fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor, declaration: PsiElement?): LookupElement {
