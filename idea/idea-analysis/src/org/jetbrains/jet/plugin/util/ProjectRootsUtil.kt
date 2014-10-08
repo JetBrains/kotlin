@@ -21,9 +21,26 @@ import com.intellij.psi.PsiElement
 import kotlin.platform.platformStatic
 import org.jetbrains.jet.plugin.util.application.runReadAction
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
+import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 
 public object ProjectRootsUtil {
-    private fun isInSource(element: PsiElement, includeLibrarySources: Boolean): Boolean {
+    platformStatic
+    public fun isInSources(project: Project, file: VirtualFile,
+                           includeLibrarySources: Boolean, withLibraryClassesRoots: Boolean,
+                           fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)): Boolean {
+        if (fileIndex.isInSourceContent(file)) {
+            return !JetModuleTypeManager.getInstance()!!.isKtFileInGradleProjectInWrongFolder(file, project)
+        }
+
+        if (!includeLibrarySources) return false
+
+        return (withLibraryClassesRoots && fileIndex.isInLibraryClasses(file)) || fileIndex.isInLibrarySource(file)
+    }
+
+    platformStatic
+    public fun isInSource(element: PsiElement, includeLibrarySources: Boolean, withLibraryClassesRoots: Boolean = false): Boolean {
         return runReadAction { (): Boolean ->
             val containingFile = element.getContainingFile()
             if (containingFile == null) return@runReadAction false
@@ -32,8 +49,7 @@ public object ProjectRootsUtil {
             if (virtualFile == null) return@runReadAction false
 
             val project = element.getProject()
-            val index = ProjectFileIndex.SERVICE.getInstance(project)
-            return@runReadAction JetSourceFilterScope.isInProjectSources(project, virtualFile, index, false, includeLibrarySources)
+            return@runReadAction isInSources(project, virtualFile, includeLibrarySources, withLibraryClassesRoots)
         }!!
     }
 
