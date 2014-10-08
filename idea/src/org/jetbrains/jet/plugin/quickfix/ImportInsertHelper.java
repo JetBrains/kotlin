@@ -40,36 +40,21 @@ public class ImportInsertHelper {
      *
      * @param importFqn full name of the import
      * @param file File where directive should be added.
-     * @param optimize Optimize existing imports before adding new one.
      */
-    public static void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file, boolean optimize) {
-        addImportDirectiveIfNeeded(new ImportPath(importFqn, false), file, optimize);
-    }
-
     public static void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file) {
-        addImportDirectiveIfNeeded(importFqn, file, true);
+        ImportPath importPath = new ImportPath(importFqn, false);
+
+        optimizeImportsOnTheFly(file);
+
+        if (needImport(importPath, file)) {
+            writeImportToFile(importPath, file);
+        }
     }
 
-    public static void addImportDirectiveIfNeeded(@NotNull ImportPath importPath, @NotNull JetFile file, boolean optimize) {
-        if (optimize) {
-            optimizeImportsIfNeeded(file);
-        }
-
-        if (!needImport(importPath, file)) {
-            return;
-        }
-
-        writeImportToFile(importPath, file);
-    }
-
-    public static void optimizeImportsIfNeeded(JetFile file) {
+    public static void optimizeImportsOnTheFly(JetFile file) {
         if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
-            optimizeImports(file);
+            new OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress();
         }
-    }
-
-    public static void optimizeImports(JetFile file) {
-        new OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress();
     }
 
     public static void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file) {

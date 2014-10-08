@@ -99,7 +99,7 @@ public object ShortenReferences {
 
     private fun process(elements: Iterable<JetElement>, elementFilter: (PsiElement) -> FilterResult) {
         for ((file, fileElements) in elements.groupBy { element -> element.getContainingJetFile() }) {
-            ImportInsertHelper.optimizeImportsIfNeeded(file)
+            ImportInsertHelper.optimizeImportsOnTheFly(file)
 
             // first resolve all qualified references - optimization
             val referenceToContext = JetFileReferencesResolver.resolve(file, fileElements, resolveShortNames = false)
