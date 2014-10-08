@@ -95,6 +95,9 @@ class TypeCandidate(val theType: JetType, scope: JetScope? = null) {
     override fun toString() = theType.toString()
 }
 
+fun List<TypeCandidate>.getTypeByRenderedType(renderedType: String): JetType? =
+        firstOrNull { it.renderedType == renderedType }?.theType
+
 class CallableBuilderConfiguration(
         val callableInfo: CallableInfo,
         val originalExpression: JetExpression,
@@ -377,10 +380,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             return allTypeParametersNotInScope.zip(typeParameterNames).toMap()
         }
 
-        private fun setupTypeReferencesForShortening(
-                declaration: JetCallableDeclaration,
-                typeRefsToShorten: MutableList<JetTypeReference>, parameterTypeExpressions: List<TypeExpression>,
-                returnTypeExpression: TypeExpression?) {
+        private fun setupTypeReferencesForShortening(declaration: JetCallableDeclaration,
+                                                     typeRefsToShorten: MutableList<JetTypeReference>,
+                                                     parameterTypeExpressions: List<TypeExpression>) {
             if (isExtension) {
                 val receiverTypeRef = JetPsiFactory(declaration).createType(receiverTypeCandidate!!.theType.renderLong(typeParameterNameMap))
                 replaceWithLongerName(receiverTypeRef, receiverTypeCandidate.theType)
@@ -391,18 +393,16 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
             }
 
-            if (returnTypeExpression != null) {
-                val returnTypeRef = declaration.getTypeReference()
-                if (returnTypeRef != null) {
-                    val returnType = returnTypeExpression.getTypeFromSelection(
-                            returnTypeRef.getText()
-                            ?: throw AssertionError("Expression for return type shouldn't be empty: declaration = ${declaration.getText()}")
-                    )
-                    if (returnType != null) {
-                        // user selected a given type
-                        replaceWithLongerName(returnTypeRef, returnType)
-                        typeRefsToShorten.add(declaration.getTypeReference()!!)
-                    }
+            val returnTypeRef = declaration.getTypeReference()
+            if (returnTypeRef != null) {
+                val returnType = typeCandidates[config.callableInfo.returnTypeInfo]!!.getTypeByRenderedType(
+                        returnTypeRef.getText()
+                        ?: throw AssertionError("Expression for return type shouldn't be empty: declaration = ${declaration.getText()}")
+                )
+                if (returnType != null) {
+                    // user selected a given type
+                    replaceWithLongerName(returnTypeRef, returnType)
+                    typeRefsToShorten.add(declaration.getTypeReference()!!)
                 }
             }
 
@@ -412,7 +412,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             for ((i, parameter) in valueParameters.stream().withIndices()) {
                 val parameterTypeRef = parameter.getTypeReference()
                 if (parameterTypeRef != null) {
-                    val parameterType = parameterTypeExpressions[i].getTypeFromSelection(
+                    val parameterType = parameterTypeExpressions[i].typeCandidates.getTypeByRenderedType(
                             parameterTypeRef.getText()
                             ?: throw AssertionError("Expression for parameter type shouldn't be empty: declaration = ${declaration.getText()}")
                     )
@@ -555,7 +555,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             if (declaration is JetProperty) {
                 setupValVarTemplate(builder, declaration)
             }
-            val returnTypeExpression = if (skipReturnType) null else setupReturnTypeTemplate(builder, declaration)
+            if (!skipReturnType) {
+                setupReturnTypeTemplate(builder, declaration)
+            }
             val parameterTypeExpressions =
                     setupParameterTypeTemplates(builder, declaration.getValueParameterList()?.getParameters() ?: Collections.emptyList())
 
@@ -598,7 +600,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         }
 
                         // change short type names to fully qualified ones (to be shortened below)
-                        setupTypeReferencesForShortening(newDeclaration, typeRefsToShorten, parameterTypeExpressions, returnTypeExpression)
+                        setupTypeReferencesForShortening(newDeclaration, typeRefsToShorten, parameterTypeExpressions)
                         ShortenReferences.process(typeRefsToShorten)
                     }
                 }

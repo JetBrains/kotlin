@@ -15,6 +15,8 @@ import java.util.HashSet
 import org.jetbrains.jet.plugin.refactoring.CollectingValidator
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.psi.JetCallableDeclaration
+import java.util.Collections
 
 /**
  * Special <code>Expression</code> for parameter names based on its type.
@@ -90,9 +92,6 @@ private class TypeExpression(public val typeCandidates: List<TypeCandidate>) : E
     override fun calculateQuickResult(context: ExpressionContext?) = calculateResult(context)
 
     override fun calculateLookupItems(context: ExpressionContext?) = cachedLookupElements
-
-    public fun getTypeFromSelection(selection: String): JetType? =
-            typeCandidates.firstOrNull { it.renderedType == selection }?.theType
 }
 
 /**
