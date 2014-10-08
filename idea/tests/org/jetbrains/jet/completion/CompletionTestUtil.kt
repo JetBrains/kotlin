@@ -45,11 +45,7 @@ fun testCompletion(fileText: String, platform: TargetPlatform?, complete: (Int) 
 }
 
 private fun testWithAutoCompleteSetting(fileText: String, doTest: () -> Unit) {
-    val autoComplete = ExpectedCompletionUtils.getAutocompleteSetting(fileText)
-    if (autoComplete == null) {
-        doTest()
-        return
-    }
+    val autoComplete = ExpectedCompletionUtils.getAutocompleteSetting(fileText) ?: false
 
     val settings = CodeInsightSettings.getInstance()
     val oldValue1 = settings.AUTOCOMPLETE_ON_CODE_COMPLETION
