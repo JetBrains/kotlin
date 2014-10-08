@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
  * Stores information about resolved descriptor and position of that descriptor.
  * Position will be used for sorting
  */
-public class DeclarationLookupObject(public val descriptor: DeclarationDescriptor, private val analyzer: KotlinCodeAnalyzer, public val psiElement: PsiElement?) {
+public class DeclarationDescriptorLookupObject(public val descriptor: DeclarationDescriptor, private val analyzer: KotlinCodeAnalyzer, public val psiElement: PsiElement?) {
     override fun toString(): String {
         return super.toString() + " " + descriptor
     }
@@ -38,7 +38,7 @@ public class DeclarationLookupObject(public val descriptor: DeclarationDescripto
         if (this identityEquals other) return true
         if (other == null || javaClass != other.javaClass) return false
 
-        val lookupObject = other as DeclarationLookupObject
+        val lookupObject = other as DeclarationDescriptorLookupObject
 
         if (analyzer != lookupObject.analyzer) {
             LOG.warn("Descriptors from different resolve sessions")
@@ -49,6 +49,6 @@ public class DeclarationLookupObject(public val descriptor: DeclarationDescripto
     }
 
     class object {
-        private val LOG = Logger.getInstance("#" + javaClass<DeclarationLookupObject>().getName())
+        private val LOG = Logger.getInstance("#" + javaClass<DeclarationDescriptorLookupObject>().getName())
     }
 }

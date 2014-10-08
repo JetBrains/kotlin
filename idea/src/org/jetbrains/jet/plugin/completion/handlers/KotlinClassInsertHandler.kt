@@ -22,7 +22,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
-import org.jetbrains.jet.plugin.completion.DeclarationLookupObject
+import org.jetbrains.jet.plugin.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 
@@ -32,7 +32,7 @@ public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
 
         val file = context.getFile()
         if (file is JetFile) {
-            val descriptor = (item.getObject() as DeclarationLookupObject).descriptor as ClassDescriptor
+            val descriptor = (item.getObject() as DeclarationDescriptorLookupObject).descriptor as ClassDescriptor
             val startOffset = context.getStartOffset()
             val document = context.getDocument()
             if (!isAfterDot(document, startOffset)) {

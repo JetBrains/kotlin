@@ -65,7 +65,7 @@ public object KotlinLookupElementFactory {
         }
 
         val name = descriptor.getName().asString()
-        var element = LookupElementBuilder.create(DeclarationLookupObject(descriptor, analyzer, declaration), name)
+        var element = LookupElementBuilder.create(DeclarationDescriptorLookupObject(descriptor, analyzer, declaration), name)
 
         var presentableText = name
         var typeText = ""

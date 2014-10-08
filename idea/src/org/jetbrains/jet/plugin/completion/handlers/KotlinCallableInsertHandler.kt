@@ -34,7 +34,7 @@ import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 import com.intellij.openapi.editor.Document
 import org.jetbrains.jet.lang.types.JetType
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.jet.plugin.completion.DeclarationLookupObject
+import org.jetbrains.jet.plugin.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
@@ -57,7 +57,7 @@ public abstract class JetCallableInsertHandler : BaseDeclarationInsertHandler() 
 
             val file = context.getFile()
             val o = item.getObject()
-            if (file is JetFile && o is DeclarationLookupObject) {
+            if (file is JetFile && o is DeclarationDescriptorLookupObject) {
                 val descriptor = o.descriptor as? CallableDescriptor
                 if (descriptor != null) {
                     if (PsiTreeUtil.getParentOfType(element, javaClass<JetQualifiedExpression>()) != null &&
