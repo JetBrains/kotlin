@@ -106,8 +106,6 @@ public class CandidateResolver {
             if (!argumentMappingStatus.isSuccess()) {
                 if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
                     candidateCall.addStatus(RECEIVER_PRESENCE_ERROR);
-                    checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS);
-                    return;
                 }
                 else {
                     candidateCall.addStatus(OTHER_ERROR);
@@ -119,16 +117,7 @@ public class CandidateResolver {
         }
 
         List<JetTypeProjection> jetTypeArguments = context.call.getTypeArguments();
-        if (jetTypeArguments.isEmpty()) {
-            if (!candidate.getTypeParameters().isEmpty()) {
-                ResolutionStatus status = inferTypeArguments(context);
-                candidateCall.addStatus(status);
-            }
-            else {
-                candidateCall.addStatus(checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS).status);
-            }
-        }
-        else {
+        if (!jetTypeArguments.isEmpty()) {
             // Explicit type arguments passed
 
             List<JetType> typeArguments = new ArrayList<JetType>();
@@ -157,7 +146,12 @@ public class CandidateResolver {
             }
 
             candidateCall.setResultingSubstitutor(substitutor);
+        }
 
+        if (jetTypeArguments.isEmpty() && !candidate.getTypeParameters().isEmpty()) {
+            candidateCall.addStatus(inferTypeArguments(context));
+        }
+        else {
             candidateCall.addStatus(checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS).status);
         }
 
