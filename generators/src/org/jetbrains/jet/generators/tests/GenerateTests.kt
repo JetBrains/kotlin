@@ -648,7 +648,7 @@ fun main(args: Array<String>) {
 
     testGroup("js/js.tests/test", "compiler/testData") {
         testClass(javaClass<AbstractBridgeTest>()) {
-            model("codegen/box/bridges", targetBackend = TargetBackend.ONLY_JS)
+            model("codegen/box/bridges", targetBackend = TargetBackend.JS)
         }
     }
 }

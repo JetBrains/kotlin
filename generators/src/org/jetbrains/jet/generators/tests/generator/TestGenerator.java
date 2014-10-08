@@ -37,8 +37,8 @@ public class TestGenerator {
 
     public static enum TargetBackend {
         ANY,
-        ONLY_JVM,
-        ONLY_JS
+        JVM,
+        JS
     }
 
     public static final String NAVIGATION_METADATA = "navigationMetadata";
