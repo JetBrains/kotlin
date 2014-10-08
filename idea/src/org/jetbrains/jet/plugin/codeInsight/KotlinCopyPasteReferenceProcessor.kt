@@ -63,29 +63,27 @@ import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
+import com.intellij.openapi.progress.ProcessCanceledException
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData?> {
 
     override fun extractTransferableData(content: Transferable): ReferenceTransferableData? {
-        //NOTE: copied code
-        var referenceData: ReferenceTransferableData? = null
-        if (CodeInsightSettings.getInstance()!!.ADD_IMPORTS_ON_PASTE != CodeInsightSettings.NO) {
+        if (CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE != CodeInsightSettings.NO) {
             try {
                 val flavor = ReferenceData.getDataFlavor()
                 if (flavor != null) {
-                    referenceData = content.getTransferData(flavor) as? ReferenceTransferableData
+                    val referenceData = content.getTransferData(flavor) as? ReferenceTransferableData
+                    if (referenceData != null) {
+                        // copy to prevent changing of original by convertLineSeparators
+                        return referenceData.clone()
+                    }
                 }
             }
             catch (ignored: UnsupportedFlavorException) {
             }
             catch (ignored: IOException) {
             }
-        }
-
-        if (referenceData != null) {
-            // copy to prevent changing of original by convertLineSeparators
-            return referenceData!!.clone()
         }
 
         return null
@@ -97,7 +95,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             startOffsets: IntArray,
             endOffsets: IntArray
     ): ReferenceTransferableData? {
-        if (file !is JetFile) {
+        if (file !is JetFile || DumbService.getInstance(file.getProject()).isDumb()) {
             return null
         }
 
@@ -108,6 +106,12 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
                     collectReferenceDataFromElement(element, file, startOffset, startOffsets, endOffsets)
                 }
             }
+        }
+        catch (e: ProcessCanceledException) {
+            // supposedly session can only be canceled from another thread
+            // do not log ProcessCanceledException as it is rethrown by IdeaLogger and code won't be copied
+            LOG.error("ProcessCanceledException while analyzing references in ${file.getName()}. References can't be processed.")
+            return null
         }
         catch (e: Throwable) {
             LOG.error("Exception in processing references for copy paste in file ${file.getName()}}", e)
@@ -187,7 +191,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             indented: Ref<Boolean>,
             value: ReferenceTransferableData?
     ) {
-        if (DumbService.getInstance(project)!!.isDumb()) {
+        if (DumbService.getInstance(project).isDumb()) {
             return
         }
         val document = editor.getDocument()
@@ -289,7 +293,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
     }
 
     private fun showRestoreReferencesDialog(project: Project, referencesToRestore: List<ReferenceToRestoreData>): Collection<ReferenceToRestoreData> {
-        val shouldShowDialog = CodeInsightSettings.getInstance()!!.ADD_IMPORTS_ON_PASTE == CodeInsightSettings.ASK
+        val shouldShowDialog = CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.ASK
         if (!shouldShowDialog || referencesToRestore.isEmpty()) {
             return referencesToRestore
         }

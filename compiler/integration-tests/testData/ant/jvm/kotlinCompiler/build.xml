@@ -5,7 +5,7 @@
     <fileset dir="${kotlin.home}" includes="kotlin-runtime.jar"/>
   </path>
 
-  <taskdef name = "kotlinc" classname = "org.jetbrains.jet.buildtools.ant.BytecodeCompilerTask"/>
+  <taskdef name = "kotlinc" classname = "org.jetbrains.jet.buildtools.ant.Kotlin2JvmTask"/>
 
   <target name="build">
       <delete dir="${temp}/classes" failonerror="false"/>

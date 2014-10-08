@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ import java.util.List;
  * @requiresDependencyResolution test
  * @noinspection UnusedDeclaration
  */
-public class KotlinTestCompileMojo extends KotlinCompileMojoBase {
+public class KotlinTestCompileMojo extends K2JVMCompileMojo {
     /**
      * Flag to allow test compilation to be skipped.
      *
@@ -86,11 +87,11 @@ public class KotlinTestCompileMojo extends KotlinCompileMojoBase {
     }
 
     @Override
-    protected void configureCompilerArguments(CommonCompilerArguments arguments) throws MojoExecutionException {
-        if (arguments instanceof K2JVMCompilerArguments) {
-            configureBaseCompilerArguments(
-                    getLog(), (K2JVMCompilerArguments) arguments,
-                    testModule, getSources(), testClasspath, testOutput);
-        }
+    protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments) throws MojoExecutionException {
+        module = testModule;
+        classpath = testClasspath;
+        output = testOutput;
+
+        super.configureSpecificCompilerArguments(arguments);
     }
 }

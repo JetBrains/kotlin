@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.buildtools.ant
 
-import org.apache.tools.ant.Task
 import org.apache.tools.ant.types.Path
-import org.apache.tools.ant.types.Reference
-import org.jetbrains.jet.buildtools.core.Util
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream
 import org.jetbrains.jet.cli.js.K2JSCompiler
@@ -32,9 +29,10 @@ import org.jetbrains.jet.config.Services
  * Kotlin JavaScript compiler Ant task.
  * http://evgeny-goldin.org/javadoc/ant/tutorial-writing-tasks.html
  */
-public class Kotlin2JsCompilerTask : Task() {
-    public var src: Path? = null
-    public var output: File? = null
+public class Kotlin2JsTask : KotlinCompilerBaseTask<K2JSCompilerArguments>() {
+    override val arguments = K2JSCompilerArguments()
+    override val compiler = K2JSCompiler()
+
     public var library: Path? = null
     public var outputPrefix: File? = null
     public var outputPostfix: File? = null
@@ -45,21 +43,6 @@ public class Kotlin2JsCompilerTask : Task() {
      * {@link K2JsArgumentConstants.NO_CALL} otherwise.
      */
     public var main: String? = null
-
-    public fun createSrc(): Path {
-        val srcPath = src
-        if (srcPath == null) {
-            val t = Path(getProject())
-            src = t
-            return t
-        }
-
-        return srcPath.createPath()
-    }
-
-    public fun setSrcRef(ref: Reference) {
-        createSrc().setRefid(ref)
-    }
 
     public fun createLibrary(): Path {
         val libraryPath = library
@@ -72,28 +55,13 @@ public class Kotlin2JsCompilerTask : Task() {
         return libraryPath.createPath()
     }
 
-    override fun execute(): Unit {
-        val arguments = K2JSCompilerArguments()
-
-        val sourcePaths = src ?: throw BuildException("\"src\" should be specified")
-        arguments.freeArgs = Util.getPaths(sourcePaths.list()).toList()
-
-        val outputFile = output ?: throw BuildException("\"output\" should be specified")
-        arguments.outputFile = outputFile.canonicalPath
+    override fun fillSpecificArguments() {
+        arguments.outputFile = getPath(output!!)
 
         arguments.outputPrefix = outputPrefix?.canonicalPath
         arguments.outputPostfix = outputPostfix?.canonicalPath
 
         arguments.main = main
         arguments.sourceMap = sourceMap
-
-        log("Compiling ${arguments.freeArgs} => [${arguments.outputFile}]");
-
-        val compiler = K2JSCompiler()
-        val exitCode = compiler.exec(MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR, Services.EMPTY, arguments)
-
-        if (exitCode != ExitCode.OK) {
-            throw BuildException("Compilation finished with exit code $exitCode")
-        }
     }
 }

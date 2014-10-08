@@ -88,6 +88,7 @@ import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getR
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.TraitImpl;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.GETFIELD;
@@ -197,7 +198,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         );
 
 
-        ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this);
+        ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION);
 
         new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state, getParentCodegen()).generate();
 
@@ -285,8 +286,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type asmType = asmTypeForAnonymousClass(bindingContext, declaration);
         ClassBuilder classBuilder = state.getFactory().newVisitor(OtherOrigin(declaration, descriptor), asmType, declaration.getContainingFile());
 
-        ClassContext objectContext = context.intoAnonymousClass(descriptor, this);
+        ClassContext objectContext = context.intoAnonymousClass(descriptor, this, OwnerKind.IMPLEMENTATION);
         new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen()).generate();
+
+        if (declaration instanceof JetClass && ((JetClass) declaration).isTrait()) {
+            Type traitImplType = state.getTypeMapper().mapTraitImpl(descriptor);
+            ClassBuilder traitImplBuilder = state.getFactory().newVisitor(TraitImpl(declaration, descriptor), traitImplType, declaration.getContainingFile());
+            ClassContext traitImplContext = context.intoAnonymousClass(descriptor, this, OwnerKind.TRAIT_IMPL);
+            new TraitImplBodyCodegen(declaration, traitImplContext, traitImplBuilder, state, parentCodegen).generate();
+        }
 
         return StackValue.none();
     }
@@ -2264,11 +2272,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     private StackValue generateReceiver(@NotNull CallableDescriptor descriptor) {
-        if (context.getCallableDescriptorWithReceiver() == descriptor) {
-            return context.getReceiverExpression(typeMapper);
-        }
-
-        return context.lookupInContext(descriptor, StackValue.local(0, OBJECT_TYPE), state, false);
+        return context.generateReceiver(descriptor, state, false);
     }
 
     // SCRIPT: generate script, move to ScriptingUtil
@@ -3487,6 +3491,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue visitThisExpression(@NotNull JetThisExpression expression, StackValue receiver) {
         DeclarationDescriptor descriptor = bindingContext.get(REFERENCE_TARGET, expression.getInstanceReference());
         if (descriptor instanceof ClassDescriptor) {
+            //TODO rewrite with context.lookupInContext()
             return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, false, true);
         }
         if (descriptor instanceof CallableDescriptor) {

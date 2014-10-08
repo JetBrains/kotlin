@@ -2,7 +2,7 @@ OUT:
 Buildfile: [TestData]/build.xml
 
 build:
-  [kotlinc] Compiling [[[TestData]/hello.kt]] => [[Temp]/hello.jar]
+  [kotlinc] Compiling [[TestData]/hello.kt] => [[Temp]/hello.jar]
   [kotlinc] WARNING: [TestData]/hello.kt: (15, 9) Variable 'result' is never used
 
 BUILD SUCCESSFUL

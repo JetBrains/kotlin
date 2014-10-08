@@ -2771,6 +2771,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("kt1776.kt")
+        public void testKt1776() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/kt1776.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("kt1953.kt")
         public void testKt1953() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/kt1953.kt");
@@ -2780,6 +2786,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt1953_class.kt")
         public void testKt1953_class() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/kt1953_class.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("kt3285.kt")
+        public void testKt3285() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/kt3285.kt");
             doTest(fileName);
         }
         
@@ -2810,6 +2822,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt475.kt")
         public void testKt475() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/kt475.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("kt5467.kt")
+        public void testKt5467() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/kt5467.kt");
             doTest(fileName);
         }
         
@@ -6280,6 +6298,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt3500.kt")
         public void testKt3500() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt3500.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("kt5495.kt")
+        public void testKt5495() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt5495.kt");
             doTest(fileName);
         }
         

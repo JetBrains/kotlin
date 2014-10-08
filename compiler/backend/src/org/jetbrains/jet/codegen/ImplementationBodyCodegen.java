@@ -1356,8 +1356,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
                 assert descriptor instanceof CallableDescriptor ||
                        descriptor instanceof ClassDescriptor : "'This' reference target should be class or callable descriptor but was " + descriptor;
-                if (context.getCallableDescriptorWithReceiver() != descriptor) {
-                    context.lookupInContext(descriptor, null, state, true);
+                if (descriptor instanceof ClassDescriptor) {
+                    context.lookupInContext(descriptor, StackValue.local(0, OBJECT_TYPE), state, true);
+                }
+
+                if (descriptor instanceof CallableDescriptor) {
+                    constructorContext.generateReceiver((CallableDescriptor) descriptor, state, true);
                 }
             }
         };

@@ -33,7 +33,7 @@ public final class MutableClosure implements CalculatedClosure {
     private final ResolvedCall<ConstructorDescriptor> superCall;
 
     private final ClassDescriptor enclosingClass;
-    private final CallableDescriptor enclosingReceiverDescriptor;
+    private final CallableDescriptor enclosingFunWithReceiverDescriptor;
 
     private boolean captureThis;
     private boolean captureReceiver;
@@ -48,7 +48,7 @@ public final class MutableClosure implements CalculatedClosure {
     ) {
         this.enclosingClass = enclosingClass;
         this.superCall = superCall;
-        this.enclosingReceiverDescriptor = enclosingExtensionMemberForClass(classDescriptor);
+        this.enclosingFunWithReceiverDescriptor = enclosingExtensionMemberForClass(classDescriptor);
     }
 
     @Nullable
@@ -85,9 +85,8 @@ public final class MutableClosure implements CalculatedClosure {
     @Override
     public JetType getCaptureReceiverType() {
         if (captureReceiver) {
-            //noinspection ConstantConditions
-            ReceiverParameterDescriptor parameter = enclosingReceiverDescriptor.getExtensionReceiverParameter();
-            assert parameter != null : "Receiver parameter should exist in " + enclosingReceiverDescriptor;
+            ReceiverParameterDescriptor parameter = getEnclosingReceiverDescriptor();
+            assert parameter != null : "Receiver parameter should exist in " + enclosingFunWithReceiverDescriptor;
             return parameter.getType();
         }
 
@@ -95,8 +94,8 @@ public final class MutableClosure implements CalculatedClosure {
     }
 
     public void setCaptureReceiver() {
-        if (enclosingReceiverDescriptor == null) {
-            throw new IllegalStateException();
+        if (enclosingFunWithReceiverDescriptor == null) {
+            throw new IllegalStateException("Extension receiver parameter should exist");
         }
         this.captureReceiver = true;
     }
@@ -127,7 +126,8 @@ public final class MutableClosure implements CalculatedClosure {
         captureVariables.put(value.getDescriptor(), value);
     }
 
-    public CallableDescriptor getEnclosingReceiverDescriptor() {
-        return enclosingReceiverDescriptor;
+    @Nullable
+    public ReceiverParameterDescriptor getEnclosingReceiverDescriptor() {
+        return enclosingFunWithReceiverDescriptor != null ? enclosingFunWithReceiverDescriptor.getExtensionReceiverParameter() : null;
     }
 }

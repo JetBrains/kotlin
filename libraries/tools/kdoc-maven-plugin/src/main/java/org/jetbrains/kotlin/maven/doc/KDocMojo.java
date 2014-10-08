@@ -17,16 +17,16 @@
 package org.jetbrains.kotlin.maven.doc;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.doc.KDocArguments;
 import org.jetbrains.kotlin.doc.KDocCompiler;
 import org.jetbrains.kotlin.doc.KDocConfig;
-import org.jetbrains.kotlin.maven.KotlinCompileMojoBase;
+import org.jetbrains.kotlin.maven.K2JVMCompileMojo;
 
 import java.util.List;
 import java.util.Map;
@@ -39,45 +39,7 @@ import java.util.Map;
  * @requiresDependencyResolution test
  * @noinspection UnusedDeclaration
  */
-public class KDocMojo extends KotlinCompileMojoBase {
-
-    /**
-     * Project classpath.
-     *
-     * @parameter default-value="${project.compileClasspathElements}"
-     * @required
-     * @readonly
-     */
-    public List<String> classpath;
-
-    /**
-     * Project test classpath.
-     *
-     * @parameter default-value="${project.testClasspathElements}"
-     * @required
-     * @readonly
-     */
-    protected List<String> testClasspath;
-
-    /**
-     * The directory for compiled apidoc classes.
-     *
-     * @parameter default-value="${project.build.outputDirectory}"
-     * @required
-     * @readonly
-     */
-    public String output;
-
-    // TODO not sure why this doesn't work :(
-    // * @parameter default-value="$(project.basedir}/src/main/resources"
-
-    /**
-     * The directories used to scan for annotation.xml files for Kotlin annotations
-     *
-     * @parameter
-     */
-    public List<String> annotationPaths;
-
+public class KDocMojo extends K2JVMCompileMojo {
     // TODO not sure why default is stopping us passing this value in via a config
     // default-value="${project.compileSourceRoots}"
 
@@ -177,6 +139,11 @@ public class KDocMojo extends KotlinCompileMojoBase {
     private Map<String, String> packageSummaryText;
 
     @Override
+    public List<String> getSources() {
+        return sources;
+    }
+
+    @Override
     protected K2JVMCompiler createCompiler() {
         return new KDocCompiler();
     }
@@ -187,10 +154,11 @@ public class KDocMojo extends KotlinCompileMojoBase {
     }
 
     @Override
+    @NotNull
     protected ExitCode executeCompiler(
-            CLICompiler compiler,
-            CommonCompilerArguments arguments,
-            MessageCollector messageCollector
+            @NotNull CLICompiler<K2JVMCompilerArguments> compiler,
+            @NotNull K2JVMCompilerArguments arguments,
+            @NotNull MessageCollector messageCollector
     ) {
         ExitCode exitCode = super.executeCompiler(compiler, arguments, messageCollector);
         if (exitCode == ExitCode.COMPILATION_ERROR) {
@@ -202,11 +170,7 @@ public class KDocMojo extends KotlinCompileMojoBase {
     }
 
     @Override
-    protected void configureCompilerArguments(CommonCompilerArguments arguments) throws MojoExecutionException {
-        if (arguments instanceof K2JVMCompilerArguments) {
-            configureBaseCompilerArguments(getLog(), (K2JVMCompilerArguments) arguments, docModule, sources, classpath, output);
-        }
-
+    protected void configureSpecificCompilerArguments(K2JVMCompilerArguments arguments) throws MojoExecutionException {
         if (arguments instanceof KDocArguments) {
             KDocArguments kdoc = (KDocArguments) arguments;
             KDocConfig docConfig = kdoc.getDocConfig();
@@ -214,8 +178,6 @@ public class KDocMojo extends KotlinCompileMojoBase {
 
             kdoc.noJdkAnnotations = true;
             kdoc.annotations = getFullAnnotationsPath(getLog(), annotationPaths);
-
-
 
             if (ignorePackages != null) {
                 docConfig.getIgnorePackages().addAll(ignorePackages);
@@ -235,19 +197,20 @@ public class KDocMojo extends KotlinCompileMojoBase {
             docConfig.setWarnNoComments(warnNoComments);
             docConfig.setSourceRootHref(sourceRootHref);
             docConfig.setProjectRootDir(projectRootDir);
-            getLog().info("API docs output to: " + docConfig.getDocOutputDir());
-            getLog().info("classpath: " + classpath);
-            getLog().info("title: " + title);
-            getLog().info("sources: " + sources);
-            getLog().info("sourceRootHref: " + sourceRootHref);
-            getLog().info("projectRootDir: " + projectRootDir);
-            getLog().info("kotlin annotations: " + kdoc.annotations);
-            getLog().info("packageDescriptionFiles: " + packageDescriptionFiles);
-            getLog().info("packagePrefixToUrls: " + packagePrefixToUrls);
-            getLog().info("API docs ignore packages: " + ignorePackages);
+
+            LOG.info("API docs output to: " + docConfig.getDocOutputDir());
+            LOG.info("classpath: " + classpath);
+            LOG.info("title: " + title);
+            LOG.info("sources: " + sources);
+            LOG.info("sourceRootHref: " + sourceRootHref);
+            LOG.info("projectRootDir: " + projectRootDir);
+            LOG.info("kotlin annotations: " + kdoc.annotations);
+            LOG.info("packageDescriptionFiles: " + packageDescriptionFiles);
+            LOG.info("packagePrefixToUrls: " + packagePrefixToUrls);
+            LOG.info("API docs ignore packages: " + ignorePackages);
         }
         else {
-            getLog().warn("No KDocArguments available!");
+            LOG.warn("No KDocArguments available!");
         }
 
     }

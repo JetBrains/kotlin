@@ -40,7 +40,7 @@ public class KotlinCompilerAdapter extends DefaultCompilerAdapter {
     public boolean execute() throws BuildException {
         Javac javac = getJavac();
 
-        BytecodeCompilerTask kotlinTask = new BytecodeCompilerTask();
+        Kotlin2JvmTask kotlinTask = new Kotlin2JvmTask();
         kotlinTask.setOutput(javac.getDestdir());
         kotlinTask.setClasspath(javac.getClasspath());
         kotlinTask.setSrc(javac.getSrcdir());
