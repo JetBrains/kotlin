@@ -34,6 +34,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTest {
+    @TestMetadata("AfterClassKeyword.kt")
+    public void testAfterClassKeyword() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/AfterClassKeyword.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("AfterClassProperty.kt")
     public void testAfterClassProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/AfterClassProperty.kt");
@@ -56,9 +62,9 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/keywords"), Pattern.compile("^(.+)\\.kt$"), false);
     }
     
-    @TestMetadata("classObject.kt")
-    public void testClassObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/classObject.kt");
+    @TestMetadata("InArgumentList.kt")
+    public void testInArgumentList() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InArgumentList.kt");
         doTest(fileName);
     }
     
@@ -104,27 +110,45 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
     
+    @TestMetadata("InCodeBlock.kt")
+    public void testInCodeBlock() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InCodeBlock.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("InFunctionExpressionBody.kt")
+    public void testInFunctionExpressionBody() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InFunctionExpressionBody.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("InFunctionName.kt")
     public void testInFunctionName() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InFunctionName.kt");
         doTest(fileName);
     }
     
-    @TestMetadata("InFunctionScope.kt")
-    public void testInFunctionScope() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InFunctionScope.kt");
+    @TestMetadata("InFunctionRecieverType.kt")
+    public void testInFunctionRecieverType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InFunctionRecieverType.kt");
         doTest(fileName);
     }
     
-    @TestMetadata("InFunctionTypeReference.kt")
-    public void testInFunctionTypeReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InFunctionTypeReference.kt");
+    @TestMetadata("InFunctionTypePosition.kt")
+    public void testInFunctionTypePosition() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InFunctionTypePosition.kt");
         doTest(fileName);
     }
     
-    @TestMetadata("InMethodParametersList.kt")
-    public void testInMethodParametersList() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InMethodParametersList.kt");
+    @TestMetadata("InGetterExpressionBody.kt")
+    public void testInGetterExpressionBody() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InGetterExpressionBody.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("InMemberFunParametersList.kt")
+    public void testInMemberFunParametersList() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InMemberFunParametersList.kt");
         doTest(fileName);
     }
     
@@ -140,9 +164,15 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
     
-    @TestMetadata("InParametersList.kt")
-    public void testInParametersList() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InParametersList.kt");
+    @TestMetadata("InParameterDefaultValue.kt")
+    public void testInParameterDefaultValue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InParameterDefaultValue.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("InPropertyInitializer.kt")
+    public void testInPropertyInitializer() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InPropertyInitializer.kt");
         doTest(fileName);
     }
     
@@ -158,21 +188,15 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
     
-    @TestMetadata("InTopProperty.kt")
-    public void testInTopProperty() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InTopProperty.kt");
+    @TestMetadata("InTopFunParametersList.kt")
+    public void testInTopFunParametersList() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InTopFunParametersList.kt");
         doTest(fileName);
     }
     
     @TestMetadata("InTopScopeAfterPackage.kt")
     public void testInTopScopeAfterPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InTopScopeAfterPackage.kt");
-        doTest(fileName);
-    }
-    
-    @TestMetadata("InTypeScope.kt")
-    public void testInTypeScope() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InTypeScope.kt");
         doTest(fileName);
     }
     
@@ -188,9 +212,15 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
     
-    @TestMetadata("PropertySetterGetter.kt")
-    public void testPropertySetterGetter() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/PropertySetterGetter.kt");
+    @TestMetadata("PropertyAccessors.kt")
+    public void testPropertyAccessors() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/PropertyAccessors.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("PropertySetter.kt")
+    public void testPropertySetter() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/PropertySetter.kt");
         doTest(fileName);
     }
     
