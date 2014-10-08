@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.types
 
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.types.Approximation.DataFlowExtras
+import org.jetbrains.kotlin.util.printAndReturn
 
 public trait Flexibility : TypeCapability {
     // lowerBound is a subtype of upperBound
@@ -28,6 +29,38 @@ public trait Flexibility : TypeCapability {
 
 public fun JetType.isFlexible(): Boolean = this.getCapability(javaClass<Flexibility>()) != null
 public fun JetType.flexibility(): Flexibility = this.getCapability(javaClass<Flexibility>())!!
+
+// This function is intended primarily for sets: since JetType.equals() represents _syntactical_ equality of types,
+// whereas JetTypeChecker.DEFAULT.equalsTypes() represents semantical equality
+// A set of types (e.g. exact bounds etc) may contain, for example, X, X? and X!
+// These are not equal syntactically (by JetType.equals()), but X! is _compatible_ with others as exact bounds,
+// moreover, X! is a better fit.
+//
+// So, we are looking for a type among this set such that it is equal to all others semantically
+// (by JetTypeChecker.DEFAULT.equalsTypes()), and fits at least as well as they do.
+fun Collection<JetType>.singleBestRepresentative(): JetType? {
+    if (this.size() == 1) return this.first()
+
+    return this.firstOrNull {
+        candidate ->
+        this.all {
+            other ->
+            candidate == other || JetTypeChecker.DEFAULT.equalTypes(candidate, other)
+        }
+    }
+}
+
+fun Collection<TypeProjection>.singleBestRepresentative(): TypeProjection? {
+    if (this.size() == 1) return this.first()
+
+    val projectionKinds = this.map { it.getProjectionKind() }.toSet()
+    if (projectionKinds.size() != 1) return null
+
+    val bestType = this.map { it.getType() }.singleBestRepresentative()
+    if (bestType == null) return null
+
+    return TypeProjectionImpl(projectionKinds.single(), bestType)
+}
 
 public fun JetType.lowerIfFlexible(): JetType = if (this.isFlexible()) this.flexibility().getLowerBound() else this
 public fun JetType.upperIfFlexible(): JetType = if (this.isFlexible()) this.flexibility().getUpperBound() else this

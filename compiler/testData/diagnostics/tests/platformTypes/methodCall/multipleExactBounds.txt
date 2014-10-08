@@ -1,0 +1,34 @@
+package
+
+internal fun </*0*/ M2 : ModuleInfo, /*1*/ A : ResolverForModule> foo(/*0*/ delegateResolver: ResolverForProject<M2, A>): ResolverForProject<M2, A>
+
+internal trait ModuleDescriptorImpl {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait ModuleInfo {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait ResolverForModule {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait ResolverForProject</*0*/ M1, /*1*/ R1> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class ResolverForProjectImpl</*0*/ M : ModuleInfo, /*1*/ R : ResolverForModule> : ResolverForProject<M, R> {
+    public constructor ResolverForProjectImpl</*0*/ M : ModuleInfo, /*1*/ R : ResolverForModule>(/*0*/ descriptorByModule: kotlin.Map<M, ModuleDescriptorImpl>, /*1*/ delegateResolver: ResolverForProject<M, R>)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

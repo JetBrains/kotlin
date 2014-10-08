@@ -7793,6 +7793,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("mixedElvis.kt")
+                public void testMixedElvis() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/mixedElvis.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("mixedIf.kt")
+                public void testMixedIf() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/mixedIf.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("recursiveGeneric.kt")
                 public void testRecursiveGeneric() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/recursiveGeneric.kt");
@@ -7808,6 +7820,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("typeOfElvis.kt")
                 public void testTypeOfElvis() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/typeOfElvis.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("withNothing.kt")
+                public void testWithNothing() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/withNothing.kt");
                     doTest(fileName);
                 }
                 
@@ -7866,6 +7884,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("list.kt")
                 public void testList() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/list.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("multipleExactBounds.kt")
+                public void testMultipleExactBounds() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/multipleExactBounds.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("multipleExactBoundsNullable.kt")
+                public void testMultipleExactBoundsNullable() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/multipleExactBoundsNullable.kt");
                     doTest(fileName);
                 }
                 

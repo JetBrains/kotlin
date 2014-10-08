@@ -156,10 +156,10 @@ public class TypeBoundsImpl implements TypeBounds {
         }
 
         Set<JetType> exactBounds = filterBounds(bounds, BoundKind.EXACT_BOUND, values);
-        if (exactBounds.size() == 1) {
-            JetType exactBound = exactBounds.iterator().next();
-            if (tryPossibleAnswer(exactBound)) {
-                return Collections.singleton(exactBound);
+        JetType bestFit = TypesPackage.singleBestRepresentative(exactBounds);
+        if (bestFit != null) {
+            if (tryPossibleAnswer(bestFit)) {
+                return Collections.singleton(bestFit);
             }
         }
         values.addAll(exactBounds);

@@ -103,7 +103,9 @@ public class CommonSupertypes {
     private static JetType commonSuperTypeForInflexible(@NotNull Collection<JetType> types, int recursionDepth, int maxDepth) {
         assert !types.isEmpty();
         Collection<JetType> typeSet = new HashSet<JetType>(types);
-        if (typeSet.size() == 1) return typeSet.iterator().next();
+
+        JetType bestFit = TypesPackage.singleBestRepresentative(typeSet);
+        if (bestFit != null) return bestFit;
 
         // If any of the types is nullable, the result must be nullable
         // This also removed Nothing and Nothing? because they are subtypes of everything else
@@ -232,8 +234,9 @@ public class CommonSupertypes {
             @NotNull Set<TypeProjection> typeProjections,
             int recursionDepth, int maxDepth
     ) {
-        if (typeProjections.size() == 1) {
-            return typeProjections.iterator().next();
+        TypeProjection singleBestProjection = TypesPackage.singleBestRepresentative(typeProjections);
+        if (singleBestProjection != null) {
+            return singleBestProjection;
         }
 
         if (recursionDepth >= maxDepth) {

@@ -1,0 +1,25 @@
+package
+
+internal fun </*0*/ M2 : WithFoo> foo(/*0*/ delegateResolver: ResolverForProject<M2?>): ResolverForProject<M2>
+
+internal trait ResolverForProject</*0*/ M1> {
+    internal open val exposeM: M1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class ResolverForProjectImpl</*0*/ M> : ResolverForProject<M> {
+    public constructor ResolverForProjectImpl</*0*/ M>(/*0*/ descriptorByModule: kotlin.Map<M, kotlin.String>, /*1*/ delegateResolver: ResolverForProject<M>)
+    internal open override /*1*/ /*fake_override*/ val exposeM: M
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal trait WithFoo {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal abstract fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
