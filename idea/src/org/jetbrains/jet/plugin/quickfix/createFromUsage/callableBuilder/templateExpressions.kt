@@ -109,8 +109,8 @@ private class TypeParameterListExpression(private val typeParameterNamesFromRece
         val editor = context.getEditor()!!
         val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as JetFile
         val elementAt = file.findElementAt(offset)
-        val func = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetFunction>()) ?: return TextResult("")
-        val parameters = func.getValueParameters()
+        val callable = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetCallableDeclaration>()) ?: return TextResult("")
+        val parameters = callable.getValueParameterList()?.getParameters() ?: Collections.emptyList<JetParameter>()
 
         val typeParameterNames = LinkedHashSet<String>()
         typeParameterNames.addAll(typeParameterNamesFromReceiverType)
@@ -123,7 +123,7 @@ private class TypeParameterListExpression(private val typeParameterNamesFromRece
                 }
             }
         }
-        val returnTypeRef = func.getTypeReference()
+        val returnTypeRef = callable.getTypeReference()
         if (returnTypeRef != null) {
             val typeParameterNamesFromReturnType = parameterTypeToTypeParameterNamesMap[returnTypeRef.getText()]
             if (typeParameterNamesFromReturnType != null) {
