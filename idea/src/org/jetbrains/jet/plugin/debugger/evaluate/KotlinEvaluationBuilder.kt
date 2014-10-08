@@ -325,7 +325,7 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
 
         val thisDesc = value.asmType.getClassDescriptor(project)
         val expDesc = asmType.getClassDescriptor(project)
-        return thisDesc != null && expDesc != null && DescriptorUtils.isSubclass(thisDesc, expDesc)
+        return thisDesc != null && expDesc != null && runReadAction { DescriptorUtils.isSubclass(thisDesc, expDesc) }!!
     }
 
 
