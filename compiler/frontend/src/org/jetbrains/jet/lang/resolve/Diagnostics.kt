@@ -17,27 +17,25 @@
 package org.jetbrains.jet.lang.resolve
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.annotations.ReadOnly
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import java.util.Collections
 
 public trait Diagnostics : Iterable<Diagnostic> {
     public fun all(): Collection<Diagnostic>
 
     public fun forElement(psiElement: PsiElement): Collection<Diagnostic>
 
-    public fun isEmpty(): Boolean
+    public fun isEmpty(): Boolean = all().isEmpty()
 
     public fun noSuppression(): Diagnostics
+
+    override fun iterator() = all().iterator()
 
     class object {
 
         public val EMPTY: Diagnostics = object : Diagnostics {
+            override fun noSuppression(): Diagnostics = this
             override fun all() = listOf<Diagnostic>()
             override fun forElement(psiElement: PsiElement) = listOf<Diagnostic>()
-            override fun isEmpty() = true
-            override fun noSuppression() = this
-            override fun iterator() = all().iterator()
         }
     }
 }

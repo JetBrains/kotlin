@@ -30,8 +30,4 @@ public class SimpleDiagnostics(diagnostics: Collection<Diagnostic>) : Diagnostic
     override fun forElement(psiElement: PsiElement) = elementsCache.getDiagnostics(psiElement)
 
     override fun noSuppression() = this
-
-    override fun iterator() = all().iterator()
-
-    override fun isEmpty() = all().isEmpty()
 }
