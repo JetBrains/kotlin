@@ -37,7 +37,6 @@ import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.expression.loopTranslator.LoopTranslatorPackage;
-import org.jetbrains.k2js.translate.expression.tryTranslator.TryTranslatorPackage;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
@@ -445,9 +444,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitTryExpression(@NotNull JetTryExpression expression,
-            @NotNull TranslationContext context) {
-        return TryTranslatorPackage.translateTryExpression(expression, context);
+    public JsNode visitTryExpression(
+            @NotNull JetTryExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        return new TryTranslator(expression, context).translate();
     }
 
     @Override
