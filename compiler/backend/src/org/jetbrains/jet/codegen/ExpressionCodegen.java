@@ -2222,7 +2222,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean isInline = state.isInlineEnabled() &&
                            descriptor instanceof SimpleFunctionDescriptor &&
                            ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
-        if (!isInline) return defaultCallGenerator;
+        //TODO: support local fun inlining
+        if (!isInline || isLocalNamedFun(descriptor)) return defaultCallGenerator;
 
         SimpleFunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((SimpleFunctionDescriptor) descriptor.getOriginal());
         return new InlineCodegen(this, state, original, callElement);
