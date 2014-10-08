@@ -36,9 +36,21 @@ public final class InTextDirectivesUtils {
 
     @Nullable
     public static Integer getPrefixedInt(String fileText, String prefix) {
-        String[] numberStrings = findArrayWithPrefixes(fileText, prefix);
-        if (numberStrings.length > 0) {
-            return Integer.parseInt(numberStrings[0]);
+        String[] strings = findArrayWithPrefixes(fileText, prefix);
+        if (strings.length > 0) {
+            assert strings.length == 1;
+            return Integer.parseInt(strings[0]);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static Boolean getPrefixedBoolean(String fileText, String prefix) {
+        String[] strings = findArrayWithPrefixes(fileText, prefix);
+        if (strings.length > 0) {
+            assert strings.length == 1;
+            return Boolean.parseBoolean(strings[0]);
         }
 
         return null;

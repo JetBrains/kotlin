@@ -35,23 +35,35 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
     private val elements = ArrayList<LookupElement>()
 
     public fun flushToResultSet(resultSet: CompletionResultSet) {
-        resultSet.addAllElements(elements)
-        elements.clear()
-    }
-
-    public val isEmpty: Boolean
-        get() = elements.isEmpty()
-
-    public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>) {
-        for (descriptor in descriptors) {
-            addDescriptorElements(descriptor)
+        if (!elements.isEmpty()) {
+            resultSet.addAllElements(elements)
+            elements.clear()
+            isResultEmpty = false
         }
     }
 
-    public fun addDescriptorElements(descriptor: DeclarationDescriptor) {
+    public var isResultEmpty: Boolean = true
+        private set
+
+    public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>,
+                                     suppressAutoInsertion: Boolean // auto-insertion suppression is used for elements that require adding an import
+    ) {
+        for (descriptor in descriptors) {
+            addDescriptorElements(descriptor, suppressAutoInsertion)
+        }
+    }
+
+    public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean) {
         if (!descriptorFilter(descriptor)) return
 
-        addElement(DescriptorLookupConverter.createLookupElement(resolveSession, descriptor))
+        run {
+            var lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, descriptor)
+            if (suppressAutoInsertion &&
+                elements.isEmpty() && isResultEmpty /* without these checks we would get duplicated items */) {
+                lookupElement = lookupElement.suppressAutoInsertion()
+            }
+            addElement(lookupElement)
+        }
 
         // add special item for function with one argument of function type with more than one parameter
         if (descriptor is FunctionDescriptor) {

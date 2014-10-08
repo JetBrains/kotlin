@@ -60,7 +60,6 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
 
     protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession, { isVisibleDescriptor(it) })
-    protected var anythingAdded: Boolean = false
 
     protected val project: Project = position.getProject()
     protected val indicesHelper: KotlinIndicesHelper = KotlinIndicesHelper(project)
@@ -77,16 +76,13 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     }
 
     protected fun flushToResultSet() {
-        if (!collector.isEmpty) {
-            anythingAdded = true
-        }
         collector.flushToResultSet(resultSet)
     }
 
     public fun complete(): Boolean {
         doComplete()
         flushToResultSet()
-        return anythingAdded
+        return !collector.isResultEmpty
     }
 
     protected abstract fun doComplete()
@@ -157,11 +153,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     private fun addNonImported() {
         if (shouldRunTopLevelCompletion()) {
             TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
-            collector.addDescriptorElements(getKotlinTopLevelDeclarations())
+            collector.addDescriptorElements(getKotlinTopLevelDeclarations(), suppressAutoInsertion = true)
         }
 
         if (shouldRunExtensionsCompletion()) {
-            collector.addDescriptorElements(getKotlinExtensions())
+            collector.addDescriptorElements(getKotlinExtensions(), suppressAutoInsertion = true)
         }
     }
 
@@ -196,7 +192,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private fun addReferenceVariants(filterCondition: (DeclarationDescriptor) -> Boolean = { true }) {
         val descriptors = TipsManager.getReferenceVariants(jetReference!!.expression, bindingContext!!)
-        collector.addDescriptorElements(descriptors.filter { filterCondition(it) })
+        collector.addDescriptorElements(descriptors.filter { filterCondition(it) }, suppressAutoInsertion = false)
     }
 }
 

@@ -420,6 +420,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
         
+        @TestMetadata("NoAutoInsertionOfNotImported.kt")
+        public void testNoAutoInsertionOfNotImported() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoAutoInsertionOfNotImported.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("NoAutoPopupAfterNumberLiteral.kt")
         public void testNoAutoPopupAfterNumberLiteral() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoAutoPopupAfterNumberLiteral.kt");

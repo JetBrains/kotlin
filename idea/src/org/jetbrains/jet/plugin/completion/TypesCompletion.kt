@@ -37,11 +37,13 @@ import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
 
 class TypesCompletion(val parameters: CompletionParameters, val resolveSession: ResolveSessionForBodies, val prefixMatcher: PrefixMatcher) {
     fun addAllTypes(result: LookupElementsCollector) {
-        result.addDescriptorElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses())
+        result.addDescriptorElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses().filter { prefixMatcher.prefixMatches(it.getName().asString()) },
+                                     suppressAutoInsertion = true)
 
         val project = parameters.getOriginalFile().getProject()
         val searchScope = searchScopeForSourceElementDependencies(parameters.getOriginalFile()) ?: return
-        result.addDescriptorElements(KotlinIndicesHelper(project).getClassDescriptors({ prefixMatcher.prefixMatches(it) }, resolveSession, searchScope))
+        result.addDescriptorElements(KotlinIndicesHelper(project).getClassDescriptors({ prefixMatcher.prefixMatches(it) }, resolveSession, searchScope),
+                                     suppressAutoInsertion = true)
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
             addAdaptedJavaCompletion(result)
@@ -63,7 +65,7 @@ class TypesCompletion(val parameters: CompletionParameters, val resolveSession: 
                         override fun handleInsert(context: InsertionContext) {
                             JetJavaClassInsertHandler.handleInsert(context, lookupElement)
                         }
-                    })
+                    }.suppressAutoInsertion())
                 }
             }
         })
@@ -79,7 +81,8 @@ class TypesCompletion(val parameters: CompletionParameters, val resolveSession: 
             if (JetFromJavaDescriptorHelper.getCompiledClassKind(aClass) != ClassKind.CLASS_OBJECT) {
                 val qualifiedName = aClass.getQualifiedName()
                 if (qualifiedName != null) {
-                    result.addDescriptorElements(ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession.getModuleDescriptor(), FqName(qualifiedName)))
+                    result.addDescriptorElements(ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession.getModuleDescriptor(), FqName(qualifiedName)),
+                                                 suppressAutoInsertion = true)
                 }
             }
 
