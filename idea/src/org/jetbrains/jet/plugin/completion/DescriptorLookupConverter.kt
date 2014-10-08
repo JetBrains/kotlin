@@ -34,6 +34,11 @@ import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.plugin.completion.handlers.BaseDeclarationInsertHandler
 import org.jetbrains.jet.plugin.completion.handlers.JetPropertyInsertHandler
+import com.intellij.psi.PsiClass
+import org.jetbrains.jet.asJava.KotlinLightClass
+import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils
+import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler
+import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement
 
 public object DescriptorLookupConverter {
     public fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): LookupElement {
@@ -44,7 +49,21 @@ public object DescriptorLookupConverter {
         return createLookupElement(analyzer, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
     }
 
+    public fun createLookupElementForJavaClass(psiClass: PsiClass): LookupElement {
+        return JavaPsiClassReferenceElement(psiClass).setInsertHandler(JetJavaClassInsertHandler)
+    }
+
     private fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor, declaration: PsiElement?): LookupElement {
+        if (descriptor is ClassifierDescriptor &&
+            declaration is PsiClass &&
+            declaration !is KotlinLightClass &&
+            !JavaResolverPsiUtils.isCompiledKotlinClass(declaration)) {
+            // for java classes we create special lookup elements
+            // because they must be equal to ones created in TypesCompletion
+            // otherwise we may have duplicates
+            return createLookupElementForJavaClass(declaration)
+        }
+
         val name = descriptor.getName().asString()
         var element = LookupElementBuilder.create(DeclarationLookupObject(descriptor, analyzer, declaration), name)
 

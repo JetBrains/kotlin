@@ -21,13 +21,13 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.completion.handlers.*
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import com.intellij.codeInsight.completion.PrefixMatcher
 import java.util.ArrayList
 import com.intellij.codeInsight.completion.CompletionResultSet
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
 class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
                               private val resolveSession: ResolveSessionForBodies,
@@ -57,12 +57,13 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
         if (!descriptorFilter(descriptor)) return
 
         run {
-            var lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, descriptor)
-            if (suppressAutoInsertion &&
-                elements.isEmpty() && isResultEmpty /* without these checks we would get duplicated items */) {
-                lookupElement = lookupElement.suppressAutoInsertion()
+            val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, descriptor)
+            if (suppressAutoInsertion) {
+                addElementWithAutoInsertionSuppressed(lookupElement)
             }
-            addElement(lookupElement)
+            else {
+                addElement(lookupElement)
+            }
         }
 
         // add special item for function with one argument of function type with more than one parameter
@@ -93,6 +94,15 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
     public fun addElement(element: LookupElement) {
         if (prefixMatcher.prefixMatches(element)) {
             elements.add(element)
+        }
+    }
+
+    public fun addElementWithAutoInsertionSuppressed(element: LookupElement) {
+        if (isResultEmpty && elements.isEmpty()) { /* without these checks we may get duplicated items */
+            addElement(element.suppressAutoInsertion())
+        }
+        else {
+            addElement(element)
         }
     }
 
