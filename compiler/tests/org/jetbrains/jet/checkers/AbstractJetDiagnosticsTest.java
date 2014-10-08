@@ -48,6 +48,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
 import java.util.*;
@@ -113,6 +114,18 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             checkAllResolvedCallsAreCompleted(jetFiles, moduleTrace.getBindingContext());
         }
 
+        // We want to always create a test data file (txt) if it was missing,
+        // but don't want to skip the following checks in case this one fails
+        Throwable exceptionFromDescriptorValidation = null;
+        try {
+            File expectedFile = new File(FileUtil.getNameWithoutExtension(testDataFile.getAbsolutePath()) + ".txt");
+            validateAndCompareDescriptorWithFile(expectedFile, testFiles, support, modules);
+        }
+        catch (Throwable e) {
+            exceptionFromDescriptorValidation = e;
+        }
+
+        // main checks
         boolean ok = true;
 
         StringBuilder actualText = new StringBuilder();
@@ -126,8 +139,10 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
         checkAllResolvedCallsAreCompleted(allJetFiles, supportTrace.getBindingContext());
 
-        File expectedFile = new File(FileUtil.getNameWithoutExtension(testDataFile.getAbsolutePath()) + ".txt");
-        validateAndCompareDescriptorWithFile(expectedFile, testFiles, support, modules);
+        // now we throw a previously found error, if any
+        if (exceptionFromDescriptorValidation != null) {
+            throw UtilsPackage.rethrow(exceptionFromDescriptorValidation);
+        }
     }
 
     private void validateAndCompareDescriptorWithFile(
