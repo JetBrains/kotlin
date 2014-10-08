@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
+import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.lang.ASTNode;
@@ -122,6 +124,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         });
 
         if (firstGenerated != null) {
+            CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(firstGenerated);
             QuickfixPackage.moveCaretIntoGeneratedElement(editor, firstGenerated);
         }
     }
