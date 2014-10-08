@@ -21,7 +21,7 @@ import com.intellij.psi.PsiErrorElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticSink;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid;
@@ -60,7 +60,7 @@ public class AnalyzingUtils {
 
     public static void throwExceptionOnErrors(BindingContext bindingContext) {
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-            DiagnosticHolder.THROW_EXCEPTION.report(diagnostic);
+            DiagnosticSink.THROW_EXCEPTION.report(diagnostic);
         }
     }
 

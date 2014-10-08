@@ -23,13 +23,13 @@ import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 
 import java.util.List;
 
-public interface DiagnosticHolder {
-    DiagnosticHolder DO_NOTHING = new DiagnosticHolder() {
+public interface DiagnosticSink {
+    DiagnosticSink DO_NOTHING = new DiagnosticSink() {
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
         }
     };
-    DiagnosticHolder THROW_EXCEPTION = new DiagnosticHolder() {
+    DiagnosticSink THROW_EXCEPTION = new DiagnosticSink() {
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
             if (diagnostic.getSeverity() == Severity.ERROR) {

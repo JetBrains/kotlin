@@ -17,11 +17,9 @@
 package org.jetbrains.jet.lang.resolve.kotlin
 
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider
-import com.google.common.collect.Lists
 import org.jetbrains.jet.lang.resolve.AnnotationChecker
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.descriptors.MemberDescriptor
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder
 import org.jetbrains.jet.lang.resolve.annotations.hasPlatformStaticAnnotation
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
@@ -30,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
 
 public object JavaDeclarationCheckerProvider : AdditionalCheckerProvider {
 
@@ -38,7 +37,7 @@ public object JavaDeclarationCheckerProvider : AdditionalCheckerProvider {
 
 public class PlatformStaticAnnotationChecker : AnnotationChecker {
 
-    override fun check(declaration: JetDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticHolder) {
+    override fun check(declaration: JetDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor.hasPlatformStaticAnnotation()) {
             if (declaration is JetNamedFunction) {
                 val insideObject = DescriptorUtils.containerKindIs(descriptor, ClassKind.OBJECT)

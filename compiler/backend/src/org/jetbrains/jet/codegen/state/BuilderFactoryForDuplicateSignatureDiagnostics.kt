@@ -21,7 +21,6 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.jet.codegen.ClassBuilderFactory
 import org.jetbrains.jet.codegen.SignatureCollectingClassBuilderFactory
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.java.diagnostics.*
 import java.util.*
@@ -31,11 +30,12 @@ import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.codegen.ClassBuilderMode
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
 
 class BuilderFactoryForDuplicateSignatureDiagnostics(
         builderFactory: ClassBuilderFactory,
         bindingContext: BindingContext,
-        private val diagnostics: DiagnosticHolder
+        private val diagnostics: DiagnosticSink
 ) : SignatureCollectingClassBuilderFactory(builderFactory) {
 
     // Avoid errors when some classes are not loaded for some reason
