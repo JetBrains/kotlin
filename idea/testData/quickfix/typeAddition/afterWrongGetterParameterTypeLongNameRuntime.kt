@@ -1,4 +1,5 @@
 // "Change getter type to Module" "true"
+
 import kotlin.modules.Module
 
 class A() {

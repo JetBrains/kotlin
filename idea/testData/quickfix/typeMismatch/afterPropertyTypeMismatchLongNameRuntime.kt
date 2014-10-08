@@ -1,4 +1,5 @@
 // "Change 'f' type to '(Delegates) -> Unit'" "true"
+
 import kotlin.properties.Delegates
 
 fun foo() {

@@ -2,6 +2,7 @@ package abstract
 
 class MyClass() {
     //properties
+
     <error>val a: Int</error>
     val a1: Int = 1
     <error>abstract</error> val a2: Int
@@ -23,6 +24,7 @@ class MyClass() {
     <error>abstract</error> val e3: Int = 0; get() = a
 
     //methods
+
     <error>fun f()</error>
     fun g() {}
     <error>abstract</error> fun h()
@@ -31,6 +33,7 @@ class MyClass() {
 
 abstract class MyAbstractClass() {
     //properties
+
     <error>val a: Int</error>
     val a1: Int = 1
     abstract val a2: Int
@@ -52,6 +55,7 @@ abstract class MyAbstractClass() {
     abstract val e3: Int = <error>0</error>; <error>get() = a</error>
 
     //methods
+
     <error>fun f()</error>
     fun g() {}
     abstract fun h()
@@ -60,6 +64,7 @@ abstract class MyAbstractClass() {
 
 trait MyTrait {
     //properties
+
     val a: Int
     val a1: Int = <error>1</error>
     <warning>abstract</warning> val a2: Int
@@ -81,6 +86,7 @@ trait MyTrait {
     <warning>abstract</warning> val e3: Int = <error>0</error>; <error>get() = a</error>
 
     //methods
+
     fun f()
     fun g() {}
     <warning>abstract</warning> fun h()
@@ -89,6 +95,7 @@ trait MyTrait {
 
 enum class MyEnum() {
     //properties
+
     <error>val a: Int</error>
     val a1: Int = 1
     abstract val a2: Int
@@ -110,6 +117,7 @@ enum class MyEnum() {
     abstract val e3: Int = <error>0</error>; <error>get() = a</error>
 
     //methods
+
     <error>fun f()</error>
     fun g() {}
     abstract fun h()
@@ -119,6 +127,7 @@ enum class MyEnum() {
 <error>abstract</error> enum class MyAbstractEnum() {}
 
 //properties
+
 <error>val a: Int</error>
 val a1: Int = 1
 <error><error>abstract</error> val a2: Int</error>
@@ -140,6 +149,7 @@ val e1: Int = <error>0</error>;          get() = a
 <error>abstract</error> val e3: Int = <error>0</error>; get() = a
 
 //methods
+
 <error>fun f()</error>
 fun g() {}
 <error>abstract</error> fun h()

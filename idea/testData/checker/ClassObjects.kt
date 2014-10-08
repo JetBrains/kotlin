@@ -16,7 +16,8 @@ class B() {
 object b {
   <error>class object {
     val x = 1
-  }</error> // error
+  }</error>
+  // error
 }
 
 val a = A.x
