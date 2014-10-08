@@ -79,7 +79,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             }
 
             JetFile file = location.getJetFile();
-            if (file == null || !ProjectRootsUtil.isInSource(file, false)) {
+            if (file == null || !ProjectRootsUtil.isInProjectSource(file)) {
                 return null;
             }
 

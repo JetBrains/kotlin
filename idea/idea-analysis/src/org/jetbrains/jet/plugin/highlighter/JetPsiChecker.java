@@ -93,7 +93,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!(ProjectRootsUtil.isInSource(element) || element.getContainingFile() instanceof JetCodeFragment)) return;
+        if (!(ProjectRootsUtil.isInProjectOrLibSource(element) || element.getContainingFile() instanceof JetCodeFragment)) return;
 
         for (HighlightingVisitor visitor : getBeforeAnalysisVisitors(holder)) {
             element.accept(visitor);
@@ -116,7 +116,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
     }
 
     public static void annotateElement(PsiElement element, AnnotationHolder holder, Diagnostics diagnostics) {
-        if (ProjectRootsUtil.isInSource(element, /* includeLibrarySources = */ false) || element.getContainingFile() instanceof JetCodeFragment) {
+        if (ProjectRootsUtil.isInProjectSource(element) || element.getContainingFile() instanceof JetCodeFragment) {
             ElementAnnotator elementAnnotator = new ElementAnnotator(element, holder);
             for (Diagnostic diagnostic : diagnostics.forElement(element)) {
                 elementAnnotator.registerDiagnosticAnnotations(diagnostic);

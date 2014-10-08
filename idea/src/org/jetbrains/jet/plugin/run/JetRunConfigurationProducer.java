@@ -78,7 +78,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         if (ProjectStructureUtil.isJsKotlinModule(module)) return null;
 
         PsiFile psiFile = location.getPsiElement().getContainingFile();
-        if (!(psiFile instanceof JetFile && ProjectRootsUtil.isInSource(psiFile))) return null;
+        if (!(psiFile instanceof JetFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null;
 
         JetFile jetFile = (JetFile) psiFile;
         final ResolveSessionForBodies session = ResolvePackage.getLazyResolveSession(jetFile);

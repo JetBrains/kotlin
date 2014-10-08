@@ -39,7 +39,7 @@ public class DuplicateJvmSignatureAnnotator implements Annotator {
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
         if (!(element instanceof JetFile) && !(element instanceof JetDeclaration)) return;
-        if (!ProjectRootsUtil.isInSource(element, false)) return;
+        if (!ProjectRootsUtil.isInProjectSource(element)) return;
 
         PsiFile file = element.getContainingFile();
         if (!(file instanceof JetFile) || TargetPlatformDetector.getPlatform((JetFile) file) != TargetPlatform.JVM) return;

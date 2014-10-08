@@ -174,7 +174,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         val priority = when {
             declaration == null -> Priority.OTHER
             ModuleUtilCore.findModuleForPsiElement(declaration) == module -> Priority.MODULE
-            ProjectRootsUtil.isInSource(declaration, false) -> Priority.PROJECT
+            ProjectRootsUtil.isInProjectSource(declaration) -> Priority.PROJECT
             else -> Priority.OTHER
         }
 

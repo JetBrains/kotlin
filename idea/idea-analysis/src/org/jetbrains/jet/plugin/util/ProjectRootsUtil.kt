@@ -23,8 +23,7 @@ import org.jetbrains.jet.plugin.util.application.runReadAction
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 
 public object ProjectRootsUtil {
-    platformStatic
-    public fun isInSource(element: PsiElement, includeLibrarySources: Boolean): Boolean {
+    private fun isInSource(element: PsiElement, includeLibrarySources: Boolean): Boolean {
         return runReadAction { (): Boolean ->
             val containingFile = element.getContainingFile()
             if (containingFile == null) return@runReadAction false
@@ -39,7 +38,12 @@ public object ProjectRootsUtil {
     }
 
     platformStatic
-    public fun isInSource(element: PsiElement): Boolean {
+    public fun isInProjectSource(element: PsiElement): Boolean {
+        return isInSource(element, false)
+    }
+
+    platformStatic
+    public fun isInProjectOrLibSource(element: PsiElement): Boolean {
         return isInSource(element, true)
     }
 }

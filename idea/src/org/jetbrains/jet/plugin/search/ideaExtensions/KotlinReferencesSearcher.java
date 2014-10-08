@@ -58,7 +58,7 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
         PsiElement element = queryParameters.getElementToSearch();
 
         final PsiNamedElement unwrappedElement = AsJavaPackage.getNamedUnwrappedElement(element);
-        if (unwrappedElement == null || !ProjectRootsUtil.isInSource(unwrappedElement)) return;
+        if (unwrappedElement == null || !ProjectRootsUtil.isInProjectOrLibSource(unwrappedElement)) return;
 
         ApplicationManager.getApplication().runReadAction(
                 new Runnable() {
