@@ -26,7 +26,7 @@ import org.jetbrains.jet.plugin.completion.DeclarationLookupObject
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 
-public object JetClassInsertHandler : BaseDeclarationInsertHandler() {
+public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 

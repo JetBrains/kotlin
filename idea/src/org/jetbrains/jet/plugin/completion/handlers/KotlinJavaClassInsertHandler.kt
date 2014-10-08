@@ -28,7 +28,7 @@ import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
  * Handler for inserting java class completion.
  * - Should place import directive if necessary.
  */
-object JetJavaClassInsertHandler : InsertHandler<JavaPsiClassReferenceElement> {
+object KotlinJavaClassInsertHandler : InsertHandler<JavaPsiClassReferenceElement> {
     override fun handleInsert(context: InsertionContext, item: JavaPsiClassReferenceElement) {
         PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
 

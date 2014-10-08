@@ -56,7 +56,7 @@ class TypesCompletion(val parameters: CompletionParameters, val resolveSession: 
                     addLookupElementForCompiledKotlinClass(psiClass, collector)
                 }
                 else {
-                    collector.addElementWithAutoInsertionSuppressed(DescriptorLookupConverter.createLookupElementForJavaClass(psiClass))
+                    collector.addElementWithAutoInsertionSuppressed(KotlinLookupElementFactory.createLookupElementForJavaClass(psiClass))
                 }
             }
         })

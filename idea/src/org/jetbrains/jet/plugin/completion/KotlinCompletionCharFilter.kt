@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
 import com.intellij.openapi.util.Key
 
-public open class JetCompletionCharFilter() : CharFilter() {
+public class KotlinCompletionCharFilter() : CharFilter() {
     class object {
         public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key<Boolean>("JetCompletionCharFilter.ACCEPT_OPENNING_BRACE")
         public val ACCEPT_EQ: Key<Boolean> = Key<Boolean>("JetCompletionCharFilter.ACCEPT_EQ")

@@ -247,7 +247,7 @@
     <completion.contributor language="jet"
                             id="JetCompletionContributor"
                             order="first"
-                            implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>
+                            implementationClass="org.jetbrains.jet.plugin.completion.KotlinCompletionContributor"/>
 
     <completion.contributor language="jet"
                             id="JetLiveTemplateCompletionContributor"
@@ -262,7 +262,7 @@
     <completion.skip implementation="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor$Skipper"
                      id="skipLiveTemplate"/>
 
-    <lookup.charFilter implementation="org.jetbrains.jet.plugin.completion.JetCompletionCharFilter"/>
+    <lookup.charFilter implementation="org.jetbrains.jet.plugin.completion.KotlinCompletionCharFilter"/>
 
     <psi.referenceContributor language="jet" implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>
 

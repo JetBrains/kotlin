@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider
 import org.jetbrains.jet.plugin.completion.handlers.CaretPosition
 import org.jetbrains.jet.plugin.completion.handlers.GenerateLambdaInfo
-import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler
+import org.jetbrains.jet.plugin.completion.handlers.KotlinClassInsertHandler
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.plugin.completion.handlers.BaseDeclarationInsertHandler
@@ -37,10 +37,10 @@ import org.jetbrains.jet.plugin.completion.handlers.JetPropertyInsertHandler
 import com.intellij.psi.PsiClass
 import org.jetbrains.jet.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils
-import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler
+import org.jetbrains.jet.plugin.completion.handlers.KotlinJavaClassInsertHandler
 import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement
 
-public object DescriptorLookupConverter {
+public object KotlinLookupElementFactory {
     public fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): LookupElement {
         val _descriptor = if (descriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(descriptor)
@@ -50,7 +50,7 @@ public object DescriptorLookupConverter {
     }
 
     public fun createLookupElementForJavaClass(psiClass: PsiClass): LookupElement {
-        return JavaPsiClassReferenceElement(psiClass).setInsertHandler(JetJavaClassInsertHandler)
+        return JavaPsiClassReferenceElement(psiClass).setInsertHandler(KotlinJavaClassInsertHandler)
     }
 
     private fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor, declaration: PsiElement?): LookupElement {
@@ -95,7 +95,7 @@ public object DescriptorLookupConverter {
         element = element.withInsertHandler(insertHandler)
 
         if (insertHandler is JetFunctionInsertHandler && insertHandler.lambdaInfo != null) {
-            element.putUserData<Boolean>(JetCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
+            element.putUserData<Boolean>(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
         }
 
         element = element.withTailText(tailText, true).withTypeText(typeText).withPresentableText(presentableText)
@@ -130,7 +130,7 @@ public object DescriptorLookupConverter {
 
             is PropertyDescriptor -> JetPropertyInsertHandler
 
-            is ClassDescriptor -> JetClassInsertHandler
+            is ClassDescriptor -> KotlinClassInsertHandler
 
             else -> BaseDeclarationInsertHandler()
         }

@@ -96,7 +96,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
                     (if (visibleConstructors.size == 0)
                         JetFunctionInsertHandler.NO_PARAMETERS_HANDLER
                     else if (visibleConstructors.size == 1)
-                        DescriptorLookupConverter.getDefaultInsertHandler(visibleConstructors.single())
+                        KotlinLookupElementFactory.getDefaultInsertHandler(visibleConstructors.single())
                     else
                         JetFunctionInsertHandler.WITH_PARAMETERS_HANDLER) as JetFunctionInsertHandler
             insertHandler = object : InsertHandler<LookupElement> {
@@ -113,7 +113,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
                 lookupElement = lookupElement.keepOldArgumentListOnTab()
             }
             if (baseInsertHandler.lambdaInfo != null) {
-                lookupElement.putUserData(JetCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
+                lookupElement.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
             }
         }
 

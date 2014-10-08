@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.JetFunction
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lexer.JetTokens
 
-public object JetKeywordInsertHandler : InsertHandler<LookupElement> {
+public object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
     private val NO_SPACE_AFTER = setOf(JetTokens.THIS_KEYWORD.toString(),
                                        JetTokens.SUPER_KEYWORD.toString(),
                                        JetTokens.CAPITALIZED_THIS_KEYWORD.toString(),

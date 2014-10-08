@@ -57,7 +57,7 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
         if (!descriptorFilter(descriptor)) return
 
         run {
-            val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, descriptor)
+            val lookupElement = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
             if (suppressAutoInsertion) {
                 addElementWithAutoInsertionSuppressed(lookupElement)
             }
@@ -74,7 +74,7 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
                 if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
                     val parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size()
                     if (parameterCount > 1) {
-                        val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, descriptor)
+                        val lookupElement = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
                         addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
                             override fun renderElement(presentation: LookupElementPresentation) {
                                 super.renderElement(presentation)

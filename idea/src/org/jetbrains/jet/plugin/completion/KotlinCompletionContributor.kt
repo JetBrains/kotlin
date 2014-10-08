@@ -44,7 +44,7 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.PsiComment
 
-public class JetCompletionContributor : CompletionContributor() {
+public class KotlinCompletionContributor : CompletionContributor() {
 
     private val AFTER_NUMBER_LITERAL = psiElement().afterLeafSkipping(psiElement().withText(""), psiElement().withElementType(elementType().oneOf(JetTokens.FLOAT_LITERAL, JetTokens.INTEGER_LITERAL)))
     private val AFTER_INTEGER_LITERAL_AND_DOT = psiElement().afterLeafSkipping(psiElement().withText("."), psiElement().withElementType(elementType().oneOf(JetTokens.INTEGER_LITERAL)))
