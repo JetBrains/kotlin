@@ -51,7 +51,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                 object : LookupElementDecorator<LookupElement>(item) {
                     override fun handleInsert(context: InsertionContext) {
                         if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
-                            val offset = context.getOffsetMap().getOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET)
+                            val offset = context.getOffsetMap().getOffset(OLD_ARGUMENTS_REPLACEMENT_OFFSET)
                             if (offset != -1) {
                                 context.getDocument().deleteString(context.getTailOffset(), offset)
                             }
