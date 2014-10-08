@@ -153,4 +153,6 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testInfixCall() = doTest(1, "to", null, null, '\n')
     fun testInfixCallOnSpace() = doTest(1, "to", null, null, ' ')
+
+    fun testImportedEnumMember() { doTest(1, "AAA", null, null, '\n') }
 }

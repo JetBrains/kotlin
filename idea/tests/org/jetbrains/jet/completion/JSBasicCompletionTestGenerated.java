@@ -234,6 +234,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
         
+        @TestMetadata("ImportedEnumMembers.kt")
+        public void testImportedEnumMembers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImportedEnumMembers.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("InCallExpression.kt")
         public void testInCallExpression() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InCallExpression.kt");
