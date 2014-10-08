@@ -99,14 +99,27 @@ public class Converter private(val project: Project,
                         State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, state.importList, importsToAdd))
 
     public fun elementToKotlin(element: PsiElement): String {
-        val converted = convertTopElement(element) ?: return ""
-        val builder = CodeBuilder(element)
-        builder.append(converted)
-        if (postProcessor != null) {
-            return AfterConversionPass(project, postProcessor).run(builder.result)
+        try {
+            val converted = convertTopElement(element) ?: return ""
+            val builder = CodeBuilder(element)
+            builder.append(converted)
+
+            if (postProcessor != null) {
+                return AfterConversionPass(project, postProcessor).run(builder.result)
+            }
+            else {
+                return builder.result
+            }
         }
-        else {
-            return builder.result
+        catch(e: ElementCreationStackTraceRequiredException) {
+            // if we got this exception then we need to turn element creation stack traces on to get better diagnostic
+            Element.saveCreationStacktraces = true
+            try {
+                return elementToKotlin(element)
+            }
+            finally {
+                Element.saveCreationStacktraces = false
+            }
         }
     }
 

@@ -46,6 +46,8 @@ fun CodeBuilder.append(elements: Collection<Element>, separator: String, prefix:
     return append(elements.filter { !it.isEmpty }.map { { append(it) } }, separator, prefix, suffix)
 }
 
+class ElementCreationStackTraceRequiredException : RuntimeException()
+
 class CodeBuilder(private val topElement: PsiElement?) {
     private val builder = StringBuilder()
     private var endOfLineCommentAtEnd = false
@@ -81,10 +83,15 @@ class CodeBuilder(private val topElement: PsiElement?) {
         if (element.isEmpty) return this // do not insert comment and spaces for empty elements to avoid multiple blank lines
 
         if (element.prototypes == null && topElement != null) {
-            val s = "Element $element has no prototypes assigned.\n" +
-                    "Use Element.assignPrototype() or Element.assignNoPrototype().\n" +
-                    "Element created at:\n${element.createdAt}"
-            throw RuntimeException(s)
+            if (element.createdAt == null) {
+                throw ElementCreationStackTraceRequiredException()
+            }
+            else {
+                val s = "Element $element has no prototypes assigned.\n" +
+                        "Use Element.assignPrototype() or Element.assignNoPrototype().\n" +
+                        "Element created at:\n${element.createdAt}"
+                throw RuntimeException(s)
+            }
         }
 
         if (topElement == null || element.prototypes!!.isEmpty()) {

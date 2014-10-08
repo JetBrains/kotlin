@@ -67,7 +67,11 @@ abstract class Element {
           $prototypes = value
       }
 
-    public var createdAt: String = "Element creation stacktraces turned off. Uncomment initializer of Element.createdAt." //Exception().getStackTrace().joinToString("\n")
+    public var createdAt: String?
+            = if (saveCreationStacktraces)
+                  Exception().getStackTrace().joinToString("\n")
+              else
+                  null
 
     /** This method should not be used anywhere except for CodeBuilder! Use CodeBuilder.append instead. */
     public abstract fun generateCode(builder: CodeBuilder)
@@ -79,5 +83,9 @@ abstract class Element {
     object Empty : Element() {
         override fun generateCode(builder: CodeBuilder) { }
         override val isEmpty: Boolean get() = true
+    }
+
+    class object {
+        var saveCreationStacktraces = false
     }
 }
