@@ -26,7 +26,7 @@ class Doggy(): Pet()  {
 
 fun box(): String {
     Doggy().play()
-    if (sayResult != "Time to play! Playing with my owner!") return "fail: $result"
+    if (sayResult != "Time to play! Playing with my owner!") return "fail: $sayResult"
 
     return "OK"
 }
