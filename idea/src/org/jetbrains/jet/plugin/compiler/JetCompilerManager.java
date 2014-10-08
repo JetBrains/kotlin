@@ -16,11 +16,13 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
+import com.intellij.compiler.CompilerWorkspaceConfiguration;
 import com.intellij.diagnostic.PluginException;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -29,6 +31,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerWorkspaceSettings;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -44,7 +47,10 @@ public class JetCompilerManager implements ProjectComponent {
     private static final String PREFIX_WITH_COMPILER_NAME = KOTLIN_COMPILER_NAME + ": " + INTERNAL_ERROR_PREFIX;
     private static final Set<String> FILE_EXTS_WHICH_NEEDS_REFRESH = ContainerUtil.immutableSet(".js", ".map");
 
+    private final Project project;
+
     public JetCompilerManager(Project project, CompilerManager manager) {
+        this.project = project;
         manager.addCompilableFileType(JetFileType.INSTANCE);
         manager.addCompilationStatusListener(new CompilationStatusListener() {
             @Override
@@ -83,6 +89,18 @@ public class JetCompilerManager implements ProjectComponent {
 
     @Override
     public void initComponent() {
+        // TODO remove it after Kotlin M9
+        // Migrate incremental compilation option for early adopters only
+
+        String INCREMENTAL_VM_OPTION = "-Dkotlin.incremental.compilation=true";
+
+        CompilerWorkspaceConfiguration commonCompilerConfig = ServiceManager.getService(project, CompilerWorkspaceConfiguration.class);
+        String additionalVmOptions = commonCompilerConfig.COMPILER_PROCESS_ADDITIONAL_VM_OPTIONS;
+        if (additionalVmOptions.contains(INCREMENTAL_VM_OPTION)) {
+            String updatedVmOptions = additionalVmOptions.replace(INCREMENTAL_VM_OPTION, " ").trim();
+            commonCompilerConfig.COMPILER_PROCESS_ADDITIONAL_VM_OPTIONS = updatedVmOptions;
+            ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class).setIncrementalCompilationEnabled(true);
+        }
     }
 
     @Override
