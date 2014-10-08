@@ -243,11 +243,16 @@
                  classname="com.google.javascript.jscomp.ant.CompileTask"
                  classpath="${dependencies.dir}/closure-compiler.jar"/>
 
+        <!-- value should be one of: whitespace, simple, advanced -->
+        <property name="compilationLevel" value="simple" />
+        <!-- value should be one of: default, quiet, verbose -->
+        <property name="warningLevel" value="default" />
+
         <closure-compiler
-            compilationLevel="simple"
+            compilationLevel="${compilationLevel}"
             prettyprint="true"
             languagein="ECMASCRIPT5_STRICT"
-            warning="verbose"
+            warning="${warningLevel}"
             output="${kotlin-home}/lib/kotlin.js" >
 
             <sources dir="${basedir}/js/js.translator/testData">
