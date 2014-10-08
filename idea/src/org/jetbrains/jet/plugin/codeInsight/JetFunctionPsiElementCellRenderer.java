@@ -18,25 +18,18 @@ package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class JetFunctionPsiElementCellRenderer extends DefaultPsiElementCellRenderer {
-    private final BindingContext bindingContext;
-
-    public JetFunctionPsiElementCellRenderer(BindingContext bindingContext) {
-        this.bindingContext = bindingContext;
-    }
-
     @Override
     public String getElementText(PsiElement element) {
         if (element instanceof JetNamedFunction) {
             JetNamedFunction function = (JetNamedFunction) element;
-            SimpleFunctionDescriptor fd = bindingContext.get(BindingContext.FUNCTION, function);
-            assert fd != null;
-            return DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(fd);
+            DeclarationDescriptor descriptor = ResolvePackage.getLazyResolveSession(function).resolveToDescriptor(function);
+            return DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor);
         }
         return super.getElementText(element);
     }

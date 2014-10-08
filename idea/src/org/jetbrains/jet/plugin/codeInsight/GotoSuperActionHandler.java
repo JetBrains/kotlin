@@ -34,13 +34,12 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.Collection;
 import java.util.List;
@@ -60,9 +59,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
                                             JetObjectDeclaration.class);
         if (declaration == null) return;
 
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(declaration);
-
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+        DeclarationDescriptor descriptor = ResolvePackage.getLazyResolveSession(declaration).resolveToDescriptor(declaration);
 
         Collection<? extends DeclarationDescriptor> superDescriptors;
         String message;
@@ -117,7 +114,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
             JBPopup popup = descriptor instanceof ClassDescriptor
                             ? NavigationUtil.getPsiElementPopup(superDeclarationsArray, message)
                             : NavigationUtil.getPsiElementPopup(superDeclarationsArray,
-                                                                new JetFunctionPsiElementCellRenderer(bindingContext), message);
+                                                                new JetFunctionPsiElementCellRenderer(), message);
             popup.showInBestPositionFor(editor);
         }
     }

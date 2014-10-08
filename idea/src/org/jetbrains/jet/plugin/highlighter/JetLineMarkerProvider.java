@@ -190,7 +190,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
         // clearing the whole BindingTrace.
-        LineMarkerInfo<JetElement> marker = new LineMarkerInfo<JetElement>(
+        LineMarkerInfo<JetDeclaration> marker = new LineMarkerInfo<JetDeclaration>(
                 declaration,
                 declaration.getTextOffset(),
                 isImplementsAndNotOverrides(resolveWithParents.getDescriptor(), resolveWithParents.getOverriddenDescriptors()) ?

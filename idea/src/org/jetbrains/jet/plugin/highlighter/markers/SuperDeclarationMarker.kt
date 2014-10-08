@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.plugin.highlighter.markers
 
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.resolve.OverrideResolver
 import org.jetbrains.jet.lang.descriptors.Modality
@@ -37,13 +34,12 @@ import org.jetbrains.annotations.TestOnly
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import java.util.ArrayList
 import com.intellij.util.Function
+import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.lang.psi.JetDeclaration
 
-object SuperDeclarationMarkerTooltip: Function<JetElement, String> {
-    override fun `fun`(param: JetElement?): String? {
-        val element = param!!
-
-        [suppress("UNUSED_VARIABLE")]
-        val (elementDescriptor, _, overriddenDescriptors) = resolveDeclarationWithParents(element)
+object SuperDeclarationMarkerTooltip: Function<JetDeclaration, String> {
+    override fun `fun`(jetDeclaration: JetDeclaration?): String? {
+        val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(jetDeclaration!!)
         if (overriddenDescriptors.isEmpty()) return ""
 
         val isAbstract = elementDescriptor!!.getModality() == Modality.ABSTRACT
@@ -67,7 +63,7 @@ object SuperDeclarationMarkerTooltip: Function<JetElement, String> {
     }
 }
 
-public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<JetElement> {
+public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<JetDeclaration> {
     private var testNavigableElements: List<NavigatablePsiElement>? = null
 
     TestOnly
@@ -77,10 +73,10 @@ public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandl
         return navigationResult
     }
 
-    override fun navigate(e: MouseEvent?, element: JetElement?) {
+    override fun navigate(e: MouseEvent?, element: JetDeclaration?) {
         if (element == null) return
 
-        val (elementDescriptor, bindingContext, overriddenDescriptors) = resolveDeclarationWithParents(element)
+        val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(element)
         if (overriddenDescriptors.isEmpty()) return
 
         val superDeclarations = ArrayList<NavigatablePsiElement>()
@@ -101,7 +97,7 @@ public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandl
                     superDeclarations.copyToArray(),
                     JetBundle.message("navigation.title.super.declaration", elementName),
                     JetBundle.message("navigation.findUsages.title.super.declaration", elementName),
-                    JetFunctionPsiElementCellRenderer(bindingContext))
+                    JetFunctionPsiElementCellRenderer())
         }
         else {
             // Only store elements for retrieve in test
@@ -112,15 +108,13 @@ public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandl
 
 public data class ResolveWithParentsResult(
         val descriptor: CallableMemberDescriptor?,
-        val bindingContext: BindingContext,
         val overriddenDescriptors: Collection<CallableMemberDescriptor>)
 
-public fun resolveDeclarationWithParents(element: JetElement): ResolveWithParentsResult {
-    val bindingContext = AnalyzerFacadeWithCache.getContextForElement(element)
-    val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
+public fun resolveDeclarationWithParents(element: JetDeclaration): ResolveWithParentsResult {
+    val descriptor = element.getLazyResolveSession().resolveToDescriptor(element)
 
-    if (descriptor !is CallableMemberDescriptor) return ResolveWithParentsResult(null, bindingContext, listOf())
+    if (descriptor !is CallableMemberDescriptor) return ResolveWithParentsResult(null, listOf())
 
     val overriddenMembers = OverrideResolver.getDirectlyOverriddenDeclarations(descriptor)
-    return ResolveWithParentsResult(descriptor, bindingContext, overriddenMembers)
+    return ResolveWithParentsResult(descriptor, overriddenMembers)
 }
