@@ -3043,9 +3043,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 JetExpression left = binaryExpression.getLeft();
                 JetExpression right = binaryExpression.getRight();
                 Type leftType = expressionType(left);
-                Type rightType = expressionType(right);
 
-                if (leftType.equals(JAVA_STRING_TYPE) && rightType.equals(JAVA_STRING_TYPE)) {
+                if (leftType.equals(JAVA_STRING_TYPE)) {
                     invokeAppend(left);
                     invokeAppend(right);
                     return;

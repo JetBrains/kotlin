@@ -5990,6 +5990,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("stringBuilderAppend.kt")
+        public void testStringBuilderAppend() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/stringBuilderAppend.kt");
+            doTest(fileName);
+        }
+        
     }
     
     @TestMetadata("compiler/testData/codegen/box/super")
