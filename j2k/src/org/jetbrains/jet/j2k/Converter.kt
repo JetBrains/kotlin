@@ -27,6 +27,8 @@ import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.BindingContext
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
 
 public trait ConversionScope {
     public fun contains(element: PsiElement): Boolean
@@ -68,6 +70,8 @@ public class Converter private(val project: Project,
     val annotationConverter = AnnotationConverter(this)
 
     class object {
+        private val LOG = Logger.getInstance("#org.jetbrains.jet.j2k.Converter")
+
         public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope, referenceSearcher: ReferenceSearcher, postProcessor: PostProcessor?): Converter {
             val state = State(null, { ExpressionVisitor(it) }, { StatementVisitor(it) }, null, null, null)
             return Converter(project, settings, conversionScope, referenceSearcher, postProcessor, state)
@@ -105,7 +109,16 @@ public class Converter private(val project: Project,
             builder.append(converted)
 
             if (postProcessor != null) {
-                return AfterConversionPass(project, postProcessor).run(builder.result)
+                try {
+                    return AfterConversionPass(project, postProcessor).run(builder.result)
+                }
+                catch(e: ProcessCanceledException) {
+                    throw e
+                }
+                catch(t: Throwable) {
+                    LOG.error(t)
+                    return builder.result
+                }
             }
             else {
                 return builder.result
