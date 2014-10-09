@@ -747,7 +747,7 @@ private fun JetNamedDeclaration.getGeneratedBlockBody() =
         when (this) {
             is JetNamedFunction -> getBodyExpression()
             else -> (this as JetProperty).getGetter()!!.getBodyExpression()
-        } as JetBlockExpression
+        } as? JetBlockExpression ?: throw AssertionError("Couldn't get block body for this declaration: ${JetPsiUtil.getElementTextWithContext(this)}")
 
 fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts {
     val conflicts = MultiMap<PsiElement, String>()
