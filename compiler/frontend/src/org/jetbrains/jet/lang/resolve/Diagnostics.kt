@@ -18,8 +18,13 @@ package org.jetbrains.jet.lang.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import com.intellij.openapi.util.ModificationTracker
 
 public trait Diagnostics : Iterable<Diagnostic> {
+    //should not be called on readonly views
+    public val modificationTracker: ModificationTracker
+        get() = throw IllegalStateException("Trying to obtain modification tracker for Diagnostics object of class $javaClass")
+
     public fun all(): Collection<Diagnostic>
 
     public fun forElement(psiElement: PsiElement): Collection<Diagnostic>
@@ -31,9 +36,9 @@ public trait Diagnostics : Iterable<Diagnostic> {
     override fun iterator() = all().iterator()
 
     class object {
-
         public val EMPTY: Diagnostics = object : Diagnostics {
             override fun noSuppression(): Diagnostics = this
+            override val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
             override fun all() = listOf<Diagnostic>()
             override fun forElement(psiElement: PsiElement) = listOf<Diagnostic>()
         }

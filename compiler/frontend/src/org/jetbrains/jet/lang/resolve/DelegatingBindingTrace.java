@@ -25,7 +25,6 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.util.slicedmap.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -35,16 +34,14 @@ public class DelegatingBindingTrace implements BindingTrace {
     private final MutableSlicedMap map = BindingTraceContext.TRACK_REWRITES ? new TrackingSlicedMap(BindingTraceContext.TRACK_WITH_STACK_TRACES) : SlicedMapImpl.create();
 
     private final BindingContext parentContext;
-    private final List<Diagnostic> diagnostics = Lists.newArrayList();
     private final String name;
+    private final MutableDiagnosticsWithSuppression mutableDiagnostics;
 
     private final BindingContext bindingContext = new BindingContext() {
         @NotNull
         @Override
         public Diagnostics getDiagnostics() {
-            ArrayList<Diagnostic> mergedDiagnostics = new ArrayList<Diagnostic>(diagnostics);
-            mergedDiagnostics.addAll(parentContext.getDiagnostics().noSuppression().all());
-            return new DiagnosticsWithSuppression(this, mergedDiagnostics);
+            return mutableDiagnostics;
         }
 
         @Override
@@ -73,6 +70,7 @@ public class DelegatingBindingTrace implements BindingTrace {
     public DelegatingBindingTrace(BindingContext parentContext, String debugName) {
         this.parentContext = parentContext;
         this.name = debugName;
+        this.mutableDiagnostics = new MutableDiagnosticsWithSuppression(bindingContext, parentContext.getDiagnostics());
     }
 
     public DelegatingBindingTrace(BindingContext parentContext, String debugName, @Nullable Object resolutionSubjectForMessage) {
@@ -147,7 +145,7 @@ public class DelegatingBindingTrace implements BindingTrace {
 
         if (!commitDiagnostics) return;
 
-        for (Diagnostic diagnostic : diagnostics) {
+        for (Diagnostic diagnostic : mutableDiagnostics.getOwnDiagnostics()) {
             if (filter == null || filter.accept(null, diagnostic.getPsiElement())) {
                 trace.report(diagnostic);
             }
@@ -156,12 +154,12 @@ public class DelegatingBindingTrace implements BindingTrace {
 
     public void clear() {
         map.clear();
-        diagnostics.clear();
+        mutableDiagnostics.clear();
     }
 
     @Override
     public void report(@NotNull Diagnostic diagnostic) {
-        diagnostics.add(diagnostic);
+        mutableDiagnostics.report(diagnostic);
     }
 
     @Override

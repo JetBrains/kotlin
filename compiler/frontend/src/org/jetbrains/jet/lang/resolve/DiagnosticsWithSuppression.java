@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ConcurrentWeakValueHashMap;
@@ -215,6 +216,12 @@ public class DiagnosticsWithSuppression implements Diagnostics {
         if (strings.contains("warnings") && diagnostic.getSeverity() == Severity.WARNING) return true;
 
         return strings.contains(diagnostic.getFactory().getName().toLowerCase());
+    }
+
+    @NotNull
+    @Override
+    public ModificationTracker getModificationTracker() {
+        throw new IllegalStateException("Trying to obtain modification tracker for readonly DiagnosticsWithSuppression.");
     }
 
     private static abstract class Suppressor {

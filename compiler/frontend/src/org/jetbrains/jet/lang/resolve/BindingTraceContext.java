@@ -17,31 +17,27 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
-import java.util.List;
 
 public class BindingTraceContext implements BindingTrace {
-    private final List<Diagnostic> diagnosticList = Lists.newArrayList();
-    private final Diagnostics diagnostics;
-
     // These flags are used for debugging of "Rewrite at slice..." exceptions
     /* package */ final static boolean TRACK_REWRITES = false;
     /* package */ final static boolean TRACK_WITH_STACK_TRACES = true;
 
     private final MutableSlicedMap map;
+    private final MutableDiagnosticsWithSuppression mutableDiagnostics;
 
     private final BindingContext bindingContext = new BindingContext() {
 
         @NotNull
         @Override
         public Diagnostics getDiagnostics() {
-            return diagnostics;
+            return mutableDiagnostics;
         }
 
         @Override
@@ -71,7 +67,7 @@ public class BindingTraceContext implements BindingTrace {
 
     private BindingTraceContext(@NotNull MutableSlicedMap map) {
         this.map = map;
-        this.diagnostics = new DiagnosticsWithSuppression(getBindingContext(), diagnosticList);
+        this.mutableDiagnostics = new MutableDiagnosticsWithSuppression(bindingContext, Diagnostics.EMPTY);
     }
 
     @TestOnly
@@ -81,11 +77,11 @@ public class BindingTraceContext implements BindingTrace {
 
     @Override
     public void report(@NotNull Diagnostic diagnostic) {
-        diagnosticList.add(diagnostic);
+        mutableDiagnostics.report(diagnostic);
     }
 
     public void clearDiagnostics() {
-        diagnosticList.clear();
+        mutableDiagnostics.clear();
     }
 
     @NotNull
