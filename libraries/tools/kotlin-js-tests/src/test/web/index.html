@@ -16,5 +16,12 @@
 <body>
 	<div id="qunit"></div>
 	<div id="qunit-fixture">test markup</div>
+
+        <script>
+          document.getElementById("qunit").className = "running";
+          QUnit.done(function () {
+            document.getElementById("qunit").className = "done"
+          });
+        </script>
 </body>
 </html>

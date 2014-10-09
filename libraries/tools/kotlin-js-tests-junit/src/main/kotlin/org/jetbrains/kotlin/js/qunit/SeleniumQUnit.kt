@@ -17,12 +17,13 @@ public fun waitFor(maxMillis: Long, sleepMillis: Long = 100, predicate: () -> Bo
         }
         val now = System.currentTimeMillis()
         if (now >= end) break
-        val delta = end - now
         val delay = sleepMillis
         Thread.sleep(delay)
     }
     return false
 }
+
+val TIMEOUT: Long = 5000
 
 /**
  * Helper class to find QUnit tests using Selenium
@@ -33,12 +34,16 @@ public class SeleniumQUnit(val driver: WebDriver) {
      * Returns all the test cases found in the current driver's page
      */
     public fun findTests(): List<WebElement> {
-        var resultsElement: WebElement? = null
-        waitFor(5000) {
-            resultsElement = driver.findElement(By.id("qunit-tests"))
-            resultsElement != null
+        val qunitContainer = driver.findElement(By.id("qunit"))!!
+
+        val success = waitFor(TIMEOUT) {
+            qunitContainer.getAttribute("class") == "done"
         }
+        assertTrue(success, "Tests timed out after $TIMEOUT milliseconds.")
+
+        var resultsElement = driver.findElement(By.id("qunit-tests"))
         assertNotNull(resultsElement, "No qunit test elements could be found in ${driver.getCurrentUrl()}")
+
         return resultsElement!!.findElements(By.xpath("li"))?.filterNotNull() ?: arrayListOf<WebElement>()
     }
 

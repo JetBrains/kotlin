@@ -18,19 +18,11 @@
 package tests;
 
 import org.jetbrains.kotlin.js.qunit.SeleniumQUnit;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  */
@@ -48,8 +40,8 @@ public class SeleniumFireFox extends SeleniumTest {
         return answer;
     }
 
-    public SeleniumFireFox(WebElement element) {
-        super(element);
+    public SeleniumFireFox(WebElement element, String name) {
+        super(element, name);
     }
 
 
