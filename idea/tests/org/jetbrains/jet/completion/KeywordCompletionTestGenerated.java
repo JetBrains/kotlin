@@ -224,6 +224,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
     
+    @TestMetadata("NoFinalInParameterList.kt")
+    public void testNoFinalInParameterList() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/NoFinalInParameterList.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("PropertyAccessors.kt")
     public void testPropertyAccessors() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/PropertyAccessors.kt");
