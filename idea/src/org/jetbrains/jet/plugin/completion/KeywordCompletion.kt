@@ -67,7 +67,8 @@ object KeywordCompletion {
             CommentFilter(),
             ParentFilter(ClassFilter(javaClass<JetLiteralStringTemplateEntry>())),
             ParentFilter(ClassFilter(javaClass<JetConstantExpression>())),
-            LeftNeighbour(TextFilter("."))
+            LeftNeighbour(TextFilter(".")),
+            LeftNeighbour(TextFilter("?."))
     ))
 
     private class CommentFilter() : ElementFilter {
