@@ -21,6 +21,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -72,6 +73,8 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
 
     @Nullable
     private static JetFile getStartClassFile(@NotNull Location location) {
+        if (DumbService.getInstance(location.getProject()).isDumb()) return null;
+
         Module module = location.getModule();
         if (module == null) return null;
 
