@@ -472,6 +472,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("kotlinMultiRefInImport.0.kt")
+            public void testKotlinMultiRefInImport() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinMultiRefInImport.0.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("kotlinOverloadAndExtensionUsages.0.kt")
             public void testKotlinOverloadAndExtensionUsages() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinOverloadAndExtensionUsages.0.kt");
@@ -671,6 +677,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("kotlinLocalPropertyUsages2.0.kt")
             public void testKotlinLocalPropertyUsages2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinLocalPropertyUsages2.0.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("kotlinMultiRefInImport.0.kt")
+            public void testKotlinMultiRefInImport() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinMultiRefInImport.0.kt");
                 doTest(fileName);
             }
             

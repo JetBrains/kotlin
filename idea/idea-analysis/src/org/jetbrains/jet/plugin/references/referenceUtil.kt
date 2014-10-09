@@ -33,6 +33,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration
 import org.jetbrains.jet.lang.psi.JetClassObject
 import org.jetbrains.jet.lang.psi.JetClass
+import com.intellij.psi.PsiPolyVariantReference
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
@@ -49,7 +50,7 @@ public val PsiReference.unwrappedTargets: Set<PsiElement>
         }
 
         return when (this) {
-            is JetMultiReference<*> -> multiResolve(false).map { it.getElement()?.adjust() }.filterNotNullTo(HashSet<PsiElement>())
+            is PsiPolyVariantReference -> multiResolve(false).map { it.getElement()?.adjust() }.filterNotNullTo(HashSet<PsiElement>())
             else -> ContainerUtil.createMaybeSingletonSet(resolve()?.adjust())
         }
     }
