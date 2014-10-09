@@ -21,6 +21,9 @@ open class Base {
 // EXPRESSION: a
 // RESULT: Unresolved reference: a
 
+// EXPRESSION: a + 1
+// RESULT: Unresolved reference: a
+
 // EXPRESSION: prop.
 // RESULT: Expecting an element; looking at ERROR_ELEMENT '(1,6) in /fragment.kt
 

@@ -73,8 +73,6 @@ fun getFunctionForExtractedFragment(
     }
 
     fun generateFunction(): JetNamedFunction? {
-        checkForSyntacticErrors(codeFragment)
-
         val originalFile = breakpointFile as JetFile
 
         val tmpFile = originalFile.createTempCopy { it }

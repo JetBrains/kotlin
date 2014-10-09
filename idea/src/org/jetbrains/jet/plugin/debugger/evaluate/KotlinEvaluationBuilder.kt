@@ -71,6 +71,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.codegen.StackValue
+import org.jetbrains.jet.analyzer.AnalyzeExhaust
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -139,6 +140,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
     class object {
         private fun extractAndCompile(codeFragment: JetCodeFragment, sourcePosition: SourcePosition): CompiledDataDescriptor {
+            codeFragment.checkForErrors(codeFragment.getAnalysisResults())
+
             val extractedFunction = getFunctionForExtractedFragment(codeFragment, sourcePosition.getFile(), sourcePosition.getLine())
             if (extractedFunction == null) {
                 throw IllegalStateException("Code fragment cannot be extracted to function")
@@ -229,26 +232,14 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             return runReadAction {
                 val file = createFileForDebugger(codeFragment, extractedFunction)
 
-                checkForSyntacticErrors(file)
-
                 val analyzeExhaust = file.getAnalysisResults()
-                if (analyzeExhaust.isError()) {
-                    exception(analyzeExhaust.getError())
-                }
-
-                val bindingContext = analyzeExhaust.getBindingContext()
-                bindingContext.getDiagnostics().forEach {
-                    diagnostic ->
-                    if (diagnostic.getSeverity() == Severity.ERROR) {
-                        exception(DefaultErrorMessages.RENDERER.render(diagnostic))
-                    }
-                }
+                file.checkForErrors(analyzeExhaust)
 
                 val state = GenerationState(
                         file.getProject(),
                         ClassBuilderFactories.BINARIES,
                         analyzeExhaust.getModuleDescriptor(),
-                        bindingContext,
+                        analyzeExhaust.getBindingContext(),
                         listOf(file)
                 )
 
@@ -266,6 +257,29 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 exception(message)
             }
             throw EvaluateExceptionUtil.createEvaluateException(e)
+        }
+
+        private fun JetFile.checkForErrors(analyzeExhaust: AnalyzeExhaust) {
+            runReadAction {
+                try {
+                    AnalyzingUtils.checkForSyntacticErrors(this)
+                }
+                catch (e: IllegalArgumentException) {
+                    throw EvaluateExceptionUtil.createEvaluateException(e.getMessage())
+                }
+
+                if (analyzeExhaust.isError()) {
+                    throw EvaluateExceptionUtil.createEvaluateException(analyzeExhaust.getError())
+                }
+
+                val bindingContext = analyzeExhaust.getBindingContext()
+                bindingContext.getDiagnostics().forEach {
+                    diagnostic ->
+                    if (diagnostic.getSeverity() == Severity.ERROR) {
+                        throw EvaluateExceptionUtil.createEvaluateException(DefaultErrorMessages.RENDERER.render(diagnostic))
+                    }
+                }
+            }
         }
     }
 }
@@ -299,15 +313,6 @@ private fun createFileForDebugger(codeFragment: JetCodeFragment,
     jetFile.skipVisibilityCheck = true
     jetFile.analysisContext = codeFragment
     return jetFile
-}
-
-fun checkForSyntacticErrors(file: JetFile) {
-    try {
-        AnalyzingUtils.checkForSyntacticErrors(file)
-    }
-    catch (e: IllegalArgumentException) {
-        throw EvaluateExceptionUtil.createEvaluateException(e.getMessage())
-    }
 }
 
 private fun SuspendContext.getInvokePolicy(): Int {
