@@ -140,7 +140,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
     class object {
         private fun extractAndCompile(codeFragment: JetCodeFragment, sourcePosition: SourcePosition): CompiledDataDescriptor {
-            codeFragment.checkForErrors(codeFragment.getAnalysisResults())
+            codeFragment.checkForErrors()
 
             val extractedFunction = getFunctionForExtractedFragment(codeFragment, sourcePosition.getFile(), sourcePosition.getLine())
             if (extractedFunction == null) {
@@ -232,9 +232,9 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             return runReadAction {
                 val file = createFileForDebugger(codeFragment, extractedFunction)
 
-                val analyzeExhaust = file.getAnalysisResults()
-                file.checkForErrors(analyzeExhaust)
+                file.checkForErrors()
 
+                val analyzeExhaust = file.getAnalysisResults()
                 val state = GenerationState(
                         file.getProject(),
                         ClassBuilderFactories.BINARIES,
@@ -259,7 +259,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             throw EvaluateExceptionUtil.createEvaluateException(e)
         }
 
-        private fun JetFile.checkForErrors(analyzeExhaust: AnalyzeExhaust) {
+        private fun JetFile.checkForErrors() {
             runReadAction {
                 try {
                     AnalyzingUtils.checkForSyntacticErrors(this)
@@ -268,16 +268,14 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     throw EvaluateExceptionUtil.createEvaluateException(e.getMessage())
                 }
 
+                val analyzeExhaust = this.getAnalysisResults()
                 if (analyzeExhaust.isError()) {
                     throw EvaluateExceptionUtil.createEvaluateException(analyzeExhaust.getError())
                 }
 
                 val bindingContext = analyzeExhaust.getBindingContext()
-                bindingContext.getDiagnostics().forEach {
-                    diagnostic ->
-                    if (diagnostic.getSeverity() == Severity.ERROR) {
-                        throw EvaluateExceptionUtil.createEvaluateException(DefaultErrorMessages.RENDERER.render(diagnostic))
-                    }
+                bindingContext.getDiagnostics().firstOrNull { it.getSeverity() == Severity.ERROR }?.let {
+                    throw EvaluateExceptionUtil.createEvaluateException(DefaultErrorMessages.RENDERER.render(it))
                 }
             }
         }
