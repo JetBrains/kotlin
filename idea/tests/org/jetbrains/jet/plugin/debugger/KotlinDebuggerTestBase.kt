@@ -24,6 +24,8 @@ import com.intellij.debugger.impl.PositionUtil
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.roots.libraries.LibraryUtil
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
+import com.intellij.openapi.roots.JdkOrderEntry
+import com.intellij.openapi.util.io.FileUtil
 
 abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
@@ -61,9 +63,10 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                 return@runReadAction println("VirtualFile for position is null", ProcessOutputTypes.SYSTEM)
             }
 
-            val isInStdlib = LibraryUtil.findLibraryEntry(virtualFile, getProject())?.getPresentableName() == JetJdkAndLibraryProjectDescriptor.LIBRARY_NAME
-            if (isInStdlib) {
-                return@runReadAction println(virtualFile.getName(), ProcessOutputTypes.SYSTEM)
+            val libraryEntry = LibraryUtil.findLibraryEntry(virtualFile, getProject())
+            if (libraryEntry != null && (libraryEntry is JdkOrderEntry ||
+                                         libraryEntry.getPresentableName() == JetJdkAndLibraryProjectDescriptor.LIBRARY_NAME)) {
+                return@runReadAction println(FileUtil.getNameWithoutExtension(virtualFile.getName()) + ".!EXT!", ProcessOutputTypes.SYSTEM)
             }
 
             println(virtualFile.getName() + ":" + sourcePosition.getLine(), ProcessOutputTypes.SYSTEM)

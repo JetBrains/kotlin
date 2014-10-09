@@ -4,7 +4,7 @@ Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socke
 stepIntoSpecificKotlinClasses.kt:7
 MyJavaClass.java:11
 stepIntoSpecificKotlinClasses.kt:7
-Intrinsics.class
+Intrinsics.!EXT!
 stepIntoSpecificKotlinClasses.kt:7
 stepIntoSpecificKotlinClasses.kt:8
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
