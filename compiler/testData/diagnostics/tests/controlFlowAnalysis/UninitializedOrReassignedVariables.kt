@@ -68,7 +68,7 @@ fun t1() {
     b = <!UNUSED_VALUE!>3<!>
 }
 
-abstract enum class ProtocolState {
+enum class ProtocolState {
   WAITING {
     override fun signal() = ProtocolState.TALKING
   }

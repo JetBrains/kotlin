@@ -545,6 +545,9 @@ public class DeclarationsChecker {
         if (aClass.hasModifier(JetTokens.OPEN_KEYWORD)) {
             trace.report(OPEN_MODIFIER_IN_ENUM.on(aClass));
         }
+        if (aClass.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+            trace.report(ABSTRACT_MODIFIER_IN_ENUM.on(aClass));
+        }
     }
 
     private void checkEnumEntry(@NotNull JetEnumEntry enumEntry, @NotNull ClassDescriptor classDescriptor) {

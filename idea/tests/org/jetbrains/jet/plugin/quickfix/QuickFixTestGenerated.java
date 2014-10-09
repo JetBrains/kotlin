@@ -1716,6 +1716,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @InnerTestClasses({Modifiers.AddOpenToClassDeclaration.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Modifiers extends AbstractQuickFixTest {
+        @TestMetadata("beforeAbstractModifierInEnum.kt")
+        public void testAbstractModifierInEnum() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeAbstractModifierInEnum.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("beforeAddInnerModifier.kt")
         public void testAddInnerModifier() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/beforeAddInnerModifier.kt");

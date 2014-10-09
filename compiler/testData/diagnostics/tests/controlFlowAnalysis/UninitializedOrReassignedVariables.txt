@@ -116,7 +116,7 @@ package uninitialized_reassigned_variables {
         }
     }
 
-    internal abstract enum class ProtocolState : kotlin.Enum<uninitialized_reassigned_variables.ProtocolState> {
+    internal final enum class ProtocolState : kotlin.Enum<uninitialized_reassigned_variables.ProtocolState> {
         private constructor ProtocolState()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -2,7 +2,7 @@ package
 
 internal fun box(): kotlin.String
 
-internal abstract enum class ProtocolState : kotlin.Enum<ProtocolState> {
+internal final enum class ProtocolState : kotlin.Enum<ProtocolState> {
     private constructor ProtocolState()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
