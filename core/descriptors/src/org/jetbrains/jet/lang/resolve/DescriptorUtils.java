@@ -405,4 +405,8 @@ public class DescriptorUtils {
     public static boolean classCanHaveAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
         return classDescriptor.getModality() == Modality.ABSTRACT || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
     }
+
+    public static boolean classCanHaveOpenMembers(@NotNull ClassDescriptor classDescriptor) {
+        return classDescriptor.getModality() != Modality.FINAL || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
+    }
 }

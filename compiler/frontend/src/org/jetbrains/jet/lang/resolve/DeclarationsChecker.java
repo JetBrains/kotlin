@@ -36,6 +36,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE_PARAMETER;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.classCanHaveAbstractMembers;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.classCanHaveOpenMembers;
 
 public class DeclarationsChecker {
     @NotNull
@@ -337,10 +338,12 @@ public class DeclarationsChecker {
     }
 
     private void checkOpenMembers(ClassDescriptorWithResolutionScopes classDescriptor) {
+        if (classCanHaveOpenMembers(classDescriptor)) return;
+
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
             if (memberDescriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) continue;
             JetNamedDeclaration member = (JetNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor);
-            if (member != null && classDescriptor.getModality() == Modality.FINAL && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
+            if (member != null && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
                 trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));
             }
         }

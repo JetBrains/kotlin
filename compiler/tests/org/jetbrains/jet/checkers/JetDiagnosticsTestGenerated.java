@@ -3889,6 +3889,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("openMemberInEnum.kt")
+            public void testOpenMemberInEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/openMemberInEnum.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("starImportNestedClassAndEntries.kt")
             public void testStarImportNestedClassAndEntries() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/starImportNestedClassAndEntries.kt");
