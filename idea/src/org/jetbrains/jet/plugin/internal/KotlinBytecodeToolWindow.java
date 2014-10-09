@@ -113,7 +113,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 }
                 state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
                                             exhaust.getModuleDescriptor(), exhaust.getBindingContext(),
-                                            Collections.singletonList(jetFile), true, true,
+                                            Collections.singletonList(jetFile), !enableAssertions.isSelected(), !enableAssertions.isSelected(),
                                             GenerationState.GenerateClassFilter.GENERATE_ALL,
                                             !enableInline.isSelected(), !enableOptimization.isSelected(), null, null,
                                             DiagnosticSink.DO_NOTHING, null);
@@ -182,6 +182,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     private final ToolWindow toolWindow;
     private final JCheckBox enableInline;
     private final JCheckBox enableOptimization;
+    private final JCheckBox enableAssertions;
 
     public KotlinBytecodeToolWindow(Project project, ToolWindow toolWindow) {
         super(new BorderLayout());
@@ -192,14 +193,16 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 EditorFactory.getInstance().createDocument(""), project, JavaFileType.INSTANCE, true);
         add(myEditor.getComponent());
 
-        JPanel optionPanel = new JPanel(new BorderLayout());
+        JPanel optionPanel = new JPanel(new FlowLayout());
         add(optionPanel, BorderLayout.NORTH);
 
         /*TODO: try to extract default parameter from compiler options*/
         enableInline = new JCheckBox("Enable inline", false);
         enableOptimization = new JCheckBox("Enable optimization", true);
-        optionPanel.add(enableInline, BorderLayout.WEST);
-        optionPanel.add(enableOptimization, BorderLayout.CENTER);
+        enableAssertions = new JCheckBox("Enable assertions", true);
+        optionPanel.add(enableInline);
+        optionPanel.add(enableOptimization);
+        optionPanel.add(enableAssertions);
 
         new InfinitePeriodicalTask(UPDATE_DELAY, Alarm.ThreadToUse.SWING_THREAD, this, new Computable<LongRunningReadTask>() {
             @Override
