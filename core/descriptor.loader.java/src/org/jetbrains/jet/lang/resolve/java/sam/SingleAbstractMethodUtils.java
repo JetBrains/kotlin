@@ -339,6 +339,12 @@ public class SingleAbstractMethodUtils {
                 return true;
             }
             for (JavaMethod method : javaClass.getMethods()) {
+
+                //skip java 8 default methods
+                if (!method.isAbstract()) {
+                    continue;
+                }
+
                 if (DescriptorResolverUtils.isObjectMethod(method)) { // e.g., ignore toString() declared in interface
                     continue;
                 }
