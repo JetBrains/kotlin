@@ -17,10 +17,8 @@
 package org.jetbrains.jet.codegen.inline;
 
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -31,7 +29,6 @@ import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode;
 
-import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -69,22 +66,7 @@ public class AnonymousObjectTransformer {
         this.oldObjectType = Type.getObjectType(objectInternalName);
         this.newLambdaType = newLambdaType;
 
-        //try to find just compiled classes then in dependencies
-        try {
-            OutputFile outputFile = state.getFactory().get(objectInternalName + ".class");
-            if (outputFile != null) {
-                reader = new ClassReader(outputFile.asByteArray());
-            } else {
-                VirtualFile file = InlineCodegenUtil.findVirtualFile(state.getProject(), objectInternalName);
-                if (file == null) {
-                    throw new RuntimeException("Couldn't find virtual file for " + objectInternalName);
-                }
-                reader = new ClassReader(file.contentsToByteArray());
-            }
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        reader = InlineCodegenUtil.buildClassReaderByInternalName(state, objectInternalName);
     }
 
     private void buildInvokeParamsFor(@NotNull ParametersBuilder builder, @NotNull MethodNode node) {
