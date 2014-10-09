@@ -222,6 +222,7 @@
 
         <kotlin2js output="${output}/${compiled.stdlib.js}" main="noCall">
             <src>
+                <fileset refid="kotlin.builtin.files" />
                 <resources refid="js.lib.files" />
             </src>
         </kotlin2js>
