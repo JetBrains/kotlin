@@ -17,9 +17,13 @@
 package org.jetbrains.jet.completion;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.TestMetadata;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.junit.runner.RunWith;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.test.InnerTestClasses;
+import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -62,6 +66,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     
     public void testAllFilesPresentInKeywords() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/keywords"), Pattern.compile("^(.+)\\.kt$"), false);
+    }
+    
+    @TestMetadata("CommaExpected.kt")
+    public void testCommaExpected() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/CommaExpected.kt");
+        doTest(fileName);
     }
     
     @TestMetadata("InArgumentList.kt")
