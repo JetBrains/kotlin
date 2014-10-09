@@ -3775,6 +3775,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("enumEntryInAbstractEnum.kt")
+            public void testEnumEntryInAbstractEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumEntryInAbstractEnum.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("enumInheritance.kt")
             public void testEnumInheritance() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumInheritance.kt");
