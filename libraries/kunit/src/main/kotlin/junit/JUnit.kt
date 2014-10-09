@@ -8,6 +8,10 @@ class JUnitAsserter : Asserter {
         Assert.assertEquals(message, expected, actual)
     }
 
+    override fun assertNotEquals(message : String, illegal : Any?, actual : Any?) {
+        Assert.assertNotEquals(message, illegal, actual)
+    }
+
     override fun assertNotNull(message : String, actual : Any?) {
         Assert.assertNotNull(message, actual)
     }
