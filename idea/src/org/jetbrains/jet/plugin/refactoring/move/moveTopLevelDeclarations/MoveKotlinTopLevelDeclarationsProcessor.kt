@@ -72,16 +72,32 @@ import org.jetbrains.jet.plugin.refactoring.move.postProcessMoveUsages
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.plugin.refactoring.move.MoveRenameUsageInfoForExtension
+import org.jetbrains.jet.lang.psi.JetDeclaration
+
+trait Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetNamedDeclaration {
+    object Default: Mover {
+        [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
+        override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile): JetNamedDeclaration {
+            val newElement = targetFile.add(originalElement) as JetNamedDeclaration
+            originalElement.delete()
+            return newElement
+        }
+    }
+}
 
 public class MoveKotlinTopLevelDeclarationsOptions(
         val elementsToMove: Collection<JetNamedDeclaration>,
         val moveTarget: KotlinMoveTarget,
         val searchInCommentsAndStrings: Boolean = true,
         val searchInNonCode: Boolean = true,
+        val updateInternalReferences: Boolean = true,
         val moveCallback: MoveCallback? = null
 )
 
-public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val options: MoveKotlinTopLevelDeclarationsOptions) : BaseRefactoringProcessor(project) {
+public class MoveKotlinTopLevelDeclarationsProcessor(
+        val project: Project,
+        val options: MoveKotlinTopLevelDeclarationsOptions,
+        val mover: Mover = Mover.Default) : BaseRefactoringProcessor(project) {
     class object {
         private val LOG: Logger = Logger.getInstance(javaClass<MoveKotlinTopLevelDeclarationsProcessor>())
 
@@ -100,7 +116,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
         )
     }
 
-    override fun findUsages(): Array<UsageInfo> {
+    public override fun findUsages(): Array<UsageInfo> {
         val newPackageName = options.moveTarget.packageWrapper?.getQualifiedName() ?: ""
 
         fun collectUsages(): List<UsageInfo> {
@@ -232,26 +248,23 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
             val targetFile =
                     if (targetPsi is PsiDirectory) {
                         val existingFile = if (targetPsi != file!!.getContainingDirectory()) targetPsi.findFile(file.getName()) else null
-                        val newFile = existingFile ?: declaration.getFileNameAfterMove()?.let {
-                            fileName ->
-                            createKotlinFile(fileName, targetPsi)
-                        }
-
-                        newFile
+                        existingFile ?: declaration.getFileNameAfterMove()?.let {createKotlinFile(it, targetPsi)}
                     }
                     else targetPsi
 
             assert(targetFile is JetFile, "Couldn't create Koltin file for: ${declaration.javaClass}: ${declaration.getText()}")
+            targetFile as JetFile
 
-            val packageNameInfo = PackageNameInfo(file!!.getPackageFqName(), (targetFile as JetFile).getPackageFqName())
-            val (usagesToProcessLater, usagesToProcessNow) = declaration
-                    .getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo)
-                    .partition { it is MoveRenameUsageInfoForExtension }
-            postProcessMoveUsages(usagesToProcessNow, shorteningMode = ShorteningMode.NO_SHORTENING)
-            usagesToProcessAfterMove.addAll(usagesToProcessLater)
+            if (options.updateInternalReferences) {
+                val packageNameInfo = PackageNameInfo(file!!.getPackageFqName(), targetFile.getPackageFqName())
+                val (usagesToProcessLater, usagesToProcessNow) = declaration
+                        .getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo)
+                        .partition { it is MoveRenameUsageInfoForExtension }
+                postProcessMoveUsages(usagesToProcessNow, shorteningMode = ShorteningMode.NO_SHORTENING)
+                usagesToProcessAfterMove.addAll(usagesToProcessLater)
+            }
 
-            val newElement = targetFile.add(declaration) as JetNamedDeclaration
-            declaration.delete()
+            val newElement = mover(declaration, targetFile)
 
             newElement.addToShorteningWaitSet()
 
@@ -292,6 +305,10 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
     override fun performPsiSpoilingRefactoring() {
         nonCodeUsages?.let { nonCodeUsages -> RenameUtil.renameNonCodeUsages(myProject, nonCodeUsages) }
         options.moveCallback?.refactoringCompleted()
+    }
+
+    fun execute(usages: List<UsageInfo>) {
+        execute(usages.copyToArray())
     }
 
     override fun getCommandName(): String = REFACTORING_NAME

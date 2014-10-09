@@ -15,7 +15,21 @@ fun test() {
     c.foo()
 }
 
+fun Test.test() {
+    a.foo()
+    foo()
+    c.foo()
+}
+
 var TEST: String
+    get() = a.FOO + FOO + c.FOO
+    set(value: String) {
+        a.FOO = value
+        FOO = value
+        c.FOO = value
+    }
+
+var Test.TEST: String
     get() = a.FOO + FOO + c.FOO
     set(value: String) {
         a.FOO = value

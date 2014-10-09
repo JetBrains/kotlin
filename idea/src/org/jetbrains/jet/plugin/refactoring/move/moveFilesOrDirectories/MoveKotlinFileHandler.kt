@@ -24,59 +24,27 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.jet.lang.psi.JetFile
-import java.util.ArrayList
-import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.refactoring.util.MoveRenameUsageInfo
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiReference
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
-import com.intellij.openapi.util.Key
-import org.jetbrains.jet.plugin.refactoring.getAndRemoveCopyableUserData
 import org.jetbrains.jet.lang.psi.psiUtil.getPackage
-import org.jetbrains.jet.plugin.references.JetReference
-import org.jetbrains.jet.asJava.toLightElements
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.plugin.search.usagesSearch.descriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import com.intellij.refactoring.util.TextOccurrencesUtil
-import java.util.Collections
 import org.jetbrains.jet.plugin.refactoring.move.PackageNameInfo
-import org.jetbrains.jet.plugin.search.projectScope
-import org.jetbrains.jet.plugin.search.fileScope
-import org.jetbrains.jet.plugin.search.minus
 import org.jetbrains.jet.plugin.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
 import org.jetbrains.jet.plugin.refactoring.move.postProcessMoveUsages
-import org.jetbrains.jet.plugin.codeInsight.addToShorteningWaitSet
+import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
+import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
+import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.DeferredJetFileKotlinMoveTarget
+import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.Mover
+import org.jetbrains.jet.plugin.codeInsight.ensureElementsToShortenIsEmptyBeforeRefactoring
 
 public class MoveKotlinFileHandler : MoveFileHandler() {
-    class object {
-        private val LOG = Logger.getInstance(javaClass<MoveKotlinFileHandler>())
+    private var packageNameInfo: PackageNameInfo? = null
+    private var declarationMoveProcessor: MoveKotlinTopLevelDeclarationsProcessor? = null
 
-        class MoveRenameKotlinUsageInfo(
-                reference: JetSimpleNameReference,
-                range: TextRange,
-                referencedElement: JetDeclaration,
-                val newFqName: FqName
-        ) : MoveRenameUsageInfo(reference.getElement(), reference, range.getStartOffset(), range.getEndOffset(), referencedElement, false) {
-            val jetReference: JetSimpleNameReference get() = getReference() as JetSimpleNameReference
-        }
-
-        class MoveRenameJavaUsageInfo(
-                reference: PsiReference,
-                range: TextRange,
-                referencedElement: JetDeclaration,
-                val lightElementIndex: Int
-        ) : MoveRenameUsageInfo(reference.getElement(), reference, range.getStartOffset(), range.getEndOffset(), referencedElement, false) {
-            val jetDeclaration: JetDeclaration get() = getReferencedElement() as JetDeclaration
-        }
-
-        private val PACKAGE_NAME_INFO_KEY =
-                Key.create<PackageNameInfo>("${javaClass<MoveKotlinFileHandler>().getCanonicalName()}.PACKAGE_NAME_INFO_KEY")
+    private fun clearState() {
+        packageNameInfo = null
+        declarationMoveProcessor = null
     }
 
     private fun JetFile.packageMatchesDirectory(): Boolean {
@@ -88,95 +56,52 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         return !JavaProjectRootsUtil.isOutsideJavaSourceRoot(element)
     }
 
-    override fun prepareMovedFile(file: PsiFile, moveDestination: PsiDirectory, oldToNewMap: Map<PsiElement, PsiElement>) {
-        if (file is JetFile && file.packageMatchesDirectory()) {
-            val newPackage = moveDestination.getPackage()
-            if (newPackage != null) {
-                file.putCopyableUserData(
-                        PACKAGE_NAME_INFO_KEY,
-                        PackageNameInfo(file.getPackageFqName(), FqName(newPackage.getQualifiedName()))
-                )
-            }
-        }
-    }
-
     override fun findUsages(
             psiFile: PsiFile,
             newParent: PsiDirectory,
             searchInComments: Boolean,
             searchInNonJavaFiles: Boolean
     ): List<UsageInfo>? {
+        clearState()
+
         if (psiFile !is JetFile || !psiFile.packageMatchesDirectory()) return null
 
+        val newPackage = newParent.getPackage()
+        if (newPackage == null) return null
+
+        val packageNameInfo = PackageNameInfo(psiFile.getPackageFqName(), FqName(newPackage.getQualifiedName()))
         val project = psiFile.getProject()
-        val newPackageName = newParent.getPackage()?.getQualifiedName() ?: ""
 
-        val searchScope = project.projectScope() - psiFile.fileScope()
-        return psiFile.getDeclarations().flatMap { declaration ->
-            val name = (declaration as? JetNamedDeclaration)?.getName()
-            if (name != null) {
-                val newFqName = StringUtil.getQualifiedName(newPackageName, name)!!
-
-                val results = ReferencesSearch.search(declaration, searchScope, false)
-                        .toSet()
-                        .mapTo(ArrayList<UsageInfo?>()) { ref ->
-                            val range = ref.getRangeInElement()!!
-
-                            when (ref) {
-                                is JetSimpleNameReference ->
-                                    MoveRenameKotlinUsageInfo(ref, range, declaration, FqName(newFqName))
-                                is JetReference ->
-                                    // Can't rebind other JetReferences
-                                    null
-                                else -> {
-                                    val lightElementWithIndex =
-                                            declaration.toLightElements().withIndices().find { p -> ref.isReferenceTo(p.second) }
-                                    if (lightElementWithIndex != null && lightElementWithIndex.first >= 0) {
-                                        MoveRenameJavaUsageInfo(ref, range, declaration, lightElementWithIndex.first)
-                                    }
-                                    else null
-                                }
-                            }
-                        }
-                        .filterNotNull()
-                if (declaration is JetClassOrObject) {
-                    declaration.descriptor?.let { DescriptorUtils.getFqName(it).asString() }?.let { stringToSearch ->
-                        TextOccurrencesUtil.findNonCodeUsages(
-                                declaration, stringToSearch, searchInComments, searchInNonJavaFiles, newFqName, results
-                        )
-                    }
+        val declarationMoveProcessor = MoveKotlinTopLevelDeclarationsProcessor(
+                project,
+                MoveKotlinTopLevelDeclarationsOptions(
+                        elementsToMove = psiFile.getDeclarations().filterIsInstance(javaClass<JetNamedDeclaration>()),
+                        moveTarget = DeferredJetFileKotlinMoveTarget(project, packageNameInfo.newPackageName) {
+                            MoveFilesOrDirectoriesUtil.doMoveFile(psiFile, newParent)
+                            newParent.findFile(psiFile.getName()) as? JetFile
+                        },
+                        updateInternalReferences = false
+                ),
+                object: Mover {
+                    [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
+                    override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile): JetNamedDeclaration = originalElement
                 }
+        )
 
-                results
-            }
-            else Collections.emptyList<UsageInfo>()
-        }
+        this.packageNameInfo = packageNameInfo
+        this.declarationMoveProcessor = declarationMoveProcessor
+
+        return declarationMoveProcessor.findUsages().toList()
     }
 
-    override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>?) {
-        usageInfos?.forEach { usage ->
-            when (usage) {
-                is MoveRenameKotlinUsageInfo -> {
-                    usage.jetReference.bindToFqName(usage.newFqName)
-                }
-                is MoveRenameJavaUsageInfo -> {
-                    val lightElements = usage.jetDeclaration.toLightElements()
-                    val index = usage.lightElementIndex
-                    if (index < lightElements.size) {
-                        usage.getReference()!!.bindToElement(lightElements[index])
-                    }
-                    else {
-                        LOG.error("Can't find light element with index $index for ${usage.jetDeclaration.getText()} ")
-                    }
-                }
-            }
-        }
+    override fun prepareMovedFile(file: PsiFile, moveDestination: PsiDirectory, oldToNewMap: Map<PsiElement, PsiElement>) {
+
     }
 
     override fun updateMovedFile(file: PsiFile) {
         if (file !is JetFile) return
 
-        val packageNameInfo = file.getAndRemoveCopyableUserData(PACKAGE_NAME_INFO_KEY)
+        val packageNameInfo = packageNameInfo
         if (packageNameInfo == null) return
 
         val usages = file.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo)
@@ -184,5 +109,20 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
 
         val packageRef = file.getPackageDirective()?.getLastReferenceExpression()?.getReference() as? JetSimpleNameReference
         packageRef?.bindToFqName(packageNameInfo.newPackageName)
+    }
+
+    override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>?) {
+        val processor = declarationMoveProcessor ?: return
+
+        val project = processor.project
+        val ensureElementsToShortenIsEmpty = project.ensureElementsToShortenIsEmptyBeforeRefactoring
+
+        try {
+            project.ensureElementsToShortenIsEmptyBeforeRefactoring = false
+            usageInfos?.let { processor.execute(it) }
+        } finally {
+            project.ensureElementsToShortenIsEmptyBeforeRefactoring = ensureElementsToShortenIsEmpty
+            clearState()
+        }
     }
 }

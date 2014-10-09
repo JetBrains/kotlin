@@ -22,6 +22,9 @@ import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import org.jetbrains.jet.lang.resolve.name.FqName
+import com.intellij.openapi.project.Project
+import kotlin.properties.Delegates
 
 public trait KotlinMoveTarget {
     val packageWrapper: PackageWrapper?
@@ -45,13 +48,29 @@ public class MoveDestinationKotlinMoveTarget(val moveDestination: MoveDestinatio
 }
 
 public class JetFileKotlinMoveTarget(val targetFile: JetFile): KotlinMoveTarget {
-    override val packageWrapper: PackageWrapper? = targetFile.getPackageName()?.let { packageName ->
+    override val packageWrapper: PackageWrapper? = targetFile.getPackageFqName().asString().let { packageName ->
         PackageWrapper(PsiManager.getInstance(targetFile.getProject()), packageName)
     }
 
     override fun getOrCreateTargetPsi(originalPsi: PsiElement): PsiElement? = targetFile
 
     override fun getTargetPsiIfExists(originalPsi: PsiElement): PsiElement? = targetFile
+
+    // No additional verification is needed
+    override fun verify(file: PsiFile): String? = null
+}
+
+public class DeferredJetFileKotlinMoveTarget(
+        project: Project,
+        val packageFqName: FqName,
+        createFile: () -> JetFile?): KotlinMoveTarget {
+    val createdFile: JetFile? by Delegates.lazy(createFile)
+
+    override val packageWrapper: PackageWrapper = PackageWrapper(PsiManager.getInstance(project), packageFqName.asString())
+
+    override fun getOrCreateTargetPsi(originalPsi: PsiElement): PsiElement? = createdFile
+
+    override fun getTargetPsiIfExists(originalPsi: PsiElement): PsiElement? = null
 
     // No additional verification is needed
     override fun verify(file: PsiFile): String? = null
