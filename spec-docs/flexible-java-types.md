@@ -15,6 +15,9 @@ This is a new kind of types. A flexible type consists of two inflexible ones: a 
 (Lower..Upper)
 ```
 
+For the special case where `Upper = Lower?`, i.e. `(T..T?)`, for brevity we write `T!`.
+
+
 This syntax is not supported in Kotlin. Flexible types are non-denotable.
 
 Invariants:
@@ -33,6 +36,58 @@ Let `T`, `L`, `U`, `A`, `B` be inflexible types. Symbol `|-` (turnstile) means "
 Least Upper Bound (aka "common supertype"):
 
 * `lub[(A..B), (C..D)] = (lub[A, C], lub[B, D])
+
+## Equality and Domination
+
+We have to distinguish syntactic and semantic equality of types.
+
+*Syntactic equality* (`==`, implemented by JetType.equals()) means exact match of desugared forms of types, thus `T` != `T!`.
+
+*Semantic equality* (`~~`, implemented by `JetTypeChecker.DEFAULT.equalTypes()`) (which is not an equality relation) means that one type may be used instead of another. Formally:
+
+```
+  T1 ~~ T2 <=> T1 :< T2 && T2 :< T1
+```
+
+thus, `T ~~ T!`, `List<T>! ~~ List<T!>`, etc.
+
+**Note** that `~~` is not transitive: `T ~~ T!` and `T! ~~ T?`, but `T !~ T!`.
+
+Syntactically equivalent types are indistinguishable, unlike some semantically equivalent types, and when we have a set of syntactically unequal,
+but semantically equal types, we can't pick any of them as a representative.
+
+Example:
+
+```
+class Inv<T>
+fun <T> foo(a: Inv<T>, b: Inv<T>): T
+
+fun test(a: Inv<Foo>, b: Inv<Foo!>) {
+    foo(a, b)
+}
+```
+
+In this case, the constraints on `T` are:
+ - `T = Foo`
+ - `T = Foo!`
+
+We have to choose a representative from the set `{ Foo, Foo! }`, and make it the resulting value for type variable `T`.
+Intuitively, `Foo!` is better than `Foo` in this case, but there can be trickier cases as well:
+- `{ List<Foo!>, List<Foo>! }`
+- `{ Foo<Bar!, Bar>, Foo<Bar, Bar!>! }`
+
+The latter case suggests that we need to find a *common dominating type* for a set of types, which is a non-trivial operation.
+
+Let's say that `B` is dominated by `A` and write `B <~ A`, iff
+
+- `A ~~ B`
+- at least one of the following holds
+  - `A == B`
+  - `A = (Al..Au)`, `B = (Bl..Bu)` where `Bl <~ Al`, `Bu <~ Au`
+  - `A == B!`
+  - `A = C<Pa>` or `A = C<Pa>!`, `B = C<Pb>` and `Pb <~ Pa` (for many arguments, analogously)
+  - `A = (Sub<Psub>..Super<Psub>)`, `B = Middle<Pmid>` and
+
 
 
 ## Loading Java Types
