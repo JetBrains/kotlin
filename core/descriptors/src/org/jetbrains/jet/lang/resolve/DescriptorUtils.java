@@ -401,4 +401,8 @@ public class DescriptorUtils {
                builtIns.getNumber().getDefaultType().equals(type) ||
                builtIns.getAnyType().equals(type);
     }
+
+    public static boolean classCanHaveAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
+        return classDescriptor.getModality() == Modality.ABSTRACT || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
+    }
 }

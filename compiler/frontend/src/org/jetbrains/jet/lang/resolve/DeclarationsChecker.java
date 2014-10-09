@@ -35,6 +35,7 @@ import java.util.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE_PARAMETER;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.classCanHaveAbstractMembers;
 
 public class DeclarationsChecker {
     @NotNull
@@ -385,7 +386,7 @@ public class DeclarationsChecker {
         ASTNode abstractNode = modifierList != null ? modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD) : null;
 
         if (abstractNode != null) { //has abstract modifier
-            if (!(classDescriptor.getModality() == Modality.ABSTRACT) && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
+            if (!classCanHaveAbstractMembers(classDescriptor)) {
                 String name = property.getName();
                 trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor));
                 return;
@@ -489,9 +490,7 @@ public class DeclarationsChecker {
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
             boolean inTrait = classDescriptor.getKind() == ClassKind.TRAIT;
-            boolean inEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
-            boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
-            if (hasAbstractModifier && !inAbstractClass && !inEnum) {
+            if (hasAbstractModifier && !classCanHaveAbstractMembers(classDescriptor)) {
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName().asString(), classDescriptor));
             }
             if (hasAbstractModifier && inTrait) {
