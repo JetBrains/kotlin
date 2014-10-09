@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.types.JetTypeImpl
 import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
 
 private fun JetType.contains(inner: JetType): Boolean {
-    return this == inner || getArguments().any { inner in it.getType() }
+    return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
 }
 
 private fun DeclarationDescriptor.render(
@@ -167,7 +167,7 @@ private class JetTypeSubstitution(public val forType: JetType, public val byType
 
 private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Variance): JetType {
     if (when (variance) {
-        Variance.INVARIANT      -> this == substitution.forType
+        Variance.INVARIANT      -> JetTypeChecker.DEFAULT.equalTypes(this, substitution.forType)
         Variance.IN_VARIANCE    -> JetTypeChecker.DEFAULT.isSubtypeOf(this, substitution.forType)
         Variance.OUT_VARIANCE   -> JetTypeChecker.DEFAULT.isSubtypeOf(substitution.forType, this)
     }) {
