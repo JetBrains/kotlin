@@ -12,3 +12,5 @@ class Some {
     object NamedObjectInClassObject
   }
 }
+
+// ALLOW_AST_ACCESS
