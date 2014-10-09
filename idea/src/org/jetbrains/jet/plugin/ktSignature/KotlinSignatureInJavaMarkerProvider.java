@@ -155,6 +155,10 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
                 @Nullable
                 @Override
                 public ActionGroup getPopupMenuActions() {
+                    if (getNavigationHandler() == null) {
+                        return null;
+                    }
+
                     PsiModifierListOwner element = getElement();
                     assert element != null;
 
