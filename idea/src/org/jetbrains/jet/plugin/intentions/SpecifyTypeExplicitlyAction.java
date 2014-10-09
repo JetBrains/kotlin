@@ -101,7 +101,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             setText(JetBundle.message("specify.type.explicitly.add.return.type.action.name"));
         }
         else if (declaration instanceof JetParameter && ((JetParameter) declaration).isLoopParameter()) {
-            if (((JetParameter) declaration).getTypeReference() != null) {
+            if (declaration.getTypeReference() != null) {
                 setText(JetBundle.message("specify.type.explicitly.remove.action.name"));
                 return true;
             }
