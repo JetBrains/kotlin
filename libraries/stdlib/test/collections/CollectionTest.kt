@@ -30,10 +30,9 @@ class CollectionTest {
         assertEquals(2, foo.size)
         assertEquals(arrayListOf("foo", "bar"), foo)
 
-//        TODO uncomment this when KT-2468 will be fixed
-//        assertTrue {
-//            foo is List<String>
-//        }
+        assertTrue {
+            foo is List<String>
+        }
     }
 
     test fun mapNotNull() {
@@ -42,10 +41,9 @@ class CollectionTest {
         assertEquals(2, foo.size)
         assertEquals(arrayListOf(3, 3), foo)
 
-//        TODO uncomment this when KT-2468 will be fixed
-//        assertTrue {
-//            foo is List<Int>
-//        }
+        assertTrue {
+            foo is List<Int>
+        }
     }
 
     test fun filterIntoSet() {

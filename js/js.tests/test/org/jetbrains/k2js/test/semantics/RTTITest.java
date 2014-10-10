@@ -43,4 +43,12 @@ public class RTTITest extends SingleFileTranslationTest {
     public void testNotIsOtherClass() throws Exception {
         fooBoxTest();
     }
+
+    public void testCollectionClassesIsCheck() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testStdlibEmptyListClass() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
