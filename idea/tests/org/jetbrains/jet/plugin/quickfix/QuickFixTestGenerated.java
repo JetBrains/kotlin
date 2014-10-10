@@ -1799,12 +1799,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
-        @TestMetadata("beforeValVarFromParameters.kt")
-        public void testValVarFromParameters() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/beforeValVarFromParameters.kt");
-            doTest(fileName);
-        }
-        
     }
     
     @TestMetadata("idea/testData/quickfix/modifiers")
@@ -3746,7 +3740,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     
     @TestMetadata("idea/testData/quickfix/variables")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Variables.ChangeMutability.class, Variables.ChangeToBackingField.class, Variables.ChangeToFunctionInvocation.class, Variables.ChangeToPropertyName.class})
+    @InnerTestClasses({Variables.ChangeMutability.class, Variables.ChangeToBackingField.class, Variables.ChangeToFunctionInvocation.class, Variables.ChangeToPropertyName.class, Variables.RemoveValVarFromParameter.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Variables extends AbstractQuickFixTest {
         public void testAllFilesPresentInVariables() throws Exception {
@@ -3878,6 +3872,40 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("beforeInaccessibleBackingFieldQualified.kt")
             public void testInaccessibleBackingFieldQualified() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToPropertyName/beforeInaccessibleBackingFieldQualified.kt");
+                doTest(fileName);
+            }
+            
+        }
+        
+        @TestMetadata("idea/testData/quickfix/variables/removeValVarFromParameter")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class RemoveValVarFromParameter extends AbstractQuickFixTest {
+            public void testAllFilesPresentInRemoveValVarFromParameter() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/removeValVarFromParameter"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("beforeCatchParameter.kt")
+            public void testCatchParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/removeValVarFromParameter/beforeCatchParameter.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeConstructorParameter.kt")
+            public void testConstructorParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/removeValVarFromParameter/beforeConstructorParameter.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeFunParameter.kt")
+            public void testFunParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/removeValVarFromParameter/beforeFunParameter.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("beforeLoopParameter.kt")
+            public void testLoopParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/removeValVarFromParameter/beforeLoopParameter.kt");
                 doTest(fileName);
             }
             

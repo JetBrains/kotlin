@@ -20,69 +20,52 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
 
-import java.util.Collection;
+public class RemoveValVarFromParametersFix extends JetIntentionAction<JetParameter> {
+    public RemoveValVarFromParametersFix(@NotNull JetParameter element) {
+        super(element);
+    }
 
-public class RemoveValVarFromParametersFix implements IntentionAction {
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("remove.val.var.from.parameter");
+        ASTNode valOrVarNode = element.getValOrVarNode();
+        return JetBundle.message("remove.val.var.from.parameter", valOrVarNode != null ? valOrVarNode.getText() : "null");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("remove.val.var.from.parameter");
+        return JetBundle.message("remove.val.var.from.parameter", "val/var");
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return file.getManager().isInProject(file);
+    protected void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
+        ASTNode valOrVarNode = element.getValOrVarNode();
+        if (valOrVarNode == null) return;
+
+        ASTNode whitespace = valOrVarNode.getTreeNext();
+        assert whitespace.getElementType() == TokenType.WHITE_SPACE;
+
+        element.getNode().removeRange(valOrVarNode, whitespace.getTreeNext());
     }
 
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) {
-        // TODO after M6, this quick fix should remove val/var only for current parameter
 
-        Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(project);
-        for (JetFile jetFile : files) {
-            jetFile.acceptChildren(new JetVisitorVoid() {
-                @Override
-                public void visitParameter(@NotNull JetParameter parameter) {
-                    visitJetElement(parameter); // run recursively for children
-
-                    PsiElement parent = parameter.getParent();
-                    if (parent != null && parent.getParent() instanceof JetClass) {
-                        return; // constructor parameter
-                    }
-
-                    ASTNode valOrVarNode = parameter.getValOrVarNode();
-                    if (valOrVarNode != null) {
-                        ASTNode whitespace = valOrVarNode.getTreeNext();
-                        assert whitespace.getElementType() == TokenType.WHITE_SPACE;
-
-                        parameter.getNode().removeRange(valOrVarNode, whitespace.getTreeNext());
-                    }
-                }
-
-                @Override
-                public void visitJetElement(@NotNull JetElement element) {
-                    element.acceptChildren(this);
-                }
-            });
-        }
-    }
-
-    @Override
-    public boolean startInWriteAction() {
-        return true;
+    public static JetSingleIntentionActionFactory createFactory() {
+        return new JetSingleIntentionActionFactory() {
+            @Nullable
+            @Override
+            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
+                return new RemoveValVarFromParametersFix((JetParameter) diagnostic.getPsiElement().getParent());
+            }
+        };
     }
 }
