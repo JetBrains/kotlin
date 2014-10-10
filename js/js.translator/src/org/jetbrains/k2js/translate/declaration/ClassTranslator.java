@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -148,15 +147,7 @@ public final class ClassTranslator extends AbstractTranslator {
             invocationArguments.add(function);
         }
 
-        generateTraitMethods(properties);
-
-        if (!DescriptorUtils.isTrait(descriptor)) {
-            for (DeclarationDescriptor memberDescriptor : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
-                if (memberDescriptor instanceof FunctionDescriptor) {
-                    generateBridges((FunctionDescriptor) memberDescriptor, properties);
-                }
-            }
-        }
+        generatedBridgeMethods(properties);
 
         boolean hasStaticProperties = !staticProperties.isEmpty();
         if (!properties.isEmpty() || hasStaticProperties) {
@@ -262,15 +253,33 @@ public final class ClassTranslator extends AbstractTranslator {
         return ExpressionPackage.withCapturedParameters(fun, funContext, outerClassContext, descriptor);
     }
 
-    private void generateBridges(
-            @NotNull FunctionDescriptor descriptor,
-            @NotNull List<JsPropertyInitializer> properties
-    ) {
-        Set<Bridge<FunctionDescriptor>> bridgesToGenerate =
-                BridgesPackage.generateBridgesForFunctionDescriptor(descriptor, UtilsPackage.<FunctionDescriptor>getID());
+    private void generatedBridgeMethods(@NotNull List<JsPropertyInitializer> properties) {
+        if (isTrait()) return;
 
-        for (Bridge<FunctionDescriptor> bridge : bridgesToGenerate) {
-            generateBridge(bridge, properties);
+        generateBridgesToTraitImpl(properties);
+
+        generateOtherBridges(properties);
+    }
+
+    private void generateBridgesToTraitImpl(List<JsPropertyInitializer> properties) {
+        for(Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getTraitMethods(descriptor).entrySet()) {
+            if (!areNamesEqual(entry.getKey(), entry.getValue())) {
+                properties.add(generateDelegateCall(entry.getValue(), entry.getKey(), JsLiteral.THIS, context()));
+            }
+        }
+    }
+
+    private void generateOtherBridges(List<JsPropertyInitializer> properties) {
+        for (DeclarationDescriptor memberDescriptor : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            if (memberDescriptor instanceof FunctionDescriptor) {
+                FunctionDescriptor functionDescriptor = (FunctionDescriptor) memberDescriptor;
+                Set<Bridge<FunctionDescriptor>> bridgesToGenerate =
+                        BridgesPackage.generateBridgesForFunctionDescriptor(functionDescriptor, UtilsPackage.<FunctionDescriptor>getID());
+
+                for (Bridge<FunctionDescriptor> bridge : bridgesToGenerate) {
+                    generateBridge(bridge, properties);
+                }
+            }
         }
     }
 
@@ -287,16 +296,6 @@ public final class ClassTranslator extends AbstractTranslator {
             !toDescriptor.getKind().isReal()) return;
 
         properties.add(generateDelegateCall(fromDescriptor, toDescriptor, JsLiteral.THIS, context()));
-    }
-
-    private void generateTraitMethods(@NotNull List<JsPropertyInitializer> properties) {
-        if (isTrait()) return;
-
-        for(Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getTraitMethods(descriptor).entrySet()) {
-            if (!areNamesEqual(entry.getKey(), entry.getValue())) {
-                properties.add(generateDelegateCall(entry.getValue(), entry.getKey(), JsLiteral.THIS, context()));
-            }
-        }
     }
 
     private boolean areNamesEqual(@NotNull FunctionDescriptor first, @NotNull FunctionDescriptor second) {
