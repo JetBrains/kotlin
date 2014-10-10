@@ -39,7 +39,7 @@ import javax.swing.*;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.OverrideResolver.filterOutOverridden;
-import static org.jetbrains.jet.lang.resolve.OverrideResolver.getAllOverriddenDeclarations;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getAllOverriddenDeclarations;
 import static org.jetbrains.jet.renderer.DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES;
 
 class KotlinStructureElementPresentation implements ColoredItemPresentation, LocationPresentation {

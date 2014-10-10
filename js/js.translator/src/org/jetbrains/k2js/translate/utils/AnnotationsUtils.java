@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -80,7 +80,7 @@ public final class AnnotationsUtils {
             isOverride((CallableMemberDescriptor) declarationDescriptor)) {
 
             Set<CallableMemberDescriptor> overriddenDeclarations =
-                    OverrideResolver.getAllOverriddenDeclarations((CallableMemberDescriptor) declarationDescriptor);
+                    DescriptorUtils.getAllOverriddenDeclarations((CallableMemberDescriptor) declarationDescriptor);
 
             descriptors = ContainerUtil.mapNotNull(overriddenDeclarations, new Function<CallableMemberDescriptor, DeclarationDescriptor>() {
                 @Override

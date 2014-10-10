@@ -685,7 +685,7 @@ public class JetTypeMapper {
         //noinspection ConstantConditions
         if (!KotlinBuiltIns.getInstance().isPrimitiveType(descriptor.getReturnType())) return false;
 
-        for (FunctionDescriptor overridden : OverrideResolver.getAllOverriddenDescriptors(descriptor)) {
+        for (FunctionDescriptor overridden : getAllOverriddenDescriptors(descriptor)) {
             //noinspection ConstantConditions
             if (!KotlinBuiltIns.getInstance().isPrimitiveType(overridden.getOriginal().getReturnType())) return true;
         }

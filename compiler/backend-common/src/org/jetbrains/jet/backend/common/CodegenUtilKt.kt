@@ -21,8 +21,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.types.JetType
 import kotlin.platform.platformStatic
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.resolve.OverrideResolver
 import org.jetbrains.jet.utils.keysToMapExceptNulls
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 public object CodegenUtilKt {
 
@@ -43,7 +43,7 @@ public object CodegenUtilKt {
             .keysToMapExceptNulls {
                 delegatingMember ->
 
-                val actualDelegates = OverrideResolver.getAllOverriddenDescriptors(delegatingMember)
+                val actualDelegates = DescriptorUtils.getAllOverriddenDescriptors(delegatingMember)
                         .filter { it.getContainingDeclaration() == toTrait }
                         .map {
                             overriddenDescriptor ->
@@ -53,7 +53,7 @@ public object CodegenUtilKt {
                             // this is the actual member of delegateExpressionType that we are delegating to
                             (scope.getFunctions(name) + scope.getProperties(name))
                                     .first {
-                                        (listOf(it) + OverrideResolver.getAllOverriddenDescriptors(it)).map {it.getOriginal()}.contains(overriddenDescriptor.getOriginal())
+                                        (listOf(it) + DescriptorUtils.getAllOverriddenDescriptors(it)).map { it.getOriginal() }.contains(overriddenDescriptor.getOriginal())
                                     }
                         }
                 assert(actualDelegates.size <= 1) { "Meny delegates found for $delegatingMember: $actualDelegates" }

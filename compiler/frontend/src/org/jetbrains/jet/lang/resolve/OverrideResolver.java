@@ -298,28 +298,10 @@ public class OverrideResolver {
         // As other code relies on no equal descriptors passed here, we guard against f == g, but this may not be necessary
         if (!f.equals(g) && DescriptorEquivalenceForOverrides.INSTANCE$.areEquivalent(f.getOriginal(), g.getOriginal())) return true;
         CallableDescriptor originalG = g.getOriginal();
-        for (D overriddenFunction : getAllOverriddenDescriptors(f)) {
+        for (D overriddenFunction : DescriptorUtils.getAllOverriddenDescriptors(f)) {
             if (DescriptorEquivalenceForOverrides.INSTANCE$.areEquivalent(originalG, overriddenFunction.getOriginal())) return true;
         }
         return false;
-    }
-
-    @NotNull
-    @SuppressWarnings("unchecked")
-    public static <D extends CallableDescriptor> Set<D> getAllOverriddenDescriptors(@NotNull D f) {
-        Set<D> result = new LinkedHashSet<D>();
-        collectAllOverriddenDescriptors((D) f.getOriginal(), result);
-        return result;
-    }
-
-    private static <D extends CallableDescriptor> void collectAllOverriddenDescriptors(@NotNull D current, @NotNull Set<D> result) {
-        if (result.contains(current)) return;
-        for (CallableDescriptor callableDescriptor : current.getOriginal().getOverriddenDescriptors()) {
-            @SuppressWarnings("unchecked")
-            D descriptor = (D) callableDescriptor;
-            collectAllOverriddenDescriptors(descriptor, result);
-            result.add(descriptor);
-        }
     }
 
     private static <T extends DeclarationDescriptor> MultiMap<Name, T> groupDescriptorsByName(Collection<T> properties) {
@@ -1000,30 +982,9 @@ public class OverrideResolver {
     }
 
     @NotNull
-    public static <D extends CallableMemberDescriptor> Set<D> getAllOverriddenDeclarations(@NotNull D memberDescriptor) {
-        Set<D> result = Sets.newHashSet();
-        for (CallableMemberDescriptor overriddenDeclaration : memberDescriptor.getOverriddenDescriptors()) {
-            CallableMemberDescriptor.Kind kind = overriddenDeclaration.getKind();
-            if (kind == DECLARATION) {
-                //noinspection unchecked
-                result.add((D) overriddenDeclaration);
-            }
-            else if (kind == DELEGATION || kind == FAKE_OVERRIDE || kind == SYNTHESIZED) {
-                //do nothing
-            }
-            else {
-                throw new AssertionError("Unexpected callable kind " + kind);
-            }
-            //noinspection unchecked
-            result.addAll(getAllOverriddenDeclarations((D) overriddenDeclaration));
-        }
-        return result;
-    }
-
-    @NotNull
     @ReadOnly
     public static <D extends CallableMemberDescriptor> Set<D> getDeepestSuperDeclarations(@NotNull D functionDescriptor) {
-        Set<D> overriddenDeclarations = getAllOverriddenDeclarations(functionDescriptor);
+        Set<D> overriddenDeclarations = DescriptorUtils.getAllOverriddenDeclarations(functionDescriptor);
         if (overriddenDeclarations.isEmpty()) {
             return Collections.singleton(functionDescriptor);
         }

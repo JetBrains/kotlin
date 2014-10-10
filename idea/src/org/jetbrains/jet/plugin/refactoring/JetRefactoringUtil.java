@@ -45,7 +45,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
@@ -55,7 +55,6 @@ import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
-import org.jetbrains.jet.plugin.util.UtilPackage;
 import org.jetbrains.jet.plugin.util.string.StringPackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -139,7 +138,7 @@ public class JetRefactoringUtil {
 
         Project project = declaration.getProject();
         Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor = new HashMap<PsiElement, CallableDescriptor>();
-        for (CallableDescriptor overriddenDescriptor : OverrideResolver.getAllOverriddenDescriptors(declarationDescriptor)) {
+        for (CallableDescriptor overriddenDescriptor : DescriptorUtils.getAllOverriddenDescriptors(declarationDescriptor)) {
             PsiElement overriddenDeclaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(project, overriddenDescriptor);
             if (PsiTreeUtil.instanceOf(overriddenDeclaration, JetNamedFunction.class, JetProperty.class, PsiMethod.class)) {
                 overriddenElementsToDescriptor.put(overriddenDeclaration, overriddenDescriptor);
