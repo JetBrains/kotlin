@@ -2615,12 +2615,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
-        @TestMetadata("abstractmethod.kt")
-        public void testAbstractmethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/abstractmethod.kt");
-            doTest(fileName);
-        }
-        
         public void testAllFilesPresentInEnum() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/enum"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -2700,6 +2694,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("objectInEnum.kt")
         public void testObjectInEnum() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/objectInEnum.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("openMethod.kt")
+        public void testOpenMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/openMethod.kt");
             doTest(fileName);
         }
         

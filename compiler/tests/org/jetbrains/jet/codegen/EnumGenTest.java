@@ -72,7 +72,7 @@ public class EnumGenTest extends CodegenTestCase {
     }
 
     public void testYesClassForComplexEnum() throws Exception {
-        loadFile("enum/abstractmethod.kt");
+        loadFile("enum/openMethod.kt");
         Class<?> cls = generateClass("IssueState");
         Field field = cls.getField("DEFAULT");
         assertEquals("IssueState", field.get(null).getClass().getName());
