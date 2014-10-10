@@ -8117,6 +8117,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("ea53340.kt")
+            public void testEa53340() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/ea53340.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("ErrorsOnIbjectExpressionsAsParameters.kt")
             public void testErrorsOnIbjectExpressionsAsParameters() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/ErrorsOnIbjectExpressionsAsParameters.kt");
