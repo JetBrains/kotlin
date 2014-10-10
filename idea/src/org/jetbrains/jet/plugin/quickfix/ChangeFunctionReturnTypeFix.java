@@ -61,7 +61,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
         renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
         if (element instanceof JetFunctionLiteral) {
             JetFunctionLiteralExpression functionLiteralExpression = PsiTreeUtil.getParentOfType(element, JetFunctionLiteralExpression.class);
-            assert functionLiteralExpression != null : "FunctionLiteral outside any FunctionLiteralExpression";
+            assert functionLiteralExpression != null : "FunctionLiteral outside any FunctionLiteralExpression: " +
+                                                       JetPsiUtil.getElementTextWithContext(element);
             changeFunctionLiteralReturnTypeFix = new ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, type);
         }
         else {
