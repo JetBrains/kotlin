@@ -441,7 +441,8 @@ public class SignaturesPropagationData {
 
         if (!(classifier instanceof ClassDescriptor)) {
             assert autoArguments.isEmpty() :
-                    "Unexpected type arguments when type constructor is not ClassDescriptor, type = " + autoType;
+                    "Unexpected type arguments when type constructor is not ClassDescriptor, type = " + autoType +
+                    ", classifier = " + classifier + ", classifier class = " + classifier.getClass();
             return autoArguments;
         }
 
