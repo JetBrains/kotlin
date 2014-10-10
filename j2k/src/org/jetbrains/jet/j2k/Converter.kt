@@ -72,7 +72,8 @@ public class Converter private(val project: Project,
     class object {
         private val LOG = Logger.getInstance("#org.jetbrains.jet.j2k.Converter")
 
-        public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope, referenceSearcher: ReferenceSearcher, postProcessor: PostProcessor?): Converter {
+        public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope,
+                          referenceSearcher: ReferenceSearcher, postProcessor: PostProcessor?): Converter {
             val state = State(null, { ExpressionVisitor(it) }, { StatementVisitor(it) }, null, null, null)
             return Converter(project, settings, conversionScope, referenceSearcher, postProcessor, state)
         }
@@ -184,81 +185,11 @@ public class Converter private(val project: Project,
     }
 
     fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
-        return AnonymousClassBody(convertBody(anonymousClass, null), anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false).assignPrototype(anonymousClass)
+        return AnonymousClassBody(ClassBodyConverter(anonymousClass, this, null).convertBody(),
+                                  anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false).assignPrototype(anonymousClass)
     }
 
-    private fun convertBody(psiClass: PsiClass, constructorConverter: ConstructorConverter?): ClassBody {
-        val membersToRemove = HashSet<PsiMember>()
-        val convertedMembers = LinkedHashMap<PsiMember, Member>()
-        for (element in psiClass.getChildren()) {
-            if (element is PsiMember) {
-                if (element is PsiAnnotationMethod) continue // converted in convertAnnotationType()
-
-                val converted = convertMember(element, membersToRemove, constructorConverter)
-                if (converted != null && !converted.isEmpty) {
-                    convertedMembers.put(element, converted)
-                }
-            }
-        }
-
-        for (member in membersToRemove) {
-            convertedMembers.remove(member)
-        }
-
-        val useClassObject = shouldGenerateClassObject(psiClass, convertedMembers)
-
-        val members = ArrayList<Member>()
-        val classObjectMembers = ArrayList<Member>()
-        val factoryFunctions = ArrayList<FactoryFunction>()
-        var primaryConstructorSignature: PrimaryConstructorSignature? = null
-        for ((psiMember, member) in convertedMembers) {
-            if (member is PrimaryConstructor) {
-                assert(primaryConstructorSignature == null)
-                primaryConstructorSignature = member.signature()
-                val initializer = member.initializer()
-                if (initializer != null) {
-                    members.add(initializer)
-                }
-            }
-            else if (member is FactoryFunction) {
-                factoryFunctions.add(member)
-            }
-            else if (useClassObject
-                    && (if (member is Class) shouldGenerateIntoClassObject(member) else psiMember.hasModifierProperty(PsiModifier.STATIC))) {
-                classObjectMembers.add(member)
-            }
-            else {
-                members.add(member)
-            }
-        }
-
-        val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
-        val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
-        return ClassBody(primaryConstructorSignature, members, classObjectMembers, factoryFunctions, lBrace, rBrace)
-    }
-
-    // do not convert private static methods into class object if possible
-    private fun shouldGenerateClassObject(psiClass: PsiClass, convertedMembers: Map<PsiMember, Member>): Boolean {
-        if (psiClass.isEnum()) return false
-
-        if (convertedMembers.values().any { it is Class && shouldGenerateIntoClassObject(it) }) return true
-
-        val members = convertedMembers.keySet().filter { !it.isConstructor() }
-        val classObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
-        val nestedClasses = members.filterIsInstance(javaClass<PsiClass>()).filter { it.hasModifierProperty(PsiModifier.STATIC) }
-        if (classObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
-            return nestedClasses.any { nestedClass -> classObjectMembers.any { referenceSearcher.findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
-        }
-        else {
-            return true
-        }
-    }
-
-    // we generate nested classes with factory functions into class object as a workaround until secondary constructors supported by Kotlin
-    private fun shouldGenerateIntoClassObject(nestedClass: Class)
-            = !nestedClass.modifiers.contains(Modifier.INNER) && nestedClass.body.factoryFunctions.isNotEmpty()
-
-    private fun convertMember(member: PsiMember, membersToRemove: MutableSet<PsiMember>, constructorConverter: ConstructorConverter?): Member? = when (member) {
+    fun convertMember(member: PsiMember, membersToRemove: MutableSet<PsiMember>, constructorConverter: ConstructorConverter?): Member? = when (member) {
         is PsiMethod -> convertMethod(member, membersToRemove, constructorConverter)
         is PsiField -> convertField(member)
         is PsiClass -> convertClass(member)
@@ -282,7 +213,7 @@ public class Converter private(val project: Project,
         val name = psiClass.declarationIdentifier()
 
         val constructorConverter = ConstructorConverter(psiClass, this)
-        var classBody = convertBody(psiClass, constructorConverter)
+        var classBody = ClassBodyConverter(psiClass, this, constructorConverter).convertBody()
         classBody = constructorConverter.postProcessConstructors(classBody)
 
         return when {
@@ -328,7 +259,7 @@ public class Converter private(val project: Project,
         val constructorSignature = PrimaryConstructorSignature(Annotations.Empty, Modifiers.Empty, parameterList).assignNoPrototype()
 
         // to convert fields and nested types - they are not allowed in Kotlin but we convert them and let user refactor code
-        var classBody = convertBody(psiClass, null)
+        var classBody = ClassBodyConverter(psiClass, this, null).convertBody()
         classBody = ClassBody(constructorSignature, classBody.members, classBody.classObjectMembers, listOf(), classBody.lBrace, classBody.rBrace)
 
         val annotationAnnotation = Annotation(Identifier("annotation").assignNoPrototype(), listOf(), false, false).assignNoPrototype()
@@ -376,7 +307,7 @@ public class Converter private(val project: Project,
         return converted.assignPrototype(field)
     }
 
-    fun variableTypeToDeclare(variable: PsiVariable, specifyAlways: Boolean, canChangeType: Boolean): Type? {
+    private fun variableTypeToDeclare(variable: PsiVariable, specifyAlways: Boolean, canChangeType: Boolean): Type? {
         fun convertType() = typeConverter.convertVariableType(variable)
 
         if (specifyAlways) return convertType()
