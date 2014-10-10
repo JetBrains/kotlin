@@ -5534,6 +5534,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("localFun.kt")
+            public void testLocalFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/localFun.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("nonVirtualMembersWithInline.kt")
             public void testNonVirtualMembersWithInline() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/nonVirtualMembersWithInline.kt");

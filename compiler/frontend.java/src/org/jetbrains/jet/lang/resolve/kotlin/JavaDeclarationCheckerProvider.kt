@@ -29,21 +29,39 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
+import org.jetbrains.jet.lang.descriptors.Visibilities
+import org.jetbrains.jet.lang.resolve.annotations.hasInlineAnnotation
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 public object JavaDeclarationCheckerProvider : AdditionalCheckerProvider {
 
-    override val annotationCheckers: List<AnnotationChecker> = listOf(PlatformStaticAnnotationChecker())
+    override val annotationCheckers: List<AnnotationChecker> = listOf(PlatformStaticAnnotationChecker(), LocalFunInlineChecker())
+}
+
+public class LocalFunInlineChecker : AnnotationChecker {
+
+    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+        if (descriptor.hasInlineAnnotation() &&
+            declaration is JetNamedFunction &&
+            descriptor is FunctionDescriptor &&
+            descriptor.getVisibility() == Visibilities.LOCAL) {
+            diagnosticHolder.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(declaration, declaration, descriptor))
+        }
+    }
 }
 
 public class PlatformStaticAnnotationChecker : AnnotationChecker {
 
-    override fun check(declaration: JetDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticSink) {
+    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor.hasPlatformStaticAnnotation()) {
             if (declaration is JetNamedFunction) {
                 val insideObject = DescriptorUtils.containerKindIs(descriptor, ClassKind.OBJECT)
                 val insideClassObject = DescriptorUtils.containerKindIs(descriptor, ClassKind.CLASS_OBJECT)
 
-                if (!insideObject && !(insideClassObject && DescriptorUtils.containerKindIs(descriptor.getContainingDeclaration(), ClassKind.CLASS))) {
+                if (!insideObject && !(insideClassObject && DescriptorUtils.containerKindIs(descriptor.getContainingDeclaration()!!, ClassKind.CLASS))) {
                     diagnosticHolder.report(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT.on(declaration, descriptor));
                 }
 

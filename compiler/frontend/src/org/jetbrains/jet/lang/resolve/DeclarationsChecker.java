@@ -52,7 +52,6 @@ public class DeclarationsChecker {
     @Inject
     public void setTrace(@NotNull BindingTrace trace) {
         this.trace = trace;
-        this.modifiersChecker = new ModifiersChecker(trace);
     }
 
     @Inject
@@ -63,6 +62,11 @@ public class DeclarationsChecker {
     @Inject
     public void setAdditionalCheckerProvider(@NotNull AdditionalCheckerProvider additionalCheckerProvider) {
         this.additionalCheckerProvider = additionalCheckerProvider;
+    }
+
+    @Inject
+    public void setModifiersChecker(@NotNull ModifiersChecker modifiersChecker) {
+        this.modifiersChecker = modifiersChecker;
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
@@ -90,7 +94,6 @@ public class DeclarationsChecker {
             }
 
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor);
-            runAnnotationCheckers(classOrObject, classDescriptor);
         }
 
         Map<JetNamedFunction, SimpleFunctionDescriptor> functions = bodiesResolveContext.getFunctions();
@@ -101,7 +104,6 @@ public class DeclarationsChecker {
             if (!bodiesResolveContext.completeAnalysisNeeded(function)) continue;
             checkFunction(function, functionDescriptor);
             modifiersChecker.checkModifiersForDeclaration(function, functionDescriptor);
-            runAnnotationCheckers(function, functionDescriptor);
         }
 
         Map<JetProperty, PropertyDescriptor> properties = bodiesResolveContext.getProperties();
@@ -112,7 +114,6 @@ public class DeclarationsChecker {
             if (!bodiesResolveContext.completeAnalysisNeeded(property)) continue;
             checkProperty(property, propertyDescriptor);
             modifiersChecker.checkModifiersForDeclaration(property, propertyDescriptor);
-            runAnnotationCheckers(property, propertyDescriptor);
         }
 
     }
@@ -573,12 +574,6 @@ public class DeclarationsChecker {
                     }
                 }
             }
-        }
-    }
-
-    private void runAnnotationCheckers(@NotNull JetDeclaration declaration, @NotNull MemberDescriptor descriptor) {
-        for (AnnotationChecker checker : additionalCheckerProvider.getAnnotationCheckers()) {
-            checker.check(declaration, descriptor, trace);
         }
     }
 }

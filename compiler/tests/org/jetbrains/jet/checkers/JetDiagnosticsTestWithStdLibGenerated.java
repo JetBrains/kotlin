@@ -124,6 +124,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 doTest(fileName);
             }
             
+            @TestMetadata("localFun.kt")
+            public void testLocalFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/localFun.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("property.kt")
             public void testProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/property.kt");
