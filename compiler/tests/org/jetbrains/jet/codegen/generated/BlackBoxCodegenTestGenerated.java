@@ -2715,6 +2715,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("superCallInEnumLiteral.kt")
+        public void testSuperCallInEnumLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/superCallInEnumLiteral.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("toString.kt")
         public void testToString() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/toString.kt");

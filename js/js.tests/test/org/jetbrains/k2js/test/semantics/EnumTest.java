@@ -42,4 +42,8 @@ public class EnumTest  extends SingleFileTranslationTest {
     public void testEnumInheritedFromTrait() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testSuperCallInEnumLiteral() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
