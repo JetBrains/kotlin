@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.Map;
 
@@ -95,8 +96,16 @@ public final class StandardClasses {
     private static void declareKotlinStandardClasses(@NotNull StandardClasses standardClasses) {
         standardClasses.declare().forFQ("kotlin.Iterator").kotlinClass("Iterator").methods("next").properties("hasNext");
 
-        standardClasses.declare().forFQ("kotlin.IntRange").kotlinClass("NumberRange")
-                .methods("iterator", "contains").properties("start", "end", "increment");
+        for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
+            if (type == PrimitiveType.CHAR || type == PrimitiveType.LONG) continue;
+
+            String typeName = type.getTypeName().asString();
+            standardClasses.declare().forFQ("kotlin." + typeName + "Range").kotlinClass("NumberRange")
+                    .methods("iterator", "contains").properties("start", "end", "increment");
+
+            standardClasses.declare().forFQ("kotlin." + typeName + "Progression").kotlinClass("NumberProgression")
+                    .methods("iterator", "contains").properties("start", "end", "increment");
+        }
 
         standardClasses.declare().forFQ("kotlin.LongRange").kotlinClass("LongRange")
                 .methods("iterator", "contains").properties("start", "end", "increment");
@@ -104,8 +113,6 @@ public final class StandardClasses {
         standardClasses.declare().forFQ("kotlin.CharRange").kotlinClass("CharRange")
                 .methods("iterator", "contains").properties("start", "end", "increment");
 
-        standardClasses.declare().forFQ("kotlin.IntProgression").kotlinClass("NumberProgression")
-                .methods("iterator", "contains").properties("start", "end", "increment");
 
         standardClasses.declare().forFQ("kotlin.LongProgression").kotlinClass("LongProgression")
                 .methods("iterator", "contains").properties("start", "end", "increment");
