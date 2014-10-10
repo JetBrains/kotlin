@@ -52,10 +52,9 @@ public class RemoveValVarFromParameterFix extends JetIntentionAction<JetParamete
         ASTNode valOrVarNode = element.getValOrVarNode();
         if (valOrVarNode == null) return;
 
-        ASTNode whitespace = valOrVarNode.getTreeNext();
-        assert whitespace.getElementType() == TokenType.WHITE_SPACE;
-
-        element.getNode().removeRange(valOrVarNode, whitespace.getTreeNext());
+        ASTNode next = valOrVarNode.getTreeNext();
+        ASTNode firstNodeToKeep = next.getElementType() == TokenType.WHITE_SPACE ? next.getTreeNext() : next;
+        element.getNode().removeRange(valOrVarNode, firstNodeToKeep);
     }
 
 

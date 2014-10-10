@@ -3909,6 +3909,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("beforeParameterWithComment.kt")
+            public void testParameterWithComment() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/removeValVarFromParameter/beforeParameterWithComment.kt");
+                doTest(fileName);
+            }
+            
         }
         
     }
