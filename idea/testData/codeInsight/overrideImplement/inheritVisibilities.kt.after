@@ -14,20 +14,25 @@ class C : A(), B {
     override fun equals(other: Any?): Boolean {
         <selection><caret>return super<A>.equals(other)</selection>
     }
+
     override fun hashCode(): Int {
         return super<A>.hashCode()
     }
+
     override fun internalFun() {
         super<A>.internalFun()
     }
+
     override val internalProperty: Int = 0
     override fun protectedFun() {
         super<A>.protectedFun()
     }
+
     override val protectedProperty: Int = 0
     override fun publicFun() {
         super<A>.publicFun()
     }
+
     override val publicProperty: Int = 0
     override fun toString(): String {
         return super<A>.toString()

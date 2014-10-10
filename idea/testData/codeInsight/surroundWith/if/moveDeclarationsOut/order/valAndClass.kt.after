@@ -2,6 +2,7 @@ fun foo() {
     class A {
         fun test() {}
     }
+
     val d: A
     if (<caret>) {
         d = A()

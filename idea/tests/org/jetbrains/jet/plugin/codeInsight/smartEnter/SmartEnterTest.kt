@@ -938,10 +938,12 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
     fun testFunBody7() = doFileTest(
             """
             trait T
+
             fun <U> other() where U: T<caret>
             """,
             """
             trait T
+
             fun <U> other() where U : T {
                 <caret>
             }

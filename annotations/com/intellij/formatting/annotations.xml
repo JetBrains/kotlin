@@ -1,117 +1,121 @@
 <root>
-  <item name='com.intellij.formatting.Spacing com.intellij.formatting.Spacing createKeepingFirstColumnSpacing(int, int, boolean, int)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='com.intellij.formatting.Spacing com.intellij.formatting.Spacing createSpacing(int, int, int, boolean, int)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder append(com.intellij.formatting.SpacingBuilder)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder after(com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder afterInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder afterInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.TokenSet)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder afterInside(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder around(com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder around(com.intellij.psi.tree.TokenSet)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder aroundInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder aroundInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.TokenSet)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder aroundInside(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder aroundInside(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.TokenSet)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder before(com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder beforeInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder beforeInside(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder between(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder between(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.TokenSet)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder between(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder between(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.TokenSet)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder betweenInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder betweenInside(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder withinPair(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder withinPairInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder blankLines(int)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder lineBreakInCode()'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder lineBreakInCodeIf(boolean)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder none()'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder spaceIf(boolean)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder spaces(int)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder spacing(int, int, int, boolean, int)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
+    <item
+        name='com.intellij.formatting.DependentSpacingRule com.intellij.formatting.DependentSpacingRule registerData(com.intellij.formatting.DependentSpacingRule.Anchor, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.formatting.Spacing com.intellij.formatting.Spacing createKeepingFirstColumnSpacing(int, int, boolean, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.formatting.Spacing com.intellij.formatting.Spacing createSpacing(int, int, int, boolean, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder append(com.intellij.formatting.SpacingBuilder)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder after(com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder afterInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder afterInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.TokenSet)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder afterInside(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder around(com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder around(com.intellij.psi.tree.TokenSet)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder aroundInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder aroundInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.TokenSet)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder aroundInside(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder aroundInside(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.TokenSet)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder before(com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder beforeInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder beforeInside(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder between(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder between(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.TokenSet)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder between(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder between(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.TokenSet)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder betweenInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder betweenInside(com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.TokenSet, com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder withinPair(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder com.intellij.formatting.SpacingBuilder.RuleBuilder withinPairInside(com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType, com.intellij.psi.tree.IElementType)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder blankLines(int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder lineBreakInCode()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder lineBreakInCodeIf(boolean)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder none()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder spaceIf(boolean)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder spaces(int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item
+        name='com.intellij.formatting.SpacingBuilder.RuleBuilder com.intellij.formatting.SpacingBuilder spacing(int, int, int, boolean, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
 </root>

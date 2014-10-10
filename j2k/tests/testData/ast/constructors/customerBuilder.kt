@@ -17,6 +17,7 @@ class Customer(public val _firstName: String, public val _lastName: String) {
 
     private fun doSmthBefore() {
     }
+
     private fun doSmthAfter() {
     }
 }

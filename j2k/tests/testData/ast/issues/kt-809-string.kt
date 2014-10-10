@@ -15,6 +15,7 @@ class StringContainer(s: String)
 class Test {
     fun putString(s: String) {
     }
+
     fun test() {
         putString(One.myContainer.myString)
         StringContainer(One.myContainer.myString)

@@ -3,8 +3,10 @@
 open class A {
     open fun foo1() {
     }
+
     private fun foo2() {
     }
+
     fun foo3() {
     }
 }

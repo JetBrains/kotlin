@@ -13,6 +13,7 @@ class A {
 
         private fun privateStatic1() {
         }
+
         private fun privateStatic2() {
         }
     }

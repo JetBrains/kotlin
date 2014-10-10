@@ -5,6 +5,7 @@ class A<T>(val n: T) {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
+
 class B<T>(val m: T)
 
 fun test<U, V>(u: U): B<V> {

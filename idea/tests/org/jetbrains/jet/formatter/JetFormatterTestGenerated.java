@@ -156,6 +156,42 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest(fileName);
         }
         
+        @TestMetadata("EmptyLineBetweeAbstractFunctions.after.kt")
+        public void testEmptyLineBetweeAbstractFunctions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweeAbstractFunctions.after.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("EmptyLineBetweenClassAndFunction.after.kt")
+        public void testEmptyLineBetweenClassAndFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenClassAndFunction.after.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("EmptyLineBetweenClasses.after.kt")
+        public void testEmptyLineBetweenClasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenClasses.after.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("EmptyLineBetweenFunAndProperty.after.kt")
+        public void testEmptyLineBetweenFunAndProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenFunAndProperty.after.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("EmptyLineBetweenFunctions.after.kt")
+        public void testEmptyLineBetweenFunctions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenFunctions.after.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("EmptyLineBetweenProperties.after.kt")
+        public void testEmptyLineBetweenProperties() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenProperties.after.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("ForLineBreak.after.kt")
         public void testForLineBreak() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ForLineBreak.after.kt");
