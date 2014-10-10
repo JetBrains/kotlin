@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -198,11 +197,8 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static final JsNameRef kotlinLongNameRef = new JsNameRef("Long", Namer.KOTLIN_OBJECT_REF);
-
-    @NotNull
     public static JsExpression isLong(@NotNull JsExpression expression) {
-        return instanceOf(expression, kotlinLongNameRef);
+        return instanceOf(expression, Namer.KOTLIN_LONG_NAME_REF);
     }
 
     public static JsExpression newLong(long value, @NotNull TranslationContext context) {
@@ -212,7 +208,7 @@ public final class JsAstUtils {
             List<JsExpression> args = new SmartList<JsExpression>();
             args.add(context.program().getNumberLiteral(low));
             args.add(context.program().getNumberLiteral(high));
-            return new JsNew(kotlinLongNameRef, args);
+            return new JsNew(Namer.KOTLIN_LONG_NAME_REF, args);
         }
         else {
             return longFromInt(context.program().getNumberLiteral((int) value));
@@ -221,12 +217,12 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsExpression longFromInt(@NotNull JsExpression expression) {
-        return invokeMethod(kotlinLongNameRef, Namer.LONG_FROM_INT, expression);
+        return invokeMethod(Namer.KOTLIN_LONG_NAME_REF, Namer.LONG_FROM_INT, expression);
     }
 
     @NotNull
     public static JsExpression longFromNumber(@NotNull JsExpression expression) {
-        return invokeMethod(kotlinLongNameRef, Namer.LONG_FROM_NUMBER, expression);
+        return invokeMethod(Namer.KOTLIN_LONG_NAME_REF, Namer.LONG_FROM_NUMBER, expression);
     }
 
     @NotNull
