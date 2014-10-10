@@ -3741,6 +3741,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("AbstractOverrideInEnum.kt")
+            public void testAbstractOverrideInEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/AbstractOverrideInEnum.kt");
+                doTest(fileName);
+            }
+            
             public void testAllFilesPresentInEnum() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/enum"), Pattern.compile("^(.+)\\.kt$"), true);
             }
