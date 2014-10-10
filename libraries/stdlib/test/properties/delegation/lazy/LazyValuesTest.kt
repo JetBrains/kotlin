@@ -2,31 +2,32 @@ package test.properties.delegation.lazy
 
 import test.properties.delegation.WithBox
 import test.properties.delegation.DelegationTestBase
+import org.junit.Test as test
 import kotlin.properties.*
 
 class LazyValuesTest(): DelegationTestBase() {
 
-    fun testLazyVal() {
+    test fun testLazyVal() {
         doTest(TestLazyVal())
     }
 
-    fun testNullableLazyVal() {
+    test fun testNullableLazyVal() {
         doTest(TestNullableLazyVal())
     }
 
-    fun testAtomicNullableLazyVal() {
+    test fun testAtomicNullableLazyVal() {
         doTest(TestAtomicNullableLazyVal())
     }
 
-    fun testAtomicLazyVal() {
+    test fun testAtomicLazyVal() {
         doTest(TestAtomicLazyVal())
     }
 
-    fun testVolatileNullableLazyVal() {
+    test fun testVolatileNullableLazyVal() {
         doTest(TestVolatileNullableLazyVal())
     }
 
-    fun testVolatileLazyVal() {
+    test fun testVolatileLazyVal() {
         doTest(TestVolatileLazyVal())
     }
 }

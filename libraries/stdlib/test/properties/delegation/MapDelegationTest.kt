@@ -1,53 +1,56 @@
 package test.properties.delegation
 
+import org.junit.Test as test
 import java.util.HashMap
 import kotlin.properties.*
 
 class MapDelegationTest(): DelegationTestBase() {
 
-    fun testMapPropertyString() {
+    test fun testMapPropertyString() {
         doTest(TestMapPropertyString())
     }
 
-    fun testMapValWithDifferentTypes() {
+    test fun testMapValWithDifferentTypes() {
         doTest(TestMapValWithDifferentTypes())
     }
 
-    fun testMapVarWithDifferentTypes() {
+    test fun testMapVarWithDifferentTypes() {
         doTest(TestMapVarWithDifferentTypes())
     }
 
-    fun testNullableKey() {
+    test fun testNullableKey() {
         doTest(TestNullableKey())
     }
 
-    fun testMapPropertyKey() {
+    test fun testMapPropertyKey() {
         doTest(TestMapPropertyKey())
     }
 
-    fun testMapPropertyFunction() {
+    test fun testMapPropertyFunction() {
         doTest(TestMapPropertyFunction())
     }
 
-    fun testMapPropertyCustom() {
+    test fun testMapPropertyCustom() {
         doTest(TestMapPropertyCustom())
     }
 
-    fun testMapValWithDefault() {
+    test fun testMapValWithDefault() {
         doTest(TestMapValWithDefault())
     }
 
-    fun testMapVarWithDefault() {
+    test fun testMapVarWithDefault() {
         doTest(TestMapVarWithDefault())
     }
 
-    fun testMapPropertyCustomWithDefault() {
+    test fun testMapPropertyCustomWithDefault() {
         doTest(TestMapPropertyCustomWithDefault())
     }
 }
 
+data class B(val a: Int)
+
 class TestMapValWithDifferentTypes(): WithBox {
-    val map = hashMapOf("a" to "a", "b" to 1, "c" to A(1), "d" to null)
+    val map = hashMapOf("a" to "a", "b" to 1, "c" to B(1), "d" to null)
     val a by Delegates.mapVal<String>(map)
     val b by Delegates.mapVal<Int>(map)
     val c by Delegates.mapVal<Any>(map)
@@ -56,16 +59,14 @@ class TestMapValWithDifferentTypes(): WithBox {
     override fun box(): String {
         if (a != "a") return "fail at 'a'"
         if (b != 1) return "fail at 'b'"
-        if (c != A(1)) return "fail at 'c'"
+        if (c != B(1)) return "fail at 'c'"
         if (d != null) return "fail at 'd'"
         return "OK"
     }
-
-    data class A(val a: Int)
 }
 
 class TestMapVarWithDifferentTypes(): WithBox {
-    val map: HashMap<String, Any?> = hashMapOf("a" to "a", "b" to 1, "c" to A(1), "d" to "d")
+    val map: HashMap<String, Any?> = hashMapOf("a" to "a", "b" to 1, "c" to B(1), "d" to "d")
     var a: String by Delegates.mapVar(map)
     var b: Int by Delegates.mapVar(map)
     var c by Delegates.mapVar<Any>(map)
@@ -74,16 +75,14 @@ class TestMapVarWithDifferentTypes(): WithBox {
     override fun box(): String {
         a = "aa"
         b = 11
-        c = A(11)
+        c = B(11)
         d = null
         if (a != "aa") return "fail at 'a'"
         if (b != 11) return "fail at 'b'"
-        if (c != A(11)) return "fail at 'c'"
+        if (c != B(11)) return "fail at 'c'"
         if (d != null) return "fail at  'd'"
         return "OK"
     }
-
-    data class A(val a: Int)
 }
 
 class TestNullableKey: WithBox {

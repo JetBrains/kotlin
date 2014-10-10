@@ -5,7 +5,7 @@ import java.lang.Float as jFloat
 import org.junit.Test as test
 import kotlin.test.*
 
-public class RangeTestJVM {
+public class RangeJVMTest {
 
     test fun doubleRange() {
         val range = -1.0..3.14159265358979

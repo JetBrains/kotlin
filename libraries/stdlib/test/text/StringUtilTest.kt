@@ -2,7 +2,6 @@ package test.text
 
 import kotlin.*
 import kotlin.test.*
-import kotlin.util.*
 import org.junit.Test as test
 
 class StringUtilTest() {

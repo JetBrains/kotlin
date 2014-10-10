@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 import org.junit.Test as test
 
 // Test data for codegen is generated from this class. If you change it, rerun GenerateTests
-public class RangeIterationTestJVM {
+public class RangeIterationJVMTest {
     private fun <N> doTest(
             sequence: Progression<N>,
             expectedStart: N,

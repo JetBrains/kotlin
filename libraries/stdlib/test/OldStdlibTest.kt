@@ -2,26 +2,25 @@ package test.collections
 
 import kotlin.*
 import kotlin.io.*
-import kotlin.util.*
 import kotlin.test.*
 import java.util.*
 import java.io.*
-import junit.framework.TestCase
+import org.junit.Test as test
 
-class OldStdlibTest() : TestCase() {
-    fun testCollectionEmpty() {
+class OldStdlibTest() {
+    test fun testCollectionEmpty() {
         assertNot {
-            Arrays.asList(0, 1, 2).empty
+            listOf(0, 1, 2).empty
         }
     }
 
-    fun testCollectionSize() {
+    test fun testCollectionSize() {
         assertTrue {
-            Arrays.asList(0, 1, 2).size == 3
+            listOf(0, 1, 2).size == 3
         }
     }
 
-    fun testInputStreamIterator() {
+    test fun testInputStreamIterator() {
         val x = ByteArray (10)
 
         for(index in 0..9) {
@@ -29,7 +28,7 @@ class OldStdlibTest() : TestCase() {
         }
 
         for(b in x.inputStream) {
-            System.out.println(b)
+            println(b)
         }
     }
 }

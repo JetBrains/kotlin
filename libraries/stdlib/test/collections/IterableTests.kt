@@ -202,13 +202,13 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
 
     Test
     fun fold() {
-
+        expect(231) { data.fold(1, {a, b -> a + if (b == "foo") 200 else 30 }) }
     }
 
     Test
     fun reduce() {
-
+        val reduced = data.reduce {a, b -> a + b }
+        assertEquals(6, reduced.size)
+        assertTrue(reduced == "foobar" || reduced == "barfoo")
     }
-
-
 }

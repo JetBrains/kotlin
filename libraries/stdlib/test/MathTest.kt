@@ -5,10 +5,10 @@ import java.math.BigInteger
 import java.math.BigDecimal
 
 import kotlin.test.*
-import junit.framework.TestCase
+import org.junit.Test as test
 
-class MathTest : TestCase() {
-    fun testBigInteger() {
+class MathTest {
+    test fun testBigInteger() {
         val a = BigInteger("2")
         val b = BigInteger("3")
 
@@ -21,7 +21,7 @@ class MathTest : TestCase() {
         assertEquals(BigInteger("-2"), -a remainder b)
     }
 
-    fun testBigDecimal() {
+    test fun testBigDecimal() {
         val a = BigDecimal("2")
         val b = BigDecimal("3")
 

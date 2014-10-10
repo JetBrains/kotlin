@@ -2,12 +2,11 @@ package test.properties
 
 import kotlin.*
 import kotlin.properties.*
-import kotlin.util.*
 import kotlin.test.*
 import java.util.*
-import junit.framework.TestCase
+import org.junit.Test as test
 
-class Customer() : ChangeSupport() {
+class Customer : ChangeSupport() {
     // TODO the setter code should be generated
     // via KT-1299
     var name: String? = null
@@ -25,7 +24,7 @@ class Customer() : ChangeSupport() {
     override fun toString() = "Customer($name, $city)"
 }
 
-class MyChangeListener() : ChangeListener {
+class MyChangeListener : ChangeListener {
     val events = ArrayList<ChangeEvent>()
 
     override fun onPropertyChange(event: ChangeEvent): Unit {
@@ -34,9 +33,9 @@ class MyChangeListener() : ChangeListener {
     }
 }
 
-class PropertiesTest() : TestCase() {
+class PropertiesTest {
 
-    fun testModel() {
+    test fun testModel() {
         val c = Customer()
         c.name = "James"
         c.city = "Mells"

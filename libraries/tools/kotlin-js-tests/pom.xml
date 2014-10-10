@@ -32,51 +32,50 @@
                                 <delete dir="${basedir}/target/tests" failonerror="false"/>
                                 <mkdir dir="${basedir}/target/tests"/>
                                 <copy todir="${basedir}/target/tests">
-                                    <fileset dir="${basedir}/../../stdlib/test/js">
-                                        <include name="**/*.kt"/>
-                                        <exclude name="**/*JVM.kt"/>
-
-                                        <!-- TODO FixME ASAP - works fine in JS, why doesn't it work in JUnit with Rhino and Selenium? -->
-                                        <exclude name="**/JsArrayTest.kt"/>
-                                    </fileset>
-                                    <fileset dir="${basedir}/../../stdlib/test/dom">
-                                        <include name="**/*.kt"/>
-                                        <!-- TODO needs toXmlString() or innerHTML / outerHTML to work on newly create Document instances -->
-                                        <exclude name="**/DomTest.kt"/>
-                                        <exclude name="**/DomBuilderTest.kt"/>
-                                        <exclude name="**/NextSiblingTest.kt"/>
-                                        <exclude name="**/*JVMTest.kt"/>
-                                    </fileset>
                                     <fileset dir="${basedir}/../../stdlib/test">
-                                        <include name="ArraysTest.kt"/>
-                                        <include name="GetOrElseTest.kt"/>
-                                        <include name="StringTest.kt"/>
+                                        <include name="**/*.kt"/>
 
-                                        <!-- TODO FixME ASAP - works fine in JS, why doesn't it work in JUnit with Rhino and Selenium?
-                                        <include name="ListTest.kt"/>
-                                        -->
-<!--
-    TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2468
-                                        <include name="SetTest.kt"/>
--->
-<!--
-    TODO: depends on this being fixed:
-    http://youtrack.jetbrains.com/issue/KT-2470
-    http://youtrack.jetbrains.com/issue/KT-2374
-    http://youtrack.jetbrains.com/issue/KT-2468
-                                        <include name="CollectionTest.kt"/>
--->
 
-<!--
-    TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2470
-                                        <include name="iterators/*.kt"/>
--->
-<!--
-    TODO: needs a TreeMap see: http://youtrack.jetbrains.com/issue/KT-2377
-                                        <include name="MapTest.kt"/>
--->
-
+                                        <!-- exclude JVM tests-->
                                         <exclude name="**/*JVMTest.kt"/>
+                                        <exclude name="**/*JVMTests.kt"/>
+
+                                        <exclude name="concurrent/**"/>
+                                        <exclude name="io/**"/>
+                                        <exclude name="template/**"/>
+
+                                        <exclude name="ExceptionTest.kt"/>
+
+                                        <!-- test for javaClass<T>()-->
+                                        <exclude name="JavaClassTest.kt"/>
+                                        <!-- javaClass(), Retention etc. -->
+                                        <exclude name="AnnotationsTest.kt"/>
+
+                                        <!-- Something missed in JS:-->
+
+                                        <!-- ImmutableArrayList -->
+                                        <exclude name="collections/ImmutableArrayListTest.kt"/>
+                                        <!-- BigInteger, BigDecimal -->
+                                        <exclude name="MathTest.kt"/>
+                                        <!-- fun String.toRegex -->
+                                        <exclude name="text/StringUtilTest.kt"/>
+                                        <!-- ByteArray.inputStream -->
+                                        <exclude name="OldStdlibTest.kt"/>
+                                        <!-- failsWith, javaClass -->
+                                        <exclude name="PreconditionsTest.kt"/>
+                                        <!-- dom.createDocument -->
+                                        <exclude name="dom/*.kt"/>
+                                        <!-- dom.createDocument -->
+                                        <exclude name="browser/BrowserTest.kt"/>
+
+
+                                        <!-- Can't run: spaces in function name -->
+                                        <exclude name="NaturalLanguageTest.kt"/>
+
+
+                                        <!-- TODO review: unused files? -->
+                                        <exclude name="Test.kt"/>
+                                        <exclude name="TestDslExample.kt"/>
                                     </fileset>
                                 </copy>
                             </target>

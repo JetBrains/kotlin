@@ -30,9 +30,10 @@ class CollectionTest {
         assertEquals(2, foo.size)
         assertEquals(arrayListOf("foo", "bar"), foo)
 
-        assertTrue {
-            foo is List<String>
-        }
+//        TODO uncomment this when KT-2468 will be fixed
+//        assertTrue {
+//            foo is List<String>
+//        }
     }
 
     test fun mapNotNull() {
@@ -41,9 +42,10 @@ class CollectionTest {
         assertEquals(2, foo.size)
         assertEquals(arrayListOf(3, 3), foo)
 
-        assertTrue {
-            foo is List<Int>
-        }
+//        TODO uncomment this when KT-2468 will be fixed
+//        assertTrue {
+//            foo is List<Int>
+//        }
     }
 
     test fun filterIntoSet() {
@@ -148,7 +150,9 @@ class CollectionTest {
             list.reduce { a, b -> a + b }
         }
 
-        failsWith(javaClass<UnsupportedOperationException>()) {
+//        TODO replace with more accurate version when KT-5987 will be fixed
+//        failsWith(javaClass<UnsupportedOperationException>()) {
+        fails {
             arrayListOf<Int>().reduce { a, b -> a + b }
         }
     }
@@ -159,7 +163,9 @@ class CollectionTest {
             list.reduceRight { a, b -> a + b }
         }
 
-        failsWith(javaClass<UnsupportedOperationException>()) {
+//        TODO replace with more accurate version when KT-5987 will be fixed
+//        failsWith(javaClass<UnsupportedOperationException>()) {
+        fails {
             arrayListOf<Int>().reduceRight { a, b -> a + b }
         }
     }
@@ -229,7 +235,10 @@ class CollectionTest {
         assertEquals(arrayListOf("foo", "bar"), notNull)
 
         val hasNulls = arrayListOf("foo", null, "bar")
-        failsWith(javaClass<IllegalArgumentException>()) {
+
+//        TODO replace with more accurate version when KT-5987 will be fixed
+//        failsWith(javaClass<IllegalArgumentException>()) {
+        fails {
             // should throw an exception as we have a null
             hasNulls.requireNoNulls()
         }
@@ -277,9 +286,9 @@ class CollectionTest {
         assertEquals(arrayListOf("foo", "bar", "abc"), coll.takeWhile { it.size == 3 })
     }
 
-    test fun toArray() {
+    test fun copyToArray() {
         val data = arrayListOf("foo", "bar")
-        val arr = data.toArray()
+        val arr = data.copyToArray()
         println("Got array ${arr}")
         assertEquals(2, arr.size)
         todo {
@@ -297,7 +306,11 @@ class CollectionTest {
     }
 
     test fun first() {
-        assertEquals(19, TreeSet(arrayListOf(90, 47, 19)).first())
+        val data = arrayListOf("foo", "bar")
+        assertEquals("foo", data.first())
+        assertEquals(15, arrayListOf(15, 19, 20, 25).first())
+        assertEquals('a', arrayListOf('a').first())
+        fails { arrayListOf<Int>().first() }
     }
 
     test fun last() {
@@ -344,7 +357,6 @@ class CollectionTest {
         assertTrue(arrayListOf(15, 19, 20).contains(15))
 
         assertTrue(IterableWrapper(hashSetOf(45, 14, 13)).contains(14))
-        assertFalse(IterableWrapper(linkedListOf<Int>()).contains(15))
     }
 
     test fun sortForMutableIterable() {
@@ -436,6 +448,29 @@ class CollectionTest {
         expect(listOf<Long>()) { listOf(1L) take 0 }
         expect(listOf(1)) { (1..1) take 10 }
         expect(listOf(1)) { listOf(1) take 10 }
-        expect(setOf(1, 2)) { sortedSetOf(1, 2, 3, 4, 5).take(2).toSet() }
+    }
+
+    test fun sortBy() {
+        expect(arrayListOf("two" to 2, "three" to 3)) {
+            arrayListOf("three" to 3, "two" to 2).sortBy { it.second }
+        }
+        expect(arrayListOf("three" to 3, "two" to 2)) {
+            arrayListOf("three" to 3, "two" to 2).sortBy { it.first }
+        }
+        expect(arrayListOf("two" to 2, "three" to 3)) {
+            arrayListOf("three" to 3, "two" to 2).sortBy { it.first.length }
+        }
+    }
+
+    test fun sortFunctionShouldReturnSortedCopyForList() {
+        val list: List<Int> = arrayListOf(2, 3, 1)
+        expect(arrayListOf(1, 2, 3)) { list.sort() }
+        expect(arrayListOf(2, 3, 1)) { list }
+    }
+
+    test fun sortFunctionShouldReturnSortedCopyForIterable() {
+        val list: Iterable<Int> = arrayListOf(2, 3, 1)
+        expect(arrayListOf(1, 2, 3)) { list.sort() }
+        expect(arrayListOf(2, 3, 1)) { list }
     }
 }
