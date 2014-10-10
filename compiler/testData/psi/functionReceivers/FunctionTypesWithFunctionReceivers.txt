@@ -2,7 +2,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
   PACKAGE_DIRECTIVE
     <empty list>
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
@@ -65,7 +65,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
@@ -123,7 +123,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
@@ -177,7 +177,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
@@ -235,7 +235,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
@@ -316,7 +316,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
@@ -374,7 +374,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
@@ -453,7 +453,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
@@ -528,7 +528,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
@@ -607,7 +607,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
@@ -709,7 +709,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')

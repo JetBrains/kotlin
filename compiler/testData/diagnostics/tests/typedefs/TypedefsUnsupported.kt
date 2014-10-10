@@ -1,5 +1,5 @@
-<!UNSUPPORTED!>type Foo = Any<!>
+<!UNSUPPORTED!>typealias Foo = Any<!>
 
 fun foo() {
-    <!UNSUPPORTED!>type Bar = Any<!>
+    <!UNSUPPORTED!>typealias Bar = Any<!>
 }

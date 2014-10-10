@@ -1,14 +1,14 @@
 package foo.bar.goo
 
-type foo = bar
-type foo<T> = bar
-type foo<T : foo> = bar
-type foo<A, B> = bar
-type foo<A, B : A> = bar
+typealias foo = bar
+typealias foo<T> = bar
+typealias foo<T : foo> = bar
+typealias foo<A, B> = bar
+typealias foo<A, B : A> = bar
 
-type foo = bar ;
-type foo<T> = bar ;
+typealias foo = bar ;
+typealias foo<T> = bar ;
 
-type foo<T : foo> = bar ;
-type foo<A, B> = bar ;
-type foo<A, B : A> = bar ;
+typealias foo<T : foo> = bar ;
+typealias foo<A, B> = bar ;
+typealias foo<A, B : A> = bar ;

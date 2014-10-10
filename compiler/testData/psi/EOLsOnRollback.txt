@@ -31,7 +31,7 @@ JetFile: EOLsOnRollback.kt
         PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace('\n\n    ')
       TYPEDEF
-        PsiElement(type)('type')
+        PsiElement(typealias)('typealias')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('x')
         PsiWhiteSpace(' ')

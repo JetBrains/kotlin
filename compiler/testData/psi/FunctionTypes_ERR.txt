@@ -2,7 +2,7 @@ JetFile: FunctionTypes_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')

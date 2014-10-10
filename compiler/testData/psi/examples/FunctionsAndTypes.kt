@@ -1,24 +1,24 @@
-type f1 =  (T) -> X
+typealias f1 =  (T) -> X
 // type f1 = {(T) => X}
-type f2 =  (T, E) -> X
+typealias f2 =  (T, E) -> X
 // type f2 = {(T, E) => X}
-type f_tuple =  (Pair<T, E>) -> X
+typealias f_tuple =  (Pair<T, E>) -> X
 //type f_tuple = {((T, E)) => X}
-type hof =   (X) ->  (T) -> Y
+typealias hof =   (X) ->  (T) -> Y
 //type hof = { (X) => {(T) => Y} }
-type hof2 =   ( (X) -> Y) ->  (Y) -> Z
+typealias hof2 =   ( (X) -> Y) ->  (Y) -> Z
 //type hof2 = { {(X) => Y} => {(Y) => Z} }
 
 
-type Comparison<in T> =  (a : T, b : T) -> Int
+typealias Comparison<in T> =  (a : T, b : T) -> Int
 //type Comparison<in T> = {(a : T, b : T) => Int}
-type Equality<in T> =  (a : T, b : T) -> Boolean
+typealias Equality<in T> =  (a : T, b : T) -> Boolean
 //type Equality<in T> = {(a : T, b : T) => Boolean}
-type HashFunction<in T> =  (obj : T) -> Int
+typealias HashFunction<in T> =  (obj : T) -> Int
 //type HashFunction<in T> = {(obj : T) => Int}
-type Runnable =  () -> Unit
+typealias Runnable =  () -> Unit
 //type Runnable = {() => ()}
-type Function1<in T, out R> =  (input : T) -> R
+typealias Function1<in T, out R> =  (input : T) -> R
 //type Function1<in T, out R> = {(input : T) => R}
 
 

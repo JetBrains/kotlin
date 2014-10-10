@@ -1,17 +1,17 @@
-type
-type foo
-type foo =
-type ;
-type foo ;
-type foo = ;
-type = foo
-type =
-type = foo ;
-type = ;
+typealias
+typealias foo
+typealias foo =
+typealias ;
+typealias foo ;
+typealias foo = ;
+typealias = foo
+typealias =
+typealias = foo ;
+typealias = ;
 
-type foo<> = bar
-type foo<T, > = bar
-type foo<A : , B> = bar
+typealias foo<> = bar
+typealias foo<T, > = bar
+typealias foo<A : , B> = bar
 
 class
-type foo = bar
+typealias foo = bar

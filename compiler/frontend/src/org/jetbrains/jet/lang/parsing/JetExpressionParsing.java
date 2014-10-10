@@ -51,7 +51,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
             INTEGER_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, OPEN_QUOTE,
-            PACKAGE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
+            PACKAGE_KEYWORD, AS_KEYWORD, TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
             FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
@@ -121,7 +121,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     VAL_KEYWORD, VAR_KEYWORD,
                     TRAIT_KEYWORD,
                     CLASS_KEYWORD,
-                    TYPE_KEYWORD
+                    TYPE_ALIAS_KEYWORD
             ),
             MODIFIER_KEYWORDS
     );
@@ -600,7 +600,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseDoWhile();
         }
         else if (atSet(CLASS_KEYWORD, FUN_KEYWORD, VAL_KEYWORD,
-                       VAR_KEYWORD, TYPE_KEYWORD)) {
+                       VAR_KEYWORD, TYPE_ALIAS_KEYWORD)) {
             parseLocalDeclaration();
         }
         else if (at(FIELD_IDENTIFIER)) {
@@ -1295,8 +1295,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
             declType = myJetParsing.parseProperty(true);
         }
-        else if (keywordToken == TYPE_KEYWORD) {
-            declType = myJetParsing.parseTypeDef();
+        else if (keywordToken == TYPE_ALIAS_KEYWORD) {
+            declType = myJetParsing.parseTypeAlias();
         }
         else if (keywordToken == OBJECT_KEYWORD) {
             // Object expression may appear at the statement position: should parse it

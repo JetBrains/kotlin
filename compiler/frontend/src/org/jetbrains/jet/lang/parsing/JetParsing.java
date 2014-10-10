@@ -43,9 +43,9 @@ public class JetParsing extends AbstractJetParsing {
         }
     }
 
-    private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
+    private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
                 FUN_KEYWORD, VAL_KEYWORD, PACKAGE_KEYWORD);
-    private static final TokenSet ENUM_MEMBER_FIRST = TokenSet.create(TYPE_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
+    private static final TokenSet ENUM_MEMBER_FIRST = TokenSet.create(TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
                 FUN_KEYWORD, VAL_KEYWORD, IDENTIFIER);
 
     private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, LPAR, COLON, LBRACE), TOPLEVEL_OBJECT_FIRST);
@@ -367,8 +367,8 @@ public class JetParsing extends AbstractJetParsing {
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
             declType = parseProperty();
         }
-        else if (keywordToken == TYPE_KEYWORD) {
-            declType = parseTypeDef();
+        else if (keywordToken == TYPE_ALIAS_KEYWORD) {
+            declType = parseTypeAlias();
         }
         else if (keywordToken == OBJECT_KEYWORD) {
             parseObject(true, true);
@@ -754,8 +754,8 @@ public class JetParsing extends AbstractJetParsing {
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
             declType = parseProperty();
         }
-        else if (keywordToken == TYPE_KEYWORD) {
-            declType = parseTypeDef();
+        else if (keywordToken == TYPE_ALIAS_KEYWORD) {
+            declType = parseTypeAlias();
         }
         else if (keywordToken == OBJECT_KEYWORD) {
             parseObject(true, true);
@@ -877,13 +877,13 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * typedef
-     *   : modifiers "type" SimpleName (typeParameters typeConstraints)? "=" type
+     *   : modifiers "typealias" SimpleName (typeParameters typeConstraints)? "=" type
      *   ;
      */
-    JetNodeType parseTypeDef() {
-        assert _at(TYPE_KEYWORD);
+    JetNodeType parseTypeAlias() {
+        assert _at(TYPE_ALIAS_KEYWORD);
 
-        advance(); // TYPE_KEYWORD
+        advance(); // TYPE_ALIAS_KEYWORD
 
         expect(IDENTIFIER, "Type name expected", TokenSet.orSet(TokenSet.create(LT, EQ, SEMICOLON), TOPLEVEL_OBJECT_FIRST));
 

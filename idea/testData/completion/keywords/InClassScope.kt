@@ -44,7 +44,7 @@ class TestClass {
 // EXIST:  trait
 // ABSENT: true
 // ABSENT: try
-// EXIST:  type
+// EXIST:  typealias
 // EXIST:  val
 // EXIST:  var
 // ABSENT: vararg

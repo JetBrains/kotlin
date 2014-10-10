@@ -42,7 +42,7 @@ fun foo() {
 // EXIST: trait
 // EXIST: true
 // EXIST: try
-// EXIST: type
+// EXIST: typealias
 // EXIST: val
 // EXIST: var
 // EXIST: vararg

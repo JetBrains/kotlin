@@ -56,7 +56,7 @@ JetFile: SimpleClassMembers.kt
             PsiElement(IDENTIFIER)('f')
           PsiWhiteSpace('\n\n        ')
           TYPEDEF
-            PsiElement(type)('type')
+            PsiElement(typealias)('typealias')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
@@ -240,7 +240,7 @@ JetFile: SimpleClassMembers.kt
             PsiElement(IDENTIFIER)('f')
           PsiWhiteSpace('\n\n        ')
           TYPEDEF
-            PsiElement(type)('type')
+            PsiElement(typealias)('typealias')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
@@ -272,7 +272,7 @@ JetFile: SimpleClassMembers.kt
         PsiElement(IDENTIFIER)('f')
       PsiWhiteSpace('\n\n    ')
       TYPEDEF
-        PsiElement(type)('type')
+        PsiElement(typealias)('typealias')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
         PsiWhiteSpace(' ')

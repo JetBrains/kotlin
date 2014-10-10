@@ -61,5 +61,5 @@ See [Packages](packages.html)
 
 [undocumented]
 typedef
-  : modifiers "type" SimpleName (typeParameters typeConstraints)? "=" type
+  : modifiers "typealias" SimpleName (typeParameters typeConstraints)? "=" type
   ;

@@ -97,7 +97,7 @@ JetFile: LocalDeclarations.kt
           PsiElement(INTEGER_LITERAL)('4')
       PsiWhiteSpace('\n    ')
       TYPEDEF
-        PsiElement(type)('type')
+        PsiElement(typealias)('typealias')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('f')
         PsiWhiteSpace(' ')
