@@ -43,6 +43,9 @@ public final class Namer {
     public static final String LONG_FROM_NUMBER = "fromNumber";
     public static final String LONG_TO_NUMBER = "toNumber";
     public static final String LONG_FROM_INT = "fromInt";
+    public static final String LONG_ZERO = "ZERO";
+    public static final String LONG_ONE = "ONE";
+    public static final String LONG_NEG_ONE = "NEG_ONE";
     public static final String PRIMITIVE_COMPARE_TO = "primitiveCompareTo";
     public static final String IS_CHAR = "isChar";
     public static final String IS_NUMBER = "isNumber";

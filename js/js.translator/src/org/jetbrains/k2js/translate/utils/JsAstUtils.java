@@ -211,6 +211,15 @@ public final class JsAstUtils {
             return new JsNew(Namer.KOTLIN_LONG_NAME_REF, args);
         }
         else {
+            if (value == 0) {
+                return new JsNameRef(Namer.LONG_ZERO, Namer.KOTLIN_LONG_NAME_REF);
+            }
+            else if (value == 1) {
+                return new JsNameRef(Namer.LONG_ONE, Namer.KOTLIN_LONG_NAME_REF);
+            }
+            else if (value == -1) {
+                return new JsNameRef(Namer.LONG_NEG_ONE, Namer.KOTLIN_LONG_NAME_REF);
+            }
             return longFromInt(context.program().getNumberLiteral((int) value));
         }
     }
