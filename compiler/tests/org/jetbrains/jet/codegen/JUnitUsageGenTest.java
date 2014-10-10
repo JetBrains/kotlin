@@ -30,7 +30,7 @@ public class JUnitUsageGenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        File junitJar = new File("libraries/lib/junit-4.9.jar");
+        File junitJar = new File("libraries/lib/junit-4.11.jar");
 
         if (!junitJar.exists()) {
             throw new AssertionError("JUnit jar wasn't found");
