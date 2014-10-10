@@ -7,6 +7,10 @@
           <option name="issueRegexp" value="[A-Z]+\-\d+" />
           <option name="linkRegexp" value="http://youtrack.jetbrains.com/issue/$0" />
         </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="EA\-(\d+)" />
+          <option name="linkRegexp" value="http://ea.jetbrains.com/browser/ea_problems/$1" />
+        </IssueNavigationLink>
       </list>
     </option>
   </component>
