@@ -1,0 +1,106 @@
+JetFile: Array.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiWhiteSpace('\n        ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('p')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Array')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                PsiErrorElement:Unexpected tokens
+                  PsiElement(LPAR)('(')
+                  PsiElement(IDENTIFIER)('out')
+                  PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+              PsiElement(GT)('>')
+            PsiErrorElement:Unexpected token
+              PsiElement(EXCL)('!')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n        ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('p1')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Array')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                PsiErrorElement:Unexpected tokens
+                  PsiElement(LPAR)('(')
+                  PsiElement(IDENTIFIER)('out')
+                  PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+                    PsiErrorElement:Unexpected token
+                      PsiElement(EXCL)('!')
+              PsiElement(GT)('>')
+            PsiErrorElement:Unexpected token
+              PsiElement(EXCL)('!')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n        ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('p1')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Array')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                PsiErrorElement:Unexpected tokens
+                  PsiElement(LPAR)('(')
+                  PsiElement(IDENTIFIER)('out')
+                  PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Array')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        PsiErrorElement:Unexpected tokens
+                          PsiElement(LPAR)('(')
+                          PsiElement(IDENTIFIER)('out')
+                          PsiElement(RPAR)(')')
+                        PsiWhiteSpace(' ')
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Foo')
+                      PsiElement(GT)('>')
+                    PsiErrorElement:Unexpected token
+                      PsiElement(EXCL)('!')
+              PsiElement(GT)('>')
+            PsiErrorElement:Unexpected token
+              PsiElement(EXCL)('!')
+      PsiWhiteSpace('\n')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')

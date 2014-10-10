@@ -1488,7 +1488,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker typeRefMarker = mark();
         parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
 
-        if (at(IDENTIFIER) || at(PACKAGE_KEYWORD)) {
+        if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
             parseUserType();
         }
         else if (at(HASH)) {
@@ -1577,6 +1577,11 @@ public class JetParsing extends AbstractJetParsing {
      * userType
      *   : ("package" ".")? simpleUserType{"."}
      *   ;
+     *
+     *   recovers on platform types:
+     *    - Foo!
+     *    - (Mutable)List<Foo>!
+     *    - Array<(out) Foo>!
      */
     void parseUserType() {
         PsiBuilder.Marker userType = mark();
@@ -1588,6 +1593,8 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker reference = mark();
         while (true) {
+            recoverOnParenthesizedWordForPlatformTypes(0, "Mutable", true);
+
             if (expect(IDENTIFIER, "Expecting type name",
                        TokenSet.orSet(JetExpressionParsing.EXPRESSION_FIRST, JetExpressionParsing.EXPRESSION_FOLLOW))) {
                 reference.done(REFERENCE_EXPRESSION);
@@ -1598,10 +1605,13 @@ public class JetParsing extends AbstractJetParsing {
             }
 
             parseTypeArgumentList();
+
+            recoverOnPlatformTypeSuffix();
+
             if (!at(DOT)) {
                 break;
             }
-            if (lookahead(1) == LPAR) {
+            if (lookahead(1) == LPAR && !atParenthesizedMutableForPlatformTypes(1)) {
                 // This may be a receiver for a function type
                 //   Int.(Int) -> Int
                 break;
@@ -1616,6 +1626,49 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         userType.done(USER_TYPE);
+    }
+
+    private boolean atParenthesizedMutableForPlatformTypes(int offset) {
+        return recoverOnParenthesizedWordForPlatformTypes(offset, "Mutable", false);
+    }
+
+    private boolean recoverOnParenthesizedWordForPlatformTypes(int offset, String word, boolean consume) {
+        // Array<(out) Foo>! or (Mutable)List<Bar>!
+        if (lookahead(offset) == LPAR && lookahead(offset + 1) == IDENTIFIER && lookahead(offset + 2) == RPAR && lookahead(offset + 3) == IDENTIFIER) {
+            PsiBuilder.Marker error = mark();
+
+            advance(offset);
+
+            advance(); // LPAR
+            if (!word.equals(myBuilder.getTokenText())) {
+                // something other than "out" / "Mutable"
+                error.rollbackTo();
+                return false;
+            }
+            else {
+                advance(); // IDENTIFIER('out')
+                advance(); // RPAR
+
+                if (consume) {
+                    error.error("Unexpected tokens");
+                }
+                else {
+                    error.rollbackTo();
+                }
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void recoverOnPlatformTypeSuffix() {
+        // Recovery for platform types
+        if (at(EXCL)) {
+            PsiBuilder.Marker error = mark();
+            advance(); // EXCL
+            error.error("Unexpected token");
+        }
     }
 
     /*
@@ -1651,6 +1704,8 @@ public class JetParsing extends AbstractJetParsing {
 
         while (true) {
             PsiBuilder.Marker projection = mark();
+
+            recoverOnParenthesizedWordForPlatformTypes(0, "out", true);
 
 //            TokenSet lookFor = TokenSet.create(IDENTIFIER);
 //            TokenSet stopAt = TokenSet.create(COMMA, COLON, GT);

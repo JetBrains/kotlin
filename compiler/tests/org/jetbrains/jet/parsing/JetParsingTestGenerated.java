@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 public class JetParsingTestGenerated extends AbstractJetParsingTest {
     @TestMetadata("compiler/testData/psi")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Psi.Annotation.class, Psi.Examples.class, Psi.FunctionReceivers.class, Psi.GreatSyntacticShift.class, Psi.Kdoc.class, Psi.PropertyDelegate.class, Psi.Recovery.class, Psi.Script.class, Psi.StringTemplates.class})
+    @InnerTestClasses({Psi.Annotation.class, Psi.Examples.class, Psi.FunctionReceivers.class, Psi.GreatSyntacticShift.class, Psi.Kdoc.class, Psi.PlatformTypesRecovery.class, Psi.PropertyDelegate.class, Psi.Recovery.class, Psi.Script.class, Psi.StringTemplates.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Psi extends AbstractJetParsingTest {
         @TestMetadata("AbsentInnerType.kt")
@@ -1023,6 +1023,76 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             @TestMetadata("TextRightAfterLeadAsterisks.kt")
             public void testTextRightAfterLeadAsterisks() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/kdoc/TextRightAfterLeadAsterisks.kt");
+                doParsingTest(fileName);
+            }
+            
+        }
+        
+        @TestMetadata("compiler/testData/psi/platformTypesRecovery")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class PlatformTypesRecovery extends AbstractJetParsingTest {
+            public void testAllFilesPresentInPlatformTypesRecovery() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/platformTypesRecovery"), Pattern.compile("^(.*)\\.kts?$"), true);
+            }
+            
+            @TestMetadata("Array.kt")
+            public void testArray() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/platformTypesRecovery/Array.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("BeforeDot.kt")
+            public void testBeforeDot() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/platformTypesRecovery/BeforeDot.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("Collections.kt")
+            public void testCollections() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/platformTypesRecovery/Collections.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("FunctionsNotPlatform.kt")
+            public void testFunctionsNotPlatform() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/platformTypesRecovery/FunctionsNotPlatform.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("MapEntry.kt")
+            public void testMapEntry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/platformTypesRecovery/MapEntry.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("ParenthesizedNotPlatform.kt")
+            public void testParenthesizedNotPlatform() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/platformTypesRecovery/ParenthesizedNotPlatform.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("Qualified.kt")
+            public void testQualified() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/platformTypesRecovery/Qualified.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("QualifiedCollections.kt")
+            public void testQualifiedCollections() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/platformTypesRecovery/QualifiedCollections.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("Simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/platformTypesRecovery/Simple.kt");
+                doParsingTest(fileName);
+            }
+            
+            @TestMetadata("WrongWordInParentheses.kt")
+            public void testWrongWordInParentheses() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/platformTypesRecovery/WrongWordInParentheses.kt");
                 doParsingTest(fileName);
             }
             

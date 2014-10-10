@@ -1,0 +1,75 @@
+JetFile: WrongWordInParentheses.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiWhiteSpace('\n        ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('p')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          PsiElement(LPAR)('(')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Foo')
+          PsiElement(RPAR)(')')
+      PsiErrorElement:Expecting comma or ')'
+        <empty list>
+      VALUE_PARAMETER
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('List')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Bar')
+              PsiElement(GT)('>')
+            PsiErrorElement:Unexpected token
+              PsiElement(EXCL)('!')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n        ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('p1')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Array')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  PsiElement(LPAR)('(')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('foo')
+                  PsiElement(RPAR)(')')
+              PsiErrorElement:Expecting a '>'
+                <empty list>
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('Bar')
+        PsiErrorElement:Parameters must have type annotation
+          PsiElement(GT)('>')
+      PsiErrorElement:Expecting comma or ')'
+        <empty list>
+      PsiErrorElement:Expecting ')'
+        PsiElement(EXCL)('!')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting package directive or top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting package directive or top level declaration
+    PsiElement(LBRACE)('{')
+  PsiErrorElement:Expecting package directive or top level declaration
+    PsiElement(RBRACE)('}')
