@@ -26,7 +26,7 @@ public final class StringOperationFIF extends CompositeFIF {
     public static final FunctionIntrinsicFactory INSTANCE = new StringOperationFIF();
 
     private StringOperationFIF() {
-        add(pattern("kotlin", "String", "get"), new BuiltInFunctionIntrinsic("charAt"));
+        add(pattern("kotlin", "CharSequence", "get").checkOverridden(), new BuiltInFunctionIntrinsic("charAt"));
         add(pattern("kotlin.js", "length").isExtensionOf("kotlin.CharSequence"), LENGTH_PROPERTY_INTRINSIC);
         add(pattern("kotlin.js", "isEmpty").isExtensionOf("kotlin.CharSequence"), IS_EMPTY_INTRINSIC);
     }
