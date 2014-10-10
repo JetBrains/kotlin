@@ -249,18 +249,10 @@
                             order="first"
                             implementationClass="org.jetbrains.jet.plugin.completion.KotlinCompletionContributor"/>
 
-    <completion.contributor language="jet"
-                            id="JetLiveTemplateCompletionContributor"
-                            order="after JetCompletionContributor"
-                            implementationClass="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor"/>
-
     <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.UnfocusedNameIdentifier"/>
     <completion.confidence language="jet"
                            implementationClass="org.jetbrains.jet.plugin.completion.confidence.UnfocusedPossibleFunctionParameter"/>
     <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.AlwaysFocusLookup" order="last"/>
-
-    <completion.skip implementation="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor$Skipper"
-                     id="skipLiveTemplate"/>
 
     <lookup.charFilter implementation="org.jetbrains.jet.plugin.completion.KotlinCompletionCharFilter"/>
 
