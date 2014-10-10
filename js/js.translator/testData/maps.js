@@ -773,15 +773,66 @@ Kotlin.AbstractPrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollectio
         }
 });
 
+var PROTO_NAME = "__proto__";
+
 Kotlin.DefaultPrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractPrimitiveHashSet,
     /** @constructs */
     function () {
-        Kotlin.AbstractPrimitiveHashSet.call(this);
+        var superClass = Kotlin.AbstractPrimitiveHashSet;
+
+        superClass.call(this);
+        this.super = superClass.prototype;
+
+        this.containsProto = false;
     },
-    {
     /** @lends {Kotlin.DefaultPrimitiveHashSet.prototype} */
+    {
+        contains_za3rmp$: function (key) {
+            var skey = String(key);
+            if (skey === PROTO_NAME) {
+                return this.containsProto;
+            }
+
+            return this.super.contains_za3rmp$.call(this, key);
+        },
+        add_za3rmp$: function (element) {
+            var skey = String(element);
+            if (skey === PROTO_NAME) {
+                var isNewElement = !this.containsProto;
+
+                if (isNewElement) {
+                    this.containsProto = true;
+                    this.$size++;
+                }
+
+                return isNewElement;
+            }
+
+            return this.super.add_za3rmp$.call(this, element);
+        },
+        remove_za3rmp$: function (element) {
+            var skey = String(element);
+            if (skey === PROTO_NAME) {
+                var contains = this.containsProto;
+
+                if (contains) {
+                    this.containsProto = false;
+                    this.$size++;
+                }
+
+                return contains;
+            }
+
+            return this.super.remove_za3rmp$.call(this, element);
+        },
+        clear: function () {
+            this.$size = 0;
+            this.containsProto = false;
+            this.map = {};
+        },
         toArray: function () {
-            return Object.keys(this.map);
+            var elements = Object.keys(this.map);
+            return !this.containsProto ? elements : elements.concat(PROTO_NAME);
         }
 });
 
