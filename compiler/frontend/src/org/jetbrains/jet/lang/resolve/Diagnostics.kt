@@ -22,6 +22,7 @@ import com.intellij.openapi.util.ModificationTracker
 
 public trait Diagnostics : Iterable<Diagnostic> {
     //should not be called on readonly views
+    //any Diagnostics object returned by BindingContext#getDiagnostics() should implement this property
     public val modificationTracker: ModificationTracker
         get() = throw IllegalStateException("Trying to obtain modification tracker for Diagnostics object of class $javaClass")
 

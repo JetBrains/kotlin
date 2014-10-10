@@ -21,6 +21,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice
 import com.google.common.collect.ImmutableMap
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import com.intellij.psi.PsiElement
+import com.intellij.openapi.util.ModificationTracker
 
 public class CompositeBindingContext private (
         private val delegates: List<BindingContext>
@@ -57,9 +58,14 @@ public class CompositeBindingContext private (
     private class CompositeDiagnostics(
             private val delegates: List<Diagnostics>
     ) : Diagnostics {
+
         override fun iterator(): Iterator<Diagnostic> {
             val emptyStream = listOf<Diagnostic>().stream()
-            return delegates.fold(emptyStream, { r, t -> r + t.stream()}).iterator()
+            return delegates.fold(emptyStream, { r, t -> r + t.stream() }).iterator()
+        }
+
+        override val modificationTracker = object : ModificationTracker {
+            override fun getModificationCount() = delegates.fold(0L, { r, t -> r + t.modificationTracker.getModificationCount() })
         }
 
         override fun all(): Collection<Diagnostic> {
