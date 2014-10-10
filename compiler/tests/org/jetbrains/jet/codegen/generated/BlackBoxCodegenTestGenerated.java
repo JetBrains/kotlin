@@ -2649,6 +2649,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("enumInheritedFromTrait.kt")
+        public void testEnumInheritedFromTrait() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/enumInheritedFromTrait.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("inPackage.kt")
         public void testInPackage() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/inPackage.kt");
