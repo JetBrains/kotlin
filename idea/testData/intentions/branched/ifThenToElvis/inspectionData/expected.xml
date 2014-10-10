@@ -80,6 +80,14 @@
     <description>Replace 'if' expression with elvis expression</description>
   </problem>
   <problem>
+    <file>doesNotInlineVariableInMultiDeclaration.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/doesNotInlineVariableInMultiDeclaration.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
     <file>doesNotinlineValueIfUsedMoreThanOnce.kt</file>
     <line>11</line>
     <module>light_idea_test_case</module>

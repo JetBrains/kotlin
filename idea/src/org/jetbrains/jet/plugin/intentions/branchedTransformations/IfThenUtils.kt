@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.isUsedAsStatement
+import org.jetbrains.jet.lang.psi.JetProperty
 
 val NULL_PTR_EXCEPTION = "NullPointerException"
 val NULL_PTR_EXCEPTION_FQ = "java.lang.NullPointerException"
@@ -140,6 +141,8 @@ fun JetElement.replace(expressionAsString: String): PsiElement =
 
 fun JetSimpleNameExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor) {
     val declaration = this.getReference()?.resolve() as JetDeclaration
+
+    if (declaration !is JetProperty) return
 
     val enclosingElement = JetPsiUtil.getEnclosingElementForLocalDeclaration(declaration)
     val isLocal = enclosingElement != null
