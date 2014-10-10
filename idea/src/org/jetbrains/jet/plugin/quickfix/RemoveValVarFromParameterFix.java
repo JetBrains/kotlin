@@ -29,8 +29,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.plugin.JetBundle;
 
-public class RemoveValVarFromParametersFix extends JetIntentionAction<JetParameter> {
-    public RemoveValVarFromParametersFix(@NotNull JetParameter element) {
+public class RemoveValVarFromParameterFix extends JetIntentionAction<JetParameter> {
+    public RemoveValVarFromParameterFix(@NotNull JetParameter element) {
         super(element);
     }
 
@@ -64,7 +64,7 @@ public class RemoveValVarFromParametersFix extends JetIntentionAction<JetParamet
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                return new RemoveValVarFromParametersFix((JetParameter) diagnostic.getPsiElement().getParent());
+                return new RemoveValVarFromParameterFix((JetParameter) diagnostic.getPsiElement().getParent());
             }
         };
     }
