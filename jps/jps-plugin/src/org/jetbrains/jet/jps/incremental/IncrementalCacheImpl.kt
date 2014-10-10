@@ -59,6 +59,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
     private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap)
 
     public fun saveFileToCache(sourceFiles: Collection<File>, classFile: File): RecompilationDecision {
+        if (classFile.extension.toLowerCase() != "class") return DO_NOTHING
         val kotlinClass = LocalFileKotlinClass.create(classFile)
         if (kotlinClass == null) return DO_NOTHING
 
