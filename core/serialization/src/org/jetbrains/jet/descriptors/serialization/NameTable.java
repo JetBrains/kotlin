@@ -46,15 +46,15 @@ public class NameTable {
                 }
             };
 
-    private final Interner<String> simpleNames = new Interner<String>();
+    private final Interner<String> strings = new Interner<String>();
     private final Interner<QualifiedName.Builder> qualifiedNames = new Interner<QualifiedName.Builder>(QUALIFIED_NAME_BUILDER_HASHING);
 
     public NameTable() {
     }
 
     @NotNull
-    public List<String> getSimpleNames() {
-        return simpleNames.getAllInternedObjects();
+    public List<String> getStrings() {
+        return strings.getAllInternedObjects();
     }
 
     @NotNull
@@ -63,7 +63,11 @@ public class NameTable {
     }
 
     public int getSimpleNameIndex(@NotNull Name name) {
-        return simpleNames.intern(name.asString());
+        return getStringIndex(name.asString());
+    }
+
+    public int getStringIndex(@NotNull String string) {
+        return strings.intern(string);
     }
 
     public int getFqNameIndex(@NotNull ClassOrPackageFragmentDescriptor descriptor) {

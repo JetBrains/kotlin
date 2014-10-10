@@ -20,14 +20,15 @@ option java_outer_classname = "ProtoBuf";
 option optimize_for = LITE_RUNTIME; // Smaller runtime
 option java_generic_services = false; // Less code
 
-message SimpleNameTable {
-  repeated string name = 1;
+message StringTable {
+  repeated string string = 1;
 }
 
 message QualifiedNameTable {
 
   message QualifiedName {
     optional int32 parent_qualified_name = 1 [default = -1];
+    // Id in the StringTable
     required int32 short_name = 2;
     optional Kind kind = 3 [default = PACKAGE];
 
@@ -68,10 +69,21 @@ message Type {
   repeated Argument argument = 2;
 
   optional bool nullable = 3 [default = false];
+
+  // Id in the StringTable
+  // If this field is set, the type is flexible.
+  // All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+  optional int32 flexible_type_capabilities_id = 4;
+
+  // While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+  // we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+  // to represent flexible types is too many wasted bytes.
+  optional Type flexible_upper_bound = 5;
 }
 
 message TypeParameter {
   required int32 id = 1;
+  // Id in the StringTable
   required int32 name = 2;
 
   optional bool reified = 3 [default = false];
@@ -188,6 +200,7 @@ message Callable {
 
   optional Type receiver_type = 5;
 
+  // Id in the StringTable
   required int32 name = 6;
 
   message ValueParameter {
@@ -196,6 +209,8 @@ message Callable {
        has_annotations
     */
     optional int32 flags = 1;
+
+    // Id in the StringTable
     required int32 name = 2;
     required Type type = 3;
     optional Type vararg_element_type = 4;

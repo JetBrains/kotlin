@@ -156,15 +156,17 @@ public class TypeSubstitutor {
         JetType type = originalProjection.getType();
         Variance originalProjectionKind = originalProjection.getProjectionKind();
         if (TypesPackage.isFlexible(type) && !TypesPackage.isCustomTypeVariable(type)) {
+            Flexibility flexibility = TypesPackage.flexibility(type);
             TypeProjection substitutedLower =
-                    unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, TypesPackage.flexibility(type).getLowerBound()), recursionDepth + 1);
+                    unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, flexibility.getLowerBound()), recursionDepth + 1);
             TypeProjection substitutedUpper =
-                    unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, TypesPackage.flexibility(type).getUpperBound()), recursionDepth + 1);
+                    unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, flexibility.getUpperBound()), recursionDepth + 1);
             // todo: projection kind is neglected
             return new TypeProjectionImpl(originalProjectionKind,
                                           DelegatingFlexibleType.OBJECT$.create(
                                                   substitutedLower.getType(),
-                                                  substitutedUpper.getType()
+                                                  substitutedUpper.getType(),
+                                                  flexibility.getExtraCapabilities()
                                           )
             );
         }

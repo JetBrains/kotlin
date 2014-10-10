@@ -18,13 +18,25 @@ package org.jetbrains.jet.lang.types
 
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.types.Approximation.DataFlowExtras
-import org.jetbrains.kotlin.util.printAndReturn
+import org.jetbrains.jet.lang.resolve.name.FqName
+
+public trait FlexibleTypeCapabilities {
+    fun <T: TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T?
+    val id: String
+
+    object NONE : FlexibleTypeCapabilities {
+        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T? = null
+        override val id: String get() = "NONE"
+    }
+}
 
 public trait Flexibility : TypeCapability {
     // lowerBound is a subtype of upperBound
     public fun getUpperBound(): JetType
 
     public fun getLowerBound(): JetType
+
+    public fun getExtraCapabilities(): FlexibleTypeCapabilities
 }
 
 public fun JetType.isFlexible(): Boolean = this.getCapability(javaClass<Flexibility>()) != null
@@ -104,12 +116,13 @@ public fun JetType.getApproximationTo(
 
 public open class DelegatingFlexibleType protected (
         private val _lowerBound: JetType,
-        private val _upperBound: JetType
+        private val _upperBound: JetType,
+        private val _extraCapabilities: FlexibleTypeCapabilities
 ) : DelegatingType(), NullAwareness, Flexibility, Approximation {
     class object {
-        public fun create(lowerBound: JetType, upperBound: JetType): JetType {
+        fun create(lowerBound: JetType, upperBound: JetType, extraCapabilities: FlexibleTypeCapabilities): JetType {
             if (lowerBound == upperBound) return lowerBound
-            return DelegatingFlexibleType(lowerBound, upperBound)
+            return DelegatingFlexibleType(lowerBound, upperBound, extraCapabilities)
         }
     }
 
@@ -125,12 +138,17 @@ public open class DelegatingFlexibleType protected (
     override fun getUpperBound(): JetType = _upperBound
     override fun getLowerBound(): JetType = _lowerBound
 
-    protected open fun create(lowerBound: JetType, upperBound: JetType): JetType {
-        return DelegatingFlexibleType.create(lowerBound, upperBound)
+    override fun getExtraCapabilities() = _extraCapabilities
+
+    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
+        return getExtraCapabilities().getCapability(capabilityClass, this, this) ?: super<DelegatingType>.getCapability(capabilityClass)
     }
 
     override fun makeNullableAsSpecified(nullable: Boolean): JetType {
-        return create(TypeUtils.makeNullableAsSpecified(_lowerBound, nullable), TypeUtils.makeNullableAsSpecified(_upperBound, nullable))
+        return create(
+                TypeUtils.makeNullableAsSpecified(_lowerBound, nullable),
+                TypeUtils.makeNullableAsSpecified(_upperBound, nullable),
+                getExtraCapabilities())
     }
 
     override fun approximateToExpectedType(expectedType: JetType, dataFlowExtras: Approximation.DataFlowExtras): Approximation.Info? {

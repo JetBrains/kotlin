@@ -4612,6 +4612,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
             
+            @TestMetadata("platform.kt")
+            public void testPlatform() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/platform.kt");
+                doTestCompiledKotlin(fileName);
+            }
+            
             @TestMetadata("String.kt")
             public void testString() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/String.kt");

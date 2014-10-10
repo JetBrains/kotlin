@@ -84,6 +84,7 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
                 storageManager, module, builtInsClassDataFinder,
                 // TODO: support annotations
                 AnnotationLoader.UNSUPPORTED, ConstantLoader.UNSUPPORTED, packageFragmentProvider,
+                FlexibleTypeCapabilitiesDeserializer.ThrowException.INSTANCE$,
                 new ClassDeserializer(storageManager, builtInsClassDataFinder), nameResolver
         );
         members = new DeserializedPackageMemberScope(this, loadPackage(), deserializationContext, classNames);

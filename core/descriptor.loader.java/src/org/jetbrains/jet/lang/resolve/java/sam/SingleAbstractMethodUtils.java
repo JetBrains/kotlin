@@ -102,7 +102,7 @@ public class SingleAbstractMethodUtils {
                 if (fixedProjections == null) return null;
 
                 if (JavaPackage.getPLATFORM_TYPES() && !isSamConstructor) {
-                    return LazyJavaTypeResolver.FlexibleJavaClassifierType.OBJECT$.create(fixedProjections, TypeUtils.makeNullable(fixedProjections));
+                    return LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(fixedProjections, TypeUtils.makeNullable(fixedProjections));
                 }
 
                 return TypeUtils.makeNullableAsSpecified(fixedProjections, !isSamConstructor && samType.isNullable());

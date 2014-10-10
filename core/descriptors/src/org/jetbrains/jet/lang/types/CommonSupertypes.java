@@ -80,11 +80,14 @@ public class CommonSupertypes {
         boolean hasFlexible = false;
         List<JetType> upper = new ArrayList<JetType>(types.size());
         List<JetType> lower = new ArrayList<JetType>(types.size());
+        Set<FlexibleTypeCapabilities> capabilities = new LinkedHashSet<FlexibleTypeCapabilities>();
         for (JetType type : types) {
             if (TypesPackage.isFlexible(type)) {
                 hasFlexible = true;
-                upper.add(TypesPackage.flexibility(type).getUpperBound());
-                lower.add(TypesPackage.flexibility(type).getLowerBound());
+                Flexibility flexibility = TypesPackage.flexibility(type);
+                upper.add(flexibility.getUpperBound());
+                lower.add(flexibility.getLowerBound());
+                capabilities.add(flexibility.getExtraCapabilities());
             }
             else {
                 upper.add(type);
@@ -95,7 +98,8 @@ public class CommonSupertypes {
         if (!hasFlexible) return commonSuperTypeForInflexible(types, recursionDepth, maxDepth);
         return DelegatingFlexibleType.OBJECT$.create(
                 commonSuperTypeForInflexible(lower, recursionDepth, maxDepth),
-                commonSuperTypeForInflexible(upper, recursionDepth, maxDepth)
+                commonSuperTypeForInflexible(upper, recursionDepth, maxDepth),
+                KotlinPackage.single(capabilities) // mixing different capabilities is not supported
         );
     }
 

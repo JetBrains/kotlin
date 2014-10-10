@@ -32,15 +32,17 @@ import org.jetbrains.jet.storage.*
 import java.util.HashSet
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
-import org.jetbrains.jet.lang.resolve.java.lazy.types.Flexibility.*
+import org.jetbrains.jet.lang.resolve.java.lazy.types.JavaTypeFlexibility.*
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
+import org.jetbrains.jet.lang.resolve.name.FqName
+import kotlin.platform.platformStatic
 
 class LazyJavaTypeResolver(
         private val c: LazyJavaResolverContext,
         private val typeParameterResolver: TypeParameterResolver
 ) {
-    
+
     public fun transformJavaType(javaType: JavaType, attr: JavaTypeAttributes): JetType {
         return when (javaType) {
             is JavaPrimitiveType -> {
@@ -49,9 +51,13 @@ class LazyJavaTypeResolver(
                 assert(jetType != null, "Primitive type is not found: " + canonicalText)
                 jetType!!
             }
-            is JavaClassifierType -> if (PLATFORM_TYPES && attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE)
-                                         LazyFlexibleJavaClassifierType(javaType, attr)
-                                     else LazyJavaClassifierType(javaType, attr)
+            is JavaClassifierType ->
+                if (PLATFORM_TYPES && attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE)
+                    FlexibleJavaClassifierTypeCapabilities.create(
+                            LazyJavaClassifierType(javaType, attr.toFlexible(FLEXIBLE_LOWER_BOUND)),
+                            LazyJavaClassifierType(javaType, attr.toFlexible(FLEXIBLE_UPPER_BOUND))
+                    )
+                else LazyJavaClassifierType(javaType, attr)
             is JavaArrayType -> transformArrayType(javaType, attr)
             else -> throw UnsupportedOperationException("Unsupported type: " + javaType)
         }
@@ -63,7 +69,7 @@ class LazyJavaTypeResolver(
             val jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
             if (jetType != null) {
                 return if (PLATFORM_TYPES && attr.allowFlexible)
-                           FlexibleJavaClassifierType.create(jetType, TypeUtils.makeNullable(jetType))
+                           FlexibleJavaClassifierTypeCapabilities.create(jetType, TypeUtils.makeNullable(jetType))
                        else TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
             }
         }
@@ -74,7 +80,7 @@ class LazyJavaTypeResolver(
         val componentType = transformJavaType(javaComponentType, howArgumentTypeIsUsed.toAttributes(attr.allowFlexible))
         val result = KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType)
         return if (PLATFORM_TYPES && attr.allowFlexible)
-            FlexibleJavaClassifierType.create(
+            FlexibleJavaClassifierTypeCapabilities.create(
                            KotlinBuiltIns.getInstance().getArrayType(INVARIANT, componentType),
                            TypeUtils.makeNullable(
                                    KotlinBuiltIns.getInstance().getArrayType(OUT_VARIANCE, componentType)
@@ -268,67 +274,60 @@ class LazyJavaTypeResolver(
         override fun getAnnotations() = attr.annotations
     }
 
-    public open class FlexibleJavaClassifierType protected (
-            lowerBound: JetType,
-            upperBound: JetType
-    ) : DelegatingFlexibleType(lowerBound, upperBound), CustomTypeVariable, Specificity {
-        public class object {
-            public fun create(lowerBound: JetType, upperBound: JetType): JetType {
-                if (lowerBound == upperBound) return lowerBound
-                return FlexibleJavaClassifierType(lowerBound, upperBound)
+    public object FlexibleJavaClassifierTypeCapabilities : FlexibleTypeCapabilities {
+        platformStatic fun create(lowerBound: JetType, upperBound: JetType) = DelegatingFlexibleType.create(lowerBound, upperBound, this)
+
+        override val id: String get() = "kotlin.jvm.PlatformType"
+
+        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T? {
+            if (capabilityClass.isAssignableFrom(javaClass<Impl>()))
+                [suppress("UNCHECKED_CAST")]
+                return Impl(flexibility) as T
+            else return null
+        }
+
+
+        private class Impl(val flexibility: Flexibility) : CustomTypeVariable, Specificity {
+
+            private val lowerBound: JetType get() = flexibility.getLowerBound()
+            private val upperBound: JetType get() = flexibility.getUpperBound()
+
+            override val isTypeVariable: Boolean = lowerBound.getConstructor() == upperBound.getConstructor()
+                                                   && lowerBound.getConstructor().getDeclarationDescriptor() is TypeParameterDescriptor
+
+            override val typeParameterDescriptor: TypeParameterDescriptor? =
+                    if (isTypeVariable) lowerBound.getConstructor().getDeclarationDescriptor() as TypeParameterDescriptor else null
+
+            override fun substitutionResult(replacement: JetType): JetType {
+                return if (replacement.isFlexible()) replacement
+                       else create(TypeUtils.makeNotNullable(replacement), TypeUtils.makeNullable(replacement))
             }
-        }
 
-        override fun create(lowerBound: JetType, upperBound: JetType): JetType {
-            return FlexibleJavaClassifierType.create(lowerBound, upperBound)
-        }
-
-        override val isTypeVariable: Boolean = lowerBound.getConstructor() == upperBound.getConstructor()
-                                               && lowerBound.getConstructor().getDeclarationDescriptor() is TypeParameterDescriptor
-
-        override val typeParameterDescriptor: TypeParameterDescriptor? = if (isTypeVariable) lowerBound.getConstructor().getDeclarationDescriptor() as TypeParameterDescriptor else null
-
-        override fun substitutionResult(replacement: JetType): JetType {
-            return if (replacement.isFlexible()) replacement
-                   else FlexibleJavaClassifierType(TypeUtils.makeNotNullable(replacement), TypeUtils.makeNullable(replacement))
-        }
-
-        override fun getSpecificityRelationTo(otherType: JetType): Specificity.Relation {
-            // For primitive types we have to take care of the case when there are two overloaded methods like
-            //    foo(int) and foo(Integer)
-            // if we do not discriminate one of them, any call to foo(kotlin.Int) will result in overload resolution ambiguity
-            // so, for such cases, we discriminate Integer in favour of int
-            if (!KotlinBuiltIns.getInstance().isPrimitiveType(otherType) || !KotlinBuiltIns.getInstance().isPrimitiveType(getLowerBound())) {
-                return Specificity.Relation.DONT_KNOW
+            override fun getSpecificityRelationTo(otherType: JetType): Specificity.Relation {
+                // For primitive types we have to take care of the case when there are two overloaded methods like
+                //    foo(int) and foo(Integer)
+                // if we do not discriminate one of them, any call to foo(kotlin.Int) will result in overload resolution ambiguity
+                // so, for such cases, we discriminate Integer in favour of int
+                if (!KotlinBuiltIns.getInstance().isPrimitiveType(otherType) || !KotlinBuiltIns.getInstance().isPrimitiveType(lowerBound)) {
+                    return Specificity.Relation.DONT_KNOW
+                }
+                // Int! >< Int?
+                if (otherType.isFlexible()) return Specificity.Relation.DONT_KNOW
+                // Int? >< Int!
+                if (otherType.isNullable()) return Specificity.Relation.DONT_KNOW
+                // Int! lessSpecific Int
+                return Specificity.Relation.LESS_SPECIFIC
             }
-            // Int! >< Int?
-            if (otherType.isFlexible()) return Specificity.Relation.DONT_KNOW
-            // Int? >< Int!
-            if (otherType.isNullable()) return Specificity.Relation.DONT_KNOW
-            // Int! lessSpecific Int
-            return Specificity.Relation.LESS_SPECIFIC
         }
     }
 
-    /*
-     * For a java type like java.util.List<Foo>
-     *     lowerBound = MutableList<Foo>
-     *     upperBound = List<Foo?>
-     */
-    private inner class LazyFlexibleJavaClassifierType(
-            javaType: JavaClassifierType,
-            attr: JavaTypeAttributes
-    ) : FlexibleJavaClassifierType(
-            LazyJavaClassifierType(javaType, attr.toFlexible(FLEXIBLE_LOWER_BOUND)),
-            LazyJavaClassifierType(javaType, attr.toFlexible(FLEXIBLE_UPPER_BOUND))
-    )
 }
 
 trait JavaTypeAttributes {
     val howThisTypeIsUsed: TypeUsage
     val howThisTypeIsUsedAccordingToAnnotations: TypeUsage
     val isMarkedNotNull: Boolean
-    val flexibility: Flexibility
+    val flexibility: JavaTypeFlexibility
         get() = INFLEXIBLE
     val allowFlexible: Boolean
         get() = true
@@ -337,7 +336,7 @@ trait JavaTypeAttributes {
 
 fun JavaTypeAttributes.isFlexible() = flexibility != INFLEXIBLE
 
-enum class Flexibility {
+enum class JavaTypeFlexibility {
     INFLEXIBLE
     FLEXIBLE_UPPER_BOUND
     FLEXIBLE_LOWER_BOUND
@@ -375,7 +374,7 @@ fun TypeUsage.toAttributes(allowFlexible: Boolean = true) = object : JavaTypeAtt
     override val annotations: Annotations = Annotations.EMPTY
 }
 
-fun JavaTypeAttributes.toFlexible(flexibility: Flexibility) =
+fun JavaTypeAttributes.toFlexible(flexibility: JavaTypeFlexibility) =
         object : JavaTypeAttributes by this {
             override val flexibility = flexibility
         }

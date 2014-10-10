@@ -30,4 +30,4 @@ public class DeserializationGlobalContextForJava(
         constantLoader: ConstantDescriptorLoader,
         packageFragmentProvider: LazyJavaPackageFragmentProvider
 ) : DeserializationGlobalContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                                 constantLoader, packageFragmentProvider)
+                                 constantLoader, packageFragmentProvider, JavaFlexibleTypeCapabilitiesDeserializer)

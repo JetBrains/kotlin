@@ -128,6 +128,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
     
+    @TestMetadata("PlatformTypes.A.kt")
+    public void testPlatformTypes() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/PlatformTypes.A.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("PropertyReference.A.kt")
     public void testPropertyReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/PropertyReference.A.kt");
