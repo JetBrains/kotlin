@@ -1430,7 +1430,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         StackValue answer = StackValue.none();
 
         for (Iterator<JetElement> iterator = statements.iterator(); iterator.hasNext(); ) {
-            JetElement statement = iterator.next();
+            JetElement possiblyLabeledStatement = iterator.next();
+
+            JetElement statement = possiblyLabeledStatement instanceof JetExpression
+                                   ? JetPsiUtil.safeDeparenthesize((JetExpression) possiblyLabeledStatement, true)
+                                   : possiblyLabeledStatement;
+
 
             if (statement instanceof JetNamedDeclaration) {
                 JetNamedDeclaration declaration = (JetNamedDeclaration) statement;
@@ -1459,7 +1464,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 v.mark(labelBeforeLastExpression);
             }
 
-            StackValue result = isExpression ? gen(statement) : genStatement(statement);
+            StackValue result = isExpression ? gen(possiblyLabeledStatement) : genStatement(possiblyLabeledStatement);
 
             if (!iterator.hasNext()) {
                 answer = result;

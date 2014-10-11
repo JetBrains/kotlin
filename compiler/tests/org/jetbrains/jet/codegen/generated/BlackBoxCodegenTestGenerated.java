@@ -4075,6 +4075,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/labels"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("labeledDeclarations.kt")
+        public void testLabeledDeclarations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/labels/labeledDeclarations.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("labeledDeclarations2.kt")
+        public void testLabeledDeclarations2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/labels/labeledDeclarations2.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("propertyAccessor.kt")
         public void testPropertyAccessor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/labels/propertyAccessor.kt");
