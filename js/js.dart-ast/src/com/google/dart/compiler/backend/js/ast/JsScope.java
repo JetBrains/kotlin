@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;
 
@@ -47,6 +49,8 @@ public abstract class JsScope {
     private final JsScope parent;
     protected int tempIndex = 0;
     private final String scopeId;
+
+    private static final Pattern FRESH_NAME_SUFFIX = Pattern.compile("[\\$_]\\d+$");
 
     public JsScope(JsScope parent, @NotNull String description, @Nullable String scopeId) {
         assert (parent != null);
@@ -89,12 +93,10 @@ public abstract class JsScope {
      */
     @NotNull
     public JsName declareFreshName(@NotNull String suggestedName) {
-        String name = suggestedName;
-        int counter = 0;
-        while (hasOwnName(name)) {
-            name = suggestedName + '_' + counter++;
-        }
-        return doCreateName(name);
+        assert !suggestedName.isEmpty();
+        String ident = getFreshIdent(suggestedName);
+        assert !hasOwnName(ident);
+        return doCreateName(ident);
     }
 
     private String getNextTempName() {
@@ -180,5 +182,38 @@ public abstract class JsScope {
      */
     protected JsName findOwnName(@NotNull String ident) {
         return names.get(ident);
+    }
+
+    /**
+     * During inlining names can be refreshed multiple times,
+     * so "a" becomes "a_0", then becomes "a_0_0"
+     * in case a_0 has been declared in calling scope.
+     *
+     * That's ugly. To resolve it, we rename
+     * clashing names with "[_$]\\d+" suffix,
+     * incrementing last number.
+     *
+     * Fresh name for "a0" should still be "a0_0".
+     */
+    @NotNull
+    private String getFreshIdent(@NotNull String suggestedIdent) {
+        char sep = '_';
+        String baseName = suggestedIdent;
+        int counter = 0;
+
+        Matcher matcher = FRESH_NAME_SUFFIX.matcher(suggestedIdent);
+        if (matcher.find()) {
+            String group = matcher.group();
+            baseName = matcher.replaceAll("");
+            sep = group.charAt(0);
+            counter = Integer.valueOf(group.substring(1));
+        }
+
+        String freshName = suggestedIdent;
+        while (hasOwnName(freshName)) {
+            freshName = baseName + sep + counter++;
+        }
+
+        return freshName;
     }
 }
