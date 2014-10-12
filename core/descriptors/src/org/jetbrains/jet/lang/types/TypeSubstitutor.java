@@ -187,9 +187,8 @@ public class TypeSubstitutor {
                     return TypeUtils.makeStarProjection(typeParameter);
                 case NO_CONFLICT:
                     JetType substitutedType;
-                    if (TypesPackage.isCustomTypeVariable(type)) {
-                        CustomTypeVariable typeVariable = type.getCapability(CustomTypeVariable.class);
-                        assert typeVariable != null;
+                    CustomTypeVariable typeVariable = TypesPackage.getCustomTypeVariable(type);
+                    if (typeVariable != null) {
                         substitutedType = typeVariable.substitutionResult(replacement.getType());
                     }
                     else {

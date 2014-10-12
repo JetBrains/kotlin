@@ -47,3 +47,7 @@ public trait CustomTypeVariable : TypeCapability {
 }
 
 public fun JetType.isCustomTypeVariable(): Boolean = this.getCapability(javaClass<CustomTypeVariable>())?.isTypeVariable ?: false
+public fun JetType.getCustomTypeVariable(): CustomTypeVariable? =
+        this.getCapability(javaClass<CustomTypeVariable>())?.let {
+            if (it.isTypeVariable) it else null
+        }
