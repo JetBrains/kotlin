@@ -163,7 +163,7 @@ public class TypeSubstitutor {
                     unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, flexibility.getUpperBound()), recursionDepth + 1);
             // todo: projection kind is neglected
             return new TypeProjectionImpl(originalProjectionKind,
-                                          DelegatingFlexibleType.OBJECT$.create(
+                                          DelegatingFlexibleType.create(
                                                   substitutedLower.getType(),
                                                   substitutedUpper.getType(),
                                                   flexibility.getExtraCapabilities()

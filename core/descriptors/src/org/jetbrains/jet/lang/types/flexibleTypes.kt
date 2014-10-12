@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.types
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.types.Approximation.DataFlowExtras
 import org.jetbrains.jet.lang.resolve.name.FqName
+import kotlin.platform.platformStatic
 
 public trait FlexibleTypeCapabilities {
     fun <T: TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T?
@@ -119,7 +120,7 @@ public open class DelegatingFlexibleType protected (
         override val extraCapabilities: FlexibleTypeCapabilities
 ) : DelegatingType(), NullAwareness, Flexibility, Approximation {
     class object {
-        fun create(lowerBound: JetType, upperBound: JetType, extraCapabilities: FlexibleTypeCapabilities): JetType {
+        platformStatic fun create(lowerBound: JetType, upperBound: JetType, extraCapabilities: FlexibleTypeCapabilities): JetType {
             if (lowerBound == upperBound) return lowerBound
             return DelegatingFlexibleType(lowerBound, upperBound, extraCapabilities)
         }

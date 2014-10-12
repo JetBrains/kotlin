@@ -96,7 +96,7 @@ public class CommonSupertypes {
         }
 
         if (!hasFlexible) return commonSuperTypeForInflexible(types, recursionDepth, maxDepth);
-        return DelegatingFlexibleType.OBJECT$.create(
+        return DelegatingFlexibleType.create(
                 commonSuperTypeForInflexible(lower, recursionDepth, maxDepth),
                 commonSuperTypeForInflexible(upper, recursionDepth, maxDepth),
                 KotlinPackage.single(capabilities) // mixing different capabilities is not supported

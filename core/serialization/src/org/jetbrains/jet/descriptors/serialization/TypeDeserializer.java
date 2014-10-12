@@ -106,7 +106,7 @@ public class TypeDeserializer {
 
             if (capabilities == null) return ErrorUtils.createErrorType(new DeserializedType(proto) + ": Capabilities not found for id " + id);
 
-            return DelegatingFlexibleType.OBJECT$.create(
+            return DelegatingFlexibleType.create(
                     new DeserializedType(proto),
                     new DeserializedType(proto.getFlexibleUpperBound()),
                     capabilities
