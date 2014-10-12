@@ -38,7 +38,7 @@ fun JetType.isUnit(): Boolean = KotlinBuiltIns.getInstance().isUnit(this)
 public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true): JetType {
     if (jetType.isFlexible()) {
         val flexible = jetType.flexibility()
-        val lowerClass = flexible.getLowerBound().getConstructor().getDeclarationDescriptor() as? ClassDescriptor?
+        val lowerClass = flexible.lowerBound.getConstructor().getDeclarationDescriptor() as? ClassDescriptor?
         val isCollection = lowerClass != null && CollectionClassMapping.getInstance().isMutableCollection(lowerClass)
         // (Mutable)Collection<T>! -> MutableCollection<T>?
         // Foo<(Mutable)Collection<T>!>! -> Foo<Collection<T>>?
@@ -46,9 +46,9 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
         // Foo<Bar!>! -> Foo<Bar>?
         val approximation =
                 if (isCollection)
-                    TypeUtils.makeNullableAsSpecified(if (jetType.isMarkedReadOnly()) flexible.getUpperBound() else flexible.getLowerBound(), outermost)
+                    TypeUtils.makeNullableAsSpecified(if (jetType.isMarkedReadOnly()) flexible.upperBound else flexible.lowerBound, outermost)
                 else
-                    if (outermost) flexible.getUpperBound() else flexible.getLowerBound()
+                    if (outermost) flexible.upperBound else flexible.lowerBound
         val approximated = approximateFlexibleTypes(approximation)
         return if (jetType.isMarkedNotNull()) approximated.makeNotNullable() else approximated
     }

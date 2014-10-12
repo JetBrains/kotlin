@@ -289,8 +289,8 @@ class LazyJavaTypeResolver(
 
         private class Impl(val flexibility: Flexibility) : CustomTypeVariable, Specificity {
 
-            private val lowerBound: JetType get() = flexibility.getLowerBound()
-            private val upperBound: JetType get() = flexibility.getUpperBound()
+            private val lowerBound: JetType get() = flexibility.lowerBound
+            private val upperBound: JetType get() = flexibility.upperBound
 
             override val isTypeVariable: Boolean = lowerBound.getConstructor() == upperBound.getConstructor()
                                                    && lowerBound.getConstructor().getDeclarationDescriptor() is TypeParameterDescriptor
