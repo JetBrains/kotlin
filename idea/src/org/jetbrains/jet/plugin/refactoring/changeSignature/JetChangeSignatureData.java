@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
@@ -206,6 +207,6 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
     @Nullable
     public String getReturnTypeText() {
         JetType returnType = baseDescriptor.getReturnType();
-        return returnType != null ? DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(returnType) : null;
+        return returnType != null ? IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(returnType) : null;
     }
 }

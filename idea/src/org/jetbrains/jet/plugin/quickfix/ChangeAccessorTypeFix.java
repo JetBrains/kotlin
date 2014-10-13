@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
@@ -44,7 +44,7 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
         if (property == null) return false;
         JetType type = QuickFixUtil.getDeclarationReturnType(property);
         if (super.isAvailable(project, editor, file) && type != null && !type.isError()) {
-            renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
+            renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
             return true;
         }
         return false;

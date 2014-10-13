@@ -62,6 +62,7 @@ import java.util.*;
  */
 public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunction> {
     private static final DescriptorRenderer SIGNATURE_RENDERER = new DescriptorRendererBuilder()
+            .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)
             .setWithDefinedIn(false)
             .setModifiers()
             .setShortNames(true)

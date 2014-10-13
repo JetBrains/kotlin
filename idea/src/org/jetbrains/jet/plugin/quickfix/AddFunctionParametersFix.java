@@ -36,12 +36,12 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.refactoring.SimpleCollectingValidator;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
+import org.jetbrains.jet.plugin.refactoring.SimpleCollectingValidator;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import java.util.Collection;
 import java.util.List;
@@ -129,7 +129,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
                         JetType parameterType = parameters.get(i).getType();
 
                         if (argumentType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType))
-                            changeSignatureData.getParameters().get(i).setTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(argumentType));
+                            changeSignatureData.getParameters().get(i).setTypeText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(argumentType));
                     }
                     else {
                         JetParameterInfo parameterInfo = getNewParameterInfo(bindingContext, argument, validator);

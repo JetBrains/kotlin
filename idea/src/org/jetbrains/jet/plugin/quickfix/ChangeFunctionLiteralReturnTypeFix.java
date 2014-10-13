@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
 
     public ChangeFunctionLiteralReturnTypeFix(@NotNull JetFunctionLiteralExpression functionLiteralExpression, @NotNull JetType type) {
         super(functionLiteralExpression);
-        renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
+        renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
         functionLiteralReturnTypeRef = functionLiteralExpression.getFunctionLiteral().getTypeReference();
 
         BindingContext context = ResolvePackage.getBindingContext(functionLiteralExpression.getContainingJetFile());

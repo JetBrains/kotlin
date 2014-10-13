@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
@@ -73,7 +74,7 @@ public class DeclarationUtils {
         JetType inferredType = getPropertyTypeIfNeeded(property);
 
         String typeStr = inferredType != null
-                         ? DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(inferredType)
+                         ? IdeDescriptorRenderers.SOURCE_CODE.renderType(inferredType)
                          : JetPsiUtil.getNullableText(property.getTypeReference());
 
         //noinspection ConstantConditions

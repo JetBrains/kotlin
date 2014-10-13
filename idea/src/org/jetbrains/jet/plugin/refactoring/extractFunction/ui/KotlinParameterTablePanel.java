@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.extractFunction.Parameter;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -148,7 +148,7 @@ public class KotlinParameterTablePanel extends JPanel {
             public Component getTableCellRendererComponent(
                     @NotNull JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column
             ) {
-                myLabel.setText(String.valueOf(value));
+                myLabel.setText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((JetType) value));
                 myLabel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
                 myLabel.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
                 if (isSelected) {
@@ -181,7 +181,7 @@ public class KotlinParameterTablePanel extends JPanel {
                 myEditorComponent.setToString(new Function<Object, String>() {
                     @Override
                     public String fun(Object o) {
-                        return DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType((JetType) o);
+                        return IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((JetType) o);
                     }
                 });
 

@@ -22,11 +22,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
@@ -37,7 +40,7 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
 
     public ChangeParameterTypeFix(@NotNull JetParameter element, @NotNull JetType type) {
         super(element);
-        renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
+        renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
         JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetNamedDeclaration.class);
         isPrimaryConstructorParameter = declaration instanceof JetClass;
         FqName declarationFQName = declaration == null ? null : declaration.getFqName();

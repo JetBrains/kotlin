@@ -74,7 +74,7 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
 
 fun buildLambdaPresentation(lambdaType: JetType): String {
     val parameterTypes = functionParameterTypes(lambdaType)
-    val parametersPresentation = parameterTypes.map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }.makeString(", ")
+    val parametersPresentation = parameterTypes.map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }.makeString(", ")
     fun wrap(s: String) = if (parameterTypes.size != 1) "($s)" else s
     return "{ ${wrap(parametersPresentation)} -> ... }"
 }

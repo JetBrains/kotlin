@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
@@ -53,6 +54,7 @@ import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SIGN
 
 public class KotlinSignatureAnnotationIntention extends BaseIntentionAction implements Iconable {
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
+            .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)
             .setShortNames(true)
             .setModifiers()
             .setWithDefinedIn(false).build();

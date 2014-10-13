@@ -36,12 +36,9 @@ import java.util.Collections
 import org.jetbrains.jet.lang.psi.psiUtil.isFunctionLiteralOutsideParentheses
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
-import org.jetbrains.jet.lang.psi.psiUtil.prependElement
 import org.jetbrains.jet.lang.psi.psiUtil.appendElement
 import org.jetbrains.jet.lang.psi.psiUtil.replaced
-import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.ParameterUpdate
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValue.Jump
@@ -54,19 +51,18 @@ import org.jetbrains.jet.plugin.refactoring.isMultiLine
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValueBoxer.AsTuple
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.jet.plugin.util.psi.patternMatching.UnifierParameter
-import org.jetbrains.jet.plugin.util.psi.patternMatching.toRange
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
-import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange.Match
-import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.Status
 import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.WeaklyMatched
 import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.StronglyMatched
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 fun ExtractableCodeDescriptor.getDeclarationText(
         options: ExtractionGeneratorOptions = ExtractionGeneratorOptions.DEFAULT,
         withBody: Boolean = true,
-        descriptorRenderer: DescriptorRenderer = DescriptorRenderer.FQ_NAMES_IN_TYPES
+        descriptorRenderer: DescriptorRenderer = IdeDescriptorRenderers.SOURCE_CODE
 ): String {
     if (!canGenerateProperty() && options.extractAsProperty) {
         throw IllegalArgumentException("Can't generate property: ${extractionData.getCodeFragmentText()}")
