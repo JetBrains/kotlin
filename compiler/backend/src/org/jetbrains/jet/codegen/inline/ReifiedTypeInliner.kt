@@ -162,12 +162,12 @@ public class ReifiedTypeParameterMappings(private val size: Int) {
     private val indexByParameterName = hashMapOf<String, Int>()
 
     public fun addParameterMappingToType(index: Int, name: String, asmType: Type) {
-        mappingsByIndex[index] = ReifiedTypeParameterMapping(name, asmType, null)
+        mappingsByIndex[index] = ReifiedTypeParameterMapping(name, asmType, null, null)
         indexByParameterName[name] = index
     }
 
-    public fun addParameterMappingToNewParameter(index: Int, name: String, newIndex: Int) {
-        mappingsByIndex[index] = ReifiedTypeParameterMapping(name, null, newIndex)
+    public fun addParameterMappingToNewParameter(index: Int, name: String, newIndex: Int, newName: String) {
+        mappingsByIndex[index] = ReifiedTypeParameterMapping(name, null, newIndex, newName)
         indexByParameterName[name] = index
     }
 
@@ -177,7 +177,7 @@ public class ReifiedTypeParameterMappings(private val size: Int) {
     }
 }
 
-public class ReifiedTypeParameterMapping(val name: String, val asmType: Type?, val newIndex: Int?)
+public class ReifiedTypeParameterMapping(val name: String, val asmType: Type?, val newIndex: Int?, val newName: String?)
 
 private fun iconstInsn(n: Int): AbstractInsnNode {
     val node = MethodNode()
