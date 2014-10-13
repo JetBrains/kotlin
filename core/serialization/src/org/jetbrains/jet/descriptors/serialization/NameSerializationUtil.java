@@ -30,7 +30,7 @@ public class NameSerializationUtil {
     @NotNull
     public static NameResolver deserializeNameResolver(@NotNull InputStream in) {
         try {
-            ProtoBuf.SimpleNameTable simpleNames = ProtoBuf.SimpleNameTable.parseDelimitedFrom(in);
+            ProtoBuf.StringTable simpleNames = ProtoBuf.StringTable.parseDelimitedFrom(in);
             ProtoBuf.QualifiedNameTable qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(in);
             return new NameResolver(simpleNames, qualifiedNames);
         }
@@ -40,20 +40,20 @@ public class NameSerializationUtil {
     }
 
     public static void serializeNameResolver(@NotNull OutputStream out, @NotNull NameResolver nameResolver) {
-        serializeNameTable(out, nameResolver.getSimpleNameTable(), nameResolver.getQualifiedNameTable());
+        serializeNameTable(out, nameResolver.getStringTable(), nameResolver.getQualifiedNameTable());
     }
 
     public static void serializeNameTable(@NotNull OutputStream out, @NotNull NameTable nameTable) {
-        serializeNameTable(out, toSimpleNameTable(nameTable), toQualifiedNameTable(nameTable));
+        serializeNameTable(out, toStringTable(nameTable), toQualifiedNameTable(nameTable));
     }
 
     private static void serializeNameTable(
             @NotNull OutputStream out,
-            @NotNull ProtoBuf.SimpleNameTable simpleNameTable,
+            @NotNull ProtoBuf.StringTable stringTable,
             @NotNull ProtoBuf.QualifiedNameTable qualifiedNameTable
     ) {
         try {
-            simpleNameTable.writeDelimitedTo(out);
+            stringTable.writeDelimitedTo(out);
             qualifiedNameTable.writeDelimitedTo(out);
         }
         catch (IOException e) {
@@ -62,10 +62,10 @@ public class NameSerializationUtil {
     }
 
     @NotNull
-    public static ProtoBuf.SimpleNameTable toSimpleNameTable(@NotNull NameTable nameTable) {
-        ProtoBuf.SimpleNameTable.Builder simpleNames = ProtoBuf.SimpleNameTable.newBuilder();
-        for (String simpleName : nameTable.getSimpleNames()) {
-            simpleNames.addName(simpleName);
+    public static ProtoBuf.StringTable toStringTable(@NotNull NameTable nameTable) {
+        ProtoBuf.StringTable.Builder simpleNames = ProtoBuf.StringTable.newBuilder();
+        for (String simpleName : nameTable.getStrings()) {
+            simpleNames.addString(simpleName);
         }
         return simpleNames.build();
     }
@@ -81,6 +81,6 @@ public class NameSerializationUtil {
 
     @NotNull
     public static NameResolver createNameResolver(@NotNull NameTable table) {
-        return new NameResolver(toSimpleNameTable(table), toQualifiedNameTable(table));
+        return new NameResolver(toStringTable(table), toQualifiedNameTable(table));
     }
 }

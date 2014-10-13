@@ -10,6 +10,6 @@ package _03_collections {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
-        public open fun add(/*0*/ ints: kotlin.List<kotlin.Int>?): kotlin.Unit
+        public open fun add(/*0*/ ints: kotlin.(Mutable)List<kotlin.Int!>!): kotlin.Unit
     }
 }

@@ -1,24 +1,24 @@
 package test
 
-public final enum class StaticMembersInEnum : kotlin.Enum<test.StaticMembersInEnum> {
+public final enum class StaticMembersInEnum : kotlin.Enum<test.StaticMembersInEnum!> {
     private constructor StaticMembersInEnum()
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    
+
     public enum entry ENTRY : test.StaticMembersInEnum {
         private constructor ENTRY()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-ENTRY> : test.StaticMembersInEnum.ENTRY {
             private constructor <class-object-for-ENTRY>()
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-    
+
     // Static members
-    public final val CONSTANT: test.StaticMembersInEnum
+    public final val CONSTANT: test.StaticMembersInEnum!
     public final var STATIC_FIELD: kotlin.Int
     public open fun foo(): kotlin.Unit
     public open fun valueOf(/*0*/ p0: kotlin.Int): kotlin.Unit

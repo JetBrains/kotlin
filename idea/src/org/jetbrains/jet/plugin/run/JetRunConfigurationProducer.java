@@ -21,6 +21,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -34,7 +35,7 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
-import org.jetbrains.jet.plugin.ProjectRootsUtil;
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
@@ -57,47 +58,43 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
 
     @Override
     protected RunnerAndConfigurationSettings createConfigurationByElement(@NotNull Location location, ConfigurationContext configurationContext) {
-        Module module = location.getModule();
-        if (module == null) {
-            return null;
-        }
-
-        if (ProjectStructureUtil.isJsKotlinModule(module)) {
-            return null;
-        }
-
         JetFile file = getStartClassFile(location);
-        if (file == null || !ProjectRootsUtil.isInSource(file, true)) {
-            return null;
-        }
+        if (file == null) return null;
 
         mySourceElement = file;
 
         FqName startClassFQName = PackageClassUtils.getPackageClassFqName(file.getPackageFqName());
+
+        Module module = location.getModule();
+        assert module != null;
 
         return createConfigurationByQName(module, configurationContext, startClassFQName);
     }
 
     @Nullable
     private static JetFile getStartClassFile(@NotNull Location location) {
-        PsiFile psiFile = location.getPsiElement().getContainingFile();
-        if (psiFile instanceof JetFile) {
-            JetFile jetFile = (JetFile) psiFile;
-            final ResolveSessionForBodies session = ResolvePackage.getLazyResolveSession(jetFile);
-            MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(
-                    new NotNullFunction<JetNamedFunction, FunctionDescriptor>() {
-                        @NotNull
-                        @Override
-                        public FunctionDescriptor fun(JetNamedFunction function) {
-                            return (FunctionDescriptor) session.resolveToDescriptor(function);
-                        }
-                    });
-            if (mainFunctionDetector.hasMain(jetFile.getDeclarations())) {
-                return jetFile;
-            }
-        }
+        if (DumbService.getInstance(location.getProject()).isDumb()) return null;
 
-        return null;
+        Module module = location.getModule();
+        if (module == null) return null;
+
+        if (ProjectStructureUtil.isJsKotlinModule(module)) return null;
+
+        PsiFile psiFile = location.getPsiElement().getContainingFile();
+        if (!(psiFile instanceof JetFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null;
+
+        JetFile jetFile = (JetFile) psiFile;
+        final ResolveSessionForBodies session = ResolvePackage.getLazyResolveSession(jetFile);
+        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(
+                new NotNullFunction<JetNamedFunction, FunctionDescriptor>() {
+                    @NotNull
+                    @Override
+                    public FunctionDescriptor fun(JetNamedFunction function) {
+                        return (FunctionDescriptor) session.resolveToDescriptor(function);
+                    }
+                });
+
+        return mainFunctionDetector.hasMain(jetFile.getDeclarations()) ? jetFile : null;
     }
 
     @NotNull
@@ -121,9 +118,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
             ConfigurationContext context
     ) {
         JetFile file = getStartClassFile(location);
-        if (file == null) {
-            return null;
-        }
+        if (file == null) return null;
 
         FqName startClassFQName = PackageClassUtils.getPackageClassFqName(file.getPackageFqName());
 

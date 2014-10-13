@@ -375,6 +375,12 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest(fileName);
         }
         
+        @TestMetadata("BadParseForClass.kt")
+        public void testBadParseForClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/BadParseForClass.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("CoercionToUnit.kt")
         public void testCoercionToUnit() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/regression/CoercionToUnit.kt");

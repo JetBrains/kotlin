@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
     @TestMetadata("compiler/testData/diagnostics/tests")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Delegation.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndSmartCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.TraitWithRequired.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Delegation.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndSmartCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.PlatformTypes.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.TraitWithRequired.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class Tests extends AbstractJetDiagnosticsTest {
         @TestMetadata("Abstract.kt")
@@ -3741,6 +3741,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("AbstractOverrideInEnum.kt")
+            public void testAbstractOverrideInEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/AbstractOverrideInEnum.kt");
+                doTest(fileName);
+            }
+            
             public void testAllFilesPresentInEnum() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/enum"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -3754,6 +3760,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("classObjectInEnumPrivate.kt")
             public void testClassObjectInEnumPrivate() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/classObjectInEnumPrivate.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("commonSupertype.kt")
+            public void testCommonSupertype() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/commonSupertype.kt");
                 doTest(fileName);
             }
             
@@ -3772,6 +3784,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("enumEntryCannotHaveClassObject.kt")
             public void testEnumEntryCannotHaveClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumEntryCannotHaveClassObject.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("enumEntryInAbstractEnum.kt")
+            public void testEnumEntryInAbstractEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumEntryInAbstractEnum.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("enumImplementingTrait.kt")
+            public void testEnumImplementingTrait() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumImplementingTrait.kt");
                 doTest(fileName);
             }
             
@@ -3874,6 +3898,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("localEnums.kt")
             public void testLocalEnums() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/localEnums.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("openMemberInEnum.kt")
+            public void testOpenMemberInEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/openMemberInEnum.kt");
                 doTest(fileName);
             }
             
@@ -4413,6 +4443,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("recursive.kt")
+            public void testRecursive() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/recursive.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("RecursiveUpperBoundCheck.kt")
             public void testRecursiveUpperBoundCheck() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/RecursiveUpperBoundCheck.kt");
@@ -4826,6 +4862,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("hasErrorInConstrainingTypes.kt")
             public void testHasErrorInConstrainingTypes() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/hasErrorInConstrainingTypes.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("immutableArrayList.kt")
+            public void testImmutableArrayList() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/immutableArrayList.kt");
                 doTest(fileName);
             }
             
@@ -5510,6 +5552,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("localFun.kt")
+            public void testLocalFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/localFun.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("nonVirtualMembersWithInline.kt")
             public void testNonVirtualMembersWithInline() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/nonVirtualMembersWithInline.kt");
@@ -6125,9 +6173,21 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("GenericsInSupertypes.kt")
+            public void testGenericsInSupertypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/GenericsInSupertypes.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("inheritAbstractSamAdapter.kt")
             public void testInheritAbstractSamAdapter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/inheritAbstractSamAdapter.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("InheritedGenericFunction.kt")
+            public void testInheritedGenericFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/InheritedGenericFunction.kt");
                 doTest(fileName);
             }
             
@@ -7649,6 +7709,229 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("kotlinInheritsJava.kt")
                 public void testKotlinInheritsJava() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/parameterNames/kotlinInheritsJava.kt");
+                    doTest(fileName);
+                }
+                
+            }
+            
+        }
+        
+        @TestMetadata("compiler/testData/diagnostics/tests/platformTypes")
+        @TestDataPath("$PROJECT_ROOT")
+        @InnerTestClasses({PlatformTypes.CommonSupertype.class, PlatformTypes.MethodCall.class})
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class PlatformTypes extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInPlatformTypes() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("dereference.kt")
+            public void testDereference() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/dereference.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("elvis.kt")
+            public void testElvis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/elvis.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("getParentOfType.kt")
+            public void testGetParentOfType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/getParentOfType.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("inference.kt")
+            public void testInference() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/inference.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("intVsIntegerAmbiguity.kt")
+            public void testIntVsIntegerAmbiguity() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/intVsIntegerAmbiguity.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("override.kt")
+            public void testOverride() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/override.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("safeCall.kt")
+            public void testSafeCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/safeCall.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("samConstructor.kt")
+            public void testSamConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/samConstructor.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+            public static class CommonSupertype extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInCommonSupertype() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/commonSupertype"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("collectionOrNull.kt")
+                public void testCollectionOrNull() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/collectionOrNull.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("inferenceWithBound.kt")
+                public void testInferenceWithBound() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/inferenceWithBound.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("mixedElvis.kt")
+                public void testMixedElvis() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/mixedElvis.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("mixedIf.kt")
+                public void testMixedIf() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/mixedIf.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("recursiveGeneric.kt")
+                public void testRecursiveGeneric() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/recursiveGeneric.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("stringOrNull.kt")
+                public void testStringOrNull() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/stringOrNull.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("typeOfElvis.kt")
+                public void testTypeOfElvis() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/typeOfElvis.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("withNothing.kt")
+                public void testWithNothing() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype/withNothing.kt");
+                    doTest(fileName);
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+            public static class MethodCall extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInMethodCall() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/methodCall"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("entrySet.kt")
+                public void testEntrySet() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/entrySet.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("int.kt")
+                public void testInt() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/int.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("intArray.kt")
+                public void testIntArray() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/intArray.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("javaCollectionToKotlin.kt")
+                public void testJavaCollectionToKotlin() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/javaCollectionToKotlin.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("javaToJava.kt")
+                public void testJavaToJava() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/javaToJava.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("javaToKotlin.kt")
+                public void testJavaToKotlin() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/javaToKotlin.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("kotlinCollectionToJava.kt")
+                public void testKotlinCollectionToJava() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/kotlinCollectionToJava.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("list.kt")
+                public void testList() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/list.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("multipleExactBounds.kt")
+                public void testMultipleExactBounds() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/multipleExactBounds.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("multipleExactBoundsNullable.kt")
+                public void testMultipleExactBoundsNullable() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/multipleExactBoundsNullable.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("objectArray.kt")
+                public void testObjectArray() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/objectArray.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("overloadingForSubclass.kt")
+                public void testOverloadingForSubclass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/overloadingForSubclass.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("sam.kt")
+                public void testSam() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/sam.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("singleton.kt")
+                public void testSingleton() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/singleton.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("string.kt")
+                public void testString() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/string.kt");
+                    doTest(fileName);
+                }
+                
+                @TestMetadata("visitor.kt")
+                public void testVisitor() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodCall/visitor.kt");
                     doTest(fileName);
                 }
                 

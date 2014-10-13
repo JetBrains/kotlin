@@ -51,7 +51,7 @@ public final class ImportPath {
     }
 
     public String getPathStr() {
-        return DescriptorRenderer.SOURCE_CODE.renderFqName(fqName) + (isAllUnder ? ".*" : "");
+        return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderFqName(fqName) + (isAllUnder ? ".*" : "");
     }
 
     @Override

@@ -17,8 +17,10 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.List;
 
@@ -60,13 +62,27 @@ public abstract class DelegatingType implements JetType {
     }
 
     @Override
+    @Nullable
+    public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
+        if (capabilityClass.isInstance(this)) {
+            //noinspection unchecked
+            return (T) this;
+        }
+        return getDelegate().getCapability(capabilityClass);
+    }
+
+    @Override
     public int hashCode() {
         return getDelegate().hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        return getDelegate().equals(obj);
+        if (this == obj) return true;
+        if (!(obj instanceof JetType)) return false;
+
+        JetType type = (JetType) obj;
+        return JetTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(this, type);
     }
 
     @Override

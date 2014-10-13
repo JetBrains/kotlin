@@ -8,7 +8,7 @@ internal final class JSub : java.lang.CharSequence {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun length(): kotlin.Int
-    public abstract override /*1*/ /*fake_override*/ fun subSequence(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.CharSequence
+    public abstract override /*1*/ /*fake_override*/ fun subSequence(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.CharSequence!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 

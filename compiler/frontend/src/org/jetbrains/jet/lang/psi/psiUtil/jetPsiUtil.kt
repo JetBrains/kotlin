@@ -193,7 +193,7 @@ public fun PsiElement.isExtensionDeclaration(): Boolean {
         else -> null
     }
 
-    return callable?.getReceiverTypeRef() != null
+    return callable?.getReceiverTypeReference() != null
 }
 
 public fun PsiElement.isObjectLiteral(): Boolean = this is JetObjectDeclaration && isObjectLiteral()

@@ -257,7 +257,7 @@ public final class PatternBuilder {
             }
 
             if (checkOverridden) {
-                for (CallableDescriptor overridden : OverrideResolver.getAllOverriddenDescriptors(functionDescriptor)) {
+                for (CallableDescriptor overridden : DescriptorUtils.getAllOverriddenDescriptors(functionDescriptor)) {
                     if (matches(overridden)) {
                         return true;
                     }

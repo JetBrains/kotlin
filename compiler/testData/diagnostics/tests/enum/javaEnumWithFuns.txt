@@ -2,13 +2,13 @@ package
 
 internal fun main(): kotlin.Unit
 
-public final enum class A : kotlin.Enum<A> {
+public final enum class A : kotlin.Enum<A!> {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    public open fun s(): kotlin.String?
+    public open fun s(): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public enum entry ANOTHER : A {
@@ -17,7 +17,7 @@ public final enum class A : kotlin.Enum<A> {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun s(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun s(): kotlin.String!
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         public class object <class-object-for-ANOTHER> : A.ANOTHER {
@@ -26,7 +26,7 @@ public final enum class A : kotlin.Enum<A> {
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun s(): kotlin.String?
+            public open override /*1*/ /*fake_override*/ fun s(): kotlin.String!
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
@@ -37,7 +37,7 @@ public final enum class A : kotlin.Enum<A> {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun s(): kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun s(): kotlin.String!
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         public class object <class-object-for-ENTRY> : A.ENTRY {
@@ -46,7 +46,7 @@ public final enum class A : kotlin.Enum<A> {
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun s(): kotlin.String?
+            public open override /*1*/ /*fake_override*/ fun s(): kotlin.String!
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }

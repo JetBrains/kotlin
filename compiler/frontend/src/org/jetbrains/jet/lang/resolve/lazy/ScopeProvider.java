@@ -154,6 +154,7 @@ public class ScopeProvider {
             return classObjectDescriptor.getScopeForMemberDeclarationResolution();
         }
 
-        throw new IllegalStateException("Don't call this method for local declarations: " + jetDeclaration + " " + jetDeclaration.getText());
+        throw new IllegalStateException("Don't call this method for local declarations: " + jetDeclaration + "\n" +
+                                        JetPsiUtil.getElementTextWithContext(jetDeclaration));
     }
 }

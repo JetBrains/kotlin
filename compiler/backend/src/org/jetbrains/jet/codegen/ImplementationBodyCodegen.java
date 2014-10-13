@@ -24,6 +24,7 @@ import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.backend.common.CodegenUtil;
+import org.jetbrains.jet.backend.common.CodegenUtilKt;
 import org.jetbrains.jet.backend.common.DataClassMethodGenerator;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.context.*;
@@ -49,6 +50,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaCallableMemberDescriptor;
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmClassSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
@@ -1285,13 +1287,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 JetExpression expression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
                 PropertyDescriptor propertyDescriptor = CodegenUtil.getDelegatePropertyIfAny(expression, descriptor, bindingContext);
 
-                ClassDescriptor superClassDescriptor = getSuperClass(specifier);
 
                 if (CodegenUtil.isFinalPropertyWithBackingField(propertyDescriptor, bindingContext)) {
                     result.addField((JetDelegatorByExpressionSpecifier) specifier, propertyDescriptor);
                 }
                 else {
-                    result.addField((JetDelegatorByExpressionSpecifier) specifier, typeMapper.mapType(superClassDescriptor), "$delegate_" + n);
+                    JetType expressionType = state.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+                    Type asmType =
+                            expressionType != null ? typeMapper.mapType(expressionType) : typeMapper.mapType(getSuperClass(specifier));
+                    result.addField((JetDelegatorByExpressionSpecifier) specifier, asmType, "$delegate_" + n);
                 }
                 n++;
             }
@@ -1412,8 +1416,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateTraitMethods() {
         if (JetPsiUtil.isTrait(myClass)) return;
 
-        for(Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getTraitMethods(descriptor).entrySet()) {
-            generateDelegationToTraitImpl(entry.getKey(), entry.getValue());
+        for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getTraitMethods(descriptor).entrySet()) {
+            FunctionDescriptor traitFun = entry.getKey();
+            //skip java 8 default methods
+            if (!(traitFun instanceof JavaCallableMemberDescriptor)) {
+                generateDelegationToTraitImpl(traitFun, entry.getValue());
+            }
         }
     }
 
@@ -1643,7 +1651,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (specifier instanceof JetDelegatorByExpressionSpecifier) {
                 DelegationFieldsInfo.Field field = delegationFieldsInfo.getInfo((JetDelegatorByExpressionSpecifier) specifier);
                 generateDelegateField(field);
-                generateDelegates(getSuperClass(specifier), field);
+                JetExpression delegateExpression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
+                JetType delegateExpressionType = state.getBindingContext().get(BindingContext.EXPRESSION_TYPE, delegateExpression);
+                generateDelegates(getSuperClass(specifier), delegateExpressionType, field);
             }
         }
     }
@@ -1655,17 +1665,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                    fieldInfo.name, fieldInfo.type.getDescriptor(), /*TODO*/null, null);
     }
 
-    protected void generateDelegates(ClassDescriptor toClass, DelegationFieldsInfo.Field field) {
-        for (Map.Entry<CallableMemberDescriptor, CallableMemberDescriptor> entry : CodegenUtil.getDelegates(descriptor, toClass).entrySet()) {
+    protected void generateDelegates(ClassDescriptor toTrait, JetType delegateExpressionType, DelegationFieldsInfo.Field field) {
+        for (Map.Entry<CallableMemberDescriptor, CallableDescriptor> entry : CodegenUtilKt.getDelegates(descriptor, toTrait, delegateExpressionType).entrySet()) {
             CallableMemberDescriptor callableMemberDescriptor = entry.getKey();
-            CallableMemberDescriptor overriddenDescriptor = entry.getValue();
+            CallableDescriptor delegateTo = entry.getValue();
             if (callableMemberDescriptor instanceof PropertyDescriptor) {
                 propertyCodegen
-                        .genDelegate((PropertyDescriptor) callableMemberDescriptor, (PropertyDescriptor) overriddenDescriptor, field.getStackValue());
+                        .genDelegate((PropertyDescriptor) callableMemberDescriptor, (PropertyDescriptor) delegateTo, field.getStackValue());
             }
             else if (callableMemberDescriptor instanceof FunctionDescriptor) {
                 functionCodegen
-                        .genDelegate((FunctionDescriptor) callableMemberDescriptor, (FunctionDescriptor) overriddenDescriptor, field.getStackValue());
+                        .genDelegate((FunctionDescriptor) callableMemberDescriptor, (FunctionDescriptor) delegateTo, field.getStackValue());
             }
         }
     }

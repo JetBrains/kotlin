@@ -88,6 +88,7 @@ import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier
 import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBody
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 public trait UnificationResult {
     public enum class Status {
@@ -468,7 +469,7 @@ public class JetPsiUnifier(
                 desc2: CallableDescriptor): Status? {
             fun needToCompareReturnTypes(): Boolean {
                 if (decl1 !is JetCallableDeclaration) return true
-                return decl1.getReturnTypeRef() != null || (decl2 as JetCallableDeclaration).getReturnTypeRef() != null
+                return decl1.getTypeReference() != null || (decl2 as JetCallableDeclaration).getTypeReference() != null
             }
 
             if (desc1 is VariableDescriptor && desc1.isVar() != (desc2 as VariableDescriptor).isVar()) return UNMATCHED
@@ -564,7 +565,7 @@ public class JetPsiUnifier(
             fun resolveAndSortDeclarationsByDescriptor(declarations: List<JetDeclaration>): List<Pair<JetDeclaration, DeclarationDescriptor?>> {
                 return declarations
                         .map { it to it.bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] }
-                        .sortBy { it.second?.let { DescriptorRenderer.SOURCE_CODE.render(it) } ?: "" }
+                        .sortBy { it.second?.let { IdeDescriptorRenderers.SOURCE_CODE.render(it) } ?: "" }
             }
 
             fun sortDeclarationsByElementType(declarations: List<JetDeclaration>): List<JetDeclaration> {

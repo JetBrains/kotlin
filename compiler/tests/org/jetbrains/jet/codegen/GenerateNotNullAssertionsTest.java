@@ -120,7 +120,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         loadFile("notNullAssertions/arrayListGet.kt");
         String text = generateToText();
 
-        assertTrue(text.contains("checkReturnedValueIsNotNull"));
+        assertTrue(text.contains("checkExpressionValueIsNotNull"));
         assertTrue(text.contains("checkParameterIsNotNull"));
     }
 
@@ -131,7 +131,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         loadFile("notNullAssertions/javaMultipleSubstitutions.kt");
         String text = generateToText();
 
-        assertEquals(3, StringUtil.getOccurrenceCount(text, "checkReturnedValueIsNotNull"));
+        assertEquals(3, StringUtil.getOccurrenceCount(text, "checkExpressionValueIsNotNull"));
         assertEquals(3, StringUtil.getOccurrenceCount(text, "checkParameterIsNotNull"));
     }
 

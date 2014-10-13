@@ -85,6 +85,12 @@ public class TypeUtils {
             throw new IllegalStateException(name);
         }
 
+        @Nullable
+        @Override
+        public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
+            return null;
+        }
+
         @Override
         public String toString() {
             return name;
@@ -111,6 +117,11 @@ public class TypeUtils {
 
     @NotNull
     public static JetType makeNullableAsSpecified(@NotNull JetType type, boolean nullable) {
+        NullAwareness nullAwareness = type.getCapability(NullAwareness.class);
+        if (nullAwareness != null) {
+            return nullAwareness.makeNullableAsSpecified(nullable);
+        }
+
         // Wrapping serves two purposes here
         // 1. It's requires less memory than copying with a changed nullability flag: a copy has many fields, while a wrapper has only one
         // 2. It preserves laziness of types
@@ -420,6 +431,9 @@ public class TypeUtils {
         if (type.isNullable()) {
             return true;
         }
+        if (TypesPackage.isFlexible(type) && isNullableType(TypesPackage.flexibility(type).getUpperBound())) {
+            return true;
+        }
         if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
             return hasNullableSuperType(type);
         }
@@ -519,6 +533,11 @@ public class TypeUtils {
     ) {
         if (type == null) return false;
         if (isSpecialType.invoke(type)) return true;
+        Flexibility flexibility = type.getCapability(Flexibility.class);
+        if (flexibility != null
+                && (containsSpecialType(flexibility.getLowerBound(), isSpecialType) || containsSpecialType(flexibility.getUpperBound(), isSpecialType))) {
+            return true;
+        }
         for (TypeProjection projection : type.getArguments()) {
             if (containsSpecialType(projection.getType(), isSpecialType)) return true;
         }

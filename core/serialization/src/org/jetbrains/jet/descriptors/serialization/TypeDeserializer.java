@@ -100,6 +100,18 @@ public class TypeDeserializer {
 
     @NotNull
     public JetType type(@NotNull ProtoBuf.Type proto) {
+        if (proto.hasFlexibleTypeCapabilitiesId()) {
+            String id = context.getNameResolver().getString(proto.getFlexibleTypeCapabilitiesId());
+            FlexibleTypeCapabilities capabilities = context.getFlexibleTypeCapabilitiesDeserializer().capabilitiesById(id);
+
+            if (capabilities == null) return ErrorUtils.createErrorType(new DeserializedType(proto) + ": Capabilities not found for id " + id);
+
+            return DelegatingFlexibleType.create(
+                    new DeserializedType(proto),
+                    new DeserializedType(proto.getFlexibleUpperBound()),
+                    capabilities
+            );
+        }
         return new DeserializedType(proto);
     }
 

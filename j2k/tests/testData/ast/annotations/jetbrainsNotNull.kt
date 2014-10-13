@@ -10,7 +10,8 @@ public class Test(str: String) {
     }
 
     public fun sout(str: String) {
-        System.out.println(str)
+        // UNNECESSARY_NOT_NULL_ASSERTION heuristic does not work any more, instead we can skip generating !! altogether
+        System.out!!.println(str)
     }
 
     public fun dummy(str: String): String {

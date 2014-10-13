@@ -7,7 +7,7 @@ package a {
         public constructor Test</*0*/ T>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public/*package*/ open fun t(): T?
+        public/*package*/ open fun t(): T!
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

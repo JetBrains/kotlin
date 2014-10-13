@@ -46,7 +46,7 @@ public object JetKeywordInsertHandler : InsertHandler<LookupElement> {
             val element = context.getFile().findElementAt(context.getStartOffset())
             if (element != null) {
                 val jetFunction = PsiTreeUtil.getParentOfType(element, javaClass<JetFunction>())
-                if (jetFunction != null && (!jetFunction.hasDeclaredReturnType() || JetPsiUtil.isVoidType(jetFunction.getReturnTypeRef()))) {
+                if (jetFunction != null && (!jetFunction.hasDeclaredReturnType() || JetPsiUtil.isVoidType(jetFunction.getTypeReference()))) {
                     // No space for void function
                     return
                 }

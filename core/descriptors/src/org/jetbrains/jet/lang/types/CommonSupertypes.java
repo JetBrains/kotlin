@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.types;
 
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -47,9 +49,67 @@ public class CommonSupertypes {
 
     @NotNull
     public static JetType commonSupertype(@NotNull Collection<JetType> types) {
+        // Recursion should not be significantly deeper than the deepest type in question
+        // It can be slightly deeper, though: e.g. when initial types are simple, but their supertypes are complex
+        return findCommonSupertype(types, 0, maxDepth(types) + 3);
+    }
+
+    private static int maxDepth(@NotNull Collection<JetType> types) {
+        int max = 0;
+        for (JetType type : types) {
+            int depth = depth(type);
+            if (max < depth) {
+                max = depth;
+            }
+        }
+        return max;
+    }
+
+    private static int depth(@NotNull JetType type) {
+        return 1 + maxDepth(KotlinPackage.map(type.getArguments(), new Function1<TypeProjection, JetType>() {
+            @Override
+            public JetType invoke(TypeProjection projection) {
+                return projection.getType();
+            }
+        }));
+    }
+
+    @NotNull
+    private static JetType findCommonSupertype(@NotNull Collection<JetType> types, int recursionDepth, int maxDepth) {
+        assert recursionDepth <= maxDepth : "Recursion depth exceeded: " + recursionDepth + " > " + maxDepth + " for types " + types;
+        boolean hasFlexible = false;
+        List<JetType> upper = new ArrayList<JetType>(types.size());
+        List<JetType> lower = new ArrayList<JetType>(types.size());
+        Set<FlexibleTypeCapabilities> capabilities = new LinkedHashSet<FlexibleTypeCapabilities>();
+        for (JetType type : types) {
+            if (TypesPackage.isFlexible(type)) {
+                hasFlexible = true;
+                Flexibility flexibility = TypesPackage.flexibility(type);
+                upper.add(flexibility.getUpperBound());
+                lower.add(flexibility.getLowerBound());
+                capabilities.add(flexibility.getExtraCapabilities());
+            }
+            else {
+                upper.add(type);
+                lower.add(type);
+            }
+        }
+
+        if (!hasFlexible) return commonSuperTypeForInflexible(types, recursionDepth, maxDepth);
+        return DelegatingFlexibleType.create(
+                commonSuperTypeForInflexible(lower, recursionDepth, maxDepth),
+                commonSuperTypeForInflexible(upper, recursionDepth, maxDepth),
+                KotlinPackage.single(capabilities) // mixing different capabilities is not supported
+        );
+    }
+
+    @NotNull
+    private static JetType commonSuperTypeForInflexible(@NotNull Collection<JetType> types, int recursionDepth, int maxDepth) {
         assert !types.isEmpty();
         Collection<JetType> typeSet = new HashSet<JetType>(types);
-        if (typeSet.size() == 1) return typeSet.iterator().next();
+
+        JetType bestFit = TypesPackage.singleBestRepresentative(typeSet);
+        if (bestFit != null) return bestFit;
 
         // If any of the types is nullable, the result must be nullable
         // This also removed Nothing and Nothing? because they are subtypes of everything else
@@ -57,6 +117,7 @@ public class CommonSupertypes {
         for (Iterator<JetType> iterator = typeSet.iterator(); iterator.hasNext();) {
             JetType type = iterator.next();
             assert type != null;
+            assert !TypesPackage.isFlexible(type) : "Flexible type " + type + " passed to commonSuperTypeForInflexible";
             if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type)) {
                 iterator.remove();
             }
@@ -91,7 +152,7 @@ public class CommonSupertypes {
         Map.Entry<TypeConstructor, Set<JetType>> entry = commonSupertypes.entrySet().iterator().next();
 
         // Reconstructing type arguments if possible
-        JetType result = computeSupertypeProjections(entry.getKey(), entry.getValue());
+        JetType result = computeSupertypeProjections(entry.getKey(), entry.getValue(), recursionDepth, maxDepth);
         return TypeUtils.makeNullableIfNeeded(result, nullable);
     }
 
@@ -137,7 +198,7 @@ public class CommonSupertypes {
     // constructor - type constructor of a supertype to be instantiated
     // types - instantiations of constructor occurring as supertypes of classes we are trying to intersect
     @NotNull
-    private static JetType computeSupertypeProjections(@NotNull TypeConstructor constructor, @NotNull Set<JetType> types) {
+    private static JetType computeSupertypeProjections(@NotNull TypeConstructor constructor, @NotNull Set<JetType> types, int recursionDepth, int maxDepth) {
         // we assume that all the given types are applications of the same type constructor
 
         assert !types.isEmpty();
@@ -154,7 +215,7 @@ public class CommonSupertypes {
             for (JetType type : types) {
                 typeProjections.add(type.getArguments().get(i));
             }
-            newProjections.add(computeSupertypeProjection(parameterDescriptor, typeProjections));
+            newProjections.add(computeSupertypeProjection(parameterDescriptor, typeProjections, recursionDepth, maxDepth));
         }
 
         boolean nullable = false;
@@ -172,9 +233,20 @@ public class CommonSupertypes {
     }
 
     @NotNull
-    private static TypeProjection computeSupertypeProjection(@NotNull TypeParameterDescriptor parameterDescriptor, @NotNull Set<TypeProjection> typeProjections) {
-        if (typeProjections.size() == 1) {
-            return typeProjections.iterator().next();
+    private static TypeProjection computeSupertypeProjection(
+            @NotNull TypeParameterDescriptor parameterDescriptor,
+            @NotNull Set<TypeProjection> typeProjections,
+            int recursionDepth, int maxDepth
+    ) {
+        TypeProjection singleBestProjection = TypesPackage.singleBestRepresentative(typeProjections);
+        if (singleBestProjection != null) {
+            return singleBestProjection;
+        }
+
+        if (recursionDepth >= maxDepth) {
+            // If recursion is too deep, we cut it by taking <out Any?> as an ultimate supertype argument
+            // Example: class A : Base<A>; class B : Base<B>, commonSuperType(A, B) = Base<out Any?>
+            return new TypeProjectionImpl(OUT_VARIANCE, KotlinBuiltIns.getInstance().getNullableAnyType());
         }
 
         Set<JetType> ins = new HashSet<JetType>();
@@ -214,24 +286,21 @@ public class CommonSupertypes {
             }
         }
 
+        if (outs != null) {
+            Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
+            return new TypeProjectionImpl(projectionKind, findCommonSupertype(outs, recursionDepth + 1, maxDepth));
+        }
         if (ins != null) {
             JetType intersection = TypeUtils.intersect(JetTypeChecker.DEFAULT, ins);
             if (intersection == null) {
-                if (outs != null) {
-                    return new TypeProjectionImpl(OUT_VARIANCE, commonSupertype(outs));
-                }
-                return new TypeProjectionImpl(OUT_VARIANCE, commonSupertype(parameterDescriptor.getUpperBounds()));
+                return new TypeProjectionImpl(OUT_VARIANCE, findCommonSupertype(parameterDescriptor.getUpperBounds(), recursionDepth + 1, maxDepth));
             }
             Variance projectionKind = variance == IN_VARIANCE ? Variance.INVARIANT : IN_VARIANCE;
             return new TypeProjectionImpl(projectionKind, intersection);
         }
-        else if (outs != null) {
-            Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
-            return new TypeProjectionImpl(projectionKind, commonSupertype(outs));
-        }
         else {
             Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
-            return new TypeProjectionImpl(projectionKind, commonSupertype(parameterDescriptor.getUpperBounds()));
+            return new TypeProjectionImpl(projectionKind, findCommonSupertype(parameterDescriptor.getUpperBounds(), recursionDepth + 1, maxDepth));
         }
     }
 

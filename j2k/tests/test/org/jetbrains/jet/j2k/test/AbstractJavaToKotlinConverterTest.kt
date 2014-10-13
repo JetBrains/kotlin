@@ -36,6 +36,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiFile
+import org.jetbrains.jet.j2k.ReferenceSearcherImpl
 
 public abstract class AbstractJavaToKotlinConverterTest() : LightCodeInsightFixtureTestCase() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
@@ -125,14 +126,14 @@ public abstract class AbstractJavaToKotlinConverterTest() : LightCodeInsightFixt
 
     private fun elementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val fileWithText = createJavaFile(text)
-        val converter = Converter.create(project, settings, FilesConversionScope(listOf(fileWithText)), J2kPostProcessor(fileWithText))
+        val converter = Converter.create(project, settings, FilesConversionScope(listOf(fileWithText)), ReferenceSearcherImpl, J2kPostProcessor(fileWithText))
         val element = fileWithText.getFirstChild()!!
         return converter.elementToKotlin(element)
     }
 
     private fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = createJavaFile(text)
-        val converter = Converter.create(project, settings, FilesConversionScope(listOf(file)), J2kPostProcessor(file))
+        val converter = Converter.create(project, settings, FilesConversionScope(listOf(file)), ReferenceSearcherImpl, J2kPostProcessor(file))
         return converter.elementToKotlin(file)
     }
 

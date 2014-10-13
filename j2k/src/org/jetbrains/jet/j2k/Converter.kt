@@ -45,6 +45,7 @@ public trait PostProcessor {
 public class Converter private(val project: Project,
                                val settings: ConverterSettings,
                                val conversionScope: ConversionScope,
+                               val referenceSearcher: ReferenceSearcher,
                                private val postProcessor: PostProcessor?,
                                private val state: Converter.State) {
     private class State(val methodReturnType: PsiType?,
@@ -67,34 +68,34 @@ public class Converter private(val project: Project,
     val annotationConverter = AnnotationConverter(this)
 
     class object {
-        public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope, postProcessor: PostProcessor?): Converter {
+        public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope, referenceSearcher: ReferenceSearcher, postProcessor: PostProcessor?): Converter {
             val state = State(null, { ExpressionVisitor(it) }, { StatementVisitor(it) }, null, null, null)
-            return Converter(project, settings, conversionScope, postProcessor, state)
+            return Converter(project, settings, conversionScope, referenceSearcher, postProcessor, state)
         }
     }
 
     fun withMethodReturnType(methodReturnType: PsiType?): Converter
-            = Converter(project, settings, conversionScope, postProcessor,
+            = Converter(project, settings, conversionScope, referenceSearcher, postProcessor,
                         State(methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, state.importList, state.importsToAdd))
 
     fun withExpressionVisitor(factory: (Converter) -> ExpressionVisitor): Converter
-            = Converter(project, settings, conversionScope, postProcessor,
+            = Converter(project, settings, conversionScope, referenceSearcher, postProcessor,
                         State(state.methodReturnType, factory, state.statementVisitorFactory, state.specialContext, state.importList, state.importsToAdd))
 
     fun withStatementVisitor(factory: (Converter) -> StatementVisitor): Converter
-            = Converter(project, settings, conversionScope, postProcessor,
+            = Converter(project, settings, conversionScope, referenceSearcher, postProcessor,
                         State(state.methodReturnType, state.expressionVisitorFactory, factory, state.specialContext, state.importList, state.importsToAdd))
 
     fun withSpecialContext(context: PsiElement): Converter
-            = Converter(project, settings, conversionScope, postProcessor,
+            = Converter(project, settings, conversionScope, referenceSearcher, postProcessor,
                         State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, context, state.importList, state.importsToAdd))
 
     private fun withImportList(importList: ImportList): Converter
-            = Converter(project, settings, conversionScope, postProcessor,
+            = Converter(project, settings, conversionScope, referenceSearcher, postProcessor,
                         State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, importList, state.importsToAdd))
 
     private fun withImportsToAdd(importsToAdd: MutableCollection<String>): Converter
-            = Converter(project, settings, conversionScope, postProcessor,
+            = Converter(project, settings, conversionScope, referenceSearcher, postProcessor,
                         State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, state.importList, importsToAdd))
 
     public fun elementToKotlin(element: PsiElement): String {
@@ -220,7 +221,7 @@ public class Converter private(val project: Project,
         val classObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
         val nestedClasses = members.filterIsInstance(javaClass<PsiClass>()).filter { it.hasModifierProperty(PsiModifier.STATIC) }
         if (classObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
-            return nestedClasses.any { nestedClass -> classObjectMembers.any { findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
+            return nestedClasses.any { nestedClass -> classObjectMembers.any { referenceSearcher.findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
         }
         else {
             return true
@@ -332,7 +333,7 @@ public class Converter private(val project: Project,
                          ExpressionList(convertExpressions(argumentList?.getExpressions())).assignPrototype(argumentList))
         }
         else {
-            val isVal = isVal(field)
+            val isVal = isVal(referenceSearcher, field)
             val typeToDeclare = variableTypeToDeclare(field,
                                                       settings.specifyFieldTypeByDefault || modifiers.isPublic || modifiers.isProtected,
                                                       isVal && modifiers.isPrivate)
@@ -344,7 +345,7 @@ public class Converter private(val project: Project,
                   initializer,
                   isVal,
                   typeToDeclare != null,
-                  initializer.isEmpty && shouldGenerateDefaultInitializer(field))
+                  initializer.isEmpty && shouldGenerateDefaultInitializer(referenceSearcher, field))
         }
         return converted.assignPrototype(field)
     }
@@ -378,7 +379,7 @@ public class Converter private(val project: Project,
 
         val statementsToInsert = ArrayList<Statement>()
         for (parameter in method.getParameterList().getParameters()) {
-            if (parameter.hasWriteAccesses(method)) {
+            if (parameter.hasWriteAccesses(referenceSearcher, method)) {
                 val variable = LocalVariable(parameter.declarationIdentifier(),
                                              Annotations.Empty,
                                              Modifiers.Empty,
@@ -488,7 +489,7 @@ public class Converter private(val project: Project,
     fun convertLocalVariable(variable: PsiLocalVariable): LocalVariable {
         val isVal = variable.hasModifierProperty(PsiModifier.FINAL) ||
                 variable.getInitializer() == null/* we do not know actually and prefer val until we have better analysis*/ ||
-                !variable.hasWriteAccesses(variable.getContainingMethod())
+                !variable.hasWriteAccesses(referenceSearcher, variable.getContainingMethod())
         return LocalVariable(variable.declarationIdentifier(),
                              annotationConverter.convertAnnotations(variable),
                              convertModifiers(variable),

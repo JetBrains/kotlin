@@ -23,17 +23,22 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.PopupStep;
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.resolve.VisibilityUtil;
@@ -43,15 +48,26 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.actions.JetChangeFunctionSignatureAction;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
+import javax.swing.*;
 import java.util.*;
 
 /**
  * Fix that changes member function's signature to match one of super functions' signatures.
  */
 public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunction> {
+    private static final DescriptorRenderer SIGNATURE_RENDERER = new DescriptorRendererBuilder()
+            .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)
+            .setWithDefinedIn(false)
+            .setModifiers()
+            .setShortNames(true)
+            .setUnitReturnType(false).build();
+
     private final List<FunctionDescriptor> possibleSignatures;
 
     public ChangeMemberFunctionSignatureFix(@NotNull JetNamedFunction element) {
@@ -67,16 +83,12 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     @NotNull
     @Override
     public String getText() {
-        if (possibleSignatures.size() == 1)
-            return JetBundle.message("change.function.signature.action.single",
-                                     getFunctionSignatureString(possibleSignatures.get(0)));
-        else
+        if (possibleSignatures.size() == 1) {
+            return JetBundle.message("change.function.signature.action.single", SIGNATURE_RENDERER.render(possibleSignatures.get(0)));
+        }
+        else {
             return JetBundle.message("change.function.signature.action.multiple");
-    }
-
-    @NotNull
-    private static String getFunctionSignatureString(@NotNull FunctionDescriptor functionSignature) {
-        return JetChangeFunctionSignatureAction.SIGNATURE_RENDERER.render(functionSignature);
+        }
     }
 
     @NotNull
@@ -86,19 +98,13 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
     }
 
     @Override
-    protected void invoke(@NotNull final Project project, @NotNull final Editor editor, JetFile file)
-            throws IncorrectOperationException {
+    protected void invoke(@NotNull final Project project, final Editor editor, JetFile file) throws IncorrectOperationException {
         CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
             @Override
             public void run() {
-                createAction(project, editor).execute();
+                new MyAction(project, editor, element, possibleSignatures).execute();
             }
         });
-    }
-
-    @NotNull
-    private JetChangeFunctionSignatureAction createAction(@NotNull Project project, @NotNull Editor editor) {
-        return new JetChangeFunctionSignatureAction(project, editor, element, possibleSignatures);
     }
 
     /**
@@ -118,7 +124,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         for (FunctionDescriptor superFunction : superFunctions) {
             if (!superFunction.getKind().isReal()) continue;
             FunctionDescriptor signature = changeSignatureToMatch(functionDescriptor, superFunction);
-            possibleSignatures.put(getFunctionSignatureString(signature), signature);
+            possibleSignatures.put(SIGNATURE_RENDERER.render(signature), signature);
         }
         List<String> keys = new ArrayList<String>(possibleSignatures.keySet());
         Collections.sort(keys);
@@ -289,5 +295,99 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         }
 
         return true;
+    }
+
+    private static class MyAction {
+        private final Project project;
+        private final Editor editor;
+        private final JetNamedFunction function;
+        private final List<FunctionDescriptor> signatures;
+
+        public MyAction(
+                @NotNull Project project,
+                @NotNull Editor editor,
+                @NotNull JetNamedFunction function,
+                @NotNull List<FunctionDescriptor> signatures
+        ) {
+            this.project = project;
+            this.editor = editor;
+            this.function = function;
+            this.signatures = signatures;
+        }
+
+        public boolean execute() {
+            PsiDocumentManager.getInstance(project).commitAllDocuments();
+
+            if (!function.isValid() || signatures.isEmpty()) return false;
+
+            if (signatures.size() == 1 || !editor.getComponent().isShowing()) {
+                changeSignature(signatures.get(0));
+            }
+            else {
+                chooseSignatureAndChange();
+            }
+
+            return true;
+        }
+
+        private BaseListPopupStep getSignaturePopup() {
+            return new BaseListPopupStep<FunctionDescriptor>(
+                    JetBundle.message("change.function.signature.chooser.title"), signatures) {
+                @Override
+                public boolean isAutoSelectionEnabled() {
+                    return false;
+                }
+
+                @Override
+                public PopupStep onChosen(FunctionDescriptor selectedValue, boolean finalChoice) {
+                    if (finalChoice) {
+                        changeSignature(selectedValue);
+                    }
+                    return FINAL_CHOICE;
+                }
+
+                @Override
+                public Icon getIconFor(FunctionDescriptor aValue) {
+                    return PlatformIcons.FUNCTION_ICON;
+                }
+
+                @NotNull
+                @Override
+                public String getTextFor(FunctionDescriptor aValue) {
+                    return SIGNATURE_RENDERER.render(aValue);
+                }
+            };
+        }
+
+        private void changeSignature(FunctionDescriptor patternDescriptor) {
+            final String signatureString = IdeDescriptorRenderers.SOURCE_CODE.render(patternDescriptor);
+
+            PsiDocumentManager.getInstance(project).commitAllDocuments();
+
+            final JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(project);
+            CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+                @Override
+                public void run() {
+                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            JetNamedFunction patternFunction = psiFactory.createFunction(signatureString);
+
+                            JetTypeReference newTypeRef = function.setTypeReference(patternFunction.getTypeReference());
+                            if (newTypeRef != null) {
+                                ShortenReferences.INSTANCE$.process(newTypeRef);
+                            }
+
+                            JetParameterList newParameterList = (JetParameterList) function.getValueParameterList().replace(patternFunction.getValueParameterList());
+                            ShortenReferences.INSTANCE$.process(newParameterList);
+                        }
+                    });
+                }
+            }, JetBundle.message("change.function.signature.action"), null);
+        }
+
+        private void chooseSignatureAndChange() {
+            JBPopupFactory.getInstance().createListPopup(getSignaturePopup()).showInBestPositionFor(editor);
+        }
     }
 }

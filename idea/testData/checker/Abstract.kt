@@ -116,7 +116,7 @@ enum class MyEnum() {
     <error>abstract</error> fun j() {}
 }
 
-abstract enum class MyAbstractEnum() {}
+<error>abstract</error> enum class MyAbstractEnum() {}
 
 //properties
 <error>val a: Int</error>

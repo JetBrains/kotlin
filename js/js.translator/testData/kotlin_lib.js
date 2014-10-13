@@ -164,16 +164,28 @@
         return new Kotlin.Progression(from, to, -1);
     };
 
-    Kotlin.RuntimeException = Kotlin.createClassNow();
-    Kotlin.NullPointerException = Kotlin.createClassNow();
-    Kotlin.NoSuchElementException = Kotlin.createClassNow();
-    Kotlin.IllegalArgumentException = Kotlin.createClassNow();
-    Kotlin.IllegalStateException = Kotlin.createClassNow();
-    Kotlin.UnsupportedOperationException = Kotlin.createClassNow();
-    Kotlin.IOException = Kotlin.createClassNow();
+    Kotlin.Exception = Error;
 
-    Kotlin.throwNPE = function () {
-        throw new Kotlin.NullPointerException();
+    function createClassNowWithMessage(base) {
+        return Kotlin.createClassNow(base,
+                   /** @constructs */
+                   function (message) {
+                       this.message = (message !== undefined) ? message : null;
+                   }
+               );
+    }
+
+    Kotlin.RuntimeException = createClassNowWithMessage(Kotlin.Exception);
+    Kotlin.NullPointerException = createClassNowWithMessage(Kotlin.RuntimeException);
+    Kotlin.NoSuchElementException = createClassNowWithMessage(Kotlin.RuntimeException);
+    Kotlin.IllegalArgumentException = createClassNowWithMessage(Kotlin.RuntimeException);
+    Kotlin.IllegalStateException = createClassNowWithMessage(Kotlin.RuntimeException);
+    Kotlin.UnsupportedOperationException = createClassNowWithMessage(Kotlin.RuntimeException);
+    Kotlin.IndexOutOfBoundsException = createClassNowWithMessage(Kotlin.RuntimeException);
+    Kotlin.IOException = createClassNowWithMessage(Kotlin.Exception);
+
+    Kotlin.throwNPE = function (message) {
+        throw new Kotlin.NullPointerException(message);
     };
 
     function throwAbstractFunctionInvocationError(funName) {
@@ -468,7 +480,7 @@
             },
             checkRange: function (index) {
                 if (index < 0 || index >= this.array.length) {
-                    throw new RangeError();
+                    throw new Kotlin.IndexOutOfBoundsException();
                 }
             }
         });

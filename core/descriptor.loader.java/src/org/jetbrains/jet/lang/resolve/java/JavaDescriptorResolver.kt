@@ -22,7 +22,10 @@ import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.sources.JavaSourceElement
 
+public var PLATFORM_TYPES: Boolean = true
+
 public class JavaDescriptorResolver(public val packageFragmentProvider: LazyJavaPackageFragmentProvider, private val module: ModuleDescriptor) {
+
     public fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
         return packageFragmentProvider.getClass(javaClass)
     }

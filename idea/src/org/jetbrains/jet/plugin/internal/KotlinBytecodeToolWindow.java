@@ -43,9 +43,9 @@ import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.KotlinCodegenFacade;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticSink;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.ProjectRootsUtil;
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.util.InfinitePeriodicalTask;
 import org.jetbrains.jet.plugin.util.LongRunningReadTask;
@@ -79,7 +79,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             }
 
             JetFile file = location.getJetFile();
-            if (file == null || !ProjectRootsUtil.isInSource(file, false)) {
+            if (file == null || !ProjectRootsUtil.isInProjectSource(file)) {
                 return null;
             }
 
@@ -113,10 +113,10 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 }
                 state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
                                             exhaust.getModuleDescriptor(), exhaust.getBindingContext(),
-                                            Collections.singletonList(jetFile), true, true,
+                                            Collections.singletonList(jetFile), !enableAssertions.isSelected(), !enableAssertions.isSelected(),
                                             GenerationState.GenerateClassFilter.GENERATE_ALL,
                                             !enableInline.isSelected(), !enableOptimization.isSelected(), null, null,
-                                            DiagnosticHolder.DO_NOTHING, null);
+                                            DiagnosticSink.DO_NOTHING, null);
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
             }
             catch (ProcessCanceledException e) {
@@ -182,6 +182,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     private final ToolWindow toolWindow;
     private final JCheckBox enableInline;
     private final JCheckBox enableOptimization;
+    private final JCheckBox enableAssertions;
 
     public KotlinBytecodeToolWindow(Project project, ToolWindow toolWindow) {
         super(new BorderLayout());
@@ -192,14 +193,16 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 EditorFactory.getInstance().createDocument(""), project, JavaFileType.INSTANCE, true);
         add(myEditor.getComponent());
 
-        JPanel optionPanel = new JPanel(new BorderLayout());
+        JPanel optionPanel = new JPanel(new FlowLayout());
         add(optionPanel, BorderLayout.NORTH);
 
         /*TODO: try to extract default parameter from compiler options*/
         enableInline = new JCheckBox("Enable inline", false);
         enableOptimization = new JCheckBox("Enable optimization", true);
-        optionPanel.add(enableInline, BorderLayout.WEST);
-        optionPanel.add(enableOptimization, BorderLayout.CENTER);
+        enableAssertions = new JCheckBox("Enable assertions", true);
+        optionPanel.add(enableInline);
+        optionPanel.add(enableOptimization);
+        optionPanel.add(enableAssertions);
 
         new InfinitePeriodicalTask(UPDATE_DELAY, Alarm.ThreadToUse.SWING_THREAD, this, new Computable<LongRunningReadTask>() {
             @Override

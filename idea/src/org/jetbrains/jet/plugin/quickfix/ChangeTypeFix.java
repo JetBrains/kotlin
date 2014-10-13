@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
@@ -39,7 +40,7 @@ public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
 
     public ChangeTypeFix(@NotNull JetTypeReference element, JetType type) {
         super(element);
-        renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
+        renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
     }
 
     @NotNull

@@ -3,10 +3,10 @@ package test
 public trait TwoBounds {
 
     public trait Sub : test.TwoBounds.Super {
-        public abstract override /*1*/ fun </*0*/ B : kotlin.CharSequence> foo(/*0*/ a: B): kotlin.Unit where B : kotlin.Cloneable
+        public abstract override /*1*/ fun </*0*/ B : kotlin.CharSequence!> foo(/*0*/ a: B!): kotlin.Unit where B : kotlin.Cloneable!
     }
 
     public trait Super {
-        public abstract fun </*0*/ A : kotlin.CharSequence> foo(/*0*/ a: A): kotlin.Unit where A : kotlin.Cloneable
+        public abstract fun </*0*/ A : kotlin.CharSequence!> foo(/*0*/ a: A!): kotlin.Unit where A : kotlin.Cloneable!
     }
 }

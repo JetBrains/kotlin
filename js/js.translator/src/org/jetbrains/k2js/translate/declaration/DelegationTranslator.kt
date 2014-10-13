@@ -36,6 +36,7 @@ import java.util.HashMap
 import org.jetbrains.k2js.translate.declaration.propertyTranslator.addGetterAndSetter
 import org.jetbrains.k2js.translate.utils.ManglingUtils.getMangledMemberNameForExplicitDelegation
 import org.jetbrains.k2js.translate.utils.generateDelegateCall
+import org.jetbrains.jet.backend.common.CodegenUtilKt
 
 public class DelegationTranslator(
         private val classDeclaration: JetClassOrObject,
@@ -90,7 +91,7 @@ public class DelegationTranslator(
         CodegenUtil.getSuperClassByDelegationSpecifier(specifier, bindingContext())
 
     private fun generateDelegates(toClass: ClassDescriptor, field: Field, properties: MutableList<JsPropertyInitializer>) {
-        for ((descriptor, overriddenDescriptor) in CodegenUtil.getDelegates(classDescriptor, toClass)) {
+        for ((descriptor, overriddenDescriptor) in CodegenUtilKt.getDelegates(classDescriptor, toClass)) {
             when (descriptor) {
                 is PropertyDescriptor ->
                     generateDelegateCallForPropertyMember(descriptor, field.name, properties)

@@ -25,6 +25,9 @@ import org.jetbrains.jet.lang.psi.typeRefHelpers.TypeRefHelpersPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.jetbrains.jet.lexer.JetTokens.VAL_KEYWORD;
 import static org.jetbrains.jet.lexer.JetTokens.VAR_KEYWORD;
 
@@ -34,13 +37,38 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
     }
 
     @Override
-    public JetTypeReference getTypeRef() {
-        return TypeRefHelpersPackage.getTypeRef(this);
+    public JetTypeReference getTypeReference() {
+        return TypeRefHelpersPackage.getTypeReference(this);
+    }
+
+    @Override
+    @Nullable
+    public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
+        return TypeRefHelpersPackage.setTypeReference(this, getNameIdentifier(), typeRef);
     }
 
     @Nullable
-    public JetTypeReference setTypeRef(@Nullable JetTypeReference typeRef) {
-        return TypeRefHelpersPackage.setTypeRef(this, getNameIdentifier(), typeRef);
+    @Override
+    public JetParameterList getValueParameterList() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public JetTypeReference getReceiverTypeReference() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public List<JetTypeConstraint> getTypeConstraints() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public List<JetTypeParameter> getTypeParameters() {
+        return Collections.emptyList();
     }
 
     @Override

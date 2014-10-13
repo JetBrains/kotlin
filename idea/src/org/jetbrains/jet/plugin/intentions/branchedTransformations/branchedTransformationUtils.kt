@@ -37,7 +37,7 @@ fun JetWhenCondition.toExpressionText(subject: JetExpression?): String {
     return when (this) {
         is JetWhenConditionIsPattern -> {
             val op = if (isNegated()) "!is" else "is"
-            toBinaryExpression(subject, op, getTypeRef())
+            toBinaryExpression(subject, op, getTypeReference())
         }
         is JetWhenConditionInRange -> {
             toBinaryExpression(subject, getOperationReference()!!.getText()!!, getRangeExpression())
@@ -173,7 +173,7 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
             val conditionExpression = ((condition as JetWhenConditionWithExpression)).getExpression()
             when (conditionExpression)  {
                 is JetIsExpression -> {
-                    builder.pattern(conditionExpression.getTypeRef(), conditionExpression.isNegated())
+                    builder.pattern(conditionExpression.getTypeReference(), conditionExpression.isNegated())
                 }
                 is JetBinaryExpression -> {
                     val lhs = conditionExpression.getLeft()

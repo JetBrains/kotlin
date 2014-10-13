@@ -22,6 +22,10 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
+public fun DeclarationDescriptor.hasInlineAnnotation(): Boolean {
+    return getAnnotations().findAnnotation(FqName("kotlin.inline")) != null
+}
+
 public fun DeclarationDescriptor.hasPlatformStaticAnnotation(): Boolean {
     return getAnnotations().findAnnotation(FqName("kotlin.platform.platformStatic")) != null
 }

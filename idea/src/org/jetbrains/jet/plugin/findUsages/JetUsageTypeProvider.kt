@@ -61,10 +61,10 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             val property = refExpr.getParentByType(javaClass<JetProperty>())
             if (property != null) {
                 when {
-                    property.getTypeRef().isAncestor(refExpr) ->
+                    property.getTypeReference().isAncestor(refExpr) ->
                         return if (property.isLocal()) UsageType.CLASS_LOCAL_VAR_DECLARATION else JetUsageTypes.NON_LOCAL_PROPERTY_TYPE
 
-                    property.getReceiverTypeRef().isAncestor(refExpr) ->
+                    property.getReceiverTypeReference().isAncestor(refExpr) ->
                         return JetUsageTypes.EXTENSION_RECEIVER_TYPE
                 }
             }
@@ -72,9 +72,9 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             val function = refExpr.getParentByType(javaClass<JetFunction>())
             if (function != null) {
                 when {
-                    function.getReturnTypeRef().isAncestor(refExpr) ->
+                    function.getTypeReference().isAncestor(refExpr) ->
                         return JetUsageTypes.FUNCTION_RETURN_TYPE
-                    function.getReceiverTypeRef().isAncestor(refExpr) ->
+                    function.getReceiverTypeReference().isAncestor(refExpr) ->
                         return JetUsageTypes.EXTENSION_RECEIVER_TYPE
                 }
             }
@@ -97,7 +97,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
                 refExpr.getParentByTypeAndBranch(javaClass<JetParameter>()) { getTypeReference() } != null ->
                     JetUsageTypes.VALUE_PARAMETER_TYPE
 
-                refExpr.getParentByTypeAndBranch(javaClass<JetIsExpression>()) { getTypeRef() } != null ->
+                refExpr.getParentByTypeAndBranch(javaClass<JetIsExpression>()) { getTypeReference() } != null ->
                     JetUsageTypes.IS
 
                 with(refExpr.getParentByTypeAndBranch(javaClass<JetBinaryExpressionWithTypeRHS>()) { getRight() }) {

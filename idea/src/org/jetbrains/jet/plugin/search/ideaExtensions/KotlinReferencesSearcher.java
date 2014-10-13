@@ -29,7 +29,7 @@ import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.asJava.KotlinLightMethod;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.plugin.ProjectRootsUtil;
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.search.usagesSearch.*;
 
 public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
@@ -58,7 +58,7 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
         PsiElement element = queryParameters.getElementToSearch();
 
         final PsiNamedElement unwrappedElement = AsJavaPackage.getNamedUnwrappedElement(element);
-        if (unwrappedElement == null || !ProjectRootsUtil.isInSourceWithGradleCheck(unwrappedElement)) return;
+        if (unwrappedElement == null || !ProjectRootsUtil.isInProjectOrLibSource(unwrappedElement)) return;
 
         ApplicationManager.getApplication().runReadAction(
                 new Runnable() {

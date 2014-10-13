@@ -4,8 +4,8 @@ internal fun test(): kotlin.Unit
 
 public open class JavaClass {
     public constructor JavaClass()
-    private final val privateFinal: kotlin.String?
-    private final var privateMutable: kotlin.Any?
+    private final val privateFinal: kotlin.String!
+    private final var privateMutable: kotlin.Any!
     protected/*protected and package*/ final val protectedFinal: kotlin.Double
     protected/*protected and package*/ final var protectedMutable: kotlin.Char
     public final val publicFinal: kotlin.Int

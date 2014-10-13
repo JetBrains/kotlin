@@ -86,4 +86,8 @@ public final class StringTest extends AbstractExpressionTest {
     public void testExtensionMethods() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testNullableTypeInStringTemplate() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

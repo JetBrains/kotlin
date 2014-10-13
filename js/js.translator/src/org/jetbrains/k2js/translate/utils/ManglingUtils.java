@@ -22,7 +22,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -240,7 +240,7 @@ public class ManglingUtils {
         private static boolean isNativeOrOverrideNative(CallableMemberDescriptor descriptor) {
             if (AnnotationsUtils.isNativeObject(descriptor)) return true;
 
-            Set<CallableMemberDescriptor> declarations = OverrideResolver.getAllOverriddenDeclarations(descriptor);
+            Set<CallableMemberDescriptor> declarations = DescriptorUtils.getAllOverriddenDeclarations(descriptor);
             for (CallableMemberDescriptor memberDescriptor : declarations) {
                 if (AnnotationsUtils.isNativeObject(memberDescriptor)) return true;
             }

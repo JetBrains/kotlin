@@ -406,7 +406,7 @@ JetFile: ShortAnnotations.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('zoo')
     PsiWhiteSpace(' ')
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('T')
     PsiWhiteSpace(' ')
@@ -836,7 +836,7 @@ JetFile: ShortAnnotations.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('zoo')
         PsiWhiteSpace(' ')
-        PsiElement(type)('type')
+        PsiElement(typealias)('typealias')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('T')
         PsiWhiteSpace(' ')

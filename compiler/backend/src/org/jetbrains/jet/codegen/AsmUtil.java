@@ -37,7 +37,9 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaCallableMemberDescriptor;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.Approximation;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.org.objectweb.asm.*;
@@ -608,12 +610,15 @@ public class AsmUtil {
             @NotNull CallableDescriptor descriptor,
             @NotNull String assertMethodToCall
     ) {
+        // Assertions are generated elsewhere for platform types
+        if (JavaPackage.getPLATFORM_TYPES()) return;
+
         if (!state.isCallAssertionsEnabled()) return;
 
         if (!isDeclaredInJava(descriptor)) return;
 
         JetType type = descriptor.getReturnType();
-        if (type == null || isNullableType(type)) return;
+        if (type == null || isNullableType(TypesPackage.lowerIfFlexible(type))) return;
 
         Type asmType = state.getTypeMapper().mapReturnType(descriptor);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
@@ -623,6 +628,30 @@ public class AsmUtil {
             v.invokestatic("kotlin/jvm/internal/Intrinsics", assertMethodToCall,
                            "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V", false);
         }
+    }
+
+    @NotNull
+    public static StackValue genNotNullAssertions(
+            @NotNull GenerationState state,
+            @NotNull final StackValue stackValue,
+            @Nullable final Approximation.Info approximationInfo
+    ) {
+        if (!state.isCallAssertionsEnabled()) return stackValue;
+        if (approximationInfo == null || !TypesPackage.assertNotNull(approximationInfo)) return stackValue;
+
+        return new StackValue(stackValue.type) {
+
+            @Override
+            public void put(Type type, InstructionAdapter v) {
+                stackValue.put(type, v);
+                if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
+                    v.dup();
+                    v.visitLdcInsn(approximationInfo.getMessage());
+                    v.invokestatic("kotlin/jvm/internal/Intrinsics", "checkExpressionValueIsNotNull",
+                                   "(Ljava/lang/Object;Ljava/lang/String;)V", false);
+                }
+            }
+        };
     }
 
     private static boolean isDeclaredInJava(@NotNull CallableDescriptor callableDescriptor) {

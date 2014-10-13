@@ -1,29 +1,29 @@
 import java.sql.DriverManager
 
 fun getConnection(url: String?) {
-  DriverManager.<!NONE_APPLICABLE!>getConnection<!>(url)
+  DriverManager.getConnection(url)
   DriverManager.getConnection(url!!) : java.sql.Connection
 }
 
 fun getConnection(url: String?, props: java.util.Properties?) {
-  DriverManager.<!NONE_APPLICABLE!>getConnection<!>(url, props)
+  DriverManager.getConnection(url, props)
   DriverManager.getConnection(url!!, props) : java.sql.Connection
 }
 
 fun getConnection(url: String?, user: String?, password: String?) {
-  DriverManager.<!NONE_APPLICABLE!>getConnection<!>(url, user!!, password!!)
-  DriverManager.<!NONE_APPLICABLE!>getConnection<!>(url!!, user, password!!)
-  DriverManager.<!NONE_APPLICABLE!>getConnection<!>(url!!, user!!, password)
-  DriverManager.getConnection(url!!, user!!, password!!) : java.sql.Connection
+  DriverManager.getConnection(url, user!!, password!!)
+  DriverManager.getConnection(url!!, user, password<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
+  DriverManager.getConnection(url<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>, user<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>, password)
+  DriverManager.getConnection(url<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>, user<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>, password<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) : java.sql.Connection
 }
 
 fun getDriver(url: String?) {
-  DriverManager.getDriver(<!TYPE_MISMATCH!>url<!>)
+  DriverManager.getDriver(url)
   DriverManager.getDriver(url!!) : java.sql.Driver
 }
 
 fun registerDriver(driver: java.sql.Driver?) {
-   DriverManager.registerDriver(<!TYPE_MISMATCH!>driver<!>)
+   DriverManager.registerDriver(driver)
    DriverManager.registerDriver(driver!!)
 }
 

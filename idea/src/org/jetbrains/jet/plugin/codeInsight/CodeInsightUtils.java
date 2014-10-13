@@ -27,10 +27,10 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
@@ -146,7 +146,7 @@ public class CodeInsightUtils {
 
         PsiElement stopElement = element2.getNextSibling();
         List<PsiElement> array = new ArrayList<PsiElement>();
-        for (PsiElement currentElement = element1; currentElement != stopElement; currentElement = currentElement.getNextSibling()) {
+        for (PsiElement currentElement = element1; currentElement != stopElement && currentElement != null; currentElement = currentElement.getNextSibling()) {
             if (aClass.isInstance(currentElement)) {
                 array.add(currentElement);
             }
@@ -219,15 +219,6 @@ public class CodeInsightUtils {
     }
 
     private CodeInsightUtils() {
-    }
-
-    @NotNull
-    public static String createFunctionSignatureStringFromDescriptor(
-            @NotNull FunctionDescriptor descriptor,
-            boolean shortTypeNames
-    ) {
-        DescriptorRenderer renderer = shortTypeNames ? DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES : DescriptorRenderer.SOURCE_CODE;
-        return renderer.render(descriptor);
     }
 
     @Nullable

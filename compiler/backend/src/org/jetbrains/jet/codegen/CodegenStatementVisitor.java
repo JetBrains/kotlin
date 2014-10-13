@@ -50,4 +50,11 @@ public class CodegenStatementVisitor extends JetVisitor<StackValue, StackValue> 
     public StackValue visitBlockExpression(@NotNull JetBlockExpression expression, StackValue data) {
         return codegen.generateBlock(expression, true);
     }
+
+    @Override
+    public StackValue visitLabeledExpression(@NotNull JetLabeledExpression expression, StackValue receiver) {
+        JetExpression baseExpression = expression.getBaseExpression();
+        assert baseExpression != null : "Label expression should have base one: " + expression.getText();
+        return baseExpression.accept(this, receiver);
+    }
 }

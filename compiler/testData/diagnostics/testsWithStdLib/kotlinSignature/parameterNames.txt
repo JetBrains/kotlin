@@ -1,10 +1,10 @@
 package
 
-public/*package*/ /*synthesized*/ fun A(/*0*/ function: (kotlin.String) -> kotlin.Unit): A
+public/*package*/ /*synthesized*/ fun A(/*0*/ function: (kotlin.String!) -> kotlin.Unit): A
 
 public/*package*/ trait A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun foo(/*0*/ kotlinSignatureName: kotlin.String): kotlin.Unit
+    public abstract fun foo(/*0*/ kotlinSignatureName: kotlin.String!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

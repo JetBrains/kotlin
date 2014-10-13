@@ -2,5 +2,5 @@ package test
 
 public open class RedundantProjectionKind {
     public constructor RedundantProjectionKind()
-    public open fun foo(/*0*/ list: kotlin.List<kotlin.Number>): kotlin.Unit
+    public open fun foo(/*0*/ list: kotlin.(Mutable)List<kotlin.Number!>!): kotlin.Unit
 }

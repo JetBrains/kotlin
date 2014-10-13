@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.renderer;
 
+import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -43,6 +45,13 @@ public class DescriptorRendererBuilder {
     private boolean withoutFunctionParameterNames = false;
     private boolean withoutTypeParameters = false;
     private boolean withoutSuperTypes = false;
+    private Function1<JetType, JetType> typeNormalizer = new Function1<JetType, JetType>() {
+        @Override
+        public JetType invoke(JetType type) {
+            return type;
+        }
+    };
+    private boolean renderDefaultValues = true;
 
     @NotNull
     private DescriptorRenderer.OverrideRenderingPolicy overrideRenderingPolicy = DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN;
@@ -201,6 +210,17 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
+    public DescriptorRendererBuilder setRenderDefaultValues(boolean renderDefaultValues) {
+        this.renderDefaultValues = renderDefaultValues;
+        return this;
+    }
+
+    @NotNull
+    public DescriptorRendererBuilder setTypeNormalizer(@NotNull Function1<JetType, JetType> typeNormalizer) {
+        this.typeNormalizer = typeNormalizer;
+        return this;
+    }
+
     @NotNull
     public DescriptorRenderer build() {
         return new DescriptorRendererImpl(
@@ -208,7 +228,7 @@ public class DescriptorRendererBuilder {
                 normalizedVisibilities, showInternalKeyword, prettyFunctionTypes, uninferredTypeParameterAsName,
                 overrideRenderingPolicy, valueParametersHandler, textFormat, excludedAnnotationClasses, includePropertyConstant,
                 includeSynthesizedParameterNames, withoutFunctionParameterNames, withoutTypeParameters, receiverAfterName,
-                renderClassObjectName, withoutSuperTypes);
+                renderClassObjectName, withoutSuperTypes, typeNormalizer, renderDefaultValues);
     }
 
 }

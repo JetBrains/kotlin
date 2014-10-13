@@ -26,20 +26,20 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.QualifiedNameTable.QualifiedName;
 
 public class NameResolver {
-    private final ProtoBuf.SimpleNameTable simpleNames;
+    private final ProtoBuf.StringTable strings;
     private final ProtoBuf.QualifiedNameTable qualifiedNames;
 
     public NameResolver(
-            @NotNull ProtoBuf.SimpleNameTable simpleNames,
+            @NotNull ProtoBuf.StringTable strings,
             @NotNull ProtoBuf.QualifiedNameTable qualifiedNames
     ) {
-        this.simpleNames = simpleNames;
+        this.strings = strings;
         this.qualifiedNames = qualifiedNames;
     }
 
     @NotNull
-    public ProtoBuf.SimpleNameTable getSimpleNameTable() {
-        return simpleNames;
+    public ProtoBuf.StringTable getStringTable() {
+        return strings;
     }
 
     @NotNull
@@ -48,8 +48,13 @@ public class NameResolver {
     }
 
     @NotNull
+    public String getString(int index) {
+        return strings.getString(index);
+    }
+
+    @NotNull
     public Name getName(int index) {
-        String name = simpleNames.getName(index);
+        String name = strings.getString(index);
         return Name.guess(name);
     }
 
@@ -89,7 +94,7 @@ public class NameResolver {
                 result = parentProto;
             }
         }
-        sb.append(simpleNames.getName(fqNameProto.getShortName()));
+        sb.append(strings.getString(fqNameProto.getShortName()));
         return result;
     }
 

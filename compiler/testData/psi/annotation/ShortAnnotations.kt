@@ -5,7 +5,7 @@ foo bar(1) buzz<T>(1) zoo object B
 foo bar(1) buzz<T>(1) zoo fun a() {}
 foo bar(1) buzz<T>(1) zoo val c : Int = 0
 foo bar(1) buzz<T>(1) zoo var v : Int = 0
-foo bar(1) buzz<T>(1) zoo type T = Int
+foo bar(1) buzz<T>(1) zoo typealias T = Int
 
 
 class Foo {
@@ -15,7 +15,7 @@ class Foo {
   foo bar(1) buzz<T>(1) zoo fun a() {}
   foo bar(1) buzz<T>(1) zoo val c : Int = 0
   foo bar(1) buzz<T>(1) zoo var v : Int = 0
-  foo bar(1) buzz<T>(1) zoo type T = Int
+  foo bar(1) buzz<T>(1) zoo typealias T = Int
 
   foo bar(1) buzz<T>(1) zoo {}
 }

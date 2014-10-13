@@ -1,6 +1,6 @@
 package test
 
-public final enum class Enum : kotlin.Enum<test.Enum> {
+public final enum class Enum : kotlin.Enum<test.Enum!> {
     private constructor Enum()
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
@@ -44,7 +44,7 @@ public final enum class Enum : kotlin.Enum<test.Enum> {
     public open inner class Inner {
         public constructor Inner()
         public/*package*/ open fun bar(): kotlin.Unit
-        public/*package*/ open fun valueOf(/*0*/ p0: kotlin.String?): kotlin.Unit
+        public/*package*/ open fun valueOf(/*0*/ p0: kotlin.String!): kotlin.Unit
     }
 
     public open class Nested {

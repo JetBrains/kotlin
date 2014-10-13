@@ -33,7 +33,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.plugin.ProjectRootsUtil;
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 
 public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer {
     private JetElement myElement;
@@ -51,7 +51,7 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
     protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
         PsiElement leaf = location.getPsiElement();
 
-        if (!ProjectRootsUtil.isInSource(leaf, true)) {
+        if (!ProjectRootsUtil.isInProjectOrLibSource(leaf)) {
             return null;
         }
 

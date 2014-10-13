@@ -2,7 +2,7 @@ JetFile: Comparison.kt
   PACKAGE_DIRECTIVE
     <empty list>
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Comparison')
     TYPE_PARAMETER_LIST
@@ -231,7 +231,7 @@ JetFile: Comparison.kt
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('MatchableComparison')
     TYPE_PARAMETER_LIST

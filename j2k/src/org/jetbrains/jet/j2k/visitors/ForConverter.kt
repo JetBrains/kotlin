@@ -118,8 +118,8 @@ class ForConverter(private val statement: PsiForStatement, private val converter
         if (initialization is PsiDeclarationStatement) {
             val loopVar = initialization.getDeclaredElements().singleOrNull2() as? PsiLocalVariable
             if (loopVar != null
-                    && !loopVar.hasWriteAccesses(body)
-                    && !loopVar.hasWriteAccesses(condition)
+                    && !loopVar.hasWriteAccesses(converter.referenceSearcher, body)
+                    && !loopVar.hasWriteAccesses(converter.referenceSearcher, condition)
                     && condition is PsiBinaryExpression) {
                 val operationTokenType = condition.getOperationTokenType()
                 val lowerBound = condition.getLOperand()

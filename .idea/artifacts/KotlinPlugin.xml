@@ -14,7 +14,6 @@
           <element id="module-output" name="util" />
           <element id="module-output" name="util.runtime" />
           <element id="module-output" name="j2k" />
-          <element id="module-output" name="js.translator" />
           <element id="module-output" name="js.frontend" />
           <element id="module-output" name="cli-common" />
           <element id="module-output" name="ide-compiler-runner" />

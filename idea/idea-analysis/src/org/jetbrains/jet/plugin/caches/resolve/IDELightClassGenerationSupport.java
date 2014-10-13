@@ -87,7 +87,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
             if (descriptor == null) {
                 LOG.warn("No class descriptor in context for class: " + JetPsiUtil.getElementTextWithContext(classOrObject));
-                return new LightClassConstructionContext(BindingContext.EMPTY, session.getModuleDescriptor());
+                return new LightClassConstructionContext(bindingContext, session.getModuleDescriptor());
             }
 
             ForceResolveUtil.forceResolveAllContents(descriptor);

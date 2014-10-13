@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.LinkedList;
@@ -54,7 +55,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
 
     public ChangeVariableTypeFix(@NotNull JetVariableDeclaration element, @NotNull JetType type) {
         super(element);
-        renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
+        renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
         this.type = type;
     }
 
@@ -81,7 +82,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        element.setTypeRef(null);
+        element.setTypeReference(null);
         PsiElement nameIdentifier = element.getNameIdentifier();
         assert nameIdentifier != null : "ChangeVariableTypeFix applied to variable without name";
         JetPsiFactory psiFactory = JetPsiFactory(file);

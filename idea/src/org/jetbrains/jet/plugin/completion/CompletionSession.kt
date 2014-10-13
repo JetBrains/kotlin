@@ -32,8 +32,7 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.module.ModuleUtilCore
-import com.intellij.openapi.module.Module
+import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -65,8 +64,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected val project: Project = position.getProject()
     protected val indicesHelper: KotlinIndicesHelper = KotlinIndicesHelper(project)
-    protected val module: Module? = ModuleUtilCore.findModuleForPsiElement(parameters.getOriginalFile())
-    protected val searchScope: GlobalSearchScope = if (module != null) GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module) else GlobalSearchScope.EMPTY_SCOPE
+    protected val searchScope: GlobalSearchScope = searchScopeForSourceElementDependencies(parameters.getOriginalFile()) ?: GlobalSearchScope.EMPTY_SCOPE
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (configuration.completeNonAccessibleDeclarations) return true

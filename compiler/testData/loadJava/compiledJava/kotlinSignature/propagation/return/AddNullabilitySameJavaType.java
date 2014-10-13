@@ -15,7 +15,7 @@ public interface AddNullabilitySameJavaType {
     }
 
     public interface Sub extends Super {
-        @ExpectLoadError("Auto type 'kotlin.CharSequence' is not-null, while type in alternative signature is nullable: 'CharSequence?'")
+        //@ExpectLoadError("Auto type 'kotlin.CharSequence' is not-null, while type in alternative signature is nullable: 'CharSequence?'")
         @KotlinSignature("fun foo(): CharSequence?")
         CharSequence foo();
     }

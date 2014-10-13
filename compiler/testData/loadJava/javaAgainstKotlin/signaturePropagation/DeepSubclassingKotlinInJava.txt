@@ -7,7 +7,7 @@ public open class A {
 
 public open class B : test.A {
     public constructor B()
-    public open override /*1*/ fun foo(): kotlin.String
+    public open override /*1*/ fun foo(): kotlin.String!
 }
 
 public open class C : test.B {
@@ -17,7 +17,7 @@ public open class C : test.B {
 
 public open class D : test.C {
     public constructor D()
-    public open override /*1*/ fun foo(): kotlin.String
+    public open override /*1*/ fun foo(): kotlin.String!
 }
 
 public open class E : test.D {
@@ -27,5 +27,5 @@ public open class E : test.D {
 
 public open class F : test.E {
     public constructor F()
-    public open override /*1*/ fun foo(): kotlin.String
+    public open override /*1*/ fun foo(): kotlin.String!
 }

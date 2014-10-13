@@ -9,10 +9,10 @@ public open class JavaClass {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    private final val privateFinal: JavaClass
-    private final var privateMutable: kotlin.Throwable?
+    private final val privateFinal: JavaClass!
+    private final var privateMutable: kotlin.Throwable!
     protected/*protected static*/ final val protectedFinal: kotlin.Double
     protected/*protected static*/ final var protectedMutable: kotlin.Char
-    public final val publicFinal: kotlin.String
-    public final var publicMutable: kotlin.Any?
+    public final val publicFinal: kotlin.String!
+    public final var publicMutable: kotlin.Any!
 }

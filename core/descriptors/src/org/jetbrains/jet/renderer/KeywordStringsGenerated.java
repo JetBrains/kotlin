@@ -27,7 +27,7 @@ public class KeywordStringsGenerated {
     public static final Set<String> KEYWORDS = new HashSet<String>(Arrays.asList(
         "package",
         "as",
-        "type",
+        "typealias",
         "class",
         "this",
         "super",

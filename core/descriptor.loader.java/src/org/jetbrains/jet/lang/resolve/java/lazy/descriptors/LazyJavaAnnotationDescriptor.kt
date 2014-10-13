@@ -37,6 +37,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName
+import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 
 private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
     override val name: Name? = null
@@ -45,7 +46,7 @@ private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
 
 fun LazyJavaResolverContextWithTypes.resolveAnnotation(annotation: JavaAnnotation): LazyJavaAnnotationDescriptor? {
     val classId = annotation.getClassId()
-    if (classId == null || JvmAnnotationNames.isSpecialAnnotation(classId)) return null
+    if (classId == null || JvmAnnotationNames.isSpecialAnnotation(classId, !PLATFORM_TYPES)) return null
     return LazyJavaAnnotationDescriptor(this, annotation)
 }
 
@@ -153,7 +154,10 @@ class LazyJavaAnnotationDescriptor(
 
     private fun resolveFromJavaClassObjectType(javaType: JavaType): CompileTimeConstant<*>? {
         // Class type is never nullable in 'Foo.class' in Java
-        val `type` = TypeUtils.makeNotNullable(c.typeResolver.transformJavaType(javaType, TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes()))
+        val `type` = TypeUtils.makeNotNullable(c.typeResolver.transformJavaType(
+                javaType,
+                TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false))
+        )
 
         val jlClass = c.packageFragmentProvider.module.resolveTopLevelClass(FqName("java.lang.Class"))
         if (jlClass == null) return null

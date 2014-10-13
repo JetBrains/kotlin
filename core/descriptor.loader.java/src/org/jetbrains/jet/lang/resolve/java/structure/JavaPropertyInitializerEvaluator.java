@@ -24,4 +24,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 public interface JavaPropertyInitializerEvaluator {
     @Nullable
     CompileTimeConstant<?> getInitializerConstant(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor);
+
+    boolean isNotNullCompileTimeConstant(@NotNull JavaField field);
 }

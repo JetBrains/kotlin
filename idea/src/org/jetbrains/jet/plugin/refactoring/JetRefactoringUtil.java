@@ -45,16 +45,17 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.util.UtilPackage;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.jet.plugin.util.string.StringPackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
@@ -69,7 +70,8 @@ public class JetRefactoringUtil {
     private JetRefactoringUtil() {
     }
 
-    public static JetKeywordToken getVisibilityToken(Visibility visibility) {
+    @NotNull
+    public static JetModifierKeywordToken getVisibilityToken(@NotNull Visibility visibility) {
         if (visibility == Visibilities.PUBLIC) {
             return JetTokens.PUBLIC_KEYWORD;
         }
@@ -93,7 +95,7 @@ public class JetRefactoringUtil {
 
     @NotNull
     public static String formatClassDescriptor(@NotNull DeclarationDescriptor classDescriptor) {
-        return DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(classDescriptor);
+        return IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(classDescriptor);
     }
 
     @NotNull
@@ -136,7 +138,7 @@ public class JetRefactoringUtil {
 
         Project project = declaration.getProject();
         Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor = new HashMap<PsiElement, CallableDescriptor>();
-        for (CallableDescriptor overriddenDescriptor : OverrideResolver.getAllOverriddenDescriptors(declarationDescriptor)) {
+        for (CallableDescriptor overriddenDescriptor : DescriptorUtils.getAllOverriddenDescriptors(declarationDescriptor)) {
             PsiElement overriddenDeclaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(project, overriddenDescriptor);
             if (PsiTreeUtil.instanceOf(overriddenDeclaration, JetNamedFunction.class, JetProperty.class, PsiMethod.class)) {
                 overriddenElementsToDescriptor.put(overriddenDeclaration, overriddenDescriptor);
@@ -168,7 +170,7 @@ public class JetRefactoringUtil {
         String message = JetBundle.message(
                 "x.overrides.y.in.class.list",
                 DescriptorRenderer.COMPACT.render(declarationDescriptor),
-                DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(declarationDescriptor.getContainingDeclaration()),
+                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(declarationDescriptor.getContainingDeclaration()),
                 superClassesStr,
                 JetBundle.message(actionStringKey)
         );
@@ -501,7 +503,7 @@ public class JetRefactoringUtil {
     }
 
     public static String getExpressionShortText(@NotNull JetElement element) { //todo: write appropriate implementation
-        return UtilPackage.collapseSpaces(StringUtil.shortenTextWithEllipsis(element.getText(), 53, 0));
+        return StringPackage.collapseSpaces(StringUtil.shortenTextWithEllipsis(element.getText(), 53, 0));
     }
 
     @Nullable

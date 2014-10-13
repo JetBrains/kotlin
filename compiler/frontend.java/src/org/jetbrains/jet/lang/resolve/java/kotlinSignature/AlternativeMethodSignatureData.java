@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.java.JavaPackage;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMember;
@@ -89,7 +90,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             computeValueParameters(valueParameters);
 
             if (originalReturnType != null) {
-                altReturnType = computeReturnType(originalReturnType, altFunDeclaration.getReturnTypeRef(), originalToAltTypeParameters);
+                altReturnType = computeReturnType(originalReturnType, altFunDeclaration.getTypeReference(), originalToAltTypeParameters);
             }
 
             if (hasSuperMethods) {
@@ -101,11 +102,25 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         }
     }
 
+    public static List<ValueParameterDescriptor> updateNames(
+            List<ValueParameterDescriptor> originalValueParameters,
+            List<ValueParameterDescriptor> altValueParameters
+    ) {
+        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(originalValueParameters.size());
+        for (int i = 0; i < originalValueParameters.size(); i++) {
+            ValueParameterDescriptor originalValueParameter = originalValueParameters.get(i);
+            ValueParameterDescriptor altValueParameter = altValueParameters.get(i);
+            result.add(originalValueParameter.copy(originalValueParameter.getContainingDeclaration(), altValueParameter.getName()));
+        }
+        return result;
+    }
+
     private void checkParameterAndReturnTypesForOverridingMethods(
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull List<TypeParameterDescriptor> methodTypeParameters,
             @Nullable JetType returnType
     ) {
+        if (JavaPackage.getPLATFORM_TYPES()) return;
         TypeSubstitutor substitutor = DescriptorResolverUtils.createSubstitutorForTypeParameters(originalToAltTypeParameters);
 
         for (ValueParameterDescriptor parameter : valueParameters) {

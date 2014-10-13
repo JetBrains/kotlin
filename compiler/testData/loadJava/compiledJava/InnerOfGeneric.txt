@@ -2,29 +2,29 @@ package test
 
 public open class InnerOfGeneric {
     public constructor InnerOfGeneric()
-    
+
     public abstract inner class A</*0*/ K> {
         public constructor A</*0*/ K>()
-        
-        public abstract inner class Inner : test.InnerOfGeneric.S<K> {
+
+        public abstract inner class Inner : test.InnerOfGeneric.S<K!> {
             public constructor Inner()
-            public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<K>?
+            public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.(Mutable)Iterator<K!>!
         }
     }
-    
-    public open inner class B</*0*/ L> : test.InnerOfGeneric.A<L> {
+
+    public open inner class B</*0*/ L> : test.InnerOfGeneric.A<L!> {
         public constructor B</*0*/ L>()
-        
+
         public open inner class SubInner : test.InnerOfGeneric.A.Inner {
             public constructor SubInner()
-            public open override /*1*/ fun iterator(): kotlin.MutableIterator<L>?
+            public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<L!>!
         }
     }
-    
+
     public trait S</*0*/ E> {
-        public abstract fun iterator(): kotlin.MutableIterator<E>?
+        public abstract fun iterator(): kotlin.(Mutable)Iterator<E!>!
     }
-    
+
     // Static members
-    public final /*synthesized*/ fun </*0*/ E> S(/*0*/ function: () -> kotlin.MutableIterator<E>?): test.InnerOfGeneric.S<E>
+    public final /*synthesized*/ fun </*0*/ E> S(/*0*/ function: () -> kotlin.(Mutable)Iterator<E!>!): test.InnerOfGeneric.S<E>
 }

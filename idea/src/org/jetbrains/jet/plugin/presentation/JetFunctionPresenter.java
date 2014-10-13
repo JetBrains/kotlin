@@ -62,7 +62,7 @@ public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFu
             public String getLocationString() {
                 FqName name = function.getFqName();
                 if (name != null) {
-                    JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
+                    JetTypeReference receiverTypeRef = function.getReceiverTypeReference();
                     String extensionLocation = receiverTypeRef != null ? "for " + receiverTypeRef.getText() + " " : "";
                     return String.format("(%sin %s)", extensionLocation, name.parent());
                 }

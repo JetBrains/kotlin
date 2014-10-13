@@ -1,7 +1,7 @@
 package test
 
 public/*package*/ open class B {
-    public/*package*/ constructor B(/*0*/ p0: test.B.C?)
+    public/*package*/ constructor B(/*0*/ p0: test.B.C!)
 
     public/*package*/ trait C {
     }

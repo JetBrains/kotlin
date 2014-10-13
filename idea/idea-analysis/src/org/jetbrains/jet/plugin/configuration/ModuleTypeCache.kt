@@ -42,12 +42,12 @@ class ModuleTypeCacheManager private (project: Project) {
                 (module: Module?) ->
                 val moduleType = if (module != null) computeType(module) else null
                 CachedValueProvider.Result.create<ModuleType>(moduleType, vfsModificationTracker)
-            }, false)
+            }, false)!!
 
     fun isGradleModule(module: Module) = getModuleType(module) == ModuleType.GRADLE
 
     private fun getModuleType(module: Module): ModuleType? {
-        return cachedValue?.getValue(module)
+        return cachedValue.getValue(module)
     }
 
     private class VfsModificationTracker(project: Project): DefaultModificationTracker() {

@@ -113,9 +113,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
     protected boolean errorAndAdvance(String message, int advanceTokenCount) {
         PsiBuilder.Marker err = mark();
-        for (int i = 0; i < advanceTokenCount; i++) {
-            advance(); // erroneous token
-        }
+        advance(advanceTokenCount);
         err.error(message);
         return false;
     }
@@ -127,6 +125,12 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
     protected void advance() {
         // TODO: how to report errors on bad characters? (Other than highlighting)
         myBuilder.advanceLexer();
+    }
+
+    protected void advance(int advanceTokenCount) {
+        for (int i = 0; i < advanceTokenCount; i++) {
+            advance(); // erroneous token
+        }
     }
 
     protected void advanceAt(IElementType current) {

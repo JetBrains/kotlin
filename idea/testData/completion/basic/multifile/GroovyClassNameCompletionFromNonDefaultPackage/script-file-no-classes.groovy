@@ -1,3 +1,5 @@
+package nondefault
+
 def method() {
 
 }

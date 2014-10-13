@@ -34,6 +34,7 @@ import java.util.List;
 public abstract class CompositeFIF implements FunctionIntrinsicFactory {
     @NotNull
     public static final FunctionIntrinsic LENGTH_PROPERTY_INTRINSIC = new BuiltInPropertyIntrinsic("length");
+    public static final FunctionIntrinsic MESSAGE_PROPERTY_INTRINSIC = new BuiltInPropertyIntrinsic("message");
     public static final FunctionIntrinsic IS_EMPTY_INTRINSIC = new FunctionIntrinsic() {
         @NotNull
         @Override

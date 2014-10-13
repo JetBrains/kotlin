@@ -26,7 +26,7 @@ import org.jetbrains.jet.codegen.optimization.OptimizationClassBuilderFactory;
 import org.jetbrains.jet.codegen.when.MappingsClassesForWhenByEnum;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticSink;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
@@ -120,7 +120,7 @@ public class GenerationState {
             @NotNull List<JetFile> files
     ) {
         this(project, builderFactory, Progress.DEAF, module, bindingContext, files, true, true, GenerateClassFilter.GENERATE_ALL,
-             false, false, null, null, DiagnosticHolder.DO_NOTHING, null);
+             false, false, null, null, DiagnosticSink.DO_NOTHING, null);
     }
 
     public GenerationState(
@@ -137,7 +137,7 @@ public class GenerationState {
             boolean disableOptimization,
             @Nullable Collection<FqName> packagesWithRemovedFiles,
             @Nullable String moduleId,
-            @NotNull DiagnosticHolder diagnostics,
+            @NotNull DiagnosticSink diagnostics,
             @Nullable File outDirectory
     ) {
         this.project = project;

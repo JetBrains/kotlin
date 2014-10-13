@@ -145,7 +145,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         moduleContainingMissingDependencies.seal()
     }
     val deserializationContext = DeserializationGlobalContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                                                              constantLoader, packageFragmentProvider)
+                                                              constantLoader, packageFragmentProvider, JavaFlexibleTypeCapabilitiesDeserializer)
 
     private fun createDummyPackageFragment(fqName: FqName): MutablePackageFragmentDescriptor {
         return MutablePackageFragmentDescriptor(moduleDescriptor, fqName)

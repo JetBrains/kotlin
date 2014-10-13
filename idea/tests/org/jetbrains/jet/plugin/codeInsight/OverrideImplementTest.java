@@ -71,6 +71,10 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
         doImplementFileTest();
     }
 
+    public void testDefaultValues() {
+        doImplementFileTest();
+    }
+
     public void testRespectCaretPosition() {
         doMultiImplementFileTest();
     }

@@ -11,6 +11,6 @@ package test {
 
         // Static members
         protected/*protected static*/ final var field: kotlin.Int
-        protected/*protected static*/ open fun method(): kotlin.String?
+        protected/*protected static*/ open fun method(): kotlin.String!
     }
 }

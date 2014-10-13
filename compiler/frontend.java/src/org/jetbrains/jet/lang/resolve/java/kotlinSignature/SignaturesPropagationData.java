@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaPackage;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmSignaturePackage;
@@ -150,6 +151,8 @@ public class SignaturesPropagationData {
     private JetType modifyReturnTypeAccordingToSuperMethods(
             @NotNull JetType autoType // type built by JavaTypeTransformer
     ) {
+        if (JavaPackage.getPLATFORM_TYPES()) return autoType;
+
         List<TypeAndVariance> typesFromSuperMethods = ContainerUtil.map(superFunctions,
                 new Function<FunctionDescriptor, TypeAndVariance>() {
                     @Override
@@ -162,6 +165,8 @@ public class SignaturesPropagationData {
     }
 
     private List<TypeParameterDescriptor> modifyTypeParametersAccordingToSuperMethods(List<TypeParameterDescriptor> autoTypeParameters) {
+        if (JavaPackage.getPLATFORM_TYPES()) return autoTypeParameters;
+
         List<TypeParameterDescriptor> result = Lists.newArrayList();
 
         for (TypeParameterDescriptor autoParameter : autoTypeParameters) {
@@ -399,9 +404,9 @@ public class SignaturesPropagationData {
             @NotNull List<TypeAndVariance> typesFromSuper,
             @NotNull TypeUsage howThisTypeIsUsed
     ) {
-        if (autoType.isError()) {
-            return autoType;
-        }
+        if (autoType.isError()) return autoType;
+
+        if (JavaPackage.getPLATFORM_TYPES()) return autoType;
 
         boolean resultNullable = typeMustBeNullable(autoType, typesFromSuper, howThisTypeIsUsed);
         ClassifierDescriptor resultClassifier = modifyTypeClassifier(autoType, typesFromSuper);
@@ -430,6 +435,8 @@ public class SignaturesPropagationData {
             @NotNull ClassifierDescriptor classifier,
             @NotNull List<TypeAndVariance> typesFromSuper
     ) {
+        if (typesFromSuper.isEmpty()) return autoType.getArguments();
+
         List<TypeProjection> autoArguments = autoType.getArguments();
 
         if (!(classifier instanceof ClassDescriptor)) {
@@ -462,6 +469,8 @@ public class SignaturesPropagationData {
             @NotNull TypeProjection argument,
             @NotNull List<TypeProjectionAndVariance> projectionsFromSuper
     ) {
+        if (projectionsFromSuper.isEmpty()) return argument.getProjectionKind();
+
         Set<Variance> projectionKindsInSuper = Sets.newLinkedHashSet();
         for (TypeProjectionAndVariance projectionAndVariance : projectionsFromSuper) {
             projectionKindsInSuper.add(projectionAndVariance.typeProjection.getProjectionKind());
@@ -575,7 +584,7 @@ public class SignaturesPropagationData {
         boolean someSupersCovariantNullable = false;
         boolean someSupersNotNull = false;
         for (TypeAndVariance typeFromSuper : typesFromSuper) {
-            if (!typeFromSuper.type.isNullable()) {
+            if (!TypeUtils.isNullableType(typeFromSuper.type)) {
                 someSupersNotNull = true;
             }
             else {
@@ -590,23 +599,23 @@ public class SignaturesPropagationData {
 
         if (someSupersNotNull && someSupersNotCovariantNullable) {
             reportError("Incompatible types in superclasses: " + typesFromSuper);
-            return autoType.isNullable();
+            return TypeUtils.isNullableType(autoType);
         }
         else if (someSupersNotNull) {
             return false;
         }
         else if (someSupersNotCovariantNullable || someSupersCovariantNullable) {
-            boolean annotatedAsNotNull = howThisTypeIsUsed != TYPE_ARGUMENT && !autoType.isNullable();
+            boolean annotatedAsNotNull = howThisTypeIsUsed != TYPE_ARGUMENT && !TypeUtils.isNullableType(autoType);
 
             if (annotatedAsNotNull && someSupersNotCovariantNullable) {
-                DescriptorRenderer renderer = DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES;
+                DescriptorRenderer renderer = DescriptorRenderer.SHORT_NAMES_IN_TYPES;
                 reportError("In superclass type is nullable: " + typesFromSuper + ", in subclass it is not: " + renderer.renderType(autoType));
                 return true;
             }
 
             return !annotatedAsNotNull;
         }
-        return autoType.isNullable();
+        return TypeUtils.isNullableType(autoType);
     }
 
     @NotNull

@@ -46,12 +46,12 @@ public interface JetTokens {
     JetToken LONG_TEMPLATE_ENTRY_END = new JetToken("LONG_TEMPLATE_ENTRY_END");
     JetToken DANGLING_NEWLINE = new JetToken("DANGLING_NEWLINE");
 
-    JetKeywordToken PACKAGE_KEYWORD = JetKeywordToken.keyword("package");
+    JetKeywordToken PACKAGE_KEYWORD          = JetKeywordToken.keyword("package");
     JetKeywordToken AS_KEYWORD               = JetKeywordToken.keyword("as");
-    JetKeywordToken TYPE_KEYWORD             = JetKeywordToken.keyword("type");
+    JetKeywordToken TYPE_ALIAS_KEYWORD       = JetKeywordToken.keyword("typealias");
     JetKeywordToken CLASS_KEYWORD            = JetKeywordToken.keyword("class");
     JetKeywordToken THIS_KEYWORD             = JetKeywordToken.keyword("this");
-    JetKeywordToken SUPER_KEYWORD             = JetKeywordToken.keyword("super");
+    JetKeywordToken SUPER_KEYWORD            = JetKeywordToken.keyword("super");
     JetKeywordToken VAL_KEYWORD              = JetKeywordToken.keyword("val");
     JetKeywordToken VAR_KEYWORD              = JetKeywordToken.keyword("var");
     JetKeywordToken FUN_KEYWORD              = JetKeywordToken.keyword("fun");
@@ -71,8 +71,8 @@ public interface JetTokens {
     JetKeywordToken ELSE_KEYWORD             = JetKeywordToken.keyword("else");
     JetKeywordToken WHILE_KEYWORD            = JetKeywordToken.keyword("while");
     JetKeywordToken DO_KEYWORD               = JetKeywordToken.keyword("do");
-    JetKeywordToken WHEN_KEYWORD            = JetKeywordToken.keyword("when");
-    JetKeywordToken TRAIT_KEYWORD     = JetKeywordToken.keyword("trait");
+    JetKeywordToken WHEN_KEYWORD             = JetKeywordToken.keyword("when");
+    JetKeywordToken TRAIT_KEYWORD            = JetKeywordToken.keyword("trait");
     // TODO: Discuss "This" keyword
     JetKeywordToken CAPITALIZED_THIS_KEYWORD = JetKeywordToken.keyword("This");
 
@@ -155,7 +155,7 @@ public interface JetTokens {
     JetKeywordToken FINALLY_KEYWORD   = JetKeywordToken.softKeyword("finally");
     JetModifierKeywordToken FINAL_KEYWORD     = JetModifierKeywordToken.softKeywordModifier("final");
 
-    TokenSet KEYWORDS = TokenSet.create(PACKAGE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, TRAIT_KEYWORD,
+    TokenSet KEYWORDS = TokenSet.create(PACKAGE_KEYWORD, AS_KEYWORD, TYPE_ALIAS_KEYWORD, CLASS_KEYWORD, TRAIT_KEYWORD,
                                         THIS_KEYWORD, SUPER_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
                                         NULL_KEYWORD,
                                         TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,

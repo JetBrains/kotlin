@@ -14,7 +14,7 @@ JetFile: TypeDef.kt
         PsiElement(IDENTIFIER)('goo')
   PsiWhiteSpace('\n\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
@@ -26,7 +26,7 @@ JetFile: TypeDef.kt
           PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     TYPE_PARAMETER_LIST
@@ -43,7 +43,7 @@ JetFile: TypeDef.kt
           PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     TYPE_PARAMETER_LIST
@@ -67,7 +67,7 @@ JetFile: TypeDef.kt
           PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     TYPE_PARAMETER_LIST
@@ -88,7 +88,7 @@ JetFile: TypeDef.kt
           PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     TYPE_PARAMETER_LIST
@@ -116,7 +116,7 @@ JetFile: TypeDef.kt
           PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace('\n\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
@@ -130,7 +130,7 @@ JetFile: TypeDef.kt
     PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     TYPE_PARAMETER_LIST
@@ -149,7 +149,7 @@ JetFile: TypeDef.kt
     PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     TYPE_PARAMETER_LIST
@@ -175,7 +175,7 @@ JetFile: TypeDef.kt
     PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     TYPE_PARAMETER_LIST
@@ -198,7 +198,7 @@ JetFile: TypeDef.kt
     PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n')
   TYPEDEF
-    PsiElement(type)('type')
+    PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     TYPE_PARAMETER_LIST

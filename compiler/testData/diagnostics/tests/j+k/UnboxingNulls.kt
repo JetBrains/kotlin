@@ -9,5 +9,5 @@ package a
 
 fun foo() {
   // If this fails, it means that we have broken the rule that Java returns are always nullable
-  a.Test<Int>().t() <!UNSAFE_INFIX_CALL!>+<!> 1
+  a.Test<Int>().t() + 1
 }

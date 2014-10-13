@@ -20,15 +20,15 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.plugin.completion.DeclarationLookupObject
-import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 open class BaseDeclarationInsertHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val descriptor = (item.getObject() as? DeclarationLookupObject)?.descriptor
         if (descriptor != null) {
             val name = descriptor.getName()
-            val nameInCode = DescriptorRenderer.SOURCE_CODE.renderName(name)
+            val nameInCode = IdeDescriptorRenderers.SOURCE_CODE.renderName(name)
             val document = context.getDocument()
             val needEscaping = nameInCode != name.asString()
             // we check that text inserted matches the name because something else can be inserted by custom insert handler

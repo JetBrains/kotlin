@@ -2,5 +2,5 @@ package test
 
 public open class Max {
     public constructor Max()
-    public open fun </*0*/ T> max(/*0*/ p0: kotlin.Collection<T>?): T? where T : kotlin.Comparable<T>?
+    public open fun </*0*/ T : kotlin.Any!> max(/*0*/ p0: (kotlin.MutableCollection<out T!>..kotlin.Collection<T!>?)): T! where T : kotlin.Comparable<T!>!
 }

@@ -123,7 +123,7 @@ class KotlinSignatureUtil {
             return false;
         }
         PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
-        assert annotation != null;
+        assert annotation != null : "Annotation not found for " + element.getText();
         if (annotation.getContainingFile() == annotationOwner.getContainingFile()) {
             return annotation.isWritable();
         } else {

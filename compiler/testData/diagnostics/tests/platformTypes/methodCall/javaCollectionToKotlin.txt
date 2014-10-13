@@ -1,0 +1,4 @@
+package
+
+internal fun takeJ(/*0*/ map: kotlin.Map<kotlin.Any, kotlin.Any>): kotlin.Unit
+internal fun test(): kotlin.Unit

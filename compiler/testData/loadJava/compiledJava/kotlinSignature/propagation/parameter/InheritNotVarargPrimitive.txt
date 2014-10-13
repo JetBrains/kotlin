@@ -9,6 +9,6 @@ public trait InheritNotVarargPrimitive {
 
     public trait Super {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun foo(/*0*/ p0: kotlin.IntArray?): kotlin.Unit
+        public abstract fun foo(/*0*/ p0: kotlin.IntArray!): kotlin.Unit
     }
 }

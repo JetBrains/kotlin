@@ -6,6 +6,6 @@ fun foo() {
 
     out val foo = 5
     [a] var foo = 4
-    type f =  T.() -> Unit
+    typealias f =  T.() -> Unit
 
 }

@@ -5,6 +5,6 @@ public final class MethodReferencesOuterClassTP</*0*/ P> {
 
     public final inner class Inner {
         public constructor Inner()
-        public final fun </*0*/ Q : P> f(): kotlin.Unit
+        public final fun </*0*/ Q : P!> f(): kotlin.Unit
     }
 }

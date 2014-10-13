@@ -62,21 +62,7 @@ public abstract class JetModifierList extends JetElementImplStub<PsiJetModifierL
         return answer != null ? answer : Collections.<JetAnnotationEntry>emptyList();
     }
 
-    @NotNull
-    public List<ASTNode> getModifierNodes() {
-        List<ASTNode> modifierNodes = new ArrayList<ASTNode>();
-
-        ASTNode node = getNode().getFirstChildNode();
-        while (node != null) {
-            if (node.getElementType() instanceof JetModifierKeywordToken) {
-                modifierNodes.add(node);
-            }
-            node = node.getTreeNext();
-        }
-        return modifierNodes;
-    }
-
-    public boolean hasModifier(JetModifierKeywordToken token) {
+    public boolean hasModifier(@NotNull JetModifierKeywordToken token) {
         PsiJetModifierListStub stub = getStub();
         if (stub != null) {
             return stub.hasModifier(token);
@@ -85,12 +71,12 @@ public abstract class JetModifierList extends JetElementImplStub<PsiJetModifierL
     }
 
     @Nullable
-    public PsiElement getModifier(JetModifierKeywordToken token) {
+    public PsiElement getModifier(@NotNull JetModifierKeywordToken token) {
         return findChildByType(token);
     }
 
     @Nullable
-    public ASTNode getModifierNode(JetToken token) {
+    public ASTNode getModifierNode(@NotNull JetToken token) {
         ASTNode node = getNode().getFirstChildNode();
         while (node != null) {
             if (node.getElementType() == token) return node;
@@ -98,6 +84,4 @@ public abstract class JetModifierList extends JetElementImplStub<PsiJetModifierL
         }
         return null;
     }
-
-
 }

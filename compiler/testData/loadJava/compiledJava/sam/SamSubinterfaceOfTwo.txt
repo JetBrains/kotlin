@@ -1,21 +1,21 @@
 package test
 
 public trait SamSubinterfaceOfTwo {
-    
-    public trait Sub : test.SamSubinterfaceOfTwo.Super1, test.SamSubinterfaceOfTwo.Super2<kotlin.String> {
-        public abstract override /*2*/ /*fake_override*/ fun f(): kotlin.String?
+
+    public trait Sub : test.SamSubinterfaceOfTwo.Super1, test.SamSubinterfaceOfTwo.Super2<kotlin.String!> {
+        public abstract override /*2*/ /*fake_override*/ fun f(): kotlin.String!
     }
-    
+
     public trait Super1 {
-        public abstract fun f(): kotlin.CharSequence?
+        public abstract fun f(): kotlin.CharSequence!
     }
-    
+
     public trait Super2</*0*/ T> {
-        public abstract fun f(): T?
+        public abstract fun f(): T!
     }
-    
+
     // Static members
-    public final /*synthesized*/ fun Sub(/*0*/ function: () -> kotlin.String?): test.SamSubinterfaceOfTwo.Sub
-    public final /*synthesized*/ fun Super1(/*0*/ function: () -> kotlin.CharSequence?): test.SamSubinterfaceOfTwo.Super1
-    public final /*synthesized*/ fun </*0*/ T> Super2(/*0*/ function: () -> T?): test.SamSubinterfaceOfTwo.Super2<T>
+    public final /*synthesized*/ fun Sub(/*0*/ function: () -> kotlin.String!): test.SamSubinterfaceOfTwo.Sub
+    public final /*synthesized*/ fun Super1(/*0*/ function: () -> kotlin.CharSequence!): test.SamSubinterfaceOfTwo.Super1
+    public final /*synthesized*/ fun </*0*/ T> Super2(/*0*/ function: () -> T!): test.SamSubinterfaceOfTwo.Super2<T>
 }

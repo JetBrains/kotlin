@@ -1,6 +1,6 @@
 package test
 
-public final enum class JavaEnum : kotlin.Enum<test.JavaEnum> {
+public final enum class JavaEnum : kotlin.Enum<test.JavaEnum!> {
     private constructor JavaEnum()
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int

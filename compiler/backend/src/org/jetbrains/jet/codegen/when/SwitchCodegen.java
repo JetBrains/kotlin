@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -135,7 +136,7 @@ abstract public class SwitchCodegen {
 
         assert subjectJetType != null : "subject type can't be null (i.e. void)";
 
-        if (subjectJetType.isNullable()) {
+        if (TypeUtils.isNullableType(subjectJetType)) {
             int nullEntryIndex = findNullEntryIndex(expression);
             Label nullLabel = nullEntryIndex == -1 ? defaultLabel : entryLabels.get(nullEntryIndex);
             Label notNullLabel = new Label();

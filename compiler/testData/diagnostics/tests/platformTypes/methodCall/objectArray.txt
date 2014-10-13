@@ -1,0 +1,3 @@
+package
+
+internal fun test(/*0*/ aa: kotlin.Array<kotlin.Any>, /*1*/ sa: kotlin.Array<kotlin.String>, /*2*/ san: kotlin.Array<kotlin.String?>): kotlin.Unit

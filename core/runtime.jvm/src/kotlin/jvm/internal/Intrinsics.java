@@ -37,6 +37,13 @@ public class Intrinsics {
         throw new KotlinNullPointerException();
     }
 
+    public static void checkExpressionValueIsNotNull(Object value, String message) {
+        if (value == null) {
+            IllegalStateException exception = new IllegalStateException(message + " must not be null");
+            throw sanitizeStackTrace(exception);
+        }
+    }
+
     public static void checkReturnedValueIsNotNull(Object value, String className, String methodName) {
         if (value == null) {
             IllegalStateException exception =

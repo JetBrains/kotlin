@@ -21,10 +21,10 @@ import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.psi.JetTypeArgumentList
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpression>(
         "insert.explicit.type.arguments", javaClass()) {
@@ -71,7 +71,7 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
             val psiFactory = JetPsiFactory(element)
             val typeArgs = types.map {
                 assert(args[it] != null, "there is a null in the type arguments to transform")
-                DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(args[it]!!)
+                IdeDescriptorRenderers.SOURCE_CODE.renderType(args[it]!!)
             }.joinToString(", ", "<", ">")
 
             return psiFactory.createTypeArguments(typeArgs)

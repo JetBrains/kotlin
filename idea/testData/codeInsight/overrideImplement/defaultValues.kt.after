@@ -1,0 +1,9 @@
+trait T {
+    fun foo(a:Int = 1)
+}
+
+class C : T {
+    override fun foo(a: Int) {
+        <selection><caret>throw UnsupportedOperationException()</selection>
+    }
+}

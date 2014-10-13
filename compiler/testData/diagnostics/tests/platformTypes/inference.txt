@@ -1,0 +1,4 @@
+package
+
+internal fun </*0*/ T, /*1*/ C : foo.Base<T>> convert(/*0*/ src: foo.HS<T>, /*1*/ dest: C): C
+internal fun test(/*0*/ l: foo.HS<kotlin.Int>): kotlin.Unit

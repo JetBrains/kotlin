@@ -302,7 +302,7 @@ public class DelegatedPropertyResolver {
             @NotNull final JetScope accessorScope,
             @NotNull final BindingTrace trace
     ) {
-        final JetType expectedType = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
+        final JetType expectedType = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         return new ConstraintSystemCompleter() {
             @Override
             public void completeConstraintSystem(

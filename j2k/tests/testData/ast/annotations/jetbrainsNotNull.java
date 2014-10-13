@@ -12,6 +12,7 @@ public class Test {
   }
 
   public void sout(@NotNull String str) {
+    // UNNECESSARY_NOT_NULL_ASSERTION heuristic does not work any more, instead we can skip generating !! altogether
     System.out.println(str);
   }
 

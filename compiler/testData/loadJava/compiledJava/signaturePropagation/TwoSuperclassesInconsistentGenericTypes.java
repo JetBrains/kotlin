@@ -16,7 +16,7 @@ public interface TwoSuperclassesInconsistentGenericTypes {
     }
 
     public class Sub implements TwoSuperclassesInconsistentGenericTypes, Other {
-        @ExpectLoadError("Incompatible types in superclasses: [String?, String]")
+        //@ExpectLoadError("Incompatible types in superclasses: [String?, String]")
         public List<String> foo() {
             throw new UnsupportedOperationException();
         }

@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -52,8 +52,8 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
 
     public ChangeFunctionLiteralReturnTypeFix(@NotNull JetFunctionLiteralExpression functionLiteralExpression, @NotNull JetType type) {
         super(functionLiteralExpression);
-        renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
-        functionLiteralReturnTypeRef = functionLiteralExpression.getFunctionLiteral().getReturnTypeRef();
+        renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
+        functionLiteralReturnTypeRef = functionLiteralExpression.getFunctionLiteral().getTypeReference();
 
         BindingContext context = ResolvePackage.getBindingContext(functionLiteralExpression.getContainingJetFile());
         JetType functionLiteralType = context.get(BindingContext.EXPRESSION_TYPE, functionLiteralExpression);
@@ -71,7 +71,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
 
         JetProperty correspondingProperty = PsiTreeUtil.getParentOfType(functionLiteralExpression, JetProperty.class);
         if (correspondingProperty != null && QuickFixUtil.canEvaluateTo(correspondingProperty.getInitializer(), functionLiteralExpression)) {
-            JetTypeReference correspondingPropertyTypeRef = correspondingProperty.getTypeRef();
+            JetTypeReference correspondingPropertyTypeRef = correspondingProperty.getTypeReference();
             JetType propertyType = context.get(BindingContext.TYPE, correspondingPropertyTypeRef);
             if (propertyType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, propertyType)) {
                 appropriateQuickFix = new ChangeVariableTypeFix(correspondingProperty, eventualFunctionLiteralType);
@@ -97,7 +97,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
 
         JetFunction parentFunction = PsiTreeUtil.getParentOfType(functionLiteralExpression, JetFunction.class, true);
         if (parentFunction != null && QuickFixUtil.canFunctionOrGetterReturnExpression(parentFunction, functionLiteralExpression)) {
-            JetTypeReference parentFunctionReturnTypeRef = parentFunction.getReturnTypeRef();
+            JetTypeReference parentFunctionReturnTypeRef = parentFunction.getTypeReference();
             JetType parentFunctionReturnType = context.get(BindingContext.TYPE, parentFunctionReturnTypeRef);
             if (parentFunctionReturnType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parentFunctionReturnType)) {
                 appropriateQuickFix = new ChangeFunctionReturnTypeFix(parentFunction, eventualFunctionLiteralType);

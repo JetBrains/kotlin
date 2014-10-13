@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -25,7 +23,6 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetPropertyStubImpl;
@@ -49,7 +46,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
                 parentStub, StringRef.fromString(psi.getName()),
                 psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
                 psi.hasDelegateExpression(), psi.hasInitializer(),
-                psi.getReceiverTypeRef() != null, psi.getReturnTypeRef() != null,
+                psi.getReceiverTypeReference() != null, psi.getTypeReference() != null,
                 ResolveSessionUtils.safeFqNameForLazyResolve(psi)
         );
     }

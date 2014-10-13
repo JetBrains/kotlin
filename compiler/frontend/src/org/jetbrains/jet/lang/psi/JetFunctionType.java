@@ -45,14 +45,14 @@ public class JetFunctionType extends JetElementImplStub<PsiJetPlaceHolderStub<Je
     @Override
     public List<JetTypeReference> getTypeArgumentsAsTypes() {
         ArrayList<JetTypeReference> result = Lists.newArrayList();
-        JetTypeReference receiverTypeRef = getReceiverTypeRef();
+        JetTypeReference receiverTypeRef = getReceiverTypeReference();
         if (receiverTypeRef != null) {
             result.add(receiverTypeRef);
         }
         for (JetParameter jetParameter : getParameters()) {
             result.add(jetParameter.getTypeReference());
         }
-        JetTypeReference returnTypeRef = getReturnTypeRef();
+        JetTypeReference returnTypeRef = getReturnTypeReference();
         if (returnTypeRef != null) {
             result.add(returnTypeRef);
         }
@@ -76,7 +76,7 @@ public class JetFunctionType extends JetElementImplStub<PsiJetPlaceHolderStub<Je
     }
 
     @Nullable
-    public JetTypeReference getReceiverTypeRef() {
+    public JetTypeReference getReceiverTypeReference() {
         JetFunctionTypeReceiver receiverDeclaration = getStubOrPsiChild(JetStubElementTypes.FUNCTION_TYPE_RECEIVER);
         if (receiverDeclaration == null) {
             return null;
@@ -85,7 +85,7 @@ public class JetFunctionType extends JetElementImplStub<PsiJetPlaceHolderStub<Je
     }
 
     @Nullable
-    public JetTypeReference getReturnTypeRef() {
+    public JetTypeReference getReturnTypeReference() {
         return getStubOrPsiChild(JetStubElementTypes.TYPE_REFERENCE);
     }
 }

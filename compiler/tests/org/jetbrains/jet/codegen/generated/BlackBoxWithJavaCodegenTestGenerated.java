@@ -45,6 +45,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
     
+    @TestMetadata("trait")
+    public void testTrait() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/trait/");
+        doTestWithJava(fileName);
+    }
+    
     @TestMetadata("compiler/testData/codegen/boxWithJava/platformStatic")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({})

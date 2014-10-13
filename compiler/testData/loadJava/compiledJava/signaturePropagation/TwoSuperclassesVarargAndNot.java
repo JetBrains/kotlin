@@ -19,9 +19,9 @@ public interface TwoSuperclassesVarargAndNot {
     }
 
     public interface Sub extends Super1, Super2 {
-        @ExpectLoadError("Incompatible projection kinds in type arguments of super methods' return types: [String?, out String?]|" +
-                         "Incompatible super methods: some have vararg parameter, some have not|" +
-                         "Incompatible types in superclasses: [Array<String?>, Array<out String?>?]")
+        @ExpectLoadError(//"Incompatible projection kinds in type arguments of super methods' return types: [String?, out String?]|" +
+                         //"Incompatible types in superclasses: [Array<String?>, Array<out String?>?]|" +
+                         "Incompatible super methods: some have vararg parameter, some have not|")
         void foo(String[] s);
     }
 }

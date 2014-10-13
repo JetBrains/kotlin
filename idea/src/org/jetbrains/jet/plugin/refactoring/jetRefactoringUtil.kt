@@ -44,7 +44,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.ui.ConflictsDialog
 import com.intellij.util.containers.MultiMap
-import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.ui.popup.JBPopup
@@ -67,14 +66,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
-import org.jetbrains.jet.plugin.util.application.runWriteAction
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.jet.plugin.util.collapseSpaces
 import javax.swing.Icon
+import org.jetbrains.jet.plugin.util.string.collapseSpaces
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName

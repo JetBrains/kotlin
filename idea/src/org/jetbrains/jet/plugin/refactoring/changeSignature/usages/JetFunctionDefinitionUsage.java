@@ -21,10 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.quickfix.AddModifierFix;
-import org.jetbrains.jet.plugin.quickfix.ChangeVisibilityModifierFix;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
@@ -57,31 +54,35 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
                 }
             }
             if (changeInfo.isReturnTypeChanged()) {
-                function.setReturnTypeRef(null);
+                function.setTypeReference(null);
                 String returnTypeText = changeInfo.getNewReturnTypeText();
 
                 //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
                 if (!KotlinBuiltIns.getInstance().getUnitType().toString().equals(returnTypeText)) {
-                    function.setReturnTypeRef(JetPsiFactory(function).createType(returnTypeText));
+                    function.setTypeReference(JetPsiFactory(function).createType(returnTypeText));
                 }
             }
         }
-        else
+        else {
             parameterList = ((JetClass) element).getPrimaryConstructorParameterList();
+        }
 
         if (changeInfo.isParameterSetOrOrderChanged()) {
             String parametersText = changeInfo.getNewParametersSignature(element, isInherited, 0);
             JetParameterList newParameterList = psiFactory.createParameterList(parametersText);
 
-            if (parameterList != null)
-                parameterList = (JetParameterList) parameterList.replace(newParameterList);
+            if (parameterList != null) {
+                parameterList.replace(newParameterList);
+            }
             else if (element instanceof JetClass) {
                 PsiElement anchor = ((JetClass) element).getTypeParameterList();
 
-                if (anchor == null)
+                if (anchor == null) {
                     anchor = ((JetClass) element).getNameIdentifier();
-                if (anchor != null)
-                    parameterList = (JetParameterList) element.addAfter(newParameterList, anchor);
+                }
+                if (anchor != null) {
+                    element.addAfter(newParameterList, anchor);
+                }
             }
         }
         else if (parameterList != null) {
@@ -93,27 +94,21 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
             }
         }
 
-        if (changeInfo.isVisibilityChanged())
-            changeVisibility(changeInfo, element, parameterList);
+        if (changeInfo.isVisibilityChanged() && !JetPsiUtil.isLocal((JetDeclaration) element)) {
+            changeVisibility(changeInfo, element);
+        }
 
         return true;
     }
 
-    private void changeVisibility(JetChangeInfo changeInfo, PsiElement element, JetParameterList parameterList) {
-        JetKeywordToken newVisibilityToken = JetRefactoringUtil.getVisibilityToken(changeInfo.getNewVisibility());
+    private static void changeVisibility(JetChangeInfo changeInfo, PsiElement element) {
+        JetModifierKeywordToken newVisibilityToken = JetRefactoringUtil.getVisibilityToken(changeInfo.getNewVisibility());
 
-        JetPsiFactory psiFactory = JetPsiFactory(getProject());
         if (element instanceof JetFunction) {
-            JetModifierList modifierList = newVisibilityToken == JetTokens.INTERNAL_KEYWORD ? null :
-                                           psiFactory.createModifierList(newVisibilityToken);
-            AddModifierFix.changeModifier(element, ((JetFunction) element).getModifierList(), null,
-                                          ChangeVisibilityModifierFix.VISIBILITY_TOKENS, getProject(), true, modifierList);
+            ((JetFunction)element).addModifier(newVisibilityToken);
         }
         else {
-            JetModifierList modifierList = newVisibilityToken == JetTokens.PUBLIC_KEYWORD ? null :
-                                           psiFactory.createConstructorModifierList(newVisibilityToken);
-            AddModifierFix.changeModifier(element, ((JetClass) element).getPrimaryConstructorModifierList(), parameterList,
-                                          ChangeVisibilityModifierFix.VISIBILITY_TOKENS, getProject(), true, modifierList);
+            ((JetClass)element).addPrimaryConstructorModifier(newVisibilityToken);
         }
     }
 
@@ -139,7 +134,7 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
 
         if (parameterInfo.isTypeChanged()) {
             JetTypeReference newTypeRef = psiFactory.createType(parameterInfo.getTypeText());
-            parameter.setTypeRef(newTypeRef);
+            parameter.setTypeReference(newTypeRef);
         }
 
         PsiElement identifier = parameter.getNameIdentifier();

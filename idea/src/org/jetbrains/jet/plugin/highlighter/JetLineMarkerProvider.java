@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.ProjectRootsUtil;
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.highlighter.markers.MarkersPackage;
 import org.jetbrains.jet.plugin.highlighter.markers.ResolveWithParentsResult;
 import org.jetbrains.jet.plugin.highlighter.markers.SuperDeclarationMarkerNavigationHandler;
@@ -151,7 +151,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         PsiElement first = KotlinPackage.first(elements);
         if (DumbService.getInstance(first.getProject()).isDumb() ||
-            !ProjectRootsUtil.isInSourceWithGradleCheck(elements.get(0))) {
+            !ProjectRootsUtil.isInProjectOrLibSource(elements.get(0))) {
             return;
         }
 
@@ -190,7 +190,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
         // clearing the whole BindingTrace.
-        LineMarkerInfo<JetElement> marker = new LineMarkerInfo<JetElement>(
+        LineMarkerInfo<JetDeclaration> marker = new LineMarkerInfo<JetDeclaration>(
                 declaration,
                 declaration.getTextOffset(),
                 isImplementsAndNotOverrides(resolveWithParents.getDescriptor(), resolveWithParents.getOverriddenDescriptors()) ?

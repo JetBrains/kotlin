@@ -32,6 +32,7 @@ import org.jetbrains.jet.plugin.completion.ExpectedInfo
 import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 // adds java static members, enum members and members from class object
 class StaticMembers(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
@@ -133,7 +134,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
             }
 
             override fun handleInsert(context: InsertionContext) {
-                var text = qualifierText + "." + DescriptorRenderer.SOURCE_CODE.renderName(memberDescriptor.getName())
+                var text = qualifierText + "." + IdeDescriptorRenderers.SOURCE_CODE.renderName(memberDescriptor.getName())
 
                 context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
                 context.setTailOffset(context.getStartOffset() + text.length)

@@ -19,34 +19,16 @@ package org.jetbrains.jet.j2k
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiUtil
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.jet.j2k.ast.*
 import com.intellij.psi.util.PsiMethodUtil
 
 fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier.toKotlin(it) }.joinToString(".")
 
-fun findVariableUsages(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression> {
-    return ReferencesSearch.search(variable, LocalSearchScope(scope)).findAll().filterIsInstance(javaClass<PsiReferenceExpression>())
-}
+fun PsiVariable.countWriteAccesses(searcher: ReferenceSearcher, scope: PsiElement?): Int
+        = if (scope != null) searcher.findVariableUsages(this, scope).count { PsiUtil.isAccessedForWriting(it) } else 0
 
-fun findMethodCalls(method: PsiMethod, scope: PsiElement): Collection<PsiMethodCallExpression> {
-    return ReferencesSearch.search(method, LocalSearchScope(scope)).findAll().map {
-        if (it is PsiReferenceExpression) {
-            val methodCall = it.getParent() as? PsiMethodCallExpression
-            if (methodCall?.getMethodExpression() == it) methodCall else null
-        }
-        else {
-            null
-        }
-    }.filterNotNull()
-}
-
-fun PsiVariable.countWriteAccesses(scope: PsiElement?): Int
-        = if (scope != null) findVariableUsages(this, scope).count { PsiUtil.isAccessedForWriting(it) } else 0
-
-fun PsiVariable.hasWriteAccesses(scope: PsiElement?): Boolean
-        = if (scope != null) findVariableUsages(this, scope).any { PsiUtil.isAccessedForWriting(it) } else false
+fun PsiVariable.hasWriteAccesses(searcher: ReferenceSearcher, scope: PsiElement?): Boolean
+        = if (scope != null) searcher.findVariableUsages(this, scope).any { PsiUtil.isAccessedForWriting(it) } else false
 
 fun getDefaultInitializer(field: Field): Expression? {
     val t = field.`type`
@@ -68,11 +50,11 @@ fun getDefaultInitializer(field: Field): Expression? {
     return result?.assignNoPrototype()
 }
 
-fun isVal(field: PsiField): Boolean {
+fun isVal(searcher: ReferenceSearcher, field: PsiField): Boolean {
     if (field.hasModifierProperty(PsiModifier.FINAL)) return true
     if (!field.hasModifierProperty(PsiModifier.PRIVATE)) return false
     val containingClass = field.getContainingClass() ?: return false
-    val writes = findVariableUsages(field, containingClass).filter { PsiUtil.isAccessedForWriting(it) }
+    val writes = searcher.findVariableUsages(field, containingClass).filter { PsiUtil.isAccessedForWriting(it) }
     if (writes.size == 0) return true
     if (writes.size > 1) return false
     val write = writes.single()
@@ -89,8 +71,8 @@ fun isVal(field: PsiField): Boolean {
     return false
 }
 
-fun shouldGenerateDefaultInitializer(field: PsiField)
-        = field.getInitializer() == null && !(isVal(field) && field.hasWriteAccesses(field.getContainingClass()))
+fun shouldGenerateDefaultInitializer(searcher: ReferenceSearcher, field: PsiField)
+        = field.getInitializer() == null && !(isVal(searcher, field) && field.hasWriteAccesses(searcher, field.getContainingClass()))
 
 fun isQualifierEmptyOrThis(ref: PsiReferenceExpression): Boolean {
     val qualifier = ref.getQualifierExpression()

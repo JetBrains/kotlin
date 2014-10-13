@@ -23,7 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager;
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 
 public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
     @NotNull
@@ -59,12 +59,6 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
             return false;
         }
 
-        if (index.isInSourceContent(file)) {
-            return !JetModuleTypeManager.getInstance().isKtFileInGradleProjectInWrongFolder(file, project);
-        }
-
-        if (!includeLibraries) return false;
-
-        return index.isInLibraryClasses(file) || index.isInLibrarySource(file);
+        return ProjectRootsUtil.isInSources(project, file, includeLibraries, /* withLibraryClassesRoots */ true, index);
     }
 }

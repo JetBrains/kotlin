@@ -25,9 +25,7 @@ import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
-import org.jetbrains.jet.lang.types.BoundsSubstitutor;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -239,8 +237,18 @@ public class OverloadingConflictResolver {
     }
 
     private boolean typeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {
-        return JetTypeChecker.DEFAULT.isSubtypeOf(specific, general) ||
-                            numericTypeMoreSpecific(specific, general);
+        boolean isSubtype = JetTypeChecker.DEFAULT.isSubtypeOf(specific, general) ||
+                    numericTypeMoreSpecific(specific, general);
+
+        if (!isSubtype) return false;
+
+        Specificity.Relation sThanG = TypesPackage.getSpecificityRelationTo(specific, general);
+        Specificity.Relation gThanS = TypesPackage.getSpecificityRelationTo(general, specific);
+        if (sThanG == Specificity.Relation.LESS_SPECIFIC && gThanS != Specificity.Relation.LESS_SPECIFIC) {
+            return false;
+        }
+
+        return true;
     }
 
     private boolean numericTypeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {

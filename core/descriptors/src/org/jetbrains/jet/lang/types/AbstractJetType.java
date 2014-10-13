@@ -16,12 +16,24 @@
 
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.Iterator;
 import java.util.List;
 
 public abstract class AbstractJetType implements JetType {
+    @Nullable
+    @Override
+    public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
+        if (capabilityClass.isInstance(this)) {
+            //noinspection unchecked
+            return (T) this;
+        }
+        return null;
+    }
+
     @Override
     public final int hashCode() {
         int result = getConstructor().hashCode();
@@ -37,7 +49,7 @@ public abstract class AbstractJetType implements JetType {
 
         JetType type = (JetType) obj;
 
-        return isNullable() == type.isNullable() && JetTypeChecker.DEFAULT.equalTypes(this, type);
+        return isNullable() == type.isNullable() && JetTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(this, type);
     }
 
     @Override

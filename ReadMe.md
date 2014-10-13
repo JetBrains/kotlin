@@ -95,9 +95,9 @@ Then update the list of plugins in "Browse Repositories", you'll see two version
 
 # Contributing
 
-We love contributions! There's [lots to do on kotlin](http://youtrack.jetbrains.com/issues/KT) and on the [standard library](http://youtrack.jetbrains.com/issues/KT?q=%23%7BStandard+Library%7D+-Resolved) so why not chat with us on the [forum](http://devnet.jetbrains.net/community/kotlin?view=discussions) about what you're interested in doing?
+We love contributions! There's [lots to do on kotlin](http://youtrack.jetbrains.com/issues/KT) and on the [standard library](https://youtrack.jetbrains.com/issues/KT?q=Subtask+of%3A+KT-2554+%23Unresolved) so why not chat with us on the [forum](http://devnet.jetbrains.net/community/kotlin?view=discussions) about what you're interested in doing?
 
-If you want to find some issues to start off with, try [this query](http://youtrack.jetbrains.com/issues?q=tag%3A+%7BUp+For+Grabs%7D) which should find all issues that marked as "up-for-grabs".
+If you want to find some issues to start off with, try [this query](https://youtrack.jetbrains.com/issues?q=tag%3A+%7BUp+For+Grabs%7D+%23Unresolved) which should find all issues that marked as "up-for-grabs".
 
 Currently only committers can assign issues to themselves so just add a comment if you're starting work on it.
 

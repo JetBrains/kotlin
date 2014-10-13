@@ -2,7 +2,7 @@ package test
 
 public open class Sub : test.Super {
     public constructor Sub()
-    public open override /*1*/ fun kotlin.String.bar(/*0*/ p: kotlin.String): kotlin.String
+    public open override /*1*/ fun kotlin.String!.bar(/*0*/ p: kotlin.String!): kotlin.String!
     public final override /*1*/ /*fake_override*/ fun kotlin.String.foo(): kotlin.Unit
 }
 

@@ -45,7 +45,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
-import org.jetbrains.jet.plugin.ProjectRootsUtil;
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.actions.internal.KotlinInternalMode;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory;
@@ -93,7 +93,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!(ProjectRootsUtil.isInSourceWithGradleCheck(element) || element.getContainingFile() instanceof JetCodeFragment)) return;
+        if (!(ProjectRootsUtil.isInProjectOrLibSource(element) || element.getContainingFile() instanceof JetCodeFragment)) return;
 
         for (HighlightingVisitor visitor : getBeforeAnalysisVisitors(holder)) {
             element.accept(visitor);
@@ -116,7 +116,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
     }
 
     public static void annotateElement(PsiElement element, AnnotationHolder holder, Diagnostics diagnostics) {
-        if (ProjectRootsUtil.isInSource(element, /* includeLibrarySources = */ false) || element.getContainingFile() instanceof JetCodeFragment) {
+        if (ProjectRootsUtil.isInProjectSource(element) || element.getContainingFile() instanceof JetCodeFragment) {
             ElementAnnotator elementAnnotator = new ElementAnnotator(element, holder);
             for (Diagnostic diagnostic : diagnostics.forElement(element)) {
                 elementAnnotator.registerDiagnosticAnnotations(diagnostic);

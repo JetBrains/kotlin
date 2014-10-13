@@ -232,48 +232,48 @@ public final class DebugProtoBuf {
     // @@protoc_insertion_point(enum_scope:org.jetbrains.jet.descriptors.serialization.Visibility)
   }
 
-  public interface SimpleNameTableOrBuilder
+  public interface StringTableOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
 
-    // repeated string name = 1;
+    // repeated string string = 1;
     /**
-     * <code>repeated string name = 1;</code>
+     * <code>repeated string string = 1;</code>
      */
     java.util.List<java.lang.String>
-    getNameList();
+    getStringList();
     /**
-     * <code>repeated string name = 1;</code>
+     * <code>repeated string string = 1;</code>
      */
-    int getNameCount();
+    int getStringCount();
     /**
-     * <code>repeated string name = 1;</code>
+     * <code>repeated string string = 1;</code>
      */
-    java.lang.String getName(int index);
+    java.lang.String getString(int index);
     /**
-     * <code>repeated string name = 1;</code>
+     * <code>repeated string string = 1;</code>
      */
     com.google.protobuf.ByteString
-        getNameBytes(int index);
+        getStringBytes(int index);
   }
   /**
-   * Protobuf type {@code org.jetbrains.jet.descriptors.serialization.SimpleNameTable}
+   * Protobuf type {@code org.jetbrains.jet.descriptors.serialization.StringTable}
    */
-  public static final class SimpleNameTable extends
+  public static final class StringTable extends
       com.google.protobuf.GeneratedMessage
-      implements SimpleNameTableOrBuilder {
-    // Use SimpleNameTable.newBuilder() to construct.
-    private SimpleNameTable(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      implements StringTableOrBuilder {
+    // Use StringTable.newBuilder() to construct.
+    private StringTable(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private SimpleNameTable(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private StringTable(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
-    private static final SimpleNameTable defaultInstance;
-    public static SimpleNameTable getDefaultInstance() {
+    private static final StringTable defaultInstance;
+    public static StringTable getDefaultInstance() {
       return defaultInstance;
     }
 
-    public SimpleNameTable getDefaultInstanceForType() {
+    public StringTable getDefaultInstanceForType() {
       return defaultInstance;
     }
 
@@ -283,7 +283,7 @@ public final class DebugProtoBuf {
         getUnknownFields() {
       return this.unknownFields;
     }
-    private SimpleNameTable(
+    private StringTable(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -308,10 +308,10 @@ public final class DebugProtoBuf {
             }
             case 10: {
               if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                name_ = new com.google.protobuf.LazyStringArrayList();
+                string_ = new com.google.protobuf.LazyStringArrayList();
                 mutable_bitField0_ |= 0x00000001;
               }
-              name_.add(input.readBytes());
+              string_.add(input.readBytes());
               break;
             }
           }
@@ -323,7 +323,7 @@ public final class DebugProtoBuf {
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-          name_ = new com.google.protobuf.UnmodifiableLazyStringList(name_);
+          string_ = new com.google.protobuf.UnmodifiableLazyStringList(string_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -331,63 +331,63 @@ public final class DebugProtoBuf {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.internal_static_org_jetbrains_jet_descriptors_serialization_SimpleNameTable_descriptor;
+      return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.internal_static_org_jetbrains_jet_descriptors_serialization_StringTable_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.internal_static_org_jetbrains_jet_descriptors_serialization_SimpleNameTable_fieldAccessorTable
+      return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.internal_static_org_jetbrains_jet_descriptors_serialization_StringTable_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable.class, org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable.Builder.class);
+              org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable.class, org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<SimpleNameTable> PARSER =
-        new com.google.protobuf.AbstractParser<SimpleNameTable>() {
-      public SimpleNameTable parsePartialFrom(
+    public static com.google.protobuf.Parser<StringTable> PARSER =
+        new com.google.protobuf.AbstractParser<StringTable>() {
+      public StringTable parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new SimpleNameTable(input, extensionRegistry);
+        return new StringTable(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<SimpleNameTable> getParserForType() {
+    public com.google.protobuf.Parser<StringTable> getParserForType() {
       return PARSER;
     }
 
-    // repeated string name = 1;
-    public static final int NAME_FIELD_NUMBER = 1;
-    private com.google.protobuf.LazyStringList name_;
+    // repeated string string = 1;
+    public static final int STRING_FIELD_NUMBER = 1;
+    private com.google.protobuf.LazyStringList string_;
     /**
-     * <code>repeated string name = 1;</code>
+     * <code>repeated string string = 1;</code>
      */
     public java.util.List<java.lang.String>
-        getNameList() {
-      return name_;
+        getStringList() {
+      return string_;
     }
     /**
-     * <code>repeated string name = 1;</code>
+     * <code>repeated string string = 1;</code>
      */
-    public int getNameCount() {
-      return name_.size();
+    public int getStringCount() {
+      return string_.size();
     }
     /**
-     * <code>repeated string name = 1;</code>
+     * <code>repeated string string = 1;</code>
      */
-    public java.lang.String getName(int index) {
-      return name_.get(index);
+    public java.lang.String getString(int index) {
+      return string_.get(index);
     }
     /**
-     * <code>repeated string name = 1;</code>
+     * <code>repeated string string = 1;</code>
      */
     public com.google.protobuf.ByteString
-        getNameBytes(int index) {
-      return name_.getByteString(index);
+        getStringBytes(int index) {
+      return string_.getByteString(index);
     }
 
     private void initFields() {
-      name_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      string_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -401,8 +401,8 @@ public final class DebugProtoBuf {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      for (int i = 0; i < name_.size(); i++) {
-        output.writeBytes(1, name_.getByteString(i));
+      for (int i = 0; i < string_.size(); i++) {
+        output.writeBytes(1, string_.getByteString(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -415,12 +415,12 @@ public final class DebugProtoBuf {
       size = 0;
       {
         int dataSize = 0;
-        for (int i = 0; i < name_.size(); i++) {
+        for (int i = 0; i < string_.size(); i++) {
           dataSize += com.google.protobuf.CodedOutputStream
-            .computeBytesSizeNoTag(name_.getByteString(i));
+            .computeBytesSizeNoTag(string_.getByteString(i));
         }
         size += dataSize;
-        size += 1 * getNameList().size();
+        size += 1 * getStringList().size();
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -434,53 +434,53 @@ public final class DebugProtoBuf {
       return super.writeReplace();
     }
 
-    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable parseFrom(
+    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable parseFrom(
+    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable parseFrom(byte[] data)
+    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable parseFrom(
+    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable parseFrom(java.io.InputStream input)
+    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable parseFrom(
+    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable parseDelimitedFrom(java.io.InputStream input)
+    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
-    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable parseDelimitedFrom(
+    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable parseFrom(
+    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable parseFrom(
+    public static org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -489,7 +489,7 @@ public final class DebugProtoBuf {
 
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable prototype) {
+    public static Builder newBuilder(org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
@@ -501,24 +501,24 @@ public final class DebugProtoBuf {
       return builder;
     }
     /**
-     * Protobuf type {@code org.jetbrains.jet.descriptors.serialization.SimpleNameTable}
+     * Protobuf type {@code org.jetbrains.jet.descriptors.serialization.StringTable}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTableOrBuilder {
+       implements org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTableOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.internal_static_org_jetbrains_jet_descriptors_serialization_SimpleNameTable_descriptor;
+        return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.internal_static_org_jetbrains_jet_descriptors_serialization_StringTable_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.internal_static_org_jetbrains_jet_descriptors_serialization_SimpleNameTable_fieldAccessorTable
+        return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.internal_static_org_jetbrains_jet_descriptors_serialization_StringTable_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable.class, org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable.Builder.class);
+                org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable.class, org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable.Builder.class);
       }
 
-      // Construct using org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable.newBuilder()
+      // Construct using org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -538,7 +538,7 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        name_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        string_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
@@ -549,52 +549,52 @@ public final class DebugProtoBuf {
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.internal_static_org_jetbrains_jet_descriptors_serialization_SimpleNameTable_descriptor;
+        return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.internal_static_org_jetbrains_jet_descriptors_serialization_StringTable_descriptor;
       }
 
-      public org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable getDefaultInstanceForType() {
-        return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable.getDefaultInstance();
+      public org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable getDefaultInstanceForType() {
+        return org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable.getDefaultInstance();
       }
 
-      public org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable build() {
-        org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable result = buildPartial();
+      public org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable build() {
+        org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable buildPartial() {
-        org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable result = new org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable(this);
+      public org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable buildPartial() {
+        org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable result = new org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable(this);
         int from_bitField0_ = bitField0_;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          name_ = new com.google.protobuf.UnmodifiableLazyStringList(
-              name_);
+          string_ = new com.google.protobuf.UnmodifiableLazyStringList(
+              string_);
           bitField0_ = (bitField0_ & ~0x00000001);
         }
-        result.name_ = name_;
+        result.string_ = string_;
         onBuilt();
         return result;
       }
 
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable) {
-          return mergeFrom((org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable)other);
+        if (other instanceof org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable) {
+          return mergeFrom((org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable other) {
-        if (other == org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable.getDefaultInstance()) return this;
-        if (!other.name_.isEmpty()) {
-          if (name_.isEmpty()) {
-            name_ = other.name_;
+      public Builder mergeFrom(org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable other) {
+        if (other == org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable.getDefaultInstance()) return this;
+        if (!other.string_.isEmpty()) {
+          if (string_.isEmpty()) {
+            string_ = other.string_;
             bitField0_ = (bitField0_ & ~0x00000001);
           } else {
-            ensureNameIsMutable();
-            name_.addAll(other.name_);
+            ensureStringIsMutable();
+            string_.addAll(other.string_);
           }
           onChanged();
         }
@@ -610,11 +610,11 @@ public final class DebugProtoBuf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable parsedMessage = null;
+        org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.SimpleNameTable) e.getUnfinishedMessage();
+          parsedMessage = (org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.StringTable) e.getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -625,108 +625,108 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // repeated string name = 1;
-      private com.google.protobuf.LazyStringList name_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureNameIsMutable() {
+      // repeated string string = 1;
+      private com.google.protobuf.LazyStringList string_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureStringIsMutable() {
         if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-          name_ = new com.google.protobuf.LazyStringArrayList(name_);
+          string_ = new com.google.protobuf.LazyStringArrayList(string_);
           bitField0_ |= 0x00000001;
          }
       }
       /**
-       * <code>repeated string name = 1;</code>
+       * <code>repeated string string = 1;</code>
        */
       public java.util.List<java.lang.String>
-          getNameList() {
-        return java.util.Collections.unmodifiableList(name_);
+          getStringList() {
+        return java.util.Collections.unmodifiableList(string_);
       }
       /**
-       * <code>repeated string name = 1;</code>
+       * <code>repeated string string = 1;</code>
        */
-      public int getNameCount() {
-        return name_.size();
+      public int getStringCount() {
+        return string_.size();
       }
       /**
-       * <code>repeated string name = 1;</code>
+       * <code>repeated string string = 1;</code>
        */
-      public java.lang.String getName(int index) {
-        return name_.get(index);
+      public java.lang.String getString(int index) {
+        return string_.get(index);
       }
       /**
-       * <code>repeated string name = 1;</code>
+       * <code>repeated string string = 1;</code>
        */
       public com.google.protobuf.ByteString
-          getNameBytes(int index) {
-        return name_.getByteString(index);
+          getStringBytes(int index) {
+        return string_.getByteString(index);
       }
       /**
-       * <code>repeated string name = 1;</code>
+       * <code>repeated string string = 1;</code>
        */
-      public Builder setName(
+      public Builder setString(
           int index, java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureNameIsMutable();
-        name_.set(index, value);
+  ensureStringIsMutable();
+        string_.set(index, value);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated string name = 1;</code>
+       * <code>repeated string string = 1;</code>
        */
-      public Builder addName(
+      public Builder addString(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureNameIsMutable();
-        name_.add(value);
+  ensureStringIsMutable();
+        string_.add(value);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated string name = 1;</code>
+       * <code>repeated string string = 1;</code>
        */
-      public Builder addAllName(
+      public Builder addAllString(
           java.lang.Iterable<java.lang.String> values) {
-        ensureNameIsMutable();
-        super.addAll(values, name_);
+        ensureStringIsMutable();
+        super.addAll(values, string_);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated string name = 1;</code>
+       * <code>repeated string string = 1;</code>
        */
-      public Builder clearName() {
-        name_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      public Builder clearString() {
+        string_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated string name = 1;</code>
+       * <code>repeated string string = 1;</code>
        */
-      public Builder addNameBytes(
+      public Builder addStringBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureNameIsMutable();
-        name_.add(value);
+  ensureStringIsMutable();
+        string_.add(value);
         onChanged();
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:org.jetbrains.jet.descriptors.serialization.SimpleNameTable)
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.jet.descriptors.serialization.StringTable)
     }
 
     static {
-      defaultInstance = new SimpleNameTable(true);
+      defaultInstance = new StringTable(true);
       defaultInstance.initFields();
     }
 
-    // @@protoc_insertion_point(class_scope:org.jetbrains.jet.descriptors.serialization.SimpleNameTable)
+    // @@protoc_insertion_point(class_scope:org.jetbrains.jet.descriptors.serialization.StringTable)
   }
 
   public interface QualifiedNameTableOrBuilder
@@ -874,10 +874,18 @@ public final class DebugProtoBuf {
       // required int32 short_name = 2;
       /**
        * <code>required int32 short_name = 2;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       boolean hasShortName();
       /**
        * <code>required int32 short_name = 2;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       int getShortName();
 
@@ -1106,12 +1114,20 @@ public final class DebugProtoBuf {
       private int shortName_;
       /**
        * <code>required int32 short_name = 2;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       public boolean hasShortName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
        * <code>required int32 short_name = 2;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       public int getShortName() {
         return shortName_;
@@ -1439,18 +1455,30 @@ public final class DebugProtoBuf {
         private int shortName_ ;
         /**
          * <code>required int32 short_name = 2;</code>
+         *
+         * <pre>
+         * Id in the StringTable
+         * </pre>
          */
         public boolean hasShortName() {
           return ((bitField0_ & 0x00000002) == 0x00000002);
         }
         /**
          * <code>required int32 short_name = 2;</code>
+         *
+         * <pre>
+         * Id in the StringTable
+         * </pre>
          */
         public int getShortName() {
           return shortName_;
         }
         /**
          * <code>required int32 short_name = 2;</code>
+         *
+         * <pre>
+         * Id in the StringTable
+         * </pre>
          */
         public Builder setShortName(int value) {
           bitField0_ |= 0x00000002;
@@ -1460,6 +1488,10 @@ public final class DebugProtoBuf {
         }
         /**
          * <code>required int32 short_name = 2;</code>
+         *
+         * <pre>
+         * Id in the StringTable
+         * </pre>
          */
         public Builder clearShortName() {
           bitField0_ = (bitField0_ & ~0x00000002);
@@ -2123,6 +2155,60 @@ public final class DebugProtoBuf {
      * <code>optional bool nullable = 3 [default = false];</code>
      */
     boolean getNullable();
+
+    // optional int32 flexible_type_capabilities_id = 4;
+    /**
+     * <code>optional int32 flexible_type_capabilities_id = 4;</code>
+     *
+     * <pre>
+     * Id in the StringTable
+     * If this field is set, the type is flexible.
+     * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+     * </pre>
+     */
+    boolean hasFlexibleTypeCapabilitiesId();
+    /**
+     * <code>optional int32 flexible_type_capabilities_id = 4;</code>
+     *
+     * <pre>
+     * Id in the StringTable
+     * If this field is set, the type is flexible.
+     * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+     * </pre>
+     */
+    int getFlexibleTypeCapabilitiesId();
+
+    // optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;
+    /**
+     * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+     *
+     * <pre>
+     * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+     * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+     * to represent flexible types is too many wasted bytes.
+     * </pre>
+     */
+    boolean hasFlexibleUpperBound();
+    /**
+     * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+     *
+     * <pre>
+     * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+     * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+     * to represent flexible types is too many wasted bytes.
+     * </pre>
+     */
+    org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type getFlexibleUpperBound();
+    /**
+     * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+     *
+     * <pre>
+     * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+     * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+     * to represent flexible types is too many wasted bytes.
+     * </pre>
+     */
+    org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.TypeOrBuilder getFlexibleUpperBoundOrBuilder();
   }
   /**
    * Protobuf type {@code org.jetbrains.jet.descriptors.serialization.Type}
@@ -2199,6 +2285,24 @@ public final class DebugProtoBuf {
             case 24: {
               bitField0_ |= 0x00000002;
               nullable_ = input.readBool();
+              break;
+            }
+            case 32: {
+              bitField0_ |= 0x00000004;
+              flexibleTypeCapabilitiesId_ = input.readInt32();
+              break;
+            }
+            case 42: {
+              org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = flexibleUpperBound_.toBuilder();
+              }
+              flexibleUpperBound_ = input.readMessage(org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(flexibleUpperBound_);
+                flexibleUpperBound_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000008;
               break;
             }
           }
@@ -3630,10 +3734,80 @@ public final class DebugProtoBuf {
       return nullable_;
     }
 
+    // optional int32 flexible_type_capabilities_id = 4;
+    public static final int FLEXIBLE_TYPE_CAPABILITIES_ID_FIELD_NUMBER = 4;
+    private int flexibleTypeCapabilitiesId_;
+    /**
+     * <code>optional int32 flexible_type_capabilities_id = 4;</code>
+     *
+     * <pre>
+     * Id in the StringTable
+     * If this field is set, the type is flexible.
+     * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+     * </pre>
+     */
+    public boolean hasFlexibleTypeCapabilitiesId() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional int32 flexible_type_capabilities_id = 4;</code>
+     *
+     * <pre>
+     * Id in the StringTable
+     * If this field is set, the type is flexible.
+     * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+     * </pre>
+     */
+    public int getFlexibleTypeCapabilitiesId() {
+      return flexibleTypeCapabilitiesId_;
+    }
+
+    // optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;
+    public static final int FLEXIBLE_UPPER_BOUND_FIELD_NUMBER = 5;
+    private org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type flexibleUpperBound_;
+    /**
+     * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+     *
+     * <pre>
+     * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+     * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+     * to represent flexible types is too many wasted bytes.
+     * </pre>
+     */
+    public boolean hasFlexibleUpperBound() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+     *
+     * <pre>
+     * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+     * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+     * to represent flexible types is too many wasted bytes.
+     * </pre>
+     */
+    public org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type getFlexibleUpperBound() {
+      return flexibleUpperBound_;
+    }
+    /**
+     * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+     *
+     * <pre>
+     * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+     * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+     * to represent flexible types is too many wasted bytes.
+     * </pre>
+     */
+    public org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.TypeOrBuilder getFlexibleUpperBoundOrBuilder() {
+      return flexibleUpperBound_;
+    }
+
     private void initFields() {
       constructor_ = org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.Constructor.getDefaultInstance();
       argument_ = java.util.Collections.emptyList();
       nullable_ = false;
+      flexibleTypeCapabilitiesId_ = 0;
+      flexibleUpperBound_ = org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -3654,6 +3828,12 @@ public final class DebugProtoBuf {
           return false;
         }
       }
+      if (hasFlexibleUpperBound()) {
+        if (!getFlexibleUpperBound().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -3669,6 +3849,12 @@ public final class DebugProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeBool(3, nullable_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeInt32(4, flexibleTypeCapabilitiesId_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(5, flexibleUpperBound_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3690,6 +3876,14 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(3, nullable_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(4, flexibleTypeCapabilitiesId_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, flexibleUpperBound_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -3801,6 +3995,7 @@ public final class DebugProtoBuf {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getConstructorFieldBuilder();
           getArgumentFieldBuilder();
+          getFlexibleUpperBoundFieldBuilder();
         }
       }
       private static Builder create() {
@@ -3823,6 +4018,14 @@ public final class DebugProtoBuf {
         }
         nullable_ = false;
         bitField0_ = (bitField0_ & ~0x00000004);
+        flexibleTypeCapabilitiesId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        if (flexibleUpperBoundBuilder_ == null) {
+          flexibleUpperBound_ = org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.getDefaultInstance();
+        } else {
+          flexibleUpperBoundBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -3872,6 +4075,18 @@ public final class DebugProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.nullable_ = nullable_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.flexibleTypeCapabilitiesId_ = flexibleTypeCapabilitiesId_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        if (flexibleUpperBoundBuilder_ == null) {
+          result.flexibleUpperBound_ = flexibleUpperBound_;
+        } else {
+          result.flexibleUpperBound_ = flexibleUpperBoundBuilder_.build();
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -3920,6 +4135,12 @@ public final class DebugProtoBuf {
         if (other.hasNullable()) {
           setNullable(other.getNullable());
         }
+        if (other.hasFlexibleTypeCapabilitiesId()) {
+          setFlexibleTypeCapabilitiesId(other.getFlexibleTypeCapabilitiesId());
+        }
+        if (other.hasFlexibleUpperBound()) {
+          mergeFlexibleUpperBound(other.getFlexibleUpperBound());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -3935,6 +4156,12 @@ public final class DebugProtoBuf {
         }
         for (int i = 0; i < getArgumentCount(); i++) {
           if (!getArgument(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasFlexibleUpperBound()) {
+          if (!getFlexibleUpperBound().isInitialized()) {
             
             return false;
           }
@@ -4351,6 +4578,234 @@ public final class DebugProtoBuf {
         return this;
       }
 
+      // optional int32 flexible_type_capabilities_id = 4;
+      private int flexibleTypeCapabilitiesId_ ;
+      /**
+       * <code>optional int32 flexible_type_capabilities_id = 4;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * If this field is set, the type is flexible.
+       * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+       * </pre>
+       */
+      public boolean hasFlexibleTypeCapabilitiesId() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional int32 flexible_type_capabilities_id = 4;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * If this field is set, the type is flexible.
+       * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+       * </pre>
+       */
+      public int getFlexibleTypeCapabilitiesId() {
+        return flexibleTypeCapabilitiesId_;
+      }
+      /**
+       * <code>optional int32 flexible_type_capabilities_id = 4;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * If this field is set, the type is flexible.
+       * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+       * </pre>
+       */
+      public Builder setFlexibleTypeCapabilitiesId(int value) {
+        bitField0_ |= 0x00000008;
+        flexibleTypeCapabilitiesId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 flexible_type_capabilities_id = 4;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * If this field is set, the type is flexible.
+       * All the fields above represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+       * </pre>
+       */
+      public Builder clearFlexibleTypeCapabilitiesId() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        flexibleTypeCapabilitiesId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;
+      private org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type flexibleUpperBound_ = org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type, org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.TypeOrBuilder> flexibleUpperBoundBuilder_;
+      /**
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+       *
+       * <pre>
+       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+       * to represent flexible types is too many wasted bytes.
+       * </pre>
+       */
+      public boolean hasFlexibleUpperBound() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+       *
+       * <pre>
+       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+       * to represent flexible types is too many wasted bytes.
+       * </pre>
+       */
+      public org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type getFlexibleUpperBound() {
+        if (flexibleUpperBoundBuilder_ == null) {
+          return flexibleUpperBound_;
+        } else {
+          return flexibleUpperBoundBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+       *
+       * <pre>
+       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+       * to represent flexible types is too many wasted bytes.
+       * </pre>
+       */
+      public Builder setFlexibleUpperBound(org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type value) {
+        if (flexibleUpperBoundBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          flexibleUpperBound_ = value;
+          onChanged();
+        } else {
+          flexibleUpperBoundBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+       *
+       * <pre>
+       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+       * to represent flexible types is too many wasted bytes.
+       * </pre>
+       */
+      public Builder setFlexibleUpperBound(
+          org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.Builder builderForValue) {
+        if (flexibleUpperBoundBuilder_ == null) {
+          flexibleUpperBound_ = builderForValue.build();
+          onChanged();
+        } else {
+          flexibleUpperBoundBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+       *
+       * <pre>
+       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+       * to represent flexible types is too many wasted bytes.
+       * </pre>
+       */
+      public Builder mergeFlexibleUpperBound(org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type value) {
+        if (flexibleUpperBoundBuilder_ == null) {
+          if (((bitField0_ & 0x00000010) == 0x00000010) &&
+              flexibleUpperBound_ != org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.getDefaultInstance()) {
+            flexibleUpperBound_ =
+              org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.newBuilder(flexibleUpperBound_).mergeFrom(value).buildPartial();
+          } else {
+            flexibleUpperBound_ = value;
+          }
+          onChanged();
+        } else {
+          flexibleUpperBoundBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+       *
+       * <pre>
+       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+       * to represent flexible types is too many wasted bytes.
+       * </pre>
+       */
+      public Builder clearFlexibleUpperBound() {
+        if (flexibleUpperBoundBuilder_ == null) {
+          flexibleUpperBound_ = org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.getDefaultInstance();
+          onChanged();
+        } else {
+          flexibleUpperBoundBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+       *
+       * <pre>
+       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+       * to represent flexible types is too many wasted bytes.
+       * </pre>
+       */
+      public org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.Builder getFlexibleUpperBoundBuilder() {
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return getFlexibleUpperBoundFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+       *
+       * <pre>
+       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+       * to represent flexible types is too many wasted bytes.
+       * </pre>
+       */
+      public org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.TypeOrBuilder getFlexibleUpperBoundOrBuilder() {
+        if (flexibleUpperBoundBuilder_ != null) {
+          return flexibleUpperBoundBuilder_.getMessageOrBuilder();
+        } else {
+          return flexibleUpperBound_;
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.Type flexible_upper_bound = 5;</code>
+       *
+       * <pre>
+       * While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
+       * we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
+       * to represent flexible types is too many wasted bytes.
+       * </pre>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type, org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.TypeOrBuilder> 
+          getFlexibleUpperBoundFieldBuilder() {
+        if (flexibleUpperBoundBuilder_ == null) {
+          flexibleUpperBoundBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type, org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.jet.descriptors.serialization.DebugProtoBuf.TypeOrBuilder>(
+                  flexibleUpperBound_,
+                  getParentForChildren(),
+                  isClean());
+          flexibleUpperBound_ = null;
+        }
+        return flexibleUpperBoundBuilder_;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.jet.descriptors.serialization.Type)
     }
 
@@ -4378,10 +4833,18 @@ public final class DebugProtoBuf {
     // required int32 name = 2;
     /**
      * <code>required int32 name = 2;</code>
+     *
+     * <pre>
+     * Id in the StringTable
+     * </pre>
      */
     boolean hasName();
     /**
      * <code>required int32 name = 2;</code>
+     *
+     * <pre>
+     * Id in the StringTable
+     * </pre>
      */
     int getName();
 
@@ -4670,12 +5133,20 @@ public final class DebugProtoBuf {
     private int name_;
     /**
      * <code>required int32 name = 2;</code>
+     *
+     * <pre>
+     * Id in the StringTable
+     * </pre>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
      * <code>required int32 name = 2;</code>
+     *
+     * <pre>
+     * Id in the StringTable
+     * </pre>
      */
     public int getName() {
       return name_;
@@ -5142,18 +5613,30 @@ public final class DebugProtoBuf {
       private int name_ ;
       /**
        * <code>required int32 name = 2;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
        * <code>required int32 name = 2;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       public int getName() {
         return name_;
       }
       /**
        * <code>required int32 name = 2;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       public Builder setName(int value) {
         bitField0_ |= 0x00000002;
@@ -5163,6 +5646,10 @@ public final class DebugProtoBuf {
       }
       /**
        * <code>required int32 name = 2;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       public Builder clearName() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -10433,10 +10920,18 @@ public final class DebugProtoBuf {
     // required int32 name = 6;
     /**
      * <code>required int32 name = 6;</code>
+     *
+     * <pre>
+     * Id in the StringTable
+     * </pre>
      */
     boolean hasName();
     /**
      * <code>required int32 name = 6;</code>
+     *
+     * <pre>
+     * Id in the StringTable
+     * </pre>
      */
     int getName();
 
@@ -10907,10 +11402,18 @@ public final class DebugProtoBuf {
       // required int32 name = 2;
       /**
        * <code>required int32 name = 2;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       boolean hasName();
       /**
        * <code>required int32 name = 2;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       int getName();
 
@@ -11102,12 +11605,20 @@ public final class DebugProtoBuf {
       private int name_;
       /**
        * <code>required int32 name = 2;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
        * <code>required int32 name = 2;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       public int getName() {
         return name_;
@@ -11564,18 +12075,30 @@ public final class DebugProtoBuf {
         private int name_ ;
         /**
          * <code>required int32 name = 2;</code>
+         *
+         * <pre>
+         * Id in the StringTable
+         * </pre>
          */
         public boolean hasName() {
           return ((bitField0_ & 0x00000002) == 0x00000002);
         }
         /**
          * <code>required int32 name = 2;</code>
+         *
+         * <pre>
+         * Id in the StringTable
+         * </pre>
          */
         public int getName() {
           return name_;
         }
         /**
          * <code>required int32 name = 2;</code>
+         *
+         * <pre>
+         * Id in the StringTable
+         * </pre>
          */
         public Builder setName(int value) {
           bitField0_ |= 0x00000002;
@@ -11585,6 +12108,10 @@ public final class DebugProtoBuf {
         }
         /**
          * <code>required int32 name = 2;</code>
+         *
+         * <pre>
+         * Id in the StringTable
+         * </pre>
          */
         public Builder clearName() {
           bitField0_ = (bitField0_ & ~0x00000002);
@@ -12045,12 +12572,20 @@ public final class DebugProtoBuf {
     private int name_;
     /**
      * <code>required int32 name = 6;</code>
+     *
+     * <pre>
+     * Id in the StringTable
+     * </pre>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000020) == 0x00000020);
     }
     /**
      * <code>required int32 name = 6;</code>
+     *
+     * <pre>
+     * Id in the StringTable
+     * </pre>
      */
     public int getName() {
       return name_;
@@ -13295,18 +13830,30 @@ public final class DebugProtoBuf {
       private int name_ ;
       /**
        * <code>required int32 name = 6;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000040) == 0x00000040);
       }
       /**
        * <code>required int32 name = 6;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       public int getName() {
         return name_;
       }
       /**
        * <code>required int32 name = 6;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       public Builder setName(int value) {
         bitField0_ |= 0x00000040;
@@ -13316,6 +13863,10 @@ public final class DebugProtoBuf {
       }
       /**
        * <code>required int32 name = 6;</code>
+       *
+       * <pre>
+       * Id in the StringTable
+       * </pre>
        */
       public Builder clearName() {
         bitField0_ = (bitField0_ & ~0x00000040);
@@ -13765,10 +14316,10 @@ public final class DebugProtoBuf {
   }
 
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_jetbrains_jet_descriptors_serialization_SimpleNameTable_descriptor;
+    internal_static_org_jetbrains_jet_descriptors_serialization_StringTable_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_org_jetbrains_jet_descriptors_serialization_SimpleNameTable_fieldAccessorTable;
+      internal_static_org_jetbrains_jet_descriptors_serialization_StringTable_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_jet_descriptors_serialization_QualifiedNameTable_descriptor;
   private static
@@ -13840,95 +14391,98 @@ public final class DebugProtoBuf {
     java.lang.String[] descriptorData = {
       "\n.core/serialization/src/descriptors.deb" +
       "ug.proto\022+org.jetbrains.jet.descriptors." +
-      "serialization\"\037\n\017SimpleNameTable\022\014\n\004name" +
-      "\030\001 \003(\t\"\317\002\n\022QualifiedNameTable\022e\n\016qualifi" +
-      "ed_name\030\001 \003(\0132M.org.jetbrains.jet.descri" +
-      "ptors.serialization.QualifiedNameTable.Q" +
-      "ualifiedName\032\321\001\n\rQualifiedName\022!\n\025parent" +
-      "_qualified_name\030\001 \001(\005:\002-1\022\022\n\nshort_name\030" +
-      "\002 \002(\005\022i\n\004kind\030\003 \001(\0162R.org.jetbrains.jet." +
-      "descriptors.serialization.QualifiedNameT",
-      "able.QualifiedName.Kind:\007PACKAGE\"\036\n\004Kind" +
-      "\022\t\n\005CLASS\020\000\022\013\n\007PACKAGE\020\001\"\263\004\n\004Type\022R\n\013con" +
-      "structor\030\001 \002(\0132=.org.jetbrains.jet.descr" +
-      "iptors.serialization.Type.Constructor\022L\n" +
-      "\010argument\030\002 \003(\0132:.org.jetbrains.jet.desc" +
-      "riptors.serialization.Type.Argument\022\027\n\010n" +
-      "ullable\030\003 \001(\010:\005false\032\231\001\n\013Constructor\022W\n\004" +
-      "kind\030\001 \001(\0162B.org.jetbrains.jet.descripto" +
-      "rs.serialization.Type.Constructor.Kind:\005" +
-      "CLASS\022\n\n\002id\030\002 \002(\005\"%\n\004Kind\022\t\n\005CLASS\020\000\022\022\n\016",
-      "TYPE_PARAMETER\020\001\032\323\001\n\010Argument\022^\n\nproject" +
-      "ion\030\001 \001(\0162E.org.jetbrains.jet.descriptor" +
-      "s.serialization.Type.Argument.Projection" +
-      ":\003INV\022?\n\004type\030\002 \002(\01321.org.jetbrains.jet." +
-      "descriptors.serialization.Type\"&\n\nProjec" +
-      "tion\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\"\213\002\n\rTypeP" +
-      "arameter\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\005\022\026\n\007re" +
-      "ified\030\003 \001(\010:\005false\022Z\n\010variance\030\004 \001(\0162C.o" +
-      "rg.jetbrains.jet.descriptors.serializati" +
-      "on.TypeParameter.Variance:\003INV\022F\n\013upper_",
-      "bound\030\005 \003(\01321.org.jetbrains.jet.descript" +
-      "ors.serialization.Type\"$\n\010Variance\022\006\n\002IN" +
-      "\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\"\254\006\n\005Class\022\020\n\005flags\030" +
-      "\001 \001(\005:\0010\022\030\n\020extra_visibility\030\002 \001(\t\022\017\n\007fq" +
-      "_name\030\003 \002(\005\022T\n\014class_object\030\004 \001(\0132>.org." +
-      "jetbrains.jet.descriptors.serialization." +
-      "Class.ClassObject\022R\n\016type_parameter\030\005 \003(" +
-      "\0132:.org.jetbrains.jet.descriptors.serial" +
-      "ization.TypeParameter\022D\n\tsupertype\030\006 \003(\013" +
-      "21.org.jetbrains.jet.descriptors.seriali",
-      "zation.Type\022\031\n\021nested_class_name\030\007 \003(\005\022E" +
-      "\n\006member\030\013 \003(\01325.org.jetbrains.jet.descr" +
-      "iptors.serialization.Callable\022\022\n\nenum_en" +
-      "try\030\014 \003(\005\022b\n\023primary_constructor\030\r \001(\0132E" +
-      ".org.jetbrains.jet.descriptors.serializa" +
-      "tion.Class.PrimaryConstructor\032O\n\013ClassOb" +
-      "ject\022@\n\004data\030\001 \001(\01322.org.jetbrains.jet.d" +
-      "escriptors.serialization.Class\032Y\n\022Primar" +
-      "yConstructor\022C\n\004data\030\001 \001(\01325.org.jetbrai" +
-      "ns.jet.descriptors.serialization.Callabl",
-      "e\"p\n\004Kind\022\t\n\005CLASS\020\000\022\t\n\005TRAIT\020\001\022\016\n\nENUM_" +
-      "CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOTATION_CL" +
-      "ASS\020\004\022\n\n\006OBJECT\020\005\022\020\n\014CLASS_OBJECT\020\006\"P\n\007P" +
-      "ackage\022E\n\006member\030\001 \003(\01325.org.jetbrains.j" +
-      "et.descriptors.serialization.Callable\"\220\006" +
-      "\n\010Callable\022\r\n\005flags\030\001 \001(\005\022\030\n\020extra_visib" +
-      "ility\030\002 \001(\t\022\024\n\014getter_flags\030\t \001(\005\022\024\n\014set" +
-      "ter_flags\030\n \001(\005\022R\n\016type_parameter\030\004 \003(\0132" +
+      "serialization\"\035\n\013StringTable\022\016\n\006string\030\001" +
+      " \003(\t\"\317\002\n\022QualifiedNameTable\022e\n\016qualified" +
+      "_name\030\001 \003(\0132M.org.jetbrains.jet.descript" +
+      "ors.serialization.QualifiedNameTable.Qua" +
+      "lifiedName\032\321\001\n\rQualifiedName\022!\n\025parent_q" +
+      "ualified_name\030\001 \001(\005:\002-1\022\022\n\nshort_name\030\002 " +
+      "\002(\005\022i\n\004kind\030\003 \001(\0162R.org.jetbrains.jet.de" +
+      "scriptors.serialization.QualifiedNameTab",
+      "le.QualifiedName.Kind:\007PACKAGE\"\036\n\004Kind\022\t" +
+      "\n\005CLASS\020\000\022\013\n\007PACKAGE\020\001\"\253\005\n\004Type\022R\n\013const" +
+      "ructor\030\001 \002(\0132=.org.jetbrains.jet.descrip" +
+      "tors.serialization.Type.Constructor\022L\n\010a" +
+      "rgument\030\002 \003(\0132:.org.jetbrains.jet.descri" +
+      "ptors.serialization.Type.Argument\022\027\n\010nul" +
+      "lable\030\003 \001(\010:\005false\022%\n\035flexible_type_capa" +
+      "bilities_id\030\004 \001(\005\022O\n\024flexible_upper_boun" +
+      "d\030\005 \001(\01321.org.jetbrains.jet.descriptors." +
+      "serialization.Type\032\231\001\n\013Constructor\022W\n\004ki",
+      "nd\030\001 \001(\0162B.org.jetbrains.jet.descriptors" +
+      ".serialization.Type.Constructor.Kind:\005CL" +
+      "ASS\022\n\n\002id\030\002 \002(\005\"%\n\004Kind\022\t\n\005CLASS\020\000\022\022\n\016TY" +
+      "PE_PARAMETER\020\001\032\323\001\n\010Argument\022^\n\nprojectio" +
+      "n\030\001 \001(\0162E.org.jetbrains.jet.descriptors." +
+      "serialization.Type.Argument.Projection:\003" +
+      "INV\022?\n\004type\030\002 \002(\01321.org.jetbrains.jet.de" +
+      "scriptors.serialization.Type\"&\n\nProjecti" +
+      "on\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\"\213\002\n\rTypePar" +
+      "ameter\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\005\022\026\n\007reif",
+      "ied\030\003 \001(\010:\005false\022Z\n\010variance\030\004 \001(\0162C.org" +
+      ".jetbrains.jet.descriptors.serialization" +
+      ".TypeParameter.Variance:\003INV\022F\n\013upper_bo" +
+      "und\030\005 \003(\01321.org.jetbrains.jet.descriptor" +
+      "s.serialization.Type\"$\n\010Variance\022\006\n\002IN\020\000" +
+      "\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\"\254\006\n\005Class\022\020\n\005flags\030\001 " +
+      "\001(\005:\0010\022\030\n\020extra_visibility\030\002 \001(\t\022\017\n\007fq_n" +
+      "ame\030\003 \002(\005\022T\n\014class_object\030\004 \001(\0132>.org.je" +
+      "tbrains.jet.descriptors.serialization.Cl" +
+      "ass.ClassObject\022R\n\016type_parameter\030\005 \003(\0132",
       ":.org.jetbrains.jet.descriptors.serializ" +
-      "ation.TypeParameter\022H\n\rreceiver_type\030\005 \001",
-      "(\01321.org.jetbrains.jet.descriptors.seria" +
-      "lization.Type\022\014\n\004name\030\006 \002(\005\022]\n\017value_par" +
-      "ameter\030\007 \003(\0132D.org.jetbrains.jet.descrip" +
-      "tors.serialization.Callable.ValueParamet" +
-      "er\022F\n\013return_type\030\010 \002(\01321.org.jetbrains." +
-      "jet.descriptors.serialization.Type\032\305\001\n\016V" +
-      "alueParameter\022\r\n\005flags\030\001 \001(\005\022\014\n\004name\030\002 \002" +
-      "(\005\022?\n\004type\030\003 \002(\01321.org.jetbrains.jet.des" +
-      "criptors.serialization.Type\022N\n\023vararg_el" +
-      "ement_type\030\004 \001(\01321.org.jetbrains.jet.des",
-      "criptors.serialization.Type*\005\010d\020\310\001\"Q\n\nMe" +
-      "mberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRI" +
-      "DE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003\":\n" +
-      "\014CallableKind\022\007\n\003FUN\020\000\022\007\n\003VAL\020\001\022\007\n\003VAR\020\002" +
-      "\022\017\n\013CONSTRUCTOR\020\003*\005\010d\020\310\001*-\n\010Modality\022\t\n\005" +
-      "FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002*M\n\nVisib" +
-      "ility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROT" +
-      "ECTED\020\002\022\n\n\006PUBLIC\020\003\022\t\n\005EXTRA\020\004B\022B\rDebugP" +
-      "rotoBuf\210\001\000"
+      "ation.TypeParameter\022D\n\tsupertype\030\006 \003(\01321" +
+      ".org.jetbrains.jet.descriptors.serializa" +
+      "tion.Type\022\031\n\021nested_class_name\030\007 \003(\005\022E\n\006" +
+      "member\030\013 \003(\01325.org.jetbrains.jet.descrip" +
+      "tors.serialization.Callable\022\022\n\nenum_entr" +
+      "y\030\014 \003(\005\022b\n\023primary_constructor\030\r \001(\0132E.o" +
+      "rg.jetbrains.jet.descriptors.serializati" +
+      "on.Class.PrimaryConstructor\032O\n\013ClassObje" +
+      "ct\022@\n\004data\030\001 \001(\01322.org.jetbrains.jet.des",
+      "criptors.serialization.Class\032Y\n\022PrimaryC" +
+      "onstructor\022C\n\004data\030\001 \001(\01325.org.jetbrains" +
+      ".jet.descriptors.serialization.Callable\"" +
+      "p\n\004Kind\022\t\n\005CLASS\020\000\022\t\n\005TRAIT\020\001\022\016\n\nENUM_CL" +
+      "ASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOTATION_CLAS" +
+      "S\020\004\022\n\n\006OBJECT\020\005\022\020\n\014CLASS_OBJECT\020\006\"P\n\007Pac" +
+      "kage\022E\n\006member\030\001 \003(\01325.org.jetbrains.jet" +
+      ".descriptors.serialization.Callable\"\220\006\n\010" +
+      "Callable\022\r\n\005flags\030\001 \001(\005\022\030\n\020extra_visibil" +
+      "ity\030\002 \001(\t\022\024\n\014getter_flags\030\t \001(\005\022\024\n\014sette",
+      "r_flags\030\n \001(\005\022R\n\016type_parameter\030\004 \003(\0132:." +
+      "org.jetbrains.jet.descriptors.serializat" +
+      "ion.TypeParameter\022H\n\rreceiver_type\030\005 \001(\013" +
+      "21.org.jetbrains.jet.descriptors.seriali" +
+      "zation.Type\022\014\n\004name\030\006 \002(\005\022]\n\017value_param" +
+      "eter\030\007 \003(\0132D.org.jetbrains.jet.descripto" +
+      "rs.serialization.Callable.ValueParameter" +
+      "\022F\n\013return_type\030\010 \002(\01321.org.jetbrains.je" +
+      "t.descriptors.serialization.Type\032\305\001\n\016Val" +
+      "ueParameter\022\r\n\005flags\030\001 \001(\005\022\014\n\004name\030\002 \002(\005",
+      "\022?\n\004type\030\003 \002(\01321.org.jetbrains.jet.descr" +
+      "iptors.serialization.Type\022N\n\023vararg_elem" +
+      "ent_type\030\004 \001(\01321.org.jetbrains.jet.descr" +
+      "iptors.serialization.Type*\005\010d\020\310\001\"Q\n\nMemb" +
+      "erKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE" +
+      "\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003\":\n\014C" +
+      "allableKind\022\007\n\003FUN\020\000\022\007\n\003VAL\020\001\022\007\n\003VAR\020\002\022\017" +
+      "\n\013CONSTRUCTOR\020\003*\005\010d\020\310\001*-\n\010Modality\022\t\n\005FI" +
+      "NAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002*M\n\nVisibil" +
+      "ity\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTEC",
+      "TED\020\002\022\n\n\006PUBLIC\020\003\022\t\n\005EXTRA\020\004B\022B\rDebugPro" +
+      "toBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
         public com.google.protobuf.ExtensionRegistry assignDescriptors(
             com.google.protobuf.Descriptors.FileDescriptor root) {
           descriptor = root;
-          internal_static_org_jetbrains_jet_descriptors_serialization_SimpleNameTable_descriptor =
+          internal_static_org_jetbrains_jet_descriptors_serialization_StringTable_descriptor =
             getDescriptor().getMessageTypes().get(0);
-          internal_static_org_jetbrains_jet_descriptors_serialization_SimpleNameTable_fieldAccessorTable = new
+          internal_static_org_jetbrains_jet_descriptors_serialization_StringTable_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_jetbrains_jet_descriptors_serialization_SimpleNameTable_descriptor,
-              new java.lang.String[] { "Name", });
+              internal_static_org_jetbrains_jet_descriptors_serialization_StringTable_descriptor,
+              new java.lang.String[] { "String", });
           internal_static_org_jetbrains_jet_descriptors_serialization_QualifiedNameTable_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_org_jetbrains_jet_descriptors_serialization_QualifiedNameTable_fieldAccessorTable = new
@@ -13946,7 +14500,7 @@ public final class DebugProtoBuf {
           internal_static_org_jetbrains_jet_descriptors_serialization_Type_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_jet_descriptors_serialization_Type_descriptor,
-              new java.lang.String[] { "Constructor", "Argument", "Nullable", });
+              new java.lang.String[] { "Constructor", "Argument", "Nullable", "FlexibleTypeCapabilitiesId", "FlexibleUpperBound", });
           internal_static_org_jetbrains_jet_descriptors_serialization_Type_Constructor_descriptor =
             internal_static_org_jetbrains_jet_descriptors_serialization_Type_descriptor.getNestedTypes().get(0);
           internal_static_org_jetbrains_jet_descriptors_serialization_Type_Constructor_fieldAccessorTable = new

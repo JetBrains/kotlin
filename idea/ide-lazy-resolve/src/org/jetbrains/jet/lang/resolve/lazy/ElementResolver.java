@@ -333,7 +333,10 @@ public abstract class ElementResolver {
 
         ClassDescriptor classDescriptor = (ClassDescriptor) resolveSession.resolveToDescriptor(klass);
         ConstructorDescriptor constructorDescriptor = classDescriptor.getUnsubstitutedPrimaryConstructor();
-        assert constructorDescriptor != null;
+        assert constructorDescriptor != null :
+                String.format("Can't get primary constructor for descriptor '%s' in from class '%s'",
+                              classDescriptor,
+                              JetPsiUtil.getElementTextWithContext(klass));
 
         BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file);
         bodyResolver.resolveConstructorParameterDefaultValuesAndAnnotations(createEmptyContext(resolveSession), trace, klass,

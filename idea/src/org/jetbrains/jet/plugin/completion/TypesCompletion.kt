@@ -52,7 +52,7 @@ class TypesCompletion(val parameters: CompletionParameters, val resolveSession: 
      * Add java elements with performing conversion to kotlin elements if necessary.
      */
     private fun addAdaptedJavaCompletion(result: LookupElementsCollector) {
-        JavaClassNameCompletionContributor.addAllClasses(parameters, false, prefixMatcher, object : Consumer<LookupElement> {
+        JavaClassNameCompletionContributor.addAllClasses(parameters, true, prefixMatcher, object : Consumer<LookupElement> {
             override fun consume(lookupElement: LookupElement?) {
                 if (lookupElement is JavaPsiClassReferenceElement) {
                     val psiClass = lookupElement.getObject()

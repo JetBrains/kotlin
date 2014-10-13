@@ -109,7 +109,7 @@ class KeywordCompletion {
         add(JetTokens.TRAIT_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
         add(JetTokens.VAL_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
         add(JetTokens.VAR_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
-        add(JetTokens.TYPE_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
+        add(JetTokens.TYPE_ALIAS_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
 
         add(JetTokens.IMPORT_KEYWORD, inTopLevel)
         add(JetTokens.PACKAGE_KEYWORD, inTopLevel)

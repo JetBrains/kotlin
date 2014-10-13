@@ -1,3 +1,3 @@
 package abstract
 
-abstract enum class MyAbstractEnum() {}
+<!ABSTRACT_MODIFIER_IN_ENUM!>abstract<!> enum class MyAbstractEnum() {}

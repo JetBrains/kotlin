@@ -33,7 +33,7 @@ import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 import org.jetbrains.jet.plugin.refactoring.RefactoringPackage;
 import org.jetbrains.jet.plugin.refactoring.extractFunction.*;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -111,7 +111,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         setOKActionEnabled(checkNames());
         signaturePreviewField.setText(
                 ExtractFunctionPackage.getDeclarationText(currentDescriptor, getGeneratorOptions(), false,
-                                                          DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
+                                                          IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
         );
     }
 

@@ -52,7 +52,14 @@ public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implement
     @Nullable
     public ClassId getClassId() {
         PsiClass resolved = resolvePsi();
-        return resolved == null ? null : computeClassId(resolved);
+        if (resolved != null) return computeClassId(resolved);
+
+        // External annotations do not have PSI behind them,
+        // so we can only heuristically reconstruct annotation class ids from qualified names
+        String qualifiedName = getPsi().getQualifiedName();
+        if (qualifiedName != null) return ClassId.topLevel(new FqName(qualifiedName));
+
+        return null;
     }
 
     @Nullable

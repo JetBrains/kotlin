@@ -61,6 +61,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
+import org.jetbrains.jet.lang.types.Approximation;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -242,7 +243,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 }
             }
 
-            return selector.accept(visitor, receiver);
+            StackValue stackValue = selector.accept(visitor, receiver);
+
+            Approximation.Info approximationInfo = null;
+            if (selector instanceof JetExpression) {
+                approximationInfo = bindingContext.get(BindingContext.EXPRESSION_RESULT_APPROXIMATION, (JetExpression) selector);
+            }
+
+            return genNotNullAssertions(state, stackValue, approximationInfo);
         }
         catch (ProcessCanceledException e) {
             throw e;
@@ -1430,7 +1438,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         StackValue answer = StackValue.none();
 
         for (Iterator<JetElement> iterator = statements.iterator(); iterator.hasNext(); ) {
-            JetElement statement = iterator.next();
+            JetElement possiblyLabeledStatement = iterator.next();
+
+            JetElement statement = possiblyLabeledStatement instanceof JetExpression
+                                   ? JetPsiUtil.safeDeparenthesize((JetExpression) possiblyLabeledStatement, true)
+                                   : possiblyLabeledStatement;
+
 
             if (statement instanceof JetNamedDeclaration) {
                 JetNamedDeclaration declaration = (JetNamedDeclaration) statement;
@@ -1459,7 +1472,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 v.mark(labelBeforeLastExpression);
             }
 
-            StackValue result = isExpression ? gen(statement) : genStatement(statement);
+            StackValue result = isExpression ? gen(possiblyLabeledStatement) : genStatement(possiblyLabeledStatement);
 
             if (!iterator.hasNext()) {
                 answer = result;
@@ -2222,6 +2235,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean isInline = state.isInlineEnabled() &&
                            descriptor instanceof SimpleFunctionDescriptor &&
                            ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
+
         if (!isInline) return defaultCallGenerator;
 
         SimpleFunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((SimpleFunctionDescriptor) descriptor.getOriginal());
@@ -3042,9 +3056,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 JetExpression left = binaryExpression.getLeft();
                 JetExpression right = binaryExpression.getRight();
                 Type leftType = expressionType(left);
-                Type rightType = expressionType(right);
 
-                if (leftType.equals(JAVA_STRING_TYPE) && rightType.equals(JAVA_STRING_TYPE)) {
+                if (leftType.equals(JAVA_STRING_TYPE)) {
                     invokeAppend(left);
                     invokeAppend(right);
                     return;
@@ -3692,7 +3705,7 @@ The "returned" value of try expression with no finally is either the last expres
     @Override
     public StackValue visitIsExpression(@NotNull JetIsExpression expression, StackValue receiver) {
         StackValue match = StackValue.expression(OBJECT_TYPE, expression.getLeftHandSide(), this);
-        return generateIsCheck(match, expression.getTypeRef(), expression.isNegated());
+        return generateIsCheck(match, expression.getTypeReference(), expression.isNegated());
     }
 
     private StackValue generateExpressionMatch(StackValue expressionToMatch, JetExpression patternExpression) {
@@ -3844,7 +3857,7 @@ The "returned" value of try expression with no finally is either the last expres
         StackValue.Local match = subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType);
         if (condition instanceof JetWhenConditionIsPattern) {
             JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
-            return generateIsCheck(match, patternCondition.getTypeRef(), patternCondition.isNegated());
+            return generateIsCheck(match, patternCondition.getTypeReference(), patternCondition.isNegated());
         }
         else if (condition instanceof JetWhenConditionWithExpression) {
             JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();

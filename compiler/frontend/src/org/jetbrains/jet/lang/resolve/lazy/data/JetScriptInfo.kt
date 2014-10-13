@@ -48,6 +48,6 @@ public fun shouldBeScriptClassMember(declaration: JetDeclaration): Boolean {
     // To avoid the necessity to always analyze the whole body of a script even if just its class descriptor is needed
     // we only add those vals, vars and funs that have explicitly specified return types
     // (or implicit Unit for function with block body)
-    return declaration is JetCallableDeclaration && declaration.getReturnTypeRef() != null
+    return declaration is JetCallableDeclaration && declaration.getTypeReference() != null
             || declaration is JetNamedFunction && declaration.hasBlockBody()
 }

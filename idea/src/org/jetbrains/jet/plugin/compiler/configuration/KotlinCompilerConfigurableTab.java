@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.compiler.configuration;
 
 import com.intellij.compiler.options.ComparingUtils;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableEP;
@@ -40,6 +41,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private final CommonCompilerArguments commonCompilerArguments;
     private final K2JSCompilerArguments k2jsCompilerArguments;
     private final CompilerSettings compilerSettings;
+    private final KotlinCompilerWorkspaceSettings compilerWorkspaceSettings;
     private final ConfigurableEP extPoint;
     private JPanel contentPane;
     private JCheckBox generateNoWarningsCheckBox;
@@ -50,16 +52,17 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private TextFieldWithBrowseButton outputPostfixFile;
     private JLabel labelForOutputPrefixFile;
     private JLabel labelForOutputPostfixFile;
+    private JCheckBox incrementalCompilationCheckBox;
 
     public KotlinCompilerConfigurableTab(ConfigurableEP ep) {
         this.extPoint = ep;
         this.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(ep.getProject()).getSettings();
         this.k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(ep.getProject()).getSettings();
         this.compilerSettings = KotlinCompilerSettings.getInstance(ep.getProject()).getSettings();
+        this.compilerWorkspaceSettings = ServiceManager.getService(ep.getProject(), KotlinCompilerWorkspaceSettings.class);
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
-        additionalArgsOptionsField.setDialogCaption(JetBundle.message("kotlin.compiler.option.additional.command.line.parameters.dialog.title"));
-        
+
         setupFileChooser(labelForOutputPrefixFile, outputPrefixFile,
                          JetBundle.message("kotlin.compiler.js.option.output.prefix.browse.title"));
         setupFileChooser(labelForOutputPostfixFile, outputPostfixFile,
@@ -88,6 +91,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public boolean isModified() {
         return ComparingUtils.isModified(generateNoWarningsCheckBox, commonCompilerArguments.suppressWarnings) ||
                ComparingUtils.isModified(additionalArgsOptionsField, compilerSettings.getAdditionalArguments()) ||
+
+               ComparingUtils.isModified(incrementalCompilationCheckBox, compilerWorkspaceSettings.getIncrementalCompilationEnabled()) ||
+
                ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerArguments.sourceMap) ||
                isModified(outputPrefixFile, k2jsCompilerArguments.outputPrefix) ||
                isModified(outputPostfixFile, k2jsCompilerArguments.outputPostfix);
@@ -97,6 +103,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void apply() throws ConfigurationException {
         commonCompilerArguments.suppressWarnings = generateNoWarningsCheckBox.isSelected();
         compilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
+
+        compilerWorkspaceSettings.setIncrementalCompilationEnabled(incrementalCompilationCheckBox.isSelected());
+
         k2jsCompilerArguments.sourceMap = generateSourceMapsCheckBox.isSelected();
         k2jsCompilerArguments.outputPrefix = StringUtil.nullize(outputPrefixFile.getText(), true);
         k2jsCompilerArguments.outputPostfix = StringUtil.nullize(outputPostfixFile.getText(), true);
@@ -106,6 +115,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void reset() {
         generateNoWarningsCheckBox.setSelected(commonCompilerArguments.suppressWarnings);
         additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());
+
+        incrementalCompilationCheckBox.setSelected(compilerWorkspaceSettings.getIncrementalCompilationEnabled());
+
         generateSourceMapsCheckBox.setSelected(k2jsCompilerArguments.sourceMap);
         outputPrefixFile.setText(k2jsCompilerArguments.outputPrefix);
         outputPostfixFile.setText(k2jsCompilerArguments.outputPostfix);

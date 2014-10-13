@@ -17,27 +17,31 @@
 package org.jetbrains.jet.lang.resolve
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.annotations.ReadOnly
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import java.util.Collections
+import com.intellij.openapi.util.ModificationTracker
 
 public trait Diagnostics : Iterable<Diagnostic> {
+    //should not be called on readonly views
+    //any Diagnostics object returned by BindingContext#getDiagnostics() should implement this property
+    public val modificationTracker: ModificationTracker
+        get() = throw IllegalStateException("Trying to obtain modification tracker for Diagnostics object of class $javaClass")
+
     public fun all(): Collection<Diagnostic>
 
     public fun forElement(psiElement: PsiElement): Collection<Diagnostic>
 
-    public fun isEmpty(): Boolean
+    public fun isEmpty(): Boolean = all().isEmpty()
 
     public fun noSuppression(): Diagnostics
 
-    class object {
+    override fun iterator() = all().iterator()
 
+    class object {
         public val EMPTY: Diagnostics = object : Diagnostics {
+            override fun noSuppression(): Diagnostics = this
+            override val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
             override fun all() = listOf<Diagnostic>()
             override fun forElement(psiElement: PsiElement) = listOf<Diagnostic>()
-            override fun isEmpty() = true
-            override fun noSuppression() = this
-            override fun iterator() = all().iterator()
         }
     }
 }

@@ -17,13 +17,12 @@
 package org.jetbrains.jet.lang.resolve
 
 import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.MemberDescriptor
-import org.jetbrains.jet.lang.psi.JetDeclarationModifierList
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder
+import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 public trait AnnotationChecker {
 
-    public fun check(declaration: JetDeclaration, descriptor: MemberDescriptor, diagnosticHolder: DiagnosticHolder);
+    public fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink);
 
 }

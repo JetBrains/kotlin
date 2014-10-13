@@ -2615,12 +2615,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
-        @TestMetadata("abstractmethod.kt")
-        public void testAbstractmethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/abstractmethod.kt");
-            doTest(fileName);
-        }
-        
         public void testAllFilesPresentInEnum() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/enum"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -2646,6 +2640,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("entrywithinner.kt")
         public void testEntrywithinner() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/entrywithinner.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("enumInheritedFromTrait.kt")
+        public void testEnumInheritedFromTrait() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/enumInheritedFromTrait.kt");
             doTest(fileName);
         }
         
@@ -2697,6 +2697,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("openMethod.kt")
+        public void testOpenMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/openMethod.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("ordinal.kt")
         public void testOrdinal() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/ordinal.kt");
@@ -2706,6 +2712,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/simple.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("superCallInEnumLiteral.kt")
+        public void testSuperCallInEnumLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/superCallInEnumLiteral.kt");
             doTest(fileName);
         }
         
@@ -2751,6 +2763,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public static class ExtensionFunctions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInExtensionFunctions() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("executionOrder.kt")
+        public void testExecutionOrder() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionFunctions/executionOrder.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("kt1061.kt")
@@ -4000,11 +4018,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     
     @TestMetadata("compiler/testData/codegen/box/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({JavaInterop.ObjectMethods.class})
+    @InnerTestClasses({JavaInterop.NotNullAssertions.class, JavaInterop.ObjectMethods.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class JavaInterop extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInJavaInterop() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/javaInterop"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class NotNullAssertions extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInNotNullAssertions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("mapPut.kt")
+            public void testMapPut() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/mapPut.kt");
+                doTest(fileName);
+            }
+            
         }
         
         @TestMetadata("compiler/testData/codegen/box/javaInterop/objectMethods")
@@ -4061,6 +4095,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public static class Labels extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInLabels() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/labels"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("labeledDeclarations.kt")
+        public void testLabeledDeclarations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/labels/labeledDeclarations.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("labeledDeclarations2.kt")
+        public void testLabeledDeclarations2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/labels/labeledDeclarations2.kt");
+            doTest(fileName);
         }
         
         @TestMetadata("propertyAccessor.kt")
@@ -5750,6 +5796,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/regressions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("ea49318.kt")
+        public void testEa49318() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/ea49318.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("kt3173.kt")
         public void testKt3173() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3173.kt");
@@ -5981,6 +6033,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("rawStringsWithManyQuotes.kt")
         public void testRawStringsWithManyQuotes() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/rawStringsWithManyQuotes.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("stringBuilderAppend.kt")
+        public void testStringBuilderAppend() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/strings/stringBuilderAppend.kt");
             doTest(fileName);
         }
         

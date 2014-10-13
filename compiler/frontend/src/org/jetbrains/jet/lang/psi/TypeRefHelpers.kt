@@ -24,22 +24,23 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import com.intellij.psi.PsiErrorElement
 
-fun getTypeRef(declaration: JetDeclaration): JetTypeReference? {
+fun getTypeReference(declaration: JetDeclaration): JetTypeReference? {
     return declaration.getFirstChild()!!.siblings(forward = true)
             .dropWhile { it.getNode()!!.getElementType() != JetTokens.COLON }
             .filterIsInstance(javaClass<JetTypeReference>())
             .firstOrNull()
 }
 
-fun setTypeRef(declaration: JetNamedDeclaration, addAfter: PsiElement?, typeRef: JetTypeReference?): JetTypeReference? {
-    val oldTypeRef = getTypeRef(declaration)
+fun setTypeReference(declaration: JetNamedDeclaration, addAfter: PsiElement?, typeRef: JetTypeReference?): JetTypeReference? {
+    val oldTypeRef = getTypeReference(declaration)
     if (typeRef != null) {
         if (oldTypeRef != null) {
             return oldTypeRef.replace(typeRef) as JetTypeReference
         }
         else {
-            var anchor = addAfter ?: declaration.getNameIdentifier()
+            var anchor = addAfter ?: declaration.getNameIdentifier()?.siblings(forward = true)?.firstOrNull { it is PsiErrorElement }
             val newTypeRef = declaration.addAfter(typeRef, anchor) as JetTypeReference
             declaration.addAfter(JetPsiFactory(declaration.getProject()).createColon(), anchor)
             return newTypeRef

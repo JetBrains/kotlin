@@ -755,6 +755,7 @@
         <fileset dir="js/js.dart-ast/src"/>
         <fileset dir="js/js.translator/src"/>
         <fileset dir="js/js.frontend/src"/>
+        <fileset dir="js/js.inliner/src"/>
         <fileset dir="idea/idea-analysis/src"/>
 
         <manifest>

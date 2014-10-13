@@ -29,6 +29,14 @@ public class JsTry extends SourceInfoAwareJsNode implements JsStatement {
         this.finallyBlock = finallyBlock;
     }
 
+    public JsTry(JsBlock tryBlock, @Nullable JsCatch jsCatch, @Nullable JsBlock finallyBlock) {
+        this(tryBlock, new SmartList<JsCatch>(), finallyBlock);
+
+        if (jsCatch != null) {
+            catches.add(jsCatch);
+        }
+    }
+
     public List<JsCatch> getCatches() {
         return catches;
     }

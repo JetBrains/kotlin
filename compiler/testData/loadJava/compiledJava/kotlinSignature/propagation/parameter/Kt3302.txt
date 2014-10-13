@@ -4,16 +4,16 @@ public trait Kt3302 {
 
     public trait BSONObject {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun put(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Any): kotlin.Any?
+        public abstract fun put(/*0*/ org.jetbrains.annotations.NotNull() p0: kotlin.String!, /*1*/ org.jetbrains.annotations.NotNull() p1: kotlin.Any!): kotlin.Any!
     }
 
-    public trait BasicBSONObject : test.Kt3302.LinkedHashMap<kotlin.String, kotlin.Any>, test.Kt3302.BSONObject {
+    public trait BasicBSONObject : test.Kt3302.LinkedHashMap<kotlin.String!, kotlin.Any!>, test.Kt3302.BSONObject {
         public abstract override /*2*/ /*fake_override*/ fun dummy(): kotlin.Unit
-        public abstract override /*2*/ fun put(/*0*/ key: kotlin.String, /*1*/ value: kotlin.Any): kotlin.Any?
+        public abstract override /*2*/ fun put(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Any!): kotlin.Any!
     }
 
     public trait LinkedHashMap</*0*/ K, /*1*/ V> {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun put(/*0*/ key: K, /*1*/ value: V): V?
+        public abstract fun put(/*0*/ key: K!, /*1*/ value: V!): V!
     }
 }

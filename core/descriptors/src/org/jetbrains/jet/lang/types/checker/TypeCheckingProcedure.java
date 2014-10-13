@@ -69,6 +69,17 @@ public class TypeCheckingProcedure {
     }
 
     public boolean equalTypes(@NotNull JetType type1, @NotNull JetType type2) {
+        if (TypesPackage.isFlexible(type1)) {
+            if (TypesPackage.isFlexible(type2)) {
+                return equalTypes(TypesPackage.flexibility(type1).getLowerBound(), TypesPackage.flexibility(type2).getLowerBound())
+                        && equalTypes(TypesPackage.flexibility(type1).getUpperBound(), TypesPackage.flexibility(type2).getUpperBound());
+            }
+            return heterogeneousEquivalence(type2, type1);
+        }
+        else if (TypesPackage.isFlexible(type2)) {
+            return heterogeneousEquivalence(type1, type2);
+        }
+
         if (type1.isNullable() != type2.isNullable()) {
             return false;
         }
@@ -105,6 +116,13 @@ public class TypeCheckingProcedure {
             }
         }
         return true;
+    }
+
+    protected boolean heterogeneousEquivalence(JetType inflexibleType, JetType flexibleType) {
+        // This is to account for the case when we have Collection<X> vs (Mutable)Collection<X>! or K(java.util.Collection<? extends X>)
+        assert !TypesPackage.isFlexible(inflexibleType) : "Only inflexible types are allowed here: " + inflexibleType;
+        return isSubtypeOf(TypesPackage.flexibility(flexibleType).getLowerBound(), inflexibleType)
+               && isSubtypeOf(inflexibleType, TypesPackage.flexibility(flexibleType).getUpperBound());
     }
 
     public enum EnrichedProjectionKind {
@@ -163,6 +181,12 @@ public class TypeCheckingProcedure {
     }
 
     public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
+        if (TypesPackage.isFlexible(subtype)) {
+            return isSubtypeOf(TypesPackage.flexibility(subtype).getLowerBound(), supertype);
+        }
+        if (TypesPackage.isFlexible(supertype)) {
+            return isSubtypeOf(subtype, TypesPackage.flexibility(supertype).getUpperBound());
+        }
         if (subtype.isError() || supertype.isError()) {
             return true;
         }

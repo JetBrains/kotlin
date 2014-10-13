@@ -202,7 +202,7 @@ public class TypeResolver {
 
                 @Override
                 public void visitFunctionType(@NotNull JetFunctionType type) {
-                    JetTypeReference receiverTypeRef = type.getReceiverTypeRef();
+                    JetTypeReference receiverTypeRef = type.getReceiverTypeReference();
                     JetType receiverType = receiverTypeRef == null ? null : resolveType(c.noBareTypes(), receiverTypeRef);
 
                     List<JetType> parameterTypes = new ArrayList<JetType>();
@@ -210,7 +210,7 @@ public class TypeResolver {
                         parameterTypes.add(resolveType(c.noBareTypes(), parameter.getTypeReference()));
                     }
 
-                    JetTypeReference returnTypeRef = type.getReturnTypeRef();
+                    JetTypeReference returnTypeRef = type.getReturnTypeReference();
                     JetType returnType;
                     if (returnTypeRef != null) {
                         returnType = resolveType(c.noBareTypes(), returnTypeRef);

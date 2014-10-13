@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaMemberScope.MethodSignatureData
+import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
@@ -180,16 +181,17 @@ public class LazyJavaClassMemberScope(
 
             val jReturnType = method.getReturnType() ?: throw AssertionError("Annotation method has no return type: " + method)
 
+            val attr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false)
             val varargElementType =
                 if (index == methods.size() - 1 && jReturnType is JavaArrayType) {
                     c.typeResolver.transformJavaType(
                             jReturnType.getComponentType(),
-                            TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes()
+                            attr
                     )
                 }
                 else null
 
-            val returnType = c.typeResolver.transformJavaType(jReturnType, TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes())
+            val returnType = c.typeResolver.transformJavaType(jReturnType, attr)
 
             result.add(ValueParameterDescriptorImpl(
                     constructor,

@@ -121,7 +121,7 @@ public class KotlinInplaceVariableIntroducer extends InplaceVariableIntroducer<J
                                 PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
                             }
                             else {
-                                myProperty.setTypeRef(null);
+                                myProperty.setTypeReference(null);
                             }
                         }
                     }.execute();

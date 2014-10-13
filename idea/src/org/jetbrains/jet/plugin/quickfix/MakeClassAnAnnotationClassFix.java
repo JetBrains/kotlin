@@ -83,7 +83,7 @@ public class MakeClassAnAnnotationClassFix extends JetIntentionAction<JetAnnotat
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        annotationClass.replace(AddModifierFix.addModifier(annotationClass, ANNOTATION_KEYWORD, null, project, false));
+        annotationClass.addModifier(ANNOTATION_KEYWORD);
     }
 
     @NotNull

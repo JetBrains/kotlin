@@ -20,10 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -343,6 +340,8 @@ public class DescriptorSerializer {
     public ProtoBuf.Type.Builder type(@NotNull JetType type) {
         assert !type.isError() : "Can't serialize error types: " + type; // TODO
 
+        if (TypesPackage.isFlexible(type)) return flexibleType(type);
+
         ProtoBuf.Type.Builder builder = ProtoBuf.Type.newBuilder();
 
         builder.setConstructor(typeConstructor(type.getConstructor()));
@@ -355,6 +354,18 @@ public class DescriptorSerializer {
         if (type.isNullable()) {
             builder.setNullable(true);
         }
+
+        return builder;
+    }
+
+    private ProtoBuf.Type.Builder flexibleType(@NotNull JetType type) {
+        Flexibility flexibility = TypesPackage.flexibility(type);
+
+        ProtoBuf.Type.Builder builder = type(flexibility.getLowerBound());
+
+        builder.setFlexibleTypeCapabilitiesId(nameTable.getStringIndex(flexibility.getExtraCapabilities().getId()));
+
+        builder.setFlexibleUpperBound(type(flexibility.getUpperBound()));
 
         return builder;
     }

@@ -37,3 +37,11 @@ fun f() : Unit {}
 fun f(a : Int) : Int {a}
 fun f(a : Float, b : Int) : Float {a}
 fun f<T>(a : Float) : T {a}
+
+trait Parent
+trait A: Parent
+trait B: Parent
+
+trait Rec<T>
+class ARec : Rec<ARec>
+class BRec : Rec<BRec>

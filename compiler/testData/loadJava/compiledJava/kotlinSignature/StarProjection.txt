@@ -2,8 +2,8 @@ package test
 
 public final class StarProjection {
     public constructor StarProjection()
-    public final fun foo(): test.StarProjection.MyClass<out kotlin.CharSequence?>
+    public final fun foo(): test.StarProjection.MyClass<out kotlin.CharSequence!>!
 
-    public trait MyClass</*0*/ T : kotlin.CharSequence?> {
+    public trait MyClass</*0*/ T : kotlin.CharSequence!> {
     }
 }

@@ -18,6 +18,6 @@ public class Y extends X<A> {
 
 fun main() {
     Y().fooN() : Any
-    Y().barN(<!NULL_FOR_NONNULL_TYPE!>null<!>);
+    Y().barN(null);
 }
 

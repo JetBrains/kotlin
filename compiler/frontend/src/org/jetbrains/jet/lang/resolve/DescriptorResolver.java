@@ -317,7 +317,7 @@ public class DescriptorResolver {
         resolveGenericBounds(function, functionDescriptor, innerScope, typeParameterDescriptors, trace);
 
         JetType receiverType = null;
-        JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
+        JetTypeReference receiverTypeRef = function.getReceiverTypeReference();
         if (receiverTypeRef != null) {
             JetScope scopeForReceiver =
                     function.hasTypeParameterListBeforeFunctionName()
@@ -331,7 +331,7 @@ public class DescriptorResolver {
 
         innerScope.changeLockLevel(WritableScope.LockLevel.READING);
 
-        JetTypeReference returnTypeRef = function.getReturnTypeRef();
+        JetTypeReference returnTypeRef = function.getTypeReference();
         JetType returnType;
         if (returnTypeRef != null) {
             returnType = typeResolver.resolveType(innerScope, returnTypeRef, trace, true);
@@ -952,7 +952,7 @@ public class DescriptorResolver {
                 scopeWithTypeParameters = writableScope;
             }
 
-            JetTypeReference receiverTypeRef = property.getReceiverTypeRef();
+            JetTypeReference receiverTypeRef = property.getReceiverTypeReference();
             if (receiverTypeRef != null) {
                 receiverType = typeResolver.resolveType(scopeWithTypeParameters, receiverTypeRef, trace, true);
             }
@@ -1005,7 +1005,7 @@ public class DescriptorResolver {
             boolean notLocal,
             @NotNull final BindingTrace trace
     ) {
-        JetTypeReference propertyTypeRef = variable.getTypeRef();
+        JetTypeReference propertyTypeRef = variable.getTypeReference();
 
         boolean hasDelegate = variable instanceof JetProperty && ((JetProperty) variable).hasDelegateExpression();
         if (propertyTypeRef == null) {

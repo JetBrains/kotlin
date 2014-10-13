@@ -26,16 +26,15 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider
 import org.jetbrains.jet.plugin.project.TargetPlatform
 import org.jetbrains.jet.plugin.project.TargetPlatform.*
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector
 import org.jetbrains.jet.lang.psi.JetCodeFragment
-import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 import org.jetbrains.jet.utils.keysToMap
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
@@ -171,7 +170,7 @@ public class KotlinCacheService(val project: Project) {
 
     public fun getLazyResolveSession(element: JetElement): ResolveSessionForBodies {
         val file = element.getContainingJetFile()
-        if (!isFileInScope(file)) {
+        if (!ProjectRootsUtil.isInProjectSource(file)) {
             return getCacheForSyntheticFile(file).getLazyResolveSession(file)
         }
 
@@ -182,23 +181,11 @@ public class KotlinCacheService(val project: Project) {
         if (elements.isEmpty()) return AnalyzeExhaust.EMPTY
 
         val firstFile = elements.first().getContainingJetFile()
-        if (elements.size == 1 && (!isFileInScope(firstFile) && firstFile !is JetCodeFragment)) {
+        if (elements.size == 1 && (!ProjectRootsUtil.isInProjectSource(firstFile) && firstFile !is JetCodeFragment)) {
             return getCacheForSyntheticFile(firstFile).getAnalysisResultsForElements(elements)
         }
 
         return getGlobalCache(TargetPlatformDetector.getPlatform(firstFile)).getAnalysisResultsForElements(elements)
-    }
-
-    private fun isFileInScope(jetFile: JetFile): Boolean {
-        val virtualFile = jetFile.getVirtualFile()
-        if (virtualFile == null) {
-            return false
-        }
-        return virtualFile in kotlinSourcesInProjectScope()
-    }
-
-    private fun kotlinSourcesInProjectScope(): GlobalSearchScope {
-        return JetSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project), project)
     }
 
     public fun <T> get(extension: CacheExtension<T>): T {

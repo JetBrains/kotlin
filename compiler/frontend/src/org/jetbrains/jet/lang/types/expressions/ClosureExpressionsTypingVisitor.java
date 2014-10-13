@@ -130,7 +130,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             boolean functionTypeExpected
     ) {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
-        JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
+        JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeReference();
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
                 context.scope.getContainingDeclaration(), Annotations.EMPTY, CallableMemberDescriptor.Kind.DECLARATION,
                 toSourceElement(functionLiteral)
@@ -275,7 +275,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         assert bodyExpression != null;
 
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
-        JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
+        JetTypeReference returnTypeRef = functionLiteral.getTypeReference();
         JetType declaredReturnType = null;
         if (returnTypeRef != null) {
             declaredReturnType = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);

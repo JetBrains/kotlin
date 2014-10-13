@@ -56,12 +56,12 @@ abstract public class JetFunctionNotStubbed extends JetTypeParameterListOwnerNot
 
     @Override
     public boolean hasDeclaredReturnType() {
-        return getReturnTypeRef() != null;
+        return getTypeReference() != null;
     }
 
     @Override
     @Nullable
-    public JetTypeReference getReceiverTypeRef() {
+    public JetTypeReference getReceiverTypeReference() {
         PsiElement child = getFirstChild();
         while (child != null) {
             IElementType tt = child.getNode().getElementType();
@@ -77,14 +77,14 @@ abstract public class JetFunctionNotStubbed extends JetTypeParameterListOwnerNot
 
     @Override
     @Nullable
-    public JetTypeReference getReturnTypeRef() {
-        return TypeRefHelpersPackage.getTypeRef(this);
+    public JetTypeReference getTypeReference() {
+        return TypeRefHelpersPackage.getTypeReference(this);
     }
 
     @Nullable
     @Override
-    public JetTypeReference setReturnTypeRef(@Nullable JetTypeReference typeRef) {
-        return TypeRefHelpersPackage.setTypeRef(this, getValueParameterList(), typeRef);
+    public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
+        return TypeRefHelpersPackage.setTypeReference(this, getValueParameterList(), typeRef);
     }
 
     @Override

@@ -140,7 +140,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         if (classId.isTopLevelClass()) {
             List<PackageFragmentDescriptor> fragments =
                     context.getPackageFragmentProvider().getPackageFragments(classId.getPackageFqName());
-            assert fragments.size() == 1 : "there should be exactly one package: " + fragments;
+            assert fragments.size() == 1 : "there should be exactly one package: " + fragments + ", class id is " + classId;
             return fragments.iterator().next();
         }
         else {

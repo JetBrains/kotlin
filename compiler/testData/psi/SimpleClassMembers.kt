@@ -13,7 +13,7 @@ class foo {
 
         var f
 
-        type foo = bar
+        typealias foo = bar
 
     }
 
@@ -46,7 +46,7 @@ class foo {
 
         var f
 
-        type foo = bar
+        typealias foo = bar
 
     }
 
@@ -56,7 +56,7 @@ class foo {
 
     var f
 
-    type foo = bar
+    typealias foo = bar
 
     class object {
 

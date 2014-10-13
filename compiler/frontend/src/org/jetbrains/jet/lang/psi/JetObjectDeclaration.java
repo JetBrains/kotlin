@@ -110,7 +110,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
     }
 
     @Override
-    public boolean hasModifier(JetModifierKeywordToken modifier) {
+    public boolean hasModifier(@NotNull JetModifierKeywordToken modifier) {
         JetModifierList modifierList = getModifierList();
         return modifierList != null && modifierList.hasModifier(modifier);
     }

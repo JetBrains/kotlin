@@ -9,7 +9,7 @@ public open class NestedEnumArgument {
         public abstract fun value(): test.NestedEnumArgument.E
     }
 
-    public final enum class E : kotlin.Enum<test.NestedEnumArgument.E> {
+    public final enum class E : kotlin.Enum<test.NestedEnumArgument.E!> {
         private constructor E()
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int

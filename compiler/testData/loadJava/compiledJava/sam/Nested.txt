@@ -1,29 +1,29 @@
 package test
 
 public trait Nested {
-    
+
     public trait Deeper1 {
-        
+
         public trait Runnable {
             public abstract fun run(): kotlin.Unit
             public abstract fun run2(): kotlin.Unit
         }
     }
-    
+
     public trait Deeper2 {
-        
+
         public trait Runnable {
             public abstract fun run(): kotlin.Unit
         }
-        
+
         // Static members
         public final /*synthesized*/ fun Runnable(/*0*/ function: () -> kotlin.Unit): test.Nested.Deeper2.Runnable
     }
-    
+
     public trait Runnable {
         public abstract fun run(): kotlin.Unit
     }
-    
+
     // Static members
     public final /*synthesized*/ fun Runnable(/*0*/ function: () -> kotlin.Unit): test.Nested.Runnable
 }

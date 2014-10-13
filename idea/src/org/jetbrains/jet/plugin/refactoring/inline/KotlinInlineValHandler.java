@@ -63,6 +63,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
@@ -83,7 +84,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             return false;
         }
         JetProperty property = (JetProperty) element;
-        return !property.isVar() && property.getGetter() == null && property.getReceiverTypeRef() == null;
+        return !property.isVar() && property.getGetter() == null && property.getReceiverTypeReference() == null;
     }
 
     @Override
@@ -240,7 +241,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         return StringUtil.join(fun.getValueParameters(), new Function<ValueParameterDescriptor, String>() {
             @Override
             public String fun(ValueParameterDescriptor descriptor) {
-                return descriptor.getName() + ": " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(descriptor.getType());
+                return descriptor.getName() + ": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(descriptor.getType());
             }
         }, ", ");
     }
@@ -356,7 +357,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         return StringUtil.join(typeArguments, new Function<JetType, String>() {
             @Override
             public String fun(JetType type) {
-                return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
+                return IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(type);
             }
         }, ", ");
     }

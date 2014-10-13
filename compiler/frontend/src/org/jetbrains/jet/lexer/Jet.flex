@@ -242,6 +242,7 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 
 {CHARACTER_LITERAL} { return JetTokens.CHARACTER_LITERAL; }
 
+"typealias"  { return JetTokens.TYPE_ALIAS_KEYWORD ;}
 "continue"   { return JetTokens.CONTINUE_KEYWORD ;}
 "package"    { return JetTokens.PACKAGE_KEYWORD ;}
 "return"     { return JetTokens.RETURN_KEYWORD ;}
@@ -255,7 +256,6 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 "super"      { return JetTokens.SUPER_KEYWORD ;}
 "when"       { return JetTokens.WHEN_KEYWORD ;}
 "true"       { return JetTokens.TRUE_KEYWORD ;}
-"type"       { return JetTokens.TYPE_KEYWORD ;}
 "this"       { return JetTokens.THIS_KEYWORD ;}
 "null"       { return JetTokens.NULL_KEYWORD ;}
 "else"       { return JetTokens.ELSE_KEYWORD ;}

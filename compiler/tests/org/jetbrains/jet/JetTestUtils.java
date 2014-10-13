@@ -124,7 +124,7 @@ public class JetTestUtils {
                 @NotNull
                 @Override
                 public Diagnostics getDiagnostics() {
-                    throw new UnsupportedOperationException(); // TODO
+                    return Diagnostics.EMPTY;
                 }
 
                 @Override

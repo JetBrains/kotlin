@@ -53,7 +53,7 @@ public class JetFunctionLiteralExpression extends JetExpressionImpl {
     }
 
     public boolean hasDeclaredReturnType() {
-        return getFunctionLiteral().getReturnTypeRef() != null;
+        return getFunctionLiteral().getTypeReference() != null;
     }
 
     @NotNull

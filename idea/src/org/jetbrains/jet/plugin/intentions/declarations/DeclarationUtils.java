@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
@@ -42,7 +43,7 @@ public class DeclarationUtils {
 
     @Nullable
     private static JetType getPropertyTypeIfNeeded(@NotNull JetProperty property) {
-        if (property.getTypeRef() != null) return null;
+        if (property.getTypeReference() != null) return null;
 
         JetType type = AnalyzerFacadeWithCache.getContextForElement(property).get(
                 BindingContext.EXPRESSION_TYPE, property.getInitializer()
@@ -73,8 +74,8 @@ public class DeclarationUtils {
         JetType inferredType = getPropertyTypeIfNeeded(property);
 
         String typeStr = inferredType != null
-                         ? DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(inferredType)
-                         : JetPsiUtil.getNullableText(property.getTypeRef());
+                         ? IdeDescriptorRenderers.SOURCE_CODE.renderType(inferredType)
+                         : JetPsiUtil.getNullableText(property.getTypeReference());
 
         //noinspection ConstantConditions
         property = (JetProperty) property.replace(
@@ -82,7 +83,7 @@ public class DeclarationUtils {
         );
 
         if (inferredType != null) {
-            ShortenReferences.INSTANCE$.process(property.getTypeRef());
+            ShortenReferences.INSTANCE$.process(property.getTypeReference());
         }
 
         return newInitializer;

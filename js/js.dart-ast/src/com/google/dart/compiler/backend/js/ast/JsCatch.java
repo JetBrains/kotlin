@@ -24,6 +24,15 @@ public class JsCatch extends SourceInfoAwareJsNode implements HasCondition {
         param = new JsParameter(scope.findName(ident));
     }
 
+    public JsCatch(JsScope parent, @NotNull String ident, @NotNull JsStatement catchBody) {
+        this(parent, ident);
+        if (catchBody instanceof JsBlock) {
+            body = (JsBlock) catchBody;
+        } else {
+            body = new JsBlock(catchBody);
+        }
+    }
+
     public JsBlock getBody() {
         return body;
     }

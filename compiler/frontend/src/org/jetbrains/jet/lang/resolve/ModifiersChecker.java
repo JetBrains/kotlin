@@ -65,27 +65,32 @@ public class ModifiersChecker {
 
     @NotNull
     private final BindingTrace trace;
+    @NotNull
+    private AdditionalCheckerProvider additionalCheckerProvider;
 
-    public ModifiersChecker(@NotNull BindingTrace trace) {
+    public ModifiersChecker(@NotNull BindingTrace trace, @NotNull AdditionalCheckerProvider provider) {
         this.trace = trace;
+        additionalCheckerProvider = provider;
     }
 
-    public static ModifiersChecker create(@NotNull BindingTrace trace) {
-        return new ModifiersChecker(trace);
+    public static ModifiersChecker create(@NotNull BindingTrace trace, @NotNull AdditionalCheckerProvider provider) {
+        return new ModifiersChecker(trace, provider);
     }
 
-    public void checkModifiersForDeclaration(@NotNull JetModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
+    public void checkModifiersForDeclaration(@NotNull JetDeclaration modifierListOwner, @NotNull MemberDescriptor descriptor) {
         JetModifierList modifierList = modifierListOwner.getModifierList();
         checkModalityModifiers(modifierList);
         checkVisibilityModifiers(modifierListOwner, descriptor);
         checkInnerModifier(modifierListOwner, descriptor);
         checkPlatformNameApplicability(descriptor);
+        runAnnotationCheckers(modifierListOwner, descriptor);
     }
 
-    public void checkModifiersForLocalDeclaration(@NotNull JetModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
+    public void checkModifiersForLocalDeclaration(@NotNull JetDeclaration modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
         checkIllegalModalityModifiers(modifierListOwner);
         checkIllegalVisibilityModifiers(modifierListOwner);
         checkPlatformNameApplicability(descriptor);
+        runAnnotationCheckers(modifierListOwner, descriptor);
     }
 
     public void checkIllegalModalityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
@@ -290,5 +295,11 @@ public class ModifiersChecker {
             return ((ClassDescriptor) descriptor.getContainingDeclaration()).getVisibility();
         }
         return Visibilities.INTERNAL;
+    }
+
+    private void runAnnotationCheckers(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
+        for (AnnotationChecker checker : additionalCheckerProvider.getAnnotationCheckers()) {
+            checker.check(declaration, descriptor, trace);
+        }
     }
 }

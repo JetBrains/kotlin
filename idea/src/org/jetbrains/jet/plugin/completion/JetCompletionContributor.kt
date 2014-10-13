@@ -216,8 +216,8 @@ public class JetCompletionContributor : CompletionContributor() {
         if (userType != typeRef.getTypeElement()) return false
         val parent = typeRef.getParent()
         return when (parent) {
-            is JetNamedFunction -> typeRef == parent.getReceiverTypeRef()
-            is JetProperty -> typeRef == parent.getReceiverTypeRef()
+            is JetNamedFunction -> typeRef == parent.getReceiverTypeReference()
+            is JetProperty -> typeRef == parent.getReceiverTypeReference()
             else -> false
         }
     }

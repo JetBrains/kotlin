@@ -15,7 +15,7 @@ public interface ReadOnlyToMutable {
     }
 
     public interface Sub extends Super {
-        @ExpectLoadError("Parameter type changed for method which overrides another: MutableList<String>, was: List<String>")
+        //@ExpectLoadError("Parameter type changed for method which overrides another: MutableList<String>, was: List<String>")
         @KotlinSignature("fun foo(p: MutableList<String>)")
         void foo(List<String> p);
     }

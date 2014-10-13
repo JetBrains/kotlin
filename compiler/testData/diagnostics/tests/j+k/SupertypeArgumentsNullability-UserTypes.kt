@@ -15,6 +15,6 @@ public class Y extends X<A> {
 // FILE: test.kt
 
 fun main() {
-    Y().foo()<!UNSAFE_CALL!>.<!>hashCode()
+    Y().foo().hashCode()
     Y().bar(null)
 }

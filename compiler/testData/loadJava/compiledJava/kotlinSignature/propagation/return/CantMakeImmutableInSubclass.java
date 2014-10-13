@@ -16,7 +16,7 @@ public interface CantMakeImmutableInSubclass {
     }
 
     public interface Sub extends Super {
-        @ExpectLoadError("Return type is changed to not subtype for method which overrides another: List<String>, was: MutableList<String>")
+        //@ExpectLoadError("Return type is changed to not subtype for method which overrides another: List<String>, was: MutableList<String>")
         @KotlinSignature("fun foo(): List<String>")
         List<String> foo();
     }

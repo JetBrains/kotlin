@@ -2,5 +2,5 @@ package test
 
 public final class ArrayTypeVariance {
     public constructor ArrayTypeVariance()
-    public final fun toArray(/*0*/ p0: kotlin.Array<out kotlin.Any>?): kotlin.Array<kotlin.Any>?
+    public final fun toArray(/*0*/ p0: kotlin.Array<(out) kotlin.Any!>!): kotlin.Array<(out) kotlin.Any!>!
 }

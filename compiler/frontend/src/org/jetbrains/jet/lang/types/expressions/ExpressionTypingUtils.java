@@ -391,7 +391,7 @@ public class ExpressionTypingUtils {
 
     @NotNull
     private JetType getExpectedTypeForComponent(ExpressionTypingContext context, JetMultiDeclarationEntry entry) {
-        JetTypeReference entryTypeRef = entry.getTypeRef();
+        JetTypeReference entryTypeRef = entry.getTypeReference();
         if (entryTypeRef != null) {
             return expressionTypingServices.getTypeResolver().resolveType(context.scope, entryTypeRef, context.trace, true);
         }

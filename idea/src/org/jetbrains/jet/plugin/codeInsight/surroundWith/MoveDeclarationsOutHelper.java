@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,13 +125,13 @@ public class MoveDeclarationsOutHelper {
 
     @NotNull
     private static JetProperty createProperty(@NotNull JetProperty property, @NotNull JetType propertyType, @Nullable String initializer) {
-        JetTypeReference typeRef = property.getTypeRef();
+        JetTypeReference typeRef = property.getTypeReference();
         String typeString = null;
         if (typeRef != null) {
             typeString = typeRef.getText();
         }
         else if (!propertyType.isError()) {
-            typeString = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(propertyType);
+            typeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(propertyType);
         }
 
         return JetPsiFactory(property).createProperty(property.getName(), typeString, property.isVar(), initializer);

@@ -1,1 +1,1 @@
-type f =  (a, ) -> b
+typealias f =  (a, ) -> b

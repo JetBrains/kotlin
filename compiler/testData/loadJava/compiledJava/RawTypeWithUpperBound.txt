@@ -1,14 +1,14 @@
 package test
 
 public trait RawTypeWithUpperBound {
-    
+
     public trait Bar {
-        public abstract fun f(/*0*/ p0: test.RawTypeWithUpperBound.Foo<out kotlin.CharSequence?>?): kotlin.Unit
+        public abstract fun f(/*0*/ p0: test.RawTypeWithUpperBound.Foo<out kotlin.CharSequence!>!): kotlin.Unit
     }
-    
-    public trait Foo</*0*/ T : kotlin.CharSequence?> {
+
+    public trait Foo</*0*/ T : kotlin.CharSequence!> {
     }
-    
+
     // Static members
-    public final /*synthesized*/ fun Bar(/*0*/ function: (test.RawTypeWithUpperBound.Foo<out kotlin.CharSequence?>?) -> kotlin.Unit): test.RawTypeWithUpperBound.Bar
+    public final /*synthesized*/ fun Bar(/*0*/ function: (test.RawTypeWithUpperBound.Foo<out kotlin.CharSequence!>!) -> kotlin.Unit): test.RawTypeWithUpperBound.Bar
 }

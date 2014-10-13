@@ -174,6 +174,8 @@ public interface Errors {
 
     DiagnosticFactory0<JetModifierListOwner> OPEN_MODIFIER_IN_ENUM = DiagnosticFactory0
             .create(ERROR, modifierSetPosition(JetTokens.OPEN_KEYWORD));
+    DiagnosticFactory0<JetModifierListOwner> ABSTRACT_MODIFIER_IN_ENUM = DiagnosticFactory0
+            .create(ERROR, modifierSetPosition(JetTokens.ABSTRACT_KEYWORD));
 
     DiagnosticFactory0<PsiElement> CLASS_IN_SUPERTYPE_FOR_ENUM = DiagnosticFactory0.create(ERROR);
 

@@ -421,6 +421,12 @@ public class ErrorUtils {
             return Annotations.EMPTY;
         }
 
+        @Nullable
+        @Override
+        public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
+            return null;
+        }
+
         @Override
         public String toString() {
             return constructor.toString();
