@@ -25,7 +25,7 @@ import java.util.Map;
 public class RegenetedClassContext extends InliningContext {
 
     @NotNull
-    private final ConstructorInvocation constructorInvocation;
+    private final AnonymousObjectGeneration anonymousObjectGeneration;
 
     protected RegenetedClassContext(
             @Nullable InliningContext parent,
@@ -33,15 +33,16 @@ public class RegenetedClassContext extends InliningContext {
             @NotNull GenerationState state,
             @NotNull NameGenerator nameGenerator,
             @NotNull Map<String, String> typeMapping,
+            @NotNull ReifiedTypeInliner reifiedTypeInliner,
             boolean isInliningLambda,
-            @NotNull ConstructorInvocation constructorInvocation
+            @NotNull AnonymousObjectGeneration anonymousObjectGeneration
     ) {
-        super(parent, map, state, nameGenerator, typeMapping, isInliningLambda, true);
-        this.constructorInvocation = constructorInvocation;
+        super(parent, map, state, nameGenerator, typeMapping, reifiedTypeInliner, isInliningLambda, true);
+        this.anonymousObjectGeneration = anonymousObjectGeneration;
     }
 
     @Override
     public String getClassNameToInline() {
-        return constructorInvocation.getOwnerInternalName();
+        return anonymousObjectGeneration.getOwnerInternalName();
     }
 }

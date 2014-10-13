@@ -79,10 +79,21 @@ public class AnonymousObjectTransformer {
     }
 
     @NotNull
-    public InlineResult doTransform(@NotNull ConstructorInvocation invocation, @NotNull FieldRemapper parentRemapper) {
+    public InlineResult doTransform(@NotNull final AnonymousObjectGeneration anonymousObjectGen, @NotNull FieldRemapper parentRemapper) {
         ClassBuilder classBuilder = createClassBuilder();
         final List<MethodNode> methodsToTransform = new ArrayList<MethodNode>();
+
+        final InlineResult result = InlineResult.create();
         reader.accept(new ClassVisitor(InlineCodegenUtil.API, classBuilder.getVisitor()) {
+            @Override
+            public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
+                if (signature != null) {
+                    ReifiedTypeInliner.SignatureReificationResult signatureResult = inliningContext.reifedTypeInliner.reifySignature(signature);
+                    signature = signatureResult.getNewSignature();
+                    result.markAsNeededFurtherReificationIf(signatureResult.getNeedFurtherReification());
+                }
+                super.visit(version, access, name, signature, superName, interfaces);
+            }
 
             @Override
             public void visitOuterClass(@NotNull String owner, String name, String desc) {
@@ -131,46 +142,47 @@ public class AnonymousObjectTransformer {
         ParametersBuilder allCapturedParamBuilder = ParametersBuilder.newBuilder();
         ParametersBuilder constructorParamBuilder = ParametersBuilder.newBuilder();
         List<CapturedParamInfo> additionalFakeParams =
-                extractParametersMappingAndPatchConstructor(constructor, allCapturedParamBuilder, constructorParamBuilder, invocation);
+                extractParametersMappingAndPatchConstructor(constructor, allCapturedParamBuilder, constructorParamBuilder, anonymousObjectGen);
 
-        InlineResult result = InlineResult.create();
         for (MethodNode next : methodsToTransform) {
             MethodVisitor visitor = newMethod(classBuilder, next);
-            InlineResult funResult = inlineMethod(invocation, parentRemapper, visitor, next, allCapturedParamBuilder);
+            InlineResult funResult = inlineMethod(anonymousObjectGen, parentRemapper, visitor, next, allCapturedParamBuilder);
             result.addAllClassesToRemove(funResult);
+            result.markAsNeededFurtherReificationIf(funResult.needFurtherReification());
         }
 
         InlineResult constructorResult =
-                generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, invocation, parentRemapper, additionalFakeParams);
+                generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, anonymousObjectGen, parentRemapper, additionalFakeParams);
 
         result.addAllClassesToRemove(constructorResult);
 
         classBuilder.done();
 
-        invocation.setNewLambdaType(newLambdaType);
+        anonymousObjectGen.setNewLambdaType(newLambdaType);
         return result;
     }
 
     @NotNull
     private InlineResult inlineMethod(
-            @NotNull ConstructorInvocation invocation,
+            @NotNull AnonymousObjectGeneration anonymousObjectGen,
             @NotNull FieldRemapper parentRemapper,
             @NotNull MethodVisitor resultVisitor,
             @NotNull MethodNode sourceNode,
             @NotNull ParametersBuilder capturedBuilder
     ) {
-
+        boolean neededFurtherReification = inliningContext.reifedTypeInliner.reifyInstructions(sourceNode.instructions);
         Parameters parameters = getMethodParametersWithCaptured(capturedBuilder, sourceNode);
 
         RegeneratedLambdaFieldRemapper remapper =
                 new RegeneratedLambdaFieldRemapper(oldObjectType.getInternalName(), newLambdaType.getInternalName(),
-                                                   parameters, invocation.getCapturedLambdasToInline(),
+                                                   parameters, anonymousObjectGen.getCapturedLambdasToInline(),
                                                    parentRemapper);
 
         MethodInliner inliner = new MethodInliner(sourceNode, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
-                                                  remapper, isSameModule, "Transformer for " + invocation.getOwnerInternalName());
+                                                  remapper, isSameModule, "Transformer for " + anonymousObjectGen.getOwnerInternalName());
 
         InlineResult result = inliner.doInline(resultVisitor, new LocalVarRemapper(parameters, 0), false, LabelOwner.NOT_APPLICABLE);
+        result.markAsNeededFurtherReificationIf(neededFurtherReification);
         resultVisitor.visitMaxs(-1, -1);
         resultVisitor.visitEnd();
         return result;
@@ -180,7 +192,7 @@ public class AnonymousObjectTransformer {
             @NotNull ClassBuilder classBuilder,
             @NotNull ParametersBuilder allCapturedBuilder,
             @NotNull ParametersBuilder constructorInlineBuilder,
-            @NotNull ConstructorInvocation invocation,
+            @NotNull AnonymousObjectGeneration anonymousObjectGen,
             @NotNull FieldRemapper parentRemapper,
             @NotNull List<CapturedParamInfo> constructorAdditionalFakeParams
     ) {
@@ -251,11 +263,11 @@ public class AnonymousObjectTransformer {
 
         RegeneratedLambdaFieldRemapper remapper =
                 new RegeneratedLambdaFieldRemapper(oldObjectType.getInternalName(), newLambdaType.getInternalName(),
-                                                   constructorParameters, invocation.getCapturedLambdasToInline(),
+                                                   constructorParameters, anonymousObjectGen.getCapturedLambdasToInline(),
                                                    parentRemapper);
 
         MethodInliner inliner = new MethodInliner(constructor, constructorParameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
-                                                  remapper, isSameModule, "Transformer for constructor of " + invocation.getOwnerInternalName());
+                                                  remapper, isSameModule, "Transformer for constructor of " + anonymousObjectGen.getOwnerInternalName());
         InlineResult result = inliner.doInline(capturedFieldInitializer, new LocalVarRemapper(constructorParameters, 0), false,
                                                LabelOwner.NOT_APPLICABLE);
         constructorVisitor.visitMaxs(-1, -1);
@@ -263,7 +275,7 @@ public class AnonymousObjectTransformer {
 
         AsmUtil.genClosureFields(capturedFieldsToGenerate, classBuilder);
         //TODO for inline method make public class
-        invocation.setNewConstructorDescriptor(constructorDescriptor);
+        anonymousObjectGen.setNewConstructorDescriptor(constructorDescriptor);
         return result;
     }
 
@@ -302,19 +314,19 @@ public class AnonymousObjectTransformer {
             @NotNull MethodNode constructor,
             @NotNull ParametersBuilder capturedParamBuilder,
             @NotNull ParametersBuilder constructorParamBuilder,
-            @NotNull final ConstructorInvocation invocation
+            @NotNull final AnonymousObjectGeneration anonymousObjectGen
     ) {
 
         CapturedParamOwner owner = new CapturedParamOwner() {
             @Override
             public Type getType() {
-                return Type.getObjectType(invocation.getOwnerInternalName());
+                return Type.getObjectType(anonymousObjectGen.getOwnerInternalName());
             }
         };
 
         List<LambdaInfo> capturedLambdas = new ArrayList<LambdaInfo>(); //captured var of inlined parameter
         List<CapturedParamInfo> constructorAdditionalFakeParams = new ArrayList<CapturedParamInfo>();
-        Map<Integer, LambdaInfo> indexToLambda = invocation.getLambdasToInline();
+        Map<Integer, LambdaInfo> indexToLambda = anonymousObjectGen.getLambdasToInline();
         Set<Integer> capturedParams = new HashSet<Integer>();
 
         //load captured parameters and patch instruction list (NB: there is also could be object fields)
@@ -355,7 +367,14 @@ public class AnonymousObjectTransformer {
         }
 
         constructorParamBuilder.addThis(oldObjectType, false);
-        Type [] types = Type.getArgumentTypes(invocation.getDesc());
+        String constructorDesc = anonymousObjectGen.getConstructorDesc();
+
+        if (constructorDesc == null) {
+            // in case of anonymous object with empty closure
+            constructorDesc = Type.getMethodDescriptor(Type.VOID_TYPE);
+        }
+
+        Type [] types = Type.getArgumentTypes(constructorDesc);
         for (Type type : types) {
             LambdaInfo info = indexToLambda.get(constructorParamBuilder.getNextValueParameterIndex());
             ParameterInfo parameterInfo = constructorParamBuilder.addNextParameter(type, info != null, null);
@@ -389,8 +408,8 @@ public class AnonymousObjectTransformer {
 
 
 
-        invocation.setAllRecapturedParameters(allRecapturedParameters);
-        invocation.setCapturedLambdasToInline(capturedLambdasToInline);
+        anonymousObjectGen.setAllRecapturedParameters(allRecapturedParameters);
+        anonymousObjectGen.setCapturedLambdasToInline(capturedLambdasToInline);
 
         return constructorAdditionalFakeParams;
     }

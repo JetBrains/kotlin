@@ -17,16 +17,18 @@
 package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.org.objectweb.asm.Type;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConstructorInvocation {
+public class AnonymousObjectGeneration {
 
     private final String ownerInternalName;
 
-    private final String desc;
+    private final String constructorDesc;
 
     private final Map<Integer, LambdaInfo> lambdasToInline;
 
@@ -41,19 +43,39 @@ public class ConstructorInvocation {
     private Map<String, LambdaInfo> capturedLambdasToInline;
 
     private final boolean capturedOuterRegenerated;
+    private final boolean needReification;
+    private final boolean alreadyRegenerated;
+    private final boolean isStaticOrigin;
 
-    ConstructorInvocation(
+    AnonymousObjectGeneration(
             @NotNull String ownerInternalName,
-            @NotNull String desc,
-            @NotNull Map<Integer, LambdaInfo> lambdasToInline,
+            boolean needReification,
             boolean isSameModule,
-            boolean capturedOuterRegenerated
+            @NotNull Map<Integer, LambdaInfo> lambdasToInline,
+            boolean capturedOuterRegenerated,
+            boolean alreadyRegenerated,
+            @Nullable String constructorDesc,
+            boolean isStaticOrigin
     ) {
         this.ownerInternalName = ownerInternalName;
-        this.desc = desc;
+        this.constructorDesc = constructorDesc;
         this.lambdasToInline = lambdasToInline;
         this.isSameModule = isSameModule;
         this.capturedOuterRegenerated = capturedOuterRegenerated;
+        this.needReification = needReification;
+        this.alreadyRegenerated = alreadyRegenerated;
+        this.isStaticOrigin = isStaticOrigin;
+    }
+
+    public AnonymousObjectGeneration(
+            @NotNull String ownerInternalName, boolean isSameModule, boolean needReification,
+            boolean alreadyRegenerated,
+            boolean isStaticOrigin
+    ) {
+        this(
+                ownerInternalName, isSameModule, needReification,
+                new HashMap<Integer, LambdaInfo>(), false, alreadyRegenerated, null, isStaticOrigin
+        );
     }
 
     public String getOwnerInternalName() {
@@ -61,7 +83,9 @@ public class ConstructorInvocation {
     }
 
     public boolean shouldRegenerate() {
-        return !lambdasToInline.isEmpty() || !isSameModule || capturedOuterRegenerated;
+        return !alreadyRegenerated && (
+                !lambdasToInline.isEmpty() || !isSameModule || capturedOuterRegenerated || needReification
+        );
     }
 
     public Map<Integer, LambdaInfo> getLambdasToInline() {
@@ -100,7 +124,12 @@ public class ConstructorInvocation {
         this.capturedLambdasToInline = capturedLambdasToInline;
     }
 
-    public String getDesc() {
-        return desc;
+    @Nullable
+    public String getConstructorDesc() {
+        return constructorDesc;
+    }
+
+    public boolean isStaticOrigin() {
+        return isStaticOrigin;
     }
 }
