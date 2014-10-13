@@ -94,8 +94,6 @@ public final class StandardClasses {
     }
 
     private static void declareKotlinStandardClasses(@NotNull StandardClasses standardClasses) {
-        standardClasses.declare().forFQ("kotlin.Iterator").kotlinClass("Iterator").methods("next").properties("hasNext");
-
         for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
             if (type == PrimitiveType.CHAR || type == PrimitiveType.LONG) continue;
 
