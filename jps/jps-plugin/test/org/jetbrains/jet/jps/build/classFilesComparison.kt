@@ -126,7 +126,7 @@ fun classFileToString(classFile: File): String {
         ByteArrayInputStream(BitEncoding.decodeBytes(annotationDataEncoded)).use {
             input ->
 
-        out.write("\n------ simpleNames proto -----\n${DebugProtoBuf.SimpleNameTable.parseDelimitedFrom(input)}")
+        out.write("\n------ simpleNames proto -----\n${DebugProtoBuf.StringTable.parseDelimitedFrom(input)}")
         out.write("\n------ qualifiedNames proto -----\n${DebugProtoBuf.QualifiedNameTable.parseDelimitedFrom(input)}")
 
         when (classHeader!!.kind) {
