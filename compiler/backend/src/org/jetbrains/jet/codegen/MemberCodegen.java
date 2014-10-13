@@ -70,6 +70,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
     protected ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
+    private boolean wereReifierMarkers;
 
     public MemberCodegen(
             @NotNull GenerationState state,
@@ -389,5 +390,13 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     @NotNull
     public FieldOwnerContext<?> getContext() {
         return context;
+    }
+
+    public boolean wereReifierMarkers() {
+        return wereReifierMarkers;
+    }
+
+    public void setWereReifierMarkers(boolean wereReifierMarkers) {
+        this.wereReifierMarkers = wereReifierMarkers;
     }
 }
