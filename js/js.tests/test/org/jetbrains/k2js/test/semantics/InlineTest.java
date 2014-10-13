@@ -16,25 +16,12 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import com.google.dart.compiler.backend.js.ast.JsNode;
-import com.intellij.util.Consumer;
 import org.jetbrains.k2js.inline.exception.InlineRecursionException;
-import org.jetbrains.k2js.test.SingleFileTranslationTest;
-import org.jetbrains.k2js.test.utils.InlineTestUtils;
-import org.jetbrains.k2js.test.utils.JsTestUtils;
-import org.jetbrains.k2js.test.utils.MemoizeConsumer;
+import org.jetbrains.k2js.test.SingleFileTranslationWithDirectivesTest;
 
-public final class InlineTest extends SingleFileTranslationTest {
-    private final MemoizeConsumer<JsNode> nodeConsumer = new MemoizeConsumer<JsNode>();
-
+public final class InlineTest extends SingleFileTranslationWithDirectivesTest {
     public InlineTest() {
         super("inline/");
-    }
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        nodeConsumer.consume(null);
     }
 
     public void testInlineSimpleAssignment() throws Exception {
@@ -251,25 +238,5 @@ public final class InlineTest extends SingleFileTranslationTest {
 
     public void testSimpleReturnFunctionWithResultUnused() throws Exception {
         checkFooBoxIsOkWithInlineDirectives();
-    }
-    
-    private void checkFooBoxIsOkWithInlineDirectives() throws Exception {
-        checkFooBoxIsOk();
-        processInlineDirectives();
-    }
-
-    private void processInlineDirectives() throws Exception {
-        String fileName = getInputFilePath(getTestName(true) + ".kt");
-        String fileText = JsTestUtils.readFile(fileName);
-
-        JsNode lastJsNode = nodeConsumer.getLastValue();
-        assert lastJsNode != null;
-
-        InlineTestUtils.processDirectives(lastJsNode, fileText);
-    }
-
-    @Override
-    protected Consumer<JsNode> getConsumer() {
-        return nodeConsumer;
     }
 }
