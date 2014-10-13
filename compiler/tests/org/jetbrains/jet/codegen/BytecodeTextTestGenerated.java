@@ -353,6 +353,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
         
+        @TestMetadata("labeled.kt")
+        public void testLabeled() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/statements/labeled.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("statementsComposition.kt")
         public void testStatementsComposition() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/statements/statementsComposition.kt");
