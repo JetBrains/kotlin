@@ -38,6 +38,12 @@ public class MultiFileHighlightingTestGenerated extends AbstractMultiFileHighlig
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiFileHighlighting"), Pattern.compile("^(.+)\\.kt$"), false);
     }
     
+    @TestMetadata("copyResolveBeforeParams.kt")
+    public void testCopyResolveBeforeParams() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/copyResolveBeforeParams.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("delegatesReference.kt")
     public void testDelegatesReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/delegatesReference.kt");
