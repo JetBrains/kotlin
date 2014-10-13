@@ -90,7 +90,7 @@ class FunctionInlineMutator {
         renameLocalNames(namingContext, invokedFunction);
         removeStatementsAfterTopReturn();
 
-        if (canBeExpression(body)) {
+        if (isResultNeeded && canBeExpression(body)) {
             resultExpr = asExpression(body);
             body.getStatements().clear();
 

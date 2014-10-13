@@ -248,6 +248,10 @@ public final class InlineTest extends SingleFileTranslationTest {
     public void testIncrementProperty() throws Exception {
         checkFooBoxIsOkWithInlineDirectives();
     }
+
+    public void testSimpleReturnFunctionWithResultUnused() throws Exception {
+        checkFooBoxIsOkWithInlineDirectives();
+    }
     
     private void checkFooBoxIsOkWithInlineDirectives() throws Exception {
         checkFooBoxIsOk();
