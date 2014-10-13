@@ -30,8 +30,9 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods
 import kotlin.platform.platformStatic
 import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode
 import java.util.ArrayList
-import org.jetbrains.org.objectweb.asm.signature.SignatureWriter
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
+import org.jetbrains.org.objectweb.asm.signature.SignatureWriter
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 
 public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
 
@@ -40,12 +41,32 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         public val CHECKCAST_MARKER_METHOD_NAME: String = "reifyCheckcast"
         public val INSTANCEOF_MARKER_METHOD_NAME: String = "reifyInstanceof"
         public val JAVA_CLASS_MARKER_METHOD_NAME: String = "reifyJavaClass"
+        public val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME: String = "needClassReification"
+
+        private fun isParametrisedReifiedMarker(insn: AbstractInsnNode) =
+                isReifiedMarker(insn) { it.startsWith("reify") }
+
+        private fun isReifiedMarker(insn: AbstractInsnNode, namePredicate: (String) -> Boolean): Boolean {
+            if (insn.getOpcode() != Opcodes.INVOKESTATIC || insn !is MethodInsnNode) return false
+            return insn.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME && namePredicate(insn.name)
+        }
+
+        platformStatic public fun isNeedClassReificationMarker(insn: AbstractInsnNode): Boolean =
+                isReifiedMarker(insn) { s -> s == NEED_CLASS_REIFICATION_MARKER_METHOD_NAME }
+
+        platformStatic public fun putNeedClassReificationMarker(v: MethodVisitor) {
+            v.visitMethodInsn(
+                    Opcodes.INVOKESTATIC,
+                    IntrinsicMethods.INTRINSICS_CLASS_NAME, NEED_CLASS_REIFICATION_MARKER_METHOD_NAME,
+                    Type.getMethodDescriptor(Type.VOID_TYPE), false
+            );
+        }
     }
 
     public fun reifyInstructions(instructions: InsnList) {
         if (parametersMapping == null) return
         for (insn in instructions.toArray()) {
-            if (isReifiedMarker(insn)) {
+            if (isParametrisedReifiedMarker(insn)) {
                 processReifyMarker(insn as MethodInsnNode, instructions)
             }
         }
@@ -84,11 +105,6 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         SignatureReader(oldSignature).accept(signatureRemapper)
 
         return SignatureReificationResult(signatureRemapper.toString(), signatureRemapper.needFurtherReification)
-    }
-
-    private fun isReifiedMarker(insn: AbstractInsnNode): Boolean {
-        if (insn.getOpcode() != Opcodes.INVOKESTATIC || insn !is MethodInsnNode) return false
-        return insn.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME && insn.name.startsWith("reify")
     }
 
     data class SignatureReificationResult(val newSignature: String, val needFurtherReification: Boolean)
