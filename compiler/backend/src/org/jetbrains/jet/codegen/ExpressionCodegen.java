@@ -61,6 +61,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.Approximation;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -183,7 +184,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    public ClassDescriptor generateObjectLiteral(@NotNull JetObjectLiteralExpression literal) {
+    public ObjectLiteralResult generateObjectLiteral(@NotNull JetObjectLiteralExpression literal) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
 
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, objectDeclaration);
@@ -197,9 +198,44 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         );
 
         ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION);
-        new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state, getParentCodegen()).generate();
 
-        return classDescriptor;
+        MemberCodegen literalCodegen = new ImplementationBodyCodegen(
+                objectDeclaration, objectContext, classBuilder, state, getParentCodegen()
+        );
+        literalCodegen.generate();
+
+        if (containsReifiedParametersInSupertypes(classDescriptor)) {
+            literalCodegen.setWereReifierMarkers(true);
+        }
+
+        if (literalCodegen.wereReifierMarkers()) {
+            getParentCodegen().setWereReifierMarkers(true);
+        }
+
+        return new ObjectLiteralResult(literalCodegen.wereReifierMarkers(), classDescriptor);
+    }
+
+    private static boolean containsReifiedParametersInSupertypes(@NotNull ClassDescriptor descriptor) {
+        for (JetType type : descriptor.getTypeConstructor().getSupertypes()) {
+            for (TypeProjection supertypeArgument : type.getArguments()) {
+                TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(supertypeArgument.getType());
+                if (parameterDescriptor != null && parameterDescriptor.isReified()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static class ObjectLiteralResult {
+        private final boolean wereReifiedMarkers;
+        private final ClassDescriptor classDescriptor;
+
+        public ObjectLiteralResult(boolean wereReifiedMarkers, @NotNull ClassDescriptor classDescriptor) {
+            this.wereReifiedMarkers = wereReifiedMarkers;
+            this.classDescriptor = classDescriptor;
+        }
     }
 
     @NotNull
@@ -1341,20 +1377,34 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @Nullable SamType samType,
             @NotNull KotlinSyntheticClass.Kind kind
     ) {
+        boolean wereReifiedMarkers = parentCodegen.wereReifierMarkers();
+        parentCodegen.setWereReifierMarkers(false);
+
         ClosureCodegen closureCodegen = new ClosureCodegen(
                 state, declaration, descriptor, samType, context, kind, this,
                 strategy, parentCodegen
         );
         closureCodegen.gen();
 
+        if (parentCodegen.wereReifierMarkers()) {
+            ReifiedTypeInliner.putNeedClassReificationMarker(v);
+        }
+        if (wereReifiedMarkers) {
+            parentCodegen.setWereReifierMarkers(true);
+        }
+
         return closureCodegen.putInstanceOnStack(v, this);
     }
 
     @Override
     public StackValue visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression, StackValue receiver) {
-        ClassDescriptor classDescriptor = generateObjectLiteral(expression);
+        ObjectLiteralResult objectLiteralResult = generateObjectLiteral(expression);
+        ClassDescriptor classDescriptor = objectLiteralResult.classDescriptor;
         Type type = typeMapper.mapType(classDescriptor);
 
+        if (objectLiteralResult.wereReifiedMarkers) {
+            ReifiedTypeInliner.putNeedClassReificationMarker(v);
+        }
         v.anew(type);
         v.dup();
 
@@ -3824,6 +3874,7 @@ The "returned" value of try expression with no finally is either the last expres
     public void putReifierMarkerIfTypeIsReifiedParameter(@NotNull JetType type, @NotNull String markerMethodName) {
         TypeParameterDescriptor typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
         if (typeParameterDescriptor != null && typeParameterDescriptor.isReified()) {
+            parentCodegen.setWereReifierMarkers(true);
             v.iconst(typeParameterDescriptor.getIndex());
             v.invokestatic(
                     IntrinsicMethods.INTRINSICS_CLASS_NAME, markerMethodName,
