@@ -18,13 +18,24 @@ package org.jetbrains.jet.lang.psi
 
 import kotlin.properties.ReadWriteProperty
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.UserDataHolder
 
-public class UserDataProperty<T : Any>(val key: Key<T>) : ReadWriteProperty<JetFile, T?> {
-    override fun get(thisRef: JetFile, desc: kotlin.PropertyMetadata): T? {
+public class UserDataProperty<in R: UserDataHolder, T : Any>(val key: Key<T>, val default: T? = null) : ReadWriteProperty<R, T?> {
+    override fun get(thisRef: R, desc: kotlin.PropertyMetadata): T? {
         return thisRef.getUserData(key)
     }
 
-    override fun set(thisRef: JetFile, desc: kotlin.PropertyMetadata, value: T?) {
+    override fun set(thisRef: R, desc: kotlin.PropertyMetadata, value: T?) {
+        thisRef.putUserData(key, value)
+    }
+}
+
+public class NotNullableUserDataProperty<in R: UserDataHolder, T : Any>(val key: Key<T>, val defaultValue: T) : ReadWriteProperty<R, T> {
+    override fun get(thisRef: R, desc: kotlin.PropertyMetadata): T {
+        return thisRef.getUserData(key) ?: defaultValue
+    }
+
+    override fun set(thisRef: R, desc: kotlin.PropertyMetadata, value: T) {
         thisRef.putUserData(key, value)
     }
 }
