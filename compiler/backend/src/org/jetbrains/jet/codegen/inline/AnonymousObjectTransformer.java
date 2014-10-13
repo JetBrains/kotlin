@@ -294,7 +294,7 @@ public class AnonymousObjectTransformer {
                 original.name,
                 original.desc,
                 original.signature,
-                original.exceptions.toArray(new String [original.exceptions.size()])
+                ArrayUtil.toStringArray(original.exceptions)
         );
     }
 
