@@ -1514,7 +1514,7 @@ package java {
             public/*package*/ final override /*1*/ /*fake_override*/ var syncLWRequests: kotlin.Boolean
             invisible_fake final override /*1*/ /*fake_override*/ var temporaryLostComponent: java.awt.Component!
             public/*package*/ final var title: kotlin.String!
-            invisible_fake final override /*1*/ /*fake_override*/ var `type`: java.awt.Window.Type!
+            invisible_fake final override /*1*/ /*fake_override*/ var type: java.awt.Window.Type!
             public/*package*/ final var undecorated: kotlin.Boolean
             invisible_fake final override /*1*/ /*fake_override*/ var valid: kotlin.Boolean
             public/*package*/ final override /*1*/ /*fake_override*/ var visible: kotlin.Boolean
@@ -2296,7 +2296,7 @@ package java {
             public/*package*/ final var state: kotlin.Int
             public/*package*/ final var syncLWRequests: kotlin.Boolean
             private final var temporaryLostComponent: java.awt.Component!
-            private final var `type`: java.awt.Window.Type!
+            private final var type: java.awt.Window.Type!
             invisible_fake final override /*1*/ /*fake_override*/ var valid: kotlin.Boolean
             public/*package*/ final override /*1*/ /*fake_override*/ var visible: kotlin.Boolean
             public/*package*/ final var warningString: kotlin.String!
@@ -8933,7 +8933,7 @@ package java {
                 public/*package*/ final override /*1*/ /*fake_override*/ var securityCheckCache: kotlin.Any!
                 private final var signature: kotlin.String!
                 private final var slot: kotlin.Int
-                private final var `type`: java.lang.Class<out kotlin.Any?>!
+                private final var type: java.lang.Class<out kotlin.Any?>!
                 private open fun acquireFieldAccessor(/*0*/ p0: kotlin.Boolean): [ERROR : Unresolved java classifier: FieldAccessor]!
                 public/*package*/ open override /*1*/ /*fake_override*/ fun checkAccess(/*0*/ p0: java.lang.Class<out kotlin.Any?>!, /*1*/ p1: java.lang.Class<out kotlin.Any?>!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Int): kotlin.Unit
                 public/*package*/ open fun copy(): java.lang.reflect.Field!
@@ -9216,7 +9216,7 @@ package java {
             public/*package*/ final class Cache {
                 public constructor Cache(/*0*/ p0: java.net.InetAddress.Cache.Type!)
                 private final var cache: [ERROR : Unresolved java classifier: LinkedHashMap<String, CacheEntry>]!
-                private final var `type`: java.net.InetAddress.Cache.Type!
+                private final var type: java.net.InetAddress.Cache.Type!
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open fun get(/*0*/ p0: kotlin.String!): java.net.InetAddress.CacheEntry!
                 private open fun getPolicy(): kotlin.Int
@@ -9998,7 +9998,7 @@ package java {
                 private final var params: java.security.Policy.Parameters!
                 invisible_fake final override /*1*/ /*fake_override*/ var pdMapping: [ERROR : Unresolved java classifier: WeakHashMap<Key, PermissionCollection>]!
                 private final var spi: [ERROR : Unresolved java classifier: PolicySpi]!
-                private final var `type`: kotlin.String!
+                private final var type: kotlin.String!
                 invisible_fake open override /*1*/ /*fake_override*/ fun addStaticPerms(/*0*/ p0: [ERROR : Unresolved java classifier: PermissionCollection]!, /*1*/ p1: [ERROR : Unresolved java classifier: PermissionCollection]!): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public open override /*1*/ fun getParameters(): java.security.Policy.Parameters!
@@ -10140,7 +10140,7 @@ package java {
                 private final var registered: kotlin.Boolean
                 private final var supportedClasses: kotlin.Array<(out) java.lang.Class<out kotlin.Any?>!>!
                 private final var supportedFormats: kotlin.Array<(out) kotlin.String!>!
-                private final var `type`: kotlin.String!
+                private final var type: kotlin.String!
                 private open fun addAlias(/*0*/ p0: kotlin.String!): kotlin.Unit
                 public/*package*/ open fun addAttribute(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): kotlin.Unit
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -10170,7 +10170,7 @@ package java {
                 private constructor ServiceKey(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.Boolean)
                 private final val algorithm: kotlin.String!
                 private final val originalAlgorithm: kotlin.String!
-                private final val `type`: kotlin.String!
+                private final val type: kotlin.String!
                 public open override /*1*/ fun equals(/*0*/ other: kotlin.Any!): kotlin.Boolean
                 public open override /*1*/ fun hashCode(): kotlin.Int
                 public/*package*/ open fun matches(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): kotlin.Boolean
@@ -12541,7 +12541,7 @@ package java {
             public/*package*/ open class CheckedCollection</*0*/ E> : kotlin.MutableCollection<E!>, java.io.Serializable {
                 public/*package*/ constructor CheckedCollection</*0*/ E>(/*0*/ p0: kotlin.(Mutable)Collection<E!>!, /*1*/ p1: java.lang.Class<E!>!)
                 public/*package*/ final val c: kotlin.(Mutable)Collection<E!>!
-                public/*package*/ final val `type`: java.lang.Class<E!>!
+                public/*package*/ final val type: java.lang.Class<E!>!
                 private final var zeroLengthElementArray: kotlin.Array<(out) E!>!
                 public open override /*1*/ fun add(/*0*/ e: E!): kotlin.Boolean
                 public open override /*1*/ fun addAll(/*0*/ c: (kotlin.MutableCollection<out E!>..kotlin.Collection<E!>?)): kotlin.Boolean
@@ -12572,7 +12572,7 @@ package java {
                 public/*package*/ constructor CheckedList</*0*/ E>(/*0*/ p0: kotlin.(Mutable)List<E!>!, /*1*/ p1: java.lang.Class<E!>!)
                 public/*package*/ final override /*1*/ /*fake_override*/ val c: kotlin.(Mutable)Collection<E!>!
                 public/*package*/ final val list: kotlin.(Mutable)List<E!>!
-                public/*package*/ final override /*1*/ /*fake_override*/ val `type`: java.lang.Class<E!>!
+                public/*package*/ final override /*1*/ /*fake_override*/ val type: java.lang.Class<E!>!
                 invisible_fake final override /*1*/ /*fake_override*/ var zeroLengthElementArray: kotlin.Array<(out) E!>!
                 public open override /*2*/ /*fake_override*/ fun add(/*0*/ e: E!): kotlin.Boolean
                 public open override /*1*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: E!): kotlin.Unit
@@ -12681,7 +12681,7 @@ package java {
                 public/*package*/ constructor CheckedRandomAccessList</*0*/ E>(/*0*/ p0: kotlin.(Mutable)List<E!>!, /*1*/ p1: java.lang.Class<E!>!)
                 public/*package*/ final override /*1*/ /*fake_override*/ val c: kotlin.(Mutable)Collection<E!>!
                 public/*package*/ final override /*1*/ /*fake_override*/ val list: kotlin.(Mutable)List<E!>!
-                public/*package*/ final override /*1*/ /*fake_override*/ val `type`: java.lang.Class<E!>!
+                public/*package*/ final override /*1*/ /*fake_override*/ val type: java.lang.Class<E!>!
                 invisible_fake final override /*1*/ /*fake_override*/ var zeroLengthElementArray: kotlin.Array<(out) E!>!
                 public open override /*1*/ /*fake_override*/ fun add(/*0*/ e: E!): kotlin.Boolean
                 public open override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: E!): kotlin.Unit
@@ -12721,7 +12721,7 @@ package java {
             public/*package*/ open class CheckedSet</*0*/ E> : java.util.Collections.CheckedCollection<E!>, kotlin.MutableSet<E!>, java.io.Serializable {
                 public/*package*/ constructor CheckedSet</*0*/ E>(/*0*/ p0: kotlin.(Mutable)Set<E!>!, /*1*/ p1: java.lang.Class<E!>!)
                 public/*package*/ final override /*1*/ /*fake_override*/ val c: kotlin.(Mutable)Collection<E!>!
-                public/*package*/ final override /*1*/ /*fake_override*/ val `type`: java.lang.Class<E!>!
+                public/*package*/ final override /*1*/ /*fake_override*/ val type: java.lang.Class<E!>!
                 invisible_fake final override /*1*/ /*fake_override*/ var zeroLengthElementArray: kotlin.Array<(out) E!>!
                 public open override /*2*/ /*fake_override*/ fun add(/*0*/ e: E!): kotlin.Boolean
                 public open override /*2*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<E!>): kotlin.Boolean
@@ -12788,7 +12788,7 @@ package java {
                 public/*package*/ constructor CheckedSortedSet</*0*/ E>(/*0*/ p0: java.util.SortedSet<E!>!, /*1*/ p1: java.lang.Class<E!>!)
                 public/*package*/ final override /*1*/ /*fake_override*/ val c: kotlin.(Mutable)Collection<E!>!
                 private final val ss: java.util.SortedSet<E!>!
-                public/*package*/ final override /*1*/ /*fake_override*/ val `type`: java.lang.Class<E!>!
+                public/*package*/ final override /*1*/ /*fake_override*/ val type: java.lang.Class<E!>!
                 invisible_fake final override /*1*/ /*fake_override*/ var zeroLengthElementArray: kotlin.Array<(out) E!>!
                 public open override /*2*/ /*fake_override*/ fun add(/*0*/ e: E!): kotlin.Boolean
                 public open override /*2*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<E!>): kotlin.Boolean

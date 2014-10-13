@@ -115,7 +115,7 @@ package test {
         invisible_fake final override /*1*/ /*fake_override*/ var temporaryLostComponent: java.awt.Component!
         invisible_fake final override /*1*/ /*fake_override*/ var title: kotlin.String!
         invisible_fake final override /*1*/ /*fake_override*/ var transferHandler: [ERROR : Unresolved java classifier: TransferHandler]!
-        invisible_fake final override /*1*/ /*fake_override*/ var `type`: java.awt.Window.Type!
+        invisible_fake final override /*1*/ /*fake_override*/ var type: java.awt.Window.Type!
         invisible_fake final override /*1*/ /*fake_override*/ var undecorated: kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ var valid: kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ var visible: kotlin.Boolean
