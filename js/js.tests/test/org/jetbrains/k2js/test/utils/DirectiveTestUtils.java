@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test.utils;
 
 import com.google.dart.compiler.backend.js.ast.JsFunction;
+import com.google.dart.compiler.backend.js.ast.JsLabel;
 import com.google.dart.compiler.backend.js.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +28,7 @@ import static org.jetbrains.jet.InTextDirectivesUtils.findLinesWithPrefixesRemov
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.jetbrains.k2js.inline.util.UtilPackage.collectInstances;
 
 public class DirectiveTestUtils {
 
@@ -89,12 +91,39 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static final DirectiveHandler COUNT_LABELS = new DirectiveHandler("CHECK_LABELS_COUNT") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            String functionName = arguments.findNamedArgument("function");
+            String labelName = arguments.findNamedArgument("name");
+            String countStr = arguments.findNamedArgument("count");
+            assert countStr != null;
+            int expectedCount = Integer.valueOf(countStr);
+
+            JsNode scope = AstSearchUtil.getFunction(ast, functionName);
+            List<JsLabel> labels = collectInstances(JsLabel.class, scope);
+            int actualCount = 0;
+            for (JsLabel label : labels) {
+                if (label.getName().getIdent().equals(labelName)) {
+                    actualCount++;
+                }
+            }
+
+            String message = "Label " + labelName +
+                             " is expected to be counted " + expectedCount +
+                             " times at function " + functionName +
+                             " but was encountered " + actualCount + " times";
+            assertEquals(message, expectedCount, actualCount);
+        }
+    };
+
     public static void processDirectives(@NotNull JsNode ast, @NotNull String sourceCode) throws Exception {
         FUNCTION_CONTAINS_NO_CALLS.process(ast, sourceCode);
         FUNCTION_NOT_CALLED.process(ast, sourceCode);
         FUNCTION_CALLED_IN_SCOPE.process(ast, sourceCode);
         FUNCTION_NOT_CALLED_IN_SCOPE.process(ast, sourceCode);
         FUNCTIONS_HAVE_SAME_LINES.process(ast, sourceCode);
+        COUNT_LABELS.process(ast, sourceCode);
     }
 
     public static void checkFunctionContainsNoCalls(JsNode node, String functionName) throws Exception {

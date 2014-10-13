@@ -180,10 +180,6 @@ public final class InlineTest extends SingleFileTranslationWithDirectivesTest {
         checkFooBoxIsOkWithInlineDirectives();
     }
 
-    public void testLabelNameClashing() throws Exception {
-        checkFooBoxIsOkWithInlineDirectives();
-    }
-
     public void testClassObject() throws Exception {
         checkFooBoxIsOkWithInlineDirectives();
     }
