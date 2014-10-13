@@ -18,3 +18,10 @@
 
 // from QUnit
 function ok() {}
+
+// node.js
+var module = {};
+var process = {};
+
+// common
+var console = {};

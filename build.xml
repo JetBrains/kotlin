@@ -219,6 +219,7 @@
 
     <target name="jslib">
         <property name="compiled.stdlib.js" value="stdlib.js" />
+        <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData" />
 
         <kotlin2js output="${output}/${compiled.stdlib.js}" main="noCall">
             <src>
@@ -256,7 +257,7 @@
             warning="${warningLevel}"
             output="${kotlin-home}/lib/kotlin.js" >
 
-            <sources dir="${basedir}/js/js.translator/testData">
+            <sources dir="${stdlib.js.dir}">
                 <file name="kotlin_lib_ecma5.js"/>
                 <file name="kotlin_lib.js"/>
                 <file name="maps.js"/>
@@ -267,7 +268,11 @@
                 <file name="${compiled.stdlib.js}"/>
             </sources>
 
-            <externs dir="${basedir}/js/js.translator/testData">
+            <sources dir="${stdlib.js.dir}">
+                <file name="export_Kotlin_if_possible.js"/>
+            </sources>
+
+            <externs dir="${stdlib.js.dir}">
                 <file name="externs.js"/>
             </externs>
         </closure-compiler>
