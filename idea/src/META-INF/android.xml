@@ -4,4 +4,7 @@
             <implementation-class>org.jetbrains.jet.android.OutputParserInitializer</implementation-class>
         </component>
     </application-components>
+    <extensions defaultExtensionNs="com.intellij">
+        <gotoDeclarationHandler implementation="org.jetbrains.jet.android.navigation.KotlinAndroidGotoDeclarationHandler"/>
+    </extensions>
 </idea-plugin>
