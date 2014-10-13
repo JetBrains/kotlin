@@ -38,9 +38,10 @@ public class RootInliningContext extends InliningContext {
             @NotNull NameGenerator nameGenerator,
             @NotNull CodegenContext startContext,
             @NotNull JetElement callElement,
-            @NotNull String classNameToInline
+            @NotNull String classNameToInline,
+            @NotNull ReifiedTypeInliner inliner
     ) {
-        super(null, map, state, nameGenerator, Collections.<String, String>emptyMap(), false, false);
+        super(null, map, state, nameGenerator, Collections.<String, String>emptyMap(), inliner, false, false);
         this.callElement = callElement;
         this.startContext = startContext;
         this.classNameToInline = classNameToInline;

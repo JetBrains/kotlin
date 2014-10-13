@@ -232,6 +232,10 @@ public class InlineCodegenUtil {
         return "<init>".equals(methodName) && isAnonymousClass(internalName);
     }
 
+    public static boolean isAnonymousSingletonLoad(@NotNull String internalName, @NotNull String fieldName) {
+        return JvmAbi.INSTANCE_FIELD.equals(fieldName) && isAnonymousClass(internalName);
+    }
+
     public static boolean isAnonymousClass(String internalName) {
         String shortName = getLastNamePart(internalName);
         int index = shortName.lastIndexOf("$");

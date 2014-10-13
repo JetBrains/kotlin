@@ -24,6 +24,7 @@ import java.util.Set;
 public class InlineResult {
 
     private final Set<String> classesToRemove = new HashSet<String>();
+    private boolean needFurtherReification = false;
 
     private InlineResult() {
 
@@ -47,5 +48,13 @@ public class InlineResult {
     @NotNull
     public Set<String> getClassesToRemove() {
         return classesToRemove;
+    }
+
+    public boolean needFurtherReification() {
+        return needFurtherReification;
+    }
+
+    public void markAsNeededFurtherReificationIf(boolean condtition) {
+        this.needFurtherReification |= condtition;
     }
 }

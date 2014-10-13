@@ -37,6 +37,8 @@ public class InliningContext {
 
     public final Map<String, String> typeMapping;
 
+    public final ReifiedTypeInliner reifedTypeInliner;
+
     public final boolean isInliningLambda;
 
     public final boolean classRegeneration;
@@ -47,6 +49,7 @@ public class InliningContext {
             @NotNull GenerationState state,
             @NotNull NameGenerator nameGenerator,
             @NotNull Map<String, String> typeMapping,
+            @NotNull ReifiedTypeInliner reifedTypeInliner,
             boolean isInliningLambda,
             boolean classRegeneration
     ) {
@@ -55,6 +58,7 @@ public class InliningContext {
         this.state = state;
         this.nameGenerator = nameGenerator;
         this.typeMapping = typeMapping;
+        this.reifedTypeInliner = reifedTypeInliner;
         this.isInliningLambda = isInliningLambda;
         this.classRegeneration = classRegeneration;
     }
@@ -75,11 +79,12 @@ public class InliningContext {
 
     public InliningContext subInlineWithClassRegeneration(@NotNull NameGenerator generator,
             @NotNull Map<String, String> additionalTypeMappings,
-            @NotNull ConstructorInvocation constructorInvocation) {
+            @NotNull AnonymousObjectGeneration anonymousObjectGeneration
+    ) {
         Map<String, String> newTypeMappings = new HashMap<String, String>(typeMapping);
         newTypeMappings.putAll(additionalTypeMappings);
         return new RegenetedClassContext(this, expressionMap, state, generator,
-                                   newTypeMappings, isInliningLambda, constructorInvocation);
+                                   newTypeMappings, reifedTypeInliner, isInliningLambda, anonymousObjectGeneration);
 
     }
 
@@ -96,7 +101,7 @@ public class InliningContext {
         Map<String, String> newTypeMappings = new HashMap<String, String>(typeMapping);
         newTypeMappings.putAll(additionalTypeMappings);
         return new InliningContext(this, expressionMap, state, generator,
-                                   newTypeMappings, isInliningLambda, isRegeneration);
+                                   newTypeMappings, reifedTypeInliner, isInliningLambda, isRegeneration);
     }
 
     public boolean isRoot() {
