@@ -19,7 +19,7 @@ package org.jetbrains.k2js.test.semantics;
 import com.google.dart.compiler.backend.js.ast.JsNode;
 import com.intellij.util.Consumer;
 import org.jetbrains.k2js.test.MultipleFilesTranslationTest;
-import org.jetbrains.k2js.test.utils.InlineTestUtils;
+import org.jetbrains.k2js.test.utils.DirectiveTestUtils;
 import org.jetbrains.k2js.test.utils.JsTestUtils;
 import org.jetbrains.k2js.test.utils.MemoizeConsumer;
 
@@ -164,7 +164,7 @@ public final class InlineMultiFileTest extends MultipleFilesTranslationTest {
             JsNode lastJsNode = nodeConsumer.getLastValue();
             assert lastJsNode != null;
 
-            InlineTestUtils.processDirectives(lastJsNode, fileText);
+            DirectiveTestUtils.processDirectives(lastJsNode, fileText);
         }
     }
 

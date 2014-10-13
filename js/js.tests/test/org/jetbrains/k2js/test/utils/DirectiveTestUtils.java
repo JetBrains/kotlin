@@ -28,9 +28,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class InlineTestUtils {
+public class DirectiveTestUtils {
 
-    private InlineTestUtils() {}
+    private DirectiveTestUtils() {}
 
     private static final DirectiveHandler FUNCTION_CONTAINS_NO_CALLS = new DirectiveHandler("CHECK_CONTAINS_NO_CALLS") {
         @Override
