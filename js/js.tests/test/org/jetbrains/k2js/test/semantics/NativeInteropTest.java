@@ -130,4 +130,8 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     public void testNestedElements() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testPrint() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

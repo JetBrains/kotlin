@@ -529,46 +529,87 @@
         return true;
     };
 
-    Kotlin.System = function () {
-        var output = "";
-
-        var print = function (obj) {
-            if (obj !== undefined) {
-                if (obj === null || typeof obj !== "object") {
-                    output += obj;
-                }
-                else {
-                    output += obj.toString();
-                }
-            }
-        };
-        var println = function (obj) {
-            this.print(obj);
-            output += "\n";
-        };
-
-        return {
-            out: function () {
-                return {
-                    print: print,
-                    println: println
-                };
-            },
-            output: function () {
-                return output;
+    var BaseOutput = Kotlin.createClassNow(null, null, {
+            println: function (a) {
+                if (typeof a !== "undefined") this.print(a);
+                this.print("\n");
             },
             flush: function () {
-                output = "";
             }
-        };
+        }
+    );
+
+    Kotlin.NodeJsOutput = Kotlin.createClassNow(BaseOutput,
+        function(outputStream) {
+            this.outputStream = outputStream;
+        }, {
+            print: function (a) {
+                this.outputStream.write(a);
+            }
+        }
+    );
+
+    Kotlin.OutputToConsoleLog = Kotlin.createClassNow(BaseOutput, null, {
+            print: function (a) {
+                console.log(a);
+            },
+            println: function (a) {
+                this.print(typeof a !== "undefined" ? a : "");
+            }
+        }
+    );
+
+    Kotlin.BufferedOutput = Kotlin.createClassNow(BaseOutput,
+        function() {
+            this.buffer = ""
+        }, {
+            print: function (a) {
+                this.buffer += String(a);
+            },
+            flush: function () {
+                this.buffer = "";
+            }
+        }
+    );
+
+    Kotlin.BufferedOutputToConsoleLog = Kotlin.createClassNow(Kotlin.BufferedOutput,
+        function() {
+            Kotlin.BufferedOutput.call(this);
+        }, {
+            print: function (a) {
+                var s = String(a);
+
+                var i = s.lastIndexOf("\n");
+                if (i != -1) {
+                    this.buffer += s.substr(0, i);
+
+                    this.flush();
+
+                    s = s.substr(i + 1);
+                }
+
+                this.buffer += s;
+            },
+            flush: function () {
+                console.log(this.buffer);
+                this.buffer = "";
+            }
+        }
+    );
+    Kotlin.out = function() {
+        var isNode = typeof process !== 'undefined' && process.versions && !!process.versions.node;
+
+        if (isNode) return new Kotlin.NodeJsOutput(process.stdout);
+
+        return new Kotlin.BufferedOutputToConsoleLog();
     }();
 
     Kotlin.println = function (s) {
-        Kotlin.System.out().println(s);
+        Kotlin.out.println(s);
     };
 
     Kotlin.print = function (s) {
-        Kotlin.System.out().print(s);
+        Kotlin.out.print(s);
     };
 
     lazyInitClasses.RangeIterator = Kotlin.createClass(
