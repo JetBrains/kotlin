@@ -51,6 +51,7 @@ public class DescriptorRendererBuilder {
             return type;
         }
     };
+    private boolean renderDefaultValues = true;
 
     @NotNull
     private DescriptorRenderer.OverrideRenderingPolicy overrideRenderingPolicy = DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN;
@@ -209,6 +210,11 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
+    public DescriptorRendererBuilder setRenderDefaultValues(boolean renderDefaultValues) {
+        this.renderDefaultValues = renderDefaultValues;
+        return this;
+    }
+
     @NotNull
     public DescriptorRendererBuilder setTypeNormalizer(@NotNull Function1<JetType, JetType> typeNormalizer) {
         this.typeNormalizer = typeNormalizer;
@@ -222,7 +228,7 @@ public class DescriptorRendererBuilder {
                 normalizedVisibilities, showInternalKeyword, prettyFunctionTypes, uninferredTypeParameterAsName,
                 overrideRenderingPolicy, valueParametersHandler, textFormat, excludedAnnotationClasses, includePropertyConstant,
                 includeSynthesizedParameterNames, withoutFunctionParameterNames, withoutTypeParameters, receiverAfterName,
-                renderClassObjectName, withoutSuperTypes, typeNormalizer);
+                renderClassObjectName, withoutSuperTypes, typeNormalizer, renderDefaultValues);
     }
 
 }

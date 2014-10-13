@@ -65,6 +65,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean renderClassObjectName;
     private final boolean withoutSuperTypes;
     private final boolean receiverAfterName;
+    private final boolean renderDefaultValues;
 
     @NotNull
     private final OverrideRenderingPolicy overrideRenderingPolicy;
@@ -100,7 +101,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean receiverAfterName,
             boolean renderClassObjectName,
             boolean withoutSuperTypes,
-            Function1<JetType, JetType> typeNormalizer
+            @NotNull Function1<JetType, JetType> typeNormalizer,
+            boolean renderDefaultValues
     ) {
         this.shortNames = shortNames;
         this.withDefinedIn = withDefinedIn;
@@ -126,6 +128,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.renderClassObjectName = renderClassObjectName;
         this.withoutSuperTypes = withoutSuperTypes;
         this.typeNormalizer = typeNormalizer;
+        this.renderDefaultValues = renderDefaultValues;
     }
 
     /* FORMATTING */
@@ -822,7 +825,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         renderAnnotations(valueParameter, builder);
         renderVariable(valueParameter, includeName, builder, topLevel);
-        boolean withDefaultValue = debugMode ? valueParameter.declaresDefaultValue() : valueParameter.hasDefaultValue();
+        boolean withDefaultValue = renderDefaultValues && (debugMode ? valueParameter.declaresDefaultValue() : valueParameter.hasDefaultValue());
         if (withDefaultValue) {
             builder.append(" = ...");
         }

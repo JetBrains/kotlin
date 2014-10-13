@@ -55,6 +55,7 @@ import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 public abstract class OverrideImplementMethodsHandler implements LanguageCodeInsightActionHandler {
 
     private static final DescriptorRenderer OVERRIDE_RENDERER = new DescriptorRendererBuilder()
+            .setRenderDefaultValues(false)
             .setModifiers(DescriptorRenderer.Modifier.OVERRIDE)
             .setWithDefinedIn(false)
             .setShortNames(false)
