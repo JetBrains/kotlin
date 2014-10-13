@@ -2275,7 +2275,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 mappings.addParameterMappingToNewParameter(
                         key.getIndex(),
                         key.getName().getIdentifier(),
-                        parameterDescriptor.getIndex()
+                        parameterDescriptor.getIndex(),
+                        parameterDescriptor.getName().getIdentifier()
                 );
             }
         }
