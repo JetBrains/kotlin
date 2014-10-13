@@ -63,13 +63,23 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         }
     }
 
-    public fun reifyInstructions(instructions: InsnList) {
-        if (parametersMapping == null) return
+    /**
+     * @return true if there is something need to be reified further
+     * e.g. when we're generating inline function containing reified T
+     * and another function containing reifiable parts is inlined into that function
+     */
+    public fun reifyInstructions(instructions: InsnList): Boolean {
+        if (parametersMapping == null) return false
+        var needFurtherReification = false
         for (insn in instructions.toArray()) {
             if (isParametrisedReifiedMarker(insn)) {
-                processReifyMarker(insn as MethodInsnNode, instructions)
+                if (processReifyMarker(insn as MethodInsnNode, instructions)) {
+                    needFurtherReification = true
+                }
             }
         }
+
+        return needFurtherReification
     }
 
     public fun reifySignature(oldSignature: String): SignatureReificationResult {
@@ -109,8 +119,11 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
 
     data class SignatureReificationResult(val newSignature: String, val needFurtherReification: Boolean)
 
-    private fun processReifyMarker(insn: MethodInsnNode, instructions: InsnList) {
-        val mapping = getTypeParameterMapping(insn) ?: return
+    /**
+     * @return true if this marker should be reified further
+     */
+    private fun processReifyMarker(insn: MethodInsnNode, instructions: InsnList): Boolean {
+        val mapping = getTypeParameterMapping(insn) ?: return false
 
         val asmType = mapping.asmType
         if (asmType != null) {
@@ -121,12 +134,15 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
                 JAVA_CLASS_MARKER_METHOD_NAME -> processJavaClass(insn, asmType)
                 else -> false
             }) {
-                return
+                return false
             }
             instructions.remove(insn.getPrevious()!!)
             instructions.remove(insn)
+
+            return false
         } else {
             instructions.set(insn.getPrevious()!!, iconstInsn(mapping.newIndex!!))
+            return true
         }
     }
 
