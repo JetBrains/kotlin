@@ -26,6 +26,7 @@ import com.intellij.util.containers.ConcurrentWeakValueHashMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
@@ -297,5 +298,11 @@ public class DiagnosticsWithSuppression implements Diagnostics {
             // it's too costly to check set inclusion
             return other instanceof EmptySuppressor;
         }
+    }
+
+    @TestOnly
+    @NotNull
+    public Collection<Diagnostic> getDiagnostics() {
+        return diagnostics;
     }
 }

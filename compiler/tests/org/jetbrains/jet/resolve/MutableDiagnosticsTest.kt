@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.Diagnostics
+import org.jetbrains.jet.lang.resolve.MutableDiagnosticsWithSuppression
 
 class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
     override fun createEnvironment(): JetCoreEnvironment? {
@@ -44,7 +45,7 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
         Assert.assertTrue(middle.diagnostics.isEmpty())
         Assert.assertTrue(derived.diagnostics.isEmpty())
 
-        middle.report(DummyDiagnostic())
+        middle.reportDiagnostic()
 
         Assert.assertTrue(base.diagnostics.isEmpty())
         Assert.assertFalse(middle.diagnostics.isEmpty())
@@ -63,9 +64,9 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
         Assert.assertTrue(middle.diagnostics.isEmpty())
         Assert.assertTrue(derived.diagnostics.isEmpty())
 
-        base.report(DummyDiagnostic())
-        middle.report(DummyDiagnostic())
-        derived.report(DummyDiagnostic())
+        base.reportDiagnostic()
+        middle.reportDiagnostic()
+        derived.reportDiagnostic()
 
         Assert.assertEquals(1, base.diagnostics.all().size)
         Assert.assertEquals(2, middle.diagnostics.all().size)
@@ -83,40 +84,52 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
         val middle = DelegatingBindingTrace(base.getBindingContext(), "middle")
         val derived = DelegatingBindingTrace(middle.getBindingContext(), "derived")
 
+        base.reportDiagnostic()
+        middle.reportDiagnostic()
+        derived.reportDiagnostic()
+
         val cachedBase = base.diagnostics
         val cachedMiddle = middle.diagnostics
         val cachedDerived = derived.diagnostics
 
-        val cachedListForBase = cachedBase.all()
-        val cachedListForMiddle = cachedMiddle.all()
-        val cachedListForDerived = cachedDerived.all()
+        val cachedListForBase = cachedBase.contents()
+        val cachedListForMiddle = cachedMiddle.contents()
+        val cachedListForDerived = cachedDerived.contents()
 
-        Assert.assertSame(cachedListForBase, base.diagnostics.all())
-        Assert.assertSame(cachedListForMiddle, middle.diagnostics.all())
-        Assert.assertSame(cachedListForDerived, derived.diagnostics.all())
+        Assert.assertSame(cachedListForBase, base.diagnostics.contents())
+        Assert.assertSame(cachedListForMiddle, middle.diagnostics.contents())
+        Assert.assertSame(cachedListForDerived, derived.diagnostics.contents())
 
         Assert.assertSame(cachedBase, base.diagnostics)
         Assert.assertSame(cachedMiddle, middle.diagnostics)
         Assert.assertSame(cachedDerived, derived.diagnostics)
 
-        derived.report(DummyDiagnostic())
+        derived.reportDiagnostic()
 
-        Assert.assertSame(cachedListForBase, base.diagnostics.all())
-        Assert.assertSame(cachedListForMiddle, middle.diagnostics.all())
-        Assert.assertNotSame(cachedListForDerived, derived.diagnostics.all())
+        Assert.assertSame(cachedListForBase, base.diagnostics.contents())
+        Assert.assertSame(cachedListForMiddle, middle.diagnostics.contents())
+        Assert.assertNotSame(cachedListForDerived, derived.diagnostics.contents())
 
         Assert.assertSame(cachedBase, base.diagnostics)
         Assert.assertSame(cachedMiddle, middle.diagnostics)
 
-        middle.report(DummyDiagnostic())
+        middle.reportDiagnostic()
 
-        Assert.assertSame(cachedListForBase, base.diagnostics.all())
-        Assert.assertNotSame(cachedListForMiddle, middle.diagnostics.all())
-        Assert.assertNotSame(cachedListForDerived, derived.diagnostics.all())
+        Assert.assertSame(cachedListForBase, base.diagnostics.contents())
+        Assert.assertNotSame(cachedListForMiddle, middle.diagnostics.contents())
+        Assert.assertNotSame(cachedListForDerived, derived.diagnostics.contents())
 
         Assert.assertSame(cachedBase, base.diagnostics)
     }
 
+    private fun BindingTrace.reportDiagnostic() {
+        report(DummyDiagnostic())
+    }
+
+    //NOTE: cannot simply call all() since it applies filter on every query and produces new collection
+    private fun Diagnostics.contents(): MutableCollection<Diagnostic> {
+        return (this as MutableDiagnosticsWithSuppression).getReadonlyView().getDiagnostics()
+    }
 
     private inner class DummyDiagnostic : Diagnostic {
         val dummyElement = JetPsiFactory(getEnvironment().getProject()).createType("Int")

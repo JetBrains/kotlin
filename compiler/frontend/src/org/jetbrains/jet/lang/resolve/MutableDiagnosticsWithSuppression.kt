@@ -22,6 +22,7 @@ import com.intellij.openapi.util.CompositeModificationTracker
 import com.intellij.util.CachedValueImpl
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.PsiElement
+import org.jetbrains.annotations.TestOnly
 
 public class MutableDiagnosticsWithSuppression(
         private val bindingContext: BindingContext,
@@ -56,4 +57,5 @@ public class MutableDiagnosticsWithSuppression(
         modificationTracker.incModificationCount()
     }
 
+    TestOnly public fun getReadonlyView(): DiagnosticsWithSuppression = readonlyView()
 }
