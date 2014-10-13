@@ -30,6 +30,8 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods
 import kotlin.platform.platformStatic
 import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode
 import java.util.ArrayList
+import org.jetbrains.org.objectweb.asm.signature.SignatureWriter
+import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 
 public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
 
@@ -49,10 +51,47 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         }
     }
 
+    public fun reifySignature(oldSignature: String): SignatureReificationResult {
+        if (parametersMapping == null) return SignatureReificationResult(oldSignature, false)
+
+        val signatureRemapper = object : SignatureWriter() {
+            var needFurtherReification = false
+            override fun visitTypeVariable(name: String?) {
+                val mapping = getMappingByName(name) ?:
+                              return super.visitTypeArgument()
+                if (mapping.newName != null) {
+                    needFurtherReification = true
+                    return super.visitTypeVariable(mapping.newName)
+                }
+
+                // else TypeVariable is replaced by concrete type
+                visitClassType(mapping.asmType!!.getInternalName())
+                visitEnd()
+            }
+
+            override fun visitFormalTypeParameter(name: String?) {
+                val mapping = getMappingByName(name) ?:
+                              return super.visitFormalTypeParameter(name)
+                if (mapping.newName != null) {
+                    needFurtherReification = true
+                    super.visitFormalTypeParameter(mapping.newName)
+                }
+            }
+
+            private fun getMappingByName(name: String?) = parametersMapping[name!!]
+        }
+
+        SignatureReader(oldSignature).accept(signatureRemapper)
+
+        return SignatureReificationResult(signatureRemapper.toString(), signatureRemapper.needFurtherReification)
+    }
+
     private fun isReifiedMarker(insn: AbstractInsnNode): Boolean {
         if (insn.getOpcode() != Opcodes.INVOKESTATIC || insn !is MethodInsnNode) return false
         return insn.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME && insn.name.startsWith("reify")
     }
+
+    data class SignatureReificationResult(val newSignature: String, val needFurtherReification: Boolean)
 
     private fun processReifyMarker(insn: MethodInsnNode, instructions: InsnList) {
         val mapping = getTypeParameterMapping(insn) ?: return
