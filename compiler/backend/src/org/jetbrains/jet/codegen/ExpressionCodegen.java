@@ -1328,9 +1328,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         FunctionDescriptor descriptor = bindingContext.get(FUNCTION, declaration);
         assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
 
+        return genClosure(
+                declaration, descriptor, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), samType, kind
+        );
+    }
+
+    @NotNull
+    private StackValue genClosure(
+            @NotNull PsiElement declaration,
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull FunctionGenerationStrategy strategy,
+            @Nullable SamType samType,
+            @NotNull KotlinSyntheticClass.Kind kind
+    ) {
         ClosureCodegen closureCodegen = new ClosureCodegen(
                 state, declaration, descriptor, samType, context, kind, this,
-                new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), parentCodegen
+                strategy, parentCodegen
         );
         closureCodegen.gen();
 
@@ -2492,11 +2505,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         if (functionDescriptor != null) {
             CallableReferenceGenerationStrategy strategy = new CallableReferenceGenerationStrategy(state, functionDescriptor, resolvedCall);
-            ClosureCodegen closureCodegen = new ClosureCodegen(state, expression, functionDescriptor, null, context,
-                                                               KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER,
-                                                               this, strategy, getParentCodegen());
-            closureCodegen.gen();
-            return closureCodegen.putInstanceOnStack(v, this);
+
+            return genClosure(expression, functionDescriptor, strategy, null, KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER);
         }
 
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
