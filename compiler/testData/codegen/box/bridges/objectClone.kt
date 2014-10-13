@@ -1,4 +1,4 @@
-// TARGET_BACKEND: ONLY_JVM
+// TARGET_BACKEND: JVM
 import java.util.HashSet
 
 trait A : Set<String>

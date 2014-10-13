@@ -21,6 +21,7 @@ import java.util.ArrayList
 import com.intellij.util.CachedValueImpl
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.PsiElement
+import org.jetbrains.annotations.TestOnly
 import com.intellij.openapi.util.ModificationTracker
 
 //NOTE: copied to support changes depending on IDEA 14 branch
@@ -63,4 +64,5 @@ public class MutableDiagnosticsWithSuppression(
         modificationTracker.incModificationCount()
     }
 
+    TestOnly public fun getReadonlyView(): DiagnosticsWithSuppression = readonlyView()
 }

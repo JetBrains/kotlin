@@ -10,10 +10,3 @@ public object Arrays {
     }
 }
 
-public fun ArrayList<T>(c: Collection<T>): ArrayList<T> {
-    val result = ArrayList<T>()
-    for (t in c) {
-        result.add(t)
-    }
-    return result
-}

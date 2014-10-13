@@ -21,19 +21,24 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.psi.JetConstantExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getCompileTimeValue;
+import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getBaseExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
@@ -53,6 +58,18 @@ public final class UnaryOperationTranslator {
             JetType type = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.EXPRESSION_TYPE, baseExpression);
             JsExpression translatedExpression = translateAsExpression(baseExpression, context);
             return type.isNullable() ? sure(translatedExpression, context) : translatedExpression;
+        }
+
+        if (operationToken == JetTokens.MINUS) {
+            JetExpression baseExpression = getBaseExpression(expression);
+            if (baseExpression instanceof JetConstantExpression) {
+                CompileTimeConstant<?> compileTimeValue = context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
+                assert compileTimeValue != null : message(expression, "Expression is not compile time value: " + expression.getText() + " ");
+                Object value = getCompileTimeValue(context.bindingContext(), expression, compileTimeValue);
+                if (value instanceof Long) {
+                    return JsAstUtils.newLong((Long) value, context);
+                }
+            }
         }
 
         if (IncrementTranslator.isIncrement(operationToken)) {

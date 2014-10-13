@@ -757,6 +757,7 @@
         <fileset dir="js/js.frontend/src"/>
         <fileset dir="js/js.inliner/src"/>
         <fileset dir="idea/idea-analysis/src"/>
+        <fileset dir="idea/ide-lazy-resolve/src"/>
 
         <manifest>
           <attribute name="Built-By" value="${manifest.impl.vendor}"/>

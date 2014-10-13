@@ -34,6 +34,7 @@ public final class Namer {
     public static final String KOTLIN_NAME = JetLanguage.NAME;
     public static final String KOTLIN_LOWER_NAME = KOTLIN_NAME.toLowerCase();
     public static final JsNameRef KOTLIN_OBJECT_REF = new JsNameRef(KOTLIN_NAME);
+    public static final JsNameRef KOTLIN_LONG_NAME_REF = new JsNameRef("Long", KOTLIN_OBJECT_REF);
 
     public static final String EQUALS_METHOD_NAME = getStableMangledNameForDescriptor(KotlinBuiltIns.getInstance().getAny(), "equals");
     public static final String COMPARE_TO_METHOD_NAME = getStableMangledNameForDescriptor(KotlinBuiltIns.getInstance().getComparable(), "compareTo");
@@ -42,6 +43,9 @@ public final class Namer {
     public static final String LONG_FROM_NUMBER = "fromNumber";
     public static final String LONG_TO_NUMBER = "toNumber";
     public static final String LONG_FROM_INT = "fromInt";
+    public static final String LONG_ZERO = "ZERO";
+    public static final String LONG_ONE = "ONE";
+    public static final String LONG_NEG_ONE = "NEG_ONE";
     public static final String PRIMITIVE_COMPARE_TO = "primitiveCompareTo";
     public static final String IS_CHAR = "isChar";
     public static final String IS_NUMBER = "isNumber";
