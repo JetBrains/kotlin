@@ -224,14 +224,7 @@
         return hash;
     }
 
-    /**
-     * @interface
-     * @template T
-     */
-    Kotlin.Iterator = Kotlin.createClassNow(null, null, {
-        next: throwAbstractFunctionInvocationError("Iterator#next"),
-        hasNext: throwAbstractFunctionInvocationError("Iterator#hasNext")
-    });
+    var lazyInitClasses = {};
 
     /**
      * @class
@@ -241,7 +234,10 @@
      * @param {Array.<T>} array
      * @template T
      */
-    var ArrayIterator = Kotlin.createClassNow(Kotlin.Iterator,
+    lazyInitClasses.ArrayIterator = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['stdlib'].kotlin.MutableIterator];
+        },
         /** @constructs */
         function (array) {
             this.array = array;
@@ -270,7 +266,10 @@
      * @param {Kotlin.AbstractList.<T>} list
      * @template T
      */
-    var ListIterator = Kotlin.createClassNow(ArrayIterator,
+    lazyInitClasses.ListIterator = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['stdlib'].kotlin.Iterator];
+        },
         /** @constructs */
         function (list) {
             this.list = list;
@@ -281,12 +280,6 @@
                 return this.list.get(this.index++);
             }
     });
-
-    /**
-     * @interface
-     * @template T
-     */
-    Kotlin.Collection = Kotlin.createClassNow();
 
     Kotlin.Enum = Kotlin.createClassNow(null,
         function () {
@@ -311,7 +304,10 @@
         }
     );
 
-    Kotlin.AbstractCollection = Kotlin.createClassNow(Kotlin.Collection, null, {
+    lazyInitClasses.AbstractCollection = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['stdlib'].kotlin.MutableCollection];
+        }, null, {
         addAll_4fm7v2$: function (collection) {
             var modified = false;
             var it = collection.iterator();
@@ -355,7 +351,7 @@
             return this.size() === 0;
         },
         iterator: function () {
-            return new ArrayIterator(this.toArray());
+            return new Kotlin.ArrayIterator(this.toArray());
         },
         equals_za3rmp$: function (o) {
             if (this.size() !== o.size()) return false;
@@ -397,9 +393,12 @@
      * @interface // actually it's abstract class
      * @template T
      */
-    Kotlin.AbstractList = Kotlin.createClassNow(Kotlin.AbstractCollection, null, {
+    lazyInitClasses.AbstractList = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['stdlib'].kotlin.MutableList, Kotlin.AbstractCollection];
+        }, null, {
         iterator: function () {
-            return new ListIterator(this);
+            return new Kotlin.ListIterator(this);
         },
         remove_za3rmp$: function (o) {
             var index = this.indexOf_za3rmp$(o);
@@ -415,7 +414,10 @@
     });
 
     //TODO: should be JS Array-like (https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Predefined_Core_Objects#Working_with_Array-like_objects)
-    Kotlin.ArrayList = Kotlin.createClassNow(Kotlin.AbstractList,
+    lazyInitClasses.ArrayList = Kotlin.createClass(
+        function () {
+            return [Kotlin.AbstractList];
+        },
         function () {
             this.array = [];
         }, {
@@ -569,7 +571,10 @@
         Kotlin.System.out().print(s);
     };
 
-    Kotlin.RangeIterator = Kotlin.createClassNow(Kotlin.Iterator,
+    lazyInitClasses.RangeIterator = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['stdlib'].kotlin.Iterator];
+        },
         function (start, end, increment) {
             this.start = start;
             this.end = end;
@@ -641,7 +646,10 @@
         equals_za3rmp$: isSameNotNullRanges
     });
 
-    Kotlin.LongRangeIterator = Kotlin.createClassNow(Kotlin.Iterator,
+    lazyInitClasses.LongRangeIterator = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['stdlib'].kotlin.Iterator];
+        },
          function (start, end, increment) {
              this.start = start;
              this.end = end;
@@ -704,7 +712,10 @@
             equals_za3rmp$: isSameNotNullRanges
         });
 
-    Kotlin.CharRangeIterator = Kotlin.createClassNow(Kotlin.RangeIterator,
+    lazyInitClasses.CharRangeIterator = Kotlin.createClass(
+        function () {
+            return [Kotlin.RangeIterator];
+        },
         function (start, end, increment) {
             Kotlin.RangeIterator.call(this, start, end, increment);
         }, {
@@ -918,7 +929,7 @@
     };
 
     Kotlin.arrayIterator = function (array) {
-        return new ArrayIterator(array);
+        return new Kotlin.ArrayIterator(array);
     };
 
     Kotlin.jsonFromTuples = function (pairArr) {
@@ -939,4 +950,6 @@
         }
         return obj1;
     };
+
+    Kotlin.createDefinition(lazyInitClasses, Kotlin);
 })();
