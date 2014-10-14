@@ -276,6 +276,36 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         }
     }
 
+    protected class OptionalMarker {
+        private final PsiBuilder.Marker marker;
+        private final int offset;
+
+        public OptionalMarker(boolean actuallyMark) {
+            marker = actuallyMark ? mark() : null;
+            offset = myBuilder.getCurrentOffset();
+        }
+
+        public void done(IElementType elementType) {
+            if (marker == null) return;
+            marker.done(elementType);
+        }
+
+        public void error(String message) {
+            if (marker == null) return;
+            if (offset == myBuilder.getCurrentOffset()) {
+                marker.drop(); // no empty errors
+            }
+            else {
+                marker.error(message);
+            }
+        }
+
+        public void drop() {
+            if (marker == null) return;
+            marker.drop();
+        }
+    }
+
     protected int matchTokenStreamPredicate(TokenStreamPattern pattern) {
         PsiBuilder.Marker currentPosition = mark();
         Stack<IElementType> opens = new Stack<IElementType>();

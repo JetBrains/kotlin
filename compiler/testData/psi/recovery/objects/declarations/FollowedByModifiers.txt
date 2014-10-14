@@ -1,0 +1,38 @@
+JetFile: FollowedByModifiers.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    OBJECT_DECLARATION_NAME
+      PsiElement(IDENTIFIER)('Foo')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(public)('public')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Bar')
+  PsiWhiteSpace('\n\n')
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    OBJECT_DECLARATION_NAME
+      PsiElement(IDENTIFIER)('Foo')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+        PsiElement(RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Bar')

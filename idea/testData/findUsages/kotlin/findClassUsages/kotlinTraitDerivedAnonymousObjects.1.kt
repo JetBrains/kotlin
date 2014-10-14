@@ -9,7 +9,7 @@ fun foo() {
     doSomething(object : A() {}, object: X {})
 
     fun bar() {
-        val x = object O2: X {
+        val x = object : X {
 
         }
     }
