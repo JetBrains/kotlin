@@ -350,6 +350,8 @@
                  many nice features of IDEA including diffs in the test console.
             -->
             <delete file="ideaSDK/lib/junit.jar"/>
+
+            <antcall target="get-android-plugin"/>
         </sequential>
     </macrodef>
 
@@ -364,6 +366,21 @@
     </target>
 
     <target name="get_android_studio">
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+
+        <antcallback target="download_android_studio" return="android.file.name"/>
+        <unzip-android-studio android.file.name="${android.file.name}"/>
+    </target>
+
+    <target name="get-android-plugin">
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+
+        <antcallback target="download_android_studio" return="android.file.name"/>
+        <unzip-android-plugin android.file.name="${android.file.name}"/>
+    </target>
+
+    <target name="download_android_studio">
+
         <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
         <condition property="android.os.tag" value="windows">
@@ -421,53 +438,91 @@
         <property name="android.file.name" value="android-studio-ide-${android.build.version}-${android.os.tag}.zip"/>
         <property name="android.studio.url"
                   value="http://dl.google.com/dl/android/studio/ide-zips/${android.version}/${android.file.name}"/>
-        <property name="android.destination.dir" value="android-studio/sdk"/>
 
         <mkdir dir="dependencies/download"/>
 
         <get src="${android.studio.url}" dest="dependencies/download" usetimestamp="true"/>
+    </target>
 
-        <delete dir="${android.destination.dir}" failonerror="false" includeemptydirs="true">
-            <exclude name="config/**"/>
-            <exclude name="system/**"/>
-        </delete>
+    <macrodef name="unzip-android-studio">
+        <attribute name="android.file.name"/>
 
-        <unzip src="dependencies/download/${android.file.name}" dest="${android.destination.dir}">
-            <cutdirsmapper dirs="1"/>
-        </unzip>
+        <sequential>
+            <property name="android.destination.dir" value="android-studio/sdk"/>
 
-        <if>
-            <matches pattern=".+windows\.zip" string="${android.file.name}"/>
-            <then>
-            </then>
-            <elseif>
+            <delete dir="${android.destination.dir}" failonerror="false" includeemptydirs="true">
+                <exclude name="config/**"/>
+                <exclude name="system/**"/>
+            </delete>
+
+            <unzip src="dependencies/download/@{android.file.name}" dest="${android.destination.dir}">
+                <cutdirsmapper dirs="1"/>
+            </unzip>
+
+            <if>
+                <matches pattern=".+windows\.zip" string="${android.file.name}"/>
+                <then>
+                </then>
+                <elseif>
+                    <matches pattern=".+mac\.zip" string="${android.file.name}"/>
+                    <then>
+                        <exec executable="chmod">
+                            <arg value="a+x"/>
+                            <arg path="${android.destination.dir}/bin/fsnotifier"/>
+                            <arg path="${android.destination.dir}/bin/inspect.sh"/>
+                            <arg path="${android.destination.dir}/bin/printenv.py"/>
+                            <arg path="${android.destination.dir}/bin/update_studio.sh"/>
+                        </exec>
+                    </then>
+                </elseif>
+                <elseif>
+                    <matches pattern=".+linux\.zip" string="${android.file.name}"/>
+                    <then>
+                        <exec executable="chmod">
+                            <arg value="a+x"/>
+                            <arg path="${android.destination.dir}/bin/fsnotifier"/>
+                            <arg path="${android.destination.dir}/bin/fsnotifier64"/>
+                            <arg path="${android.destination.dir}/bin/inspect.sh"/>
+                            <arg path="${android.destination.dir}/bin/studio.sh"/>
+                            <arg path="${android.destination.dir}/bin/update_studio.sh"/>
+                        </exec>
+                    </then>
+                </elseif>
+                <else>
+                    <fail message="File name '${android.file.name}' wasn't matched"/>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="unzip-android-plugin">
+        <attribute name="android.file.name"/>
+
+        <sequential>
+            <property name="android.destination.dir" value="ideaSDK/plugins/android"/>
+
+            <delete dir="${android.destination.dir}" failonerror="false" includeemptydirs="true"/>
+
+            <if>
                 <matches pattern=".+mac\.zip" string="${android.file.name}"/>
                 <then>
-                    <exec executable="chmod">
-                        <arg value="a+x"/>
-                        <arg path="${android.destination.dir}/bin/fsnotifier"/>
-                        <arg path="${android.destination.dir}/bin/inspect.sh"/>
-                        <arg path="${android.destination.dir}/bin/printenv.py"/>
-                        <arg path="${android.destination.dir}/bin/update_studio.sh"/>
-                    </exec>
+                    <unzip src="dependencies/download/@{android.file.name}" dest="${android.destination.dir}">
+                        <cutdirsmapper dirs="4"/>
+                        <patternset>
+                            <include name="Android Studio.app/Contents/plugins/android/lib/**"/>
+                        </patternset>
+                    </unzip>
                 </then>
-            </elseif>
-            <elseif>
-                <matches pattern=".+linux\.zip" string="${android.file.name}"/>
-                <then>
-                    <exec executable="chmod">
-                        <arg value="a+x"/>
-                        <arg path="${android.destination.dir}/bin/fsnotifier"/>
-                        <arg path="${android.destination.dir}/bin/fsnotifier64"/>
-                        <arg path="${android.destination.dir}/bin/inspect.sh"/>
-                        <arg path="${android.destination.dir}/bin/studio.sh"/>
-                        <arg path="${android.destination.dir}/bin/update_studio.sh"/>
-                    </exec>
-                </then>
-            </elseif>
-            <else>
-                <fail message="File name '${android.file.name}' wasn't matched"/>
-            </else>
-        </if>
-    </target>
+                <else>
+                    <unzip src="dependencies/download/@{android.file.name}" dest="${android.destination.dir}">
+                        <cutdirsmapper dirs="3"/>
+                        <patternset>
+                            <include name="android-studio/plugins/android/lib/**"/>
+                        </patternset>
+                    </unzip>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
 </project>

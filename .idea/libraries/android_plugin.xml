@@ -4,9 +4,10 @@
       <root url="file://$PROJECT_DIR$/annotations" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/android-common.jar!/" />
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/android/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/android/lib" recursive="false" />
   </library>
 </component>
