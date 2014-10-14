@@ -38,6 +38,12 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/lineMarker"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
+    @TestMetadata("BadCodeNoExceptions.kt")
+    public void testBadCodeNoExceptions() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/BadCodeNoExceptions.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("Class.kt")
     public void testClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/Class.kt");
