@@ -20,17 +20,23 @@ import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
+import com.intellij.diagnostic.AttachmentFactory;
+import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.diagnostic.Attachment;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.util.ExceptionUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +59,7 @@ import java.util.List;
 
 public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     private static final String SHOW_MARKERS_PROPERTY = "kotlin.signature.markers.enabled";
+    private static final Logger LOG = Logger.getInstance(KotlinSignatureInJavaMarkerProvider.class);
 
     private static final GutterIconNavigationHandler<PsiModifierListOwner> NAVIGATION_HANDLER = new GutterIconNavigationHandler<PsiModifierListOwner>() {
         @Override
@@ -90,26 +97,50 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        for (PsiElement element : elements) {
-            PsiModifierListOwner annotationOwner = KotlinSignatureUtil.getAnalyzableAnnotationOwner(element);
-            if (annotationOwner == null) {
-                continue;
+        markElements(elements, result, firstElement.getContainingFile());
+    }
+
+    private static void markElements(
+            @NotNull List<PsiElement> elements,
+            @NotNull Collection<LineMarkerInfo> result,
+            @NotNull PsiFile psiFile
+    ) {
+        try {
+            for (PsiElement element : elements) {
+                markElement(element, result);
             }
+        }
+        catch (AssertionError error) {
+            VirtualFile virtualFile = psiFile.getVirtualFile();
+            Attachment[] attachments = virtualFile != null
+                                       ? new Attachment[] {AttachmentFactory.createAttachment(virtualFile)}
+                                       : new Attachment[] {};
+            LOG.error(LogMessageEx.createEvent(
+                    "Exception while collecting KotlinSignature markers", ExceptionUtil.getThrowableText(error), attachments
+            ));
+        }
+    }
 
-            JavaResolveExtension resolveExtension = JavaResolveExtension.INSTANCE$;
-            BindingContext bindingContext = resolveExtension.getContext(project, annotationOwner);
-            JavaDescriptorResolver javaDescriptorResolver = resolveExtension.getResolver(project, annotationOwner);
+    private static void markElement(@NotNull PsiElement element, @NotNull Collection<LineMarkerInfo> result) {
+        Project project = element.getProject();
+        PsiModifierListOwner annotationOwner = KotlinSignatureUtil.getAnalyzableAnnotationOwner(element);
+        if (annotationOwner == null) {
+            return;
+        }
 
-            DeclarationDescriptor memberDescriptor = getDescriptorForMember(javaDescriptorResolver, annotationOwner);
+        JavaResolveExtension resolveExtension = JavaResolveExtension.INSTANCE$;
+        BindingContext bindingContext = resolveExtension.getContext(project, annotationOwner);
+        JavaDescriptorResolver javaDescriptorResolver = resolveExtension.getResolver(project, annotationOwner);
 
-            if (memberDescriptor == null) continue;
+        DeclarationDescriptor memberDescriptor = getDescriptorForMember(javaDescriptorResolver, annotationOwner);
 
-            List<String> errors = bindingContext.get(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, memberDescriptor);
-            boolean hasSignatureAnnotation = KotlinSignatureUtil.findKotlinSignatureAnnotation(annotationOwner) != null;
+        if (memberDescriptor == null) return;
 
-            if (errors != null || hasSignatureAnnotation) {
-                result.add(new MyLineMarkerInfo((PsiModifierListOwner) element, errors, hasSignatureAnnotation));
-            }
+        List<String> errors = bindingContext.get(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, memberDescriptor);
+        boolean hasSignatureAnnotation = KotlinSignatureUtil.findKotlinSignatureAnnotation(annotationOwner) != null;
+
+        if (errors != null || hasSignatureAnnotation) {
+            result.add(new MyLineMarkerInfo((PsiModifierListOwner) element, errors, hasSignatureAnnotation));
         }
     }
 
