@@ -18,11 +18,15 @@ package org.jetbrains.jet.plugin.structureView
 
 import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.ide.util.InheritedMembersNodeProvider
+import com.intellij.ide.util.treeView.smartTree.TreeElement
+import org.jetbrains.jet.lang.psi.JetClassOrObject
+import com.intellij.psi.NavigatablePsiElement
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.ArrayList
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import com.intellij.psi.NavigatablePsiElement
