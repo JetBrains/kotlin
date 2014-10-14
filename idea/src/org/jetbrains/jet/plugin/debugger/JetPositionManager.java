@@ -24,6 +24,7 @@ import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.requests.ClassPrepareRequestor;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.util.Ref;
@@ -152,6 +153,9 @@ public class JetPositionManager implements PositionManager {
         JvmClassName className = JvmClassName.byInternalName(referenceInternalName);
 
         Project project = myDebugProcess.getProject();
+
+        if (DumbService.getInstance(project).isDumb()) return null;
+
         return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName, location.lineNumber() - 1);
     }
 
