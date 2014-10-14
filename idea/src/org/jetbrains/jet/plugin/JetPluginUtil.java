@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -26,12 +27,14 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager;
 
+import java.util.Arrays;
+
 public class JetPluginUtil {
 
     @NotNull
     public static String getPluginVersion() {
         IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin"));
-        assert plugin != null : "How can it be? Kotlin plugin is available, but its component is running. Complete nonsense.";
+        assert plugin != null : "Kotlin plugin not found: " + Arrays.toString(PluginManagerCore.getPlugins());
         return plugin.getVersion();
     }
 
