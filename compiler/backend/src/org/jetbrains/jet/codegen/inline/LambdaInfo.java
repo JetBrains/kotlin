@@ -18,9 +18,6 @@ package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
@@ -32,12 +29,15 @@ import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.anonymousClassForFunction;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 
 public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
@@ -49,7 +49,7 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
     @Nullable
     public final String labelName;
 
-    public final CalculatedClosure closure;
+    private final CalculatedClosure closure;
 
     private MethodNode node;
 

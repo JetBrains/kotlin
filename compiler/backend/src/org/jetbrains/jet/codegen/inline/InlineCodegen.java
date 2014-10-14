@@ -31,7 +31,6 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpl
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -54,13 +53,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import static org.jetbrains.jet.codegen.AsmUtil.*;
+import static org.jetbrains.jet.codegen.AsmUtil.getMethodAsmFlags;
+import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.addInlineMarker;
 
 public class InlineCodegen implements CallGenerator {
     private final GenerationState state;
     private final JetTypeMapper typeMapper;
-    private final BindingContext bindingContext;
 
     private final SimpleFunctionDescriptor functionDescriptor;
     private final JvmMethodSignature jvmSignature;
@@ -90,7 +89,6 @@ public class InlineCodegen implements CallGenerator {
         this.codegen = codegen;
         this.callElement = callElement;
         this.functionDescriptor = functionDescriptor.getOriginal();
-        bindingContext = codegen.getBindingContext();
         initialFrameSize = codegen.getFrameMap().getCurrentSize();
 
         context = (MethodContext) getContext(functionDescriptor, state);
@@ -418,7 +416,7 @@ public class InlineCodegen implements CallGenerator {
     private void putClosureParametersOnStack() {
         for (LambdaInfo next : expressionMap.values()) {
             activeLambda = next;
-            codegen.pushClosureOnStack(next.closure, false, this);
+            codegen.pushClosureOnStack(next.getClassDescriptor(), true, this);
         }
         activeLambda = null;
     }

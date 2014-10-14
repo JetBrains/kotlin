@@ -4191,6 +4191,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("innerOfLocalCaptureExtensionReceiver.kt")
+        public void testInnerOfLocalCaptureExtensionReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/innerOfLocalCaptureExtensionReceiver.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("kt2700.kt")
         public void testKt2700() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/kt2700.kt");
@@ -4224,6 +4230,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("localClass.kt")
         public void testLocalClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/localClass.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("localClassCaptureExtensionReceiver.kt")
+        public void testLocalClassCaptureExtensionReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/localClassCaptureExtensionReceiver.kt");
             doTest(fileName);
         }
         

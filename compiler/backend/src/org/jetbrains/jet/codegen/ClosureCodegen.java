@@ -55,6 +55,7 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 public class ClosureCodegen extends ParentCodegenAware {
     private final PsiElement fun;
     private final FunctionDescriptor funDescriptor;
+    private final ClassDescriptor classDescriptor;
     private final SamType samType;
     private final JetType superClassType;
     private final List<JetType> superInterfaceTypes;
@@ -87,7 +88,7 @@ public class ClosureCodegen extends ParentCodegenAware {
         this.syntheticClassKind = syntheticClassKind;
         this.strategy = strategy;
 
-        ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, funDescriptor);
+        this.classDescriptor = anonymousClassForFunction(bindingContext, funDescriptor);
 
         if (samType == null) {
             this.superInterfaceTypes = new ArrayList<JetType>();
@@ -196,7 +197,7 @@ public class ClosureCodegen extends ParentCodegenAware {
                                    null);
 
 
-        AsmUtil.writeOuterClassAndEnclosingMethod(anonymousClassForFunction(bindingContext, funDescriptor), funDescriptor, typeMapper, cv);
+        AsmUtil.writeOuterClassAndEnclosingMethod(classDescriptor, funDescriptor, typeMapper, cv);
         cv.done();
     }
 
@@ -209,7 +210,7 @@ public class ClosureCodegen extends ParentCodegenAware {
             v.anew(asmType);
             v.dup();
 
-            codegen.pushClosureOnStack(closure, false, codegen.defaultCallGenerator);
+            codegen.pushClosureOnStack(classDescriptor, true, codegen.defaultCallGenerator);
             v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
         }
         return StackValue.onStack(asmType);
