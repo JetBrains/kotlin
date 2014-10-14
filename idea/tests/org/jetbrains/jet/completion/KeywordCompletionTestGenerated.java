@@ -42,9 +42,21 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
     
+    @TestMetadata("AfterClasses.kt")
+    public void testAfterClasses() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/AfterClasses.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("AfterDot.kt")
     public void testAfterDot() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/AfterDot.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("AfterFuns.kt")
+    public void testAfterFuns() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/AfterFuns.kt");
         doTest(fileName);
     }
     

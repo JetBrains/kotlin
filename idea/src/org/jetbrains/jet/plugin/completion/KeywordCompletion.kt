@@ -179,7 +179,7 @@ object KeywordCompletion {
         while (child != position) {
             if (child is JetDeclaration) {
                 if (child == prevDeclaration) {
-                    builder.append(child!!.getText()) //TODO: skip code blocks, class body inside,
+                    builder.appendReducedText(child!!)
                 }
             }
             else {
@@ -187,6 +187,23 @@ object KeywordCompletion {
             }
 
             child = child!!.getNextSibling()
+        }
+    }
+
+    private fun StringBuilder.appendReducedText(element: PsiElement) {
+        var child = element.getFirstChild()
+        if (child == null) {
+            append(element.getText()!!)
+        }
+        else {
+            while (child != null) {
+                when (child) {
+                    is JetBlockExpression, is JetClassBody -> append("{}")
+                    else -> appendReducedText(child)
+                }
+
+                child = child.getNextSibling()
+            }
         }
     }
 
