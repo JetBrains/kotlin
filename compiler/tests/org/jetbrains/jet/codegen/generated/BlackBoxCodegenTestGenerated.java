@@ -4251,6 +4251,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("localExtendsInnerAndReferencesOuterMember.kt")
+        public void testLocalExtendsInnerAndReferencesOuterMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/localExtendsInnerAndReferencesOuterMember.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("noclosure.kt")
         public void testNoclosure() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/localClasses/noclosure.kt");
@@ -5002,6 +5008,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("nestedObjectWithSuperclass.kt")
         public void testNestedObjectWithSuperclass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/nestedObjectWithSuperclass.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("objectExtendsInnerAndReferencesOuterMember.kt")
+        public void testObjectExtendsInnerAndReferencesOuterMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/objectExtendsInnerAndReferencesOuterMember.kt");
             doTest(fileName);
         }
         

@@ -1413,7 +1413,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
         if (superCall != null) {
-            pushClosureOnStack(superCall.getResultingDescriptor().getContainingDeclaration(), putThis, callGenerator);
+            pushClosureOnStack(
+                    superCall.getResultingDescriptor().getContainingDeclaration(),
+                    putThis && closure.getCaptureThis() == null,
+                    callGenerator
+            );
         }
     }
 
