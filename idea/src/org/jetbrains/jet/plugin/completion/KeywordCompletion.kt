@@ -31,6 +31,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.prevLeaf
 import org.jetbrains.jet.plugin.completion.handlers.KotlinKeywordInsertHandler
+import org.jetbrains.jet.lang.psi.psiUtil.siblings
 
 class KeywordLookupObject(val keyword: String)
 
@@ -47,7 +48,7 @@ object KeywordCompletion {
 
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
 
-        val parserFilter = buildParserFilter(position)
+        val parserFilter = buildFilter(position)
         for (keyword in ALL_KEYWORDS) {
             if (prefixMatcher.prefixMatches(keyword) && parserFilter(keyword)) {
                 val element = LookupElementBuilder.create(KeywordLookupObject(keyword), keyword)
@@ -90,27 +91,27 @@ object KeywordCompletion {
         }
     }
 
-    private fun buildParserFilter(position: PsiElement): (String) -> Boolean {
+    private fun buildFilter(position: PsiElement): (String) -> Boolean {
         var parent = position.getParent()
         var prevParent = position
         while (parent != null) {
             val _parent = parent
             when (_parent) {
                 is JetBlockExpression -> {
-                    return buildParserFilterWithContextElement("fun foo() { ", prevParent, position)
+                    return buildFilterWithContext("fun foo() { ", prevParent, position)
                 }
 
                 is JetWithExpressionInitializer -> {
                     val initializer = _parent.getInitializer()
                     if (prevParent == initializer) {
-                        return buildParserFilterWithContextElement("val v = ", initializer, position)
+                        return buildFilterWithContext("val v = ", initializer, position)
                     }
                 }
 
                 is JetParameter -> {
                     val default = _parent.getDefaultValue()
                     if (prevParent == default) {
-                        return buildParserFilterWithContextElement("val v = ", default, position)
+                        return buildFilterWithContext("val v = ", default, position)
                     }
                 }
             }
@@ -118,29 +119,36 @@ object KeywordCompletion {
             if (_parent is JetDeclaration) {
                 val scope = _parent.getParent()
                 when (scope) {
-                    is JetClassOrObject -> return buildParserFilterWithContextElement("class X { ", _parent, position)
-                    is JetFile -> return buildParserFilterWithContextElement("", _parent, position)
+                    is JetClassOrObject -> return buildFilterWithReducedContext("class X { ", _parent, position)
+                    is JetFile -> return buildFilterWithReducedContext("", _parent, position)
                 }
             }
 
-            prevParent = parent!!
-            parent = parent!!.getParent()
+            prevParent = _parent
+            parent = _parent.getParent()
         }
 
-        val builder = StringBuilder()
-        buildReducedContextBefore(builder, position)
-        return buildParserFilterByText(builder.toString(), position.getProject())
+        return buildFilterWithReducedContext("", null, position)
     }
 
-    private fun buildParserFilterWithContextElement(prefixText: String,
-                                           contextElement: PsiElement,
-                                           position: PsiElement): (String) -> Boolean {
+    private fun buildFilterWithContext(prefixText: String,
+                                       contextElement: PsiElement,
+                                       position: PsiElement): (String) -> Boolean {
         val offset = position.getStartOffsetInAncestor(contextElement)
         val truncatedContext = contextElement.getText()!!.substring(0, offset)
-        return buildParserFilterByText(prefixText + truncatedContext, contextElement.getProject())
+        return buildFilterByText(prefixText + truncatedContext, contextElement.getProject())
     }
 
-    private fun buildParserFilterByText(prefixText: String, project: Project): (String) -> Boolean {
+    private fun buildFilterWithReducedContext(prefixText: String,
+                                              contextElement: PsiElement?,
+                                              position: PsiElement): (String) -> Boolean {
+        val builder = StringBuilder()
+        buildReducedContextBefore(builder, position, contextElement)
+        return buildFilterByText(prefixText + builder.toString(), position.getProject())
+    }
+
+
+    private fun buildFilterByText(prefixText: String, project: Project): (String) -> Boolean {
         val psiFactory = JetPsiFactory(project)
         return { keyword ->
             val file = psiFactory.createFile(prefixText + keyword)
@@ -158,17 +166,26 @@ object KeywordCompletion {
         }
     }
 
-    // builds text before position element excluding declarations
-    private fun buildReducedContextBefore(builder: StringBuilder, position: PsiElement) {
+    // builds text within scope (or from the start of the file) before position element excluding almost all declarations
+    private fun buildReducedContextBefore(builder: StringBuilder, position: PsiElement, scope: PsiElement?) {
+        if (position == scope) return
         val parent = position.getParent() ?: return
 
-        buildReducedContextBefore(builder, parent)
+        buildReducedContextBefore(builder, parent, scope)
+
+        val prevDeclaration = position.siblings(forward = false, withItself = false).firstOrNull { it is JetDeclaration }
 
         var child = parent.getFirstChild()
         while (child != position) {
-            if (child !is JetDeclaration) {
+            if (child is JetDeclaration) {
+                if (child == prevDeclaration) {
+                    builder.append(child!!.getText()) //TODO: skip code blocks, class body inside,
+                }
+            }
+            else {
                 builder.append(child!!.getText())
             }
+
             child = child!!.getNextSibling()
         }
     }
