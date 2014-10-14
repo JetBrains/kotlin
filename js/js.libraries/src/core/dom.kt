@@ -86,7 +86,7 @@ native public trait DOMConfiguration {
 }
 
 native public trait DOMError {
-    public val `type`: String
+    public val type: String
     public val location: DOMLocator
     public val message: String
     public val relatedData: Any

@@ -18,7 +18,7 @@ native public trait DocumentEvent {
 }
 
 native public trait Event {
-    public val `type`: String
+    public val type: String
     public val bubbles: Boolean
     public val cancelable: Boolean
     public val currentTarget: EventTarget

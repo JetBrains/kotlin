@@ -209,7 +209,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
                 val fieldType = correctedTypeConverter.convertVariableType(field)
                 val parameterType = correctedTypeConverter.convertVariableType(parameter)
                 // types can be different only in nullability
-                val `type` = if (fieldType == parameterType) {
+                val type = if (fieldType == parameterType) {
                     fieldType
                 }
                 else if (fieldType.toNotNullType() == parameterType.toNotNullType()) {
@@ -219,7 +219,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
                     continue
                 }
 
-                parameterToField.put(parameter, field to `type`)
+                parameterToField.put(parameter, field to type)
                 statementsToRemove.add(initializationStatement)
                 membersToRemove.add(field)
 
@@ -263,9 +263,9 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
                 correctedConverter.convertParameter(parameter, defaultValue = defaultValue)
             }
             else {
-                val (field, `type`) = parameterToField[parameter]!!
+                val (field, type) = parameterToField[parameter]!!
                 Parameter(field.declarationIdentifier(),
-                          `type`,
+                          type,
                           if (isVal(converter.referenceSearcher, field)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
                           converter.convertAnnotations(parameter) + converter.convertAnnotations(field),
                           converter.convertModifiers(field).filter { it in ACCESS_MODIFIERS },
@@ -332,7 +332,7 @@ class ConstructorConverter(private val psiClass: PsiClass, private val converter
 
         val parameters = fieldsToInitialize.map { field ->
             val varValModifier = if (field.isVal) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var
-            Parameter(field.identifier, field.`type`, varValModifier, field.annotations, field.modifiers.filter { it in ACCESS_MODIFIERS }).assignPrototypesFrom(field)
+            Parameter(field.identifier, field.type, varValModifier, field.annotations, field.modifiers.filter { it in ACCESS_MODIFIERS }).assignPrototypesFrom(field)
         }
 
         val modifiers = Modifiers.Empty

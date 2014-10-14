@@ -89,12 +89,12 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         }
 
         val allExpectedInfos = calcExpectedInfos(expressionWithType) ?: return null
-        val filteredExpectedInfos = allExpectedInfos.filter { !it.`type`.isError() }
+        val filteredExpectedInfos = allExpectedInfos.filter { !it.type.isError() }
         if (filteredExpectedInfos.isEmpty()) return null
 
         // if we complete argument of == or !=, make types in expected info's nullable to allow nullable items too
         val expectedInfos = if ((expressionWithType.getParent() as? JetBinaryExpression)?.getOperationToken() in setOf(JetTokens.EQEQ, JetTokens.EXCLEQ))
-            filteredExpectedInfos.map { ExpectedInfo(it.`type`.makeNullable(), it.name, it.tail) }
+            filteredExpectedInfos.map { ExpectedInfo(it.type.makeNullable(), it.name, it.tail) }
         else
             filteredExpectedInfos
 
@@ -102,7 +102,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
         val itemsToSkip = calcItemsToSkip(expressionWithType)
 
-        val functionExpectedInfos = expectedInfos.filter { KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(it.`type`) }
+        val functionExpectedInfos = expectedInfos.filter { KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(it.type) }
 
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
             val result = ArrayList<LookupElement>()
@@ -111,8 +111,8 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                 val nonNullTypes = types.map { it.makeNotNullable() }
                 val classifier = { (expectedInfo: ExpectedInfo) ->
                     when {
-                        types.any { it.isSubtypeOf(expectedInfo.`type`) } -> ExpectedInfoClassification.MATCHES
-                        nonNullTypes.any { it.isSubtypeOf(expectedInfo.`type`) } -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
+                        types.any { it.isSubtypeOf(expectedInfo.type) } -> ExpectedInfoClassification.MATCHES
+                        nonNullTypes.any { it.isSubtypeOf(expectedInfo.type) } -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
                         else -> ExpectedInfoClassification.NOT_MATCHES
                     }
                 }
@@ -234,7 +234,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             val functionType = functionType(descriptor)
             if (functionType == null) return null
 
-            val matchedExpectedInfos = functionExpectedInfos.filter { functionType.isSubtypeOf(it.`type`) }
+            val matchedExpectedInfos = functionExpectedInfos.filter { functionType.isSubtypeOf(it.type) }
             if (matchedExpectedInfos.isEmpty()) return null
 
             var lookupElement = createLookupElement(descriptor, resolveSession)
@@ -278,7 +278,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         if (elementType != JetTokens.AS_KEYWORD && elementType != JetTokens.AS_SAFE) return null
         val expectedInfos = calcExpectedInfos(binaryExpression) ?: return null
 
-        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.`type`.makeNotNullable() }
+        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.type.makeNotNullable() }
 
         val items = ArrayList<LookupElement>()
         for ((jetType, infos) in expectedInfosGrouped) {

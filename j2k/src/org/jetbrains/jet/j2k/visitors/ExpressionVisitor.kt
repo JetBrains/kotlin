@@ -118,7 +118,7 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
         }
         else {
             val typeElement = converter.convertTypeElement(operand)
-            result = MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(typeElement.`type`.toNotNullType()))
+            result = MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(typeElement.type.toNotNullType()))
             return
         }
 
@@ -134,9 +134,9 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
 
     override fun visitConditionalExpression(expression: PsiConditionalExpression) {
         val condition = expression.getCondition()
-        val `type` = condition.getType()
-        val expr = if (`type` != null)
-            converter.convertExpression(condition, `type`)
+        val type = condition.getType()
+        val expr = if (type != null)
+            converter.convertExpression(condition, type)
         else
             converter.convertExpression(condition)
         result = IfStatement(expr,
@@ -154,9 +154,9 @@ open class ExpressionVisitor(private val converter: Converter) : JavaElementVisi
     override fun visitLiteralExpression(expression: PsiLiteralExpression) {
         val value = expression.getValue()
         var text = expression.getText()!!
-        val `type` = expression.getType()
-        if (`type` != null) {
-            val canonicalTypeStr = `type`.getCanonicalText()
+        val type = expression.getType()
+        if (type != null) {
+            val canonicalTypeStr = type.getCanonicalText()
             if (canonicalTypeStr == "double" || canonicalTypeStr == JAVA_LANG_DOUBLE) {
                 text = text.replace("D", "").replace("d", "")
                 if (!text.contains(".")) {

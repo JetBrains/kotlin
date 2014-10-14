@@ -111,13 +111,13 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testSingleBrackets() {
         fixture.configureByFile(fileName())
-        fixture.`type`('(')
+        fixture.type('(')
         checkResult()
     }
 
     fun testInsertFunctionWithBothParentheses() {
         fixture.configureByFile(fileName())
-        fixture.`type`("test()")
+        fixture.type("test()")
         checkResult()
     }
 

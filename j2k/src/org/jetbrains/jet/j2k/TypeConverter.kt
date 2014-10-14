@@ -37,10 +37,10 @@ import org.jetbrains.jet.j2k.ast.Identifier
 class TypeConverter(val converter: Converter) {
     private val nullabilityCache = HashMap<PsiElement, Nullability>()
 
-    public fun convertType(`type`: PsiType?, nullability: Nullability = Nullability.Default): Type {
-        if (`type` == null) return ErrorType().assignNoPrototype()
+    public fun convertType(type: PsiType?, nullability: Nullability = Nullability.Default): Type {
+        if (type == null) return ErrorType().assignNoPrototype()
 
-        val result = `type`.accept<Type>(TypeVisitor(converter))!!.assignNoPrototype()
+        val result = type.accept<Type>(TypeVisitor(converter))!!.assignNoPrototype()
         return when (nullability) {
             Nullability.NotNull -> result.toNotNullType()
             Nullability.Nullable -> result.toNullableType()

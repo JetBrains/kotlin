@@ -72,7 +72,7 @@ public native trait Event {
     public native var width: Double
     public native var modifiers: Double
     public native var keyCode: Double
-    public native var `type`: String
+    public native var type: String
     public native var which: Any
     public native var altKey: Boolean
     public native var ctrlKey: Boolean
@@ -258,7 +258,7 @@ public native trait HTMLLinkElement : HTMLElement {
     public native var rel: String
     public native var rev: String
     public native var target: String
-    public native var `type`: String
+    public native var type: String
 }
 
 public native trait HTMLTitleElement : HTMLElement {
@@ -285,7 +285,7 @@ public native trait HTMLIsIndexElement : HTMLElement {
 public native trait HTMLStyleElement : HTMLElement {
     public native var disabled: Boolean
     public native var media: String
-    public native var `type`: String
+    public native var type: String
 }
 
 public native trait HTMLBodyElement : HTMLElement {
@@ -313,7 +313,7 @@ public native trait HTMLFormElement {
 }
 
 public native trait HTMLSelectElement : HTMLElement {
-    public native val `type`: String
+    public native val type: String
     public native var selectedIndex: Double
     public native var value: String
     public native var length: Double
@@ -362,7 +362,7 @@ public native trait HTMLInputElement : HTMLElement {
     public native var size: Double
     public native var src: String
     public native var tabIndex: Double
-    public native var `type`: String
+    public native var type: String
     public native var useMap: String
     public native var value: String
     public native fun blur(): Unit
@@ -383,7 +383,7 @@ public native trait HTMLTextAreaElement : HTMLElement {
     public native var readOnly: Boolean
     public native var rows: Double
     public native var tabIndex: Double
-    public native var `type`: String
+    public native var type: String
     public native var value: String
     public native fun blur(): Unit
     public native fun focus(): Unit
@@ -396,7 +396,7 @@ public native trait HTMLButtonElement : HTMLElement {
     public native var disabled: Boolean
     public native var name: String
     public native var tabIndex: Double
-    public native var `type`: String
+    public native var type: String
     public native var value: String
 }
 
@@ -418,13 +418,13 @@ public native trait HTMLLegendElement : HTMLElement {
 
 public native trait HTMLUListElement : HTMLElement {
     public native var compact: Boolean
-    public native var `type`: String
+    public native var type: String
 }
 
 public native trait HTMLOListElement : HTMLElement {
     public native var compact: Boolean
     public native var start: Double
-    public native var `type`: String
+    public native var type: String
 }
 
 public native trait HTMLDListElement : HTMLElement {
@@ -440,7 +440,7 @@ public native trait HTMLMenuElement : HTMLElement {
 }
 
 public native trait HTMLLIElement : HTMLElement {
-    public native var `type`: String
+    public native var type: String
     public native var value: Double
 }
 
@@ -504,7 +504,7 @@ public native trait HTMLAnchorElement : HTMLElement {
     public native var shape: String
     public native var tabIndex: Double
     public native var target: String
-    public native var `type`: String
+    public native var type: String
     public native fun blur(): Unit
     public native fun focus(): Unit
 }
@@ -539,7 +539,7 @@ public native trait HTMLObjectElement : HTMLElement {
     public native var name: String
     public native var standby: String
     public native var tabIndex: Double
-    public native var `type`: String
+    public native var type: String
     public native var useMap: String
     public native var vspace: Double
     public native var width: String
@@ -548,7 +548,7 @@ public native trait HTMLObjectElement : HTMLElement {
 
 public native trait HTMLParamElement : HTMLElement {
     public native var name: String
-    public native var `type`: String
+    public native var type: String
     public native var value: String
     public native var valueType: String
 }
@@ -590,7 +590,7 @@ public native trait HTMLScriptElement : HTMLElement {
     public native var charset: String
     public native var defer: Boolean
     public native var src: String
-    public native var `type`: String
+    public native var type: String
 }
 
 public native trait HTMLTableElement : HTMLElement {

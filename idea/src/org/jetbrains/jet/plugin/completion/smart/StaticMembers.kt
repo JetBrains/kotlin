@@ -44,7 +44,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
         val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context]
         if (scope == null) return
 
-        val expectedInfosByClass = expectedInfos.groupBy { TypeUtils.getClassDescriptor(it.`type`) }
+        val expectedInfosByClass = expectedInfos.groupBy { TypeUtils.getClassDescriptor(it.type) }
         for ((classDescriptor, expectedInfosForClass) in expectedInfosByClass) {
             if (classDescriptor != null && !classDescriptor.getName().isSpecial()) {
                 addToCollection(collection, classDescriptor, expectedInfosForClass, scope, enumEntriesToSkip)
@@ -69,8 +69,8 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
                 classifier = {
                     expectedInfo ->
                         when {
-                            returnType.isSubtypeOf(expectedInfo.`type`) -> ExpectedInfoClassification.MATCHES
-                            returnType.isNullable() && returnType.makeNotNullable().isSubtypeOf(expectedInfo.`type`) -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
+                            returnType.isSubtypeOf(expectedInfo.type) -> ExpectedInfoClassification.MATCHES
+                            returnType.isNullable() && returnType.makeNotNullable().isSubtypeOf(expectedInfo.type) -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
                             else -> ExpectedInfoClassification.NOT_MATCHES
                         }
                 }
@@ -80,7 +80,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
             }
             else if (descriptor is ClassDescriptor && DescriptorUtils.isObject(descriptor)) {
                 classifier = { expectedInfo ->
-                    if (descriptor.getDefaultType().isSubtypeOf(expectedInfo.`type`)) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES
+                    if (descriptor.getDefaultType().isSubtypeOf(expectedInfo.type)) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES
                 }
             }
             else {

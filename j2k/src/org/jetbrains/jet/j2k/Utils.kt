@@ -31,7 +31,7 @@ fun PsiVariable.hasWriteAccesses(searcher: ReferenceSearcher, scope: PsiElement?
         = if (scope != null) searcher.findVariableUsages(this, scope).any { PsiUtil.isAccessedForWriting(it) } else false
 
 fun getDefaultInitializer(field: Field): Expression? {
-    val t = field.`type`
+    val t = field.type
     val result = if (t.isNullable) {
         LiteralExpression("null")
     }

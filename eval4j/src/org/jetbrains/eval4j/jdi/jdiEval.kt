@@ -35,14 +35,14 @@ public class JDIEval(
 ) : Eval {
 
     private val primitiveTypes = mapOf(
-            Type.BOOLEAN_TYPE.getClassName() to vm.mirrorOf(true).`type`(),
-            Type.BYTE_TYPE.getClassName() to vm.mirrorOf(1.toByte()).`type`(),
-            Type.SHORT_TYPE.getClassName() to vm.mirrorOf(1.toShort()).`type`(),
-            Type.INT_TYPE.getClassName() to vm.mirrorOf(1.toInt()).`type`(),
-            Type.CHAR_TYPE.getClassName() to vm.mirrorOf('1').`type`(),
-            Type.LONG_TYPE.getClassName() to vm.mirrorOf(1L).`type`(),
-            Type.FLOAT_TYPE.getClassName() to vm.mirrorOf(1.0f).`type`(),
-            Type.DOUBLE_TYPE.getClassName() to vm.mirrorOf(1.0).`type`()
+            Type.BOOLEAN_TYPE.getClassName() to vm.mirrorOf(true).type(),
+            Type.BYTE_TYPE.getClassName() to vm.mirrorOf(1.toByte()).type(),
+            Type.SHORT_TYPE.getClassName() to vm.mirrorOf(1.toShort()).type(),
+            Type.INT_TYPE.getClassName() to vm.mirrorOf(1.toInt()).type(),
+            Type.CHAR_TYPE.getClassName() to vm.mirrorOf('1').type(),
+            Type.LONG_TYPE.getClassName() to vm.mirrorOf(1L).type(),
+            Type.FLOAT_TYPE.getClassName() to vm.mirrorOf(1.0f).type(),
+            Type.DOUBLE_TYPE.getClassName() to vm.mirrorOf(1.0).type()
     )
 
     override fun loadClass(classType: Type): Value {
@@ -178,7 +178,7 @@ public class JDIEval(
             throwBrokenCodeException(NoSuchFieldError("Can't a field in a non-class: $field"))
         }
 
-        val jdiValue = newValue.asJdiValue(vm, field.`type`().asType())
+        val jdiValue = newValue.asJdiValue(vm, field.type().asType())
         mayThrow { _class.setValue(field, jdiValue) }
     }
 
@@ -220,7 +220,7 @@ public class JDIEval(
         val field = findField(fieldDesc)
         val obj = instance.jdiObj.checkNull()
 
-        val jdiValue = newValue.asJdiValue(vm, field.`type`().asType())
+        val jdiValue = newValue.asJdiValue(vm, field.type().asType())
         mayThrow { obj.setValue(field, jdiValue) }
     }
 

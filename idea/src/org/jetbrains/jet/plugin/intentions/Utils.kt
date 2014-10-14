@@ -30,9 +30,9 @@ fun specifyTypeExplicitly(declaration: JetNamedFunction, typeText: String) {
     specifyTypeExplicitly(declaration, JetPsiFactory(declaration).createType(typeText))
 }
 
-fun specifyTypeExplicitly(declaration: JetNamedFunction, `type`: JetType) {
-    if (`type`.isError()) return
-    val typeReference = JetPsiFactory(declaration).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(`type`))
+fun specifyTypeExplicitly(declaration: JetNamedFunction, type: JetType) {
+    if (type.isError()) return
+    val typeReference = JetPsiFactory(declaration).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
     specifyTypeExplicitly(declaration, typeReference)
     ShortenReferences.process(declaration.getTypeReference()!!)
 }

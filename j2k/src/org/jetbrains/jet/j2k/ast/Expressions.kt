@@ -47,13 +47,13 @@ class BinaryExpression(val left: Expression, val right: Expression, val op: Stri
 
 class IsOperator(val expression: Expression, val typeElement: TypeElement) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
-        builder.appendOperand(this, expression).append(" is ").append(typeElement.`type`.toNotNullType())
+        builder.appendOperand(this, expression).append(" is ").append(typeElement.type.toNotNullType())
     }
 }
 
-class TypeCastExpression(val `type`: Type, val expression: Expression) : Expression() {
+class TypeCastExpression(val type: Type, val expression: Expression) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
-        builder.appendOperand(this, expression).append(" as ").append(`type`)
+        builder.appendOperand(this, expression).append(" as ").append(type)
     }
 }
 

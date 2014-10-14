@@ -19,24 +19,24 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.CodeBuilder
 import org.jetbrains.jet.j2k.append
 
-class ArrayWithoutInitializationExpression(val `type`: ArrayType, val expressions: List<Expression>) : Expression() {
+class ArrayWithoutInitializationExpression(val type: ArrayType, val expressions: List<Expression>) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
-        fun appendConstructorName(`type`: ArrayType, hasInit: Boolean): CodeBuilder = when (`type`.elementType) {
-            is PrimitiveType -> builder.append(`type`.toNotNullType())
+        fun appendConstructorName(type: ArrayType, hasInit: Boolean): CodeBuilder = when (type.elementType) {
+            is PrimitiveType -> builder.append(type.toNotNullType())
 
             is ArrayType ->
                 if (hasInit) {
-                    builder.append(`type`.toNotNullType())
+                    builder.append(type.toNotNullType())
                 }
                 else {
-                    builder.append("arrayOfNulls<").append(`type`.elementType).append(">")
+                    builder.append("arrayOfNulls<").append(type.elementType).append(">")
                 }
 
-            else -> builder.append("arrayOfNulls<").append(`type`.elementType).append(">")
+            else -> builder.append("arrayOfNulls<").append(type.elementType).append(">")
         }
 
-        fun oneDim(`type`: ArrayType, size: Expression, init: (() -> Unit)? = null): CodeBuilder {
-            appendConstructorName(`type`, init != null).append("(").append(size)
+        fun oneDim(type: ArrayType, size: Expression, init: (() -> Unit)? = null): CodeBuilder {
+            appendConstructorName(type, init != null).append("(").append(size)
             if (init != null) {
                 builder.append(", ")
                 init()
@@ -61,6 +61,6 @@ class ArrayWithoutInitializationExpression(val `type`: ArrayType, val expression
             return appendConstructorName(hostType, expressions.isNotEmpty())
         }
 
-        constructInnerType(`type`, expressions)
+        constructInnerType(type, expressions)
     }
 }

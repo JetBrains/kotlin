@@ -36,9 +36,9 @@ class HtmlKotlinVisitor: JetTreeVisitor<StringBuilder>() {
         return super.visitClassBody(classBody, data)
     }
 
-    override fun visitFunctionType(`type`: JetFunctionType, data: StringBuilder?): Void? {
-        println("======================= function Type $`type`")
-        return super.visitFunctionType(`type`, data)
+    override fun visitFunctionType(type: JetFunctionType, data: StringBuilder?): Void? {
+        println("======================= function Type $type")
+        return super.visitFunctionType(type, data)
     }
 
     protected fun accept(child: PsiElement?, data: StringBuilder?): Unit {

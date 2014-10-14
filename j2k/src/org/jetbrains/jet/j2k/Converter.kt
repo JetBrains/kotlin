@@ -552,12 +552,12 @@ public class Converter private(val project: Project,
                          varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
                          modifiers: Modifiers = Modifiers.Empty,
                          defaultValue: Expression? = null): Parameter {
-        var `type` = typeConverter.convertVariableType(parameter)
+        var type = typeConverter.convertVariableType(parameter)
         when (nullability) {
-            Nullability.NotNull -> `type` = `type`.toNotNullType()
-            Nullability.Nullable -> `type` = `type`.toNullableType()
+            Nullability.NotNull -> type = type.toNotNullType()
+            Nullability.Nullable -> type = type.toNullableType()
         }
-        return Parameter(parameter.declarationIdentifier(), `type`, varValModifier,
+        return Parameter(parameter.declarationIdentifier(), type, varValModifier,
                          annotationConverter.convertAnnotations(parameter), modifiers, defaultValue).assignPrototype(parameter)
     }
 

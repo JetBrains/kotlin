@@ -99,8 +99,8 @@ $imports
                         val name = method.getName() ?: ""
                         fun propertyName(): String {
                             val answer = name.substring(3).decapitalize()
-                            return if (answer == "type") {
-                                "`type`"
+                            return if (answer == "typealias") {
+                                "typealias"
                             } else answer
                         }
                         fun propertyType() = simpleTypeName(method.getReturnType())

@@ -19,7 +19,7 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.*
 
 class Parameter(val identifier: Identifier,
-                val `type`: Type,
+                val type: Type,
                 val varVal: Parameter.VarValModifier,
                 val annotations: Annotations,
                 val modifiers: Modifiers,
@@ -33,7 +33,7 @@ class Parameter(val identifier: Identifier,
     override fun generateCode(builder: CodeBuilder) {
         builder.append(annotations).appendWithSpaceAfter(modifiers)
 
-        if (`type` is VarArgType) {
+        if (type is VarArgType) {
             builder.append("vararg ")
         }
 
@@ -42,7 +42,7 @@ class Parameter(val identifier: Identifier,
             VarValModifier.Val -> builder.append("val ")
         }
 
-        builder append identifier append ":" append `type`
+        builder append identifier append ":" append type
 
         if (defaultValue != null) {
             builder append " = " append defaultValue

@@ -129,8 +129,8 @@ class PrimitiveType(val name: Identifier) : NotNullType() {
     }
 }
 
-class VarArgType(val `type`: Type) : NotNullType() {
+class VarArgType(val type: Type) : NotNullType() {
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(`type`)
+        builder.append(type)
     }
 }

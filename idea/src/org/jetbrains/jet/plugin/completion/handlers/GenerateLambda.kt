@@ -88,7 +88,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
     val resolveSession = file.getLazyResolveSession()
     val bindingContext = resolveSession.resolveToElement(expression)
     val expectedInfos = ExpectedInfos(bindingContext, resolveSession).calculate(expression) ?: return false
-    val functionTypes = expectedInfos.map { it.`type` }.filter { KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(it) }.toSet()
+    val functionTypes = expectedInfos.map { it.type }.filter { KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(it) }.toSet()
     if (functionTypes.size <= 1) return false
 
     val lambdaParameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(lambdaType).size

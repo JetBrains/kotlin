@@ -43,8 +43,8 @@ class ThisItems(val bindingContext: BindingContext) {
             val thisType = receiver.getType()
             val classifier = { (expectedInfo: ExpectedInfo) ->
                 when {
-                    thisType.isSubtypeOf(expectedInfo.`type`) -> ExpectedInfoClassification.MATCHES
-                    thisType.isNullable() && thisType.makeNotNullable().isSubtypeOf(expectedInfo.`type`) -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
+                    thisType.isSubtypeOf(expectedInfo.type) -> ExpectedInfoClassification.MATCHES
+                    thisType.isNullable() && thisType.makeNotNullable().isSubtypeOf(expectedInfo.type) -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
                     else -> ExpectedInfoClassification.NOT_MATCHES
                 }
             }

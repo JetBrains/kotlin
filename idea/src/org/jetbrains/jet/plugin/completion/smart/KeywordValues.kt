@@ -48,14 +48,14 @@ object KeywordValues {
 
         if (!skipTrueFalse) {
             val booleanInfoClassifier = { (info: ExpectedInfo) ->
-                if (info.`type` == KotlinBuiltIns.getInstance().getBooleanType()) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES
+                if (info.type == KotlinBuiltIns.getInstance().getBooleanType()) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES
             }
             collection.addLookupElements(expectedInfos, booleanInfoClassifier, { LookupElementBuilder.create("true").bold() })
             collection.addLookupElements(expectedInfos, booleanInfoClassifier, { LookupElementBuilder.create("false").bold() })
         }
 
         collection.addLookupElements(expectedInfos,
-                                     { info -> if (info.`type`.isNullable()) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES },
+                                     { info -> if (info.type.isNullable()) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES },
                                      { LookupElementBuilder.create("null").bold() })
     }
 }

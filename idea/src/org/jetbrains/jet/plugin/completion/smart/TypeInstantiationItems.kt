@@ -39,7 +39,7 @@ import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
-        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.`type`.makeNotNullable() }
+        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.type.makeNotNullable() }
         for ((jetType, infos) in expectedInfosGrouped) {
             val tail = mergeTails(infos.map { it.tail })
             addToCollection(collection, jetType, tail)

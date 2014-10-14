@@ -22,7 +22,7 @@ class Field(
         val identifier: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,
-        val `type`: Type,
+        val type: Type,
         val initializer: Element,
         val isVal: Boolean,
         val explicitType: Boolean,
@@ -36,7 +36,7 @@ class Field(
                 .append(identifier)
 
         if (explicitType) {
-            builder append ":" append `type`
+            builder append ":" append type
         }
 
         var initializerToUse = initializer
