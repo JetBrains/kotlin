@@ -43,7 +43,8 @@ class Modifiers(val modifiers: Collection<Modifier>) : Element() {
 
     fun with(modifier: Modifier?): Modifiers = if (modifier != null) Modifiers(modifiers + listOf(modifier)).assignPrototypesFrom(this) else this
 
-    fun without(modifier: Modifier): Modifiers {
+    fun without(modifier: Modifier?): Modifiers {
+        if (modifier == null) return this
         val set = HashSet(modifiers)
         set.remove(modifier)
         return Modifiers(set).assignPrototypesFrom(this)

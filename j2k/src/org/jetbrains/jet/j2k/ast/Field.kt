@@ -26,7 +26,8 @@ class Field(
         val initializer: Element,
         val isVal: Boolean,
         val explicitType: Boolean,
-        private val defaultInitializer: Boolean
+        private val defaultInitializer: Boolean,
+        val setterAccess: Modifier?
 ) : Member(annotations, modifiers) {
 
     override fun generateCode(builder: CodeBuilder) {
@@ -45,6 +46,14 @@ class Field(
         }
         if (!initializerToUse.isEmpty) {
             builder append " = " append initializerToUse
+        }
+
+        if (!isVal && setterAccess != modifiers.accessModifier()) {
+            builder.append("\n")
+            if (setterAccess != null) {
+                builder.appendWithSpaceAfter(Modifiers(listOf(setterAccess)).assignNoPrototype())
+            }
+            builder.append("set")
         }
     }
 }

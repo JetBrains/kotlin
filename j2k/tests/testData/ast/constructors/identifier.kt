@@ -14,12 +14,8 @@ public fun Identifier(name: String, hasDollar: Boolean, isNullable: Boolean): Id
     return __
 }
 
-public class Identifier(private val myName: String, private val myHasDollar: Boolean) {
+public class Identifier(public val name: String, private val myHasDollar: Boolean) {
     private var myNullable = true
-
-    public fun getName(): String {
-        return myName
-    }
 }
 
 public class User {

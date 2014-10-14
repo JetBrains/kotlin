@@ -1,18 +1,10 @@
 package org.test.customer
 
-class Customer(public val _firstName: String, public val _lastName: String) {
+class Customer(public val firstName: String, public val lastName: String) {
 
     {
         doSmthBefore()
         doSmthAfter()
-    }
-
-    public fun getFirstName(): String {
-        return _firstName
-    }
-
-    public fun getLastName(): String {
-        return _lastName
     }
 
     private fun doSmthBefore() {

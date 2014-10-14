@@ -38,14 +38,25 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.asJava.KotlinLightField
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration
 
-open class ExpressionVisitor(private val converter: Converter) : JavaElementVisitor() {
-    private val typeConverter = converter.typeConverter
+trait ExpressionConverter {
+    fun convertExpression(expression: PsiExpression, converter: Converter): Expression
+}
 
-    public var result: Expression = Expression.Empty
-        protected set
+class ExpressionVisitor : JavaElementVisitor(), ExpressionConverter {
+    private var _converter: Converter? = null
+    private var result: Expression = Expression.Empty
 
-    public fun reset() {
+    private val converter: Converter get()  {
+        return _converter!!
+    }
+    private val typeConverter: TypeConverter get() = converter.typeConverter
+
+    override fun convertExpression(expression: PsiExpression, converter: Converter): Expression {
+        this._converter = converter
         result = Expression.Empty
+
+        expression.accept(this)
+        return result
     }
 
     override fun visitArrayAccessExpression(expression: PsiArrayAccessExpression) {

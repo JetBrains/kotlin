@@ -51,7 +51,7 @@ public class Converter private(val project: Project,
                                private val postProcessor: PostProcessor?,
                                private val state: Converter.State) {
     private class State(val methodReturnType: PsiType?,
-                        val expressionVisitorFactory: (Converter) -> ExpressionVisitor,
+                        val expressionConverter: ExpressionConverter,
                         val statementVisitorFactory: (Converter) -> StatementVisitor,
                         val specialContext: PsiElement?,
                         val importList: ImportList?,
@@ -64,7 +64,6 @@ public class Converter private(val project: Project,
     val importNames: Set<String> = state.importList?.imports?.mapTo(HashSet<String>()) { it.name } ?: setOf()
     val importsToAdd: MutableCollection<String>? = state.importsToAdd
 
-    private val expressionVisitor = state.expressionVisitorFactory(this)
     private val statementVisitor = state.statementVisitorFactory(this)
 
     val annotationConverter = AnnotationConverter(this)
@@ -74,34 +73,34 @@ public class Converter private(val project: Project,
 
         public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope,
                           referenceSearcher: ReferenceSearcher, postProcessor: PostProcessor?): Converter {
-            val state = State(null, { ExpressionVisitor(it) }, { StatementVisitor(it) }, null, null, null)
+            val state = State(null, ExpressionVisitor(), { StatementVisitor(it) }, null, null, null)
             return Converter(project, settings, conversionScope, referenceSearcher, postProcessor, state)
         }
     }
 
     fun withMethodReturnType(methodReturnType: PsiType?): Converter
             = Converter(project, settings, conversionScope, referenceSearcher, postProcessor,
-                        State(methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, state.importList, state.importsToAdd))
+                        State(methodReturnType, state.expressionConverter, state.statementVisitorFactory, state.specialContext, state.importList, state.importsToAdd))
 
-    fun withExpressionVisitor(factory: (Converter) -> ExpressionVisitor): Converter
+    fun withExpressionConverter(factory: (prevConverter: ExpressionConverter) -> ExpressionConverter): Converter
             = Converter(project, settings, conversionScope, referenceSearcher, postProcessor,
-                        State(state.methodReturnType, factory, state.statementVisitorFactory, state.specialContext, state.importList, state.importsToAdd))
+                        State(state.methodReturnType, factory(state.expressionConverter), state.statementVisitorFactory, state.specialContext, state.importList, state.importsToAdd))
 
     fun withStatementVisitor(factory: (Converter) -> StatementVisitor): Converter
             = Converter(project, settings, conversionScope, referenceSearcher, postProcessor,
-                        State(state.methodReturnType, state.expressionVisitorFactory, factory, state.specialContext, state.importList, state.importsToAdd))
+                        State(state.methodReturnType, state.expressionConverter, factory, state.specialContext, state.importList, state.importsToAdd))
 
     fun withSpecialContext(context: PsiElement): Converter
             = Converter(project, settings, conversionScope, referenceSearcher, postProcessor,
-                        State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, context, state.importList, state.importsToAdd))
+                        State(state.methodReturnType, state.expressionConverter, state.statementVisitorFactory, context, state.importList, state.importsToAdd))
 
     private fun withImportList(importList: ImportList): Converter
             = Converter(project, settings, conversionScope, referenceSearcher, postProcessor,
-                        State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, importList, state.importsToAdd))
+                        State(state.methodReturnType, state.expressionConverter, state.statementVisitorFactory, state.specialContext, importList, state.importsToAdd))
 
     private fun withImportsToAdd(importsToAdd: MutableCollection<String>): Converter
             = Converter(project, settings, conversionScope, referenceSearcher, postProcessor,
-                        State(state.methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory, state.specialContext, state.importList, importsToAdd))
+                        State(state.methodReturnType, state.expressionConverter, state.statementVisitorFactory, state.specialContext, state.importList, importsToAdd))
 
     public fun elementToKotlin(element: PsiElement): String {
         try {
@@ -141,7 +140,7 @@ public class Converter private(val project: Project,
         is PsiJavaFile -> convertFile(element)
         is PsiClass -> convertClass(element)
         is PsiMethod -> convertMethod(element, null, null)
-        is PsiField -> convertField(element)
+        is PsiField -> convertField(element, null)
         is PsiStatement -> convertStatement(element)
         is PsiExpression -> convertExpression(element)
         is PsiImportList -> convertImportList(element)
@@ -185,16 +184,8 @@ public class Converter private(val project: Project,
     }
 
     fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
-        return AnonymousClassBody(ClassBodyConverter(anonymousClass, this, null).convertBody(),
+        return AnonymousClassBody(ClassBodyConverter(anonymousClass, this).convertBody(),
                                   anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false).assignPrototype(anonymousClass)
-    }
-
-    fun convertMember(member: PsiMember, membersToRemove: MutableSet<PsiMember>, constructorConverter: ConstructorConverter?): Member? = when (member) {
-        is PsiMethod -> convertMethod(member, membersToRemove, constructorConverter)
-        is PsiField -> convertField(member)
-        is PsiClass -> convertClass(member)
-        is PsiClassInitializer -> convertInitializer(member)
-        else -> throw IllegalArgumentException("Unknown member: $member")
     }
 
     fun convertAnnotations(owner: PsiModifierListOwner): Annotations
@@ -212,9 +203,7 @@ public class Converter private(val project: Project,
         val extendsTypes = convertToNotNullableTypes(psiClass.getExtendsListTypes())
         val name = psiClass.declarationIdentifier()
 
-        val constructorConverter = ConstructorConverter(psiClass, this)
-        var classBody = ClassBodyConverter(psiClass, this, constructorConverter).convertBody()
-        classBody = constructorConverter.postProcessConstructors(classBody)
+        var classBody = ClassBodyConverter(psiClass, this).convertBody()
 
         return when {
             psiClass.isInterface() -> Trait(name, annotations, modifiers, typeParameters, extendsTypes, listOf(), implementsTypes, classBody)
@@ -230,7 +219,7 @@ public class Converter private(val project: Project,
                     modifiers = modifiers.with(Modifier.INNER)
                 }
 
-                Class(name, annotations, modifiers, typeParameters, extendsTypes, constructorConverter.baseClassParams, implementsTypes, classBody)
+                Class(name, annotations, modifiers, typeParameters, extendsTypes, classBody.baseClassParams, implementsTypes, classBody)
             }
         }.assignPrototype(psiClass)
     }
@@ -259,8 +248,8 @@ public class Converter private(val project: Project,
         val constructorSignature = PrimaryConstructorSignature(Annotations.Empty, Modifiers.Empty, parameterList).assignNoPrototype()
 
         // to convert fields and nested types - they are not allowed in Kotlin but we convert them and let user refactor code
-        var classBody = ClassBodyConverter(psiClass, this, null).convertBody()
-        classBody = ClassBody(constructorSignature, classBody.members, classBody.classObjectMembers, listOf(), classBody.lBrace, classBody.rBrace)
+        var classBody = ClassBodyConverter(psiClass, this).convertBody()
+        classBody = ClassBody(constructorSignature, classBody.baseClassParams, classBody.members, classBody.classObjectMembers, listOf(), classBody.lBrace, classBody.rBrace)
 
         val annotationAnnotation = Annotation(Identifier("annotation").assignNoPrototype(), listOf(), false, false).assignNoPrototype()
         return Class(psiClass.declarationIdentifier(),
@@ -273,14 +262,19 @@ public class Converter private(val project: Project,
                      classBody).assignPrototype(psiClass)
     }
 
-    private fun convertInitializer(initializer: PsiClassInitializer): Initializer {
+    fun convertInitializer(initializer: PsiClassInitializer): Initializer {
         return Initializer(convertBlock(initializer.getBody()), convertModifiers(initializer)).assignPrototype(initializer)
     }
 
-    private fun convertField(field: PsiField): Member {
+    fun convertField(field: PsiField, correction: FieldCorrectionInfo?): Member {
         val annotations = annotationConverter.convertAnnotations(field)
-        val modifiers = convertModifiers(field)
-        val name = field.declarationIdentifier()
+
+        var modifiers = convertModifiers(field)
+        if (correction != null) {
+            modifiers = modifiers.without(modifiers.accessModifier()).with(correction.access)
+        }
+
+        val name = correction?.name ?: field.declarationIdentifier()
         val converted = if (field is PsiEnumConstant) {
             val argumentList = field.getArgumentList()
             EnumConstant(name,
@@ -302,7 +296,8 @@ public class Converter private(val project: Project,
                   initializer,
                   isVal,
                   typeToDeclare != null,
-                  initializer.isEmpty && shouldGenerateDefaultInitializer(referenceSearcher, field))
+                  initializer.isEmpty && shouldGenerateDefaultInitializer(referenceSearcher, field),
+                  if (correction != null) correction.setterAccess else modifiers.accessModifier())
         }
         return converted.assignPrototype(field)
     }
@@ -324,7 +319,7 @@ public class Converter private(val project: Project,
         return if (convertedType == initializerType) null else convertedType
     }
 
-    private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>?, constructorConverter: ConstructorConverter?): Member? {
+    fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>?, constructorConverter: ConstructorConverter?): Member? {
         return withMethodReturnType(method.getReturnType()).doConvertMethod(method, membersToRemove, constructorConverter)?.assignPrototype(method)
     }
 
@@ -438,9 +433,7 @@ public class Converter private(val project: Project,
     fun convertExpression(expression: PsiExpression?): Expression {
         if (expression == null) return Expression.Empty
 
-        expressionVisitor.reset()
-        expression.accept(expressionVisitor)
-        return expressionVisitor.result.assignPrototype(expression)
+        return state.expressionConverter.convertExpression(expression, this).assignPrototype(expression)
     }
 
     fun convertLocalVariable(variable: PsiLocalVariable): LocalVariable {

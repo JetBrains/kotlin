@@ -14,12 +14,8 @@ public fun <T> Identifier(name: T, hasDollar: Boolean, isNullable: Boolean): Ide
     return __
 }
 
-public class Identifier<T>(private val myName: T, private val myHasDollar: Boolean) {
+public class Identifier<T>(public val name: T, private val myHasDollar: Boolean) {
     private var myNullable = true
-
-    public fun getName(): T {
-        return myName
-    }
 }
 
 public class User {

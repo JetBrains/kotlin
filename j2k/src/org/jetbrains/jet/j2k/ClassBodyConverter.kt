@@ -24,21 +24,43 @@ import com.intellij.psi.PsiAnnotationMethod
 import java.util.ArrayList
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiClassInitializer
 import org.jetbrains.jet.j2k.ast.*
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiReturnStatement
+import com.intellij.psi.PsiReferenceExpression
+import com.intellij.openapi.util.text.StringUtil
+import java.util.HashMap
+import com.intellij.psi.PsiClassInitializer
+import com.intellij.psi.PsiExpressionStatement
+import com.intellij.psi.PsiAssignmentExpression
+import com.intellij.psi.PsiExpression
+import com.intellij.psi.JavaTokenType
+import org.jetbrains.jet.j2k.visitors.ExpressionConverter
+import com.intellij.psi.PsiElementFactory
+
+class FieldCorrectionInfo(val name: Identifier, val access: Modifier?, val setterAccess: Modifier?)
 
 class ClassBodyConverter(private val psiClass: PsiClass,
-                         private val converter: Converter,
-                         private val constructorConverter: ConstructorConverter?) {
+                         private val converter: Converter) {
+    private val membersToRemove = HashSet<PsiMember>()
+    private val fieldCorrections = HashMap<PsiField, FieldCorrectionInfo>()
+
     public fun convertBody(): ClassBody {
-        val membersToRemove = HashSet<PsiMember>()
+        processAccessorsToDrop()
+
+        val correctedConverter = buildConverterWithCorrectedFieldNames()
+
+        val constructorConverter = if (psiClass.getName() != null)
+            ConstructorConverter(psiClass, correctedConverter, fieldCorrections)
+        else
+            null
+
         val convertedMembers = LinkedHashMap<PsiMember, Member>()
         for (element in psiClass.getChildren()) {
             if (element is PsiMember) {
                 if (element is PsiAnnotationMethod) continue // converted in convertAnnotationType()
 
-                val converted = converter.convertMember(element, membersToRemove, constructorConverter)
+                val converted = correctedConverter.convertMember(element, membersToRemove, constructorConverter)
                 if (converted != null && !converted.isEmpty) {
                     convertedMembers.put(element, converted)
                 }
@@ -78,7 +100,21 @@ class ClassBodyConverter(private val psiClass: PsiClass,
 
         val lBrace = LBrace().assignPrototype(psiClass.getLBrace())
         val rBrace = RBrace().assignPrototype(psiClass.getRBrace())
-        return ClassBody(primaryConstructorSignature, members, classObjectMembers, factoryFunctions, lBrace, rBrace)
+        val classBody = ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams ?: listOf(), members, classObjectMembers, factoryFunctions, lBrace, rBrace)
+
+        return if (constructorConverter != null) constructorConverter.postProcessConstructors(classBody) else classBody
+    }
+
+    private fun Converter.convertMember(member: PsiMember,
+                                        membersToRemove: MutableSet<PsiMember>,
+                                        constructorConverter: ConstructorConverter?): Member? {
+        return when (member) {
+            is PsiMethod -> convertMethod(member, membersToRemove, constructorConverter)
+            is PsiField -> convertField(member, fieldCorrections[member])
+            is PsiClass -> convertClass(member)
+            is PsiClassInitializer -> convertInitializer(member)
+            else -> throw IllegalArgumentException("Unknown member: $member")
+        }
     }
 
     // do not convert private static methods into class object if possible
@@ -101,4 +137,115 @@ class ClassBodyConverter(private val psiClass: PsiClass,
     // we generate nested classes with factory functions into class object as a workaround until secondary constructors supported by Kotlin
     private fun shouldGenerateIntoClassObject(nestedClass: Class)
             = !nestedClass.modifiers.contains(Modifier.INNER) && nestedClass.body.factoryFunctions.isNotEmpty()
+
+    private fun processAccessorsToDrop() {
+        val fieldToGetterInfo = HashMap<PsiField, AccessorInfo>()
+        val fieldToSetterInfo = HashMap<PsiField, AccessorInfo>()
+        val fieldsWithConflict = HashSet<PsiField>()
+        for (method in psiClass.getMethods()) {
+            val info = getAccessorInfo(method) ?: continue
+            val map = if (info.kind == AccessorKind.GETTER) fieldToGetterInfo else fieldToSetterInfo
+
+            val prevInfo = map[info.field]
+            if (prevInfo != null) {
+                fieldsWithConflict.add(info.field)
+                continue
+            }
+
+            map[info.field] = info
+        }
+
+        for ((field, getterInfo) in fieldToGetterInfo) {
+            val setterInfo = run {
+                val info = fieldToSetterInfo[field]
+                if (info?.propertyName == getterInfo.propertyName) info else null
+            }
+
+            membersToRemove.add(getterInfo.method)
+            if (setterInfo != null) {
+                membersToRemove.add(setterInfo.method)
+            }
+
+            val getterAccess = converter.convertModifiers(getterInfo.method).accessModifier()
+            val setterAccess = if (setterInfo != null)
+                converter.convertModifiers(setterInfo.method).accessModifier()
+            else
+                converter.convertModifiers(field).accessModifier()
+            //TODO: check that setter access is not bigger
+            fieldCorrections[field] = FieldCorrectionInfo(Identifier(getterInfo.propertyName).assignNoPrototype(),
+                                                          getterAccess,
+                                                          setterAccess)
+        }
+    }
+
+    private enum class AccessorKind {
+        GETTER
+        SETTER
+    }
+
+    private class AccessorInfo(val method: PsiMethod, val field: PsiField, val kind: AccessorKind, val propertyName: String)
+
+    private fun getAccessorInfo(method: PsiMethod): AccessorInfo? {
+        val name = method.getName()
+        if (name.startsWith("get") && method.getParameterList().getParametersCount() == 0) {
+            val body = method.getBody() ?: return null
+            val returnStatement = (body.getStatements().singleOrNull() as? PsiReturnStatement) ?: return null
+            val field = fieldByExpression(returnStatement.getReturnValue()) ?: return null
+            val propertyName = StringUtil.decapitalize(name.substring("get".length))
+            return AccessorInfo(method, field, AccessorKind.GETTER, propertyName)
+        }
+        else if (name.startsWith("set") && method.getParameterList().getParametersCount() == 1) {
+            val body = method.getBody() ?: return null
+            val statement = (body.getStatements().singleOrNull() as? PsiExpressionStatement) ?: return null
+            val assignment = statement.getExpression() as? PsiAssignmentExpression ?: return null
+            if (assignment.getOperationTokenType() != JavaTokenType.EQ) return null
+            val field = fieldByExpression(assignment.getLExpression()) ?: return null
+            if ((assignment.getRExpression() as? PsiReferenceExpression)?.resolve() != method.getParameterList().getParameters().single()) return null
+            val propertyName = StringUtil.decapitalize(name.substring("set".length))
+            return AccessorInfo(method, field, AccessorKind.SETTER, propertyName)
+        }
+        else {
+            return null
+        }
+    }
+
+    private fun fieldByExpression(expression: PsiExpression?): PsiField? {
+        val refExpr = expression as? PsiReferenceExpression ?: return null
+        if (!refExpr.isQualifierEmptyOrThis()) return null
+        val field = refExpr.resolve() as? PsiField ?: return null
+        if (field.getContainingClass() != psiClass || field.hasModifierProperty(PsiModifier.STATIC)) return null
+        return field
+    }
+
+    //TODO: correct usages to accessors (and field too) across all code being converted + all other Kotlin code in the project
+    private fun buildConverterWithCorrectedFieldNames(): Converter {
+        if (fieldCorrections.isEmpty()) return converter
+        return converter.withExpressionConverter { prevExpressionConverter ->
+            object : ExpressionConverter {
+                override fun convertExpression(expression: PsiExpression, converter: Converter): Expression {
+                    val result = prevExpressionConverter.convertExpression(expression, converter)
+                    if (expression !is PsiReferenceExpression) return result
+
+                    val field = expression.resolve() as? PsiField ?: return result
+                    val correction = fieldCorrections[field] ?: return result
+                    if (correction.name.name == field.getName()) return result
+
+                    val qualifier = expression.getQualifierExpression()
+                    return if (qualifier != null) {
+                        QualifiedExpression(converter.convertExpression(qualifier), correction.name)
+                    }
+                    else {
+                        // check if field name is shadowed
+                        val elementFactory = PsiElementFactory.SERVICE.getInstance(expression.getProject())
+                        val refExpr = elementFactory.createExpressionFromText(correction.name.name, expression) as PsiReferenceExpression
+                        if (refExpr.resolve() == null)
+                            correction.name
+                        else
+                            QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), correction.name) //TODO: this is not correct in case of nested/anonymous classes
+                    }
+
+                }
+            }
+        }
+    }
 }
