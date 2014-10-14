@@ -8967,6 +8967,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
                 
+                @TestMetadata("kt5971NestedSafeCall.kt")
+                public void testKt5971NestedSafeCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/nestedCalls/kt5971NestedSafeCall.kt");
+                    doTest(fileName);
+                }
+                
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/specialConstructions")

@@ -279,7 +279,7 @@ public class Converter private(val project: Project,
                          annotations,
                          modifiers,
                          typeConverter.convertType(field.getType(), Nullability.NotNull),
-                         ExpressionList(convertExpressions(argumentList?.getExpressions())).assignPrototype(argumentList))
+                         ExpressionList(convertExpressions(argumentList?.getExpressions() ?: array())).assignPrototype(argumentList))
         }
         else {
             val isVal = isVal(referenceSearcher, field)
