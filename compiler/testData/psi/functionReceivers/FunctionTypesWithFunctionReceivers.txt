@@ -11,7 +11,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     TYPE_REFERENCE
       PsiErrorElement:Type expected
         <empty list>
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   MODIFIER_LIST
     ANNOTATION_ENTRY
@@ -47,21 +47,21 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('x')
               PsiElement(GT)('>')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
@@ -74,11 +74,11 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     TYPE_REFERENCE
       PsiErrorElement:Type expected
         <empty list>
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
   MODIFIER_LIST
     ANNOTATION_ENTRY
@@ -87,39 +87,39 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('S')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
@@ -132,9 +132,9 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     TYPE_REFERENCE
       PsiErrorElement:Type expected
         <empty list>
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   MODIFIER_LIST
     ANNOTATION_ENTRY
@@ -143,37 +143,37 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
@@ -186,9 +186,9 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     TYPE_REFERENCE
       PsiErrorElement:Type expected
         <empty list>
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   MODIFIER_LIST
     ANNOTATION_ENTRY
@@ -201,37 +201,37 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
@@ -244,9 +244,9 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     TYPE_REFERENCE
       PsiErrorElement:Type expected
         <empty list>
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   MODIFIER_LIST
     ANNOTATION_ENTRY
@@ -282,37 +282,37 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('x')
               PsiElement(GT)('>')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
@@ -325,11 +325,11 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
     TYPE_REFERENCE
       PsiErrorElement:Type expected
         <empty list>
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
   MODIFIER_LIST
     ANNOTATION_ENTRY
@@ -338,39 +338,39 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('S')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   TYPEDEF
@@ -393,7 +393,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
       PsiErrorElement:Type expected
         <empty list>
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   MODIFIER_LIST
     ANNOTATION
@@ -406,9 +406,9 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
                 PsiElement(IDENTIFIER)('a')
       PsiElement(RBRACKET)(']')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
   MODIFIER_LIST
     ANNOTATION_ENTRY
@@ -417,39 +417,39 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('S')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
@@ -472,7 +472,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
       PsiErrorElement:Type expected
         <empty list>
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   MODIFIER_LIST
     ANNOTATION
@@ -485,7 +485,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
                 PsiElement(IDENTIFIER)('a')
       PsiElement(RBRACKET)(']')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   MODIFIER_LIST
     ANNOTATION_ENTRY
@@ -494,37 +494,37 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
@@ -547,7 +547,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
       PsiErrorElement:Type expected
         <empty list>
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   MODIFIER_LIST
     ANNOTATION
@@ -560,7 +560,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
                 PsiElement(IDENTIFIER)('a')
       PsiElement(RBRACKET)(']')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   MODIFIER_LIST
     ANNOTATION_ENTRY
@@ -573,37 +573,37 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
@@ -626,7 +626,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
       PsiErrorElement:Type expected
         <empty list>
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   MODIFIER_LIST
     ANNOTATION
@@ -639,7 +639,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
                 PsiElement(IDENTIFIER)('a')
       PsiElement(RBRACKET)(']')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   MODIFIER_LIST
     ANNOTATION_ENTRY
@@ -675,37 +675,37 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('x')
               PsiElement(GT)('>')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   TYPEDEF
@@ -728,7 +728,7 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
       PsiErrorElement:Type expected
         <empty list>
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   MODIFIER_LIST
     ANNOTATION
@@ -741,9 +741,9 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
                 PsiElement(IDENTIFIER)('a')
       PsiElement(RBRACKET)(']')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
   MODIFIER_LIST
     ANNOTATION_ENTRY
@@ -752,37 +752,37 @@ JetFile: FunctionTypesWithFunctionReceivers.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('S')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')

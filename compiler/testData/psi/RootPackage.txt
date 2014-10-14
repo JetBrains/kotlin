@@ -15,7 +15,7 @@ JetFile: RootPackage.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('X')
   PsiWhiteSpace('\n\n')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(package)('package')
   PsiWhiteSpace(' ')
   MODIFIER_LIST
@@ -30,7 +30,7 @@ JetFile: RootPackage.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
   PsiWhiteSpace('\n  ')
   FUN
@@ -127,5 +127,5 @@ JetFile: RootPackage.kt
       PsiWhiteSpace('\n  ')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')

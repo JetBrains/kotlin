@@ -1,9 +1,9 @@
 JetFile: FileStart_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(DIV)('/')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(package)('package')
   PsiWhiteSpace(' ')
   MODIFIER_LIST
@@ -31,5 +31,5 @@ JetFile: FileStart_ERR.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('foo')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     <empty list>

@@ -77,8 +77,8 @@ JetFile: DelegateAndInitializer.kt
           PsiElement(RPAR)(')')
     PsiElement(SEMICOLON)(';')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(EQ)('=')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(INTEGER_LITERAL)('3')

@@ -7,7 +7,7 @@ JetFile: Functions_ERR.kt
     PsiElement(IDENTIFIER)('foo')
     PsiErrorElement:Expecting '('
       <empty list>
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
   FUN
