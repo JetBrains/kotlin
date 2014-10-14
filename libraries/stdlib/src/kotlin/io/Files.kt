@@ -9,12 +9,7 @@ import java.util.*
  */
 public fun File.recurse(block: (File) -> Unit): Unit {
     block(this)
-    val children = listFiles()
-    if (children != null) {
-        for (child in children) {
-            child.recurse(block)
-        }
-    }
+    listFiles()?.forEach { it.recurse(block) }
 }
 
 /**
@@ -46,13 +41,7 @@ public val File.path: String
  */
 public val File.extension: String
     get() {
-        val text = name
-        val idx = text.lastIndexOf('.')
-        return if (idx >= 0) {
-            text.substring(idx + 1)
-        } else {
-            ""
-        }
+        return name.substringAfterLast('.', "")
     }
 
 /**
