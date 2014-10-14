@@ -22,12 +22,24 @@ import org.jetbrains.jet.j2k.ast.*
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.isInSingleLine
 
-open class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
-    public var result: Statement = Statement.Empty
-        protected set
+trait StatementConverter {
+    fun convertStatement(statement: PsiStatement, converter: Converter): Statement
+}
 
-    public fun reset() {
+class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
+    private var _converter: Converter? = null
+    private var result: Statement = Statement.Empty
+
+    private val converter: Converter get()  {
+        return _converter!!
+    }
+
+    override fun convertStatement(statement: PsiStatement, converter: Converter): Statement {
+        this._converter = converter
         result = Statement.Empty
+
+        statement.accept(this)
+        return result
     }
 
     override fun visitAssertStatement(statement: PsiAssertStatement) {

@@ -42,7 +42,7 @@ trait ExpressionConverter {
     fun convertExpression(expression: PsiExpression, converter: Converter): Expression
 }
 
-class ExpressionVisitor : JavaElementVisitor(), ExpressionConverter {
+class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     private var _converter: Converter? = null
     private var result: Expression = Expression.Empty
 
