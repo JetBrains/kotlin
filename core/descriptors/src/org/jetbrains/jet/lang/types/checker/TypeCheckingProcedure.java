@@ -71,8 +71,7 @@ public class TypeCheckingProcedure {
     public boolean equalTypes(@NotNull JetType type1, @NotNull JetType type2) {
         if (TypesPackage.isFlexible(type1)) {
             if (TypesPackage.isFlexible(type2)) {
-                return equalTypes(TypesPackage.flexibility(type1).getLowerBound(), TypesPackage.flexibility(type2).getLowerBound())
-                        && equalTypes(TypesPackage.flexibility(type1).getUpperBound(), TypesPackage.flexibility(type2).getUpperBound());
+                return !type1.isError() && !type2.isError() && isSubtypeOf(type1, type2) && isSubtypeOf(type2, type1);
             }
             return heterogeneousEquivalence(type2, type1);
         }
