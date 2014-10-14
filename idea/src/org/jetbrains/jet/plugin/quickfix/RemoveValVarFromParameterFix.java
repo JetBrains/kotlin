@@ -27,18 +27,23 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetBundle;
 
 public class RemoveValVarFromParameterFix extends JetIntentionAction<JetParameter> {
+    private final String varOrVal;
+
     public RemoveValVarFromParameterFix(@NotNull JetParameter element) {
         super(element);
+        ASTNode valOrVarNode = element.getValOrVarNode();
+        assert valOrVarNode != null : "Val or var node not found for " + JetPsiUtil.getElementTextWithContext(element);
+        varOrVal = valOrVarNode.getText();
     }
 
     @NotNull
     @Override
     public String getText() {
-        ASTNode valOrVarNode = element.getValOrVarNode();
-        return JetBundle.message("remove.val.var.from.parameter", valOrVarNode != null ? valOrVarNode.getText() : "null");
+        return JetBundle.message("remove.val.var.from.parameter", varOrVal);
     }
 
     @NotNull
