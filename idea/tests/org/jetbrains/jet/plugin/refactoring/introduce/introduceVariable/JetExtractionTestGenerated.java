@@ -173,6 +173,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
         
+        @TestMetadata("notNullAssertion.kt")
+        public void testNotNullAssertion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/notNullAssertion.kt");
+            doIntroduceVariableTest(fileName);
+        }
+        
         @TestMetadata("OccurrencesInStringTemplate.kt")
         public void testOccurrencesInStringTemplate() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/OccurrencesInStringTemplate.kt");
@@ -1088,6 +1094,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             @TestMetadata("multipleOutputValuesMatching.kt")
             public void testMultipleOutputValuesMatching() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/multipleOutputValuesMatching.kt");
+                doExtractFunctionTest(fileName);
+            }
+            
+            @TestMetadata("notNullAssertion.kt")
+            public void testNotNullAssertion() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/notNullAssertion.kt");
                 doExtractFunctionTest(fileName);
             }
             
