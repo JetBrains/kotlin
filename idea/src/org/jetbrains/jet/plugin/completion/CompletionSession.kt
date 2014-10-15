@@ -139,7 +139,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 }
             }
 
-            KeywordCompletion.complete(parameters, prefixMatcher, collector)
+            KeywordCompletion.complete(parameters, prefixMatcher.getPrefix(), collector)
 
             if (completeReference && !shouldRunOnlyTypeCompletion()) {
                 flushToResultSet()

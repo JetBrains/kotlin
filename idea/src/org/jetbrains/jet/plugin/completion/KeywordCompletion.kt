@@ -35,6 +35,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 
 import org.jetbrains.jet.lexer.JetTokens.*
+import com.intellij.openapi.util.text.StringUtil
 
 class KeywordLookupObject(val keyword: String)
 
@@ -48,7 +49,7 @@ object KeywordCompletion {
 
     private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(OUT_KEYWORD to " X")
 
-    public fun complete(parameters: CompletionParameters, prefixMatcher: PrefixMatcher, collector: LookupElementsCollector) {
+    public fun complete(parameters: CompletionParameters, prefix: String, collector: LookupElementsCollector) {
         val position = parameters.getPosition()
 
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
@@ -56,7 +57,7 @@ object KeywordCompletion {
         val parserFilter = buildFilter(position)
         for (keywordToken in ALL_KEYWORDS) {
             val keyword = keywordToken.getValue()
-            if (prefixMatcher.prefixMatches(keyword) && parserFilter(keywordToken)) {
+            if (keyword.startsWith(prefix)/* use simple matching by prefix, not prefix matcher from completion*/ && parserFilter(keywordToken)) {
                 val element = LookupElementBuilder.create(KeywordLookupObject(keyword), keyword)
                         .bold()
                         .withInsertHandler(if (keywordToken !in FUNCTION_KEYWORDS)

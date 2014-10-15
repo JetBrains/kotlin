@@ -244,6 +244,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
     
+    @TestMetadata("PrefixMatcher.kt")
+    public void testPrefixMatcher() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/PrefixMatcher.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("PropertyAccessors.kt")
     public void testPropertyAccessors() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/PropertyAccessors.kt");
