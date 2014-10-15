@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluateExpressionTest {
     @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({SingleBreakpoint.Frame.class, SingleBreakpoint.Lambdas.class})
+    @InnerTestClasses({SingleBreakpoint.Frame.class, SingleBreakpoint.Lambdas.class, SingleBreakpoint.Renderer.class})
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
     public static class SingleBreakpoint extends AbstractKotlinEvaluateExpressionTest {
         @TestMetadata("abstractFunCall.kt")
@@ -333,6 +333,22 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("twoLambdasOnOneLineSecond.kt")
             public void testTwoLambdasOnOneLineSecond() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/twoLambdasOnOneLineSecond.kt");
+                doSingleBreakpointTest(fileName);
+            }
+            
+        }
+        
+        @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/renderer")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        public static class Renderer extends AbstractKotlinEvaluateExpressionTest {
+            public void testAllFilesPresentInRenderer() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/renderer"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("toStringRenderer.kt")
+            public void testToStringRenderer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/renderer/toStringRenderer.kt");
                 doSingleBreakpointTest(fileName);
             }
             

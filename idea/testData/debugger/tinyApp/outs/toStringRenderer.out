@@ -1,0 +1,24 @@
+LineBreakpoint created at toStringRenderer.kt:6
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! toStringRenderer.ToStringRendererPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+toStringRenderer.kt:5
+package toStringRenderer
+
+fun main(args: Array<String>) {
+    val a = A()
+    //Breakpoint!
+    args.size
+}
+
+class A {
+    override fun toString() = "myA"
+}
+
+// PRINT_FRAME
+ frame    = main():6, ToStringRendererPackage$@packagePartHASH {toStringRenderer}
+   static   = static = toStringRenderer.ToStringRendererPackage$@packagePartHASH
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID}
+   local    = a: toStringRenderer.A = {toStringRenderer.A@uniqueID}myA
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0
