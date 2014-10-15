@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.descriptorUtil.DescriptorUtilPackage;
@@ -137,19 +138,21 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             @NotNull ExplicitReceiverKind explicitReceiverKind
     ) {
         if (explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER) {
-            String qualifiedName;
-            FqName fqName = getFqNameFromTopLevelClass(DescriptorUtilPackage.getImportableDescriptor(classDescriptor));
-            if (reference.getParent() instanceof JetCallableReferenceExpression) {
-                qualifiedName = fqName.parent() + "::" + classDescriptor.getName();
+            DeclarationDescriptor importableDescriptor = DescriptorUtilPackage.getImportableDescriptor(classDescriptor);
+            if (DescriptorUtils.getFqName(importableDescriptor).isSafe()) {
+                FqName fqName = getFqNameFromTopLevelClass(importableDescriptor);
+                String qualifiedName;
+                if (reference.getParent() instanceof JetCallableReferenceExpression) {
+                    qualifiedName = fqName.parent() + "::" + classDescriptor.getName();
+                }
+                else {
+                    qualifiedName = fqName.asString();
+                }
+                trace.report(NESTED_CLASS_SHOULD_BE_QUALIFIED.on(reference, classDescriptor, qualifiedName));
+                return;
             }
-            else {
-                qualifiedName = fqName.asString();
-            }
-            trace.report(NESTED_CLASS_SHOULD_BE_QUALIFIED.on(reference, classDescriptor, qualifiedName));
         }
-        else {
-            trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(reference, classDescriptor));
-        }
+        trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(reference, classDescriptor));
     }
 
     @Override
