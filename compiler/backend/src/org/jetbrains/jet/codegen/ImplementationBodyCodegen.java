@@ -1392,10 +1392,18 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
-        if (superCall != null && !isAnonymousObject(descriptor)) {
-            JetValueArgumentList argumentList = superCall.getValueArgumentList();
-            if (argumentList != null) {
-                argumentList.accept(visitor);
+        if (superCall != null) {
+            ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCallWithAssert(superCall, bindingContext);
+            ClassDescriptor superClass = ((ConstructorDescriptor) resolvedCall.getResultingDescriptor()).getContainingDeclaration();
+            if (superClass.isInner()) {
+                constructorContext.lookupInContext(superClass.getContainingDeclaration(), StackValue.local(0, OBJECT_TYPE), state, true);
+            }
+
+            if (!isAnonymousObject(descriptor)) {
+                JetValueArgumentList argumentList = superCall.getValueArgumentList();
+                if (argumentList != null) {
+                    argumentList.accept(visitor);
+                }
             }
         }
     }
@@ -1494,17 +1502,29 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (JvmMethodParameterSignature parameter : parameters) {
             if (superIndex >= superParameters.size()) break;
 
+            JvmMethodParameterKind superKind = superParameters.get(superIndex).getKind();
             JvmMethodParameterKind kind = parameter.getKind();
             Type type = parameter.getAsmType();
 
-            // Stop when we reach the actual value parameters present in the code; they will be generated via ResolvedCall below
-            if (superParameters.get(superIndex).getKind() == JvmMethodParameterKind.VALUE &&
-                kind == JvmMethodParameterKind.SUPER_CALL_PARAM) {
+            if (superKind == JvmMethodParameterKind.VALUE && kind == JvmMethodParameterKind.SUPER_CALL_PARAM) {
+                // Stop when we reach the actual value parameters present in the code; they will be generated via ResolvedCall below
                 break;
             }
 
-            if (kind == JvmMethodParameterKind.SUPER_CALL_PARAM || kind == JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL ||
-                (kind == JvmMethodParameterKind.OUTER && superConstructor.getContainingDeclaration().isInner())) {
+            if (superKind == JvmMethodParameterKind.OUTER) {
+                assert kind == JvmMethodParameterKind.OUTER || kind == JvmMethodParameterKind.SUPER_CALL_PARAM :
+                        String.format("Non-outer parameter incorrectly mapped to outer for %s: %s vs %s",
+                                      constructorDescriptor, parameters, superParameters);
+                // Super constructor requires OUTER parameter, but our OUTER instance may be different from what is expected by the super
+                // constructor. We need to traverse our outer classes from the bottom up, to find the needed class
+                // TODO: isSuper should be "true" but this makes some tests on inner classes extending outer fail
+                // See innerExtendsOuter.kt, semantics of inner classes extending their outer should be changed to be as in Java
+                ClassDescriptor outerForSuper = (ClassDescriptor) superConstructor.getContainingDeclaration().getContainingDeclaration();
+                StackValue outer = codegen.generateThisOrOuter(outerForSuper, false);
+                outer.put(outer.type, codegen.v);
+                superIndex++;
+            }
+            else if (kind == JvmMethodParameterKind.SUPER_CALL_PARAM || kind == JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL) {
                 iv.load(offset, type);
                 superIndex++;
             }

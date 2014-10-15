@@ -6224,6 +6224,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("localClassOuterDiffersFromInnerOuter.kt")
+        public void testLocalClassOuterDiffersFromInnerOuter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/superConstructorCall/localClassOuterDiffersFromInnerOuter.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("localExtendsLocalWithClosure.kt")
         public void testLocalExtendsLocalWithClosure() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/superConstructorCall/localExtendsLocalWithClosure.kt");
@@ -6281,6 +6287,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("objectExtendsLocalWithClosure.kt")
         public void testObjectExtendsLocalWithClosure() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/superConstructorCall/objectExtendsLocalWithClosure.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("objectOuterDiffersFromInnerOuter.kt")
+        public void testObjectOuterDiffersFromInnerOuter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/superConstructorCall/objectOuterDiffersFromInnerOuter.kt");
             doTest(fileName);
         }
         
