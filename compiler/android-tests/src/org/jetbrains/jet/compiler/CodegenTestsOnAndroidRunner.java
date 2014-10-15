@@ -180,11 +180,11 @@ public class CodegenTestsOnAndroidRunner {
         downloader.downloadAll();
         downloader.unzipAll();
 
-        PermissionManager.setPermissions(pathManager);
-
         String platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea");
 
         try {
+            PermissionManager.setPermissions(pathManager);
+
             antRunner.packLibraries();
 
             emulator.createEmulator();
