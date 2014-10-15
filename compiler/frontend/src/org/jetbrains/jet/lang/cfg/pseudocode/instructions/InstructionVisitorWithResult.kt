@@ -104,10 +104,6 @@ public abstract class InstructionVisitorWithResult<R>() {
         return visitOperation(instruction)
     }
 
-    public open fun visitCompilationErrorInstruction(instruction: CompilationErrorInstruction): R {
-        return visitInstructionWithNext(instruction)
-    }
-
     public open fun visitMarkInstruction(instruction: MarkInstruction): R {
         return visitInstructionWithNext(instruction)
     }

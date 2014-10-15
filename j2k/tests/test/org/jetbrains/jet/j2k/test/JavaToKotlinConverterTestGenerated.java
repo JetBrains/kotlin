@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("j2k/tests/testData/ast")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JavaToKotlinConverterTestGenerated.Annotations.class, JavaToKotlinConverterTestGenerated.AnonymousBlock.class, JavaToKotlinConverterTestGenerated.ArrayAccessExpression.class, JavaToKotlinConverterTestGenerated.ArrayInitializerExpression.class, JavaToKotlinConverterTestGenerated.ArrayType.class, JavaToKotlinConverterTestGenerated.AssertStatement.class, JavaToKotlinConverterTestGenerated.AssignmentExpression.class, JavaToKotlinConverterTestGenerated.BinaryExpression.class, JavaToKotlinConverterTestGenerated.Blocks.class, JavaToKotlinConverterTestGenerated.BoxedType.class, JavaToKotlinConverterTestGenerated.BreakStatement.class, JavaToKotlinConverterTestGenerated.CallChainExpression.class, JavaToKotlinConverterTestGenerated.Class.class, JavaToKotlinConverterTestGenerated.ClassExpression.class, JavaToKotlinConverterTestGenerated.Comments.class, JavaToKotlinConverterTestGenerated.ConditionalExpression.class, JavaToKotlinConverterTestGenerated.Constructors.class, JavaToKotlinConverterTestGenerated.ContinueStatement.class, JavaToKotlinConverterTestGenerated.DeclarationStatement.class, JavaToKotlinConverterTestGenerated.DoWhileStatement.class, JavaToKotlinConverterTestGenerated.Enum.class, JavaToKotlinConverterTestGenerated.Equals.class, JavaToKotlinConverterTestGenerated.Field.class, JavaToKotlinConverterTestGenerated.For.class, JavaToKotlinConverterTestGenerated.ForeachStatement.class, JavaToKotlinConverterTestGenerated.Formatting.class, JavaToKotlinConverterTestGenerated.Function.class, JavaToKotlinConverterTestGenerated.Identifier.class, JavaToKotlinConverterTestGenerated.IfStatement.class, JavaToKotlinConverterTestGenerated.ImportStatement.class, JavaToKotlinConverterTestGenerated.InProjectionType.class, JavaToKotlinConverterTestGenerated.Inheritance.class, JavaToKotlinConverterTestGenerated.IsOperator.class, JavaToKotlinConverterTestGenerated.Issues.class, JavaToKotlinConverterTestGenerated.KotlinApiAccess.class, JavaToKotlinConverterTestGenerated.LabelStatement.class, JavaToKotlinConverterTestGenerated.List.class, JavaToKotlinConverterTestGenerated.LiteralExpression.class, JavaToKotlinConverterTestGenerated.LocalVariable.class, JavaToKotlinConverterTestGenerated.MethodCallExpression.class, JavaToKotlinConverterTestGenerated.Misc.class, JavaToKotlinConverterTestGenerated.NewClassExpression.class, JavaToKotlinConverterTestGenerated.Nullability.class, JavaToKotlinConverterTestGenerated.ObjectLiteral.class, JavaToKotlinConverterTestGenerated.OutProjectionType.class, JavaToKotlinConverterTestGenerated.PackageStatement.class, JavaToKotlinConverterTestGenerated.ParenthesizedExpression.class, JavaToKotlinConverterTestGenerated.PolyadicExpression.class, JavaToKotlinConverterTestGenerated.PostfixOperator.class, JavaToKotlinConverterTestGenerated.PrefixOperator.class, JavaToKotlinConverterTestGenerated.RawGenerics.class, JavaToKotlinConverterTestGenerated.ReturnStatement.class, JavaToKotlinConverterTestGenerated.Settings.class, JavaToKotlinConverterTestGenerated.StarProjectionType.class, JavaToKotlinConverterTestGenerated.StaticMembers.class, JavaToKotlinConverterTestGenerated.SuperExpression.class, JavaToKotlinConverterTestGenerated.Switch.class, JavaToKotlinConverterTestGenerated.SynchronizedStatement.class, JavaToKotlinConverterTestGenerated.ThisExpression.class, JavaToKotlinConverterTestGenerated.ThrowStatement.class, JavaToKotlinConverterTestGenerated.ToKotlinClasses.class, JavaToKotlinConverterTestGenerated.Trait.class, JavaToKotlinConverterTestGenerated.TryStatement.class, JavaToKotlinConverterTestGenerated.TryWithResource.class, JavaToKotlinConverterTestGenerated.TypeCastExpression.class, JavaToKotlinConverterTestGenerated.TypeParameters.class, JavaToKotlinConverterTestGenerated.VarArg.class, JavaToKotlinConverterTestGenerated.WhileStatement.class})
+@InnerTestClasses({JavaToKotlinConverterTestGenerated.Annotations.class, JavaToKotlinConverterTestGenerated.AnonymousBlock.class, JavaToKotlinConverterTestGenerated.ArrayAccessExpression.class, JavaToKotlinConverterTestGenerated.ArrayInitializerExpression.class, JavaToKotlinConverterTestGenerated.ArrayType.class, JavaToKotlinConverterTestGenerated.AssertStatement.class, JavaToKotlinConverterTestGenerated.AssignmentExpression.class, JavaToKotlinConverterTestGenerated.BinaryExpression.class, JavaToKotlinConverterTestGenerated.Blocks.class, JavaToKotlinConverterTestGenerated.BoxedType.class, JavaToKotlinConverterTestGenerated.BreakStatement.class, JavaToKotlinConverterTestGenerated.CallChainExpression.class, JavaToKotlinConverterTestGenerated.Class.class, JavaToKotlinConverterTestGenerated.ClassExpression.class, JavaToKotlinConverterTestGenerated.Comments.class, JavaToKotlinConverterTestGenerated.ConditionalExpression.class, JavaToKotlinConverterTestGenerated.Constructors.class, JavaToKotlinConverterTestGenerated.ContinueStatement.class, JavaToKotlinConverterTestGenerated.DeclarationStatement.class, JavaToKotlinConverterTestGenerated.DoWhileStatement.class, JavaToKotlinConverterTestGenerated.DropAccessors.class, JavaToKotlinConverterTestGenerated.Enum.class, JavaToKotlinConverterTestGenerated.Equals.class, JavaToKotlinConverterTestGenerated.Field.class, JavaToKotlinConverterTestGenerated.For.class, JavaToKotlinConverterTestGenerated.ForeachStatement.class, JavaToKotlinConverterTestGenerated.Formatting.class, JavaToKotlinConverterTestGenerated.Function.class, JavaToKotlinConverterTestGenerated.Identifier.class, JavaToKotlinConverterTestGenerated.IfStatement.class, JavaToKotlinConverterTestGenerated.ImportStatement.class, JavaToKotlinConverterTestGenerated.InProjectionType.class, JavaToKotlinConverterTestGenerated.Inheritance.class, JavaToKotlinConverterTestGenerated.IsOperator.class, JavaToKotlinConverterTestGenerated.Issues.class, JavaToKotlinConverterTestGenerated.KotlinApiAccess.class, JavaToKotlinConverterTestGenerated.LabelStatement.class, JavaToKotlinConverterTestGenerated.List.class, JavaToKotlinConverterTestGenerated.LiteralExpression.class, JavaToKotlinConverterTestGenerated.LocalVariable.class, JavaToKotlinConverterTestGenerated.MethodCallExpression.class, JavaToKotlinConverterTestGenerated.Misc.class, JavaToKotlinConverterTestGenerated.NewClassExpression.class, JavaToKotlinConverterTestGenerated.Nullability.class, JavaToKotlinConverterTestGenerated.ObjectLiteral.class, JavaToKotlinConverterTestGenerated.OutProjectionType.class, JavaToKotlinConverterTestGenerated.PackageStatement.class, JavaToKotlinConverterTestGenerated.ParenthesizedExpression.class, JavaToKotlinConverterTestGenerated.PolyadicExpression.class, JavaToKotlinConverterTestGenerated.PostfixOperator.class, JavaToKotlinConverterTestGenerated.PrefixOperator.class, JavaToKotlinConverterTestGenerated.RawGenerics.class, JavaToKotlinConverterTestGenerated.ReturnStatement.class, JavaToKotlinConverterTestGenerated.Settings.class, JavaToKotlinConverterTestGenerated.StarProjectionType.class, JavaToKotlinConverterTestGenerated.StaticMembers.class, JavaToKotlinConverterTestGenerated.SuperExpression.class, JavaToKotlinConverterTestGenerated.Switch.class, JavaToKotlinConverterTestGenerated.SynchronizedStatement.class, JavaToKotlinConverterTestGenerated.ThisExpression.class, JavaToKotlinConverterTestGenerated.ThrowStatement.class, JavaToKotlinConverterTestGenerated.ToKotlinClasses.class, JavaToKotlinConverterTestGenerated.Trait.class, JavaToKotlinConverterTestGenerated.TryStatement.class, JavaToKotlinConverterTestGenerated.TryWithResource.class, JavaToKotlinConverterTestGenerated.TypeCastExpression.class, JavaToKotlinConverterTestGenerated.TypeParameters.class, JavaToKotlinConverterTestGenerated.VarArg.class, JavaToKotlinConverterTestGenerated.WhileStatement.class})
 @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
 public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConverterTest {
     public void testAllFilesPresentInAst() throws Exception {
@@ -1313,6 +1313,88 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         
     }
     
+    @TestMetadata("j2k/tests/testData/ast/dropAccessors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    public static class DropAccessors extends AbstractJavaToKotlinConverterTest {
+        @TestMetadata("AccessInGetterWithThis.java")
+        public void testAccessInGetterWithThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/dropAccessors/AccessInGetterWithThis.java");
+            doTest(fileName);
+        }
+        
+        public void testAllFilesPresentInDropAccessors() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/ast/dropAccessors"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+        
+        @TestMetadata("CannotDropOnlySetter.java")
+        public void testCannotDropOnlySetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/dropAccessors/CannotDropOnlySetter.java");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("DataClass.java")
+        public void testDataClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/dropAccessors/DataClass.java");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("DataClassWithMutableField.java")
+        public void testDataClassWithMutableField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/dropAccessors/DataClassWithMutableField.java");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("DifferentFieldName.java")
+        public void testDifferentFieldName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/dropAccessors/DifferentFieldName.java");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("DropGetter.java")
+        public void testDropGetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/dropAccessors/DropGetter.java");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("DropGetterAndSetter.java")
+        public void testDropGetterAndSetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/dropAccessors/DropGetterAndSetter.java");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("DropGetterForMutable.java")
+        public void testDropGetterForMutable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/dropAccessors/DropGetterForMutable.java");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("FalseGetter.java")
+        public void testFalseGetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/dropAccessors/FalseGetter.java");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("FalseSetter.java")
+        public void testFalseSetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/dropAccessors/FalseSetter.java");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("FieldUsagesInFactoryMethods.java")
+        public void testFieldUsagesInFactoryMethods() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/dropAccessors/FieldUsagesInFactoryMethods.java");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("GetterAndSetterNamesDifferent.java")
+        public void testGetterAndSetterNamesDifferent() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/dropAccessors/GetterAndSetterNamesDifferent.java");
+            doTest(fileName);
+        }
+        
+    }
+    
     @TestMetadata("j2k/tests/testData/ast/enum")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
@@ -2582,6 +2664,12 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
         @TestMetadata("collectionsMethods.java")
         public void testCollectionsMethods() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/methodCallExpression/collectionsMethods.java");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("collectionsMethods2.java")
+        public void testCollectionsMethods2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/ast/methodCallExpression/collectionsMethods2.java");
             doTest(fileName);
         }
         

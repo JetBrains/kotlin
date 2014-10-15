@@ -67,6 +67,12 @@ private class DefaultAsserter() : Asserter {
         }
     }
 
+    override fun assertNotEquals(message : String, illegal: Any?, actual : Any?) {
+        if (illegal == actual) {
+            fail("$message. Illegal value: <$illegal>")
+        }
+    }
+
     public override fun assertNotNull(message : String, actual : Any?) {
         if (actual == null) {
             fail(message)

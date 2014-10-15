@@ -21,4 +21,8 @@
   <item name='com.intellij.refactoring.move.moveFilesOrDirectories.MoveFileHandler void updateMovedFile(com.intellij.psi.PsiFile) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+    <item
+        name='com.intellij.refactoring.move.moveFilesOrDirectories.MoveFileHandler$1 void retargetUsages(java.util.List&lt;com.intellij.usageView.UsageInfo&gt;, java.util.Map&lt;com.intellij.psi.PsiElement,com.intellij.psi.PsiElement&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
 </root>

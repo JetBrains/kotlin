@@ -1,0 +1,3 @@
+package
+
+internal fun main(/*0*/ j: p.J<kotlin.String>): kotlin.Unit

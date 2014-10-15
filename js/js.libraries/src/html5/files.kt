@@ -27,7 +27,7 @@ public class File() : Blob() {
 native
 public open class Blob() {
     public val size : Int = noImpl
-    public val `type` : String = noImpl
+    public val type : String = noImpl
     //Blob slice(optional long long start,
     //optional long long end,
     //optional DOMString contentType);

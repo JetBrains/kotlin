@@ -63,7 +63,7 @@ public fun jdi.Value?.asValue(): Value {
         is jdi.LongValue -> LongValue(longValue())
         is jdi.FloatValue -> FloatValue(floatValue())
         is jdi.DoubleValue -> DoubleValue(doubleValue())
-        is jdi.ObjectReference -> ObjectValue(this, `type`().asType())
+        is jdi.ObjectReference -> ObjectValue(this, type().asType())
         else -> throw JDIFailureException("Unknown value: $this")
     }
 }

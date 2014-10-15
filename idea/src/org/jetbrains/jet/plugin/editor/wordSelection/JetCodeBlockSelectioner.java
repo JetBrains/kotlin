@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.jet.lang.psi.JetBlockExpression;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetWhenExpression;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -41,12 +42,16 @@ public class JetCodeBlockSelectioner extends BasicSelectioner {
     public List<TextRange> select(PsiElement e, CharSequence editorText, int cursorOffset, Editor editor) {
         List<TextRange> result = new ArrayList<TextRange>();
 
+        result.add(e.getTextRange());
+
         ASTNode[] children = e.getNode().getChildren(null);
+        if (children.length == 0) {
+            return result;
+        }
 
         int start = findOpeningBrace(children);
         int end = findClosingBrace(children, start);
 
-        result.add(e.getTextRange());
         result.addAll(expandToWholeLine(editorText, new TextRange(start, end)));
 
         return result;

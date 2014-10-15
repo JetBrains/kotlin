@@ -457,7 +457,8 @@ public class JetControlFlowProcessor {
         ) {
             JetExpression left = JetPsiUtil.deparenthesize(lhs);
             if (left == null) {
-                builder.compilationError(lhs, "No lValue in assignment");
+                List<PseudoValue> arguments = Collections.singletonList(rhsDeferredValue.invoke());
+                builder.magic(parentExpression, parentExpression, arguments, defaultTypeMap(arguments), MagicKind.UNSUPPORTED_ELEMENT);
                 return;
             }
 
@@ -490,6 +491,10 @@ public class JetControlFlowProcessor {
 
             if (setResolvedCall == null) {
                 generateArrayAccess(lhs, null);
+
+                List<PseudoValue> arguments = Arrays.asList(getBoundOrUnreachableValue(lhs), rhsDeferredValue.invoke());
+                builder.magic(parentExpression, parentExpression, arguments, defaultTypeMap(arguments), MagicKind.UNRESOLVED_CALL);
+
                 return;
             }
 
@@ -570,8 +575,9 @@ public class JetControlFlowProcessor {
         }
 
         private void generateArrayAccess(JetArrayAccessExpression arrayAccessExpression, @Nullable ResolvedCall<?> resolvedCall) {
+            if (builder.getBoundValue(arrayAccessExpression) != null) return;
             mark(arrayAccessExpression);
-            if (!checkAndGenerateCall(arrayAccessExpression, resolvedCall)) {
+            if (!checkAndGenerateCall(resolvedCall)) {
                 generateArrayAccessWithoutCall(arrayAccessExpression);
             }
         }
@@ -1276,11 +1282,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression) {
-            mark(expression);
-            ResolvedCall<FunctionDescriptor> getMethodResolvedCall = trace.get(BindingContext.INDEXED_LVALUE_GET, expression);
-            if (!checkAndGenerateCall(expression, getMethodResolvedCall)) {
-                generateArrayAccess(expression, getMethodResolvedCall);
-            }
+            generateArrayAccess(expression, trace.get(BindingContext.INDEXED_LVALUE_GET, expression));
         }
 
         @Override
@@ -1479,14 +1481,11 @@ public class JetControlFlowProcessor {
 
         private boolean generateCall(@Nullable JetElement callElement) {
             if (callElement == null) return false;
-            return checkAndGenerateCall(callElement, getResolvedCall(callElement, trace.getBindingContext()));
+            return checkAndGenerateCall(getResolvedCall(callElement, trace.getBindingContext()));
         }
 
-        private boolean checkAndGenerateCall(@NotNull JetElement callElement, @Nullable ResolvedCall<?> resolvedCall) {
-            if (resolvedCall == null) {
-                builder.compilationError(callElement, "No resolved call");
-                return false;
-            }
+        private boolean checkAndGenerateCall(@Nullable ResolvedCall<?> resolvedCall) {
+            if (resolvedCall == null) return false;
             generateCall(resolvedCall);
             return true;
         }

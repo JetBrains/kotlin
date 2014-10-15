@@ -116,6 +116,18 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
     
+    @TestMetadata("NoAutoInsertionOfNotImported")
+    public void testNoAutoInsertionOfNotImported() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NoAutoInsertionOfNotImported/");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("NotImportedExtensionForImplicitReceiver")
+    public void testNotImportedExtensionForImplicitReceiver() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedExtensionForImplicitReceiver/");
+        doTest(fileName);
+    }
+    
     @TestMetadata("NotImportedExtensionFunction")
     public void testNotImportedExtensionFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedExtensionFunction/");

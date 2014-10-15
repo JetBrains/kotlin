@@ -18,8 +18,8 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
 
-class TypeElement(val `type`: Type) : Element() {
+class TypeElement(val type: Type) : Element() {
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(`type`)
+        builder.append(type)
     }
 }

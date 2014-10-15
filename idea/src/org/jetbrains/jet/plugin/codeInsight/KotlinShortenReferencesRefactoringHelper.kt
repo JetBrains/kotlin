@@ -29,6 +29,9 @@ import com.intellij.psi.SmartPointerManager
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetUserType
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.psi.UserDataProperty
+import org.jetbrains.jet.lang.psi.NotNullableUserDataProperty
 
 public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
     private val LOG = Logger.getInstance(javaClass<KotlinShortenReferencesRefactoringHelper>().getCanonicalName())
@@ -36,10 +39,10 @@ public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
     override fun prepareOperation(usages: Array<out UsageInfo>?): Any? {
         if (usages != null && usages.isNotEmpty()) {
             val project = usages[0].getProject()
-            val elementsToShorten = project.getElementsToShorten(false)
-            if (elementsToShorten != null && !elementsToShorten.isEmpty()) {
+            val elementsToShorten = project.elementsToShorten
+            if (project.ensureElementsToShortenIsEmptyBeforeRefactoring && elementsToShorten != null && !elementsToShorten.isEmpty()) {
                 LOG.warn("Waiting set for reference shortening is not empty")
-                project.clearElementsToShorten()
+                project.elementsToShorten = null
             }
         }
         return null
@@ -47,32 +50,36 @@ public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
 
     override fun performOperation(project: Project, operationData: Any?) {
         ApplicationManager.getApplication()!!.runWriteAction {
-            project.getElementsToShorten(false)?.let { bindRequests ->
-                project.clearElementsToShorten()
+            project.elementsToShorten?.let { bindRequests ->
+                project.elementsToShorten = null
                 ShortenReferences.process(bindRequests.map() { it.getElement() }.filterNotNull())
             }
         }
     }
 }
 
-private val ELEMENTS_TO_SHORTEN_KEY = Key.create<MutableSet<SmartPsiElementPointer<JetElement>>>("ELEMENTS_TO_SHORTEN_KEY")
+private var Project.elementsToShorten: MutableSet<SmartPsiElementPointer<JetElement>>?
+        by UserDataProperty(Key.create("ELEMENTS_TO_SHORTEN_KEY"))
 
-private fun Project.getElementsToShorten(createIfNeeded: Boolean): MutableSet<SmartPsiElementPointer<JetElement>>? {
-    var elementsToShorten = getUserData(ELEMENTS_TO_SHORTEN_KEY)
-    if (createIfNeeded && elementsToShorten == null) {
-        elementsToShorten = HashSet()
-        putUserData(ELEMENTS_TO_SHORTEN_KEY, elementsToShorten)
+/*
+ * When one refactoring invokes another this value must be set to false so that shortening wait-set is not cleared
+ * and previously collected references are processed correctly. Afterwards it must be reset to original value
+ */
+public var Project.ensureElementsToShortenIsEmptyBeforeRefactoring: Boolean
+        by NotNullableUserDataProperty(Key.create("ENSURE_ELEMENTS_TO_SHORTEN_IS_EMPTY"), true)
+
+private fun Project.getOrCreateElementsToShorten(): MutableSet<SmartPsiElementPointer<JetElement>> {
+        var elements = elementsToShorten
+        if (elements == null) {
+            elements = HashSet()
+            elementsToShorten = elements
+        }
+
+        return elements!!
     }
-
-    return elementsToShorten
-}
-
-private fun Project.clearElementsToShorten() {
-    putUserData(ELEMENTS_TO_SHORTEN_KEY, null)
-}
 
 public fun JetElement.addToShorteningWaitSet() {
     assert (ApplicationManager.getApplication()!!.isWriteAccessAllowed(), "Write access needed")
     val project = getProject()
-    project.getElementsToShorten(true)!!.add(SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this))
+    project.getOrCreateElementsToShorten().add(SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this))
 }

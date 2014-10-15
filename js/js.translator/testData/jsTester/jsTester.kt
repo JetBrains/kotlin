@@ -13,6 +13,9 @@ public class JsTestsAsserter() : Asserter {
     public override fun assertEquals(message: String, expected: Any?, actual: Any?) {
         assert(actual == expected, "$message. Expected <$expected> actual <$actual>")
     }
+    public override fun assertNotEquals(message: String, illegal: Any?, actual: Any?) {
+        assert(illegal != actual, "$message. Illegal value: <$illegal>")
+    }
     public override fun assertNotNull(message: String, actual: Any?) {
         assert(actual != null, message)
     }

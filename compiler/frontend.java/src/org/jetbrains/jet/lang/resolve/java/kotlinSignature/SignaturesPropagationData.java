@@ -58,10 +58,12 @@ public class SignaturesPropagationData {
             KotlinToJvmSignatureMapper.class.getClassLoader()
     ).iterator().next();
 
+    private final JavaMethodDescriptor autoMethodDescriptor;
+
     private final List<TypeParameterDescriptor> modifiedTypeParameters;
     private final ValueParameters modifiedValueParameters;
-    private final JetType modifiedReturnType;
 
+    private final JetType modifiedReturnType;
     private final List<String> signatureErrors = Lists.newArrayList();
     private final List<FunctionDescriptor> superFunctions;
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> autoTypeParameterToModified;
@@ -77,7 +79,7 @@ public class SignaturesPropagationData {
     ) {
         this.containingClass = containingClass;
 
-        JavaMethodDescriptor autoMethodDescriptor =
+        autoMethodDescriptor =
                 createAutoMethodDescriptor(containingClass, method, autoReturnType, receiverType, autoValueParameters, autoTypeParameters);
 
         superFunctions = getSuperFunctionsForMethod(method, autoMethodDescriptor, containingClass);
@@ -441,7 +443,8 @@ public class SignaturesPropagationData {
 
         if (!(classifier instanceof ClassDescriptor)) {
             assert autoArguments.isEmpty() :
-                    "Unexpected type arguments when type constructor is not ClassDescriptor, type = " + autoType;
+                    "Unexpected type arguments when type constructor is not ClassDescriptor, type = " + autoType +
+                    ", classifier = " + classifier + ", classifier class = " + classifier.getClass();
             return autoArguments;
         }
 
@@ -625,7 +628,7 @@ public class SignaturesPropagationData {
     ) {
         ClassifierDescriptor classifier = autoType.getConstructor().getDeclarationDescriptor();
         if (!(classifier instanceof ClassDescriptor)) {
-            assert classifier != null : "no declaration descriptor for type " + autoType;
+            assert classifier != null : "no declaration descriptor for type " + autoType + ", auto method descriptor: " + autoMethodDescriptor;
 
             if (classifier instanceof TypeParameterDescriptor && autoTypeParameterToModified.containsKey(classifier)) {
                 return autoTypeParameterToModified.get(classifier);

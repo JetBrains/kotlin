@@ -10,7 +10,6 @@ L0:
     w(a|<v0>)
   2 mark({ a.foo })
     mark(a.foo)
-    error(foo, No resolved call)
     r(a) -> <v1>
     magic[UNRESOLVED_CALL](foo|<v1>) -> <v2>
 L1:

@@ -17,6 +17,7 @@ class F {
 
     fun f2() {
     }
+
     var i: Int? = 0
 
     fun f3() {

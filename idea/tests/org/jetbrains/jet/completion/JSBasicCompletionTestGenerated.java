@@ -234,6 +234,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
         
+        @TestMetadata("ImportedEnumMembers.kt")
+        public void testImportedEnumMembers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImportedEnumMembers.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("InCallExpression.kt")
         public void testInCallExpression() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InCallExpression.kt");
@@ -417,6 +423,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("NestedClassNameForExtension2.kt")
         public void testNestedClassNameForExtension2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NestedClassNameForExtension2.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("NoAutoInsertionOfNotImported.kt")
+        public void testNoAutoInsertionOfNotImported() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoAutoInsertionOfNotImported.kt");
             doTest(fileName);
         }
         

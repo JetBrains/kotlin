@@ -141,10 +141,10 @@ public class QuickFixRegistrar {
         QuickFixes.actions.put(VAL_REASSIGNMENT, changeVariableMutabilityFix);
         QuickFixes.actions.put(VAR_OVERRIDDEN_BY_VAL, changeVariableMutabilityFix);
 
-        RemoveValVarFromParametersFix removeValVarFromParametersFix = new RemoveValVarFromParametersFix();
-        QuickFixes.actions.put(VAL_OR_VAR_ON_FUN_PARAMETER, removeValVarFromParametersFix);
-        QuickFixes.actions.put(VAL_OR_VAR_ON_LOOP_PARAMETER, removeValVarFromParametersFix);
-        QuickFixes.actions.put(VAL_OR_VAR_ON_CATCH_PARAMETER, removeValVarFromParametersFix);
+        JetSingleIntentionActionFactory removeValVarFromParameterFixFactory = RemoveValVarFromParameterFix.createFactory();
+        QuickFixes.factories.put(VAL_OR_VAR_ON_FUN_PARAMETER, removeValVarFromParameterFixFactory);
+        QuickFixes.factories.put(VAL_OR_VAR_ON_LOOP_PARAMETER, removeValVarFromParameterFixFactory);
+        QuickFixes.factories.put(VAL_OR_VAR_ON_CATCH_PARAMETER, removeValVarFromParameterFixFactory);
 
         QuickFixes.factories.put(VIRTUAL_MEMBER_HIDDEN, AddOverrideToEqualsHashCodeToStringFix.createFactory());
 
@@ -238,10 +238,13 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateFunctionOrPropertyFromCallActionFactory.INSTANCE$);
         QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateFunctionOrPropertyFromCallActionFactory.INSTANCE$);
         QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateFunctionOrPropertyFromCallActionFactory.INSTANCE$);
+        QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateFunctionOrPropertyFromCallActionFactory.INSTANCE$);
 
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateLocalVariableActionFactory.INSTANCE$);
+        QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateLocalVariableActionFactory.INSTANCE$);
 
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateParameterActionFactory.INSTANCE$);
+        QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateParameterActionFactory.INSTANCE$);
 
         QuickFixes.factories.put(FUNCTION_EXPECTED, CreateInvokeFunctionActionFactory.INSTANCE$);
 

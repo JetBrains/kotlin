@@ -4,6 +4,7 @@ class Foo<T> {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
+
 fun foo() {
     for (i in Foo<Int>()) {
         bar(i)

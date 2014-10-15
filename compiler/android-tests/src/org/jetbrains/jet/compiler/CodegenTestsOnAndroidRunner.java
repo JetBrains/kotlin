@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.compiler;
 
+import com.intellij.util.PlatformUtils;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
@@ -181,9 +182,11 @@ public class CodegenTestsOnAndroidRunner {
 
         PermissionManager.setPermissions(pathManager);
 
-        antRunner.packLibraries();
+        String platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea");
 
         try {
+            antRunner.packLibraries();
+
             emulator.createEmulator();
             emulator.startEmulator();
 
@@ -207,6 +210,12 @@ public class CodegenTestsOnAndroidRunner {
             throw e;
         }
         finally {
+            if (platformPrefixProperty != null) {
+                System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, platformPrefixProperty);
+            }
+            else {
+                System.clearProperty(PlatformUtils.PLATFORM_PREFIX_KEY);
+            }
             emulator.finishEmulatorProcesses();
         }
     }

@@ -34,8 +34,9 @@ import org.jetbrains.annotations.TestOnly
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import java.util.ArrayList
 import com.intellij.util.Function
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.lang.resolve.BindingContext
 
 object SuperDeclarationMarkerTooltip: Function<JetDeclaration, String> {
     override fun `fun`(jetDeclaration: JetDeclaration?): String? {
@@ -111,7 +112,8 @@ public data class ResolveWithParentsResult(
         val overriddenDescriptors: Collection<CallableMemberDescriptor>)
 
 public fun resolveDeclarationWithParents(element: JetDeclaration): ResolveWithParentsResult {
-    val descriptor = element.getLazyResolveSession().resolveToDescriptor(element)
+    val bindingContext = AnalyzerFacadeWithCache.getContextForElement(element)
+    val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
 
     if (descriptor !is CallableMemberDescriptor) return ResolveWithParentsResult(null, listOf())
 

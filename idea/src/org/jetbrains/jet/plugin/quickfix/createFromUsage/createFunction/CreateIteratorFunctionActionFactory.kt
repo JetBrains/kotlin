@@ -25,7 +25,7 @@ object CreateIteratorFunctionActionFactory : JetSingleIntentionActionFactory() {
         val returnJetType = KotlinBuiltIns.getInstance().getIterator().getDefaultType()
 
         val context = file.getBindingContext()
-        val returnJetTypeParameterTypes = variableExpr.guessTypes(context)
+        val returnJetTypeParameterTypes = variableExpr.guessTypes(context, null)
         if (returnJetTypeParameterTypes.size != 1) return null
 
         val returnJetTypeParameterType = TypeProjectionImpl(returnJetTypeParameterTypes[0])

@@ -35,6 +35,8 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 
 public class KotlinIndicesHelper(private val project: Project) {
     public fun getTopLevelObjects(nameFilter: (String) -> Boolean, resolveSession: ResolveSessionForBodies, scope: GlobalSearchScope): Collection<ClassDescriptor> {
@@ -131,45 +133,60 @@ public class KotlinIndicesHelper(private val project: Project) {
                                      expression: JetSimpleNameExpression,
                                      resolveSession: ResolveSessionForBodies,
                                      scope: GlobalSearchScope): Collection<CallableDescriptor> {
-        val context = resolveSession.resolveToElement(expression)
-        val receiverExpression = expression.getReceiverExpression() ?: return listOf()
-        val isInfixCall = expression.getParent() is JetBinaryExpression
-        val expressionType = context.get<JetExpression, JetType>(BindingContext.EXPRESSION_TYPE, receiverExpression)
-        val jetScope = context.get(BindingContext.RESOLUTION_SCOPE, receiverExpression)
+        val bindingContext = resolveSession.resolveToElement(expression)
+        val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
 
-        if (expressionType == null || jetScope == null || expressionType.isError()) {
-            return listOf()
-        }
-
-        val sourceNames = JetTopLevelFunctionsFqnNameIndex.getInstance().getAllKeys(project).stream() + JetTopLevelPropertiesFqnNameIndex.getInstance().getAllKeys(project).stream()
+        val sourceNames = JetTopLevelFunctionsFqnNameIndex.getInstance().getAllKeys(project).stream() +
+                          JetTopLevelPropertiesFqnNameIndex.getInstance().getAllKeys(project).stream()
         val allFqNames = sourceNames.map { FqName(it) } + JetFromJavaDescriptorHelper.getTopLevelCallableFqNames(project, scope, true).stream()
+        val matchingFqNames = allFqNames.filter { nameFilter(it.shortName().asString()) }.toSet()
 
-        // Iterate through the function with attempt to resolve found functions
-        return allFqNames
-                .filter { nameFilter(it.shortName().asString()) }
-                .toSet()
-                .flatMap { findSuitableExtensions(it, receiverExpression, expressionType, isInfixCall, jetScope, resolveSession.getModuleDescriptor(), context) }
+        val receiverExpression = expression.getReceiverExpression()
+        if (receiverExpression != null) {
+            val isInfixCall = expression.getParent() is JetBinaryExpression
+
+            val expressionType = bindingContext.get<JetExpression, JetType>(BindingContext.EXPRESSION_TYPE, receiverExpression)
+            if (expressionType == null || expressionType.isError()) return listOf()
+
+            val resolutionScope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, receiverExpression) ?: return listOf()
+
+            val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
+
+            return matchingFqNames.flatMap {
+                findSuitableExtensions(it, receiverValue, dataFlowInfo, isInfixCall, resolutionScope, resolveSession.getModuleDescriptor(), bindingContext)
+            }
+        }
+        else {
+            val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
+
+            val result = HashSet<CallableDescriptor>()
+            for (receiver in resolutionScope.getImplicitReceiversHierarchy()) {
+                matchingFqNames.flatMapTo(result) {
+                    findSuitableExtensions(it, receiver.getValue(), dataFlowInfo, false, resolutionScope, resolveSession.getModuleDescriptor(), bindingContext)
+                }
+            }
+            return result
+        }
     }
+
 
     /**
      * Check that function or property with the given qualified name can be resolved in given scope and called on given receiver
      */
     private fun findSuitableExtensions(callableFQN: FqName,
-                                    receiverExpression: JetExpression,
-                                    receiverType: JetType,
-                                    isInfixCall: Boolean,
-                                    scope: JetScope,
-                                    module: ModuleDescriptor,
-                                    bindingContext: BindingContext): List<CallableDescriptor> {
-        val importDirective = JetPsiFactory(receiverExpression).createImportDirective(callableFQN.asString())
+                                       receiverValue: ReceiverValue,
+                                       dataFlowInfo: DataFlowInfo,
+                                       isInfixCall: Boolean,
+                                       scope: JetScope,
+                                       module: ModuleDescriptor,
+                                       bindingContext: BindingContext): List<CallableDescriptor> {
+        val importDirective = JetPsiFactory(project).createImportDirective(callableFQN.asString())
         val declarationDescriptors = analyzeImportReference(importDirective, scope, BindingTraceContext(), module)
-
-        val receiverValue = ExpressionReceiver(receiverExpression, receiverType)
-        val dataFlowInfo = bindingContext.getDataFlowInfo(receiverExpression)
 
         return declarationDescriptors
                 .filterIsInstance(javaClass<CallableDescriptor>())
-                .filter { it.getExtensionReceiverParameter() != null && ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, it, isInfixCall, bindingContext, dataFlowInfo) }
+                .filter { it.getExtensionReceiverParameter() != null &&
+                          ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, it, isInfixCall, bindingContext, dataFlowInfo) }
     }
 
     public fun getClassDescriptors(nameFilter: (String) -> Boolean, analyzer: KotlinCodeAnalyzer, scope: GlobalSearchScope): Collection<ClassDescriptor> {

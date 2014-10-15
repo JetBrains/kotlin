@@ -105,8 +105,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
 
     Test fun filter() {
         val foo = data.filter { it.startsWith("f") }
-        // TODO uncomment this when KT-2468 will be fixed
-        //expect(true) { foo is List<String> }
+        expect(true) { foo is List<String> }
         expect(true) { foo.all { it.startsWith("f") } }
         expect(1) { foo.size }
         assertEquals(listOf("foo"), foo)
@@ -114,8 +113,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
 
     Test fun filterNot() {
         val notFoo = data.filterNot { it.startsWith("f") }
-        // TODO uncomment this when KT-2468 will be fixed
-        //expect(true) { notFoo is List<String> }
+        expect(true) { notFoo is List<String> }
         expect(true) { notFoo.none { it.startsWith("f") } }
         expect(1) { notFoo.size }
         assertEquals(listOf("bar"), notFoo)
@@ -202,13 +200,13 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
 
     Test
     fun fold() {
-
+        expect(231) { data.fold(1, {a, b -> a + if (b == "foo") 200 else 30 }) }
     }
 
     Test
     fun reduce() {
-
+        val reduced = data.reduce {a, b -> a + b }
+        assertEquals(6, reduced.size)
+        assertTrue(reduced == "foobar" || reduced == "barfoo")
     }
-
-
 }

@@ -25,6 +25,7 @@ class F {
 
         fun f1() {
         }
+
         var i: Int? = 0
 
         //c5

@@ -34,6 +34,12 @@ Least Upper Bound (aka "common supertype"):
 
 * `lub[(A..B), (C..D)] = (lub[A, C], lub[B, D])
 
+Type equivalence (aka `JetTypeChecker.DEFAULT.equalTypes()`):
+
+`T1 ~~ T2 <=> T1 <: T2 && T2 <: T1`
+
+ NOTE: This relation is NOT transitive: `T?` ~~ (T..T?)` and `(T..T?) ~~ T`, but `T? !~ T`
+
 
 ## Loading Java Types
 

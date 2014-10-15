@@ -1176,6 +1176,7 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         
         @TestMetadata("compiler/testData/psi/recovery")
         @TestDataPath("$PROJECT_ROOT")
+        @InnerTestClasses({Recovery.Objects.class})
         @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
         public static class Recovery extends AbstractJetParsingTest {
             @TestMetadata("AbsentLeftHandSide.kt")
@@ -1366,6 +1367,139 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             public void testWithWithoutInAndMultideclaration() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/WithWithoutInAndMultideclaration.kt");
                 doParsingTest(fileName);
+            }
+            
+            @TestMetadata("compiler/testData/psi/recovery/objects")
+            @TestDataPath("$PROJECT_ROOT")
+            @InnerTestClasses({Objects.Declarations.class, Objects.Expressions.class})
+            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+            public static class Objects extends AbstractJetParsingTest {
+                public void testAllFilesPresentInObjects() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/recovery/objects"), Pattern.compile("^(.*)\\.kts?$"), true);
+                }
+                
+                @TestMetadata("compiler/testData/psi/recovery/objects/declarations")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+                public static class Declarations extends AbstractJetParsingTest {
+                    public void testAllFilesPresentInDeclarations() throws Exception {
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/recovery/objects/declarations"), Pattern.compile("^(.*)\\.kts?$"), true);
+                    }
+                    
+                    @TestMetadata("ConstructorModifiers.kt")
+                    public void testConstructorModifiers() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/declarations/ConstructorModifiers.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("EmptyParentheses.kt")
+                    public void testEmptyParentheses() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/declarations/EmptyParentheses.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("Everything.kt")
+                    public void testEverything() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/declarations/Everything.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("FollowedByModifiers.kt")
+                    public void testFollowedByModifiers() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/declarations/FollowedByModifiers.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("ParametersInParentheses.kt")
+                    public void testParametersInParentheses() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/declarations/ParametersInParentheses.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("TypeParametersAndParentheses.kt")
+                    public void testTypeParametersAndParentheses() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/declarations/TypeParametersAndParentheses.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("TypeParameterss.kt")
+                    public void testTypeParameterss() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/declarations/TypeParameterss.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("Where.kt")
+                    public void testWhere() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/declarations/Where.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                }
+                
+                @TestMetadata("compiler/testData/psi/recovery/objects/expressions")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+                public static class Expressions extends AbstractJetParsingTest {
+                    public void testAllFilesPresentInExpressions() throws Exception {
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/recovery/objects/expressions"), Pattern.compile("^(.*)\\.kts?$"), true);
+                    }
+                    
+                    @TestMetadata("ConstructorModifiers.kt")
+                    public void testConstructorModifiers() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/expressions/ConstructorModifiers.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("ConstructorModifiersAndName.kt")
+                    public void testConstructorModifiersAndName() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/expressions/ConstructorModifiersAndName.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("EmptyParentheses.kt")
+                    public void testEmptyParentheses() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/expressions/EmptyParentheses.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("Everything.kt")
+                    public void testEverything() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/expressions/Everything.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("InFunction.kt")
+                    public void testInFunction() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/expressions/InFunction.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("ParametersInParentheses.kt")
+                    public void testParametersInParentheses() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/expressions/ParametersInParentheses.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("TypeParametersAndParentheses.kt")
+                    public void testTypeParametersAndParentheses() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/expressions/TypeParametersAndParentheses.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("TypeParameterss.kt")
+                    public void testTypeParameterss() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/expressions/TypeParameterss.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                    @TestMetadata("Where.kt")
+                    public void testWhere() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/objects/expressions/Where.kt");
+                        doParsingTest(fileName);
+                    }
+                    
+                }
+                
             }
             
         }

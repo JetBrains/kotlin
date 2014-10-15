@@ -35,6 +35,11 @@ public fun assertEquals(expected: Any?, actual: Any?, message: String = "") {
     asserter.assertEquals(message, expected, actual)
 }
 
+/** Asserts that the actual value is not equal to the illegal value, with an optional message */
+public fun assertNotEquals(illegal: Any?, actual: Any?, message: String = "") {
+    asserter.assertNotEquals(message, illegal, actual)
+}
+
 /** Asserts that the expression is not null, with an optional message */
 public fun <T : Any> assertNotNull(actual: T?, message: String = ""): T {
     asserter.assertNotNull(message, actual)
@@ -90,6 +95,8 @@ public trait Asserter {
     public fun assertTrue(message: String, actual: Boolean): Unit
 
     public fun assertEquals(message: String, expected: Any?, actual: Any?): Unit
+
+    public fun assertNotEquals(message: String, illegal: Any?, actual: Any?): Unit
 
     public fun assertNotNull(message: String, actual: Any?): Unit
 

@@ -115,6 +115,7 @@ public class ExpectedCompletionUtils {
 
     private static final String INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:";
     private static final String WITH_ORDER_PREFIX = "WITH_ORDER:";
+    private static final String AUTOCOMPLETE_SETTING_PREFIX = "AUTOCOMPLETE_SETTING:";
 
     public static final List<String> KNOWN_PREFIXES = ImmutableList.of(
             EXIST_LINE_PREFIX,
@@ -128,6 +129,7 @@ public class ExpectedCompletionUtils {
             NUMBER_JAVA_LINE_PREFIX,
             INVOCATION_COUNT_PREFIX,
             WITH_ORDER_PREFIX,
+            AUTOCOMPLETE_SETTING_PREFIX,
             AstAccessControl.INSTANCE$.getALLOW_AST_ACCESS_DIRECTIVE());
 
     @NotNull
@@ -202,6 +204,11 @@ public class ExpectedCompletionUtils {
     @Nullable
     public static Integer getInvocationCount(String fileText) {
         return InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX);
+    }
+
+    @Nullable
+    public static Boolean getAutocompleteSetting(String fileText) {
+        return InTextDirectivesUtils.getPrefixedBoolean(fileText, AUTOCOMPLETE_SETTING_PREFIX);
     }
 
     public static boolean isWithOrder(String fileText) {

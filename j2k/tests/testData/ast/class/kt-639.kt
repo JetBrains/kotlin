@@ -5,6 +5,7 @@ import java.util.HashMap
 fun Test(): Test {
     return Test()
 }
+
 fun Test(s: String): Test {
     return Test()
 }

@@ -1,0 +1,17 @@
+== A ==
+class A
+---------------------
+=====================
+== foo ==
+fun foo(a: A) {
+    a[0] += 1
+}
+---------------------
+                <v0>: A   NEW: magic[FAKE_INITIALIZER](a: A) -> <v0>
+a               <v1>: *   NEW: r(a) -> <v1>
+0               <v2>: *   NEW: r(0) -> <v2>
+a[0]            <v3>: *   NEW: magic[UNRESOLVED_CALL](a[0]|<v1>, <v2>) -> <v3>
+1               <v4>: *   NEW: r(1) -> <v4>
+a[0] += 1       <v5>: *   NEW: magic[UNRESOLVED_CALL](a[0] += 1|<v3>, <v4>) -> <v5>
+{ a[0] += 1 }   <v5>: *   COPY
+=====================

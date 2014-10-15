@@ -7,5 +7,4 @@ fun test() {
 // ORDER: if
 // ORDER: ifMore
 // ORDER: isFirst
-// ORDER: ifn
 // SELECTED: 0

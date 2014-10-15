@@ -86,7 +86,7 @@ public class TestlibTest extends UsefulTestCase {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, JetTestUtils.getAnnotationsJar());
 
-        junitJar = new File("libraries/lib/junit-4.9.jar");
+        junitJar = new File("libraries/lib/junit-4.11.jar");
         assertTrue(junitJar.exists());
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, junitJar);
 

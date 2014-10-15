@@ -94,7 +94,7 @@ object NamedParametersCompletion {
                             .withIcon(JetIcons.PARAMETER)
                             .withInsertHandler(NamedParameterInsertHandler(name))
                             .assignPriority(ItemPriority.NAMED_PARAMETER)
-                    lookupElement.putUserData(JetCompletionCharFilter.ACCEPT_EQ, true);
+                    lookupElement.putUserData(KotlinCompletionCharFilter.ACCEPT_EQ, true);
 
                     collector.addElement(lookupElement)
                 }

@@ -60,8 +60,8 @@ import static org.jetbrains.k2js.facade.FacadeUtils.parseString;
  */
 public final class K2JSTranslator {
 
-    public static final String FLUSH_SYSTEM_OUT = "Kotlin.System.flush();\n";
-    public static final String GET_SYSTEM_OUT = "Kotlin.System.output();\n";
+    public static final String FLUSH_SYSTEM_OUT = "Kotlin.out.flush();\n";
+    public static final String GET_SYSTEM_OUT = "Kotlin.out.buffer;\n";
 
     public static OutputFileCollection translateWithMainCallParameters(
             @NotNull MainCallParameters mainCall,

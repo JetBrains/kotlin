@@ -39,6 +39,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
     
+    @TestMetadata("ClassNameConflict.kt")
+    public void testClassNameConflict() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/ClassNameConflict.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("classObject.kt")
     public void testClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/classObject.kt");

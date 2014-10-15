@@ -7,15 +7,19 @@ class C : A {
     override fun bar(): String {
         <selection><caret>return super<A>.bar()</selection>
     }
+
     override fun equals(other: Any?): Boolean {
         return super<A>.equals(other)
     }
+
     override fun foo(value: String): Int {
         return super<A>.foo(value)
     }
+
     override fun hashCode(): Int {
         return super<A>.hashCode()
     }
+
     override fun toString(): String {
         return super<A>.toString()
     }

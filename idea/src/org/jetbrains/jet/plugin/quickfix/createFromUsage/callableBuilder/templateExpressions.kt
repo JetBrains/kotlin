@@ -15,6 +15,8 @@ import java.util.HashSet
 import org.jetbrains.jet.plugin.refactoring.CollectingValidator
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.psi.JetCallableDeclaration
+import java.util.Collections
 
 /**
  * Special <code>Expression</code> for parameter names based on its type.
@@ -90,9 +92,6 @@ private class TypeExpression(public val typeCandidates: List<TypeCandidate>) : E
     override fun calculateQuickResult(context: ExpressionContext?) = calculateResult(context)
 
     override fun calculateLookupItems(context: ExpressionContext?) = cachedLookupElements
-
-    public fun getTypeFromSelection(selection: String): JetType? =
-            typeCandidates.firstOrNull { it.renderedType == selection }?.theType
 }
 
 /**
@@ -110,8 +109,8 @@ private class TypeParameterListExpression(private val typeParameterNamesFromRece
         val editor = context.getEditor()!!
         val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as JetFile
         val elementAt = file.findElementAt(offset)
-        val func = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetFunction>()) ?: return TextResult("")
-        val parameters = func.getValueParameters()
+        val callable = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetCallableDeclaration>()) ?: return TextResult("")
+        val parameters = callable.getValueParameterList()?.getParameters() ?: Collections.emptyList<JetParameter>()
 
         val typeParameterNames = LinkedHashSet<String>()
         typeParameterNames.addAll(typeParameterNamesFromReceiverType)
@@ -124,7 +123,7 @@ private class TypeParameterListExpression(private val typeParameterNamesFromRece
                 }
             }
         }
-        val returnTypeRef = func.getTypeReference()
+        val returnTypeRef = callable.getTypeReference()
         if (returnTypeRef != null) {
             val typeParameterNamesFromReturnType = parameterTypeToTypeParameterNamesMap[returnTypeRef.getText()]
             if (typeParameterNamesFromReturnType != null) {

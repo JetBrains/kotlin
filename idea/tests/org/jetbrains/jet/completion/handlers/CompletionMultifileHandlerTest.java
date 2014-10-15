@@ -67,6 +67,10 @@ public class CompletionMultifileHandlerTest extends KotlinCompletionTestCase {
 
         configureByFiles(null, fileName + "-1.kt", fileName + "-2.kt");
         complete(2);
+        if (myItems != null) {
+            assertTrue("Multiple items in completion", myItems.length == 1);
+            selectItem(myItems[0]);
+        }
         checkResultByFile(fileName + ".kt.after");
     }
 

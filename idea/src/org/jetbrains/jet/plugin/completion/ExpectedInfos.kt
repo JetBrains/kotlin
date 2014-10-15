@@ -74,10 +74,10 @@ enum class Tail {
     ELSE
 }
 
-open data class ExpectedInfo(val `type`: JetType, val name: String?, val tail: Tail?)
+open data class ExpectedInfo(val type: JetType, val name: String?, val tail: Tail?)
 
-class PositionalArgumentExpectedInfo(`type`: JetType, name: String?, tail: Tail?, val function: FunctionDescriptor, val argumentIndex: Int)
-  : ExpectedInfo(`type`, name, tail) {
+class PositionalArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, val function: FunctionDescriptor, val argumentIndex: Int)
+  : ExpectedInfo(type, name, tail) {
 
     override fun equals(other: Any?)
             = other is PositionalArgumentExpectedInfo && super.equals(other) && function == other.function && argumentIndex == other.argumentIndex
@@ -211,13 +211,13 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: Reso
         return when (expressionWithType) {
             ifExpression.getCondition() -> listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null, Tail.RPARENTH))
 
-            ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.`type`, it.name, Tail.ELSE) }
+            ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.type, it.name, Tail.ELSE) }
 
             ifExpression.getElse() -> {
                 val ifExpectedInfo = calculate(ifExpression)
                 val thenType = bindingContext[BindingContext.EXPRESSION_TYPE, ifExpression.getThen()]
                 if (thenType != null)
-                    ifExpectedInfo?.filter { it.`type`.isSubtypeOf(thenType) }
+                    ifExpectedInfo?.filter { it.type.isSubtypeOf(thenType) }
                 else
                     ifExpectedInfo
             }
@@ -237,7 +237,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: Reso
                 val expectedInfos = calculate(binaryExpression)
                 if (expectedInfos != null) {
                     return if (leftTypeNotNullable != null)
-                        expectedInfos.filter { leftTypeNotNullable.isSubtypeOf(it.`type`) }
+                        expectedInfos.filter { leftTypeNotNullable.isSubtypeOf(it.type) }
                     else
                         expectedInfos
                 }
@@ -252,7 +252,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: Reso
     private fun calculateForBlockExpression(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val block = expressionWithType.getParent() as? JetBlockExpression ?: return null
         if (expressionWithType != block.getStatements().last()) return null
-        return calculate(block)?.map { ExpectedInfo(it.`type`, it.name, null) }
+        return calculate(block)?.map { ExpectedInfo(it.type, it.name, null) }
     }
 
     private fun calculateForWhenEntryValue(expressionWithType: JetExpression): Collection<ExpectedInfo>? {

@@ -87,6 +87,10 @@ public final class ClassInheritanceTest extends SingleFileTranslationTest {
     public void testWithInitializeMethod() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testInheritFromCharIterator() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
 
 

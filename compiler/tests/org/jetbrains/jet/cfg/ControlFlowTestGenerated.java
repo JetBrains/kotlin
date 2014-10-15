@@ -65,6 +65,12 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             doTest(fileName);
         }
         
+        @TestMetadata("arrayIncUnresolved.kt")
+        public void testArrayIncUnresolved() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/arrayIncUnresolved.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("ArrayOfFunctions.kt")
         public void testArrayOfFunctions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/ArrayOfFunctions.kt");
@@ -80,6 +86,18 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         @TestMetadata("arraySetPlusAssign.kt")
         public void testArraySetPlusAssign() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/arraySetPlusAssign.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("arraySetPlusAssignUnresolved.kt")
+        public void testArraySetPlusAssignUnresolved() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/arraySetPlusAssignUnresolved.kt");
+            doTest(fileName);
+        }
+        
+        @TestMetadata("arraySetUnresolved.kt")
+        public void testArraySetUnresolved() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/arrays/arraySetUnresolved.kt");
             doTest(fileName);
         }
         

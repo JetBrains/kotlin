@@ -39,7 +39,7 @@ import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 
 class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
-        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.`type`.makeNotNullable() }
+        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.type.makeNotNullable() }
         for ((jetType, infos) in expectedInfosGrouped) {
             val tail = mergeTails(infos.map { it.tail })
             addToCollection(collection, jetType, tail)
@@ -96,7 +96,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
                     (if (visibleConstructors.size == 0)
                         JetFunctionInsertHandler.NO_PARAMETERS_HANDLER
                     else if (visibleConstructors.size == 1)
-                        DescriptorLookupConverter.getDefaultInsertHandler(visibleConstructors.single())
+                        KotlinLookupElementFactory.getDefaultInsertHandler(visibleConstructors.single())
                     else
                         JetFunctionInsertHandler.WITH_PARAMETERS_HANDLER) as JetFunctionInsertHandler
             insertHandler = object : InsertHandler<LookupElement> {
@@ -113,7 +113,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
                 lookupElement = lookupElement.keepOldArgumentListOnTab()
             }
             if (baseInsertHandler.lambdaInfo != null) {
-                lookupElement.putUserData(JetCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
+                lookupElement.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
             }
         }
 

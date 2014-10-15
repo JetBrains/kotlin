@@ -376,7 +376,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         if (declType == null) {
-            errorAndAdvance("Expecting package directive or top level declaration");
+            errorAndAdvance("Expecting a top level declaration");
             decl.drop();
         }
         else {
@@ -555,21 +555,45 @@ public class JetParsing extends AbstractJetParsing {
      *       typeConstraints
      *       (classBody? | enumClassBody)
      *   ;
+     *
+     * object
+     *   : "object" SimpleName? ":" delegationSpecifier{","}? classBody?
+     *   ;
      */
-    IElementType parseClass(boolean enumClass) {
-        assert _atSet(CLASS_KEYWORD, TRAIT_KEYWORD);
-        advance(); // CLASS_KEYWORD or TRAIT_KEYWORD
+    IElementType parseClassOrObject(final boolean object, boolean named, boolean optionalBody, boolean enumClass) {
+        if (object) {
+            assert _at(OBJECT_KEYWORD);
+        }
+        else {
+            assert _atSet(CLASS_KEYWORD, TRAIT_KEYWORD);
+        }
+        advance(); // CLASS_KEYWORD, TRAIT_KEYWORD or OBJECT_KEYWORD
 
-        expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
+        if (named) {
+            OptionalMarker marker = new OptionalMarker(object);
+            expect(IDENTIFIER, "Name expected", CLASS_NAME_RECOVERY_SET);
+            marker.done(OBJECT_DECLARATION_NAME);
+        }
+        else {
+            if (at(IDENTIFIER)) {
+                assert object : "Must be an object to be nameless";
+                errorAndAdvance("An object expression cannot bind a name");
+            }
+        }
+
+        OptionalMarker typeParamsMarker = new OptionalMarker(object);
         boolean typeParametersDeclared = parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
+        typeParamsMarker.error("Type parameters are not allowed for objects");
 
+        OptionalMarker constructorModifiersMarker = new OptionalMarker(object);
         PsiBuilder.Marker beforeConstructorModifiers = mark();
         boolean hasConstructorModifiers = parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
 
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
         if (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON) ) {
             beforeConstructorModifiers.rollbackTo();
-            return CLASS;
+            constructorModifiersMarker.drop();
+            return object ? OBJECT_DECLARATION : CLASS;
         }
 
         // We are still inside a class declaration
@@ -585,13 +609,16 @@ public class JetParsing extends AbstractJetParsing {
             //    class A private {
             error("Expecting primary constructor parameter list");
         }
+        constructorModifiersMarker.error("Constructors are not allowed for objects");
 
-        if (at(COLON)) {
+        if (at(COLON) ) {
             advance(); // COLON
             parseDelegationSpecifierList();
         }
 
+        OptionalMarker whereMarker = new OptionalMarker(object);
         parseTypeConstraintsGuarded(typeParametersDeclared);
+        whereMarker.error("Where clause is not allowed for objects");
 
         if (at(LBRACE)) {
             if (enumClass) {
@@ -601,8 +628,21 @@ public class JetParsing extends AbstractJetParsing {
                 parseClassBody();
             }
         }
+        else if (!optionalBody) {
+            PsiBuilder.Marker fakeBody = mark();
+            error("Expecting a class body");
+            fakeBody.done(CLASS_BODY);
+        }
 
-        return CLASS;
+        return object ? OBJECT_DECLARATION : CLASS;
+    }
+
+    IElementType parseClass(boolean enumClass) {
+        return parseClassOrObject(false, true, true, enumClass);
+    }
+
+    void parseObject(boolean named, boolean optionalBody) {
+        parseClassOrObject(true, named, optionalBody, false);
     }
 
     /*
@@ -766,48 +806,6 @@ public class JetParsing extends AbstractJetParsing {
             declType = ANONYMOUS_INITIALIZER;
         }
         return declType;
-    }
-
-    /*
-     * object
-     *   : "object" SimpleName? ":" delegationSpecifier{","}? classBody?
-     *   ;
-     */
-    void parseObject(boolean named, boolean optionalBody) {
-        assert _at(OBJECT_KEYWORD);
-
-        advance(); // OBJECT_KEYWORD
-
-        if (named) {
-            PsiBuilder.Marker propertyDeclaration = mark();
-            expect(IDENTIFIER, "Expecting object name", TokenSet.create(LBRACE));
-            propertyDeclaration.done(OBJECT_DECLARATION_NAME);
-        }
-        else {
-            if (at(IDENTIFIER)) {
-                error("An object expression cannot bind a name");
-            }
-        }
-
-        if (optionalBody) {
-            if (at(COLON)) {
-                advance(); // COLON
-                parseDelegationSpecifierList();
-            }
-            if (at(LBRACE)) {
-                parseClassBody();
-            }
-        }
-        else {
-            if (at(LBRACE)) {
-                parseClassBody();
-            }
-            else {
-                expect(COLON, "Expecting ':'", TokenSet.create(IDENTIFIER, PACKAGE_KEYWORD));
-                parseDelegationSpecifierList();
-                parseClassBody();
-            }
-        }
     }
 
     /*

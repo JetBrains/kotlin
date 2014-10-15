@@ -154,7 +154,7 @@ class LazyJavaAnnotationDescriptor(
 
     private fun resolveFromJavaClassObjectType(javaType: JavaType): CompileTimeConstant<*>? {
         // Class type is never nullable in 'Foo.class' in Java
-        val `type` = TypeUtils.makeNotNullable(c.typeResolver.transformJavaType(
+        val type = TypeUtils.makeNotNullable(c.typeResolver.transformJavaType(
                 javaType,
                 TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false))
         )
@@ -162,7 +162,7 @@ class LazyJavaAnnotationDescriptor(
         val jlClass = c.packageFragmentProvider.module.resolveTopLevelClass(FqName("java.lang.Class"))
         if (jlClass == null) return null
 
-        val arguments = listOf(TypeProjectionImpl(`type`))
+        val arguments = listOf(TypeProjectionImpl(type))
 
         val javaClassObjectType = object : LazyJavaType(c.storageManager) {
             override fun computeTypeConstructor() = jlClass.getTypeConstructor()

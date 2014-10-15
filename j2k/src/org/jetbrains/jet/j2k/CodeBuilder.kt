@@ -23,7 +23,7 @@ import java.util.ArrayList
 import org.jetbrains.jet.j2k.ast.Element
 import kotlin.platform.platformName
 import org.jetbrains.jet.j2k.ast.CommentsAndSpacesInheritance
-import com.intellij.psi.impl.light.LightElement
+import com.intellij.openapi.util.text.StringUtil
 
 fun<T> CodeBuilder.append(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     if (generators.isNotEmpty()) {
@@ -45,6 +45,8 @@ platformName("appendElements")
 fun CodeBuilder.append(elements: Collection<Element>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     return append(elements.filter { !it.isEmpty }.map { { append(it) } }, separator, prefix, suffix)
 }
+
+class ElementCreationStackTraceRequiredException : RuntimeException()
 
 class CodeBuilder(private val topElement: PsiElement?) {
     private val builder = StringBuilder()
@@ -81,10 +83,15 @@ class CodeBuilder(private val topElement: PsiElement?) {
         if (element.isEmpty) return this // do not insert comment and spaces for empty elements to avoid multiple blank lines
 
         if (element.prototypes == null && topElement != null) {
-            val s = "Element $element has no prototypes assigned.\n" +
-                    "Use Element.assignPrototype() or Element.assignNoPrototype().\n" +
-                    "Element created at:\n${element.createdAt}"
-            throw RuntimeException(s)
+            if (element.createdAt == null) {
+                throw ElementCreationStackTraceRequiredException()
+            }
+            else {
+                val s = "Element $element has no prototypes assigned.\n" +
+                        "Use Element.assignPrototype() or Element.assignNoPrototype().\n" +
+                        "Element created at:\n${element.createdAt}"
+                throw RuntimeException(s)
+            }
         }
 
         if (topElement == null || element.prototypes!!.isEmpty()) {
@@ -263,8 +270,8 @@ class CodeBuilder(private val topElement: PsiElement?) {
 
     private fun PsiElement.isEmptyElement() = getFirstChild() == null && getTextLength() == 0
 
-    private fun PsiWhiteSpace.newLinesCount() = getText()!!.count { it == '\n' } //TODO: this is not correct!!
+    private fun PsiWhiteSpace.newLinesCount() = StringUtil.getLineBreakCount(getText()!!)
 
-    private fun PsiWhiteSpace.hasNewLines() = getText()!!.any { it == '\n' || it == '\r' }
+    private fun PsiWhiteSpace.hasNewLines() = StringUtil.containsLineBreak(getText()!!)
 }
 

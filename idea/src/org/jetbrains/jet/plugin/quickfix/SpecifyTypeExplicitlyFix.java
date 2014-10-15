@@ -56,7 +56,7 @@ public class SpecifyTypeExplicitlyFix extends PsiElementBaseIntentionAction {
             setText(JetBundle.message("specify.type.explicitly.add.return.type.action.name"));
         }
         else {
-            assert false : "Couldn't find property or function " + JetPsiUtil.getElementTextWithContext((JetElement) element);
+            return false;
         }
 
         return !getTypeForDeclaration(declaration).isError();

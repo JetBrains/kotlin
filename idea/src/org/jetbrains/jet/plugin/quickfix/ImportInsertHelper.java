@@ -18,9 +18,6 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -28,8 +25,6 @@ import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
-import org.jetbrains.jet.plugin.references.JetReference;
-import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 
 import java.util.List;
@@ -45,76 +40,21 @@ public class ImportInsertHelper {
      *
      * @param importFqn full name of the import
      * @param file File where directive should be added.
-     * @param optimize Optimize existing imports before adding new one.
      */
-    public static void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file, boolean optimize) {
-        addImportDirectiveIfNeeded(new ImportPath(importFqn, false), file, optimize);
-    }
-
     public static void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file) {
-        addImportDirectiveIfNeeded(importFqn, file, true);
+        ImportPath importPath = new ImportPath(importFqn, false);
+
+        optimizeImportsOnTheFly(file);
+
+        if (needImport(importPath, file)) {
+            writeImportToFile(importPath, file);
+        }
     }
 
-    public static void addImportDirectiveOrChangeToFqName(
-            @NotNull FqName importFqn,
-            @NotNull JetFile file,
-            int refOffset,
-            @NotNull PsiElement targetElement) {
-        PsiReference reference = file.findReferenceAt(refOffset);
-        if (reference instanceof JetReference) {
-            PsiElement target = reference.resolve();
-            if (target != null) {
-                boolean same = file.getManager().areElementsEquivalent(target, targetElement);
-
-                if (!same) {
-                    same = target instanceof PsiClass && importFqn.asString().equals(((PsiClass)target).getQualifiedName());
-                }
-
-                if (!same) {
-                    if (target instanceof PsiMethod) {
-                        PsiMethod method = (PsiMethod) target;
-                        same = (method.isConstructor() && file.getManager().areElementsEquivalent(method.getContainingClass(), targetElement));
-                    }
-                }
-
-                if (!same) {
-                    if (target instanceof JetObjectDeclarationName) {
-                        same = file.getManager().areElementsEquivalent(target.getParent(), targetElement);
-                    }
-                }
-
-                if (!same) {
-                    Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
-                    assert document != null;
-                    TextRange refRange = reference.getElement().getTextRange();
-                    document.replaceString(refRange.getStartOffset(), refRange.getEndOffset(), IdeDescriptorRenderers.SOURCE_CODE.renderFqName(importFqn));
-                }
-                return;
-            }
-        }
-        addImportDirectiveIfNeeded(importFqn, file);
-    }
-
-    public static void addImportDirectiveIfNeeded(@NotNull ImportPath importPath, @NotNull JetFile file, boolean optimize) {
-        if (optimize) {
-            optimizeImportsIfNeeded(file);
-        }
-
-        if (!needImport(importPath, file)) {
-            return;
-        }
-
-        writeImportToFile(importPath, file);
-    }
-
-    public static void optimizeImportsIfNeeded(JetFile file) {
+    public static void optimizeImportsOnTheFly(JetFile file) {
         if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
-            optimizeImports(file);
+            new OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress();
         }
-    }
-
-    public static void optimizeImports(JetFile file) {
-        new OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress();
     }
 
     public static void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file) {

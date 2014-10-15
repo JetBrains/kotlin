@@ -372,8 +372,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         // Foo[] -> Array<(out) Foo!>!
         String array = replacePrefixes(
-                lowerRendered, kotlinPrefix + "Array<", upperRendered, kotlinPrefix + "Array<out ",
-                kotlinPrefix + "Array<(out) "
+                lowerRendered, kotlinPrefix + escape("Array<"), upperRendered, kotlinPrefix + escape("Array<out "),
+                kotlinPrefix + escape("Array<(out) ")
         );
         if (array != null) return array;
         return "(" + renderNormalizedType(lower) + ".." + renderNormalizedType(upper) + ")";

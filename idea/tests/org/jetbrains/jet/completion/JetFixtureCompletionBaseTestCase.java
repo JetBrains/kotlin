@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.completion;
 
-import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -31,31 +29,6 @@ import org.jetbrains.jet.plugin.project.TargetPlatform;
 import java.io.File;
 
 public abstract class JetFixtureCompletionBaseTestCase extends JetLightCodeInsightFixtureTestCase {
-    private Pair<Boolean, Boolean> savedAutoCompleteSettings;
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        savedAutoCompleteSettings = setAutoCompleteSetting(new Pair<Boolean, Boolean>(false, false));
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        setAutoCompleteSetting(savedAutoCompleteSettings);
-
-        super.tearDown();
-    }
-
-    private static Pair<Boolean, Boolean> setAutoCompleteSetting(Pair<Boolean, Boolean> value){
-        CodeInsightSettings settings = CodeInsightSettings.getInstance();
-        boolean oldValue1 = settings.AUTOCOMPLETE_ON_CODE_COMPLETION;
-        boolean oldValue2 = settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION;
-        settings.AUTOCOMPLETE_ON_CODE_COMPLETION = value.first;
-        settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION = value.second;
-        return new Pair<Boolean, Boolean>(oldValue1, oldValue2);
-    }
-
     public abstract TargetPlatform getPlatform();
 
     @Nullable

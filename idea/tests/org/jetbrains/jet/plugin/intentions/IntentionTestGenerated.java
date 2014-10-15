@@ -1228,6 +1228,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("doesNotInlineVariableInMultiDeclaration.kt")
+            public void testDoesNotInlineVariableInMultiDeclaration() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/doesNotInlineVariableInMultiDeclaration.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("doesNotinlineValueIfUsedMoreThanOnce.kt")
             public void testDoesNotinlineValueIfUsedMoreThanOnce() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/doesNotinlineValueIfUsedMoreThanOnce.kt");

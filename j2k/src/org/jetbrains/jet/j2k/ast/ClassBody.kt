@@ -20,9 +20,9 @@ import org.jetbrains.jet.j2k.*
 
 abstract class Member(val annotations: Annotations, val modifiers: Modifiers) : Element()
 
-//TODO: should be Element?
 class ClassBody (
         val primaryConstructorSignature: PrimaryConstructorSignature?,
+        val baseClassParams: List<Expression>,
         val members: List<Member>,
         val classObjectMembers: List<Member>,
         val factoryFunctions: List<FactoryFunction>,

@@ -25,6 +25,10 @@ public class QUnitAsserter(): Asserter {
         QUnit.ok(expected == actual, "$message. Expected <$expected> actual <$actual>")
     }
 
+    public override fun assertNotEquals(message: String, illegal: Any?, actual: Any?) {
+        QUnit.ok(illegal != actual, "$message. Illegal value: <$illegal>")
+    }
+
     public override fun assertNotNull(message: String, actual: Any?) {
         QUnit.ok(actual != null, message)
     }

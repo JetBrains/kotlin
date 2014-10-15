@@ -3,8 +3,7 @@ package test
 public trait ErrorTypes {
 
     public trait Sub : test.ErrorTypes.Super {
-        public abstract fun errorTypeInParameter(/*0*/ list: kotlin.(Mutable)List<kotlin.Array<(out) [ERROR : Unresolved java classifier: T]!>!>!): kotlin.Unit
-        public abstract override /*1*/ /*fake_override*/ fun errorTypeInParameter(/*0*/ list: kotlin.(Mutable)List<kotlin.Array<(out) [ERROR : Unresolved java classifier: T]!>!>!): kotlin.Unit
+        public abstract override /*1*/ fun errorTypeInParameter(/*0*/ list: kotlin.(Mutable)List<kotlin.Array<(out) [ERROR : Unresolved java classifier: T]!>!>!): kotlin.Unit
         public abstract override /*1*/ fun returnErrorType(): [ERROR : Unresolved java classifier: T]!
     }
 

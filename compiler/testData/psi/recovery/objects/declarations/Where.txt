@@ -1,0 +1,155 @@
+JetFile: Where.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    OBJECT_DECLARATION_NAME
+      PsiElement(IDENTIFIER)('Foo')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Where clause is not allowed for objects
+      PsiErrorElement:Type constraints are not allowed when no type parameters declared
+        PsiElement(where)('where')
+        PsiWhiteSpace(' ')
+        TYPE_CONSTRAINT_LIST
+          TYPE_CONSTRAINT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('G')
+  PsiWhiteSpace('\n')
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    OBJECT_DECLARATION_NAME
+      PsiElement(IDENTIFIER)('Foo')
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    DELEGATION_SPECIFIER_LIST
+      DELEGATOR_SUPER_CLASS
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Bar')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Where clause is not allowed for objects
+      PsiErrorElement:Type constraints are not allowed when no type parameters declared
+        PsiElement(where)('where')
+        PsiWhiteSpace(' ')
+        TYPE_CONSTRAINT_LIST
+          TYPE_CONSTRAINT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('G')
+  PsiWhiteSpace('\n\n')
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    OBJECT_DECLARATION_NAME
+      PsiElement(IDENTIFIER)('Foo')
+    PsiErrorElement:Constructors are not allowed for objects
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Where clause is not allowed for objects
+      PsiErrorElement:Type constraints are not allowed when no type parameters declared
+        PsiElement(where)('where')
+        PsiWhiteSpace(' ')
+        TYPE_CONSTRAINT_LIST
+          TYPE_CONSTRAINT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('G')
+  PsiWhiteSpace('\n')
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    OBJECT_DECLARATION_NAME
+      PsiElement(IDENTIFIER)('Foo')
+    PsiErrorElement:Constructors are not allowed for objects
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    DELEGATION_SPECIFIER_LIST
+      DELEGATOR_SUPER_CLASS
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Bar')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Where clause is not allowed for objects
+      PsiErrorElement:Type constraints are not allowed when no type parameters declared
+        PsiElement(where)('where')
+        PsiWhiteSpace(' ')
+        TYPE_CONSTRAINT_LIST
+          TYPE_CONSTRAINT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('G')
+  PsiWhiteSpace('\n\n')
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    OBJECT_DECLARATION_NAME
+      PsiElement(IDENTIFIER)('Foo')
+    PsiErrorElement:Constructors are not allowed for objects
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    DELEGATION_SPECIFIER_LIST
+      DELEGATOR_SUPER_CLASS
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Bar')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Where clause is not allowed for objects
+      PsiErrorElement:Type constraints are not allowed when no type parameters declared
+        PsiElement(where)('where')
+        PsiWhiteSpace(' ')
+        TYPE_CONSTRAINT_LIST
+          TYPE_CONSTRAINT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('G')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')

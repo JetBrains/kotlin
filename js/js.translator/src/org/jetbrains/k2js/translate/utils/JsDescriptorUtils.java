@@ -42,8 +42,7 @@ import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isNativeObject
 public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.
     private static final Set<String> FAKE_CLASSES = ContainerUtil.immutableSet(
-            getFqNameSafe(KotlinBuiltIns.getInstance().getAny()).asString(),
-            getFqNameSafe(KotlinBuiltIns.getInstance().getIterable()).asString()
+            getFqNameSafe(KotlinBuiltIns.getInstance().getAny()).asString()
     );
 
     private JsDescriptorUtils() {

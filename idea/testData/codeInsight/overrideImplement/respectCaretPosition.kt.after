@@ -8,6 +8,7 @@ class SomeTest : Test {
     override fun test() {
         <selection><caret>throw UnsupportedOperationException()</selection>
     }
+
     override val testProp: Int = 0
     /**
      * test

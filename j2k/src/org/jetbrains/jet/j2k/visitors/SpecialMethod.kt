@@ -69,12 +69,12 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     COLLECTIONS_SINGLETON_LIST: SpecialMethod("java.util.Collections", "singletonList", 1) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, converter: Converter)
-                = MethodCallExpression.build(null, "listOf", listOf(converter.convertExpression(arguments.single())), listOf(), false)
+                = MethodCallExpression.build(null, "listOf", listOf(converter.convertExpression(arguments.single())), typeArgumentsConverted, false)
     }
 
     COLLECTIONS_SINGLETON: SpecialMethod("java.util.Collections", "singleton", 1) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, converter: Converter)
-                = MethodCallExpression.build(null, "setOf", listOf(converter.convertExpression(arguments.single())), listOf(), false)
+                = MethodCallExpression.build(null, "setOf", listOf(converter.convertExpression(arguments.single())), typeArgumentsConverted, false)
     }
 
     open fun matches(method: PsiMethod): Boolean {

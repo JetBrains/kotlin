@@ -1,0 +1,2 @@
+Usage in import (5: 15) import server.foo
+Value read (9: 21) val t = 1.foo + foo

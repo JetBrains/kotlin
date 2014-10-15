@@ -1,5 +1,7 @@
+import java.util
+
 class SortedSet
 
 fun test() {
-  val a = java.util.SortedSet
+  val a = util.SortedSet<caret>
 }

@@ -140,6 +140,9 @@ public final class RhinoUtils {
         try {
             ScriptableObject scope = getScope(ecmaVersion, context, jsLibraries);
             putGlobalVariablesIntoScope(scope, variables);
+
+            context.evaluateString(scope, "Kotlin.out = new Kotlin.BufferedOutput();", "setup Kotlin.out", 0, null);
+
             for (String filename : fileNames) {
                 runFileWithRhino(filename, context, scope);
                 //String problems = lintIt(context, filename, scope);

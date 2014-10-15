@@ -6,16 +6,21 @@ class Other {
     fun test() {
         val a = 1
     }
+
     override fun equals(other: Any?): Boolean {
         <selection><caret>return super<Any>.equals(other)</selection>
     }
+
     override fun hashCode(): Int {
         return super<Any>.hashCode()
     }
+
     override fun toString(): String {
         return super<Any>.toString()
     }
+
     fun otherTest() {
 
     }
 }
+

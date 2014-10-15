@@ -24,8 +24,16 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.PsiFile;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
+import jet.runtime.typeinfo.JetValueParameter;
 import junit.framework.ComparisonFailure;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -35,6 +43,7 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -62,14 +71,44 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     }
 
     private void doTest(final String beforeFileName, boolean withExtraFile) throws Exception {
-        final String originalFileText = FileUtil.loadFile(new File(getTestDataPath() + beforeFileName), true);
+        final String testDataPath = getTestDataPath();
+        File mainFile = new File(testDataPath + beforeFileName);
+        final String originalFileText = FileUtil.loadFile(mainFile, true);
 
         if (InTextDirectivesUtils.findStringWithPrefixes(originalFileText, "// WITH_RUNTIME") != null) {
             ConfigLibraryUtil.configureKotlinRuntime(myModule, PluginTestCaseBase.fullJdk());
         }
 
         if (withExtraFile) {
-            configureByFiles(null, beforeFileName, beforeFileName.replace(".Main.", ".data.Sample."));
+            File mainFileDir = mainFile.getParentFile();
+            assert mainFileDir != null;
+
+            final String mainFileName = mainFile.getName();
+            final String extraFileNamePrefix = mainFileName.replace(".Main.kt", ".data.Sample.");
+            File[] extraFiles = mainFileDir.listFiles(
+                    new FilenameFilter() {
+                        @Override
+                        public boolean accept(@NotNull File dir, @NotNull String name) {
+                            return name.startsWith(extraFileNamePrefix);
+                        }
+                    }
+            );
+            assert extraFiles != null;
+
+            List<String> testFiles = new ArrayList<String>();
+            testFiles.add(beforeFileName);
+            KotlinPackage.mapTo(
+                    extraFiles,
+                    testFiles,
+                    new Function1<File, String>() {
+                        @Override
+                        public String invoke(File file) {
+                            return beforeFileName.replace(mainFileName, file.getName());
+                        }
+                    }
+            );
+
+            configureByFiles(null, ArrayUtil.toStringArray(testFiles));
         }
         else {
             configureByFiles(null, beforeFileName);
@@ -79,12 +118,16 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
             @Override
             public void run() {
                 try {
-                    Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(getFile(), originalFileText);
+                    PsiFile psiFile = getFile();
+
+                    Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(psiFile, originalFileText);
                     String text = pair.getFirst();
 
                     boolean actionShouldBeAvailable = pair.getSecond();
 
-                    DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) getFile());
+                    if (psiFile instanceof JetFile) {
+                        DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) psiFile);
+                    }
 
                     doAction(text, actionShouldBeAvailable, beforeFileName);
                 }

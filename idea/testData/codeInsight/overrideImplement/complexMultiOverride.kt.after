@@ -8,15 +8,19 @@ class C : Base<String, C, Unit>() {
     override fun bar(value: () -> Unit): (String) -> Unit {
         <selection><caret>return super<Base>.bar(value)</selection>
     }
+
     override fun equals(other: Any?): Boolean {
         return super<Base>.equals(other)
     }
+
     override fun foo(value: C): C {
         return super<Base>.foo(value)
     }
+
     override fun hashCode(): Int {
         return super<Base>.hashCode()
     }
+
     override val method: (String?) -> String = ?
     override fun toString(): String {
         return super<Base>.toString()

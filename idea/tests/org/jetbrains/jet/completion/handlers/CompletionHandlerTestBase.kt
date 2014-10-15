@@ -138,7 +138,7 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
             }).execute().throwException()
         }
         else {
-            fixture.`type`(completionChar)
+            fixture.type(completionChar)
         }
     }
 }

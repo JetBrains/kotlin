@@ -17,10 +17,7 @@
 package org.jetbrains.jet.plugin.completion
 
 import com.intellij.codeInsight.completion.*
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.psi.PsiClass
-import com.intellij.util.Consumer
 import org.jetbrains.jet.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.psi.JetFile
@@ -29,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper
-import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
@@ -37,11 +33,13 @@ import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
 
 class TypesCompletion(val parameters: CompletionParameters, val resolveSession: ResolveSessionForBodies, val prefixMatcher: PrefixMatcher) {
     fun addAllTypes(result: LookupElementsCollector) {
-        result.addDescriptorElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses())
+        result.addDescriptorElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses().filter { prefixMatcher.prefixMatches(it.getName().asString()) },
+                                     suppressAutoInsertion = true)
 
         val project = parameters.getOriginalFile().getProject()
         val searchScope = searchScopeForSourceElementDependencies(parameters.getOriginalFile()) ?: return
-        result.addDescriptorElements(KotlinIndicesHelper(project).getClassDescriptors({ prefixMatcher.prefixMatches(it) }, resolveSession, searchScope))
+        result.addDescriptorElements(KotlinIndicesHelper(project).getClassDescriptors({ prefixMatcher.prefixMatches(it) }, resolveSession, searchScope),
+                                     suppressAutoInsertion = true)
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
             addAdaptedJavaCompletion(result)
@@ -51,41 +49,26 @@ class TypesCompletion(val parameters: CompletionParameters, val resolveSession: 
     /**
      * Add java elements with performing conversion to kotlin elements if necessary.
      */
-    private fun addAdaptedJavaCompletion(result: LookupElementsCollector) {
-        JavaClassNameCompletionContributor.addAllClasses(parameters, true, prefixMatcher, object : Consumer<LookupElement> {
-            override fun consume(lookupElement: LookupElement?) {
-                if (lookupElement is JavaPsiClassReferenceElement) {
-                    val psiClass = lookupElement.getObject()
-
-                    if (addJavaClassAsJetLookupElement(psiClass, result)) return
-
-                    result.addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
-                        override fun handleInsert(context: InsertionContext) {
-                            JetJavaClassInsertHandler.handleInsert(context, lookupElement)
-                        }
-                    })
+    private fun addAdaptedJavaCompletion(collector: LookupElementsCollector) {
+        AllClassesGetter.processJavaClasses(parameters, prefixMatcher, true, { psiClass ->
+            if (psiClass!! !is KotlinLightClass) { // Kotlin non-compiled class should have already been added as kotlin element before
+                if (JavaResolverPsiUtils.isCompiledKotlinClass(psiClass)) {
+                    addLookupElementForCompiledKotlinClass(psiClass, collector)
+                }
+                else {
+                    collector.addElementWithAutoInsertionSuppressed(KotlinLookupElementFactory.createLookupElementForJavaClass(psiClass))
                 }
             }
         })
     }
 
-    private fun addJavaClassAsJetLookupElement(aClass: PsiClass, result: LookupElementsCollector): Boolean {
-        if (aClass is KotlinLightClass) {
-            // Do nothing. Kotlin not-compiled class should have already been added as kotlin element before.
-            return true
-        }
-
-        if (JavaResolverPsiUtils.isCompiledKotlinClass(aClass)) {
-            if (JetFromJavaDescriptorHelper.getCompiledClassKind(aClass) != ClassKind.CLASS_OBJECT) {
-                val qualifiedName = aClass.getQualifiedName()
-                if (qualifiedName != null) {
-                    result.addDescriptorElements(ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession.getModuleDescriptor(), FqName(qualifiedName)))
-                }
+    private fun addLookupElementForCompiledKotlinClass(aClass: PsiClass, collector: LookupElementsCollector) {
+        if (JetFromJavaDescriptorHelper.getCompiledClassKind(aClass) != ClassKind.CLASS_OBJECT) {
+            val qualifiedName = aClass.getQualifiedName()
+            if (qualifiedName != null) {
+                val descriptors = ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession.getModuleDescriptor(), FqName(qualifiedName))
+                collector.addDescriptorElements(descriptors, suppressAutoInsertion = true)
             }
-
-            return true
         }
-
-        return false
     }
 }

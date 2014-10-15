@@ -224,14 +224,7 @@
         return hash;
     }
 
-    /**
-     * @interface
-     * @template T
-     */
-    Kotlin.Iterator = Kotlin.createClassNow(null, null, {
-        next: throwAbstractFunctionInvocationError("Iterator#next"),
-        hasNext: throwAbstractFunctionInvocationError("Iterator#hasNext")
-    });
+    var lazyInitClasses = {};
 
     /**
      * @class
@@ -241,7 +234,10 @@
      * @param {Array.<T>} array
      * @template T
      */
-    var ArrayIterator = Kotlin.createClassNow(Kotlin.Iterator,
+    lazyInitClasses.ArrayIterator = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['stdlib'].kotlin.MutableIterator];
+        },
         /** @constructs */
         function (array) {
             this.array = array;
@@ -270,7 +266,10 @@
      * @param {Kotlin.AbstractList.<T>} list
      * @template T
      */
-    var ListIterator = Kotlin.createClassNow(ArrayIterator,
+    lazyInitClasses.ListIterator = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['stdlib'].kotlin.Iterator];
+        },
         /** @constructs */
         function (list) {
             this.list = list;
@@ -281,12 +280,6 @@
                 return this.list.get(this.index++);
             }
     });
-
-    /**
-     * @interface
-     * @template T
-     */
-    Kotlin.Collection = Kotlin.createClassNow();
 
     Kotlin.Enum = Kotlin.createClassNow(null,
         function () {
@@ -311,7 +304,10 @@
         }
     );
 
-    Kotlin.AbstractCollection = Kotlin.createClassNow(Kotlin.Collection, null, {
+    lazyInitClasses.AbstractCollection = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['stdlib'].kotlin.MutableCollection];
+        }, null, {
         addAll_4fm7v2$: function (collection) {
             var modified = false;
             var it = collection.iterator();
@@ -355,7 +351,7 @@
             return this.size() === 0;
         },
         iterator: function () {
-            return new ArrayIterator(this.toArray());
+            return new Kotlin.ArrayIterator(this.toArray());
         },
         equals_za3rmp$: function (o) {
             if (this.size() !== o.size()) return false;
@@ -397,9 +393,12 @@
      * @interface // actually it's abstract class
      * @template T
      */
-    Kotlin.AbstractList = Kotlin.createClassNow(Kotlin.AbstractCollection, null, {
+    lazyInitClasses.AbstractList = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['stdlib'].kotlin.MutableList, Kotlin.AbstractCollection];
+        }, null, {
         iterator: function () {
-            return new ListIterator(this);
+            return new Kotlin.ListIterator(this);
         },
         remove_za3rmp$: function (o) {
             var index = this.indexOf_za3rmp$(o);
@@ -415,7 +414,10 @@
     });
 
     //TODO: should be JS Array-like (https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Predefined_Core_Objects#Working_with_Array-like_objects)
-    Kotlin.ArrayList = Kotlin.createClassNow(Kotlin.AbstractList,
+    lazyInitClasses.ArrayList = Kotlin.createClass(
+        function () {
+            return [Kotlin.AbstractList];
+        },
         function () {
             this.array = [];
         }, {
@@ -527,49 +529,93 @@
         return true;
     };
 
-    Kotlin.System = function () {
-        var output = "";
-
-        var print = function (obj) {
-            if (obj !== undefined) {
-                if (obj === null || typeof obj !== "object") {
-                    output += obj;
-                }
-                else {
-                    output += obj.toString();
-                }
-            }
-        };
-        var println = function (obj) {
-            this.print(obj);
-            output += "\n";
-        };
-
-        return {
-            out: function () {
-                return {
-                    print: print,
-                    println: println
-                };
-            },
-            output: function () {
-                return output;
+    var BaseOutput = Kotlin.createClassNow(null, null, {
+            println: function (a) {
+                if (typeof a !== "undefined") this.print(a);
+                this.print("\n");
             },
             flush: function () {
-                output = "";
             }
-        };
+        }
+    );
+
+    Kotlin.NodeJsOutput = Kotlin.createClassNow(BaseOutput,
+        function(outputStream) {
+            this.outputStream = outputStream;
+        }, {
+            print: function (a) {
+                this.outputStream.write(a);
+            }
+        }
+    );
+
+    Kotlin.OutputToConsoleLog = Kotlin.createClassNow(BaseOutput, null, {
+            print: function (a) {
+                console.log(a);
+            },
+            println: function (a) {
+                this.print(typeof a !== "undefined" ? a : "");
+            }
+        }
+    );
+
+    Kotlin.BufferedOutput = Kotlin.createClassNow(BaseOutput,
+        function() {
+            this.buffer = ""
+        }, {
+            print: function (a) {
+                this.buffer += String(a);
+            },
+            flush: function () {
+                this.buffer = "";
+            }
+        }
+    );
+
+    Kotlin.BufferedOutputToConsoleLog = Kotlin.createClassNow(Kotlin.BufferedOutput,
+        function() {
+            Kotlin.BufferedOutput.call(this);
+        }, {
+            print: function (a) {
+                var s = String(a);
+
+                var i = s.lastIndexOf("\n");
+                if (i != -1) {
+                    this.buffer += s.substr(0, i);
+
+                    this.flush();
+
+                    s = s.substr(i + 1);
+                }
+
+                this.buffer += s;
+            },
+            flush: function () {
+                console.log(this.buffer);
+                this.buffer = "";
+            }
+        }
+    );
+    Kotlin.out = function() {
+        var isNode = typeof process !== 'undefined' && process.versions && !!process.versions.node;
+
+        if (isNode) return new Kotlin.NodeJsOutput(process.stdout);
+
+        return new Kotlin.BufferedOutputToConsoleLog();
     }();
 
     Kotlin.println = function (s) {
-        Kotlin.System.out().println(s);
+        Kotlin.out.println(s);
     };
 
     Kotlin.print = function (s) {
-        Kotlin.System.out().print(s);
+        Kotlin.out.print(s);
     };
 
-    Kotlin.RangeIterator = Kotlin.createClassNow(Kotlin.Iterator,
+    lazyInitClasses.RangeIterator = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['stdlib'].kotlin.Iterator];
+        },
         function (start, end, increment) {
             this.start = start;
             this.end = end;
@@ -613,7 +659,14 @@
             isEmpty: function () {
                 return this.start > this.end;
             },
+            hashCode: function() {
+                return this.isEmpty() ? -1 : (31 * this.start|0 + this.end|0);
+            },
             equals_za3rmp$: isSameNotNullRanges
+        }, {
+            object_initializer$: function () {
+                return { EMPTY : new this(1, 0) };
+            }
     });
 
     Kotlin.NumberProgression = Kotlin.createClassNow(null,
@@ -627,10 +680,17 @@
         },
         isEmpty: function() {
             return this.increment > 0 ? this.start > this.end : this.start < this.end;
-        }
+        },
+        hashCode: function() {
+            return this.isEmpty() ? -1 : (31 * (31 * this.start|0 + this.end|0) + this.increment|0);
+        },
+        equals_za3rmp$: isSameNotNullRanges
     });
 
-    Kotlin.LongRangeIterator = Kotlin.createClassNow(Kotlin.Iterator,
+    lazyInitClasses.LongRangeIterator = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['stdlib'].kotlin.Iterator];
+        },
          function (start, end, increment) {
              this.start = start;
              this.end = end;
@@ -665,8 +725,15 @@
            isEmpty: function () {
                return this.start.compare(this.end) > 0;
            },
-           equals_za3rmp$: isSameNotNullRanges
-       });
+            hashCode: function() {
+                return this.isEmpty() ? -1 : (31 * this.start.toInt() + this.end.toInt());
+            },
+            equals_za3rmp$: isSameNotNullRanges
+       }, {
+           object_initializer$: function () {
+               return { EMPTY : new this(Kotlin.Long.ONE, Kotlin.Long.ZERO) };
+           }
+   });
 
     Kotlin.LongProgression = Kotlin.createClassNow(null,
          function (start, end, increment) {
@@ -679,10 +746,17 @@
              },
              isEmpty: function() {
                  return this.increment.isNegative() ? this.start.compare(this.end) < 0 : this.start.compare(this.end) > 0;
-             }
-         });
+             },
+            hashCode: function() {
+                return this.isEmpty() ? -1 : (31 * (31 * this.start.toInt() + this.end.toInt()) + this.increment.toInt());
+            },
+            equals_za3rmp$: isSameNotNullRanges
+        });
 
-    Kotlin.CharRangeIterator = Kotlin.createClassNow(Kotlin.RangeIterator,
+    lazyInitClasses.CharRangeIterator = Kotlin.createClass(
+        function () {
+            return [Kotlin.RangeIterator];
+        },
         function (start, end, increment) {
             Kotlin.RangeIterator.call(this, start, end, increment);
         }, {
@@ -690,40 +764,54 @@
                 var value = this.i;
                 this.i = this.i + this.increment;
                 return String.fromCharCode(value);
-            },
+            }
     });
 
     Kotlin.CharRange = Kotlin.createClassNow(null,
         function (start, end) {
-            this.start = start.charCodeAt(0);
-            this.end = end.charCodeAt(0);
+            this.start = start;
+            this.startCode = start.charCodeAt(0);
+            this.end = end;
+            this.endCode = end.charCodeAt(0);
             this.increment = 1;
         }, {
             contains: function (char) {
-                var code = char.charCodeAt(0)
-                return this.start <= code && code <= this.end;
+                return this.start <= char && char <= this.end;
             },
             iterator: function () {
-                return new Kotlin.CharRangeIterator(this.start, this.end, this.increment);
+                return new Kotlin.CharRangeIterator(this.startCode, this.endCode, this.increment);
             },
             isEmpty: function () {
                 return this.start > this.end;
             },
+            hashCode: function() {
+                return this.isEmpty() ? -1 : (31 * this.startCode|0 + this.endCode|0);
+            },
             equals_za3rmp$: isSameNotNullRanges
+        }, {
+            object_initializer$: function () {
+                return { EMPTY : new this(Kotlin.toChar(1), Kotlin.toChar(0)) };
+            }
     });
 
-    Kotlin.CharNumberProgression = Kotlin.createClassNow(null,
+    Kotlin.CharProgression = Kotlin.createClassNow(null,
         function (start, end, increment) {
-            this.start = start.charCodeAt(0);
-            this.end = end.charCodeAt(0);
+            this.start = start;
+            this.startCode = start.charCodeAt(0);
+            this.end = end;
+            this.endCode = end.charCodeAt(0);
             this.increment = increment;
         }, {
         iterator: function () {
-            return new Kotlin.CharRangeIterator(this.start, this.end, this.increment);
+            return new Kotlin.CharRangeIterator(this.startCode, this.endCode, this.increment);
         },
         isEmpty: function() {
             return this.increment > 0 ? this.start > this.end : this.start < this.end;
-        }
+        },
+        hashCode: function() {
+            return this.isEmpty() ? -1 : (31 * (31 * this.startCode|0 + this.endCode|0) + this.increment|0);
+        },
+        equals_za3rmp$: isSameNotNullRanges
     });
 
     /**
@@ -882,7 +970,7 @@
     };
 
     Kotlin.arrayIterator = function (array) {
-        return new ArrayIterator(array);
+        return new Kotlin.ArrayIterator(array);
     };
 
     Kotlin.jsonFromTuples = function (pairArr) {
@@ -903,4 +991,6 @@
         }
         return obj1;
     };
+
+    Kotlin.createDefinition(lazyInitClasses, Kotlin);
 })();

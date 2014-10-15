@@ -404,8 +404,10 @@ var Kotlin = {};
         };
     }
 
-    function createDefinition(members) {
-        var definition = {};
+    function createDefinition(members, definition) {
+        if (typeof definition === "undefined") {
+            definition = {}
+        }
         if (members == null) {
             return definition;
         }
@@ -430,6 +432,8 @@ var Kotlin = {};
         }
         return definition;
     }
+
+    Kotlin.createDefinition = createDefinition;
 
     /**
      * @param {function()|null=} initializer

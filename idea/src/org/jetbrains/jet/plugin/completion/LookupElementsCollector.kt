@@ -21,13 +21,13 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.completion.handlers.*
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import com.intellij.codeInsight.completion.PrefixMatcher
 import java.util.ArrayList
 import com.intellij.codeInsight.completion.CompletionResultSet
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
 class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
                               private val resolveSession: ResolveSessionForBodies,
@@ -35,23 +35,36 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
     private val elements = ArrayList<LookupElement>()
 
     public fun flushToResultSet(resultSet: CompletionResultSet) {
-        resultSet.addAllElements(elements)
-        elements.clear()
-    }
-
-    public val isEmpty: Boolean
-        get() = elements.isEmpty()
-
-    public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>) {
-        for (descriptor in descriptors) {
-            addDescriptorElements(descriptor)
+        if (!elements.isEmpty()) {
+            resultSet.addAllElements(elements)
+            elements.clear()
+            isResultEmpty = false
         }
     }
 
-    public fun addDescriptorElements(descriptor: DeclarationDescriptor) {
+    public var isResultEmpty: Boolean = true
+        private set
+
+    public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>,
+                                     suppressAutoInsertion: Boolean // auto-insertion suppression is used for elements that require adding an import
+    ) {
+        for (descriptor in descriptors) {
+            addDescriptorElements(descriptor, suppressAutoInsertion)
+        }
+    }
+
+    public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean) {
         if (!descriptorFilter(descriptor)) return
 
-        addElement(DescriptorLookupConverter.createLookupElement(resolveSession, descriptor))
+        run {
+            val lookupElement = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
+            if (suppressAutoInsertion) {
+                addElementWithAutoInsertionSuppressed(lookupElement)
+            }
+            else {
+                addElement(lookupElement)
+            }
+        }
 
         // add special item for function with one argument of function type with more than one parameter
         if (descriptor is FunctionDescriptor) {
@@ -61,7 +74,7 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
                 if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
                     val parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size()
                     if (parameterCount > 1) {
-                        val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, descriptor)
+                        val lookupElement = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
                         addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
                             override fun renderElement(presentation: LookupElementPresentation) {
                                 super.renderElement(presentation)
@@ -81,6 +94,15 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
     public fun addElement(element: LookupElement) {
         if (prefixMatcher.prefixMatches(element)) {
             elements.add(element)
+        }
+    }
+
+    public fun addElementWithAutoInsertionSuppressed(element: LookupElement) {
+        if (isResultEmpty && elements.isEmpty()) { /* without these checks we may get duplicated items */
+            addElement(element.suppressAutoInsertion())
+        }
+        else {
+            addElement(element)
         }
     }
 

@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
+import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 
 object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
     private fun JetType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, context: BindingContext): Boolean {
@@ -65,14 +66,15 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
     }
 
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val context = (diagnostic.getPsiFile() as? JetFile)?.getBindingContext() ?: return null
+        val exhaust = (diagnostic.getPsiFile() as? JetFile)?.getAnalysisResults() ?: return null
+        val context = exhaust.getBindingContext()
 
         val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetSimpleNameExpression>()) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
 
         val varExpected = refExpr.getAssignmentByLHS() != null
 
-        val paramType = refExpr.getExpressionForTypeGuess().guessTypes(context).let {
+        val paramType = refExpr.getExpressionForTypeGuess().guessTypes(context, exhaust.getModuleDescriptor()).let {
             when (it.size) {
                 0 -> KotlinBuiltIns.getInstance().getAnyType()
                 1 -> it.first()

@@ -31,7 +31,7 @@ import com.intellij.util.containers.MultiMap
 import java.util.HashSet
 import com.intellij.codeInsight.completion.*
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
-import org.jetbrains.jet.plugin.completion.handlers.JetKeywordInsertHandler
+import org.jetbrains.jet.plugin.completion.handlers.KotlinKeywordInsertHandler
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import java.util.ArrayList
 
@@ -50,7 +50,7 @@ class KeywordCompletion {
                     val element = LookupElementBuilder.create(KeywordLookupObject(keyword), keyword)
                             .bold()
                             .withInsertHandler(if (keyword !in FUNCTION_KEYWORDS)
-                                                   JetKeywordInsertHandler
+                                                   KotlinKeywordInsertHandler
                                                else
                                                    JetFunctionInsertHandler.NO_PARAMETERS_HANDLER)
                     collector.addElement(element)

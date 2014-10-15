@@ -54,12 +54,12 @@ public trait Eval {
 }
 
 class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(ASM5) {
-    override fun newValue(`type`: Type?): Value? {
-        if (`type` == null) {
+    override fun newValue(type: Type?): Value? {
+        if (type == null) {
             return NOT_A_VALUE
         }
 
-        return makeNotInitializedValue(`type`)
+        return makeNotInitializedValue(type)
     }
 
     override fun newOperation(insn: AbstractInsnNode): Value? {

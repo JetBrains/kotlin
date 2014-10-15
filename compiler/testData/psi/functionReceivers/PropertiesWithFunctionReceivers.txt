@@ -81,9 +81,9 @@ JetFile: PropertiesWithFunctionReceivers.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n   ')
   MODIFIER_LIST
@@ -100,9 +100,9 @@ JetFile: PropertiesWithFunctionReceivers.kt
             PsiElement(IDENTIFIER)('it')
         PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   PROPERTY
@@ -143,7 +143,7 @@ JetFile: PropertiesWithFunctionReceivers.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
   PsiWhiteSpace(' ')
   MODIFIER_LIST
@@ -154,9 +154,9 @@ JetFile: PropertiesWithFunctionReceivers.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Foo')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n   ')
   MODIFIER_LIST
@@ -173,9 +173,9 @@ JetFile: PropertiesWithFunctionReceivers.kt
             PsiElement(IDENTIFIER)('it')
         PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n\n')
   PROPERTY
@@ -232,9 +232,9 @@ JetFile: PropertiesWithFunctionReceivers.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n   ')
   MODIFIER_LIST
@@ -262,9 +262,9 @@ JetFile: PropertiesWithFunctionReceivers.kt
                   PsiElement(IDENTIFIER)('b')
         PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n\n')
   PROPERTY
@@ -323,9 +323,9 @@ JetFile: PropertiesWithFunctionReceivers.kt
                   PsiElement(IDENTIFIER)('b')
         PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n\n')
   PROPERTY
@@ -382,9 +382,9 @@ JetFile: PropertiesWithFunctionReceivers.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   PsiComment(EOL_COMMENT)('// Error recovery:')
@@ -423,12 +423,12 @@ JetFile: PropertiesWithFunctionReceivers.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('set')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n   ')
   MODIFIER_LIST
@@ -442,9 +442,9 @@ JetFile: PropertiesWithFunctionReceivers.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   PROPERTY
@@ -488,9 +488,9 @@ JetFile: PropertiesWithFunctionReceivers.kt
             PsiElement(IDENTIFIER)('foo')
         PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n   ')
   MODIFIER_LIST
@@ -504,9 +504,9 @@ JetFile: PropertiesWithFunctionReceivers.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n   ')
   MODIFIER_LIST
@@ -520,7 +520,7 @@ JetFile: PropertiesWithFunctionReceivers.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting package directive or top level declaration
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(RBRACE)('}')

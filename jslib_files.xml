@@ -1,4 +1,11 @@
 <project>
+    <fileset id="kotlin.builtin.files" dir="${basedir}/core/builtins">
+        <include name="native/kotlin/Iterator.kt"/>
+        <include name="native/kotlin/Collections.kt"/>
+        <include name="src/kotlin/Iterators.kt"/>
+        <include name="src/kotlin/Range.kt"/>
+    </fileset>
+
     <union id="js.lib.files">
         <fileset dir="${basedir}/js/js.libraries/src">
             <include name="**/*.kt" />

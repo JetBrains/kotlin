@@ -123,8 +123,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
         JsName varName = functionObj.getScope().declareName("result");
 
-        int typeHash = context.getQualifiedReference(getClassDescriptor()).toString().hashCode();
-        statements.add(new JsVars(new JsVars.JsVar(varName, jsProgram.getNumberLiteral(typeHash))));
+        statements.add(new JsVars(new JsVars.JsVar(varName, JsNumberLiteral.ZERO)));
 
         for (PropertyDescriptor prop : classProperties) {
             // TODO: we should statically check that we can call hashCode method directly.

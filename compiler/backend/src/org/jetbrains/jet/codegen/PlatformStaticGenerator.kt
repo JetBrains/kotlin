@@ -48,7 +48,7 @@ class PlatformStaticGenerator(
             val iv = InstructionAdapter(methodVisitor)
             val classDescriptor = descriptor.getContainingDeclaration() as ClassDescriptor
             val singletonValue = StackValue.singleton(classDescriptor, typeMapper)!!
-            singletonValue.put(singletonValue.`type`, iv);
+            singletonValue.put(singletonValue.type, iv);
             var index = 0;
             for (paramType in asmMethod.getArgumentTypes()) {
                 iv.load(index, paramType);

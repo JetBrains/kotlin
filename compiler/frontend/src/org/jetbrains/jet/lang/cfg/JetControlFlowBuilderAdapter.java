@@ -115,11 +115,6 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     }
 
     @Override
-    public void compilationError(@NotNull JetElement element, @NotNull String message) {
-        getDelegateBuilder().compilationError(element, message);
-    }
-
-    @Override
     @NotNull
     public Label createUnboundLabel() {
         return getDelegateBuilder().createUnboundLabel();

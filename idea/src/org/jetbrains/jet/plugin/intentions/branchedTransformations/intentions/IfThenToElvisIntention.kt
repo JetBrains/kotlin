@@ -80,7 +80,7 @@ public class IfThenToElvisIntention : JetSelfTargetingIntention<JetIfExpression>
         assert(resultingExpression is JetBinaryExpression,
                "Unexpected expression type: ${resultingExpression?.javaClass}, expected JetBinaryExpression, element = '${element.getText()}'")
 
-        val elvis= resultingExpression as JetBinaryExpression
+        val elvis = resultingExpression as JetBinaryExpression
         elvis.inlineLeftSideIfApplicableWithPrompt(editor)
     }
 }

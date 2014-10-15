@@ -178,7 +178,7 @@ JetFile: TypeDef_ERR.kt
   PsiWhiteSpace('\n\n')
   CLASS
     PsiElement(class)('class')
-    PsiErrorElement:Class name expected
+    PsiErrorElement:Name expected
       <empty list>
   PsiWhiteSpace('\n')
   TYPEDEF

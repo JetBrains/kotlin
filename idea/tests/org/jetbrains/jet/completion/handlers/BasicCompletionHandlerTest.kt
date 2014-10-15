@@ -111,13 +111,13 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testSingleBrackets() {
         fixture.configureByFile(fileName())
-        fixture.`type`('(')
+        fixture.type('(')
         checkResult()
     }
 
     fun testInsertFunctionWithBothParentheses() {
         fixture.configureByFile(fileName())
-        fixture.`type`("test()")
+        fixture.type("test()")
         checkResult()
     }
 
@@ -153,4 +153,6 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testInfixCall() = doTest(1, "to", null, null, '\n')
     fun testInfixCallOnSpace() = doTest(1, "to", null, null, ' ')
+
+    fun testImportedEnumMember() { doTest(1, "AAA", null, null, '\n') }
 }

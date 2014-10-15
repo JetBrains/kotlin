@@ -31,7 +31,7 @@ class DelegatedPropertyFieldDescriptor(
             append(getName())
             if (classRenderer.SHOW_DECLARED_TYPE) {
                 append(": ")
-                append(classRenderer.renderTypeName(getValue()?.`type`()?.name()))
+                append(classRenderer.renderTypeName(getValue()?.type()?.name()))
             }
             toString()
         }

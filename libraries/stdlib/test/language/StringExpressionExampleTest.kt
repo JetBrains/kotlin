@@ -1,9 +1,7 @@
 package language
 
-import kotlin.util.*
-import java.util.*
-
-import junit.framework.TestCase
+import org.junit.Test as test
+import kotlin.test.*
 
 class Product(val name: String, val price: Double) {
 }
@@ -28,11 +26,22 @@ fun productSnippet(product: Product) = "<li>${product.name}. Price : ${product.p
 // TODO support number formatting methods?
 // fun productSnippet(product: Product) = "<li>${product.name}. Price : ${product.price.format('## ###,00')} </li>"
 
+val EXPECTED = """
+<html>
+<body>
+<h1>Hello James</h1>
+<ul>
+<li>Beer. Price : 1.99</li>
+<li>Wine. Price : 5.99</li>
+</ul>
+<p>lets do some kool stuff</p>
+</body>
+"""
 
-class StringExpressionExampleTest : TestCase() {
+class StringExpressionExampleTest {
     val customer = Customer("James", arrayListOf(Product("Beer", 1.99), Product("Wine", 5.99)))
 
-    fun testExpressions(): Unit {
-        println(customerTemplate(customer))
+    test fun testExpressions(): Unit {
+        assertEquals(EXPECTED, customerTemplate(customer))
     }
 }

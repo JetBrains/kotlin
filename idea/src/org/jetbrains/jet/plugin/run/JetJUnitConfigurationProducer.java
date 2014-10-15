@@ -26,6 +26,7 @@ import com.intellij.execution.junit.JUnitConfigurationType;
 import com.intellij.execution.junit.JUnitUtil;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -49,6 +50,8 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
 
     @Override
     protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
+        if (DumbService.getInstance(location.getProject()).isDumb()) return null;
+
         PsiElement leaf = location.getPsiElement();
 
         if (!ProjectRootsUtil.isInProjectOrLibSource(leaf)) {

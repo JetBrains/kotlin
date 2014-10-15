@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -34,6 +33,8 @@ import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.renderer.DescriptorRenderer.FQ_NAMES_IN_TYPES
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.resolve.ImportPath
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -98,7 +99,7 @@ public object ShortenReferences {
 
     private fun process(elements: Iterable<JetElement>, elementFilter: (PsiElement) -> FilterResult) {
         for ((file, fileElements) in elements.groupBy { element -> element.getContainingJetFile() }) {
-            ImportInsertHelper.optimizeImportsIfNeeded(file)
+            ImportInsertHelper.optimizeImportsOnTheFly(file)
 
             // first resolve all qualified references - optimization
             val referenceToContext = JetFileReferencesResolver.resolve(file, fileElements, resolveShortNames = false)
@@ -170,7 +171,7 @@ public object ShortenReferences {
             if (targetByName == null) {
                 if (target.getContainingDeclaration() is ClassDescriptor) return false
 
-                addImportIfNeeded(target, file)
+                addImport(target, file)
                 return true
             }
             else if (target.asString() == targetByName.asString()) {
@@ -297,7 +298,7 @@ public object ShortenReferences {
 
             if (isUsageInImport || isClassMember || !isClassOrPackage) return newExpression.replace(copy) // revert shortening
 
-            addImportIfNeeded(targetDescriptor, file)
+            addImport(targetDescriptor, file)
             return newExpression
         }
 
@@ -327,14 +328,13 @@ public object ShortenReferences {
         }
     }
 
-    private fun DeclarationDescriptor.asString() = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
+    private fun DeclarationDescriptor.asString()
+            = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
 
-    private fun ResolvedCall<*>.asString(): String {
-        return "${getExtensionReceiver()}, ${getDispatchReceiver()} -> ${getResultingDescriptor()?.let {FQ_NAMES_IN_TYPES.render(it)}}"
-    }
+    private fun ResolvedCall<*>.asString()
+            = "${getExtensionReceiver()}, ${getDispatchReceiver()} -> ${getResultingDescriptor()?.let {FQ_NAMES_IN_TYPES.render(it)}}"
 
-    //TODO: do we need this "IfNeeded" check?
-    private fun addImportIfNeeded(descriptor: DeclarationDescriptor, file: JetFile) {
-        ImportInsertHelper.addImportDirectiveIfNeeded(DescriptorUtils.getFqNameSafe(descriptor), file, false)
+    private fun addImport(descriptor: DeclarationDescriptor, file: JetFile) {
+        ImportInsertHelper.writeImportToFile(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false), file)
     }
 }

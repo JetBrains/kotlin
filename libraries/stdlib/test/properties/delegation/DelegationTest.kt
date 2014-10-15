@@ -1,6 +1,6 @@
 package test.properties.delegation
 
-import junit.framework.TestCase
+import org.junit.Test as test
 import kotlin.test.*
 import kotlin.properties.*
 
@@ -8,26 +8,26 @@ trait WithBox {
     fun box(): String
 }
 
-abstract class DelegationTestBase: TestCase() {
+abstract class DelegationTestBase {
     fun doTest(klass: WithBox) {
         assertEquals("OK", klass.box())
     }
 }
 
 class DelegationTest(): DelegationTestBase() {
-    fun testNotNullVar() {
+    test fun testNotNullVar() {
         doTest(TestNotNullVar("a", "b"))
     }
 
-    fun testObservablePropertyInChangeSupport() {
+    test fun testObservablePropertyInChangeSupport() {
         doTest(TestObservablePropertyInChangeSupport())
     }
 
-    fun testObservableProperty() {
+    test fun testObservableProperty() {
         doTest(TestObservableProperty())
     }
 
-    fun testVetoableProperty() {
+    test fun testVetoableProperty() {
         doTest(TestVetoableProperty())
     }
 }
@@ -82,6 +82,8 @@ class TestObservableProperty: WithBox {
     }
 }
 
+class A(val p: Boolean)
+
 class TestVetoableProperty: WithBox {
     var result = false
     var b by Delegates.vetoable(A(true), {(pd, o, n) -> result = n.p == true; result})
@@ -96,6 +98,4 @@ class TestVetoableProperty: WithBox {
         if (result) return "fail4: result should be false"
         return "OK"
     }
-    
-    class A(val p: Boolean)
 }

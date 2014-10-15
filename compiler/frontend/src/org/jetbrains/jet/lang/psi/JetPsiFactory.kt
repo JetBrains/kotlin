@@ -67,8 +67,8 @@ public class JetPsiFactory(private val project: Project) {
         return (property.getInitializer() as JetCallExpression).getTypeArgumentList()!!
     }
 
-    public fun createType(`type`: String): JetTypeReference {
-        return createProperty("val x : $`type`").getTypeReference()!!
+    public fun createType(type: String): JetTypeReference {
+        return createProperty("val x : $type").getTypeReference()!!
     }
 
     public fun createStar(): PsiElement {
@@ -152,13 +152,13 @@ public class JetPsiFactory(private val project: Project) {
         return PsiFileFactory.getInstance(project).createFileFromText(fileName, JetFileType.INSTANCE, text, LocalTimeCounter.currentTime(), true) as JetFile
     }
 
-    public fun createProperty(name: String, `type`: String?, isVar: Boolean, initializer: String?): JetProperty {
-        val text = (if (isVar) "var " else "val ") + name + (if (`type` != null) ":" + `type` else "") + (if (initializer == null) "" else " = " + initializer)
+    public fun createProperty(name: String, type: String?, isVar: Boolean, initializer: String?): JetProperty {
+        val text = (if (isVar) "var " else "val ") + name + (if (type != null) ":" + type else "") + (if (initializer == null) "" else " = " + initializer)
         return createProperty(text)
     }
 
-    public fun createProperty(name: String, `type`: String?, isVar: Boolean): JetProperty {
-        return createProperty(name, `type`, isVar, null)
+    public fun createProperty(name: String, type: String?, isVar: Boolean): JetProperty {
+        return createProperty(name, type, isVar, null)
     }
 
     public fun createProperty(text: String): JetProperty {
@@ -545,14 +545,14 @@ public class JetPsiFactory(private val project: Project) {
             return this
         }
 
-        public fun param(name: String, `type`: String): CallableBuilder {
+        public fun param(name: String, type: String): CallableBuilder {
             assert(target == Target.FUNCTION)
             assert(state == State.FIRST_PARAM || state == State.REST_PARAMS)
 
             if (state == State.REST_PARAMS) {
                 sb.append(", ")
             }
-            sb.append(name).append(": ").append(`type`)
+            sb.append(name).append(": ").append(type)
             if (state == State.FIRST_PARAM) {
                 state = State.REST_PARAMS
             }
@@ -560,9 +560,9 @@ public class JetPsiFactory(private val project: Project) {
             return this
         }
 
-        public fun returnType(`type`: String): CallableBuilder {
+        public fun returnType(type: String): CallableBuilder {
             closeParams()
-            sb.append(": ").append(`type`)
+            sb.append(": ").append(type)
 
             return this
         }

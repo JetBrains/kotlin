@@ -1,16 +1,15 @@
 package test.stdlib.issues
 
-import kotlin.util.*
 import kotlin.test.*
-import junit.framework.TestCase
+import org.junit.Test as test
 
 private fun listDifference<T>(first : List<T>, second : List<T>) : List<T> {
     return first.filter{ !second.contains(it) }.toList()
 }
 
-class StdLibIssuesTest() : TestCase() {
+class StdLibIssuesTest {
 
-    fun test_KT_1131() {
+    test fun test_KT_1131() {
         val data = arrayList("blah", "foo", "bar")
         val filterValues = arrayList("bar", "something", "blah")
 
