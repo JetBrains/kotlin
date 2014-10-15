@@ -1,6 +1,5 @@
 class Some {
-    var a : Int
-        get() = 0
+    var a : Int = 1
         <caret>
 }
 
@@ -11,8 +10,7 @@ class Some {
 // EXIST:  enum
 // EXIST:  final
 // EXIST:  fun
-// EXIST:  get
-/*TODO*/
+// EXIST: get
 // EXIST:  in
 /*why?*/
 // EXIST:  inner

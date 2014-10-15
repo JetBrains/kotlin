@@ -250,6 +250,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
     
+    @TestMetadata("PropertyAccessors2.kt")
+    public void testPropertyAccessors2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/PropertyAccessors2.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("PropertySetter.kt")
     public void testPropertySetter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/PropertySetter.kt");
