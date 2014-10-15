@@ -32,6 +32,8 @@ public abstract class ImportInsertHelper {
 
     public abstract void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file);
 
+    public abstract boolean optimizeImportsOnTheFly(JetFile file);
+
     public abstract boolean isImportedWithDefault(@NotNull ImportPath importPath, @NotNull JetFile contextFile);
 
     public abstract boolean needImport(@NotNull FqName fqName, @NotNull JetFile file);
@@ -39,6 +41,5 @@ public abstract class ImportInsertHelper {
     public abstract boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file);
 
     public abstract boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file, List<JetImportDirective> importDirectives);
-    public abstract void optimizeImportsOnTheFly(JetFile file);
     public abstract void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file);
 }

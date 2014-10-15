@@ -50,12 +50,17 @@ public class ImportInsertHelperImpl extends ImportInsertHelper {
     }
 
     @Override
-    public void optimizeImportsOnTheFly(JetFile file) {
+    public boolean optimizeImportsOnTheFly(JetFile file) {
         if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
             new OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress();
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
+    @Override
     public void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file) {
         JetPsiFactory psiFactory = JetPsiFactory(file.getProject());
         if (file instanceof JetCodeFragment) {
