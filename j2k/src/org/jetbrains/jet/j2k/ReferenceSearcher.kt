@@ -31,8 +31,8 @@ public trait ReferenceSearcher {
 }
 
 public object EmptyReferenceSearcher: ReferenceSearcher {
-    override fun findVariableUsages(variable: PsiVariable, scope: PsiElement) = Collections.emptyList<PsiReferenceExpression>()
-    override fun findMethodCalls(method: PsiMethod, scope: PsiElement) = Collections.emptyList<PsiMethodCallExpression>()
+    override fun findVariableUsages(variable: PsiVariable, scope: PsiElement) = listOf<PsiReferenceExpression>()
+    override fun findMethodCalls(method: PsiMethod, scope: PsiElement) = listOf<PsiMethodCallExpression>()
 }
 
 public object IdeaReferenceSearcher : ReferenceSearcher {
