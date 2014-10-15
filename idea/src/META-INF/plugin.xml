@@ -131,6 +131,8 @@
 
     <applicationService serviceInterface="org.jetbrains.jet.plugin.configuration.JetModuleTypeManager"
                         serviceImplementation="org.jetbrains.jet.plugin.JetModuleTypeManagerImpl"/>
+    <applicationService serviceInterface="org.jetbrains.jet.plugin.quickfix.ImportInsertHelper"
+                        serviceImplementation="org.jetbrains.jet.plugin.quickfix.ImportInsertHelperImpl"/>
 
     <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"/>

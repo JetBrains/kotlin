@@ -122,7 +122,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         result.addAll(getExtensions(referenceName, element, searchScope, resolveSession, file.getProject()))
 
         return result
-                .filter { ImportInsertHelper.needImport(ImportPath(it.fqName, false), file) }
+                .filter { ImportInsertHelper.getInstance().needImport(ImportPath(it.fqName, false), file) }
                 .sortBy { it.priority.ordinal() }
                 .map { it.fqName }
     }

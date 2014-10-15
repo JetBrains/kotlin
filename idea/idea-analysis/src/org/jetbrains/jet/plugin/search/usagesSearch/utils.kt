@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import com.intellij.psi.PsiReference
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.plugin.findUsages.JetUsageTypeProvider
-import com.intellij.usages.impl.rules.UsageType
 import org.jetbrains.jet.codegen.PropertyCodegen
 import org.jetbrains.jet.asJava.KotlinLightMethod
 import org.jetbrains.jet.lang.resolve.OverrideResolver
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.plugin.references.*
+import org.jetbrains.jet.plugin.findUsages.UsageTypeUtils
+import org.jetbrains.jet.plugin.findUsages.UsageTypeEnum
 
 val JetDeclaration.descriptor: DeclarationDescriptor?
     get() = AnalyzerFacadeWithCache.getContextForElement(this).get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
@@ -106,7 +106,7 @@ fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: JetNamedDeclara
                     val containingDescriptor = targetDescriptor.getContainingDeclaration()
 
                     containingDescriptor == receiverDescriptor
-                        || (containingDescriptor is ClassDescriptor
+                    || (containingDescriptor is ClassDescriptor
                         && receiverDescriptor is ClassDescriptor
                         && DescriptorUtils.isSubclass(containingDescriptor, receiverDescriptor))
                 }
@@ -118,7 +118,7 @@ fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: JetNamedDeclara
 fun PsiReference.isUsageInContainingDeclaration(declaration: JetNamedDeclaration): Boolean =
         checkUsageVsOriginalDescriptor(declaration) { (usageDescriptor, targetDescriptor) ->
             usageDescriptor != targetDescriptor
-                && usageDescriptor.getContainingDeclaration() == targetDescriptor.getContainingDeclaration()
+            && usageDescriptor.getContainingDeclaration() == targetDescriptor.getContainingDeclaration()
         }
 
 fun PsiReference.isCallableOverrideUsage(declaration: JetNamedDeclaration): Boolean {
@@ -128,7 +128,7 @@ fun PsiReference.isCallableOverrideUsage(declaration: JetNamedDeclaration): Bool
 
     return checkUsageVsOriginalDescriptor(declaration, decl2Desc) { (usageDescriptor, targetDescriptor) ->
         usageDescriptor is CallableDescriptor && targetDescriptor is CallableDescriptor
-            && OverrideResolver.overrides(usageDescriptor, targetDescriptor)
+        && OverrideResolver.overrides(usageDescriptor, targetDescriptor)
     }
 }
 
@@ -136,7 +136,7 @@ fun PsiReference.isCallableOverrideUsage(declaration: JetNamedDeclaration): Bool
 // Check if reference resolves to property getter
 // Works for JetProperty and JetParameter
 fun PsiReference.isPropertyReadOnlyUsage(): Boolean {
-    if (JetUsageTypeProvider.getUsageType(getElement()) == UsageType.READ) return true
+    if (UsageTypeUtils.getUsageType(getElement()) == UsageTypeEnum.READ) return true
 
     val refTarget = resolve()
     if (refTarget is KotlinLightMethod) {

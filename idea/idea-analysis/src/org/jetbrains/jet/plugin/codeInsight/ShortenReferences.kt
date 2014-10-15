@@ -99,7 +99,7 @@ public object ShortenReferences {
 
     private fun process(elements: Iterable<JetElement>, elementFilter: (PsiElement) -> FilterResult) {
         for ((file, fileElements) in elements.groupBy { element -> element.getContainingJetFile() }) {
-            ImportInsertHelper.optimizeImportsOnTheFly(file)
+            ImportInsertHelper.getInstance().optimizeImportsOnTheFly(file)
 
             // first resolve all qualified references - optimization
             val referenceToContext = JetFileReferencesResolver.resolve(file, fileElements, resolveShortNames = false)
@@ -335,6 +335,6 @@ public object ShortenReferences {
             = "${getExtensionReceiver()}, ${getDispatchReceiver()} -> ${getResultingDescriptor()?.let {FQ_NAMES_IN_TYPES.render(it)}}"
 
     private fun addImport(descriptor: DeclarationDescriptor, file: JetFile) {
-        ImportInsertHelper.writeImportToFile(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false), file)
+        ImportInsertHelper.getInstance().writeImportToFile(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false), file)
     }
 }

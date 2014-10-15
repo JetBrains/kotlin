@@ -508,7 +508,7 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
     if (options.inTempFile) return ExtractionResult(declaration, Collections.emptyMap(), nameByOffset)
 
     makeCall(this, declaration, controlFlow, extractionData.originalRange, parameters.map { it.argumentText })
-    ShortenReferences.process(declaration)    
+    ShortenReferences.process(declaration)
 
     val duplicateReplacers = duplicates.map { it.range to { makeCall(this, declaration, it.controlFlow, it.range, it.arguments) } }.toMap()
     return ExtractionResult(declaration, duplicateReplacers, nameByOffset)

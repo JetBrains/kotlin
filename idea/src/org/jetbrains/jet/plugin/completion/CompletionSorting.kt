@@ -126,8 +126,8 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
             if (isValidJavaFqName(fqName)) {
                 val importPath = ImportPath(fqName)
                 return when {
-                    ImportInsertHelper.needImport(importPath, file) -> Weight.notImported
-                    ImportInsertHelper.isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
+                    ImportInsertHelper.getInstance().needImport(importPath, file) -> Weight.notImported
+                    ImportInsertHelper.getInstance().isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
                     else -> Weight.imported
                 }
             }

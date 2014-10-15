@@ -31,17 +31,15 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
-public class ImportInsertHelper {
-    private ImportInsertHelper() {
-    }
-
+public class ImportInsertHelperImpl extends ImportInsertHelper {
     /**
      * Add import directive into the PSI tree for the given package.
      *
      * @param importFqn full name of the import
      * @param file File where directive should be added.
      */
-    public static void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file) {
+    @Override
+    public void addImportDirectiveIfNeeded(@NotNull FqName importFqn, @NotNull JetFile file) {
         ImportPath importPath = new ImportPath(importFqn, false);
 
         optimizeImportsOnTheFly(file);
@@ -51,13 +49,14 @@ public class ImportInsertHelper {
         }
     }
 
-    public static void optimizeImportsOnTheFly(JetFile file) {
+    @Override
+    public void optimizeImportsOnTheFly(JetFile file) {
         if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
             new OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress();
         }
     }
 
-    public static void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file) {
+    public void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file) {
         JetPsiFactory psiFactory = JetPsiFactory(file.getProject());
         if (file instanceof JetCodeFragment) {
             JetImportDirective newDirective = psiFactory.createImportDirective(importPath);
@@ -85,7 +84,7 @@ public class ImportInsertHelper {
     /**
      * Check that import is useless.
      */
-    private static boolean isImportedByDefault(@NotNull ImportPath importPath, @NotNull JetFile jetFile) {
+    private boolean isImportedByDefault(@NotNull ImportPath importPath, @NotNull JetFile jetFile) {
         if (importPath.fqnPart().isRoot()) {
             return true;
         }
@@ -105,22 +104,26 @@ public class ImportInsertHelper {
         return isImportedWithDefault(importPath, jetFile);
     }
 
-    public static boolean isImportedWithDefault(@NotNull ImportPath importPath, @NotNull JetFile contextFile) {
+    @Override
+    public boolean isImportedWithDefault(@NotNull ImportPath importPath, @NotNull JetFile contextFile) {
         List<ImportPath> defaultImports = ProjectStructureUtil.isJsKotlinModule(contextFile)
                                    ? TopDownAnalyzerFacadeForJS.DEFAULT_IMPORTS
                                    : TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS;
         return NamePackage.isImported(importPath, defaultImports);
     }
 
-    public static boolean needImport(@NotNull FqName fqName, @NotNull JetFile file) {
+    @Override
+    public boolean needImport(@NotNull FqName fqName, @NotNull JetFile file) {
         return needImport(new ImportPath(fqName, false), file);
     }
 
-    public static boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file) {
+    @Override
+    public boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file) {
         return needImport(importPath, file, file.getImportDirectives());
     }
 
-    public static boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file, List<JetImportDirective> importDirectives) {
+    @Override
+    public boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file, List<JetImportDirective> importDirectives) {
         if (isImportedByDefault(importPath, file)) {
             return false;
         }

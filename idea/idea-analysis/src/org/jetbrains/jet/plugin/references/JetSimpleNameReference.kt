@@ -23,11 +23,11 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
-import org.jetbrains.jet.plugin.refactoring.changeQualifiedName
+import org.jetbrains.jet.plugin.refactoring.fqName.changeQualifiedName
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.jet.lang.psi.psiUtil.getOutermostNonInterleavingQualifiedElement
-import org.jetbrains.jet.plugin.codeInsight.addToShorteningWaitSet
-import org.jetbrains.jet.plugin.refactoring.getKotlinFqName
+import org.jetbrains.jet.plugin.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.jet.plugin.refactoring.fqName.getKotlinFqName
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lexer.JetToken
 import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention

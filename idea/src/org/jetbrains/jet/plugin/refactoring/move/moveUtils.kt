@@ -48,7 +48,7 @@ import org.jetbrains.jet.lang.psi.JetImportDirective
 import java.util.ArrayList
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
-import org.jetbrains.jet.plugin.refactoring.getKotlinFqName
+import org.jetbrains.jet.plugin.refactoring.fqName.getKotlinFqName
 import org.jetbrains.jet.lang.psi.JetThisExpression
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
 import com.intellij.openapi.vfs.VirtualFile
@@ -186,7 +186,7 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
             is MoveRenameUsageInfoForExtension -> {
                 val element = counterpart(usage.getReferencedElement()!!)
                 val file = with(usage) { if (addImportToOriginalFile) originalFile else counterpart(originalFile) } as JetFile
-                ImportInsertHelper.addImportDirectiveIfNeeded(element.getKotlinFqName()!!, file)
+                ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(element.getKotlinFqName()!!, file)
             }
 
             is MoveRenameUsageInfo -> {

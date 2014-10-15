@@ -36,7 +36,7 @@ import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKo
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.DeferredJetFileKotlinMoveTarget
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.Mover
-import org.jetbrains.jet.plugin.codeInsight.ensureElementsToShortenIsEmptyBeforeRefactoring
+import org.jetbrains.jet.plugin.codeInsight.shorten.ensureElementsToShortenIsEmptyBeforeRefactoring
 
 public class MoveKotlinFileHandler : MoveFileHandler() {
     private var packageNameInfo: PackageNameInfo? = null

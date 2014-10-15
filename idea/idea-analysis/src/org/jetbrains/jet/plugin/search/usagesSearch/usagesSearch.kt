@@ -30,7 +30,6 @@ import com.intellij.psi.search.searches.ReferenceDescriptor
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.RequestResultProcessor
 import com.intellij.util.Processor
 import com.intellij.openapi.application.QueryExecutorBase
 import com.intellij.psi.PsiReferenceService
@@ -49,7 +48,6 @@ import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.psi.impl.cache.impl.id.IdIndex
 import org.jetbrains.jet.plugin.util.application.runReadAction
 import com.intellij.psi.search.TextOccurenceProcessor
-import org.jetbrains.jet.plugin.references.JetMultiDeclarationReference
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx
 
