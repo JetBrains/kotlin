@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 public interface MutableResolvedCall<D extends CallableDescriptor> extends ResolvedCall<D>  {
 
-    @NotNull
-    ResolutionStatus getStatus();
-
     void addStatus(@NotNull ResolutionStatus status);
 
     void setStatusToSuccess();

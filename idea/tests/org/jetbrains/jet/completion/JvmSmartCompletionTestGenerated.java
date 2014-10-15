@@ -788,4 +788,10 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
     
+    @TestMetadata("WrongReceiver.kt")
+    public void testWrongReceiver() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/WrongReceiver.kt");
+        doTest(fileName);
+    }
+    
 }
