@@ -331,7 +331,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 }
                 JetType returnedType = trace.get(EXPRESSION_TYPE, returnedExpression);
                 assert returnedType != null : "No type for returned expression: " + returnedExpression + ",\n" +
-                                              "the type should have been computed by getBlockReturnedType() above";
+                                              "the type should have been computed by getBlockReturnedType() above\n" +
+                                              JetPsiUtil.getElementTextWithContext(returnedExpression);
                 return returnedType;
             }
         });
