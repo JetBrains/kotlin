@@ -16,7 +16,7 @@
 
 var Kotlin = {};
 
-(function () {
+(function (Kotlin) {
     'use strict';
 
     function toArray(obj) {
@@ -475,4 +475,4 @@ var Kotlin = {};
         Object.defineProperty(Kotlin.modules, id, {value: declaration});
     };
 
-})();
+})(Kotlin);

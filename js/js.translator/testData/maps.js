@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-(function () {
+(function (Kotlin) {
     "use strict";
 
     /**
@@ -981,4 +981,4 @@
     Object.defineProperty(Kotlin, "ComplexHashSet", { get : function () { return Kotlin.HashSet; }});
 
     Kotlin.createDefinition(lazyInitClasses, Kotlin);
-}());
+}(Kotlin));
