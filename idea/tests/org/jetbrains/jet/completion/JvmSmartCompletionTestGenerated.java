@@ -698,6 +698,18 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
     
+    @TestMetadata("VariableAsFunction1.kt")
+    public void testVariableAsFunction1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/VariableAsFunction1.kt");
+        doTest(fileName);
+    }
+    
+    @TestMetadata("VariableAsFunction3.kt")
+    public void testVariableAsFunction3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/VariableAsFunction3.kt");
+        doTest(fileName);
+    }
+    
     @TestMetadata("VariableInitializer.kt")
     public void testVariableInitializer() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/VariableInitializer.kt");
