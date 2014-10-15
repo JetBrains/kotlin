@@ -25,6 +25,29 @@ import java.util.ArrayList
 import junit.framework.TestCase
 
 public class MethodOrderTest: CodegenTestCase() {
+    public fun testDelegatedMethod() {
+        doTest(
+                """
+                    trait Trait {
+                        fun f0()
+                        fun f4()
+                        fun f3()
+                        fun f2()
+                        fun f1()
+                        fun f5()
+                    }
+
+                    val delegate: Trait = throw Error()
+
+                    val obj = object : Trait by delegate {
+                        override fun f3() { }
+                    }
+                """,
+                "\$obj$1",
+                listOf("<clinit>()V", "f3()V", "<init>()V", "f0()V", "f1()V", "f2()V", "f4()V", "f5()V")
+        )
+    }
+
     public fun testLambdaClosureOrdering() {
         doTest(
                 """

@@ -23,6 +23,8 @@ import kotlin.platform.platformStatic
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.utils.keysToMapExceptNulls
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.resolve.MemberComparator
+import java.util.Comparator
 
 public object CodegenUtilKt {
 
@@ -40,6 +42,8 @@ public object CodegenUtilKt {
         return descriptor.getDefaultType().getMemberScope().getAllDescriptors().stream()
             .filterIsInstance(javaClass<CallableMemberDescriptor>())
             .filter { it.getKind() == CallableMemberDescriptor.Kind.DELEGATION }
+            .toList()
+            .sortBy(MemberComparator.INSTANCE as Comparator<CallableMemberDescriptor>) // Workaround for KT-6030
             .keysToMapExceptNulls {
                 delegatingMember ->
 
