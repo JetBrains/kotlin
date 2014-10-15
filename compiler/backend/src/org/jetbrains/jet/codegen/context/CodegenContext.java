@@ -31,10 +31,7 @@ import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.storage.NullableLazyValue;
 import org.jetbrains.org.objectweb.asm.Type;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_THIS_FIELD;
 import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
@@ -231,7 +228,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     public DeclarationDescriptor getAccessor(@NotNull DeclarationDescriptor descriptor, boolean isForBackingFieldInOuterClass, @Nullable JetType delegateType) {
         if (accessors == null) {
-            accessors = new HashMap<DeclarationDescriptor, DeclarationDescriptor>();
+            accessors = new LinkedHashMap<DeclarationDescriptor, DeclarationDescriptor>();
         }
         descriptor = descriptor.getOriginal();
         DeclarationDescriptor accessor = accessors.get(descriptor);

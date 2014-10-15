@@ -80,6 +80,26 @@ public class MethodOrderTest: CodegenTestCase() {
         )
     }
 
+    public fun testMemberAccessor() {
+        doTest(
+                """
+                    class Outer(private val a: Int, private var b: String) {
+                        private fun c() {
+                        }
+
+                        inner class Inner() {
+                            {
+                                b = b + a
+                                c()
+                            }
+                        }
+                    }
+                """,
+                "Outer",
+                listOf("<clinit>()V", "c()V", "<init>(ILjava/lang/String;)V", "getB\$b$0(LOuter;)Ljava/lang/String;", "setB\$b$0(LOuter;Ljava/lang/String;)V", "getA\$b$1(LOuter;)I", "c\$b$2(LOuter;)V")
+        )
+    }
+
     private fun doTest(sourceText: String, classSuffix: String, expectedOrder: List<String>) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS)
         myFiles = CodegenTestFiles.create("file.kt", sourceText, myEnvironment!!.getProject())
