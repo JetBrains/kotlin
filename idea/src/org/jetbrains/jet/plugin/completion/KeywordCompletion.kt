@@ -46,6 +46,8 @@ object KeywordCompletion {
             .filter { it !in NON_ACTUAL_KEYWORDS }
             .map { it as JetKeywordToken }
 
+    private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(OUT_KEYWORD to " X")
+
     public fun complete(parameters: CompletionParameters, prefixMatcher: PrefixMatcher, collector: LookupElementsCollector) {
         val position = parameters.getPosition()
 
@@ -155,7 +157,8 @@ object KeywordCompletion {
     private fun buildFilterByText(prefixText: String, project: Project): (JetKeywordToken) -> Boolean {
         val psiFactory = JetPsiFactory(project)
         return { keywordTokenType ->
-            val file = psiFactory.createFile(prefixText + keywordTokenType.getValue())
+            val postfix = KEYWORD_TO_DUMMY_POSTFIX[keywordTokenType] ?: ""
+            val file = psiFactory.createFile(prefixText + keywordTokenType.getValue() + postfix)
             val elementAt = file.findElementAt(prefixText.length)!!
             val nodeType = elementAt.getNode()!!.getElementType()
             when {

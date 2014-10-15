@@ -9,4 +9,5 @@ class TestSample() {
 // EXIST: val
 // EXIST: var
 // EXIST: in
-// NUMBER: 3
+// EXIST: out
+// NUMBER: 4
