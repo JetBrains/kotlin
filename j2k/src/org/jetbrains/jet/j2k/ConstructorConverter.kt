@@ -22,7 +22,6 @@ import com.intellij.psi.util.PsiUtil
 import java.util.HashMap
 import java.util.ArrayList
 import java.util.HashSet
-import org.jetbrains.jet.j2k.visitors.ExpressionConverter
 
 class ConstructorConverter(private val psiClass: PsiClass,
                            private val converter: Converter,

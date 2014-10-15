@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.j2k.visitors
+package org.jetbrains.jet.j2k
 
 import com.intellij.psi.*
 import org.jetbrains.jet.j2k.ast.*
-import org.jetbrains.jet.j2k.Converter
 import java.util.ArrayList
-import org.jetbrains.jet.j2k.singleOrNull2
 
 class SwitchConverter(private val converter: Converter) {
     public fun convert(statement: PsiSwitchStatement): WhenStatement

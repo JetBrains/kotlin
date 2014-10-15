@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.j2k.visitors
+package org.jetbrains.jet.j2k
 
 import com.intellij.psi.PsiForStatement
 import org.jetbrains.jet.j2k.ast.ForeachStatement
 import com.intellij.psi.PsiDeclarationStatement
-import org.jetbrains.jet.j2k.singleOrNull2
 import com.intellij.psi.PsiLocalVariable
-import org.jetbrains.jet.j2k.hasWriteAccesses
 import com.intellij.psi.PsiBinaryExpression
 import com.intellij.psi.JavaTokenType
 import com.intellij.psi.PsiReferenceExpression
@@ -30,7 +28,6 @@ import org.jetbrains.jet.j2k.ast.PrimitiveType
 import org.jetbrains.jet.j2k.ast.Identifier
 import org.jetbrains.jet.j2k.ast.assignNoPrototype
 import org.jetbrains.jet.j2k.ast.declarationIdentifier
-import org.jetbrains.jet.j2k.isInSingleLine
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiVariable
 import com.intellij.psi.PsiPostfixExpression
@@ -47,7 +44,6 @@ import com.intellij.psi.PsiArrayType
 import org.jetbrains.jet.j2k.ast.BinaryExpression
 import org.jetbrains.jet.j2k.ast.LiteralExpression
 import org.jetbrains.jet.j2k.ast.RangeExpression
-import org.jetbrains.jet.j2k.Converter
 import com.intellij.psi.PsiBlockStatement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.j2k.ast.Block

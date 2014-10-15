@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.j2k.visitors
+package org.jetbrains.jet.j2k
 
 import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType

@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.j2k.visitors
+package org.jetbrains.jet.j2k
 
 import com.intellij.psi.*
-import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.*
 import java.util.ArrayList
-import org.jetbrains.jet.j2k.isInSingleLine
 
 trait StatementConverter {
     fun convertStatement(statement: PsiStatement, converter: Converter): Statement

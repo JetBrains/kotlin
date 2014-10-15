@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.j2k.visitors
+package org.jetbrains.jet.j2k
 
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiExpression
-import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.BinaryExpression
 import org.jetbrains.jet.j2k.ast.Expression
 import org.jetbrains.jet.j2k.ast.MethodCallExpression

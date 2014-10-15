@@ -35,7 +35,6 @@ import com.intellij.psi.PsiExpressionStatement
 import com.intellij.psi.PsiAssignmentExpression
 import com.intellij.psi.PsiExpression
 import com.intellij.psi.JavaTokenType
-import org.jetbrains.jet.j2k.visitors.ExpressionConverter
 import com.intellij.psi.PsiElementFactory
 
 class FieldCorrectionInfo(val name: Identifier, val access: Modifier?, val setterAccess: Modifier?)

@@ -19,7 +19,6 @@ package org.jetbrains.jet.j2k
 import org.jetbrains.jet.j2k.ast.Type
 import org.jetbrains.jet.j2k.ast.Nullability
 import com.intellij.psi.*
-import org.jetbrains.jet.j2k.visitors.TypeVisitor
 import java.util.HashMap
 import java.util.HashSet
 import org.jetbrains.jet.j2k.ast.Import

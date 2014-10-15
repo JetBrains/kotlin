@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.j2k.visitors
+package org.jetbrains.jet.j2k
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import org.jetbrains.jet.j2k.ast.*
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
-import org.jetbrains.jet.j2k.TypeConverter
-import org.jetbrains.jet.j2k.Converter
 
 private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
 
