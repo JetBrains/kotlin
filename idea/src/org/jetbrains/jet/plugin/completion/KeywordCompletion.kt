@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.completion
 import com.intellij.psi.filters.*
 import com.intellij.psi.filters.position.LeftNeighbour
 import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lexer.JetTokens
 import com.intellij.psi.PsiElement
 import com.intellij.psi.filters.position.PositionElementFilter
 import com.intellij.codeInsight.completion.*
@@ -35,15 +34,17 @@ import org.jetbrains.jet.lang.psi.psiUtil.siblings
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 
+import org.jetbrains.jet.lexer.JetTokens.*
+
 class KeywordLookupObject(val keyword: String)
 
 object KeywordCompletion {
-    private val NON_ACTUAL_KEYWORDS = setOf(JetTokens.REIFIED_KEYWORD.getValue(),
-                                            JetTokens.CAPITALIZED_THIS_KEYWORD.getValue(),
-                                            JetTokens.TYPE_ALIAS_KEYWORD.getValue())
-    private val ALL_KEYWORDS = (JetTokens.KEYWORDS.getTypes() + JetTokens.SOFT_KEYWORDS.getTypes())
-            .map { (it as JetKeywordToken).getValue() }
+    private val NON_ACTUAL_KEYWORDS = setOf(REIFIED_KEYWORD,
+                                            CAPITALIZED_THIS_KEYWORD,
+                                            TYPE_ALIAS_KEYWORD)
+    private val ALL_KEYWORDS = (KEYWORDS.getTypes() + SOFT_KEYWORDS.getTypes())
             .filter { it !in NON_ACTUAL_KEYWORDS }
+            .map { it as JetKeywordToken }
 
     public fun complete(parameters: CompletionParameters, prefixMatcher: PrefixMatcher, collector: LookupElementsCollector) {
         val position = parameters.getPosition()
@@ -51,11 +52,12 @@ object KeywordCompletion {
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
 
         val parserFilter = buildFilter(position)
-        for (keyword in ALL_KEYWORDS) {
-            if (prefixMatcher.prefixMatches(keyword) && parserFilter(keyword)) {
+        for (keywordToken in ALL_KEYWORDS) {
+            val keyword = keywordToken.getValue()
+            if (prefixMatcher.prefixMatches(keyword) && parserFilter(keywordToken)) {
                 val element = LookupElementBuilder.create(KeywordLookupObject(keyword), keyword)
                         .bold()
-                        .withInsertHandler(if (keyword !in FUNCTION_KEYWORDS)
+                        .withInsertHandler(if (keywordToken !in FUNCTION_KEYWORDS)
                                                KotlinKeywordInsertHandler
                                            else
                                                JetFunctionInsertHandler.NO_PARAMETERS_HANDLER)
@@ -64,7 +66,7 @@ object KeywordCompletion {
         }
     }
 
-    private val FUNCTION_KEYWORDS = listOf(JetTokens.GET_KEYWORD.toString(), JetTokens.SET_KEYWORD.toString())
+    private val FUNCTION_KEYWORDS = listOf(GET_KEYWORD, SET_KEYWORD)
 
     private val GENERAL_FILTER = NotFilter(OrFilter(
             CommentFilter(),
@@ -93,7 +95,7 @@ object KeywordCompletion {
         }
     }
 
-    private fun buildFilter(position: PsiElement): (String) -> Boolean {
+    private fun buildFilter(position: PsiElement): (JetKeywordToken) -> Boolean {
         var parent = position.getParent()
         var prevParent = position
         while (parent != null) {
@@ -135,7 +137,7 @@ object KeywordCompletion {
 
     private fun buildFilterWithContext(prefixText: String,
                                        contextElement: PsiElement,
-                                       position: PsiElement): (String) -> Boolean {
+                                       position: PsiElement): (JetKeywordToken) -> Boolean {
         val offset = position.getStartOffsetInAncestor(contextElement)
         val truncatedContext = contextElement.getText()!!.substring(0, offset)
         return buildFilterByText(prefixText + truncatedContext, contextElement.getProject())
@@ -143,21 +145,21 @@ object KeywordCompletion {
 
     private fun buildFilterWithReducedContext(prefixText: String,
                                               contextElement: PsiElement?,
-                                              position: PsiElement): (String) -> Boolean {
+                                              position: PsiElement): (JetKeywordToken) -> Boolean {
         val builder = StringBuilder()
         buildReducedContextBefore(builder, position, contextElement)
         return buildFilterByText(prefixText + builder.toString(), position.getProject())
     }
 
 
-    private fun buildFilterByText(prefixText: String, project: Project): (String) -> Boolean {
+    private fun buildFilterByText(prefixText: String, project: Project): (JetKeywordToken) -> Boolean {
         val psiFactory = JetPsiFactory(project)
-        return { keyword ->
-            val file = psiFactory.createFile(prefixText + keyword)
+        return { keywordTokenType ->
+            val file = psiFactory.createFile(prefixText + keywordTokenType.getValue())
             val elementAt = file.findElementAt(prefixText.length)!!
             val nodeType = elementAt.getNode()!!.getElementType()
             when {
-                nodeType !in JetTokens.KEYWORDS && nodeType !in JetTokens.SOFT_KEYWORDS -> false
+                nodeType != keywordTokenType -> false
 
                 elementAt.getParentByType(javaClass<PsiErrorElement>(), strict = false) != null -> false
 
