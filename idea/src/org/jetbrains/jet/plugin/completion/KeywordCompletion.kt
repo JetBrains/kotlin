@@ -32,6 +32,8 @@ import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.prevLeaf
 import org.jetbrains.jet.plugin.completion.handlers.KotlinKeywordInsertHandler
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.PsiComment
 
 class KeywordLookupObject(val keyword: String)
 
@@ -159,11 +161,20 @@ object KeywordCompletion {
 
                 elementAt.getParentByType(javaClass<PsiErrorElement>(), strict = false) != null -> false
 
-                elementAt.prevLeaf() is PsiErrorElement -> false
+                elementAt.prevLeafSkipWhitespacesAndComments() is PsiErrorElement -> false
 
                 else -> true
             }
         }
+    }
+
+    private fun PsiElement.prevLeafSkipWhitespacesAndComments(): PsiElement? {
+        var leaf = prevLeaf()
+        while (leaf != null) {
+            if (leaf !is PsiWhiteSpace && leaf !is PsiComment) return leaf
+            leaf = leaf!!.prevLeaf()
+        }
+        return null
     }
 
     // builds text within scope (or from the start of the file) before position element excluding almost all declarations
