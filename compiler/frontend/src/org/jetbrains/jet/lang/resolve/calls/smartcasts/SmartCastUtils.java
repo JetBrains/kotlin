@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -68,7 +69,7 @@ public class SmartCastUtils {
      * @return variants @param receiverToCast may be cast to according to @param dataFlowInfo, @param receiverToCast itself is NOT included
      */
     @NotNull
-    public static List<JetType> getSmartCastVariantsExcludingReceiver(
+    public static Collection<JetType> getSmartCastVariantsExcludingReceiver(
             @NotNull BindingContext bindingContext,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ReceiverValue receiverToCast
@@ -77,21 +78,13 @@ public class SmartCastUtils {
             ThisReceiver receiver = (ThisReceiver) receiverToCast;
             assert receiver.exists();
             DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver);
-            return collectSmartCastReceiverValues(dataFlowInfo, dataFlowValue);
+            return dataFlowInfo.getPossibleTypes(dataFlowValue);
         }
         else if (receiverToCast instanceof ExpressionReceiver) {
             DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverToCast, bindingContext);
-            return collectSmartCastReceiverValues(dataFlowInfo, dataFlowValue);
+            return dataFlowInfo.getPossibleTypes(dataFlowValue);
         }
         return Collections.emptyList();
-    }
-
-    @NotNull
-    private static List<JetType> collectSmartCastReceiverValues(
-            @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull DataFlowValue dataFlowValue
-    ) {
-        return Lists.newArrayList(dataFlowInfo.getPossibleTypes(dataFlowValue));
     }
 
     public static boolean isSubTypeBySmartCastIgnoringNullability(
@@ -106,7 +99,7 @@ public class SmartCastUtils {
     @Nullable
     private static JetType getSmartCastSubType(
             @NotNull JetType receiverParameterType,
-            @NotNull List<JetType> smartCastTypes
+            @NotNull Collection<JetType> smartCastTypes
     ) {
         Set<JetType> subTypes = Sets.newHashSet();
         for (JetType smartCastType : smartCastTypes) {
@@ -136,7 +129,7 @@ public class SmartCastUtils {
             return false;
         }
 
-        List<JetType> smartCastTypesExcludingReceiver = getSmartCastVariantsExcludingReceiver(
+        Collection<JetType> smartCastTypesExcludingReceiver = getSmartCastVariantsExcludingReceiver(
                 context.trace.getBindingContext(), context.dataFlowInfo, receiver);
         JetType smartCastSubType = getSmartCastSubType(receiverParameterType, smartCastTypesExcludingReceiver);
         if (smartCastSubType == null) return false;

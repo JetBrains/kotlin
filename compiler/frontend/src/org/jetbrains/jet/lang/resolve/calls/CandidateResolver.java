@@ -47,10 +47,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
 import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_IS_NOT_AN_EXPRESSION;
@@ -520,9 +517,8 @@ public class CandidateResolver {
             @NotNull ResolutionContext<?> context
     ) {
         ExpressionReceiver receiverToCast = new ExpressionReceiver(JetPsiUtil.safeDeparenthesize(expression, false), actualType);
-        List<JetType> variants =
-                SmartCastUtils.getSmartCastVariantsExcludingReceiver(context.trace.getBindingContext(), context.dataFlowInfo,
-                                                                     receiverToCast);
+        Collection<JetType> variants = SmartCastUtils.getSmartCastVariantsExcludingReceiver(
+                context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
         for (JetType possibleType : variants) {
             if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, expectedType)) {
                 return possibleType;
