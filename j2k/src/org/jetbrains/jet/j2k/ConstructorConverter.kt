@@ -84,7 +84,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
                             else
                                 null
                         }
-                        val finalTarget = finalTargetInfo?.constructor ?: target!! //TODO: see KT-5335
+                        val finalTarget = finalTargetInfo?.constructor ?: target
 
                         toTargetConstructorMap[constructor] = TargetConstructorInfo(finalTarget, parameterDefaults)
                         for (entry in toTargetConstructorMap.entrySet()) {
