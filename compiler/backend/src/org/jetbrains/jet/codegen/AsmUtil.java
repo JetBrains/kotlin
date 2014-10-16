@@ -486,29 +486,28 @@ public class AsmUtil {
         v.xor(Type.INT_TYPE);
     }
 
+    @NotNull
     public static StackValue genEqualsForExpressionsOnStack(
-            InstructionAdapter v,
-            IElementType opToken,
-            Type leftType,
-            Type rightType
+            @NotNull InstructionAdapter v,
+            @NotNull IElementType opToken,
+            @NotNull Type leftType,
+            @NotNull Type rightType
     ) {
-        if ((isNumberPrimitive(leftType) || leftType.getSort() == Type.BOOLEAN) && leftType == rightType) {
+        if (isPrimitive(leftType) && leftType == rightType) {
             return StackValue.cmp(opToken, leftType);
         }
-        else {
-            if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
-                return StackValue.cmp(opToken, leftType);
-            }
-            else {
-                v.invokestatic("kotlin/jvm/internal/Intrinsics", "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
 
-                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
-                    genInvertBoolean(v);
-                }
-
-                return StackValue.onStack(Type.BOOLEAN_TYPE);
-            }
+        if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
+            return StackValue.cmp(opToken, leftType);
         }
+
+        v.invokestatic("kotlin/jvm/internal/Intrinsics", "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
+
+        if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
+            genInvertBoolean(v);
+        }
+
+        return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
     public static void genIncrement(Type expectedType, int myDelta, InstructionAdapter v) {

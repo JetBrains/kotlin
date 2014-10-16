@@ -645,15 +645,23 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     }
                     else {
                         iv.invokestatic("java/util/Arrays", "equals",
-                                        "([" + elementType.getDescriptor() + "[" + elementType.getDescriptor() + ")Z", false);
+                                        "(" + asmType.getDescriptor() + asmType.getDescriptor() + ")Z", false);
                     }
+                    iv.ifeq(ne);
+                }
+                else if (asmType.getSort() == Type.FLOAT) {
+                    iv.invokestatic("java/lang/Float", "compare", "(FF)I", false);
+                    iv.ifne(ne);
+                }
+                else if (asmType.getSort() == Type.DOUBLE) {
+                    iv.invokestatic("java/lang/Double", "compare", "(DD)I", false);
+                    iv.ifne(ne);
                 }
                 else {
                     StackValue value = genEqualsForExpressionsOnStack(iv, JetTokens.EQEQ, asmType, asmType);
                     value.put(Type.BOOLEAN_TYPE, iv);
+                    iv.ifeq(ne);
                 }
-
-                iv.ifeq(ne);
             }
 
             iv.mark(eq);

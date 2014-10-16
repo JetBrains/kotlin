@@ -517,7 +517,7 @@ public abstract class StackValue {
                 opcode = jumpIfFalse ? IFGT : IFLE;
             }
             else {
-                throw new UnsupportedOperationException("don't know how to generate this condjump");
+                throw new UnsupportedOperationException("Don't know how to generate this condJump: " + opToken);
             }
             if (operandType == Type.FLOAT_TYPE || operandType == Type.DOUBLE_TYPE) {
                 if (opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {

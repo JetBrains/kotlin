@@ -766,6 +766,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
         
+        @TestMetadata("doubleParam.kt")
+        public void testDoubleParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/doubleParam.kt");
+            doTestWithStdlib(fileName);
+        }
+        
+        @TestMetadata("floatParam.kt")
+        public void testFloatParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/floatParam.kt");
+            doTestWithStdlib(fileName);
+        }
+        
         @TestMetadata("genericParam.kt")
         public void testGenericParam() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/genericParam.kt");
