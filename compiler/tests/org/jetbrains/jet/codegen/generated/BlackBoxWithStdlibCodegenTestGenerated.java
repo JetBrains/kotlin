@@ -181,6 +181,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
         
+        @TestMetadata("kt6047.kt")
+        public void testKt6047() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/boxingOptimization/kt6047.kt");
+            doTestWithStdlib(fileName);
+        }
+        
         @TestMetadata("nullCheck.kt")
         public void testNullCheck() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/boxingOptimization/nullCheck.kt");

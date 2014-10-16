@@ -146,7 +146,11 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
 
         MethodInsnNode methodInsnNode = (MethodInsnNode) insn;
 
-        return isWrapperClassName(methodInsnNode.owner) && "valueOf".equals(methodInsnNode.name);
+        return isWrapperClassName(methodInsnNode.owner) && "valueOf".equals(methodInsnNode.name) &&
+               Type.getMethodDescriptor(
+                       Type.getObjectType(methodInsnNode.owner),
+                       AsmUtil.unboxType(Type.getObjectType(methodInsnNode.owner))
+               ).equals(methodInsnNode.desc);
     }
 
     private static boolean isNextMethodCallOfProgressionIterator(
