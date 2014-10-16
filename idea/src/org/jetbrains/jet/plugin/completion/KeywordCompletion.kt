@@ -176,11 +176,10 @@ object KeywordCompletion {
 
     private fun PsiElement.prevLeafSkipWhitespacesAndComments(): PsiElement? {
         var leaf = prevLeaf()
-        while (leaf != null) {
-            if (leaf !is PsiWhiteSpace && leaf !is PsiComment) return leaf
+        while (leaf is PsiWhiteSpace || leaf is PsiComment) {
             leaf = leaf!!.prevLeaf()
         }
-        return null
+        return leaf
     }
 
     // builds text within scope (or from the start of the file) before position element excluding almost all declarations

@@ -4,7 +4,7 @@ class A {
     }
 
     fun bar() {
-        fun()
+        foo()
     }
 
     <caret>
