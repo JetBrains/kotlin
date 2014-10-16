@@ -33,6 +33,7 @@ import java.util.ArrayList
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import org.jetbrains.org.objectweb.asm.signature.SignatureWriter
 import org.jetbrains.org.objectweb.asm.MethodVisitor
+import com.google.common.collect.ImmutableSet
 
 public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
 
@@ -43,8 +44,13 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         public val JAVA_CLASS_MARKER_METHOD_NAME: String = "reifyJavaClass"
         public val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME: String = "needClassReification"
 
+        private val PARAMETRISED_MARKERS = ImmutableSet.of(
+                NEW_ARRAY_MARKER_METHOD_NAME, CHECKCAST_MARKER_METHOD_NAME,
+                INSTANCEOF_MARKER_METHOD_NAME, JAVA_CLASS_MARKER_METHOD_NAME
+        )
+
         private fun isParametrisedReifiedMarker(insn: AbstractInsnNode) =
-                isReifiedMarker(insn) { it.startsWith("reify") }
+                isReifiedMarker(insn) { PARAMETRISED_MARKERS.contains(it) }
 
         private fun isReifiedMarker(insn: AbstractInsnNode, namePredicate: (String) -> Boolean): Boolean {
             if (insn.getOpcode() != Opcodes.INVOKESTATIC || insn !is MethodInsnNode) return false
