@@ -61,9 +61,7 @@ private object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
 }
 
 private object KindWeigher : LookupElementWeigher("kotlin.kind") {
-    enum class Weight : Comparable<Weight> {
-        override fun compareTo(other: Weight) = ordinal().compareTo(other.ordinal())
-
+    enum class Weight {
         localOrParameter
         property
         keyword
@@ -71,7 +69,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
         packages
     }
 
-    override fun weigh(element: LookupElement): Weight {
+    override fun weigh(element: LookupElement): Comparable<Any> {
         val o = element.getObject()
         return when (o) {
             is DeclarationDescriptorLookupObject -> when (o.descriptor) {
@@ -84,7 +82,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
             is KeywordLookupObject -> Weight.keyword
 
             else -> Weight.default
-        }
+        } as Comparable<Any> // TODO: a temporary hack until kotlin.Enum : kotlin.Comparable
     }
 }
 
@@ -103,9 +101,7 @@ private object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMa
 }
 
 private class JetDeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWeigher("kotlin.declarationRemoteness") {
-    private enum class Weight : Comparable<Weight> {
-        override fun compareTo(other: Weight) = ordinal().compareTo(other.ordinal())
-
+    private enum class Weight {
         kotlinDefaultImport
         thisFile
         imported
@@ -113,12 +109,12 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
         notImported
     }
 
-    override fun weigh(element: LookupElement): Weight {
+    override fun weigh(element: LookupElement): Comparable<Any> {
         val o = element.getObject()
         if (o is DeclarationDescriptorLookupObject) {
             val elementFile = o.psiElement?.getContainingFile()
             if (elementFile is JetFile && elementFile.getOriginalFile() == file) {
-                return Weight.thisFile
+                return Weight.thisFile as Comparable<Any> // TODO: a temporary hack until kotlin.Enum : kotlin.Comparable
             }
 
             val fqName = DescriptorUtils.getFqName(o.descriptor).toString()
@@ -129,10 +125,10 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
                     ImportInsertHelper.getInstance().needImport(importPath, file) -> Weight.notImported
                     ImportInsertHelper.getInstance().isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
                     else -> Weight.imported
-                }
+                } as Comparable<Any> // TODO: a temporary hack until kotlin.Enum : kotlin.Comparable
             }
         }
 
-        return Weight.normal
+        return Weight.normal as Comparable<Any> // TODO: a temporary hack until kotlin.Enum : kotlin.Comparable
     }
 }
