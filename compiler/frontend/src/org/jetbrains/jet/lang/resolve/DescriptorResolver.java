@@ -1353,7 +1353,7 @@ public class DescriptorResolver {
         return propertyDescriptor;
     }
 
-    public static void checkBounds(@NotNull JetTypeReference typeReference, @NotNull JetType type, BindingTrace trace) {
+    public static void checkBounds(@NotNull JetTypeReference typeReference, @NotNull JetType type, @NotNull BindingTrace trace) {
         if (type.isError()) return;
 
         JetTypeElement typeElement = typeReference.getTypeElement();
@@ -1364,7 +1364,20 @@ public class DescriptorResolver {
         assert parameters.size() == arguments.size();
 
         List<JetTypeReference> jetTypeArguments = typeElement.getTypeArgumentsAsTypes();
-        assert jetTypeArguments.size() == arguments.size() : typeElement.getText();
+
+        // A type reference from Kotlin code can yield a flexible type only if it's `ft<T1, T2>`, whose bounds should not be checked
+        if (TypesPackage.isFlexible(type)) {
+            assert jetTypeArguments.size() == 2
+                    : "Flexible type cannot be denoted in Kotlin otherwise than as ft<T1, T2>, but was: "
+                      + JetPsiUtil.getElementTextWithContext(typeReference);
+            // it's really ft<Foo, Bar>
+            Flexibility flexibility = TypesPackage.flexibility(type);
+            checkBounds(jetTypeArguments.get(0), flexibility.getLowerBound(), trace);
+            checkBounds(jetTypeArguments.get(1), flexibility.getUpperBound(), trace);
+            return;
+        }
+
+        assert jetTypeArguments.size() == arguments.size() : typeElement.getText() + ": " + jetTypeArguments + " - " + arguments;
 
         TypeSubstitutor substitutor = TypeSubstitutor.create(type);
         for (int i = 0; i < jetTypeArguments.size(); i++) {
@@ -1384,7 +1397,8 @@ public class DescriptorResolver {
             @NotNull JetTypeReference jetTypeArgument,
             @NotNull JetType typeArgument,
             @NotNull TypeParameterDescriptor typeParameterDescriptor,
-            @NotNull TypeSubstitutor substitutor, BindingTrace trace
+            @NotNull TypeSubstitutor substitutor,
+            @NotNull BindingTrace trace
     ) {
         for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
             JetType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);

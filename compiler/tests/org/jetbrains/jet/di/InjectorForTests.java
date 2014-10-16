@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.types.expressions.ForLoopConventionsChecker;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
+import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -68,6 +69,7 @@ public class InjectorForTests {
     private final ReflectionTypes reflectionTypes;
     private final CallExpressionResolver callExpressionResolver;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
+    private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
 
     public InjectorForTests(
@@ -96,6 +98,7 @@ public class InjectorForTests {
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.callExpressionResolver = new CallExpressionResolver();
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
+        this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
@@ -113,6 +116,7 @@ public class InjectorForTests {
         this.expressionTypingServices.setTypeResolver(typeResolver);
 
         this.typeResolver.setAnnotationResolver(annotationResolver);
+        this.typeResolver.setFlexibleTypeCapabilitiesProvider(flexibleTypeCapabilitiesProvider);
         this.typeResolver.setModuleDescriptor(moduleDescriptor);
         this.typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 

@@ -7705,6 +7705,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("explicitFlexibleNoPackage.kt")
+            public void testExplicitFlexibleNoPackage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/explicitFlexibleNoPackage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("explicitFlexibleWithPackage.kt")
+            public void testExplicitFlexibleWithPackage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/explicitFlexibleWithPackage.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("getParentOfType.kt")
             public void testGetParentOfType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/getParentOfType.kt");

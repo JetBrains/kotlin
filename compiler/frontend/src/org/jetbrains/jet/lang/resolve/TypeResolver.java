@@ -39,9 +39,16 @@ import static org.jetbrains.jet.storage.LockBasedStorageManager.NO_LOCKS;
 
 public class TypeResolver {
 
+    public static class FlexibleTypeCapabilitiesProvider {
+        public FlexibleTypeCapabilities getCapabilities() {
+            return FlexibleTypeCapabilities.NONE.INSTANCE$;
+        }
+    }
+
     private AnnotationResolver annotationResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     private ModuleDescriptor moduleDescriptor;
+    private FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
 
     @Inject
     public void setAnnotationResolver(AnnotationResolver annotationResolver) {
@@ -56,6 +63,12 @@ public class TypeResolver {
     @Inject
     public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
         this.moduleDescriptor = moduleDescriptor;
+    }
+
+
+    @Inject
+    public void setFlexibleTypeCapabilitiesProvider(@NotNull FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider) {
+        this.flexibleTypeCapabilitiesProvider = flexibleTypeCapabilitiesProvider;
     }
 
     @NotNull
@@ -163,6 +176,17 @@ public class TypeResolver {
                                 }
                             }
                             else {
+                                if (Flexibility.FLEXIBLE_TYPE_CLASSIFIER.asSingleFqName().equals(DescriptorUtils.getFqName(classifierDescriptor))
+                                        && classDescriptor.getTypeConstructor().getParameters().size() == 2) {
+                                    // We create flexible types by convention here
+                                    // This is not intended to be used in normal users' environments, only for tests and debugger etc
+                                    result[0] = type(DelegatingFlexibleType.create(
+                                            arguments.get(0).getType(),
+                                            arguments.get(1).getType(),
+                                            flexibleTypeCapabilitiesProvider.getCapabilities()
+                                    ));
+                                    return;
+                                }
                                 JetTypeImpl resultingType = new JetTypeImpl(
                                         annotations,
                                         typeConstructor,
