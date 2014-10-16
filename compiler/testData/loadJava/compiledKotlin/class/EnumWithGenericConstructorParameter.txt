@@ -2,6 +2,7 @@ package test
 
 internal final enum class EnumWithGenericConstructorParameter : kotlin.Enum<test.EnumWithGenericConstructorParameter> {
     /*primary*/ private constructor EnumWithGenericConstructorParameter(/*0*/ list: kotlin.List<kotlin.String>?)
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithGenericConstructorParameter): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     

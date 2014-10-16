@@ -2,21 +2,24 @@ package test
 
 internal final enum class In : kotlin.Enum<test.In> {
     /*primary*/ private constructor In()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.In): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     
     public enum entry A : test.In {
         /*primary*/ private constructor A()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.In): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         
         public class object <class-object-for-A> : test.In.A {
             /*primary*/ private constructor <class-object-for-A>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.In): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-
+    
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.In
     public final /*synthesized*/ fun values(): kotlin.Array<test.In>
@@ -24,21 +27,24 @@ internal final enum class In : kotlin.Enum<test.In> {
 
 private final enum class Pr : kotlin.Enum<test.Pr> {
     /*primary*/ private constructor Pr()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Pr): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     
     public enum entry A : test.Pr {
         /*primary*/ private constructor A()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Pr): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         
         public class object <class-object-for-A> : test.Pr.A {
             /*primary*/ private constructor <class-object-for-A>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Pr): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-
+    
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Pr
     public final /*synthesized*/ fun values(): kotlin.Array<test.Pr>
@@ -46,21 +52,24 @@ private final enum class Pr : kotlin.Enum<test.Pr> {
 
 public final enum class Pu : kotlin.Enum<test.Pu> {
     /*primary*/ private constructor Pu()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Pu): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     
     public enum entry A : test.Pu {
         /*primary*/ private constructor A()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Pu): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         
         public class object <class-object-for-A> : test.Pu.A {
             /*primary*/ private constructor <class-object-for-A>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Pu): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-
+    
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Pu
     public final /*synthesized*/ fun values(): kotlin.Array<test.Pu>

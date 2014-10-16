@@ -9,16 +9,19 @@ internal final class A {
     
     internal final enum class E : kotlin.Enum<test.A.E> {
         /*primary*/ private constructor E()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.A.E): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         
         public enum entry ENTRY : test.A.E {
             /*primary*/ private constructor ENTRY()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.A.E): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             
             public class object <class-object-for-ENTRY> : test.A.E.ENTRY {
                 /*primary*/ private constructor <class-object-for-ENTRY>()
+                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.A.E): kotlin.Int
                 public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
                 public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             }

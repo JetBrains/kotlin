@@ -2,6 +2,7 @@ package test
 
 internal final enum class EnumWithPrimitiveConstructorParameter : kotlin.Enum<test.EnumWithPrimitiveConstructorParameter> {
     /*primary*/ private constructor EnumWithPrimitiveConstructorParameter(/*0*/ b: kotlin.Boolean)
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithPrimitiveConstructorParameter): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     

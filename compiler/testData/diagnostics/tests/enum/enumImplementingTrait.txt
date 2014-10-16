@@ -2,27 +2,30 @@ package
 
 internal final enum class EnumImplementingTraitWithFun : kotlin.Enum<EnumImplementingTraitWithFun>, T1 {
     private constructor EnumImplementingTraitWithFun()
-    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithFun): kotlin.Int
+    public final override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal abstract override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
-    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     public enum entry E1 : EnumImplementingTraitWithFun {
         private constructor E1()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithFun): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         internal open override /*1*/ fun foo(): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         public class object <class-object-for-E1> : EnumImplementingTraitWithFun.E1 {
             private constructor <class-object-for-E1>()
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithFun): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -31,18 +34,20 @@ internal final enum class EnumImplementingTraitWithFun : kotlin.Enum<EnumImpleme
 
     public enum entry E2 : EnumImplementingTraitWithFun {
         private constructor E2()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithFun): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         internal abstract override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         public class object <class-object-for-E2> : EnumImplementingTraitWithFun.E2 {
             private constructor <class-object-for-E2>()
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithFun): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             internal abstract override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -57,8 +62,9 @@ internal final enum class EnumImplementingTraitWithFun : kotlin.Enum<EnumImpleme
 internal final enum class EnumImplementingTraitWithVal : kotlin.Enum<EnumImplementingTraitWithVal>, T2 {
     private constructor EnumImplementingTraitWithVal()
     internal abstract override /*1*/ /*fake_override*/ val bar: kotlin.Int
-    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithVal): kotlin.Int
+    public final override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
@@ -66,8 +72,9 @@ internal final enum class EnumImplementingTraitWithVal : kotlin.Enum<EnumImpleme
     public enum entry E1 : EnumImplementingTraitWithVal {
         private constructor E1()
         internal open override /*1*/ val bar: kotlin.Int = 1
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithVal): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -75,8 +82,9 @@ internal final enum class EnumImplementingTraitWithVal : kotlin.Enum<EnumImpleme
         public class object <class-object-for-E1> : EnumImplementingTraitWithVal.E1 {
             private constructor <class-object-for-E1>()
             internal open override /*1*/ /*fake_override*/ val bar: kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithVal): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -86,8 +94,9 @@ internal final enum class EnumImplementingTraitWithVal : kotlin.Enum<EnumImpleme
     public enum entry E2 : EnumImplementingTraitWithVal {
         private constructor E2()
         internal abstract override /*1*/ /*fake_override*/ val bar: kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithVal): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -95,8 +104,9 @@ internal final enum class EnumImplementingTraitWithVal : kotlin.Enum<EnumImpleme
         public class object <class-object-for-E2> : EnumImplementingTraitWithVal.E2 {
             private constructor <class-object-for-E2>()
             internal abstract override /*1*/ /*fake_override*/ val bar: kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithVal): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

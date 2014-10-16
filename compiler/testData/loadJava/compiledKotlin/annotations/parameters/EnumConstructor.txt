@@ -14,6 +14,7 @@ internal final enum class E : kotlin.Enum<test.E> {
         internal final fun <get-x>(): kotlin.String
     test.B() internal final val y: kotlin.Int
         internal final fun <get-y>(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     

@@ -454,8 +454,9 @@ public final class DoubleRange : kotlin.Range<kotlin.Double>, kotlin.Progression
     }
 }
 
-public abstract class Enum</*0*/ E : kotlin.Enum<E>> {
+public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     /*primary*/ public constructor Enum</*0*/ E : kotlin.Enum<E>>(/*0*/ name: kotlin.String, /*1*/ ordinal: kotlin.Int)
+    public final override /*1*/ fun compareTo(/*0*/ other: E): kotlin.Int
     public final fun name(): kotlin.String
     public final fun ordinal(): kotlin.Int
 }
@@ -774,33 +775,38 @@ public trait Function9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/
 
 public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
     /*primary*/ private constructor InlineOption()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineOption): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
+    
     public enum entry LOCAL_CONTINUE_AND_BREAK : kotlin.InlineOption {
         /*primary*/ private constructor LOCAL_CONTINUE_AND_BREAK()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineOption): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
+        
         public class object <class-object-for-LOCAL_CONTINUE_AND_BREAK> : kotlin.InlineOption.LOCAL_CONTINUE_AND_BREAK {
             /*primary*/ private constructor <class-object-for-LOCAL_CONTINUE_AND_BREAK>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineOption): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-
+    
     public enum entry ONLY_LOCAL_RETURN : kotlin.InlineOption {
         /*primary*/ private constructor ONLY_LOCAL_RETURN()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineOption): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-
+        
         public class object <class-object-for-ONLY_LOCAL_RETURN> : kotlin.InlineOption.ONLY_LOCAL_RETURN {
             /*primary*/ private constructor <class-object-for-ONLY_LOCAL_RETURN>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineOption): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-
+    
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineOption
     public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineOption>
@@ -808,16 +814,19 @@ public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
 
 public final enum class InlineStrategy : kotlin.Enum<kotlin.InlineStrategy> {
     /*primary*/ private constructor InlineStrategy()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineStrategy): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     
     public enum entry AS_FUNCTION : kotlin.InlineStrategy {
         /*primary*/ private constructor AS_FUNCTION()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineStrategy): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         
         public class object <class-object-for-AS_FUNCTION> : kotlin.InlineStrategy.AS_FUNCTION {
             /*primary*/ private constructor <class-object-for-AS_FUNCTION>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineStrategy): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
@@ -825,16 +834,18 @@ public final enum class InlineStrategy : kotlin.Enum<kotlin.InlineStrategy> {
     
     public enum entry IN_PLACE : kotlin.InlineStrategy {
         /*primary*/ private constructor IN_PLACE()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineStrategy): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         
         public class object <class-object-for-IN_PLACE> : kotlin.InlineStrategy.IN_PLACE {
             /*primary*/ private constructor <class-object-for-IN_PLACE>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineStrategy): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-
+    
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineStrategy
     public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineStrategy>
@@ -1461,7 +1472,7 @@ public open class Throwable {
 
 public object Unit {
     /*primary*/ private constructor Unit()
-
+    
     public class object <class-object-for-Unit> : kotlin.Unit {
         /*primary*/ private constructor <class-object-for-Unit>()
     }
