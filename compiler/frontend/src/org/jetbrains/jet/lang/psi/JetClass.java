@@ -225,6 +225,10 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
 
     @Override
     public boolean isTopLevel() {
+        PsiJetClassStub stub = getStub();
+        if (stub != null) {
+            return stub.isTopLevel();
+        }
         return getContainingFile() == getParent();
     }
 
