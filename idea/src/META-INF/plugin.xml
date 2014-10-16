@@ -61,11 +61,16 @@
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
 
-    <action id="ShowJetExpressionType" class="org.jetbrains.jet.plugin.actions.ShowExpressionTypeAction"
+    <action id="ShowKotlinExpressionType" class="org.jetbrains.jet.plugin.actions.ShowExpressionTypeAction"
             text="Show Expression Type">
-      <keyboard-shortcut keymap="$default" first-keystroke="control shift Q"/>
-      <keyboard-shortcut keymap="Mac OS X" first-keystroke="control shift T"/>
-      <add-to-group group-id="CodeMenu" anchor="last"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="alt EQUALS"/>
+
+      <keyboard-shortcut keymap="Mac OS X" first-keystroke="control shift P"/>
+      <keyboard-shortcut keymap="Mac OS X" first-keystroke="alt EQUALS" remove="true"/>
+
+      <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control shift P"/>
+      <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="alt EQUALS" remove="true"/>
+      <add-to-group group-id="CodeEditorViewGroup" anchor="last"/>
     </action>
     <action id="ConvertJavaToKotlin" class="org.jetbrains.jet.plugin.actions.JavaToKotlinAction"
             text="Convert Java File to Kotlin File">
