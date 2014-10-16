@@ -20,7 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WrappedValues {
-    private static final Object NULL_VALUE = new Object();
+    private static final Object NULL_VALUE = new Object() {
+        @Override
+        public String toString() {
+            return "NULL_VALUE";
+        }
+    };
 
     private final static class ThrowableWrapper {
         private final Throwable throwable;
