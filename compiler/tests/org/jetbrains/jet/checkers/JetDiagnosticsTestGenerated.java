@@ -10123,6 +10123,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("ElseOnNullableEnum.kt")
+            public void testElseOnNullableEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ElseOnNullableEnum.kt");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("ElseOnNullableEnumWithSmartCast.kt")
+            public void testElseOnNullableEnumWithSmartCast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ElseOnNullableEnumWithSmartCast.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("NoElseExpectedUnit.kt")
             public void testNoElseExpectedUnit() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/NoElseExpectedUnit.kt");

@@ -2609,6 +2609,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
         
+        @TestMetadata("nullableEnum.kt")
+        public void testNullableEnum() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/whenEnumOptimization/nullableEnum.kt");
+            doTestWithStdlib(fileName);
+        }
+        
         @TestMetadata("subjectAny.kt")
         public void testSubjectAny() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/whenEnumOptimization/subjectAny.kt");
