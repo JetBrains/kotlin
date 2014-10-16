@@ -2649,6 +2649,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
+        @TestMetadata("enumWithLambdaParameter.kt")
+        public void testEnumWithLambdaParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/enumWithLambdaParameter.kt");
+            doTest(fileName);
+        }
+        
         @TestMetadata("inPackage.kt")
         public void testInPackage() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/inPackage.kt");
