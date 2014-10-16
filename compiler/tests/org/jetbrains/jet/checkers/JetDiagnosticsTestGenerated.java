@@ -3907,6 +3907,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("modifiersOnEnumEntry.kt")
+            public void testModifiersOnEnumEntry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/modifiersOnEnumEntry.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("openMemberInEnum.kt")
             public void testOpenMemberInEnum() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/openMemberInEnum.kt");
