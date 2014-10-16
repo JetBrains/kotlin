@@ -3907,6 +3907,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("overrideFinalEnumMethods.kt")
+            public void testOverrideFinalEnumMethods() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/overrideFinalEnumMethods.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("starImportNestedClassAndEntries.kt")
             public void testStarImportNestedClassAndEntries() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/starImportNestedClassAndEntries.kt");
