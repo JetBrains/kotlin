@@ -53,6 +53,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
+import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -414,8 +415,16 @@ public class JetFlowInformationProvider {
         if (variableDescriptor.isVar() && variableDescriptor instanceof PropertyDescriptor) {
             DeclarationDescriptor descriptor = BindingContextUtils.getEnclosingDescriptor(trace.getBindingContext(), expression);
             PropertySetterDescriptor setterDescriptor = ((PropertyDescriptor) variableDescriptor).getSetter();
-            if (Visibilities.isVisible(variableDescriptor, descriptor) && setterDescriptor != null
-                    && !Visibilities.isVisible(setterDescriptor, descriptor)) {
+
+            ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilPackage.getResolvedCall(expression, trace.getBindingContext());
+            ReceiverValue receiverValue = ReceiverValue.IRRELEVANT_RECEIVER;
+            if (resolvedCall != null) {
+                receiverValue = ExpressionTypingUtils
+                        .normalizeReceiverValueForVisibility(resolvedCall.getDispatchReceiver(), trace.getBindingContext());
+
+            }
+            if (Visibilities.isVisible(receiverValue, variableDescriptor, descriptor) && setterDescriptor != null
+                    && !Visibilities.isVisible(receiverValue, setterDescriptor, descriptor)) {
                 report(Errors.INVISIBLE_SETTER.on(expression, variableDescriptor, setterDescriptor.getVisibility(),
                                                   variableDescriptor.getContainingDeclaration()), ctxt);
                 return true;

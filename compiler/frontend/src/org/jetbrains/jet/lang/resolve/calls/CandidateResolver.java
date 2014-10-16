@@ -91,8 +91,9 @@ public class CandidateResolver {
         }
 
 
+        ReceiverValue receiverValue = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidateCall.getDispatchReceiver(), context.trace.getBindingContext());
         DeclarationDescriptorWithVisibility invisibleMember =
-                Visibilities.findInvisibleMember(ReceiverValue.IRRELEVANT_RECEIVER, candidate, context.scope.getContainingDeclaration());
+                Visibilities.findInvisibleMember(receiverValue, candidate, context.scope.getContainingDeclaration());
         if (invisibleMember != null) {
             candidateCall.addStatus(OTHER_ERROR);
             context.tracing.invisibleMember(context.trace, invisibleMember);

@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyAccessorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -269,7 +270,7 @@ public class OverridingUtil {
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
             OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent).getResult();
 
-            boolean isVisible = Visibilities.isVisible(fromSupertype, current);
+            boolean isVisible = Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, fromSupertype, current);
             switch (result) {
                 case OVERRIDABLE:
                     if (isVisible) {
@@ -378,7 +379,8 @@ public class OverridingUtil {
             @Override
             public Boolean invoke(CallableMemberDescriptor descriptor) {
                 //nested class could capture private member, so check for private visibility added
-                return !Visibilities.isPrivate(descriptor.getVisibility()) && Visibilities.isVisible(descriptor, current);
+                return !Visibilities.isPrivate(descriptor.getVisibility()) &&
+                       Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, current);
             }
         });
     }

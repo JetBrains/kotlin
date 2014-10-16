@@ -10286,6 +10286,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
 
         @TestMetadata("compiler/testData/diagnostics/tests/variance")
         @TestDataPath("$PROJECT_ROOT")
+        @InnerTestClasses({Variance.PrivateToThis.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Variance extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInVariance() throws Exception {
@@ -10356,6 +10357,39 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             public void testVisibility() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/Visibility.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/variance/privateToThis")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class PrivateToThis extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInPrivateToThis() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/variance/privateToThis"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("FunctionCall.kt")
+                public void testFunctionCall() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/privateToThis/FunctionCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("GetVal.kt")
+                public void testGetVal() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/privateToThis/GetVal.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("SetVar.kt")
+                public void testSetVar() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/privateToThis/SetVar.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ValReassigned.kt")
+                public void testValReassigned() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/variance/privateToThis/ValReassigned.kt");
+                    doTest(fileName);
+                }
             }
         }
 

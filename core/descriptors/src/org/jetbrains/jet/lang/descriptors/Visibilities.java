@@ -139,10 +139,6 @@ public class Visibilities {
     private Visibilities() {
     }
 
-    public static boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-        return isVisible(ReceiverValue.IRRELEVANT_RECEIVER, what, from);
-    }
-
     public static boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
         return findInvisibleMember(receiver, what, from) == null;
     }

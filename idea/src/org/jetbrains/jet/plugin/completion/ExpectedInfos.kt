@@ -68,6 +68,7 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.lang.types.typeUtil.isSubtypeOf
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 
 enum class Tail {
     COMMA
@@ -186,7 +187,9 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: Re
             // consider only candidates with more arguments than in the truncated call and with all arguments before the current one matched
             if (candidate.noErrorsInValueArguments() && (candidate.getCandidateDescriptor().getValueParameters().size > argumentIndex || isFunctionLiteralArgument)) {
                 val descriptor = candidate.getResultingDescriptor()
-                if (!Visibilities.isVisible(descriptor, resolutionScope.getContainingDeclaration())) continue
+
+                val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), bindingContext)
+                if (!Visibilities.isVisible(thisReceiver, descriptor, resolutionScope.getContainingDeclaration())) continue
 
                 val parameters = descriptor.getValueParameters()
                 if (isFunctionLiteralArgument && argumentIndex != parameters.lastIndex) continue

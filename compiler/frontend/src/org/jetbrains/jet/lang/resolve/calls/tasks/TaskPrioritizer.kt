@@ -413,7 +413,8 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
             if (call == null) return false
             val candidateDescriptor = call.getDescriptor()
             if (ErrorUtils.isError(candidateDescriptor)) return true
-            return Visibilities.isVisible(candidateDescriptor, context.scope.getContainingDeclaration())
+            val receiverValue = ExpressionTypingUtils.normalizeReceiverValueForVisibility(call.getDispatchReceiver(), context.trace.getBindingContext())
+            return Visibilities.isVisible(receiverValue, candidateDescriptor, context.scope.getContainingDeclaration())
         }
 
         private fun isSynthesized(call: ResolutionCandidate<D>): Boolean {
