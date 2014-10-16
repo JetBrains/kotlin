@@ -165,7 +165,7 @@ declaration
   : function
   : property
   : class
-  : typedef
+  : typeAlias
   : object
   ;
 

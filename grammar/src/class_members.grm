@@ -32,7 +32,7 @@ memberDeclaration
   : function
   : property
   : class
-  : typedef
+  : typeAlias
   : anonymousInitializer
   ;
 
