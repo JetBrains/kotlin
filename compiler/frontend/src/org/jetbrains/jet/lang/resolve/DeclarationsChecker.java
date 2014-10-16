@@ -24,7 +24,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.SubstitutionUtils;
+import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -39,15 +42,9 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.classCanHaveAbstrac
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.classCanHaveOpenMembers;
 
 public class DeclarationsChecker {
-    @NotNull
     private BindingTrace trace;
-    @NotNull
     private ModifiersChecker modifiersChecker;
-    @NotNull
     private DescriptorResolver descriptorResolver;
-
-    @NotNull
-    private AdditionalCheckerProvider additionalCheckerProvider;
 
     @Inject
     public void setTrace(@NotNull BindingTrace trace) {
@@ -57,11 +54,6 @@ public class DeclarationsChecker {
     @Inject
     public void setDescriptorResolver(@NotNull DescriptorResolver descriptorResolver) {
         this.descriptorResolver = descriptorResolver;
-    }
-
-    @Inject
-    public void setAdditionalCheckerProvider(@NotNull AdditionalCheckerProvider additionalCheckerProvider) {
-        this.additionalCheckerProvider = additionalCheckerProvider;
     }
 
     @Inject
@@ -401,11 +393,6 @@ public class DeclarationsChecker {
         }
 
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
-            JetType returnType = propertyDescriptor.getReturnType();
-            if (returnType instanceof DeferredType) {
-                returnType = ((DeferredType) returnType).getDelegate();
-            }
-
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
                 trace.report(ABSTRACT_PROPERTY_WITH_INITIALIZER.on(initializer));

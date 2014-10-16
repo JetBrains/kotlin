@@ -235,7 +235,6 @@ public class InjectorForTopDownAnalyzerBasic {
 
         controlFlowAnalyzer.setTrace(bindingTrace);
 
-        declarationsChecker.setAdditionalCheckerProvider(additionalCheckerProvider);
         declarationsChecker.setDescriptorResolver(descriptorResolver);
         declarationsChecker.setModifiersChecker(modifiersChecker);
         declarationsChecker.setTrace(bindingTrace);

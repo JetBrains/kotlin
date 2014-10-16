@@ -310,7 +310,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         controlFlowAnalyzer.setTrace(bindingTrace);
 
-        declarationsChecker.setAdditionalCheckerProvider(additionalCheckerProvider);
         declarationsChecker.setDescriptorResolver(descriptorResolver);
         declarationsChecker.setModifiersChecker(modifiersChecker);
         declarationsChecker.setTrace(bindingTrace);
