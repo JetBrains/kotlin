@@ -302,7 +302,7 @@ public class DefaultErrorMessages {
         MAP.put(EXPECTED_RETURN_TYPE_MISMATCH, "Expected return type {0}", RENDER_TYPE);
         MAP.put(EXPECTED_PARAMETERS_NUMBER_MISMATCH, "Expected {0,choice,0#no parameters|1#one parameter of type|1<{0,number,integer} parameters of types} {1}", null, RENDER_COLLECTION_OF_TYPES);
 
-        MAP.put(IMPLICIT_CAST_TO_UNIT_OR_ANY, "Type was casted to ''{0}''. Please specify ''{0}'' as expected type, if you mean such cast",
+        MAP.put(IMPLICIT_CAST_TO_UNIT_OR_ANY, "Type is cast to ''{0}''. Please specify ''{0}'' as expected type, if you mean such cast",
                 RENDER_TYPE);
         MAP.put(EXPRESSION_EXPECTED, "{0} is not an expression, and only expressions are allowed here", new Renderer<JetExpression>() {
             @NotNull
