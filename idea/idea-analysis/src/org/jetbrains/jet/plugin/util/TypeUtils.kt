@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.types.isFlexible
 import org.jetbrains.jet.lang.types.flexibility
+import java.util.ArrayList
+import java.util.LinkedHashSet
 
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
 fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
@@ -63,3 +65,15 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
 
 private fun JetType.isMarkedReadOnly() = getAnnotations().findAnnotation(JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION) != null
 private fun JetType.isMarkedNotNull() = getAnnotations().findAnnotation(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null
+
+public fun JetType.getAllReferencedTypes(): Set<JetType> {
+    val types = LinkedHashSet<JetType>()
+
+    fun addType(type: JetType) {
+        types.add(type)
+        type.getArguments().forEach { addType(it.getType()) }
+    }
+
+    addType(this)
+    return types
+}

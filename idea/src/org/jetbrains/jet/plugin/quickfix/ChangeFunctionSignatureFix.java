@@ -42,6 +42,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import java.util.List;
 
@@ -116,7 +117,10 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         JetExpression expression = argument.getArgumentExpression();
         JetType type = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
         type = type != null ? type : KotlinBuiltIns.getInstance().getNullableAnyType();
-        return new JetParameterInfo(name, type);
+        JetParameterInfo parameterInfo = new JetParameterInfo(name, type);
+        parameterInfo.setTypeText(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
+
+        return parameterInfo;
     }
 
     private static boolean hasTypeMismatches(

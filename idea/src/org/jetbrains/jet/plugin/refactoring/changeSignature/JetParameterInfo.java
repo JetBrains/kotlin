@@ -166,6 +166,10 @@ public class JetParameterInfo implements ParameterInfo {
         this.valOrVar = valOrVar;
     }
 
+    public JetType getType() {
+        return type;
+    }
+
     public String getDeclarationSignature(boolean isInherited, PsiElement inheritedFunction, JetMethodDescriptor baseFunction) {
         StringBuilder buffer = new StringBuilder();
         JetValVar valVar = getValOrVar();

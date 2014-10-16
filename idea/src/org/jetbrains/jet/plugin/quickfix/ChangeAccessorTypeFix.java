@@ -32,7 +32,7 @@ import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccessor> {
-    private String renderedType;
+    private JetType type;
 
     public ChangeAccessorTypeFix(@NotNull JetPropertyAccessor element) {
         super(element);
@@ -44,7 +44,7 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
         if (property == null) return false;
         JetType type = QuickFixUtil.getDeclarationReturnType(property);
         if (super.isAvailable(project, editor, file) && type != null && !type.isError()) {
-            renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
+            this.type = type;
             return true;
         }
         return false;
@@ -53,9 +53,10 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
     @NotNull
     @Override
     public String getText() {
-        return element.isGetter()
-               ? JetBundle.message("change.getter.type", renderedType)
-               : JetBundle.message("change.setter.type", renderedType);
+        return JetBundle.message(
+                element.isGetter() ? "change.getter.type" : "change.setter.type",
+                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+        );
     }
 
     @NotNull
@@ -67,7 +68,7 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetPropertyAccessor newElement = (JetPropertyAccessor) element.copy();
-        JetTypeReference newTypeReference = JetPsiFactory(file).createType(renderedType);
+        JetTypeReference newTypeReference = JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
 
         if (element.isGetter()) {
             JetTypeReference returnTypeReference = newElement.getReturnTypeReference();
@@ -82,12 +83,14 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
             CodeEditUtil.replaceChild(parameter.getNode(), typeReference.getNode(), newTypeReference.getNode());
         }
         element.replace(newElement);
+
+        QuickFixUtil.shortenReferencesOfType(type, file);
     }
 
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetPropertyAccessor> createAction(Diagnostic diagnostic) {
+            public JetIntentionAction<JetPropertyAccessor> createAction(@NotNull Diagnostic diagnostic) {
                 JetPropertyAccessor accessor = QuickFixUtil.getParentElementOfType(diagnostic, JetPropertyAccessor.class);
                 if (accessor == null) return null;
                 return new ChangeAccessorTypeFix(accessor);
