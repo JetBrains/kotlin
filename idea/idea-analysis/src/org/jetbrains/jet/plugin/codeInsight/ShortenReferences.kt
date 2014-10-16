@@ -26,7 +26,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.HashSet;
 import com.intellij.psi.util.PsiTreeUtil
 import java.util.ArrayList
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
@@ -35,6 +34,10 @@ import org.jetbrains.jet.renderer.DescriptorRenderer.FQ_NAMES_IN_TYPES
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.ImportPath
+import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
+import java.util.Collections
+import org.jetbrains.jet.analyzer.analyzeInContext
+import org.jetbrains.jet.lang.resolve.calls.callUtil.getCalleeExpressionIfAny
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -199,8 +202,18 @@ public object ShortenReferences {
         private val resolveSession : ResolveSessionForBodies
             get() = file.getLazyResolveSession()
 
-        private fun bindingContext(expression: JetReferenceExpression): BindingContext
-                = resolveMap[expression] ?: resolveSession.resolveToElement(expression) // binding context can be absent in the map if some references have been shortened already
+        private fun bindingContext(element: JetElement): BindingContext
+                = resolveMap[element] ?: resolveSession.resolveToElement(element) // binding context can be absent in the map if some references have been shortened already
+
+        private fun JetReferenceExpression.getTargets(context: BindingContext): Collection<DeclarationDescriptor> {
+            return context[BindingContext.REFERENCE_TARGET, this]?.let { Collections.singletonList(adjustDescriptor(it)) }
+                   ?: context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this]?.mapTo(HashSet<DeclarationDescriptor>()) { adjustDescriptor(it) }
+                   ?: Collections.emptyList()
+        }
+
+        private fun adjustDescriptor(it: DeclarationDescriptor): DeclarationDescriptor {
+            return (it as? ConstructorDescriptor)?.getContainingDeclaration() ?: it
+        }
 
         override fun visitElement(element: PsiElement) {
             if (elementFilter(element) != FilterResult.SKIP) {
@@ -216,105 +229,43 @@ public object ShortenReferences {
             }
         }
 
+        private fun JetQualifiedExpression.doShorten(): JetExpression = replace(getSelectorExpression()!!) as JetExpression
+
         private fun processDotQualifiedExpression(qualifiedExpression: JetDotQualifiedExpression): PsiElement {
-            val selectorExpression = qualifiedExpression.getSelectorExpression()
+            val context = bindingContext(qualifiedExpression)
 
-            if (selectorExpression is JetCallExpression) {
-                val calleeExpression = selectorExpression.getCalleeExpression()
-                if (calleeExpression is JetReferenceExpression) {
-                    val bindingContext = bindingContext(calleeExpression)
+            if (context[BindingContext.QUALIFIER, qualifiedExpression.getReceiverExpression()] == null) return qualifiedExpression
 
-                    val targetClass = instantiatedClass(calleeExpression)
-                    if (targetClass != null) return shortenIfPossibleByDescriptor(qualifiedExpression, targetClass, bindingContext)
+            if (PsiTreeUtil.getParentOfType(
+                    qualifiedExpression,
+                    javaClass<JetImportDirective>(), javaClass<JetPackageDirective>()) != null) return qualifiedExpression
 
-                    return shortenIfPossible(qualifiedExpression, calleeExpression, bindingContext)
-                }
-            }
-            else if (selectorExpression is JetReferenceExpression) {
-                return shortenIfPossible(qualifiedExpression, selectorExpression, bindingContext(selectorExpression))
-            }
+            val selector = qualifiedExpression.getSelectorExpression() ?: return qualifiedExpression
+            val callee = selector.getCalleeExpressionIfAny() as? JetReferenceExpression ?: return qualifiedExpression
+            val targetBefore = callee.getTargets(context).singleOrNull() ?: return qualifiedExpression
+            val isClassMember = targetBefore.getContainingDeclaration() is ClassDescriptor
+            val isClassOrPackage = targetBefore is ClassDescriptor || targetBefore is PackageViewDescriptor
 
-            return qualifiedExpression
-        }
+            val scope = context[BindingContext.RESOLUTION_SCOPE, qualifiedExpression] ?: return qualifiedExpression
+            val selectorCopy = selector.copy() as JetReferenceExpression
+            val newContext = selectorCopy.analyzeInContext(scope)
+            val targetsAfter = (selectorCopy.getCalleeExpressionIfAny() as JetReferenceExpression).getTargets(newContext)
 
-        private fun shortenIfPossible(
-                qualifiedExpression: JetDotQualifiedExpression,
-                refExpression: JetReferenceExpression,
-                bindingContext: BindingContext
-        ): PsiElement {
-            val target = bindingContext[BindingContext.REFERENCE_TARGET, refExpression]
-            if (target == null) return qualifiedExpression
-            return shortenIfPossibleByDescriptor(qualifiedExpression, target, bindingContext)
-        }
-
-        private fun instantiatedClass(calleeExpression: JetReferenceExpression): ClassDescriptor? {
-            val bindingContext = bindingContext(calleeExpression)
-            val target = bindingContext[BindingContext.REFERENCE_TARGET, calleeExpression]
-            if (target != null) {
-                if (target is ConstructorDescriptor) {
-                    return target.getContainingDeclaration()
-                }
-            }
-            else {
-                val targets = bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, calleeExpression]
-                if (targets != null && !targets.isEmpty()) {
-                    var targetClass: ClassDescriptor? = null
-                    for (descriptor in targets) {
-                        if (descriptor is ConstructorDescriptor) {
-                            val classDescriptor = descriptor.getContainingDeclaration().getOriginal() as ClassDescriptor
-                            if (targetClass == null || targetClass == classDescriptor) {
-                                targetClass = classDescriptor
-                                continue
-                            }
-                        }
-                        return null
+            return when (targetsAfter.size) {
+                0 -> {
+                    if (!isClassMember && isClassOrPackage) {
+                        addImport(targetBefore, file)
+                        qualifiedExpression.doShorten()
                     }
-                    return targetClass
+                    else {
+                        qualifiedExpression
+                    }
                 }
+
+                1 -> if (targetBefore == targetsAfter.first()) qualifiedExpression.doShorten() else qualifiedExpression
+
+                else -> qualifiedExpression
             }
-            return null
-        }
-
-        private fun shortenIfPossibleByDescriptor(qualifiedExpression: JetDotQualifiedExpression, targetDescriptor: DeclarationDescriptor, bindingContext: BindingContext): PsiElement {
-            val isClassMember = targetDescriptor.getContainingDeclaration() is ClassDescriptor
-            val isUsageInImport = qualifiedExpression.getParentByType(javaClass<JetImportDirective>()) != null
-            val isClassOrPackage = targetDescriptor is ClassDescriptor || targetDescriptor is PackageViewDescriptor
-
-            val referenceExpression = qualifiedExpression.getSelectorExpression()!!.referenceExpression()!!
-            val resolveBefore = resolveState(referenceExpression, bindingContext)
-
-            val copy = qualifiedExpression.copy()
-
-            val selectorExpression = qualifiedExpression.getSelectorExpression()!!
-            val newExpression = qualifiedExpression.replace(selectorExpression) as JetExpression
-            val newReferenceExpression = newExpression.referenceExpression()!!
-
-            val newBindingContext = resolveSession.resolveToElement(newReferenceExpression)
-            val resolveAfter = resolveState(newReferenceExpression, newBindingContext)
-            if (resolveAfter != null) {
-                if (resolveBefore == resolveAfter) return newExpression
-                return newExpression.replace(copy) // revert shortening
-            }
-
-            if (isUsageInImport || isClassMember || !isClassOrPackage) return newExpression.replace(copy) // revert shortening
-
-            addImport(targetDescriptor, file)
-            return newExpression
-        }
-
-        private fun resolveState(referenceExpression: JetReferenceExpression, bindingContext: BindingContext): Any? {
-            val target = bindingContext[BindingContext.REFERENCE_TARGET, referenceExpression]
-            if (target != null) {
-                val resolvedCall = referenceExpression.getResolvedCall(bindingContext)
-                if (resolvedCall != null) return resolvedCall.asString()
-
-                return target.asString()
-            }
-
-            val targets = bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression]
-            if (targets != null) return HashSet(targets.map{it.asString()})
-
-            return null
         }
 
         // we do not use standard PsiElement.acceptChildren because it won't work correctly if the element is replaced by the visitor
@@ -330,9 +281,6 @@ public object ShortenReferences {
 
     private fun DeclarationDescriptor.asString()
             = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
-
-    private fun ResolvedCall<*>.asString()
-            = "${getExtensionReceiver()}, ${getDispatchReceiver()} -> ${getResultingDescriptor()?.let {FQ_NAMES_IN_TYPES.render(it)}}"
 
     private fun addImport(descriptor: DeclarationDescriptor, file: JetFile) {
         ImportInsertHelper.getInstance().writeImportToFile(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false), file)
