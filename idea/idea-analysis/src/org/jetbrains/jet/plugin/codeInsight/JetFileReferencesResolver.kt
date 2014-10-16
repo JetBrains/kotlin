@@ -23,15 +23,12 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
 import com.intellij.util.containers.HashMap
 import org.jetbrains.jet.lang.psi.JetUserType
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import java.util.Collections
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 
 object JetFileReferencesResolver {
     fun resolve(
@@ -79,24 +76,23 @@ object JetFileReferencesResolver {
             }
         }
 
-        private fun JetExpression.isReceiver(): Boolean {
-            val parent = getParent()
-            if (parent !is JetQualifiedExpression) return false
-            if (parent.getReceiverExpression() == this) return true
+        override fun visitQualifiedExpression(expression: JetQualifiedExpression) {
+            val receiverExpression = expression.getReceiverExpression()
+            if (resolveQualifiers || resolveSession.resolveToElement(expression)[BindingContext.QUALIFIER, receiverExpression] == null) {
+                receiverExpression.accept(this)
+            }
 
-            val parentParent = parent.getParent()
-            return parentParent is JetQualifiedExpression && parentParent.getReceiverExpression() == parent
+            val referenceExpression = expression.getSelectorExpression()?.referenceExpression()
+            if (referenceExpression != null) {
+                resolveMap[referenceExpression] = resolveSession.resolveToElement(referenceExpression)
+            }
+            expression.getSelectorExpression()?.accept(this)
         }
 
         override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-            val context = resolveSession.resolveToElement(expression)
-            val descriptor = context[BindingContext.REFERENCE_TARGET, expression]
-            if ((descriptor is ClassDescriptor || descriptor is PackageViewDescriptor) && expression.isReceiver()) {
-                if (!resolveQualifiers) return
+            if (resolveShortNames) {
+                resolveMap[expression] = resolveSession.resolveToElement(expression)
             }
-            if (!resolveShortNames) return
-
-            resolveMap[expression] = context
         }
     }
 }
