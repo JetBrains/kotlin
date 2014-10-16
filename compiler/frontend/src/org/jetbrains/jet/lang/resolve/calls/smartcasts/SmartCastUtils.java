@@ -152,10 +152,10 @@ public class SmartCastUtils {
             @NotNull JetExpression expression,
             @NotNull JetType type,
             @NotNull BindingTrace trace,
-            boolean canBeCasted,
+            boolean canBeCast,
             boolean recordExpressionType
     ) {
-        if (canBeCasted) {
+        if (canBeCast) {
             trace.record(SMARTCAST, expression, type);
             if (recordExpressionType) {
                 //TODO

@@ -69,17 +69,17 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetPsiFactory psiFactory = JetPsiFactory(file);
-        JetBinaryExpressionWithTypeRHS castedExpression =
+        JetBinaryExpressionWithTypeRHS castExpression =
                 (JetBinaryExpressionWithTypeRHS) psiFactory.createExpression("(" + element.getText() + ") as " + renderedType);
-        if (JetPsiUtil.areParenthesesUseless((JetParenthesizedExpression) castedExpression.getLeft())) {
-            castedExpression = (JetBinaryExpressionWithTypeRHS) psiFactory.createExpression(element.getText() + " as " + renderedType);
+        if (JetPsiUtil.areParenthesesUseless((JetParenthesizedExpression) castExpression.getLeft())) {
+            castExpression = (JetBinaryExpressionWithTypeRHS) psiFactory.createExpression(element.getText() + " as " + renderedType);
         }
 
-        JetParenthesizedExpression castedExpressionInParentheses =
-                (JetParenthesizedExpression) element.replace(psiFactory.createExpression("(" + castedExpression.getText() + ")"));
+        JetParenthesizedExpression castExpressionInParentheses =
+                (JetParenthesizedExpression) element.replace(psiFactory.createExpression("(" + castExpression.getText() + ")"));
 
-        if (JetPsiUtil.areParenthesesUseless(castedExpressionInParentheses)) {
-            castedExpressionInParentheses.replace(castedExpression);
+        if (JetPsiUtil.areParenthesesUseless(castExpressionInParentheses)) {
+            castExpressionInParentheses.replace(castExpression);
         }
     }
 

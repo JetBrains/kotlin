@@ -1803,9 +1803,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
-        @TestMetadata("forInSmartCastedToArray.kt")
-        public void testForInSmartCastedToArray() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInSmartCastedToArray.kt");
+        @TestMetadata("forInSmartCastToArray.kt")
+        public void testForInSmartCastToArray() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInSmartCastToArray.kt");
             doTest(fileName);
         }
         
@@ -6523,9 +6523,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
-        @TestMetadata("implicitSmartCastedThis.kt")
-        public void testImplicitSmartCastedThis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/typeInfo/implicitSmartCastedThis.kt");
+        @TestMetadata("implicitSmartCastThis.kt")
+        public void testImplicitSmartCastThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/typeInfo/implicitSmartCastThis.kt");
             doTest(fileName);
         }
         
@@ -6553,9 +6553,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
         
-        @TestMetadata("smartCastedThis.kt")
-        public void testSmartCastedThis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/typeInfo/smartCastedThis.kt");
+        @TestMetadata("smartCastThis.kt")
+        public void testSmartCastThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/typeInfo/smartCastThis.kt");
             doTest(fileName);
         }
         

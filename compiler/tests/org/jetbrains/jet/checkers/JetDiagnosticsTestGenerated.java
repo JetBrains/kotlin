@@ -7067,9 +7067,9 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
-            @TestMetadata("smartCastedReceiverWithGenerics.kt")
-            public void testSmartCastedReceiverWithGenerics() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/smartCastedReceiverWithGenerics.kt");
+            @TestMetadata("smartCastReceiverWithGenerics.kt")
+            public void testSmartCastReceiverWithGenerics() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/smartCastReceiverWithGenerics.kt");
                 doTest(fileName);
             }
             
