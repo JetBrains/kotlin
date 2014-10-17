@@ -27,40 +27,66 @@ import org.jetbrains.jet.utils.valuesToMap
 import org.jetbrains.jet.config.CompilerConfiguration
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.compiler.plugin.CliOption
+import org.jetbrains.jet.cli.common.messages.MessageCollector
+import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation
+import java.net.URLClassLoader
+import java.net.URL
+import java.io.File
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 
 public object PluginCliParser {
 
     public val PLUGIN_ARGUMENT_PREFIX: String = "plugin:"
 
-    private fun getCommandLineProcessors(arguments: CommonCompilerArguments): Collection<CommandLineProcessor> {
-        return arguments.pluginClasspaths?.map {
-            loadCommandLineProcessor(JarFile(it).getManifest()?.getAttributes("org.jetbrains.kotlin.compiler.plugin"))
+    private class Context(
+            val arguments: CommonCompilerArguments,
+            val configuration: CompilerConfiguration,
+            val classLoader: ClassLoader,
+            val pluginManifestAttributes: List<Attributes>
+    )
+
+    [platformStatic]
+    fun loadPlugins(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
+        val classLoader = URLClassLoader(arguments.pluginClasspaths?.map {File(it).toURI().toURL()}?.copyToArray() ?: array<URL>(), javaClass.getClassLoader())
+        val pluginManifestAttributes = arguments.pluginClasspaths?.map {
+            JarFile(it).getManifest()?.getAttributes("org.jetbrains.kotlin.compiler.plugin")
         }?.filterNotNull() ?: listOf()
+        val context = Context(arguments, configuration, classLoader, pluginManifestAttributes)
+        context.loadComponentRegistrars()
+        context.processPluginOptions()
     }
 
-    private fun loadCommandLineProcessor(attributes: Attributes?): CommandLineProcessor? {
-        if (attributes == null) return null
+    private fun Context.loadComponentRegistrars() {
+        for (attributes in pluginManifestAttributes) {
+            val registrar = loadComponent<ComponentRegistrar>(attributes, "ComponentRegistrar")
+            if (registrar == null) continue
 
-        val processorClassName = attributes.getValue("CommandLineProcessor")
+            configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, registrar)
+        }
+    }
+
+    private fun Context.loadComponent<T: Any>(attributes: Attributes, componentName: String): T? {
+        val processorClassName = attributes.getValue(componentName)
         if (processorClassName == null) return null
 
         try {
-            val processorClass = Class.forName(processorClassName)
-            return processorClass.newInstance() as CommandLineProcessor
+            val processorClass = Class.forName(processorClassName, true, classLoader)
+            [suppress("UNCHECKED_CAST")]
+            return processorClass.newInstance() as T
         }
         catch (e: Throwable) {
-            throw CliOptionProcessingException("Loading plugin component failed: $processorClassName", e)
+            throw CliOptionProcessingException("Loading plugin component failed: $componentName=$processorClassName ($e)", e)
         }
     }
 
-    [platformStatic]
-    fun processPluginOptions(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
+    private fun Context.processPluginOptions() {
         val optionValuesByPlugin = arguments.pluginOptions?.map { parsePluginOption(it) }?.groupBy {
             if (it == null) throw CliOptionProcessingException("Wrong plugin option format: $it, should be ${CommonCompilerArguments.PLUGIN_OPTION_FORMAT}")
-            it.optionName
+            it.pluginId
         } ?: mapOf()
 
-        val processors = getCommandLineProcessors(arguments)
+        val processors = pluginManifestAttributes.map { loadComponent<CommandLineProcessor>(it, "CommandLineProcessor") }.filterNotNull()
         for (processor in processors) {
             val declaredOptions = processor.pluginOptions.valuesToMap { it.name }
             val optionsToValues = MultiMap<CliOption, PluginOptionValue>()
@@ -98,7 +124,7 @@ public object PluginCliParser {
     }
 
     private fun parsePluginOption(argumentValue: String): PluginOptionValue? {
-        val pattern = Pattern.compile("""^([^:]*):([^=]*)=(.*)$""")
+        val pattern = Pattern.compile("""^plugin:([^:]*):([^=]*)=(.*)$""")
         val matcher = pattern.matcher(argumentValue)
         if (matcher.matches()) {
             return PluginOptionValue(matcher.group(1)!!, matcher.group(2)!!, matcher.group(3)!!)
