@@ -22,8 +22,9 @@ import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.model.module.JpsModule
 import java.io.File
 import org.jetbrains.jps.android.AndroidJpsUtil
-import org.jetbrains.kotlin.android.AndroidCommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CliOption
+import org.jetbrains.kotlin.android.AndroidCommandLineProcessor
+import org.jetbrains.jet.utils.PathUtil
 
 public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     override fun getExtraArguments(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
@@ -31,6 +32,12 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
         return listOf(
                 makePluginOption(AndroidCommandLineProcessor.RESOURCE_PATH_OPTION, getAndroidResPath(module)),
                 makePluginOption(AndroidCommandLineProcessor.MANIFEST_FILE_OPTION, getAndroidManifest(module))
+        )
+    }
+
+    override fun getClasspath(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
+        return listOf(
+                File(PathUtil.getJarPathForClass(javaClass).getParentFile().getParentFile(), "android-compiler-plugin.jar").getAbsolutePath()
         )
     }
 
