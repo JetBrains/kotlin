@@ -42,8 +42,8 @@ public fun JetElement.getLazyResolveSession(): ResolveSessionForBodies {
     return KotlinCacheService.getInstance(getProject()).getLazyResolveSession(this)
 }
 
-public fun JetElement.getAnalysisResults(): AnalyzeExhaust {
-    return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this))
+public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalyzeExhaust {
+    return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this) + extraFiles.toList())
 }
 
 public fun JetElement.getBindingContext(): BindingContext {
@@ -105,10 +105,11 @@ public class KotlinCacheService(val project: Project) {
     private fun getGlobalCache(platform: TargetPlatform) = globalCachesPerPlatform[platform]!!.modulesCache
     private fun getGlobalLibrariesCache(platform: TargetPlatform) = globalCachesPerPlatform[platform]!!.librariesCache
 
-    private val syntheticFileCaches = object : SLRUCache<JetFile, KotlinResolveCache>(2, 3) {
-        override fun createValue(file: JetFile?): KotlinResolveCache {
-            val targetPlatform = TargetPlatformDetector.getPlatform(file!!)
-            val syntheticFileModule = file.getModuleInfo()
+    private val syntheticFileCaches = object : SLRUCache<Set<JetFile>, KotlinResolveCache>(2, 3) {
+        override fun createValue(files: Set<JetFile>): KotlinResolveCache {
+            // we assume that all files come from the same module
+            val targetPlatform = files.map { TargetPlatformDetector.getPlatform(it) }.toSet().single()
+            val syntheticFileModule = files.map { it.getModuleInfo() }.toSet().single()
             return when {
                 syntheticFileModule is ModuleSourceInfo -> {
                     val dependentModules = syntheticFileModule.getDependentModules()
@@ -116,7 +117,7 @@ public class KotlinCacheService(val project: Project) {
                             project,
                             globalResolveSessionProvider(
                                     targetPlatform,
-                                    syntheticFiles = listOf(file),
+                                    syntheticFiles = files,
                                     reuseDataFromCache = getGlobalCache(targetPlatform),
                                     moduleFilter = { it in dependentModules },
                                     dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
@@ -129,7 +130,7 @@ public class KotlinCacheService(val project: Project) {
                             project,
                             globalResolveSessionProvider(
                                     targetPlatform,
-                                    syntheticFiles = listOf(file),
+                                    syntheticFiles = files,
                                     reuseDataFromCache = getGlobalLibrariesCache(targetPlatform),
                                     moduleFilter = { it == syntheticFileModule },
                                     dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
@@ -141,12 +142,12 @@ public class KotlinCacheService(val project: Project) {
                     //NOTE: this code should not be called for sdk or library classes
                     // currently the only known scenario is when we cannot determine that file is a library source
                     // (file under both classes and sources root)
-                    LOG.warn("Creating cache with synthetic file ($file) in classes of library $syntheticFileModule")
+                    LOG.warn("Creating cache with synthetic files ($files) in classes of library $syntheticFileModule")
                     KotlinResolveCache(
                             project,
                             globalResolveSessionProvider(
                                     targetPlatform,
-                                    syntheticFiles = listOf(file),
+                                    syntheticFiles = files,
                                     moduleFilter = { true },
                                     dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
                             )
@@ -158,9 +159,9 @@ public class KotlinCacheService(val project: Project) {
         }
     }
 
-    private fun getCacheForSyntheticFile(file: JetFile): KotlinResolveCache {
+    private fun getCacheForSyntheticFile(files: Set<JetFile>): KotlinResolveCache {
         return synchronized(syntheticFileCaches) {
-            syntheticFileCaches[file]
+            syntheticFileCaches[files]
         }
     }
 
@@ -171,7 +172,7 @@ public class KotlinCacheService(val project: Project) {
     public fun getLazyResolveSession(element: JetElement): ResolveSessionForBodies {
         val file = element.getContainingJetFile()
         if (!ProjectRootsUtil.isInProjectSource(file)) {
-            return getCacheForSyntheticFile(file).getLazyResolveSession(file)
+            return getCacheForSyntheticFile(setOf(file)).getLazyResolveSession(file)
         }
 
         return getGlobalLazyResolveSession(file, TargetPlatformDetector.getPlatform(file))
@@ -180,11 +181,15 @@ public class KotlinCacheService(val project: Project) {
     public fun getAnalysisResults(elements: Collection<JetElement>): AnalyzeExhaust {
         if (elements.isEmpty()) return AnalyzeExhaust.EMPTY
 
-        val firstFile = elements.first().getContainingJetFile()
-        if (elements.size == 1 && (!ProjectRootsUtil.isInProjectSource(firstFile) && firstFile !is JetCodeFragment)) {
-            return getCacheForSyntheticFile(firstFile).getAnalysisResultsForElements(elements)
+        val files = elements.map { it.getContainingJetFile() }.toSet()
+        if (files.all { !ProjectRootsUtil.isInProjectSource(it) }
+// TODO: decide what to do with this
+//            && files.all { it !is JetCodeFragment }
+        ) {
+            return getCacheForSyntheticFile(files).getAnalysisResultsForElements(elements)
         }
 
+        val firstFile = elements.first().getContainingJetFile()
         return getGlobalCache(TargetPlatformDetector.getPlatform(firstFile)).getAnalysisResultsForElements(elements)
     }
 

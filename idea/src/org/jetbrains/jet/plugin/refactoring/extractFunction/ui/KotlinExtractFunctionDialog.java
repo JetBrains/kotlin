@@ -276,6 +276,6 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
     @NotNull
     public ExtractionGeneratorOptions getGeneratorOptions() {
-        return new ExtractionGeneratorOptions(false, propertyCheckBox.isSelected());
+        return new ExtractionGeneratorOptions(false, propertyCheckBox.isSelected(), false);
     }
 }

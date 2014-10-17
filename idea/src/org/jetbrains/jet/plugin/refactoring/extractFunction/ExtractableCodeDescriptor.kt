@@ -318,7 +318,8 @@ data class ExtractableCodeDescriptor(
 
 data class ExtractionGeneratorOptions(
         val inTempFile: Boolean = false,
-        val extractAsProperty: Boolean = false
+        val extractAsProperty: Boolean = false,
+        val flexibleTypesAllowed: Boolean = false
 ) {
     class object {
         val DEFAULT = ExtractionGeneratorOptions()
