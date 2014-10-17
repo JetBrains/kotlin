@@ -440,13 +440,13 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeAddFunctionParameterAndChangeTypes.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("beforeAddFunctionParameterLongNameRuntime.kt")
         public void testAddFunctionParameterLongNameRuntime() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeAddFunctionParameterLongNameRuntime.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("beforeAddParameterNotAvailableForBuiltins.kt")
         public void testAddParameterNotAvailableForBuiltins() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/beforeAddParameterNotAvailableForBuiltins.kt");
@@ -628,7 +628,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({CreateFunction.BinaryOperations.class, CreateFunction.Call.class, CreateFunction.Component.class, CreateFunction.Get.class, CreateFunction.HasNext.class, CreateFunction.Invoke.class, CreateFunction.Iterator.class, CreateFunction.Next.class, CreateFunction.Set.class, CreateFunction.UnaryOperations.class})
+        @InnerTestClasses({CreateFunction.BinaryOperations.class, CreateFunction.Call.class, CreateFunction.Component.class, CreateFunction.DelegateAccessors.class, CreateFunction.Get.class, CreateFunction.HasNext.class, CreateFunction.Invoke.class, CreateFunction.Iterator.class, CreateFunction.Next.class, CreateFunction.Set.class, CreateFunction.UnaryOperations.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateFunction extends AbstractQuickFixTest {
             public void testAllFilesPresentInCreateFunction() throws Exception {
@@ -795,13 +795,13 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunOnUserType.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("beforeFunOnUserTypeWithDeclarations.kt")
                 public void testFunOnUserTypeWithDeclarations() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunOnUserTypeWithDeclarations.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("beforeFunOnUserTypeWithTypeParams.kt")
                 public void testFunOnUserTypeWithTypeParams() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunOnUserTypeWithTypeParams.kt");
@@ -958,6 +958,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("beforeCreateComponentFromUsage3.kt")
                 public void testCreateComponentFromUsage3() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/component/beforeCreateComponentFromUsage3.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/delegateAccessors")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class DelegateAccessors extends AbstractQuickFixTest {
+                public void testAllFilesPresentInDelegateAccessors() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/delegateAccessors"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+                }
+
+                @TestMetadata("beforeVal.kt")
+                public void testVal() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/delegateAccessors/beforeVal.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeVar.kt")
+                public void testVar() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/delegateAccessors/beforeVar.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeVarMissingGet.kt")
+                public void testVarMissingGet() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/delegateAccessors/beforeVarMissingGet.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("beforeVarMissingSet.kt")
+                public void testVarMissingSet() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/delegateAccessors/beforeVarMissingSet.kt");
                     doTest(fileName);
                 }
             }
@@ -3201,13 +3234,13 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeAddition/beforeWrongGetterParameterType.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("beforeWrongGetterParameterTypeLongNameRuntime.kt")
         public void testWrongGetterParameterTypeLongNameRuntime() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeAddition/beforeWrongGetterParameterTypeLongNameRuntime.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("beforeWrongSetterParameterType.kt")
         public void testWrongSetterParameterType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeAddition/beforeWrongSetterParameterType.kt");
@@ -3268,25 +3301,25 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeChangeFunctionLiteralParameterTypeToFunctionType.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("beforeChangeFunctionLiteralParameterTypeToFunctionTypeLongNameRuntime.kt")
         public void testChangeFunctionLiteralParameterTypeToFunctionTypeLongNameRuntime() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeChangeFunctionLiteralParameterTypeToFunctionTypeLongNameRuntime.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("beforeChangeFunctionReturnTypeToMatchExpectedTypeOfCall.kt")
         public void testChangeFunctionReturnTypeToMatchExpectedTypeOfCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeChangeFunctionReturnTypeToMatchExpectedTypeOfCall.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("beforeChangeFunctionReturnTypeToMatchExpectedTypeOfCallLongNameRuntime.kt")
         public void testChangeFunctionReturnTypeToMatchExpectedTypeOfCallLongNameRuntime() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeChangeFunctionReturnTypeToMatchExpectedTypeOfCallLongNameRuntime.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("beforeChangeReturnTypeWhenFunctionNameIsMissing.kt")
         public void testChangeReturnTypeWhenFunctionNameIsMissing() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeChangeReturnTypeWhenFunctionNameIsMissing.kt");
@@ -3316,13 +3349,13 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeExpectedParameterTypeMismatch.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("beforeExpectedParameterTypeMismatchLongNameRuntime.kt")
         public void testExpectedParameterTypeMismatchLongNameRuntime() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeExpectedParameterTypeMismatchLongNameRuntime.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("beforeExpectedReturnTypeMismatch.kt")
         public void testExpectedReturnTypeMismatch() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeExpectedReturnTypeMismatch.kt");
@@ -3346,13 +3379,13 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforePropertyTypeMismatch.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("beforePropertyTypeMismatchLongNameRuntime.kt")
         public void testPropertyTypeMismatchLongNameRuntime() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforePropertyTypeMismatchLongNameRuntime.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("beforeReturnTypeMismatch.kt")
         public void testReturnTypeMismatch() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/beforeReturnTypeMismatch.kt");
@@ -3426,13 +3459,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/beforeTypeMismatch5.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("beforeTypeMismatchLongNameRuntime.kt")
             public void testTypeMismatchLongNameRuntime() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/casts/beforeTypeMismatchLongNameRuntime.kt");
                 doTest(fileName);
             }
-            
         }
 
         @TestMetadata("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch")
@@ -3538,7 +3570,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/parameterTypeMismatch/beforeChangeFunctionParameterType5.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("beforeChangeParameterTypeLongNameRuntime.kt")
             public void testChangeParameterTypeLongNameRuntime() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/parameterTypeMismatch/beforeChangeParameterTypeLongNameRuntime.kt");
