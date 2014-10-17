@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.descriptors.serialization.ClassData
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.jet.plugin.decompiler.isKotlinCompiledFile
+import org.jetbrains.jet.plugin.decompiler.isKotlinWithCompatibleAbiVersion
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
@@ -81,7 +81,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
             val segments = DeserializedResolverUtils.kotlinFqNameToJavaFqName(classId.getRelativeClassName()).pathSegments()
             val targetName = segments.joinToString("$", postfix = ".class")
             val virtualFile = packageDirectory.findChild(targetName)
-            if (virtualFile != null && isKotlinCompiledFile(virtualFile)) {
+            if (virtualFile != null && isKotlinWithCompatibleAbiVersion(virtualFile)) {
                 return KotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)
             }
             return null

@@ -24,28 +24,23 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.jet.plugin.JetLanguage
 import kotlin.properties.Delegates
-import org.jetbrains.jet.plugin.decompiler.textBuilder.buildDecompiledText
 
 public class JetClassFileViewProvider(
         manager: PsiManager,
-        file: VirtualFile,
+        val file: VirtualFile,
         physical: Boolean,
-        val isInternal: Boolean
-) : SingleRootFileViewProvider(manager, file, physical, JetLanguage.INSTANCE) {
-    val decompiledText by Delegates.blockingLazy(this) {
-        buildDecompiledText(getVirtualFile())
+        val isInternal: Boolean) : SingleRootFileViewProvider(manager, file, physical, JetLanguage.INSTANCE) {
+
+    val jetClsFile by Delegates.blockingLazy(this) {
+        //TODO: check index that file is library file, as in ClassFileViewProvider
+        if (!isInternal) JetClsFile(this) else null
     }
 
     override fun getContents(): CharSequence {
-        return if (isInternal) "" else decompiledText.text
+        return if (!isInternal) jetClsFile!!.getText() else ""
     }
 
-    override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? {
-        //TODO: check index that file is library file, as in ClassFileViewProvider
-        if (isInternal) return null
-
-        return JetClsFile(this)
-    }
+    override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? = jetClsFile
 
     override fun createCopy(copy: VirtualFile): SingleRootFileViewProvider {
         return JetClassFileViewProvider(getManager(), copy, false, isInternal)

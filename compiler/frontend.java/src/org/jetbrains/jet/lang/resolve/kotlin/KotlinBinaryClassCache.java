@@ -18,30 +18,32 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 
 import com.intellij.ide.highlighter.JavaClassFileType;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class KotlinBinaryClassCache implements Disposable {
+    private static class RequestCache {
+        VirtualFile virtualFile;
+        long modificationStamp;
+        VirtualFileKotlinClass virtualFileKotlinClass;
 
-    // This cache must be small: we only query the same file a few times in a row (from different places)
-    // It's local to each thread: we don't want a single instance to synchronize access on, because VirtualFileKotlinClass.create involves
-    // reading files from disk and may take some time
-    private final ThreadLocal<SLRUCache<VirtualFile, Ref<VirtualFileKotlinClass>>> cache =
-            new ThreadLocal<SLRUCache<VirtualFile, Ref<VirtualFileKotlinClass>>>() {
+        public VirtualFileKotlinClass cache(VirtualFile file, VirtualFileKotlinClass aClass) {
+            virtualFile = file;
+            virtualFileKotlinClass = aClass;
+            modificationStamp = file.getModificationStamp();
+
+            return aClass;
+        }
+    }
+
+    private final ThreadLocal<RequestCache> cache =
+            new ThreadLocal<RequestCache>() {
                 @Override
-                protected SLRUCache<VirtualFile, Ref<VirtualFileKotlinClass>> initialValue() {
-                    return new SLRUCache<VirtualFile, Ref<VirtualFileKotlinClass>>(2, 2) {
-                        @NotNull
-                        @Override
-                        @SuppressWarnings("deprecation")
-                        public Ref<VirtualFileKotlinClass> createValue(VirtualFile virtualFile) {
-                            return Ref.create(VirtualFileKotlinClass.OBJECT$.create(virtualFile));
-                        }
-                    };
+                protected RequestCache initialValue() {
+                    return new RequestCache();
                 }
             };
 
@@ -50,7 +52,18 @@ public final class KotlinBinaryClassCache implements Disposable {
         if (file.getFileType() != JavaClassFileType.INSTANCE) return null;
 
         KotlinBinaryClassCache service = ServiceManager.getService(KotlinBinaryClassCache.class);
-        return service.cache.get().get(file).get();
+        RequestCache requestCache = service.cache.get();
+
+        if (file.getModificationStamp() == requestCache.modificationStamp && file.equals(requestCache.virtualFile)) {
+            return requestCache.virtualFileKotlinClass;
+        }
+        else {
+            ApplicationManager.getApplication().assertReadAccessAllowed();
+
+            //noinspection deprecation
+            VirtualFileKotlinClass aClass = VirtualFileKotlinClass.OBJECT$.create(file);
+            return requestCache.cache(file, aClass);
+        }
     }
 
     @Override

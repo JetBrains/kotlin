@@ -25,10 +25,9 @@ import com.intellij.psi.PsiCompiledFile
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
 import java.io.File
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import org.jetbrains.jet.plugin.decompiler.navigation.NavigateToDecompiledLibraryTest
-import org.jetbrains.jet.plugin.decompiler.INCOMPATIBLE_ABI_VERSION_COMMENT
+import org.jetbrains.jet.lang.psi.JetFile
 
 public class DecompiledTextForWrongAbiVersionTest : JetLightCodeInsightFixtureTestCase() {
 
@@ -50,9 +49,8 @@ public class DecompiledTextForWrongAbiVersionTest : JetLightCodeInsightFixtureTe
         val psiFile = PsiManager.getInstance(getProject()!!).findFile(file)
         Assert.assertTrue(psiFile is ClsFileImpl)
         val decompiledPsiFile = (psiFile as PsiCompiledFile).getDecompiledPsiFile()
-        Assert.assertTrue(decompiledPsiFile is PsiJavaFile)
+        Assert.assertTrue(decompiledPsiFile is JetFile)
         val decompiledText = decompiledPsiFile!!.getText()!!
-        Assert.assertTrue(decompiledText.contains(INCOMPATIBLE_ABI_VERSION_COMMENT))
-        Assert.assertTrue((decompiledPsiFile as PsiJavaFile).getClasses().size == 1)
+        Assert.assertTrue(decompiledText.contains(INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT))
     }
 }
