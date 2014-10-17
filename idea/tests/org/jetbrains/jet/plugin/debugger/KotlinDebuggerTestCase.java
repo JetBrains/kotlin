@@ -44,9 +44,7 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.ProjectDescriptorWithStdlibSources;
-import org.jetbrains.jet.plugin.framework.JavaRuntimeLibraryDescription;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
-import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -183,22 +181,24 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @Override
     protected void createBreakpoints(final String className) {
-        PsiClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
+        PsiClass[] psiClasses = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass[]>() {
             @Override
-            public PsiClass compute() {
-                return JavaPsiFacade.getInstance(myProject).findClass(className, GlobalSearchScope.allScope(myProject));
+            public PsiClass[] compute() {
+                return JavaPsiFacade.getInstance(myProject).findClasses(className, GlobalSearchScope.allScope(myProject));
             }
         });
 
-        if (psiClass instanceof KotlinLightClassForPackage) {
-            PsiElement element = psiClass.getNavigationElement();
-            if (element instanceof JetFile) {
-                createBreakpoints((JetFile) element);
-                return;
+        for (PsiClass psiClass : psiClasses) {
+            if (psiClass instanceof KotlinLightClassForPackage) {
+                PsiElement element = psiClass.getNavigationElement();
+                if (element instanceof JetFile) {
+                    createBreakpoints((JetFile) element);
+                }
+            }
+            else {
+                createBreakpoints(psiClass.getContainingFile());
             }
         }
-
-        createBreakpoints(psiClass.getContainingFile());
     }
 
     @SuppressWarnings("MethodMayBeStatic")
