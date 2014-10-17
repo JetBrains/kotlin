@@ -22,4 +22,5 @@ import org.jetbrains.jps.incremental.CompileContext
 
 public trait KotlinJpsCompilerArgumentsProvider {
     public fun getExtraArguments(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String>
+    public fun getClasspath(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String>
 }
