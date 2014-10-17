@@ -57,15 +57,7 @@ fun Element.canonicalCode(): String {
 }
 
 abstract class Element {
-    public var prototypes: List<PrototypeInfo>? = null
-      set(value) {
-          // no prototypes assigned to empty elements because they can be singleton instances (and they are not needed anyway)
-          if (isEmpty) {
-              $prototypes = listOf()
-              return
-          }
-          $prototypes = value
-      }
+    public open var prototypes: List<PrototypeInfo>? = null
 
     public var createdAt: String?
             = if (saveCreationStacktraces)
@@ -83,9 +75,52 @@ abstract class Element {
     object Empty : Element() {
         override fun generateCode(builder: CodeBuilder) { }
         override val isEmpty: Boolean get() = true
+        override var prototypes: List<PrototypeInfo>? by EmptyElementPrototypes // to not hold references to psi
     }
 
     class object {
         var saveCreationStacktraces = false
     }
 }
+
+object EmptyElementPrototypes {
+    public fun get(thisRef: Element, desc: PropertyMetadata): List<PrototypeInfo>? = null
+    public fun set(thisRef: Element, desc: PropertyMetadata, value: List<PrototypeInfo>?) { }
+}
+
+// this class should never be created directly - Converter.lazyElement() should be used!
+class LazyElement<TResult : Element>(private var generator: (CodeConverter) -> TResult) : Element() {
+    private var result: TResult? = null
+
+    {
+        assignNoPrototype()
+    }
+
+    public fun unfold(codeConverter: CodeConverter) {
+        assert(result == null)
+        result = generator(codeConverter)
+    }
+
+    override fun generateCode(builder: CodeBuilder) {
+        resultNotNull.generateCode(builder)
+    }
+
+    override val isEmpty: Boolean
+        get() = resultNotNull.isEmpty
+
+    private val resultNotNull: TResult
+        get() {
+            assert(result != null) { "No code generated for lazy element $this. Possible reason is that it has been created directly instead of Converter.lazyElement() call." }
+            return result!!
+        }
+
+    public fun updateGenerator(generatorUpdater: (codeConverter: CodeConverter, prevResult: TResult) -> TResult) {
+        assert(result == null, "Cannot update generator when code has been generated")
+        val prevGenerator = generator
+        generator = { codeConverter ->
+            val prevResult = prevGenerator(codeConverter)
+            generatorUpdater(codeConverter, prevResult)
+        }
+    }
+}
+

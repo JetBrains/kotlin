@@ -55,7 +55,11 @@ import org.jetbrains.jet.j2k.ast.MethodCallExpression
 import org.jetbrains.jet.j2k.ast.LambdaExpression
 import org.jetbrains.jet.j2k.ast.Statement
 
-class ForConverter(private val statement: PsiForStatement, private val converter: Converter) {
+class ForConverter(private val statement: PsiForStatement, private val codeConverter: CodeConverter) {
+    private val referenceSearcher = codeConverter.converter.referenceSearcher
+    private val settings = codeConverter.settings
+    private val project = codeConverter.converter.project
+
     private val initialization = statement.getInitialization()
     private val update = statement.getUpdate()
     private val condition = statement.getCondition()
@@ -70,11 +74,11 @@ class ForConverter(private val statement: PsiForStatement, private val converter
         val condition = statement.getCondition()
         val body = statement.getBody()
 
-        val initializationConverted = converter.convertStatement(initialization)
-        val updateConverted = converter.convertStatement(update)
+        val initializationConverted = codeConverter.convertStatement(initialization)
+        val updateConverted = codeConverter.convertStatement(update)
 
         val whileBody = if (updateConverted.isEmpty) {
-            converter.convertStatementOrBlock(body)
+            codeConverter.convertStatementOrBlock(body)
         }
         else if (body is PsiBlockStatement) {
             val nameConflict = initialization is PsiDeclarationStatement && initialization.getDeclaredElements().any { loopVar ->
@@ -86,21 +90,21 @@ class ForConverter(private val statement: PsiForStatement, private val converter
             }
 
             if (nameConflict) {
-                val statements = listOf(converter.convertStatement(body), updateConverted)
+                val statements = listOf(codeConverter.convertStatement(body), updateConverted)
                 Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
             }
             else {
-                val block = converter.convertBlock(body.getCodeBlock(), true)
+                val block = codeConverter.convertBlock(body.getCodeBlock(), true)
                 Block(block.statements + listOf(updateConverted), block.lBrace, block.rBrace, true).assignPrototypesFrom(block)
             }
         }
         else {
-            val statements = listOf(converter.convertStatement(body), updateConverted)
+            val statements = listOf(codeConverter.convertStatement(body), updateConverted)
             Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
         }
 
         val whileStatement = WhileStatement(
-                if (condition != null) converter.convertExpression(condition) else LiteralExpression("true").assignNoPrototype(),
+                if (condition != null) codeConverter.convertExpression(condition) else LiteralExpression("true").assignNoPrototype(),
                 whileBody,
                 statement.isInSingleLine()).assignNoPrototype()
         if (initializationConverted.isEmpty) return whileStatement
@@ -114,8 +118,8 @@ class ForConverter(private val statement: PsiForStatement, private val converter
         if (initialization is PsiDeclarationStatement) {
             val loopVar = initialization.getDeclaredElements().singleOrNull2() as? PsiLocalVariable
             if (loopVar != null
-                    && !loopVar.hasWriteAccesses(converter.referenceSearcher, body)
-                    && !loopVar.hasWriteAccesses(converter.referenceSearcher, condition)
+                    && !loopVar.hasWriteAccesses(referenceSearcher, body)
+                    && !loopVar.hasWriteAccesses(referenceSearcher, condition)
                     && condition is PsiBinaryExpression) {
                 val operationTokenType = condition.getOperationTokenType()
                 val lowerBound = condition.getLOperand()
@@ -128,11 +132,11 @@ class ForConverter(private val statement: PsiForStatement, private val converter
                     if (start != null &&
                             (update as? PsiExpressionStatement)?.getExpression()?.isVariablePlusPlus(loopVar) ?: false) {
                         val range = forIterationRange(start, upperBound, operationTokenType).assignNoPrototype()
-                        val explicitType = if (converter.settings.specifyLocalVariableTypeByDefault)
+                        val explicitType = if (settings.specifyLocalVariableTypeByDefault)
                             PrimitiveType(Identifier("Int").assignNoPrototype()).assignNoPrototype()
                         else
                             null
-                        return ForeachStatement(loopVar.declarationIdentifier(), explicitType, range, converter.convertStatementOrBlock(body), statement.isInSingleLine())
+                        return ForeachStatement(loopVar.declarationIdentifier(), explicitType, range, codeConverter.convertStatementOrBlock(body), statement.isInSingleLine())
                     }
                 }
             }
@@ -160,10 +164,10 @@ class ForConverter(private val statement: PsiForStatement, private val converter
                 if (methodExpr is PsiReferenceExpression && methodExpr.getReferenceName() == "size") {
                     val qualifier = methodExpr.getQualifierExpression()
                     if (qualifier is PsiReferenceExpression /* we don't convert to .indices if qualifier is method call or something because of possible side effects */) {
-                        val listType = PsiElementFactory.SERVICE.getInstance(converter.project).createTypeByFQClassName(CommonClassNames.JAVA_UTIL_LIST)
+                        val listType = PsiElementFactory.SERVICE.getInstance(project).createTypeByFQClassName(CommonClassNames.JAVA_UTIL_LIST)
                         val qualifierType = qualifier.getType()
                         if (qualifierType != null && listType.isAssignableFrom(qualifierType)) {
-                            return QualifiedExpression(converter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
+                            return QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
                         }
                     }
                 }
@@ -174,17 +178,17 @@ class ForConverter(private val statement: PsiForStatement, private val converter
                     && upperBound.getReferenceName() == "length") {
                 val qualifier = upperBound.getQualifierExpression()
                 if (qualifier is PsiReferenceExpression && qualifier.getType() is PsiArrayType) {
-                    return QualifiedExpression(converter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
+                    return QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
                 }
             }
         }
 
-        val end = converter.convertExpression(upperBound)
+        val end = codeConverter.convertExpression(upperBound)
         val endExpression = if (comparisonTokenType == JavaTokenType.LT)
             BinaryExpression(end, LiteralExpression("1").assignNoPrototype(), "-").assignNoPrototype()
         else
             end
-        return RangeExpression(converter.convertExpression(start), endExpression)
+        return RangeExpression(codeConverter.convertExpression(start), endExpression)
     }
 
 }

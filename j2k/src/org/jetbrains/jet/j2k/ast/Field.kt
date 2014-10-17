@@ -18,12 +18,13 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
 
+//TODO: rename it to Property
 class Field(
         val identifier: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,
         val type: Type,
-        val initializer: Element,
+        private val initializer: LazyElement<Expression>,
         val isVal: Boolean,
         val explicitType: Boolean,
         private val defaultInitializer: Boolean,
@@ -40,9 +41,9 @@ class Field(
             builder append ":" append type
         }
 
-        var initializerToUse = initializer
+        var initializerToUse: Element = initializer
         if (initializerToUse.isEmpty && defaultInitializer) {
-            initializerToUse = getDefaultInitializer(this) ?: Expression.Empty
+            initializerToUse = getDefaultInitializer(this) ?: Element.Empty
         }
         if (!initializerToUse.isEmpty) {
             builder append " = " append initializerToUse

@@ -31,7 +31,7 @@ class AnnotationConverter(private val converter: Converter) {
     private fun convertAnnotationsOnly(owner: PsiModifierListOwner): Annotations {
         val modifierList = owner.getModifierList()
         val annotations = modifierList?.getAnnotations()?.filter { it.getQualifiedName() !in annotationsToRemove }
-        if (annotations == null || annotations.isEmpty()) return Annotations.Empty
+        if (annotations == null || annotations.isEmpty()) return Annotations.Empty()
 
         val newLines = run {
             if (!modifierList!!.isInSingleLine()) {
@@ -73,7 +73,7 @@ class AnnotationConverter(private val converter: Converter) {
 
         val nameRef = annotation.getNameReferenceElement()
         val name = Identifier((nameRef ?: return null).getText()!!).assignPrototype(nameRef)
-        val annotationClass = nameRef!!.resolve() as? PsiClass
+        val annotationClass = nameRef.resolve() as? PsiClass
         val lastMethod = annotationClass?.getMethods()?.lastOrNull()
         val arguments = annotation.getParameterList().getAttributes().flatMap {
             val method = annotationClass?.findMethodsByName(it.getName() ?: "value", false)?.firstOrNull()
@@ -97,7 +97,7 @@ class AnnotationConverter(private val converter: Converter) {
 
     private fun convertAttributeValue(value: PsiAnnotationMemberValue?, expectedType: PsiType?, isVararg: Boolean, isUnnamed: Boolean): List<Expression> {
         return when (value) {
-            is PsiExpression -> listOf(converter.convertExpression(value as? PsiExpression, expectedType).assignPrototype(value))
+            is PsiExpression -> listOf(converter.createDefaultCodeConverter()/*TODO*/.convertExpression(value as? PsiExpression, expectedType).assignPrototype(value))
 
             is PsiArrayInitializerMemberValue -> {
                 val componentType = (expectedType as? PsiArrayType)?.getComponentType()

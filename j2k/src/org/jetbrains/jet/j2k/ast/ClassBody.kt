@@ -30,13 +30,14 @@ class ClassBody (
         val rBrace: RBrace) {
 
     fun append(builder: CodeBuilder) {
-        if (members.isEmpty() && classObjectMembers.isEmpty()) return
+        val membersFiltered = members.filter { !it.isEmpty }
+        if (membersFiltered.isEmpty() && classObjectMembers.isEmpty()) return
 
         builder append " " append lBrace append "\n"
 
-        builder.append(members, "\n")
+        builder.append(membersFiltered, "\n")
 
-        appendClassObject(builder, members.isNotEmpty())
+        appendClassObject(builder, membersFiltered.isNotEmpty())
 
         builder append "\n" append rBrace
     }

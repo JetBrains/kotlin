@@ -22,9 +22,8 @@ import org.jetbrains.jet.j2k.*
 abstract class Statement() : Element() {
     object Empty : Statement() {
         override fun generateCode(builder: CodeBuilder) { }
-
-        override val isEmpty: Boolean
-            get() = true
+        override val isEmpty: Boolean get() = true
+        override var prototypes: List<PrototypeInfo>? by EmptyElementPrototypes // to not hold references to psi
     }
 }
 
@@ -107,13 +106,13 @@ class ForeachStatement(
     }
 }
 
-class BreakStatement(val label: Identifier = Identifier.Empty) : Statement() {
+class BreakStatement(val label: Identifier = Identifier.Empty()) : Statement() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append("break").appendWithPrefix(label, "@")
     }
 }
 
-class ContinueStatement(val label: Identifier = Identifier.Empty) : Statement() {
+class ContinueStatement(val label: Identifier = Identifier.Empty()) : Statement() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append("continue").appendWithPrefix(label, "@")
     }

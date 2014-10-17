@@ -27,7 +27,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.j2k.Converter;
+import org.jetbrains.jet.j2k.JavaToKotlinConverter;
 
 import java.io.IOException;
 import java.util.*;
@@ -83,7 +83,7 @@ public class JavaToKotlinActionUtil {
     }
 
     @NotNull
-    static List<VirtualFile> convertFiles(final Converter converter, List<PsiJavaFile> allJavaFilesNear) {
+    static List<VirtualFile> convertFiles(final JavaToKotlinConverter converter, List<PsiJavaFile> allJavaFilesNear) {
         final List<VirtualFile> result = new LinkedList<VirtualFile>();
         for (final PsiFile f : allJavaFilesNear) {
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -120,7 +120,7 @@ public class JavaToKotlinActionUtil {
     }
 
     @Nullable
-    private static VirtualFile convertOneFile(Converter converter, PsiFile psiFile) {
+    private static VirtualFile convertOneFile(JavaToKotlinConverter converter, PsiFile psiFile) {
         try {
             VirtualFile virtualFile = psiFile.getVirtualFile();
             if (psiFile instanceof PsiJavaFile && virtualFile != null) {

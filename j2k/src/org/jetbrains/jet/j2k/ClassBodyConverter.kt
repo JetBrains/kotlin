@@ -35,9 +35,15 @@ import com.intellij.psi.PsiExpressionStatement
 import com.intellij.psi.PsiAssignmentExpression
 import com.intellij.psi.PsiExpression
 import com.intellij.psi.JavaTokenType
-import com.intellij.psi.PsiElementFactory
 
-class FieldCorrectionInfo(val name: Identifier, val access: Modifier?, val setterAccess: Modifier?)
+class FieldCorrectionInfo(val name: String, val access: Modifier?, val setterAccess: Modifier?) {
+    val identifier = Identifier(name).assignNoPrototype()
+}
+
+enum class AccessorKind {
+    GETTER
+    SETTER
+}
 
 class ClassBodyConverter(private val psiClass: PsiClass,
                          private val converter: Converter) {
@@ -47,10 +53,8 @@ class ClassBodyConverter(private val psiClass: PsiClass,
     public fun convertBody(): ClassBody {
         processAccessorsToDrop()
 
-        val correctedConverter = buildConverterWithCorrectedFieldNames()
-
         val constructorConverter = if (psiClass.getName() != null)
-            ConstructorConverter(psiClass, correctedConverter, fieldCorrections)
+            ConstructorConverter(psiClass, converter, fieldCorrections)
         else
             null
 
@@ -59,8 +63,8 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             if (element is PsiMember) {
                 if (element is PsiAnnotationMethod) continue // converted in convertAnnotationType()
 
-                val converted = correctedConverter.convertMember(element, membersToRemove, constructorConverter)
-                if (converted != null && !converted.isEmpty) {
+                val converted = converter.convertMember(element, membersToRemove, constructorConverter)
+                if (converted != null/* && !converted.isEmpty()*/) {
                     convertedMembers.put(element, converted)
                 }
             }
@@ -79,11 +83,8 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         for ((psiMember, member) in convertedMembers) {
             if (member is PrimaryConstructor) {
                 assert(primaryConstructorSignature == null)
-                primaryConstructorSignature = member.signature()
-                val initializer = member.initializer()
-                if (initializer != null) {
-                    members.add(initializer)
-                }
+                primaryConstructorSignature = member.createSignature(converter)
+                members.add(member.initializer())
             }
             else if (member is FactoryFunction) {
                 factoryFunctions.add(member)
@@ -171,15 +172,8 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             else
                 converter.convertModifiers(field).accessModifier()
             //TODO: check that setter access is not bigger
-            fieldCorrections[field] = FieldCorrectionInfo(Identifier(getterInfo.propertyName).assignNoPrototype(),
-                                                          getterAccess,
-                                                          setterAccess)
+            fieldCorrections[field] = FieldCorrectionInfo(getterInfo.propertyName, getterAccess, setterAccess)
         }
-    }
-
-    private enum class AccessorKind {
-        GETTER
-        SETTER
     }
 
     private class AccessorInfo(val method: PsiMethod, val field: PsiField, val kind: AccessorKind, val propertyName: String)
@@ -214,37 +208,5 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         val field = refExpr.resolve() as? PsiField ?: return null
         if (field.getContainingClass() != psiClass || field.hasModifierProperty(PsiModifier.STATIC)) return null
         return field
-    }
-
-    //TODO: correct usages to accessors (and field too) across all code being converted + all other Kotlin code in the project
-    private fun buildConverterWithCorrectedFieldNames(): Converter {
-        if (fieldCorrections.isEmpty()) return converter
-        return converter.withExpressionConverter { prevExpressionConverter ->
-            object : ExpressionConverter {
-                override fun convertExpression(expression: PsiExpression, converter: Converter): Expression {
-                    val result = prevExpressionConverter.convertExpression(expression, converter)
-                    if (expression !is PsiReferenceExpression) return result
-
-                    val field = expression.resolve() as? PsiField ?: return result
-                    val correction = fieldCorrections[field] ?: return result
-                    if (correction.name.name == field.getName()) return result
-
-                    val qualifier = expression.getQualifierExpression()
-                    return if (qualifier != null) {
-                        QualifiedExpression(converter.convertExpression(qualifier), correction.name)
-                    }
-                    else {
-                        // check if field name is shadowed
-                        val elementFactory = PsiElementFactory.SERVICE.getInstance(expression.getProject())
-                        val refExpr = elementFactory.createExpressionFromText(correction.name.name, expression) as PsiReferenceExpression
-                        if (refExpr.resolve() == null)
-                            correction.name
-                        else
-                            QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), correction.name) //TODO: this is not correct in case of nested/anonymous classes
-                    }
-
-                }
-            }
-        }
     }
 }

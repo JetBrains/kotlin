@@ -23,7 +23,7 @@ class EnumConstant(
         annotations: Annotations,
         modifiers: Modifiers,
         val type: Type,
-        val params: Element
+        val params: LazyElement<ExpressionList>
 ) : Member(annotations, modifiers) {
 
     override fun generateCode(builder: CodeBuilder) {
@@ -34,6 +34,4 @@ class EnumConstant(
 
         builder append annotations append identifier append " : " append type append "(" append params append ")"
     }
-
-
 }

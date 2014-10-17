@@ -18,8 +18,11 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
 
-class Initializer(val block: Block, modifiers: Modifiers) : Member(Annotations.Empty, modifiers) {
+class Initializer(val body: LazyElement<Block>, modifiers: Modifiers) : Member(Annotations.Empty(), modifiers) {
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(block)
+        builder.append(body)
     }
+
+    override val isEmpty: Boolean
+        get() = body.isEmpty
 }

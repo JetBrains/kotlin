@@ -86,7 +86,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
     }
 
     private fun convertCopiedCodeToKotlin(code: CopiedCode, fileCopiedFrom: PsiJavaFile, fileCopiedTo: JetFile): String {
-        val converter = Converter.create(fileCopiedFrom.getProject(),
+        val converter = JavaToKotlinConverter(fileCopiedFrom.getProject(),
                                          ConverterSettings.defaultSettings,
                                          FilesConversionScope(listOf(fileCopiedFrom)),
                                          IdeaReferenceSearcher,
@@ -105,7 +105,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
 
     private fun convertRangeToKotlin(file: PsiJavaFile,
                                      range: TextRange,
-                                     converter: Converter): String {
+                                     converter: JavaToKotlinConverter): String {
         val result = StringBuilder()
         var currentRange = range
         //TODO: probably better to use document to get text by range

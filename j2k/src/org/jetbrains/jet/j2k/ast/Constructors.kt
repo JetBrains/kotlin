@@ -22,22 +22,24 @@ import com.intellij.util.IncorrectOperationException
 class PrimaryConstructor(annotations: Annotations,
                          modifiers: Modifiers,
                          val parameterList: ParameterList,
-                         val block: Block)
+                         val body: LazyElement<Block>)
   :  Member(annotations, modifiers) {
 
     override fun generateCode(builder: CodeBuilder) { throw IncorrectOperationException() }
 
-    public fun initializer(): Initializer? {
-        return if (!block.isEmpty)
-            Initializer(block, Modifiers.Empty).assignPrototypesFrom(this, CommentsAndSpacesInheritance(commentsBefore = false))
-        else
-            null
-    }
+    public fun initializer(): Initializer
+            = Initializer(body, Modifiers.Empty()).assignPrototypesFrom(this, CommentsAndSpacesInheritance(commentsBefore = false))
 
-    public fun signature(): PrimaryConstructorSignature {
-        val noBody = block.isEmpty
-        val inheritance = CommentsAndSpacesInheritance(blankLinesBefore = false, commentsAfter = noBody, commentsInside = noBody)
-        return PrimaryConstructorSignature(annotations, modifiers, parameterList).assignPrototypesFrom(this, inheritance)
+    public fun createSignature(converter: Converter): PrimaryConstructorSignature {
+        val signature = PrimaryConstructorSignature(annotations, modifiers, parameterList)
+
+        // assign prototypes later because we don't know yet whether the body is empty or not
+        converter.addPostUnfoldLazyElementsAction {
+            val inheritance = CommentsAndSpacesInheritance(blankLinesBefore = false, commentsAfter = body.isEmpty, commentsInside = body.isEmpty)
+            signature.assignPrototypesFrom(this, inheritance)
+        }
+
+        return signature
     }
 }
 
@@ -64,8 +66,5 @@ class FactoryFunction(name: Identifier,
                       returnType: Type,
                       parameterList: ParameterList,
                       typeParameterList: TypeParameterList,
-                      body: Block)
+                      body: LazyElement<Block>)
 : Function(name, annotations, modifiers, returnType, typeParameterList, parameterList, body, false)
-
-fun FactoryFunction.withBody(body: Block)
-        = FactoryFunction(name, annotations, modifiers, returnType, parameterList, typeParameterList, body).assignPrototypesFrom(this)

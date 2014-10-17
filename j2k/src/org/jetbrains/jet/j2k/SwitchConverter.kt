@@ -20,9 +20,9 @@ import com.intellij.psi.*
 import org.jetbrains.jet.j2k.ast.*
 import java.util.ArrayList
 
-class SwitchConverter(private val converter: Converter) {
+class SwitchConverter(private val codeConverter: CodeConverter) {
     public fun convert(statement: PsiSwitchStatement): WhenStatement
-            = WhenStatement(converter.convertExpression(statement.getExpression()), switchBodyToWhenEntries(statement.getBody()))
+            = WhenStatement(codeConverter.convertExpression(statement.getExpression()), switchBodyToWhenEntries(statement.getBody()))
 
     private class Case(val label: PsiSwitchLabelStatement?, val statements: List<PsiStatement>)
 
@@ -38,7 +38,7 @@ class SwitchConverter(private val converter: Converter) {
                 result.add(WhenEntry(listOf(ValueWhenEntrySelector(Expression.Empty).assignNoPrototype()), convertCaseStatementsToBody(cases, i)).assignNoPrototype())
                 continue
             }
-            pendingSelectors.add(converter.convertStatement(case.label) as WhenEntrySelector)
+            pendingSelectors.add(codeConverter.convertStatement(case.label) as WhenEntrySelector)
             if (case.statements.isNotEmpty()) {
                 result.add(WhenEntry(pendingSelectors, convertCaseStatementsToBody(cases, i)).assignNoPrototype())
                 pendingSelectors = ArrayList()
@@ -81,10 +81,10 @@ class SwitchConverter(private val converter: Converter) {
         if (allowBlock && statementsToKeep.size == 1) {
             val block = statementsToKeep.single() as? PsiBlockStatement
             if (block != null) {
-                return listOf(converter.convertBlock(block.getCodeBlock(), true, { !isSwitchBreak(it) }))
+                return listOf(codeConverter.convertBlock(block.getCodeBlock(), true, { !isSwitchBreak(it) }))
             }
         }
-        return statementsToKeep.map { converter.convertStatement(it) }
+        return statementsToKeep.map { codeConverter.convertStatement(it) }
     }
 
     private fun convertCaseStatements(cases: List<Case>, caseIndex: Int, allowBlock: Boolean = true): List<Statement> {

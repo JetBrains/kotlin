@@ -50,14 +50,13 @@ class TypeParameterList(val parameters: List<TypeParameter>) : Element() {
         return builder
     }
 
-
     override val isEmpty: Boolean
         get() = parameters.isEmpty()
 
     private fun hasWhere(): Boolean = parameters.any { it.hasWhere() }
 
     class object {
-        val Empty = TypeParameterList(ArrayList())
+        fun Empty() = TypeParameterList(listOf())
     }
 }
 
@@ -70,5 +69,5 @@ fun Converter.convertTypeParameterList(typeParameterList: PsiTypeParameterList?)
     return if (typeParameterList != null)
         TypeParameterList(typeParameterList.getTypeParameters()!!.toList().map { convertTypeParameter(it) }).assignPrototype(typeParameterList)
     else
-        TypeParameterList.Empty
+        TypeParameterList.Empty()
 }

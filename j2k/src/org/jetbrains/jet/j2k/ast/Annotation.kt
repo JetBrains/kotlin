@@ -59,12 +59,13 @@ class Annotations(val annotations: List<Annotation>) : Element() {
         builder.append(annotations, "")
     }
 
-    override val isEmpty: Boolean = annotations.isEmpty()
+    override val isEmpty: Boolean
+        get() = annotations.isEmpty()
 
     fun plus(other: Annotations) = Annotations(annotations + other.annotations)
 
     class object {
-        val Empty = Annotations(listOf())
+        fun Empty() = Annotations(listOf())
     }
 }
 

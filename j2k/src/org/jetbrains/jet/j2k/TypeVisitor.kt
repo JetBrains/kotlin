@@ -63,7 +63,7 @@ class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>() {
             if (kotlinClassName != null) {
                 val kotlinShortName = getShortName(kotlinClassName)
                 if (kotlinShortName == getShortName(javaClassName!!) && converter.importNames.contains(getPackageName(javaClassName) + ".*")) {
-                    converter.importsToAdd?.add(kotlinClassName)
+                    converter.importsToAdd.add(kotlinClassName)
                 }
                 return ReferenceElement(Identifier(kotlinShortName).assignNoPrototype(), typeArgs).assignNoPrototype()
             }
