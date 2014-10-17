@@ -142,11 +142,20 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
             val representativeTarget = chunk.representativeTarget()
 
+            fun concatenate(strings: Array<String>?, cp: List<String>) = array(*(strings ?: array<String>()), *cp.copyToArray())
+
             for (argumentProvider in ServiceLoader.load(javaClass<KotlinJpsCompilerArgumentsProvider>())) {
                 // appending to pluginOptions
-                commonArguments.pluginOptions = array(
-                        *(commonArguments.pluginOptions ?: array<String>()),
-                        *argumentProvider.getExtraArguments(representativeTarget, context).copyToArray()
+                commonArguments.pluginOptions = concatenate(commonArguments.pluginOptions,
+                                                            argumentProvider.getExtraArguments(representativeTarget, context))
+                // appending to classpath
+                commonArguments.pluginClasspaths = concatenate(commonArguments.pluginClasspaths,
+                                                               argumentProvider.getClasspath(representativeTarget, context))
+
+                messageCollector.report(
+                        INFO,
+                        "Plugin loaded: ${argumentProvider.javaClass.getSimpleName()}",
+                        NO_LOCATION
                 )
             }
 
