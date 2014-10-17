@@ -53,10 +53,7 @@ public class JavaToKotlinConverter(private val project: Project,
             val converter = Converter.create(psiElement, settings, conversionScope, referenceSearcher, postProcessor)
             val element = converter.convert() ?: return ""
 
-            val codeConverter = converter.createDefaultCodeConverter()
-                    .withSpecialExpressionConverter(UsageProcessingExpressionConverter(converter.usageProcessings))
-
-            converter.unfoldLazyElements(codeConverter)
+            converter.unfoldLazyElements(converter.usageProcessings)
 
             val builder = CodeBuilder(psiElement)
             builder.append(element)

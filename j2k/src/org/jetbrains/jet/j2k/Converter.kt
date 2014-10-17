@@ -26,6 +26,7 @@ import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.jet.j2k.usageProcessing.FieldToPropertyProcessing
+import org.jetbrains.jet.j2k.usageProcessing.UsageProcessingExpressionConverter
 
 class Converter private(private val elementToConvert: PsiElement,
                         val settings: ConverterSettings,
@@ -69,7 +70,7 @@ class Converter private(private val elementToConvert: PsiElement,
     private fun withState(state: PersonalState): Converter
             = Converter(elementToConvert, settings, conversionScope, referenceSearcher, postProcessor, commonState, state)
 
-    /*TODO: it should be private*/ fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
+    private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
     public fun convert(): Element? = convertTopElement(elementToConvert)
 
@@ -90,7 +91,9 @@ class Converter private(private val elementToConvert: PsiElement,
     public val usageProcessings: Collection<UsageProcessing>
         get() = commonState.usageProcessings
 
-    public fun unfoldLazyElements(codeConverter: CodeConverter) {
+    public fun unfoldLazyElements(usageProcessings: Collection<UsageProcessing>) {
+        val codeConverter = createDefaultCodeConverter().withSpecialExpressionConverter(UsageProcessingExpressionConverter(usageProcessings))
+
         // we use loop with index because new lazy elements can be added during unfolding
         var i = 0
         while (i < commonState.lazyElements.size) {
