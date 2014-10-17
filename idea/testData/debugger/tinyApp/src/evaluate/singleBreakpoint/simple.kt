@@ -1,5 +1,6 @@
 package simple
 
+// this test is used also to check more than one file for package in JetPositionManager:prepareTypeMapper. see forTests/simple.kt
 fun main(args: Array<String>) {
     //Breakpoint!
     args.size
