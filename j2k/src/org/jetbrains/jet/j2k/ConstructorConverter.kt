@@ -149,7 +149,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
         }
     }
 
-    public var baseClassParams: List<Expression> = listOf()
+    public var baseClassParams: List<LazyElement<Expression>> = listOf()
         private set
 
     public fun convertConstructor(constructor: PsiMethod,
@@ -258,22 +258,25 @@ class ConstructorConverter(private val psiClass: PsiClass,
         }
 
         // we need to replace renamed parameter usages in base class constructor arguments and in default values
-        val correctedConverter = converter.withSpecialContext(psiClass) /* to correct nested class references */
-        val correctedCodeConverter = correctedConverter.createDefaultCodeConverter()/*TODO!!!*/
-                .withSpecialExpressionConverter(ReplacingExpressionConverter(this, parameterUsageReplacementMap))
 
+        val correctedConverter = converter.withSpecialContext(psiClass) /* to correct nested class references */
+
+        fun correctCodeConverter(codeConverter: CodeConverter)
+                = codeConverter.withSpecialExpressionConverter(ReplacingExpressionConverter(this, parameterUsageReplacementMap))
 
         val statement = primaryConstructor.getBody()?.getStatements()?.firstOrNull()
         val methodCall = (statement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
         if (methodCall != null && methodCall.isSuperConstructorCall()) {
-            baseClassParams = correctedCodeConverter.convertExpressions(methodCall.getArgumentList().getExpressions())
+            baseClassParams = methodCall.getArgumentList().getExpressions().map {
+                correctedConverter.lazyElement { codeConverter -> correctCodeConverter(codeConverter).convertExpression(it) }
+            }
         }
 
         val parameterList = ParameterList(params.indices.map { i ->
             val parameter = params[i]
             val indexFromEnd = params.size - i - 1
             val defaultValue = if (indexFromEnd < lastParamDefaults.size)
-                correctedCodeConverter.convertExpression(lastParamDefaults[indexFromEnd], parameter.getType())
+                correctCodeConverter(correctedConverter.createDefaultCodeConverter()/*TODO!!*/).convertExpression(lastParamDefaults[indexFromEnd], parameter.getType())
             else
                 null
             if (!parameterToField.containsKey(parameter)) {

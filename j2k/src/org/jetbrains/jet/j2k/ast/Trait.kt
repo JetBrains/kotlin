@@ -23,7 +23,7 @@ class Trait(name: Identifier,
             modifiers: Modifiers,
             typeParameterList: TypeParameterList,
             extendsTypes: List<Type>,
-            baseClassParams: List<Expression>,
+            baseClassParams: List<LazyElement<Expression>>,
             implementsTypes: List<Type>,
             body: ClassBody
 ) : Class(name, annotations, modifiers, typeParameterList, extendsTypes, baseClassParams, implementsTypes, body) {
