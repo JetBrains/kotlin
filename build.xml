@@ -103,6 +103,7 @@
         <include name="compiler/cli/cli-common/src"/>
         <include name="compiler/util/src"/>
         <include name="compiler/light-classes/src"/>
+        <include name="compiler/plugin-api/src"/>
         <include name="compiler/builtins-serializer/src"/>
         <include name="js/js.dart-ast/src"/>
         <include name="js/js.translator/src"/>
@@ -127,6 +128,7 @@
         <include name="util/**"/>
         <include name="util.runtime/**"/>
         <include name="light-classes/**"/>
+        <include name="plugin-api/**"/>
         <include name="builtins-serializer/**"/>
         <include name="js.dart-ast/**"/>
         <include name="js.translator/**"/>
@@ -193,6 +195,7 @@
             <fileset dir="compiler/cli/cli-common/src"/>
             <fileset dir="compiler/util/src"/>
             <fileset dir="compiler/light-classes/src"/>
+            <fileset dir="compiler/plugin-api/src"/>
             <fileset dir="compiler/builtins-serializer"/>
             <fileset dir="js/js.dart-ast/src"/>
             <fileset dir="js/js.translator/src"/>
@@ -626,6 +629,31 @@
         </jar>
     </target>
 
+    <target name="android-compiler-plugin">
+        <cleandir dir="${output}/classes/android-compiler-plugin"/>
+        <javac2 destdir="${output}/classes/android-compiler-plugin" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
+                source="${java.target}" target="${java.target}">
+            <withKotlin externalannotations="${external.annotations.path}"/>
+            <src>
+                <dirset dir="${basedir}/plugins">
+                    <include name="android-compiler-plugin/src"/>
+                </dirset>
+            </src>
+            <compilerarg value="-Xlint:all"/>
+            <classpath>
+                <fileset dir="${basedir}/lib" includes="**/*.jar"/>
+                <fileset dir="${idea.sdk}" includes="core/*.jar"/>
+                <fileset dir="${kotlin-home}/lib" includes="kotlin-compiler.jar"/>
+                <file file="${bootstrap.runtime}"/>
+            </classpath>
+        </javac2>
+
+        <jar manifest="${basedir}/plugins/android-compiler-plugin/src/META-INF/MANIFEST.MF" destfile="${kotlin-home}/lib/android-compiler-plugin.jar">
+            <fileset dir="${output}/classes/android-compiler-plugin"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+        </jar>
+    </target>
+
     <target name="ant-tools">
         <cleandir dir="${output}/classes/ant"/>
         <javac2 destdir="${output}/classes/ant" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
@@ -837,11 +865,11 @@
             depends="builtins,stdlib,reflection,reflection-stub,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,android-compiler-plugin,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,android-compiler-plugin,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"
