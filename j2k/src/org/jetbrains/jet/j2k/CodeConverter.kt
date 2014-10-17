@@ -64,6 +64,9 @@ class CodeConverter(public val converter: Converter,
     public fun withMethodReturnType(methodReturnType: PsiType?): CodeConverter
             = CodeConverter(converter, expressionConverter, statementConverter, methodReturnType)
 
+    public fun withConverter(converter: Converter): CodeConverter
+            = CodeConverter(converter, expressionConverter, statementConverter, methodReturnType)
+
     public fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean = true, statementFilter: (PsiStatement) -> Boolean = { true }): Block {
         if (block == null) return Block.Empty()
 

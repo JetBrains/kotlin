@@ -89,7 +89,11 @@ object EmptyElementPrototypes {
 }
 
 // this class should never be created directly - Converter.lazyElement() should be used!
-class LazyElement<TResult : Element>(private var generator: (CodeConverter) -> TResult) : Element() {
+class LazyElement<TResult : Element>(
+        private var generator: (CodeConverter) -> TResult,
+        public val converterState: Converter.PersonalState
+) : Element() {
+
     private var result: TResult? = null
 
     {

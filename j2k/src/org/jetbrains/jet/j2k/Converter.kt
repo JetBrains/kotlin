@@ -32,20 +32,26 @@ class Converter private(private val elementToConvert: PsiElement,
                         val conversionScope: ConversionScope,
                         val referenceSearcher: ReferenceSearcher,
                         private val postProcessor: PostProcessor?,
-                        private val state: Converter.State) {
+                        private val commonState: Converter.CommonState,
+                        private val personalState: Converter.PersonalState) {
 
-    private class State(val specialContext: PsiElement?,
-                        val importsToAdd: MutableSet<String>,
-                        val lazyElements: MutableList<LazyElement<*>>,
-                        val usageProcessings: MutableCollection<UsageProcessing>,
-                        val postUnfoldActions: MutableList<() -> Unit>)
+    // state which is shared between all converter's based on this one
+    private class CommonState {
+        val importsToAdd = LinkedHashSet<String>()
+        val lazyElements = ArrayList<LazyElement<*>>()
+        val usageProcessings = ArrayList<UsageProcessing>()
+        val postUnfoldActions = ArrayList<() -> Unit>()
+    }
+
+    // state which may differ in different converter's
+    public class PersonalState(val specialContext: PsiElement?)
 
     public val project: Project = elementToConvert.getProject()
     public val typeConverter: TypeConverter = TypeConverter(this)
     public val annotationConverter: AnnotationConverter = AnnotationConverter(this)
 
-    public val specialContext: PsiElement? = state.specialContext
-    public val importsToAdd: MutableCollection<String> = state.importsToAdd
+    public val specialContext: PsiElement? = personalState.specialContext
+    public val importsToAdd: MutableCollection<String> = commonState.importsToAdd
 
     private val importList = (elementToConvert as? PsiJavaFile)?.getImportList()?.let { convertImportList(it) }
     public val importNames: Set<String> = importList?.imports?.mapTo(HashSet<String>()) { it.name } ?: setOf()
@@ -53,13 +59,15 @@ class Converter private(private val elementToConvert: PsiElement,
     class object {
         public fun create(elementToConvert: PsiElement, settings: ConverterSettings, conversionScope: ConversionScope,
                           referenceSearcher: ReferenceSearcher, postProcessor: PostProcessor?): Converter {
-            return Converter(elementToConvert, settings, conversionScope, referenceSearcher, postProcessor, State(null, LinkedHashSet(), ArrayList(), ArrayList(), ArrayList()))
+            return Converter(elementToConvert, settings, conversionScope, referenceSearcher, postProcessor, CommonState(), PersonalState(null))
         }
     }
 
     public fun withSpecialContext(context: PsiElement): Converter
-            = Converter(elementToConvert, settings, conversionScope, referenceSearcher, postProcessor,
-                        State(context, state.importsToAdd, state.lazyElements, state.usageProcessings, state.postUnfoldActions))
+            = Converter(elementToConvert, settings, conversionScope, referenceSearcher, postProcessor, commonState, PersonalState(context))
+
+    private fun withState(state: PersonalState): Converter
+            = Converter(elementToConvert, settings, conversionScope, referenceSearcher, postProcessor, commonState, state)
 
     /*TODO: it should be private*/ fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
@@ -80,30 +88,31 @@ class Converter private(private val elementToConvert: PsiElement,
     }
 
     public val usageProcessings: Collection<UsageProcessing>
-        get() = state.usageProcessings
+        get() = commonState.usageProcessings
 
     public fun unfoldLazyElements(codeConverter: CodeConverter) {
         // we use loop with index because new lazy elements can be added during unfolding
         var i = 0
-        while (i < state.lazyElements.size) {
-            state.lazyElements[i++].unfold(codeConverter)
+        while (i < commonState.lazyElements.size) {
+            val lazyElement = commonState.lazyElements[i++]
+            lazyElement.unfold(codeConverter.withConverter(this.withState(lazyElement.converterState)))
         }
 
-        state.postUnfoldActions.forEach { it() }
+        commonState.postUnfoldActions.forEach { it() }
     }
 
     public fun<TResult : Element> lazyElement(generator: (CodeConverter) -> TResult): LazyElement<TResult> {
-        val element = LazyElement(generator)
-        state.lazyElements.add(element)
+        val element = LazyElement(generator, personalState)
+        commonState.lazyElements.add(element)
         return element
     }
 
     public fun addUsageProcessing(processing: UsageProcessing) {
-        state.usageProcessings.add(processing)
+        commonState.usageProcessings.add(processing)
     }
 
     public fun addPostUnfoldLazyElementsAction(action: () -> Unit) {
-        state.postUnfoldActions.add(action)
+        commonState.postUnfoldActions.add(action)
     }
 
     private fun convertFile(javaFile: PsiJavaFile): File {
@@ -418,7 +427,7 @@ class Converter private(private val elementToConvert: PsiElement,
                          nullability: Nullability = Nullability.Default,
                          varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
                          modifiers: Modifiers = Modifiers.Empty(),
-                         defaultValue: Expression? = null): Parameter {
+                         defaultValue: LazyElement<Expression>? = null): Parameter {
         var type = typeConverter.convertVariableType(parameter)
         when (nullability) {
             Nullability.NotNull -> type = type.toNotNullType()
@@ -452,9 +461,9 @@ class Converter private(private val elementToConvert: PsiElement,
         val refElements = throwsList.getReferenceElements()
         assert(types.size == refElements.size)
         if (types.isEmpty()) return Annotations.Empty()
-        val arguments = types.indices.map {
-            val convertedType = typeConverter.convertType(types[it], Nullability.NotNull)
-            null to MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(convertedType)).assignPrototype(refElements[it])
+        val arguments = types.indices.map { index ->
+            val convertedType = typeConverter.convertType(types[index], Nullability.NotNull)
+            null to lazyElement<Expression> { MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(convertedType)).assignPrototype(refElements[index]) }
         }
         val annotation = Annotation(Identifier("throws").assignNoPrototype(), arguments, false, true)
         return Annotations(listOf(annotation.assignPrototype(throwsList))).assignPrototype(throwsList)

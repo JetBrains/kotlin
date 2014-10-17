@@ -261,14 +261,13 @@ class ConstructorConverter(private val psiClass: PsiClass,
 
         val correctedConverter = converter.withSpecialContext(psiClass) /* to correct nested class references */
 
-        fun correctCodeConverter(codeConverter: CodeConverter)
-                = codeConverter.withSpecialExpressionConverter(ReplacingExpressionConverter(this, parameterUsageReplacementMap))
+        fun CodeConverter.correct() = withSpecialExpressionConverter(ReplacingExpressionConverter(this@ConstructorConverter, parameterUsageReplacementMap))
 
         val statement = primaryConstructor.getBody()?.getStatements()?.firstOrNull()
         val methodCall = (statement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
         if (methodCall != null && methodCall.isSuperConstructorCall()) {
             baseClassParams = methodCall.getArgumentList().getExpressions().map {
-                correctedConverter.lazyElement { codeConverter -> correctCodeConverter(codeConverter).convertExpression(it) }
+                correctedConverter.lazyElement { codeConverter -> codeConverter.correct().convertExpression(it) }
             }
         }
 
@@ -276,7 +275,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
             val parameter = params[i]
             val indexFromEnd = params.size - i - 1
             val defaultValue = if (indexFromEnd < lastParamDefaults.size)
-                correctCodeConverter(correctedConverter.createDefaultCodeConverter()/*TODO!!*/).convertExpression(lastParamDefaults[indexFromEnd], parameter.getType())
+                correctedConverter.lazyElement { codeConverter -> codeConverter.correct().convertExpression(lastParamDefaults[indexFromEnd], parameter.getType()) }
             else
                 null
             if (!parameterToField.containsKey(parameter)) {

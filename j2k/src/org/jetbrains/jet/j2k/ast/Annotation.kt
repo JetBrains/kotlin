@@ -18,7 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
 
-class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Expression>>, val brackets: Boolean, val newLineAfter: Boolean) : Element() {
+class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, LazyElement<Expression>>>, val brackets: Boolean, val newLineAfter: Boolean) : Element() {
     private fun CodeBuilder.surroundWithBrackets(action: () -> Unit) {
         if (brackets) append("[")
         action()
