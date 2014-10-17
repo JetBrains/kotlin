@@ -7031,6 +7031,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("noSenselessNullOnNullableType.kt")
+            public void testNoSenselessNullOnNullableType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/noSenselessNullOnNullableType.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("noUnnecessaryNotNullAssertionOnErrorType.kt")
             public void testNoUnnecessaryNotNullAssertionOnErrorType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts/noUnnecessaryNotNullAssertionOnErrorType.kt");
