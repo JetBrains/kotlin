@@ -93,7 +93,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         }
 
         try {
-            PluginCliParser.processPluginOptions(arguments, configuration);
+            PluginCliParser.loadPlugins(arguments, configuration);
         }
         catch (CliOptionProcessingException e) {
             // TODO Print usage?
