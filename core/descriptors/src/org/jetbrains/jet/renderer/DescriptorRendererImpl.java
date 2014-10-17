@@ -46,6 +46,7 @@ import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYP
 import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
+
     private final Function1<JetType, JetType> typeNormalizer;
     private final boolean shortNames;
     private final boolean withDefinedIn;
@@ -66,6 +67,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean withoutSuperTypes;
     private final boolean receiverAfterName;
     private final boolean renderDefaultValues;
+    private final boolean flexibleTypesForCode;
 
     @NotNull
     private final OverrideRenderingPolicy overrideRenderingPolicy;
@@ -102,7 +104,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean renderClassObjectName,
             boolean withoutSuperTypes,
             @NotNull Function1<JetType, JetType> typeNormalizer,
-            boolean renderDefaultValues
+            boolean renderDefaultValues,
+            boolean flexibleTypesForCode
     ) {
         this.shortNames = shortNames;
         this.withDefinedIn = withDefinedIn;
@@ -129,6 +132,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.withoutSuperTypes = withoutSuperTypes;
         this.typeNormalizer = typeNormalizer;
         this.renderDefaultValues = renderDefaultValues;
+        this.flexibleTypesForCode = flexibleTypesForCode;
     }
 
     /* FORMATTING */
@@ -305,15 +309,27 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     @NotNull
     private String renderNormalizedType(@NotNull JetType type) {
         if (TypesPackage.isFlexible(type)) {
-            if (!debugMode) {
-                return renderFlexibleType(type);
+            if (debugMode) {
+                return renderFlexibleTypeWithBothBounds(TypesPackage.flexibility(type).getLowerBound(),
+                                                        TypesPackage.flexibility(type).getUpperBound());
+            }
+            else if (flexibleTypesForCode) {
+                String prefix = shortNames ? "" : Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName().asString() + ".";
+                return prefix + Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName()
+                       + lt()
+                       + renderNormalizedType(TypesPackage.flexibility(type).getLowerBound()) + ", "
+                       + renderNormalizedType(TypesPackage.flexibility(type).getUpperBound())
+                       + gt();
             }
             else {
-                return "(" + renderNormalizedType(TypesPackage.flexibility(type).getLowerBound()) + ".." +
-                             renderNormalizedType(TypesPackage.flexibility(type).getUpperBound()) + ")";
+                return renderFlexibleType(type);
             }
         }
         return renderInflexibleType(type);
+    }
+
+    private String renderFlexibleTypeWithBothBounds(@NotNull JetType lower, @NotNull JetType upper) {
+        return "(" + renderNormalizedType(lower) + ".." + renderNormalizedType(upper) + ")";
     }
 
     private String renderInflexibleType(@NotNull JetType type) {
@@ -376,7 +392,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 kotlinPrefix + escape("Array<(out) ")
         );
         if (array != null) return array;
-        return "(" + renderNormalizedType(lower) + ".." + renderNormalizedType(upper) + ")";
+        return renderFlexibleTypeWithBothBounds(lower, upper);
     }
 
     @Nullable
