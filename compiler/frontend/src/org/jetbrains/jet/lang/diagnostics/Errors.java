@@ -178,7 +178,7 @@ public interface Errors {
             .create(ERROR, modifierSetPosition(JetTokens.ABSTRACT_KEYWORD));
 
     DiagnosticFactory0<PsiElement> CLASS_IN_SUPERTYPE_FOR_ENUM = DiagnosticFactory0.create(ERROR);
-
+    DiagnosticFactory0<JetTypeParameterList> TYPE_PARAMETERS_IN_ENUM = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetClass, ClassDescriptor> ENUM_ENTRY_SHOULD_BE_INITIALIZED = DiagnosticFactory1.create(ERROR, DECLARATION_NAME);
     DiagnosticFactory1<JetTypeReference, ClassDescriptor> ENUM_ENTRY_ILLEGAL_TYPE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetClass, ClassDescriptor> LOCAL_ENUM_NOT_ALLOWED = DiagnosticFactory1.create(ERROR, DECLARATION_NAME);

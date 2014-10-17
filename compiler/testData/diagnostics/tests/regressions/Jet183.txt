@@ -1,28 +1,6 @@
-package
+package 
 
 internal fun box(): kotlin.Unit
-
-internal final enum class Foo</*0*/ T> : kotlin.Enum<Foo<T>> {
-    private constructor Foo</*0*/ T>()
-    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Foo<T>): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-    public enum entry X {
-        private constructor X()
-
-        public class object <class-object-for-X> : Foo.X {
-            private constructor <class-object-for-X>()
-        }
-    }
-
-    // Static members
-    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Foo<T>
-    public final /*synthesized*/ fun values(): kotlin.Array<Foo<T>>
-}
 
 internal final enum class ProtocolState : kotlin.Enum<ProtocolState> {
     private constructor ProtocolState()
@@ -33,7 +11,7 @@ internal final enum class ProtocolState : kotlin.Enum<ProtocolState> {
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     internal abstract fun signal(): ProtocolState
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
+    
     public enum entry TALKING : ProtocolState {
         private constructor TALKING()
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: ProtocolState): kotlin.Int
@@ -43,7 +21,7 @@ internal final enum class ProtocolState : kotlin.Enum<ProtocolState> {
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         internal open override /*1*/ fun signal(): ProtocolState
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
+        
         public class object <class-object-for-TALKING> : ProtocolState.TALKING {
             private constructor <class-object-for-TALKING>()
             public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: ProtocolState): kotlin.Int
@@ -55,7 +33,7 @@ internal final enum class ProtocolState : kotlin.Enum<ProtocolState> {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
-
+    
     public enum entry WAITING : ProtocolState {
         private constructor WAITING()
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: ProtocolState): kotlin.Int
@@ -65,7 +43,7 @@ internal final enum class ProtocolState : kotlin.Enum<ProtocolState> {
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         internal open override /*1*/ fun signal(): ProtocolState
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
+        
         public class object <class-object-for-WAITING> : ProtocolState.WAITING {
             private constructor <class-object-for-WAITING>()
             public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: ProtocolState): kotlin.Int
@@ -77,7 +55,7 @@ internal final enum class ProtocolState : kotlin.Enum<ProtocolState> {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
-
+    
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): ProtocolState
     public final /*synthesized*/ fun values(): kotlin.Array<ProtocolState>

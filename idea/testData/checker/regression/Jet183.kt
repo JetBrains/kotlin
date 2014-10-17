@@ -10,13 +10,6 @@ enum class ProtocolState {
   abstract fun signal() : ProtocolState
 }
 
-enum class Foo<T> {
-  <error>X</error>
-
-}
-
-
-
 fun box() {
    val <warning>x</warning>: ProtocolState = ProtocolState.WAITING
 }

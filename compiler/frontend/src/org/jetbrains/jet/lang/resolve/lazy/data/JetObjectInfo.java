@@ -17,14 +17,17 @@
 package org.jetbrains.jet.lang.resolve.lazy.data;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClassObject;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.psi.JetTypeParameterList;
 
 import java.util.Collections;
 import java.util.List;
 
 public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
-
     @NotNull
     private final ClassKind kind;
 
@@ -38,10 +41,10 @@ public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
         return null;
     }
 
-    @NotNull
+    @Nullable
     @Override
-    public List<JetTypeParameter> getTypeParameters() {
-        return Collections.emptyList();
+    public JetTypeParameterList getTypeParameterList() {
+        return null;
     }
 
     @NotNull

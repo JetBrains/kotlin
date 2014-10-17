@@ -114,9 +114,16 @@ public class DescriptorResolver {
             BindingTrace trace
     ) {
         // TODO : Where-clause
-        List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
+        List<JetTypeParameter> typeParameters = classElement.getTypeParameters();
+        List<TypeParameterDescriptor> typeParameterDescriptors = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
+        if (descriptor.getKind() == ClassKind.ENUM_CLASS) {
+            JetTypeParameterList typeParameterList = classElement.getTypeParameterList();
+            if (typeParameterList != null) {
+                trace.report(TYPE_PARAMETERS_IN_ENUM.on(typeParameterList));
+            }
+        }
         int index = 0;
-        for (JetTypeParameter typeParameter : classElement.getTypeParameters()) {
+        for (JetTypeParameter typeParameter : typeParameters) {
             if (!topDownAnalysisParameters.isLazyTopDownAnalysis()) {
                 // TODO: Support
                 AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, trace);
@@ -132,10 +139,10 @@ public class DescriptorResolver {
                     toSourceElement(typeParameter)
             );
             trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
-            typeParameters.add(typeParameterDescriptor);
+            typeParameterDescriptors.add(typeParameterDescriptor);
             index++;
         }
-        descriptor.setTypeParameterDescriptors(typeParameters);
+        descriptor.setTypeParameterDescriptors(typeParameterDescriptors);
         Modality defaultModality = descriptor.getKind() == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
         descriptor.setModality(resolveModalityFromModifiers(classElement, defaultModality));
         descriptor.setVisibility(resolveVisibilityFromModifiers(classElement, getDefaultClassVisibility(descriptor)));

@@ -3931,6 +3931,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("typeParametersInEnum.kt")
+            public void testTypeParametersInEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/typeParametersInEnum.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("valuesValueOfAndEntriesAccessibility.kt")
             public void testValuesValueOfAndEntriesAccessibility() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/valuesValueOfAndEntriesAccessibility.kt");

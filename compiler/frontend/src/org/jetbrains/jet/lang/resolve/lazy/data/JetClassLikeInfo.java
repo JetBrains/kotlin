@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.util.List;
 
 public interface JetClassLikeInfo extends JetDeclarationContainer {
-
     @NotNull
     FqName getContainingPackageFqName();
 
@@ -48,9 +47,8 @@ public interface JetClassLikeInfo extends JetDeclarationContainer {
     @Nullable
     JetClassOrObject getCorrespondingClassOrObject();
 
-    @NotNull
-    @ReadOnly
-    List<JetTypeParameter> getTypeParameters();
+    @Nullable
+    JetTypeParameterList getTypeParameterList();
 
     @NotNull
     @ReadOnly
