@@ -298,12 +298,12 @@ public class JetCoreEnvironment {
 
         project.registerService(VirtualFileFinderFactory.class, new CliVirtualFileFinderFactory(classPath));
 
+        ExternalDeclarationsProvider.OBJECT$.registerExtensionPoint(project);
+        ExpressionCodegenExtension.OBJECT$.registerExtensionPoint(project);
+
         for (ComponentRegistrar registrar : configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
             registrar.registerProjectComponents(project, configuration);
         }
-
-        ExternalDeclarationsProvider.OBJECT$.registerExtensionPoint(project);
-        ExpressionCodegenExtension.OBJECT$.registerExtensionPoint(project);
     }
 
     private static void registerProjectExtensionPoints(ExtensionsArea area) {
