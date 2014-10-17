@@ -144,7 +144,7 @@ public class KotlinPsiSearchHelper(private val project: Project): PsiSearchHelpe
             FileBasedIndex.getInstance().processFilesContainingAllKeys(IdIndex.NAME, entries, scope, checker) { file ->
                 !index.shouldBeFound(scope, file) || processor.process(file)
             }
-        }!!
+        }
     }
 
     public fun processFilesWithText(item: UsagesSearchRequestItem, consumer: Processor<PsiReference>): Boolean {

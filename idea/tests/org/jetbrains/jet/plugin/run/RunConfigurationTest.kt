@@ -62,7 +62,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
     fun testDependencyModuleClasspath() {
         val dependencyModuleSrcDir = configureModule(moduleDirPath("module"), getTestProject().getBaseDir()!!).src
 
-        val moduleWithDependencyDir = runWriteAction { getTestProject().getBaseDir()!!.createChildDirectory(this, "moduleWithDependency") }!!
+        val moduleWithDependencyDir = runWriteAction { getTestProject().getBaseDir()!!.createChildDirectory(this, "moduleWithDependency") }
 
         val moduleWithDependency = createModule("moduleWithDependency")
         ModuleRootModificationUtil.setModuleSdk(moduleWithDependency, getTestProjectJdk())
@@ -109,7 +109,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
             PsiTestUtil.setCompilerOutputPath(configModule, testOutDir.getUrl(), true)
 
             Pair(srcOutDir, testOutDir)
-        }!!
+        }
 
         PsiDocumentManager.getInstance(getTestProject()).commitAllDocuments()
 

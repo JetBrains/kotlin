@@ -83,7 +83,7 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
         val jetProperty = element?.namedUnwrappedElement as? JetProperty
         if (jetProperty == null) throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
 
-        val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(jetProperty) }!!
+        val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(jetProperty) }
 
         for (propertyMethod in propertyMethods) {
             addRenameElements(propertyMethod, jetProperty.getName(), newName, allRenames, scope)

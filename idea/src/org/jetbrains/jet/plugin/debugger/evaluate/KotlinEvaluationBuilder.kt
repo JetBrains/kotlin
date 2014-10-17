@@ -221,7 +221,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     }
                 }
                 parameters
-            }!!
+            }
         }
 
         private fun EvaluationContextImpl.getArgumentsForEval4j(parameterNames: List<String>, parameterTypes: Array<Type>): List<Value> {
@@ -246,7 +246,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
 
                 state.getFactory()
-            }!!
+            }
         }
 
         private fun exception(msg: String) = throw EvaluateExceptionUtil.createEvaluateException(msg)
@@ -328,7 +328,7 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
 
         val thisDesc = value.asmType.getClassDescriptor(project)
         val expDesc = asmType.getClassDescriptor(project)
-        return thisDesc != null && expDesc != null && runReadAction { DescriptorUtils.isSubclass(thisDesc, expDesc) }!!
+        return thisDesc != null && expDesc != null && runReadAction { DescriptorUtils.isSubclass(thisDesc, expDesc) }
     }
 
 

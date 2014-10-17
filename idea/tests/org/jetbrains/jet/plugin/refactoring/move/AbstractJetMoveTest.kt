@@ -75,7 +75,7 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
                 }
 
                 offset
-            }!!
+            }
         }
 
         val config = JsonParser().parse(FileUtil.loadFile(File(path), true)) as JsonObject
