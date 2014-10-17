@@ -3,16 +3,8 @@ package
 internal fun </*0*/ T> doA(/*0*/ a: A<T>): T
 internal fun </*0*/ T> foo(/*0*/ a: A<T>, /*1*/ aN: A<T?>): T
 internal fun test(/*0*/ a: A<kotlin.Int>, /*1*/ aN: A<kotlin.Int?>): kotlin.Unit
-internal fun </*0*/ T> T.checkType(/*0*/ f: (_<T>) -> kotlin.Unit): (_<T>) -> kotlin.Unit
 
 internal trait A</*0*/ T> {
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
-internal final class _</*0*/ T> {
-    public constructor _</*0*/ T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

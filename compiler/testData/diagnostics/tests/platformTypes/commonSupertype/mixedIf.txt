@@ -1,11 +1,3 @@
 package
 
 internal fun foo(/*0*/ j: p.J<kotlin.String>): kotlin.Unit
-internal fun </*0*/ T> T.checkType(/*0*/ f: (_<T>) -> kotlin.Unit): (_<T>) -> kotlin.Unit
-
-internal final class _</*0*/ T> {
-    public constructor _</*0*/ T>()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
