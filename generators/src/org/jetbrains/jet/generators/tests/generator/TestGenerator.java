@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
 
 public class TestGenerator {
@@ -156,19 +157,24 @@ public class TestGenerator {
         p.pushIndent();
 
         Collection<TestMethodModel> testMethods = testClassModel.getTestMethods();
+        Collection<TestClassModel> innerTestClasses = testClassModel.getInnerTestClasses();
 
-        for (TestMethodModel testMethodModel : testMethods) {
+        for (Iterator<TestMethodModel> iterator = testMethods.iterator(); iterator.hasNext(); ) {
+            TestMethodModel testMethodModel = iterator.next();
             generateTestMethod(p, testMethodModel);
-            p.println();
+            if (iterator.hasNext() || !innerTestClasses.isEmpty()) {
+                p.println();
+            }
         }
 
-        Collection<TestClassModel> innerTestClasses = testClassModel.getInnerTestClasses();
-        for (TestClassModel innerTestClass : innerTestClasses) {
-            if (innerTestClass.isEmpty()) {
-                continue;
+        for (Iterator<TestClassModel> iterator = innerTestClasses.iterator(); iterator.hasNext(); ) {
+            TestClassModel innerTestClass = iterator.next();
+            if (!innerTestClass.isEmpty()) {
+                generateTestClass(p, innerTestClass, true);
+                if (iterator.hasNext()) {
+                    p.println();
+                }
             }
-            generateTestClass(p, innerTestClass, true);
-            p.println();
         }
 
         p.popIndent();

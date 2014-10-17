@@ -71,12 +71,16 @@ public class Printer {
         if (withholdIndentOnce) {
             withholdIndentOnce = false;
         }
-        else {
-            append(indent);
+        else if (objects.length > 0) {
+            printIndent();
         }
         printWithNoIndent(objects);
 
         return this;
+    }
+
+    public void printIndent() {
+        append(indent);
     }
 
     @NotNull
