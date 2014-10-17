@@ -22,4 +22,5 @@ public abstract class Enum<E : Enum<E>>(name: String, ordinal: Int) {
 
     public override final fun equals(other: Any?): Boolean
     public override final fun hashCode(): Int
+    public override fun toString(): String
 }
