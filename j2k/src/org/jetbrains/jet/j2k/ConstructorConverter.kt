@@ -242,7 +242,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
 
             { codeConverter ->
                 val bodyConverter = codeConverter.withSpecialExpressionConverter(
-                        object : ReplacingExpressionConverter(this, parameterUsageReplacementMap) {
+                        object : ReplacingExpressionConverter(parameterUsageReplacementMap) {
                             override fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression? {
                                 if (expression is PsiMethodCallExpression && expression.isSuperConstructorCall()) {
                                     return Expression.Empty // skip it
@@ -261,7 +261,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
 
         val correctedConverter = converter.withSpecialContext(psiClass) /* to correct nested class references */
 
-        fun CodeConverter.correct() = withSpecialExpressionConverter(ReplacingExpressionConverter(this@ConstructorConverter, parameterUsageReplacementMap))
+        fun CodeConverter.correct() = withSpecialExpressionConverter(ReplacingExpressionConverter(parameterUsageReplacementMap))
 
         val statement = primaryConstructor.getBody()?.getStatements()?.firstOrNull()
         val methodCall = (statement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
@@ -468,9 +468,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
         return ref.getCanonicalText() == "super" && ref.resolve()?.isConstructor() ?: false
     }
 
-    private /*inner*//*TODO: see KT-5343*/ open class ReplacingExpressionConverter(
-            val owner: ConstructorConverter, val parameterUsageReplacementMap: Map<String, String>) : SpecialExpressionConverter {
-
+    private inner open class ReplacingExpressionConverter(val parameterUsageReplacementMap: Map<String, String>) : SpecialExpressionConverter {
         override fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression? {
             if (expression is PsiReferenceExpression && expression.getQualifier() == null) {
                 val replacement = parameterUsageReplacementMap[expression.getReferenceName()]
@@ -479,7 +477,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
                     if (target is PsiParameter) {
                         val scope = target.getDeclarationScope()
                         // we do not check for exactly this constructor because default values reference parameters in other constructors
-                        if (scope.isConstructor() && scope.getParent() == owner.psiClass) {
+                        if (scope.isConstructor() && scope.getParent() == psiClass) {
                             return Identifier(replacement, codeConverter.typeConverter.variableNullability(target).isNullable(codeConverter.settings))
                         }
                     }
