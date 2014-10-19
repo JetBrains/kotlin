@@ -33,6 +33,7 @@ import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedFunctionD
 import static org.jetbrains.k2js.inline.clean.CleanPackage.removeUnusedLocalFunctionDeclarations;
 import static org.jetbrains.k2js.inline.util.UtilPackage.IdentitySet;
 import static org.jetbrains.k2js.inline.util.UtilPackage.collectNamedFunctions;
+import static org.jetbrains.k2js.inline.util.UtilPackage.refreshLabelNames;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.flattenStatement;
 
 public class JsInliner extends JsVisitorWithContextImpl {
@@ -97,6 +98,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
     @Override
     public void endVisit(JsFunction function, JsContext context) {
         super.endVisit(function, context);
+        refreshLabelNames(getInliningContext().newNamingContext(), function);
+
         removeUnusedLocalFunctionDeclarations(function);
         processedFunctions.add(function);
 

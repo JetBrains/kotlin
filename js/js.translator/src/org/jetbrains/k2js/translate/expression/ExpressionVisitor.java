@@ -293,9 +293,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         assert baseExpression != null;
         JsScope scope = context.scope();
         assert scope instanceof JsFunctionScope: "Labeled statement is unexpected outside of function scope";
-        JsName name = ((JsFunctionScope) scope).declareNameUnsafe(getReferencedName(expression.getTargetLabel()));
+        JsFunctionScope functionScope = (JsFunctionScope) scope;
+        String labelIdent = getReferencedName(expression.getTargetLabel());
+        JsName labelName = functionScope.enterLabel(labelIdent);
         JsStatement baseStatement = Translation.translateAsStatement(baseExpression, context);
-        return new JsLabel(name, baseStatement).source(expression);
+        functionScope.exitLabel();
+        return new JsLabel(labelName, baseStatement).source(expression);
     }
 
     @Override
@@ -369,11 +372,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (labelElement == null) {
             return null;
         }
-        else {
-            JsName name = context.scope().findName(getReferencedName(labelElement));
-            assert name != null;
-            return name.makeRef();
-        }
+
+        String labelIdent = getReferencedName(labelElement);
+        JsScope scope = context.scope();
+        assert scope instanceof JsFunctionScope: "Labeled statement is unexpected outside of function scope";
+        JsName labelName = ((JsFunctionScope) scope).findLabel(labelIdent);
+        assert labelName != null;
+        return labelName.makeRef();
     }
 
     @Override

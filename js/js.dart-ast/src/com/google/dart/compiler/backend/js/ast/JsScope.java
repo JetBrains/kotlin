@@ -53,7 +53,6 @@ public abstract class JsScope {
     private static final Pattern FRESH_NAME_SUFFIX = Pattern.compile("[\\$_]\\d+$");
 
     public JsScope(JsScope parent, @NotNull String description, @Nullable String scopeId) {
-        assert (parent != null);
         this.scopeId = scopeId;
         this.description = description;
         this.parent = parent;
@@ -196,7 +195,7 @@ public abstract class JsScope {
      * Fresh name for "a0" should still be "a0_0".
      */
     @NotNull
-    private String getFreshIdent(@NotNull String suggestedIdent) {
+    protected String getFreshIdent(@NotNull String suggestedIdent) {
         char sep = '_';
         String baseName = suggestedIdent;
         int counter = 0;

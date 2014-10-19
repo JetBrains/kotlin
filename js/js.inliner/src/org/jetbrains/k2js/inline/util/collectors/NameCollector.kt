@@ -36,11 +36,6 @@ class NameCollector(private val scope: JsScope) : RecursiveJsVisitor() {
 
     override fun visitFunction(x: JsFunction?) { }
 
-    override fun visitLabel(label: JsLabel?) {
-        super.visitLabel(label)
-        addNameIfNeeded(label)
-    }
-
     private fun addNameIfNeeded(hasName: HasName?) {
         val name = hasName?.getName()
         val ident = name?.getIdent()

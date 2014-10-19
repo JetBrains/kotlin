@@ -16,17 +16,49 @@
 
 package com.google.dart.compiler.backend.js.ast
 
+import java.util.Stack
 
 public fun JsObjectScope(parent: JsScope, description: String): JsObjectScope = JsObjectScope(parent, description, null)
 
 public class JsObjectScope(parent: JsScope, description: String, scopeId: String?) : JsScope(parent, description, scopeId)
 
 public class JsFunctionScope(parent: JsScope, description: String) : JsScope(parent, description, null) {
+
+    private val labelScopes = Stack<LabelScope>()
+    private val topLabelScope: LabelScope?
+        get() = if (labelScopes.notEmpty) labelScopes.peek() else null
+
     override fun declareName(identifier: String): JsName = super.declareFreshName(identifier)
 
     override fun hasOwnName(name: String): Boolean = RESERVED_WORDS.contains(name) || super.hasOwnName(name)
 
     public fun declareNameUnsafe(identifier: String): JsName = super.declareName(identifier)
+
+    public fun enterLabel(label: String): JsName {
+        val scope = LabelScope(topLabelScope, label)
+        labelScopes.push(scope)
+        return scope.labelName
+    }
+
+    public fun exitLabel() {
+        assert(labelScopes.notEmpty) { "No scope to exit from" }
+        labelScopes.pop()
+    }
+
+    public fun findLabel(label: String): JsName? =
+            topLabelScope?.findName(label)
+
+    private inner class LabelScope(parent: LabelScope?, val ident: String) : JsScope(parent, "Label scope for $ident", null) {
+        val labelName = JsName(this@JsFunctionScope, parent?.getFreshIdent(ident) ?: ident)
+
+        override fun findOwnName(name: String): JsName? =
+                if (name == ident) labelName else null
+
+        override fun hasOwnName(name: String): Boolean =
+                name == ident
+                || name == labelName.getIdent()
+                || getParent()?.hasOwnName(name) ?: false
+    }
 
     class object {
         public val RESERVED_WORDS: Set<String> = setOf(
