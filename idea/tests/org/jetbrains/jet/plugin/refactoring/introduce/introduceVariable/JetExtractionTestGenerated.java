@@ -1086,7 +1086,13 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/multipleOutputValuesMatching.kt");
                 doExtractFunctionTest(fileName);
             }
-
+            
+            @TestMetadata("nestedStrongMatch.kt")
+            public void testNestedStrongMatch() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/nestedStrongMatch.kt");
+                doExtractFunctionTest(fileName);
+            }
+            
             @TestMetadata("notNullAssertion.kt")
             public void testNotNullAssertion() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/notNullAssertion.kt");
