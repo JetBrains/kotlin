@@ -56,7 +56,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     private static boolean IS_TINY_APP_COMPILED = false;
 
     private static File CUSTOM_LIBRARY_JAR;
-    private final File CUSTOM_LIBRARY_SOURCES = new File(getTestAppPath() + "/customLibrary");
+    private final File CUSTOM_LIBRARY_SOURCES = new File(PluginTestCaseBase.getTestDataPathBase() + "/debugger/customLibraryForTinyApp");
 
     private final ProjectDescriptorWithStdlibSources projectDescriptor = ProjectDescriptorWithStdlibSources.INSTANCE;
 
@@ -88,9 +88,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
                         VirtualFile customLibrarySources = VfsUtil.findFileByIoFile(CUSTOM_LIBRARY_SOURCES, false);
                         assert customLibrarySources != null : "VirtualFile for customLibrary sources should be found";
-                        model.getContentEntries()[0].addExcludeFolder(customLibrarySources);
-
-                        configureCustomLibrary(model);
+                        configureCustomLibrary(model, customLibrarySources);
 
                         model.commit();
                     }
@@ -99,13 +97,13 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         });
     }
 
-    private static void configureCustomLibrary(@NotNull ModifiableRootModel model) {
+    private static void configureCustomLibrary(@NotNull ModifiableRootModel model, @NotNull VirtualFile customLibrarySources) {
         NewLibraryEditor customLibEditor = new NewLibraryEditor();
         customLibEditor.setName("CustomLibrary");
 
         String customLibraryRoot = VfsUtil.getUrlForLibraryRoot(CUSTOM_LIBRARY_JAR);
         customLibEditor.addRoot(customLibraryRoot, OrderRootType.CLASSES);
-        customLibEditor.addRoot(customLibraryRoot + "/src", OrderRootType.SOURCES);
+        customLibEditor.addRoot(customLibrarySources, OrderRootType.SOURCES);
 
         ConfigLibraryUtil.addLibrary(customLibEditor, model);
     }
@@ -122,7 +120,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         if (!IS_TINY_APP_COMPILED) {
             String modulePath = getTestAppPath();
 
-            CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), "debuggerCustomLibrary", true);
+            CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), "debuggerCustomLibrary", false);
 
             String outputDir = modulePath + File.separator + "classes";
             String sourcesDir = modulePath + File.separator + "src";
