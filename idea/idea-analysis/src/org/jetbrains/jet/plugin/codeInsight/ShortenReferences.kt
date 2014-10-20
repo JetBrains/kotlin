@@ -25,20 +25,15 @@ import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.HashSet;
 import com.intellij.psi.util.PsiTreeUtil
-import java.util.ArrayList
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.renderer.DescriptorRenderer.FQ_NAMES_IN_TYPES
-import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.ImportPath
-import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
 import java.util.Collections
 import org.jetbrains.jet.analyzer.analyzeInContext
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getCalleeExpressionIfAny
 import java.util.LinkedHashSet
+import org.jetbrains.jet.lang.resolve.ImportPath
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -169,10 +164,7 @@ public object ShortenReferences {
             val name = target.getName()
             val targetByName = scope.getClassifier(name)
             if (targetByName == null) {
-                if (target.getContainingDeclaration() is ClassDescriptor) return false
-
-                importInserter.addImport(target)
-                return true
+                return importInserter.addImport(target)
             }
             else if (target.asString() == targetByName.asString()) {
                 return true
@@ -237,8 +229,6 @@ public object ShortenReferences {
             val selector = qualifiedExpression.getSelectorExpression() ?: return false
             val callee = selector.getCalleeExpressionIfAny() as? JetReferenceExpression ?: return false
             val targetBefore = callee.getTargets(context).singleOrNull() ?: return false
-            val isClassMember = targetBefore.getContainingDeclaration() is ClassDescriptor
-            val isClassOrPackage = targetBefore is ClassDescriptor || targetBefore is PackageViewDescriptor
 
             val scope = context[BindingContext.RESOLUTION_SCOPE, qualifiedExpression] ?: return false
             val selectorCopy = selector.copy() as JetReferenceExpression
@@ -246,17 +236,9 @@ public object ShortenReferences {
             val targetsAfter = (selectorCopy.getCalleeExpressionIfAny() as JetReferenceExpression).getTargets(newContext)
 
             when (targetsAfter.size) {
-                0 -> {
-                    if (!isClassMember && isClassOrPackage) {
-                        importInserter.addImport(targetBefore)
-                        return true
-                    }
-                    return false
-                }
+                0 -> return importInserter.addImport(targetBefore)
 
-                1 -> {
-                    if (targetBefore == targetsAfter.first()) return true
-                }
+                1 -> if (targetBefore == targetsAfter.first()) return true
             }
 
             if (importInserter.optimizeImports()) {
@@ -290,9 +272,18 @@ public object ShortenReferences {
     private class ImportInserter(val file: JetFile) {
         private var optimizeImports = true
 
-        fun addImport(descriptor: DeclarationDescriptor) {
+        fun addImport(target: DeclarationDescriptor): Boolean {
+            val realTarget = if (DescriptorUtils.isClassObject(target)) // references to class object are treated as ones to its owner class
+                target.getContainingDeclaration() as? ClassDescriptor ?: return false
+            else
+                target
+
+            if (realTarget !is ClassDescriptor && realTarget !is PackageViewDescriptor) return false
+            if (realTarget.getContainingDeclaration() is ClassDescriptor) return false // do not insert imports for nested classes
+
             optimizeImports()
-            ImportInsertHelper.getInstance().writeImportToFile(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false), file)
+            ImportInsertHelper.getInstance().writeImportToFile(ImportPath(DescriptorUtils.getFqNameSafe(realTarget), false), file)
+            return true
         }
 
         fun optimizeImports(): Boolean {

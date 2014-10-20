@@ -1,0 +1,7 @@
+import pack.KtClass
+
+fun foo() {
+    KtClass<caret>
+}
+
+// ELEMENT: KtClass
