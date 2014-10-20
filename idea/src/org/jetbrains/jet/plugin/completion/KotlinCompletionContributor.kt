@@ -43,6 +43,8 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.PsiComment
+import org.jetbrains.jet.lang.psi.JetValueArgument
+import org.jetbrains.jet.lang.psi.JetValueArgumentList
 
 public class KotlinCompletionContributor : CompletionContributor() {
 
@@ -106,6 +108,12 @@ public class KotlinCompletionContributor : CompletionContributor() {
                     }
 
                     context.getOffsetMap().addOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET, expressionEnd)
+
+                    val argumentList = (expression.getParent() as? JetValueArgument)?.getParent() as? JetValueArgumentList
+                    if (argumentList != null) {
+                        context.getOffsetMap().addOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET,
+                                                         argumentList.getRightParenthesis()?.getTextRange()?.getStartOffset() ?: argumentList.getTextRange().getEndOffset())
+                    }
                 }
             }
         }

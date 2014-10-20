@@ -324,5 +324,6 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
     class object {
         public val OLD_ARGUMENTS_REPLACEMENT_OFFSET: OffsetKey = OffsetKey.create("nonFunctionReplacementOffset")
+        public val MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET: OffsetKey = OffsetKey.create("multipleArgumentsReplacementOffset")
     }
 }
