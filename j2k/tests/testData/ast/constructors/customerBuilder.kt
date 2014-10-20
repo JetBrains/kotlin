@@ -37,8 +37,8 @@ public class User {
     class object {
         public fun main() {
             val customer = CustomerBuilder().WithFirstName("Homer").WithLastName("Simpson").Build()
-            System.out.println(customer.getFirstName())
-            System.out.println(customer.getLastName())
+            System.out.println(customer.firstName)
+            System.out.println(customer.lastName)
         }
     }
 }

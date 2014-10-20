@@ -44,14 +44,20 @@ class UsageProcessingExpressionConverter(processings: Collection<UsageProcessing
     override fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression? {
         if (targetToProcessing.isEmpty()) return null
 
-        //TODO: method usages
+        when (expression) {
+            is PsiReferenceExpression -> {
+                val target = expression.resolve() as? PsiVariable ?: return null
+                val processor = targetToProcessing[target]?.convertedCodeProcessor ?: return null
+                return processor.convertVariableUsage(expression, codeConverter)
+            }
 
-        if (expression is PsiReferenceExpression) {
-            val target = expression.resolve() ?: return null
-            val processor = targetToProcessing[target]?.convertedCodeProcessor ?: return null
-            return processor.convertVariableUsage(expression, codeConverter)
+            is PsiMethodCallExpression -> {
+                val target = expression.getMethodExpression().resolve() as? PsiMethod ?: return null
+                val processor = targetToProcessing[target]?.convertedCodeProcessor ?: return null
+                return processor.convertMethodUsage(expression, codeConverter)
+            }
+
+            else -> return null
         }
-
-        return null
     }
 }

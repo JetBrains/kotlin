@@ -9,3 +9,9 @@ public class AAA {
         other.x = other.x + 1
     }
 }
+
+class B {
+    fun foo(a: AAA) {
+        a.x = a.x + 1
+    }
+}

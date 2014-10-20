@@ -17,3 +17,9 @@ public class AAA {
         other.setX(other.getX() + 1);
     }
 }
+
+class B {
+    void foo(AAA a) {
+        a.setX(a.getX() + 1);
+    }
+}

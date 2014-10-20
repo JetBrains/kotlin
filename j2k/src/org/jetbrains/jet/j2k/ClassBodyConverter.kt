@@ -35,6 +35,7 @@ import com.intellij.psi.PsiExpressionStatement
 import com.intellij.psi.PsiAssignmentExpression
 import com.intellij.psi.PsiExpression
 import com.intellij.psi.JavaTokenType
+import org.jetbrains.jet.j2k.usageProcessing.AccessorToPropertyProcessing
 
 class FieldCorrectionInfo(val name: String, val access: Modifier?, val setterAccess: Modifier?) {
     val identifier = Identifier(name).assignNoPrototype()
@@ -156,9 +157,10 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         }
 
         for ((field, getterInfo) in fieldToGetterInfo) {
+            val propertyName = getterInfo.propertyName
             val setterInfo = run {
                 val info = fieldToSetterInfo[field]
-                if (info?.propertyName == getterInfo.propertyName) info else null
+                if (info?.propertyName == propertyName) info else null
             }
 
             membersToRemove.add(getterInfo.method)
@@ -172,7 +174,12 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             else
                 converter.convertModifiers(field).accessModifier()
             //TODO: check that setter access is not bigger
-            fieldCorrections[field] = FieldCorrectionInfo(getterInfo.propertyName, getterAccess, setterAccess)
+            fieldCorrections[field] = FieldCorrectionInfo(propertyName, getterAccess, setterAccess)
+
+            converter.addUsageProcessing(AccessorToPropertyProcessing(getterInfo.method, AccessorKind.GETTER, propertyName))
+            if (setterInfo != null) {
+                converter.addUsageProcessing(AccessorToPropertyProcessing(setterInfo.method, AccessorKind.SETTER, propertyName))
+            }
         }
     }
 
