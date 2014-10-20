@@ -198,6 +198,8 @@ fun String?.isNullOrEmpty() = this == null || this.isEmpty()
 
 enum class SmartCompletionItemPriority {
     /*IT*/ //TODO
+    TRUE
+    FALSE
     THIS
     DEFAULT
     NULLABLE
