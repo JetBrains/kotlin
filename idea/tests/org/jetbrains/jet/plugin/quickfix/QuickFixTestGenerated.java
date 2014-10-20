@@ -795,7 +795,13 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunOnUserType.kt");
                     doTest(fileName);
                 }
-
+                
+                @TestMetadata("beforeFunOnUserTypeWithDeclarations.kt")
+                public void testFunOnUserTypeWithDeclarations() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunOnUserTypeWithDeclarations.kt");
+                    doTest(fileName);
+                }
+                
                 @TestMetadata("beforeFunOnUserTypeWithTypeParams.kt")
                 public void testFunOnUserTypeWithTypeParams() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeFunOnUserTypeWithTypeParams.kt");

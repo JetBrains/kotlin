@@ -61,6 +61,8 @@ import org.jetbrains.kotlin.util.printAndReturn
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import com.intellij.psi.SmartPointerManager
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -541,8 +543,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         }
 
         fun buildAndRunTemplate() {
-            val declaration = createDeclarationSkeleton()
-            val project = declaration.getProject()
+            val declarationSkeleton = createDeclarationSkeleton()
+            val project = declarationSkeleton.getProject()
+            val declarationPointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(declarationSkeleton)
 
             // build templates
             PsiDocumentManager.getInstance(project).commitAllDocuments()
@@ -550,6 +553,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             val caretModel = containingFileEditor.getCaretModel()
             caretModel.moveToOffset(containingFile.getNode().getStartOffset())
+
+            val declaration = declarationPointer.getElement()
 
             val builder = TemplateBuilderImpl(containingFile)
             if (declaration is JetProperty) {
