@@ -36,6 +36,7 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
+import com.intellij.openapi.util.Key
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -137,6 +138,7 @@ fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () ->
             }
         }
         lookupElement = lookupElement!!.suppressAutoInsertion()
+        lookupElement = lookupElement!!.assignSmartCompletionPriority(SmartCompletionItemPriority.NULLABLE)
         add(lookupElement!!.addTailAndNameSimilarity(matchedInfos))
     }
 
@@ -152,6 +154,7 @@ fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () ->
             }
         }
         lookupElement = lookupElement!!.suppressAutoInsertion()
+        lookupElement = lookupElement!!.assignSmartCompletionPriority(SmartCompletionItemPriority.NULLABLE)
         add(lookupElement!!.addTailAndNameSimilarity(matchedInfos))
     }
 }
@@ -192,3 +195,21 @@ fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf(
 fun <T : Any> T?.toSet(): Set<T> = if (this != null) setOf(this) else setOf()
 
 fun String?.isNullOrEmpty() = this == null || this.isEmpty()
+
+enum class SmartCompletionItemPriority {
+    /*IT*/ //TODO
+    THIS
+    DEFAULT
+    NULLABLE
+    STATIC_MEMBER
+    INSTANTIATION
+    ANONYMOUS_OBJECT
+}
+
+val SMART_COMPLETION_ITEM_PRIORITY_KEY = Key<SmartCompletionItemPriority>("SMART_COMPLETION_ITEM_PRIORITY_KEY")
+
+fun LookupElement.assignSmartCompletionPriority(priority: SmartCompletionItemPriority): LookupElement {
+    putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, priority)
+    return this
+}
+

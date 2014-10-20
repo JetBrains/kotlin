@@ -53,7 +53,9 @@ class ThisItems(val bindingContext: BindingContext) {
                 //val expressionText = if (i == 0) "this" else "this@" + (thisQualifierName(receiver, bindingContext) ?: return null)
                 val qualifier = if (i == 0) null else (thisQualifierName(receiver) ?: return null)
                 val expressionText = if (qualifier == null) "this" else "this@" + qualifier
-                return LookupElementBuilder.create(expressionText).withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(thisType))
+                return LookupElementBuilder.create(expressionText)
+                        .withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(thisType))
+                        .assignSmartCompletionPriority(SmartCompletionItemPriority.THIS)
             }
             collection.addLookupElements(expectedInfos, classifier, ::lookupElementFactory)
         }

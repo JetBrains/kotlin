@@ -145,6 +145,6 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
 
                 shortenReferences(context, context.getStartOffset(), context.getTailOffset())
             }
-        }
+        }.assignSmartCompletionPriority(SmartCompletionItemPriority.STATIC_MEMBER)
     }
 }

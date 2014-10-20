@@ -88,6 +88,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
                 ImplementMethodsHandler().invoke(context.getProject(), editor, context.getFile(), true)
             }
             lookupElement = lookupElement.suppressAutoInsertion()
+            lookupElement = lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.ANONYMOUS_OBJECT)
         }
         else {
             //TODO: when constructor has one parameter of lambda type with more than one parameter, generate special additional item
@@ -115,6 +116,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
             if (baseInsertHandler.lambdaInfo != null) {
                 lookupElement.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
             }
+            lookupElement = lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
         }
 
         lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {

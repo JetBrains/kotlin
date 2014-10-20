@@ -161,4 +161,16 @@ public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletion
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilaritySorterPlacement.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("SmartPriority.kt")
+    public void testSmartPriority() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/SmartPriority.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SmartPriority2.kt")
+    public void testSmartPriority2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/SmartPriority2.kt");
+        doTest(fileName);
+    }
 }
