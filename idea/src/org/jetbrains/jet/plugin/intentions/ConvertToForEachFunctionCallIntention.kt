@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetOperationExpression
+import com.intellij.psi.PsiElement
 
 public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<JetForExpression>("convert.to.for.each.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetForExpression): Boolean {
@@ -49,7 +50,7 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
             val loopRange = element.getLoopRange()!!
 
             return when (loopRange) {
-                is JetOperationExpression -> "(${loopRange.getText()})"
+                is JetOperationExpression -> "(${(loopRange : PsiElement).getText()})"
                 else -> loopRange.getText() ?: throw AssertionError("LoopRange in ForExpression shouldn't be empty: expressionText = ${element.getText()}")
             }
         }

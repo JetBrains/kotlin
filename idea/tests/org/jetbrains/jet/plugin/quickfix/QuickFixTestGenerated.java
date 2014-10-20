@@ -1197,6 +1197,13 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/set/beforeCreateSetFromUsage2.kt");
                     doTest(fileName);
                 }
+                
+                @TestMetadata("beforeSetterForIncrement.kt")
+                public void testSetterForIncrement() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/set/beforeSetterForIncrement.kt");
+                    doTest(fileName);
+                }
+                
             }
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/unaryOperations")
