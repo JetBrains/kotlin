@@ -1,3 +1,4 @@
+import test.*
 fun test1(): Int {
     return 1.inlineMethod()
 }
