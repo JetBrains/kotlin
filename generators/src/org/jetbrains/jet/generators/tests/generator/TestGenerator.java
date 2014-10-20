@@ -80,14 +80,11 @@ public class TestGenerator {
         p.println("package ", suiteClassPackage, ";");
         p.println();
         p.println("import com.intellij.testFramework.TestDataPath;");
-        p.println("import junit.framework.Test;");
-        p.println("import junit.framework.TestSuite;");
-        p.println("import org.junit.runner.RunWith;");
+        p.println("import ", RUNNER.getCanonicalName(), ";");
         p.println("import org.jetbrains.jet.JetTestUtils;");
         p.println("import org.jetbrains.jet.test.InnerTestClasses;");
         p.println("import org.jetbrains.jet.test.TestMetadata;");
-        p.println("import ", RUNNER.getCanonicalName(), ";");
-
+        p.println("import org.junit.runner.RunWith;");
         p.println();
         p.println("import java.io.File;");
         p.println("import java.util.regex.Pattern;");
@@ -151,7 +148,7 @@ public class TestGenerator {
         generateMetadata(p, testClassModel);
         generateTestDataPath(p, testClassModel);
         generateInnerClassesAnnotation(p, testClassModel);
-        p.println("@RunWith(", RUNNER.getName(), ".class)");
+        p.println("@RunWith(", RUNNER.getSimpleName(), ".class)");
 
         p.println("public " + staticModifier + "class ", testClassModel.getName(), " extends ", baseTestClassName, " {");
         p.pushIndent();
