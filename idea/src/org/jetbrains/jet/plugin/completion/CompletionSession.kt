@@ -69,7 +69,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         if (configuration.completeNonAccessibleDeclarations) return true
 
         if (descriptor is DeclarationDescriptorWithVisibility && inDescriptor != null) {
-            return Visibilities.isVisible(descriptor as DeclarationDescriptorWithVisibility, inDescriptor)
+            return Visibilities.isVisible(descriptor, inDescriptor)
         }
 
         return true
@@ -104,12 +104,16 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected fun getKotlinTopLevelDeclarations(): Collection<DeclarationDescriptor> {
         val filter = { (name: String) -> prefixMatcher.prefixMatches(name) }
-        return indicesHelper.getTopLevelCallables(filter, jetReference!!.expression, resolveSession, searchScope) +
-                   indicesHelper.getTopLevelObjects(filter, resolveSession, searchScope)
+        return (indicesHelper.getTopLevelCallables(filter, jetReference!!.expression, resolveSession, searchScope) +
+                   indicesHelper.getTopLevelObjects(filter, resolveSession, searchScope)).filter { isVisibleDescriptor(it) }
     }
 
     protected fun getKotlinExtensions(): Collection<CallableDescriptor> {
-        return indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope)
+        return indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope).filter { isVisibleDescriptor(it) }
+    }
+
+    protected fun addAllTypes() {
+        TypesCompletion(parameters, resolveSession, prefixMatcher, { isVisibleDescriptor(it) }).addAllTypes(collector)
     }
 }
 
@@ -127,7 +131,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             if (completeReference) {
                 if (shouldRunOnlyTypeCompletion()) {
                     if (configuration.completeNonImportedDeclarations) {
-                        TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
+                        addAllTypes()
                     }
                     else {
                         addReferenceVariants { isPartOfTypeDeclaration(it) }
@@ -152,7 +156,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private fun addNonImported() {
         if (shouldRunTopLevelCompletion()) {
-            TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
+            addAllTypes()
             collector.addDescriptorElements(getKotlinTopLevelDeclarations(), suppressAutoInsertion = true)
         }
 
