@@ -24,7 +24,8 @@ import com.intellij.psi.PsiJavaFile
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.jet.j2k.usageProcessing.UsageProcessingExpressionConverter
+import java.util.ArrayList
+import org.jetbrains.jet.j2k.usageProcessing.UsageProcessing
 
 public trait ConversionScope {
     public fun contains(element: PsiElement): Boolean
@@ -42,43 +43,52 @@ public trait PostProcessor {
 
 public class JavaToKotlinConverter(private val project: Project,
                                    private val settings: ConverterSettings,
-                                   private val conversionScope: ConversionScope,
-                                   private val referenceSearcher: ReferenceSearcher,
-                                   private val postProcessor: PostProcessor?) {
+                                   private val conversionScope: ConversionScope /*TODO: drop this parameter*/,
+                                   private val referenceSearcher: ReferenceSearcher) {
     private val LOG = Logger.getInstance("#org.jetbrains.jet.j2k.JavaToKotlinConverter")
 
-    //TODO: run not for one element when multiple files
-    public fun elementToKotlin(psiElement: PsiElement): String {
+    public fun elementsToKotlin(vararg psiElementsAndProcessors: Pair<PsiElement, PostProcessor?>): List<String> {
         try {
-            val converter = Converter.create(psiElement, settings, conversionScope, referenceSearcher, postProcessor)
-            val element = converter.convert() ?: return ""
+            val intermediateResults = ArrayList<Converter.IntermediateResult?>(psiElementsAndProcessors.size)
+            val usageProcessings = ArrayList<UsageProcessing>()
+            for ((psiElement, postProcessor) in psiElementsAndProcessors) {
+                val converter = Converter.create(psiElement, settings, conversionScope, referenceSearcher, postProcessor)
+                val result = converter.convert()
+                intermediateResults.add(result)
+                result?.usageProcessings?.let { usageProcessings.addAll(it) }
+            }
 
-            converter.unfoldLazyElements(converter.usageProcessings)
+            val results = ArrayList<String>(psiElementsAndProcessors.size)
+            for (result in intermediateResults) {
+                results.add(result?.finishConversion(usageProcessings) ?: "")
+            }
 
-            val builder = CodeBuilder(psiElement)
-            builder.append(element)
-
-            if (postProcessor != null) {
-                try {
-                    return AfterConversionPass(project, postProcessor).run(builder.result)
+            val finalResults = ArrayList<String>(psiElementsAndProcessors.size)
+            for ((i, result) in results.withIndices()) {
+                val postProcessor = psiElementsAndProcessors[i].second
+                if (postProcessor != null) {
+                    try {
+                        finalResults.add(AfterConversionPass(project, postProcessor).run(result))
+                    }
+                    catch(e: ProcessCanceledException) {
+                        throw e
+                    }
+                    catch(t: Throwable) {
+                        LOG.error(t)
+                        finalResults.add(result)
+                    }
                 }
-                catch(e: ProcessCanceledException) {
-                    throw e
-                }
-                catch(t: Throwable) {
-                    LOG.error(t)
-                    return builder.result
+                else {
+                    finalResults.add(result)
                 }
             }
-            else {
-                return builder.result
-            }
+            return finalResults
         }
         catch(e: ElementCreationStackTraceRequiredException) {
             // if we got this exception then we need to turn element creation stack traces on to get better diagnostic
             Element.saveCreationStacktraces = true
             try {
-                return elementToKotlin(psiElement)
+                return elementsToKotlin(*psiElementsAndProcessors)
             }
             finally {
                 Element.saveCreationStacktraces = false

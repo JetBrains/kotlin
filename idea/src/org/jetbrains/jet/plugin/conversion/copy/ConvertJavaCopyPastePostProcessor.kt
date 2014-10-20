@@ -32,8 +32,8 @@ import org.jetbrains.jet.plugin.editor.JetEditorOptions
 import java.awt.datatransfer.Transferable
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.jet.plugin.j2k.J2kPostProcessor;
 import com.intellij.lang.java.JavaLanguage
+import org.jetbrains.jet.plugin.j2k.J2kPostProcessor
 
 public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData>() {
 
@@ -89,8 +89,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
         val converter = JavaToKotlinConverter(fileCopiedFrom.getProject(),
                                          ConverterSettings.defaultSettings,
                                          FilesConversionScope(listOf(fileCopiedFrom)),
-                                         IdeaReferenceSearcher,
-                                         J2kPostProcessor(fileCopiedTo))
+                                         IdeaReferenceSearcher)
         val startOffsets = code.startOffsets
         val endOffsets = code.endOffsets
         assert(startOffsets.size == endOffsets.size) { "Must have the same size" }
@@ -98,12 +97,13 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
         for (i in startOffsets.indices) {
             val startOffset = startOffsets[i]
             val endOffset = endOffsets[i]
-            result.append(convertRangeToKotlin(fileCopiedFrom, TextRange(startOffset, endOffset), converter))
+            result.append(convertRangeToKotlin(fileCopiedFrom, fileCopiedTo, TextRange(startOffset, endOffset), converter))
         }
         return StringUtil.convertLineSeparators(result.toString())
     }
 
     private fun convertRangeToKotlin(file: PsiJavaFile,
+                                     fileCopiedTo: JetFile,
                                      range: TextRange,
                                      converter: JavaToKotlinConverter): String {
         val result = StringBuilder()
@@ -120,7 +120,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
             val elementToConvert = findTopMostParentWhollyInRange(currentRange, leafElement)
             val unconvertedPrefix = fileText.substring(currentRange.start, elementToConvert.range.start)
             result.append(unconvertedPrefix)
-            val converted = converter.elementToKotlin(elementToConvert)
+            val converted = converter.elementsToKotlin(elementToConvert to J2kPostProcessor(fileCopiedTo))[0]
             if (converted.isNotEmpty()) {
                 result.append(converted)
             }

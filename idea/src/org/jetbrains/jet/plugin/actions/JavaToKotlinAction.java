@@ -25,8 +25,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiJavaFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.j2k.*;
-import org.jetbrains.jet.plugin.j2k.J2kPostProcessor;
+import org.jetbrains.jet.j2k.ConverterSettings;
+import org.jetbrains.jet.j2k.FilesConversionScope;
+import org.jetbrains.jet.j2k.IdeaReferenceSearcher;
+import org.jetbrains.jet.j2k.JavaToKotlinConverter;
 
 import java.util.List;
 
@@ -47,9 +49,7 @@ public class JavaToKotlinAction extends AnAction {
         final JavaToKotlinConverter converter = new JavaToKotlinConverter(project,
                                                              ConverterSettings.defaultSettings,
                                                              new FilesConversionScope(selectedJavaFiles),
-                                                             IdeaReferenceSearcher.INSTANCE$,
-                                                             //TODO: (module refactoring) resulting files should be analyzed in context of respective java files
-                                                             new J2kPostProcessor(selectedJavaFiles.iterator().next()));
+                                                             IdeaReferenceSearcher.INSTANCE$);
         CommandProcessor.getInstance().executeCommand(
                 project,
                 new Runnable() {

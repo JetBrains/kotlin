@@ -72,7 +72,25 @@ class Converter private(private val elementToConvert: PsiElement,
 
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
-    public fun convert(): Element? = convertTopElement(elementToConvert)
+    public trait IntermediateResult {
+        fun finishConversion(usageProcessings: Collection<UsageProcessing>): String
+        val usageProcessings: Collection<UsageProcessing>
+    }
+
+    public fun convert(): IntermediateResult? {
+        val element = convertTopElement(elementToConvert) ?: return null
+        return object: IntermediateResult {
+            override fun finishConversion(usageProcessings: Collection<UsageProcessing>): String {
+                unfoldLazyElements(usageProcessings)
+
+                val builder = CodeBuilder(elementToConvert)
+                builder.append(element)
+                return builder.result
+            }
+
+            override val usageProcessings: Collection<UsageProcessing> = commonState.usageProcessings
+        }
+    }
 
     private fun convertTopElement(element: PsiElement): Element? = when (element) {
         is PsiJavaFile -> convertFile(element)
@@ -88,10 +106,7 @@ class Converter private(private val elementToConvert: PsiElement,
         else -> null
     }
 
-    public val usageProcessings: Collection<UsageProcessing>
-        get() = commonState.usageProcessings
-
-    public fun unfoldLazyElements(usageProcessings: Collection<UsageProcessing>) {
+    private fun unfoldLazyElements(usageProcessings: Collection<UsageProcessing>) {
         val codeConverter = createDefaultCodeConverter().withSpecialExpressionConverter(UsageProcessingExpressionConverter(usageProcessings))
 
         // we use loop with index because new lazy elements can be added during unfolding

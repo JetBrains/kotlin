@@ -21,13 +21,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ex.MessagesEx;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.codeStyle.CodeStyleManager;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.JavaToKotlinConverter;
+import org.jetbrains.jet.j2k.PostProcessor;
+import org.jetbrains.jet.plugin.j2k.J2kPostProcessor;
 
 import java.io.IOException;
 import java.util.*;
@@ -124,7 +128,8 @@ public class JavaToKotlinActionUtil {
         try {
             VirtualFile virtualFile = psiFile.getVirtualFile();
             if (psiFile instanceof PsiJavaFile && virtualFile != null) {
-                String result = converter.elementToKotlin(psiFile);
+                J2kPostProcessor postProcessor = new J2kPostProcessor(psiFile);
+                String result = converter.elementsToKotlin(new Pair<PsiElement, PostProcessor>(psiFile, postProcessor)).get(0); //TODO: convert all files in one call!
                 PsiManager manager = psiFile.getManager();
                 assert manager != null;
                 VirtualFile copy = virtualFile.copy(manager, virtualFile.getParent(), virtualFile.getNameWithoutExtension() + ".kt");
