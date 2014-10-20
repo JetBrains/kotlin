@@ -59,7 +59,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession, { isVisibleDescriptor(it) })
+    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession)
 
     protected val project: Project = position.getProject()
     protected val searchScope: GlobalSearchScope = searchScopeForSourceElementDependencies(parameters.getOriginalFile()) ?: GlobalSearchScope.EMPTY_SCOPE

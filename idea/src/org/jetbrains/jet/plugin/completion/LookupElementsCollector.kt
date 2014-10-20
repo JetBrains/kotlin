@@ -29,9 +29,7 @@ import java.util.ArrayList
 import com.intellij.codeInsight.completion.CompletionResultSet
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
-class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
-                              private val resolveSession: ResolveSessionForBodies,
-                              private val descriptorFilter: (DeclarationDescriptor) -> Boolean) {
+class LookupElementsCollector(private val prefixMatcher: PrefixMatcher, private val resolveSession: ResolveSessionForBodies) {
     private val elements = ArrayList<LookupElement>()
 
     public fun flushToResultSet(resultSet: CompletionResultSet) {
@@ -54,8 +52,6 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher,
     }
 
     public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean) {
-        if (!descriptorFilter(descriptor)) return
-
         run {
             val lookupElement = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
             if (suppressAutoInsertion) {
