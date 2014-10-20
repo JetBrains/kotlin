@@ -57,7 +57,7 @@ import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -510,85 +510,80 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private class MethodStubGenerator {
-        private final Set<String> generatedSignatures = new HashSet<String>();
+    @NotNull
+    private Set<String> collectSignaturesOfExistingNonAbstractMethods() {
+        Set<String> existingMethodSignatures = new HashSet<String>();
 
-        public void generate(
-                @NotNull String name,
-                @NotNull String desc,
-                @NotNull ClassifierDescriptor returnedClassifier,
-                @NotNull ClassifierDescriptor... valueParameterClassifiers
-        ) {
-            // avoid generating same signature twice
-            if (!generatedSignatures.add(name + desc)) return;
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(
-                    descriptor, Name.identifier(name), returnedClassifier, valueParameterClassifiers) == null) {
-                int access = descriptor.getKind() == ClassKind.TRAIT ?
-                             ACC_PUBLIC | ACC_ABSTRACT :
-                             ACC_PUBLIC;
-                MethodVisitor mv = v.newMethod(NO_ORIGIN, access, name, desc, null, null);
-                if (descriptor.getKind() != ClassKind.TRAIT) {
-                    mv.visitCode();
-                    genThrow(new InstructionAdapter(mv), "java/lang/UnsupportedOperationException", "Mutating immutable collection");
-                    FunctionCodegen.endVisit(mv, "built-in stub for " + name + desc, null);
-                }
+        for (DeclarationDescriptor member : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            if (!(member instanceof FunctionDescriptor)) continue;
+            FunctionDescriptor function = (FunctionDescriptor) member;
+            if (function.getModality() == Modality.ABSTRACT) continue;
+            for (FunctionDescriptor overridden : DescriptorUtils.getAllOverriddenDescriptors(function)) {
+                Method overriddenMethod = typeMapper.mapSignature(overridden.getOriginal()).getAsmMethod();
+                existingMethodSignatures.add(overriddenMethod.getName() + overriddenMethod.getDescriptor());
+            }
+
+            Method method = typeMapper.mapSignature(function.getOriginal()).getAsmMethod();
+            existingMethodSignatures.add(method.getName() + method.getDescriptor());
+        }
+
+        return existingMethodSignatures;
+    }
+
+    private void generateMethodStubs(@NotNull Set<String> signatures) {
+        if (signatures.isEmpty()) return;
+
+        Set<String> existingMethodSignatures = collectSignaturesOfExistingNonAbstractMethods();
+
+        for (String signature : signatures) {
+            if (!existingMethodSignatures.add(signature)) return;
+            int access = descriptor.getKind() == ClassKind.TRAIT ?
+                         ACC_PUBLIC | ACC_ABSTRACT :
+                         ACC_PUBLIC;
+            int paren = signature.indexOf('(');
+            MethodVisitor mv = v.newMethod(NO_ORIGIN, access, signature.substring(0, paren), signature.substring(paren), null, null);
+            if (descriptor.getKind() != ClassKind.TRAIT) {
+                mv.visitCode();
+                genThrow(new InstructionAdapter(mv), "java/lang/UnsupportedOperationException", "Mutating immutable collection");
+                FunctionCodegen.endVisit(mv, "built-in stub for " + signature, null);
             }
         }
     }
 
     private void generateBuiltinMethodStubs() {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        MethodStubGenerator methodStubs = new MethodStubGenerator();
+        Set<String> methodStubs = new LinkedHashSet<String>();
         if (isSubclass(descriptor, builtIns.getCollection())) {
-            ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getCollection(), 0);
-
-            methodStubs.generate("add", "(Ljava/lang/Object;)Z", builtIns.getBoolean(), classifier);
-            methodStubs.generate("remove", "(Ljava/lang/Object;)Z", builtIns.getBoolean(), builtIns.getAny());
-            methodStubs.generate("addAll", "(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
-            methodStubs.generate("removeAll", "(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
-            methodStubs.generate("retainAll", "(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
-            methodStubs.generate("clear", "()V", builtIns.getUnit());
+            methodStubs.add("add(Ljava/lang/Object;)Z");
+            methodStubs.add("remove(Ljava/lang/Object;)Z");
+            methodStubs.add("addAll(Ljava/util/Collection;)Z");
+            methodStubs.add("removeAll(Ljava/util/Collection;)Z");
+            methodStubs.add("retainAll(Ljava/util/Collection;)Z");
+            methodStubs.add("clear()V");
         }
 
         if (isSubclass(descriptor, builtIns.getList())) {
-            ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getList(), 0);
-
-            methodStubs.generate("set", "(ILjava/lang/Object;)Ljava/lang/Object;", classifier, builtIns.getInt(), classifier);
-            methodStubs.generate("add", "(ILjava/lang/Object;)V", builtIns.getUnit(), builtIns.getInt(), classifier);
-            methodStubs.generate("remove", "(I)Ljava/lang/Object;", classifier, builtIns.getInt());
+            methodStubs.add("set(ILjava/lang/Object;)Ljava/lang/Object;");
+            methodStubs.add("add(ILjava/lang/Object;)V");
+            methodStubs.add("remove(I)Ljava/lang/Object;");
         }
 
         if (isSubclass(descriptor, builtIns.getMap())) {
-            ClassifierDescriptor keyClassifier = getSubstituteForTypeParameterOf(builtIns.getMap(), 0);
-            ClassifierDescriptor valueClassifier = getSubstituteForTypeParameterOf(builtIns.getMap(), 1);
-
-            methodStubs.generate("put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, keyClassifier,
-                                 valueClassifier);
-            methodStubs.generate("remove", "(Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, builtIns.getAny());
-            methodStubs.generate("putAll", "(Ljava/util/Map;)V", builtIns.getUnit(), builtIns.getMap());
-            methodStubs.generate("clear", "()V", builtIns.getUnit());
+            methodStubs.add("put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+            methodStubs.add("remove(Ljava/lang/Object;)Ljava/lang/Object;");
+            methodStubs.add("putAll(Ljava/util/Map;)V");
+            methodStubs.add("clear()V");
         }
 
         if (isSubclass(descriptor, builtIns.getMapEntry())) {
-            ClassifierDescriptor valueClassifier = getSubstituteForTypeParameterOf(builtIns.getMapEntry(), 1);
-
-            methodStubs.generate("setValue", "(Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, valueClassifier);
+            methodStubs.add("setValue(Ljava/lang/Object;)Ljava/lang/Object;");
         }
 
         if (isSubclass(descriptor, builtIns.getIterator())) {
-            methodStubs.generate("remove", "()V", builtIns.getUnit());
+            methodStubs.add("remove()V");
         }
-    }
 
-    @NotNull
-    private ClassifierDescriptor getSubstituteForTypeParameterOf(@NotNull ClassDescriptor trait, int index) {
-        TypeParameterDescriptor listTypeParameter = trait.getTypeConstructor().getParameters().get(index);
-        TypeSubstitutor deepSubstitutor = SubstitutionUtils.buildDeepSubstitutor(descriptor.getDefaultType());
-        TypeProjection substitute = deepSubstitutor.substitute(new TypeProjectionImpl(listTypeParameter.getDefaultType()));
-        assert substitute != null : "Couldn't substitute: " + descriptor;
-        ClassifierDescriptor classifier = substitute.getType().getConstructor().getDeclarationDescriptor();
-        assert classifier != null : "No classifier: " + substitute.getType();
-        return classifier;
+        generateMethodStubs(methodStubs);
     }
 
     private void generateFunctionsForDataClasses() {

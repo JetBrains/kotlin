@@ -742,6 +742,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noMethodsForClassExtendingMutableCollection.kt")
+        public void testNoMethodsForClassExtendingMutableCollection() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/noMethodsForClassExtendingMutableCollection.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SubstitutedList.kt")
         public void testSubstitutedList() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/SubstitutedList.kt");
