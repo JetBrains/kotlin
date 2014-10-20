@@ -97,6 +97,10 @@ public fun File.toPsiFile(project: Project): PsiFile? {
     return toVirtualFile()?.let { vfile -> PsiManager.getInstance(project).findFile(vfile) }
 }
 
+public fun File.toPsiDirectory(project: Project): PsiDirectory? {
+    return toVirtualFile()?.let { vfile -> PsiManager.getInstance(project).findDirectory(vfile) }
+}
+
 public fun PsiElement.getUsageContext(): PsiElement {
     return when (this) {
         is JetElement -> PsiTreeUtil.getParentOfType(this, javaClass<JetNamedDeclaration>(), javaClass<JetFile>())!!
