@@ -52,9 +52,9 @@ import java.io.IOException;
  */
 
 public class Parser {
-
-  public Parser(IRFactory nf) {
-    this.nf = nf;
+  public Parser(IRFactory nf, boolean insideFunction) {
+      this.nf = nf;
+      this.insideFunction = insideFunction;
   }
 
   private void mustMatchToken(TokenStream ts, int toMatch, String messageId)
@@ -729,8 +729,9 @@ public class Parser {
         sourceAdd((char) ts.RETURN);
 
         // bail if we're not in a (toplevel) function
-        if ((ts.flags & ts.TSF_FUNCTION) == 0)
-          reportError(ts, "msg.bad.return");
+        if ((!insideFunction) && ((ts.flags & ts.TSF_FUNCTION) == 0)) {
+            reportError(ts, "msg.bad.return");
+        }
 
         /* This is ugly, but we don't want to require a semicolon. */
         ts.flags |= ts.TSF_REGEXP;
@@ -1516,4 +1517,5 @@ public class Parser {
   private char[] sourceBuffer = new char[128];
   private int sourceTop;
   private int functionNumber;
+  private final boolean insideFunction;
 }

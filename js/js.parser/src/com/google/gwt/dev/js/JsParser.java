@@ -33,9 +33,9 @@ public class JsParser {
 
     public static List<JsStatement> parse(
             SourceInfo rootSourceInfo,
-            JsScope scope, Reader r
+            JsScope scope, Reader r, boolean insideFunction
     ) throws IOException, JsParserException {
-        return new JsParser().parseImpl(rootSourceInfo, scope, r);
+        return new JsParser().parseImpl(rootSourceInfo, scope, r, insideFunction);
     }
 
     private final Stack<JsScope> scopeStack = new Stack<JsScope>();
@@ -50,7 +50,7 @@ public class JsParser {
 
     List<JsStatement> parseImpl(
             final SourceInfo rootSourceInfo, JsScope scope,
-            Reader r
+            Reader r, boolean insideFunction
     ) throws JsParserException, IOException {
         // Create a custom error handler so that we can throw our own exceptions.
         Context.enter().setErrorReporter(new ErrorReporter() {
@@ -79,7 +79,7 @@ public class JsParser {
             // Parse using the Rhino parser.
             //
             TokenStream ts = new TokenStream(r, sourceNameStub, rootSourceInfo.getLine());
-            Parser parser = new Parser(new IRFactory(ts));
+            Parser parser = new Parser(new IRFactory(ts), insideFunction);
             Node topNode = (Node) parser.parse(ts);
 
             // Map the Rhino AST to ours.
