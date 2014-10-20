@@ -41,7 +41,6 @@ import org.jetbrains.jet.plugin.caches.JetShortNamesCache
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil
 import java.util.ArrayList
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
@@ -51,6 +50,9 @@ import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.asJava.unwrapped
 import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.jet.lang.descriptors.Visibilities
 
 /**
  * Check possibility and perform fix for unresolved references.
@@ -112,40 +114,41 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
         val searchScope = searchScopeForSourceElementDependencies(file) ?: return listOf()
 
+        val resolutionScope = resolveSession.resolveToElement(element)[BindingContext.RESOLUTION_SCOPE, element] ?: return listOf()
+        val containingDescriptor = resolutionScope.getContainingDeclaration()
+
+        fun isVisible(descriptor: DeclarationDescriptor): Boolean {
+            if (descriptor is DeclarationDescriptorWithVisibility && containingDescriptor != null) {
+                return Visibilities.isVisible(descriptor, containingDescriptor)
+            }
+
+            return true
+        }
+
         val result = ArrayList<PrioritizedFqName>()
+
+        val indicesHelper = KotlinIndicesHelper(file.getProject(), resolveSession, searchScope, ::isVisible)
 
         if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
             result.addAll(getClassNames(referenceName, file, searchScope))
-            result.addAll(getTopLevelCallables(referenceName, element, searchScope, resolveSession, file.getProject()))
+            result.addAll(getTopLevelCallables(referenceName, element, indicesHelper))
         }
 
-        result.addAll(getExtensions(referenceName, element, searchScope, resolveSession, file.getProject()))
+        result.addAll(getExtensions(referenceName, element, indicesHelper))
 
         return result
                 .filter { ImportInsertHelper.getInstance().needImport(ImportPath(it.fqName, false), file) }
-                .sortBy { it.priority.ordinal() }
+                .sortBy { it.priority }
                 .map { it.fqName }
     }
 
-    private fun getTopLevelCallables(
-            name: String,
-            context: JetExpression,
-            searchScope: GlobalSearchScope,
-            resolveSession: ResolveSessionForBodies,
-            project: Project
-    ): Collection<PrioritizedFqName>
-            = KotlinIndicesHelper(project, resolveSession, searchScope).getTopLevelCallablesByName(name, context)
+    private fun getTopLevelCallables(name: String, context: JetExpression, indicesHelper: KotlinIndicesHelper): Collection<PrioritizedFqName>
+            = indicesHelper.getTopLevelCallablesByName(name, context)
             .map { PrioritizedFqName(it) }
             .toSet()
 
-    private fun getExtensions(
-            name: String,
-            expression: JetSimpleNameExpression,
-            searchScope: GlobalSearchScope,
-            resolveSession: ResolveSessionForBodies,
-            project: Project
-    ): Collection<PrioritizedFqName>
-            = KotlinIndicesHelper(project, resolveSession, searchScope).getCallableExtensions({ it == name }, expression)
+    private fun getExtensions(name: String, expression: JetSimpleNameExpression, indicesHelper: KotlinIndicesHelper): Collection<PrioritizedFqName>
+            = indicesHelper.getCallableExtensions({ it == name }, expression)
             .map { PrioritizedFqName(it) }
             .toSet()
 

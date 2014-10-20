@@ -42,7 +42,7 @@ class TypesCompletion(val parameters: CompletionParameters,
 
         val project = parameters.getOriginalFile().getProject()
         val searchScope = searchScopeForSourceElementDependencies(parameters.getOriginalFile()) ?: return
-        result.addDescriptorElements(KotlinIndicesHelper(project, resolveSession, searchScope).getClassDescriptors { prefixMatcher.prefixMatches(it) }.filter(visibilityFilter),
+        result.addDescriptorElements(KotlinIndicesHelper(project, resolveSession, searchScope, visibilityFilter).getClassDescriptors { prefixMatcher.prefixMatches(it) },
                                      suppressAutoInsertion = true)
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
