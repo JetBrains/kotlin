@@ -20,7 +20,10 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 
-public fun String.removeTrailingWhitespacesFromEachLine(): String = split('\n') map { it.trimTrailing() } makeString ("\n")
+public fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
+        this.split('\n').map { it.trimTrailing() }.joinToString(separator = "\n").let {
+            result -> if (result.endsWith("\n")) result else result + "\n"
+        }
 
 public fun CodeInsightTestFixture.configureWithExtraFile(path: String, extraNamePart: String = ".Data") {
     val noExtensionPath = FileUtil.getNameWithoutExtension(path)

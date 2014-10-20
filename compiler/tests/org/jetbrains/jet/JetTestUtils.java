@@ -439,7 +439,7 @@ public class JetTestUtils {
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual) {
         try {
-            String actualText = UtilPackage.removeTrailingWhitespacesFromEachLine(StringUtil.convertLineSeparators(actual.trim()));
+            String actualText = UtilPackage.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
 
             if (!expectedFile.exists()) {
                 FileUtil.writeToFile(expectedFile, actualText);
@@ -447,7 +447,7 @@ public class JetTestUtils {
             }
             String expected = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
 
-            String expectedText = UtilPackage.removeTrailingWhitespacesFromEachLine(StringUtil.convertLineSeparators(expected.trim()));
+            String expectedText = UtilPackage.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
 
             if (!Comparing.equal(expectedText, actualText)) {
                 throw new FileComparisonFailure("Actual data differs from file content: " + expectedFile.getName(),
