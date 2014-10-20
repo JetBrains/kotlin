@@ -17,13 +17,11 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,64 +30,63 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/smartSelection")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class SmartSelectionTestGenerated extends AbstractSmartSelectionTest {
     public void testAllFilesPresentInSmartSelection() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/smartSelection"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("labelledStatement.kt")
     public void testLabelledStatement() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/labelledStatement.kt");
         doTestSmartSelection(fileName);
     }
-    
+
     @TestMetadata("labelledThis.kt")
     public void testLabelledThis() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/labelledThis.kt");
         doTestSmartSelection(fileName);
     }
-    
+
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/simple.kt");
         doTestSmartSelection(fileName);
     }
-    
+
     @TestMetadata("superExpression.kt")
     public void testSuperExpression() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/superExpression.kt");
         doTestSmartSelection(fileName);
     }
-    
+
     @TestMetadata("superExpressionWithLabel.kt")
     public void testSuperExpressionWithLabel() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/superExpressionWithLabel.kt");
         doTestSmartSelection(fileName);
     }
-    
+
     @TestMetadata("superExpressionWithLabelAndType.kt")
     public void testSuperExpressionWithLabelAndType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/superExpressionWithLabelAndType.kt");
         doTestSmartSelection(fileName);
     }
-    
+
     @TestMetadata("superExpressionWithType.kt")
     public void testSuperExpressionWithType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/superExpressionWithType.kt");
         doTestSmartSelection(fileName);
     }
-    
+
     @TestMetadata("typeInSuperExpression.kt")
     public void testTypeInSuperExpression() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/typeInSuperExpression.kt");
         doTestSmartSelection(fileName);
     }
-    
+
     @TestMetadata("typeInSuperExpressionWithLabel.kt")
     public void testTypeInSuperExpressionWithLabel() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/typeInSuperExpressionWithLabel.kt");
         doTestSmartSelection(fileName);
     }
-    
 }

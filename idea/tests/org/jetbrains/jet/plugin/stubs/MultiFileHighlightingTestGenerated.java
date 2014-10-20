@@ -17,13 +17,11 @@
 package org.jetbrains.jet.plugin.stubs;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,40 +30,39 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/multiFileHighlighting")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class MultiFileHighlightingTestGenerated extends AbstractMultiFileHighlightingTest {
     public void testAllFilesPresentInMultiFileHighlighting() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiFileHighlighting"), Pattern.compile("^(.+)\\.kt$"), false);
     }
-    
+
     @TestMetadata("copyResolveBeforeParams.kt")
     public void testCopyResolveBeforeParams() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/copyResolveBeforeParams.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("delegatesReference.kt")
     public void testDelegatesReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/delegatesReference.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("enumReference.kt")
     public void testEnumReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/enumReference.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("referencesFunWithUnspecifiedType.kt")
     public void testReferencesFunWithUnspecifiedType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/referencesFunWithUnspecifiedType.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("topLevelMembersReference.kt")
     public void testTopLevelMembersReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/topLevelMembersReference.kt");
         doTest(fileName);
     }
-    
 }

@@ -17,13 +17,11 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,82 +30,81 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/resolve/imports")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class LazyResolveTestGenerated extends AbstractLazyResolveTest {
     public void testAllFilesPresentInImports() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolve/imports"), Pattern.compile("^(.+)\\.resolve$"), false);
     }
-    
+
     @TestMetadata("ImportConflictAllPackage.resolve")
     public void testImportConflictAllPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/imports/ImportConflictAllPackage.resolve");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ImportConflictBetweenImportedAndRootPackage.resolve")
     public void testImportConflictBetweenImportedAndRootPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/imports/ImportConflictBetweenImportedAndRootPackage.resolve");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ImportConflictBetweenImportedAndSamePackage.resolve")
     public void testImportConflictBetweenImportedAndSamePackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/imports/ImportConflictBetweenImportedAndSamePackage.resolve");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ImportConflictForFunctions.resolve")
     public void testImportConflictForFunctions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/imports/ImportConflictForFunctions.resolve");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ImportConflictPackageAndClass.resolve")
     public void testImportConflictPackageAndClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/imports/ImportConflictPackageAndClass.resolve");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ImportConflictSameNameClass.resolve")
     public void testImportConflictSameNameClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/imports/ImportConflictSameNameClass.resolve");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ImportConflictWithClassObject.resolve")
     public void testImportConflictWithClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/imports/ImportConflictWithClassObject.resolve");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ImportConflictWithInFileClass.resolve")
     public void testImportConflictWithInFileClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/imports/ImportConflictWithInFileClass.resolve");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ImportConflictWithInnerClass.resolve")
     public void testImportConflictWithInnerClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/imports/ImportConflictWithInnerClass.resolve");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ImportConflictsWithMappedToJava.resolve")
     public void testImportConflictsWithMappedToJava() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/imports/ImportConflictsWithMappedToJava.resolve");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ImportNonBlockingAnalysis.resolve")
     public void testImportNonBlockingAnalysis() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/imports/ImportNonBlockingAnalysis.resolve");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ImportResolveOrderStable.resolve")
     public void testImportResolveOrderStable() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolve/imports/ImportResolveOrderStable.resolve");
         doTest(fileName);
     }
-    
 }

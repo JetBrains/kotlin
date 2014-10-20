@@ -17,13 +17,11 @@
 package org.jetbrains.jet.plugin.parameterInfo;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,100 +30,99 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/parameterInfo/functionParameterInfo")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class FunctionParameterInfoTestGenerated extends AbstractFunctionParameterInfoTest {
     public void testAllFilesPresentInFunctionParameterInfo() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/functionParameterInfo"), Pattern.compile("^(.+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("Deprecated.kt")
     public void testDeprecated() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/Deprecated.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ExtensionOnClassObject.kt")
     public void testExtensionOnClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/ExtensionOnClassObject.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("InheritedFunctions.kt")
     public void testInheritedFunctions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/InheritedFunctions.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("InheritedWithCurrentFunctions.kt")
     public void testInheritedWithCurrentFunctions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/InheritedWithCurrentFunctions.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NamedAndDefaultParameter.kt")
     public void testNamedAndDefaultParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/NamedAndDefaultParameter.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NamedParameter.kt")
     public void testNamedParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/NamedParameter.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NamedParameter2.kt")
     public void testNamedParameter2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/NamedParameter2.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NotGreen.kt")
     public void testNotGreen() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/NotGreen.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NullableTypeCall.kt")
     public void testNullableTypeCall() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/NullableTypeCall.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Println.kt")
     public void testPrintln() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/Println.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Simple.kt")
     public void testSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/Simple.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("SimpleConstructor.kt")
     public void testSimpleConstructor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SimpleConstructor.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("SuperConstructorCall.kt")
     public void testSuperConstructorCall() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/SuperConstructorCall.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("TwoFunctions.kt")
     public void testTwoFunctions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/TwoFunctions.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("TwoFunctionsGrey.kt")
     public void testTwoFunctionsGrey() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/TwoFunctionsGrey.kt");
         doTest(fileName);
     }
-    
 }

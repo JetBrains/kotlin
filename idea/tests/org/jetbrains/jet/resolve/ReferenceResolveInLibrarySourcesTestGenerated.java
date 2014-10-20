@@ -17,13 +17,11 @@
 package org.jetbrains.jet.resolve;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,22 +30,21 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/resolve/referenceInLib")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class ReferenceResolveInLibrarySourcesTestGenerated extends AbstractReferenceResolveInLibrarySourcesTest {
     public void testAllFilesPresentInReferenceInLib() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceInLib"), Pattern.compile("^(.+)\\.kt$"), false);
     }
-    
+
     @TestMetadata("builtInNumber.kt")
     public void testBuiltInNumber() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/builtInNumber.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("inLibrarySource.kt")
     public void testInLibrarySource() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/inLibrarySource.kt");
         doTest(fileName);
     }
-    
 }

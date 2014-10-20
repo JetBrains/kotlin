@@ -17,13 +17,11 @@
 package org.jetbrains.jet.resolve;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,46 +30,45 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/resolve/additionalLazyResolve")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class AdditionalLazyResolveDescriptorRendererTestGenerated extends AbstractAdditionalLazyResolveDescriptorRendererTest {
     public void testAllFilesPresentInAdditionalLazyResolve() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/additionalLazyResolve"), Pattern.compile("^(.+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("anonymousObjectInClassInitializer.kt")
     public void testAnonymousObjectInClassInitializer() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/anonymousObjectInClassInitializer.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("anonymousObjectInClassParameterInitializer.kt")
     public void testAnonymousObjectInClassParameterInitializer() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/anonymousObjectInClassParameterInitializer.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("localClassInClassInitializer.kt")
     public void testLocalClassInClassInitializer() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/localClassInClassInitializer.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("localClassInClosureInClassParameterInitializer.kt")
     public void testLocalClassInClosureInClassParameterInitializer() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/localClassInClosureInClassParameterInitializer.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("localObjectInClassInitializer.kt")
     public void testLocalObjectInClassInitializer() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/localObjectInClassInitializer.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("localObjectInClosureInClassParameterInitializer.kt")
     public void testLocalObjectInClosureInClassParameterInitializer() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/localObjectInClosureInClassParameterInitializer.kt");
         doTest(fileName);
     }
-    
 }

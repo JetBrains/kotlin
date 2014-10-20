@@ -17,13 +17,11 @@
 package org.jetbrains.jet.completion.weighers;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,136 +30,135 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/weighers/smart")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletionWeigherTest {
     public void testAllFilesPresentInSmart() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/weighers/smart"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("MultipleArgsItem.kt")
     public void testMultipleArgsItem() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/MultipleArgsItem.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarity1.kt")
     public void testNameSimilarity1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarity1.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarity2.kt")
     public void testNameSimilarity2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarity2.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarity3.kt")
     public void testNameSimilarity3() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarity3.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityAndCompiledParameters.kt")
     public void testNameSimilarityAndCompiledParameters() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityAndCompiledParameters.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForAssignment.kt")
     public void testNameSimilarityForAssignment() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForAssignment.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForBlock.kt")
     public void testNameSimilarityForBlock() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForBlock.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForElse.kt")
     public void testNameSimilarityForElse() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForElse.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForElvis.kt")
     public void testNameSimilarityForElvis() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForElvis.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForEq1.kt")
     public void testNameSimilarityForEq1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForEq1.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForEq2.kt")
     public void testNameSimilarityForEq2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForEq2.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForEq3.kt")
     public void testNameSimilarityForEq3() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForEq3.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForEq4.kt")
     public void testNameSimilarityForEq4() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForEq4.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForExpressionBody.kt")
     public void testNameSimilarityForExpressionBody() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForExpressionBody.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForGetterExpressionBody.kt")
     public void testNameSimilarityForGetterExpressionBody() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForGetterExpressionBody.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForGetterReturn.kt")
     public void testNameSimilarityForGetterReturn() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForGetterReturn.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForInitializer.kt")
     public void testNameSimilarityForInitializer() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForInitializer.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForReturn.kt")
     public void testNameSimilarityForReturn() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForReturn.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityForThen.kt")
     public void testNameSimilarityForThen() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityForThen.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilarityInImplicitlyTypedVarInitializer.kt")
     public void testNameSimilarityInImplicitlyTypedVarInitializer() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilarityInImplicitlyTypedVarInitializer.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NameSimilaritySorterPlacement.kt")
     public void testNameSimilaritySorterPlacement() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilaritySorterPlacement.kt");
         doTest(fileName);
     }
-    
 }

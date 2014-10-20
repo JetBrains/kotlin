@@ -17,13 +17,11 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,136 +30,135 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/codeInsight/lineMarker")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
     public void testAllFilesPresentInLineMarker() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/lineMarker"), Pattern.compile("^(.+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("BadCodeNoExceptions.kt")
     public void testBadCodeNoExceptions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/BadCodeNoExceptions.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Class.kt")
     public void testClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/Class.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ClassObjectInStaticNestedClass.kt")
     public void testClassObjectInStaticNestedClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/ClassObjectInStaticNestedClass.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("DelegatedFun.kt")
     public void testDelegatedFun() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/DelegatedFun.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("DelegatedProperty.kt")
     public void testDelegatedProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/DelegatedProperty.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("FakeOverrideForClasses.kt")
     public void testFakeOverrideForClasses() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/FakeOverrideForClasses.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("FakeOverrideFun.kt")
     public void testFakeOverrideFun() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/FakeOverrideFun.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("FakeOverrideFunWithMostRelevantImplementation.kt")
     public void testFakeOverrideFunWithMostRelevantImplementation() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/FakeOverrideFunWithMostRelevantImplementation.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("FakeOverrideProperty.kt")
     public void testFakeOverrideProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/FakeOverrideProperty.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("FakeOverrideToStringInTrait.kt")
     public void testFakeOverrideToStringInTrait() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/FakeOverrideToStringInTrait.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("FakeOverridesForTraitFunWithImpl.kt")
     public void testFakeOverridesForTraitFunWithImpl() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/FakeOverridesForTraitFunWithImpl.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NavigateToSeveralSuperElements.kt")
     public void testNavigateToSeveralSuperElements() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/NavigateToSeveralSuperElements.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NoOverridingMarkerOnDefaultTraitImpl.kt")
     public void testNoOverridingMarkerOnDefaultTraitImpl() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/NoOverridingMarkerOnDefaultTraitImpl.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Overloads.kt")
     public void testOverloads() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/Overloads.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("OverrideFunction.kt")
     public void testOverrideFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/OverrideFunction.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("OverrideIconForOverloadMethodBug.kt")
     public void testOverrideIconForOverloadMethodBug() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/OverrideIconForOverloadMethodBug.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("OverridenTraitDeclarations.kt")
     public void testOverridenTraitDeclarations() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/OverridenTraitDeclarations.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("OverridingTooltipOnDefaultTraitImpl.kt")
     public void testOverridingTooltipOnDefaultTraitImpl() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/OverridingTooltipOnDefaultTraitImpl.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("PropertyOverride.kt")
     public void testPropertyOverride() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/PropertyOverride.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ToStringInTrait.kt")
     public void testToStringInTrait() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/ToStringInTrait.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Trait.kt")
     public void testTrait() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/Trait.kt");
         doTest(fileName);
     }
-    
 }

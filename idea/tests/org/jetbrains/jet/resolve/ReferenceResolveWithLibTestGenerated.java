@@ -17,13 +17,11 @@
 package org.jetbrains.jet.resolve;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,76 +30,75 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/resolve/referenceWithLib")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class ReferenceResolveWithLibTestGenerated extends AbstractReferenceResolveWithLibTest {
     public void testAllFilesPresentInReferenceWithLib() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceWithLib"), Pattern.compile("^(.+)\\.kt$"), false);
     }
-    
+
     @TestMetadata("delegatedPropertyWithTypeParameters.kt")
     public void testDelegatedPropertyWithTypeParameters() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/delegatedPropertyWithTypeParameters.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("fakeOverride.kt")
     public void testFakeOverride() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/fakeOverride.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("fakeOverride2.kt")
     public void testFakeOverride2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/fakeOverride2.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("innerClassFromLib.kt")
     public void testInnerClassFromLib() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/innerClassFromLib.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("iteratorWithTypeParameter.kt")
     public void testIteratorWithTypeParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/iteratorWithTypeParameter.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("multiDeclarationWithTypeParameters.kt")
     public void testMultiDeclarationWithTypeParameters() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/multiDeclarationWithTypeParameters.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("nestedClassFromLib.kt")
     public void testNestedClassFromLib() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/nestedClassFromLib.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("packageOfLibDeclaration.kt")
     public void testPackageOfLibDeclaration() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/packageOfLibDeclaration.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("referenceToRootJavaClassFromLib.kt")
     public void testReferenceToRootJavaClassFromLib() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/referenceToRootJavaClassFromLib.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("sameNameInLib.kt")
     public void testSameNameInLib() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/sameNameInLib.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("setWithTypeParameters.kt")
     public void testSetWithTypeParameters() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/setWithTypeParameters.kt");
         doTest(fileName);
     }
-    
 }

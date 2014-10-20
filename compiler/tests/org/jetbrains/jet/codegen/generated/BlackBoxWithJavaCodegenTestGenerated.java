@@ -17,13 +17,11 @@
 package org.jetbrains.jet.codegen.generated;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -33,68 +31,68 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/boxWithJava")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({BlackBoxWithJavaCodegenTestGenerated.PlatformStatic.class, BlackBoxWithJavaCodegenTestGenerated.Properties.class})
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxWithJava() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava"), Pattern.compile("^([^\\.]+)$"), true);
     }
-    
+
     @TestMetadata("referenceToJavaFieldOfKotlinSubclass")
     public void testReferenceToJavaFieldOfKotlinSubclass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/referenceToJavaFieldOfKotlinSubclass/");
         doTestWithJava(fileName);
     }
-    
+
     @TestMetadata("trait")
     public void testTrait() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/trait/");
         doTestWithJava(fileName);
     }
-    
+
     @TestMetadata("compiler/testData/codegen/boxWithJava/platformStatic")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({})
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class PlatformStatic extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInPlatformStatic() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/platformStatic"), Pattern.compile("^([^\\.]+)$"), true);
         }
-        
+
         @TestMetadata("annotations")
         public void testAnnotations() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformStatic/annotations/");
             doTestWithJava(fileName);
         }
-        
+
         @TestMetadata("classObject")
         public void testClassObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformStatic/classObject/");
             doTestWithJava(fileName);
         }
-        
+
         @TestMetadata("object")
         public void testObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformStatic/object/");
             doTestWithJava(fileName);
         }
-        
+
     }
-    
+
     @TestMetadata("compiler/testData/codegen/boxWithJava/properties")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({})
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class Properties extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInProperties() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/properties"), Pattern.compile("^([^\\.]+)$"), true);
         }
-        
+
         @TestMetadata("classObjectProperties")
         public void testClassObjectProperties() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/classObjectProperties/");
             doTestWithJava(fileName);
         }
-        
+
     }
-    
+
 }

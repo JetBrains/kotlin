@@ -17,13 +17,11 @@
 package org.jetbrains.jet.codegen.flags;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -33,828 +31,807 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/writeFlags")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({WriteFlagsTestGenerated.Class.class, WriteFlagsTestGenerated.Function.class, WriteFlagsTestGenerated.InnerClass.class, WriteFlagsTestGenerated.Property.class})
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     public void testAllFilesPresentInWriteFlags() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags"), Pattern.compile("^(.+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("compiler/testData/writeFlags/class")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Class.AccessFlags.class, Class.DeprecatedFlag.class, Class.Visibility.class})
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class Class extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInClass() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class"), Pattern.compile("^(.+)\\.kt$"), true);
         }
-        
+
         @TestMetadata("compiler/testData/writeFlags/class/accessFlags")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class AccessFlags extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInAccessFlags() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/accessFlags"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("objectLiteral.kt")
             public void testObjectLiteral() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/objectLiteral.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("publicFinalClass.kt")
             public void testPublicFinalClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/publicFinalClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("publicFinalInnerClass.kt")
             public void testPublicFinalInnerClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/publicFinalInnerClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("publicInnerInterface.kt")
             public void testPublicInnerInterface() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/publicInnerInterface.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("publicInterface.kt")
             public void testPublicInterface() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/publicInterface.kt");
                 doTest(fileName);
             }
-            
         }
-        
+
         @TestMetadata("compiler/testData/writeFlags/class/deprecatedFlag")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("class.kt")
             public void testClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/deprecatedFlag/class.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("classObject.kt")
             public void testClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/deprecatedFlag/classObject.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("enumClass.kt")
             public void testEnumClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/deprecatedFlag/enumClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("innerClass.kt")
             public void testInnerClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/deprecatedFlag/innerClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("trait.kt")
             public void testTrait() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/deprecatedFlag/trait.kt");
                 doTest(fileName);
             }
-            
         }
-        
+
         @TestMetadata("compiler/testData/writeFlags/class/visibility")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({Visibility.Internal.class, Visibility.Private.class, Visibility.Public.class})
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("compiler/testData/writeFlags/class/visibility/internal")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+            @RunWith(JUnit3RunnerWithInners.class)
             public static class Internal extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInInternal() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/internal"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
-                
+
                 @TestMetadata("class.kt")
                 public void testClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/class.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("enum.kt")
                 public void testEnum() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/enum.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("innerClass.kt")
                 public void testInnerClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/innerClass.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("innerEnum.kt")
                 public void testInnerEnum() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/innerEnum.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("innerObject.kt")
                 public void testInnerObject() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/innerObject.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("innerTrait.kt")
                 public void testInnerTrait() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/innerTrait.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("object.kt")
                 public void testObject() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/object.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("trait.kt")
                 public void testTrait() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/trait.kt");
                     doTest(fileName);
                 }
-                
             }
-            
+
             @TestMetadata("compiler/testData/writeFlags/class/visibility/private")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+            @RunWith(JUnit3RunnerWithInners.class)
             public static class Private extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInPrivate() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/private"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
-                
+
                 @TestMetadata("class.kt")
                 public void testClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/class.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("enum.kt")
                 public void testEnum() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/enum.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("innerClass.kt")
                 public void testInnerClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/innerClass.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("innerEnum.kt")
                 public void testInnerEnum() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/innerEnum.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("innerObject.kt")
                 public void testInnerObject() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/innerObject.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("innerTrait.kt")
                 public void testInnerTrait() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/innerTrait.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("object.kt")
                 public void testObject() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/object.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("trait.kt")
                 public void testTrait() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/trait.kt");
                     doTest(fileName);
                 }
-                
             }
-            
+
             @TestMetadata("compiler/testData/writeFlags/class/visibility/public")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+            @RunWith(JUnit3RunnerWithInners.class)
             public static class Public extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInPublic() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/public"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
-                
+
                 @TestMetadata("class.kt")
                 public void testClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/class.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("enum.kt")
                 public void testEnum() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/enum.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("innerClass.kt")
                 public void testInnerClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/innerClass.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("innerEnum.kt")
                 public void testInnerEnum() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/innerEnum.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("innerObject.kt")
                 public void testInnerObject() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/innerObject.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("innerTrait.kt")
                 public void testInnerTrait() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/innerTrait.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("object.kt")
                 public void testObject() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/object.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("trait.kt")
                 public void testTrait() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/trait.kt");
                     doTest(fileName);
                 }
-                
             }
-            
         }
-        
     }
-    
+
     @TestMetadata("compiler/testData/writeFlags/function")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Function.ClassObjectPrivate.class, Function.Constructors.class, Function.DeprecatedFlag.class})
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class Function extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInFunction() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function"), Pattern.compile("^(.+)\\.kt$"), true);
         }
-        
+
         @TestMetadata("compiler/testData/writeFlags/function/classObjectPrivate")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassObjectPrivate extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInClassObjectPrivate() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/classObjectPrivate"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("privateFun.kt")
             public void testPrivateFun() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/classObjectPrivate/privateFun.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("privateVal.kt")
             public void testPrivateVal() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/classObjectPrivate/privateVal.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("privateVar.kt")
             public void testPrivateVar() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/classObjectPrivate/privateVar.kt");
                 doTest(fileName);
             }
-            
         }
-        
+
         @TestMetadata("compiler/testData/writeFlags/function/constructors")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class Constructors extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInConstructors() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/constructors"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("classObject.kt")
             public void testClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/constructors/classObject.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("objectInClass.kt")
             public void testObjectInClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/constructors/objectInClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("objectLiteral.kt")
             public void testObjectLiteral() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/constructors/objectLiteral.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("topLevelObject.kt")
             public void testTopLevelObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/constructors/topLevelObject.kt");
                 doTest(fileName);
             }
-            
         }
-        
+
         @TestMetadata("compiler/testData/writeFlags/function/deprecatedFlag")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("emptyGetter.kt")
             public void testEmptyGetter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/emptyGetter.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("emptySetter.kt")
             public void testEmptySetter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/emptySetter.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("extentionFun.kt")
             public void testExtentionFun() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/extentionFun.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("funInClass.kt")
             public void testFunInClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/funInClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("funInClassObject.kt")
             public void testFunInClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/funInClassObject.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("getter.kt")
             public void testGetter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/getter.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("getterAnnotationOnProperty.kt")
             public void testGetterAnnotationOnProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/getterAnnotationOnProperty.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("getterForPropertyInConstructor.kt")
             public void testGetterForPropertyInConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/getterForPropertyInConstructor.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("setter.kt")
             public void testSetter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/setter.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("setterAnnotationOnProperty.kt")
             public void testSetterAnnotationOnProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/setterAnnotationOnProperty.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("setterForPropertyInConstructor.kt")
             public void testSetterForPropertyInConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/setterForPropertyInConstructor.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("topLevelFun.kt")
             public void testTopLevelFun() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/topLevelFun.kt");
                 doTest(fileName);
             }
-            
         }
-        
     }
-    
+
     @TestMetadata("compiler/testData/writeFlags/innerClass")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({InnerClass.Visibility.class})
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class InnerClass extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInInnerClass() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/innerClass"), Pattern.compile("^(.+)\\.kt$"), true);
         }
-        
+
         @TestMetadata("compiler/testData/writeFlags/innerClass/visibility")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/innerClass/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("internal.kt")
             public void testInternal() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/innerClass/visibility/internal.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("internalClassObject.kt")
             public void testInternalClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/innerClass/visibility/internalClassObject.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("private.kt")
             public void testPrivate() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/innerClass/visibility/private.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("privateClassObject.kt")
             public void testPrivateClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/innerClass/visibility/privateClassObject.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("public.kt")
             public void testPublic() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/innerClass/visibility/public.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("publicClassObject.kt")
             public void testPublicClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/innerClass/visibility/publicClassObject.kt");
                 doTest(fileName);
             }
-            
         }
-        
     }
-    
+
     @TestMetadata("compiler/testData/writeFlags/property")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Property.ClassObject.class, Property.DeprecatedFlag.class, Property.Visibility.class})
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class Property extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInProperty() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), true);
         }
-        
+
         @TestMetadata("compiler/testData/writeFlags/property/classObject")
         @TestDataPath("$PROJECT_ROOT")
         @InnerTestClasses({ClassObject.Class.class, ClassObject.Rename.class, ClassObject.Trait.class})
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassObject extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInClassObject() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("compiler/testData/writeFlags/property/classObject/class")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+            @RunWith(JUnit3RunnerWithInners.class)
             public static class Class extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInClass() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/class"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
-                
+
                 @TestMetadata("delegatedProtectedVar.kt")
                 public void testDelegatedProtectedVar() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/delegatedProtectedVar.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("delegatedPublicVal.kt")
                 public void testDelegatedPublicVal() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/delegatedPublicVal.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("internalVal.kt")
                 public void testInternalVal() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/internalVal.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("internalVar.kt")
                 public void testInternalVar() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/internalVar.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("internalVarPrivateSet.kt")
                 public void testInternalVarPrivateSet() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/internalVarPrivateSet.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("noBackingField.kt")
                 public void testNoBackingField() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/noBackingField.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("privateVal.kt")
                 public void testPrivateVal() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/privateVal.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("privateVar.kt")
                 public void testPrivateVar() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/privateVar.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("protectedVal.kt")
                 public void testProtectedVal() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/protectedVal.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("protectedVarPrivateSet.kt")
                 public void testProtectedVarPrivateSet() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/protectedVarPrivateSet.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicVal.kt")
                 public void testPublicVal() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicVal.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicValNonDefault.kt")
                 public void testPublicValNonDefault() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicValNonDefault.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicVar.kt")
                 public void testPublicVar() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicVar.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicVarNonDefault.kt")
                 public void testPublicVarNonDefault() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicVarNonDefault.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicVarPrivateSet.kt")
                 public void testPublicVarPrivateSet() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicVarPrivateSet.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicVarProtectedSet.kt")
                 public void testPublicVarProtectedSet() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicVarProtectedSet.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicVarPublicSet.kt")
                 public void testPublicVarPublicSet() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicVarPublicSet.kt");
                     doTest(fileName);
                 }
-                
             }
-            
+
             @TestMetadata("compiler/testData/writeFlags/property/classObject/rename")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+            @RunWith(JUnit3RunnerWithInners.class)
             public static class Rename extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInRename() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/rename"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
-                
+
                 @TestMetadata("constructorAndClassObject.kt")
                 public void testConstructorAndClassObject() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/rename/constructorAndClassObject.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("delegatedAndDelegated.kt")
                 public void testDelegatedAndDelegated() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/rename/delegatedAndDelegated.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("delegatedAndProperty.kt")
                 public void testDelegatedAndProperty() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/rename/delegatedAndProperty.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("propertyAndProperty.kt")
                 public void testPropertyAndProperty() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/rename/propertyAndProperty.kt");
                     doTest(fileName);
                 }
-                
             }
-            
+
             @TestMetadata("compiler/testData/writeFlags/property/classObject/trait")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+            @RunWith(JUnit3RunnerWithInners.class)
             public static class Trait extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInTrait() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/trait"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
-                
+
                 @TestMetadata("delegatedProtectedVar.kt")
                 public void testDelegatedProtectedVar() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/delegatedProtectedVar.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("delegatedPublicVal.kt")
                 public void testDelegatedPublicVal() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/delegatedPublicVal.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("internalVal.kt")
                 public void testInternalVal() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/internalVal.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("internalVar.kt")
                 public void testInternalVar() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/internalVar.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("internalVarPrivateSet.kt")
                 public void testInternalVarPrivateSet() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/internalVarPrivateSet.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("noBackingField.kt")
                 public void testNoBackingField() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/noBackingField.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("privateVal.kt")
                 public void testPrivateVal() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/privateVal.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("privateVar.kt")
                 public void testPrivateVar() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/privateVar.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("protectedVal.kt")
                 public void testProtectedVal() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/protectedVal.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("protectedVarPrivateSet.kt")
                 public void testProtectedVarPrivateSet() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/protectedVarPrivateSet.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicVal.kt")
                 public void testPublicVal() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicVal.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicValNonDefault.kt")
                 public void testPublicValNonDefault() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicValNonDefault.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicVar.kt")
                 public void testPublicVar() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicVar.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicVarNonDefault.kt")
                 public void testPublicVarNonDefault() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicVarNonDefault.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicVarPrivateSet.kt")
                 public void testPublicVarPrivateSet() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicVarPrivateSet.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicVarProtectedSet.kt")
                 public void testPublicVarProtectedSet() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicVarProtectedSet.kt");
                     doTest(fileName);
                 }
-                
+
                 @TestMetadata("publicVarPublicSet.kt")
                 public void testPublicVarPublicSet() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicVarPublicSet.kt");
                     doTest(fileName);
                 }
-                
             }
-            
         }
-        
+
         @TestMetadata("compiler/testData/writeFlags/property/deprecatedFlag")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("propertyInClass.kt")
             public void testPropertyInClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/deprecatedFlag/propertyInClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("topLevelProperty.kt")
             public void testTopLevelProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/deprecatedFlag/topLevelProperty.kt");
                 doTest(fileName);
             }
-            
         }
-        
+
         @TestMetadata("compiler/testData/writeFlags/property/visibility")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("internal.kt")
             public void testInternal() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/visibility/internal.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("private.kt")
             public void testPrivate() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/visibility/private.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("public.kt")
             public void testPublic() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/visibility/public.kt");
                 doTest(fileName);
             }
-            
         }
-        
     }
-    
 }

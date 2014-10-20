@@ -17,13 +17,11 @@
 package org.jetbrains.jet.completion;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -33,76 +31,76 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/completion/injava")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({})
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class KotlinSourceInJavaCompletionTestGenerated extends AbstractKotlinSourceInJavaCompletionTest {
     public void testAllFilesPresentInInjava() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/injava"), Pattern.compile("^(.+)\\.java$"), true);
     }
-    
+
     @TestMetadata("Class.java")
     public void testClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/Class.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ClassMembers.java")
     public void testClassMembers() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/ClassMembers.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ClassObject.java")
     public void testClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/ClassObject.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ClassesFromNamespace.java")
     public void testClassesFromNamespace() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/ClassesFromNamespace.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("EnumConstants.java")
     public void testEnumConstants() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/EnumConstants.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Nested.java")
     public void testNested() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/Nested.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NestedObjectInstance.java")
     public void testNestedObjectInstance() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/NestedObjectInstance.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ObjectInstance.java")
     public void testObjectInstance() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/ObjectInstance.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Subpackage.java")
     public void testSubpackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/Subpackage.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("TopLevelMembers.java")
     public void testTopLevelMembers() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/TopLevelMembers.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("TraitMember.java")
     public void testTraitMember() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/TraitMember.java");
         doTest(fileName);
     }
-    
+
 }

@@ -17,13 +17,11 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,34 +30,33 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/expressionSelection")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class ExpressionSelectionTestGenerated extends AbstractExpressionSelectionTest {
     public void testAllFilesPresentInExpressionSelection() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/expressionSelection"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("binaryExpr.kt")
     public void testBinaryExpr() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/expressionSelection/binaryExpr.kt");
         doTestExpressionSelection(fileName);
     }
-    
+
     @TestMetadata("labelledStatement.kt")
     public void testLabelledStatement() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/expressionSelection/labelledStatement.kt");
         doTestExpressionSelection(fileName);
     }
-    
+
     @TestMetadata("labelledThis.kt")
     public void testLabelledThis() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/expressionSelection/labelledThis.kt");
         doTestExpressionSelection(fileName);
     }
-    
+
     @TestMetadata("noExpression.kt")
     public void testNoExpression() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/expressionSelection/noExpression.kt");
         doTestExpressionSelection(fileName);
     }
-    
 }

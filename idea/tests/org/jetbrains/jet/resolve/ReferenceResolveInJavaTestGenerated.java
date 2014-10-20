@@ -17,13 +17,11 @@
 package org.jetbrains.jet.resolve;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,58 +30,57 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/resolve/referenceInJava")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolveInJavaTest {
     public void testAllFilesPresentInReferenceInJava() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceInJava"), Pattern.compile("^(.+)\\.java$"), true);
     }
-    
+
     @TestMetadata("Class.java")
     public void testClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/Class.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ClassObjectField.java")
     public void testClassObjectField() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/ClassObjectField.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Constructor.java")
     public void testConstructor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/Constructor.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("EnumEntry.java")
     public void testEnumEntry() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/EnumEntry.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Getter.java")
     public void testGetter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/Getter.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Method.java")
     public void testMethod() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/Method.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ObjectInstance.java")
     public void testObjectInstance() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/ObjectInstance.java");
         doTest(fileName);
     }
-    
+
     @TestMetadata("PackageFacade.java")
     public void testPackageFacade() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/PackageFacade.java");
         doTest(fileName);
     }
-    
 }

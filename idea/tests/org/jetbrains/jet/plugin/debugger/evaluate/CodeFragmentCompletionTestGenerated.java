@@ -17,13 +17,11 @@
 package org.jetbrains.jet.plugin.debugger.evaluate;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,28 +30,27 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/basic/codeFragments")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCompletionTest {
     public void testAllFilesPresentInCodeFragments() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/codeFragments"), Pattern.compile("^(.+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("blockCodeFragment.kt")
     public void testBlockCodeFragment() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/codeFragments/blockCodeFragment.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("localVal.kt")
     public void testLocalVal() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/codeFragments/localVal.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("topLevel.kt")
     public void testTopLevel() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/codeFragments/topLevel.kt");
         doTest(fileName);
     }
-    
 }

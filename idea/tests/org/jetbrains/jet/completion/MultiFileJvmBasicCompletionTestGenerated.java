@@ -17,13 +17,11 @@
 package org.jetbrains.jet.completion;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,148 +30,147 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/basic/multifile")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJvmBasicCompletionTest {
     public void testAllFilesPresentInMultifile() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/multifile"), Pattern.compile("^([^\\.]+)$"), false);
     }
-    
+
     @TestMetadata("CompleteFunctionWithNoSpecifiedType")
     public void testCompleteFunctionWithNoSpecifiedType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/CompleteFunctionWithNoSpecifiedType/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("CompleteImportedFunction")
     public void testCompleteImportedFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/CompleteImportedFunction/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("CompletionOnImportedFunction")
     public void testCompletionOnImportedFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/CompletionOnImportedFunction/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("DoNotCompleteWithConstraints")
     public void testDoNotCompleteWithConstraints() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/DoNotCompleteWithConstraints/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("EnumEntry")
     public void testEnumEntry() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/EnumEntry/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ExtensionFunction")
     public void testExtensionFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/ExtensionFunction/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ExtensionFunctionOnImportedFunction")
     public void testExtensionFunctionOnImportedFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/ExtensionFunctionOnImportedFunction/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ExtensionOnNullable")
     public void testExtensionOnNullable() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/ExtensionOnNullable/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ExtensionsForSmartCast")
     public void testExtensionsForSmartCast() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/ExtensionsForSmartCast/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("GroovyClassNameCompletionFromDefaultPackage")
     public void testGroovyClassNameCompletionFromDefaultPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/GroovyClassNameCompletionFromDefaultPackage/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("GroovyClassNameCompletionFromNonDefaultPackage")
     public void testGroovyClassNameCompletionFromNonDefaultPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/GroovyClassNameCompletionFromNonDefaultPackage/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("InImportedFunctionLiteralParameter")
     public void testInImportedFunctionLiteralParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/InImportedFunctionLiteralParameter/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("JavaInnerClasses")
     public void testJavaInnerClasses() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/JavaInnerClasses/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NoAutoInsertionOfNotImported")
     public void testNoAutoInsertionOfNotImported() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NoAutoInsertionOfNotImported/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NotImportedExtensionForImplicitReceiver")
     public void testNotImportedExtensionForImplicitReceiver() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedExtensionForImplicitReceiver/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NotImportedExtensionFunction")
     public void testNotImportedExtensionFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedExtensionFunction/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NotImportedExtensionProperty")
     public void testNotImportedExtensionProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedExtensionProperty/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NotImportedFunction")
     public void testNotImportedFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedFunction/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NotImportedInfixExtension")
     public void testNotImportedInfixExtension() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedInfixExtension/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NotImportedJavaClass")
     public void testNotImportedJavaClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedJavaClass/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NotImportedObject")
     public void testNotImportedObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedObject/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NotImportedProperty")
     public void testNotImportedProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/NotImportedProperty/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("TopLevelFunction")
     public void testTopLevelFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/multifile/TopLevelFunction/");
         doTest(fileName);
     }
-    
 }
