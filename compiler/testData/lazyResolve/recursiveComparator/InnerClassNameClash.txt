@@ -2,11 +2,11 @@ package test
 
 internal final class B {
     /*primary*/ public constructor B()
-    
+
     internal final class B {
         /*primary*/ public constructor B()
         internal final fun foo(/*0*/ b: test.B.B.C): kotlin.Unit
-        
+
         internal final class C {
             /*primary*/ public constructor C()
         }

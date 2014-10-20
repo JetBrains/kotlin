@@ -2,7 +2,7 @@ package test
 
 internal final class Outer {
     /*primary*/ public constructor Outer()
-    
+
     internal final class Nested</*0*/ T> {
         /*primary*/ public constructor Nested</*0*/ T>()
     }

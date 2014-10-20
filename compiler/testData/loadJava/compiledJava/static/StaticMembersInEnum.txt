@@ -5,13 +5,13 @@ public final enum class StaticMembersInEnum : kotlin.Enum<test.StaticMembersInEn
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.StaticMembersInEnum!): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    
+
     public enum entry ENTRY : test.StaticMembersInEnum {
         private constructor ENTRY()
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.StaticMembersInEnum!): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-ENTRY> : test.StaticMembersInEnum.ENTRY {
             private constructor <class-object-for-ENTRY>()
             public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.StaticMembersInEnum!): kotlin.Int
@@ -19,7 +19,7 @@ public final enum class StaticMembersInEnum : kotlin.Enum<test.StaticMembersInEn
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-    
+
     // Static members
     public final val CONSTANT: test.StaticMembersInEnum!
     public final var STATIC_FIELD: kotlin.Int

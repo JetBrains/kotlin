@@ -5,13 +5,13 @@ internal final enum class Test : kotlin.Enum<test.Test> {
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Test): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    
+
     public enum entry A : test.Test {
         /*primary*/ private constructor A()
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Test): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-A> : test.Test.A {
             /*primary*/ private constructor <class-object-for-A>()
             public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Test): kotlin.Int
@@ -19,13 +19,13 @@ internal final enum class Test : kotlin.Enum<test.Test> {
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
-    
+
     public enum entry B : test.Test {
         /*primary*/ private constructor B()
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Test): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        
+
         public class object <class-object-for-B> : test.Test.B {
             /*primary*/ private constructor <class-object-for-B>()
             public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Test): kotlin.Int

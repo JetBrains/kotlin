@@ -11,7 +11,7 @@ internal final annotation class BadAnnotation : kotlin.Annotation {
 
 test.BadAnnotation(s = IntegerValueType(1): IntegerValueType(1)) internal object SomeObject {
     /*primary*/ private constructor SomeObject()
-    
+
     public class object <class-object-for-SomeObject> : test.SomeObject {
         /*primary*/ private constructor <class-object-for-SomeObject>()
     }

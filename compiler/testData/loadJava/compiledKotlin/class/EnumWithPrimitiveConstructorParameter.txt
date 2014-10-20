@@ -5,7 +5,7 @@ internal final enum class EnumWithPrimitiveConstructorParameter : kotlin.Enum<te
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithPrimitiveConstructorParameter): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    
+
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.EnumWithPrimitiveConstructorParameter
     public final /*synthesized*/ fun values(): kotlin.Array<test.EnumWithPrimitiveConstructorParameter>

@@ -6,7 +6,7 @@ public fun topLevelFunction(): kotlin.Unit
 public open class JavaClass {
     public constructor JavaClass()
     public open fun instanceMethod(): kotlin.Unit
-    
+
     // Static members
     public open fun staticMethod(): kotlin.Unit
 }
@@ -20,11 +20,11 @@ public trait SamInterface {
 }
 
 package test.sub {
-    
+
     public open class JavaClassInSubpackage {
         public constructor JavaClassInSubpackage()
         public open fun instanceMethod(): kotlin.Unit
-        
+
         // Static members
         public open fun staticMethod(): kotlin.Unit
     }

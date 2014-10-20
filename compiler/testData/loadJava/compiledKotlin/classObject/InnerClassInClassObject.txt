@@ -2,17 +2,17 @@ package test
 
 internal final class TestFirst {
     /*primary*/ public constructor TestFirst()
-    
+
     internal class object <class-object-for-TestFirst> {
         /*primary*/ private constructor <class-object-for-TestFirst>()
         internal final fun testing(/*0*/ a: test.TestFirst.InnerClass): kotlin.Int
         internal final fun testing(/*0*/ a: test.TestFirst.NotInnerClass): kotlin.Int
     }
-    
+
     internal final inner class InnerClass {
         /*primary*/ public constructor InnerClass()
     }
-    
+
     internal final inner class NotInnerClass {
         /*primary*/ public constructor NotInnerClass()
     }

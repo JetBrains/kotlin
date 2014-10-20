@@ -2,7 +2,7 @@ package test
 
 internal final class Test {
     /*primary*/ public constructor Test()
-    
+
     internal class object <class-object-for-Test> {
         /*primary*/ private constructor <class-object-for-Test>()
         public final val prop1: kotlin.Int = 10

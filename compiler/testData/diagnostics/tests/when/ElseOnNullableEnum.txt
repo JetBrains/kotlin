@@ -1,4 +1,4 @@
-package 
+package
 
 internal fun nullableNothing(): kotlin.Nothing?
 internal fun platformType(): kotlin.Int
@@ -14,7 +14,7 @@ internal final enum class E : kotlin.Enum<E> {
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    
+
     public enum entry A : E {
         private constructor A()
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E): kotlin.Int
@@ -23,7 +23,7 @@ internal final enum class E : kotlin.Enum<E> {
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        
+
         public class object <class-object-for-A> : E.A {
             private constructor <class-object-for-A>()
             public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E): kotlin.Int
@@ -34,7 +34,7 @@ internal final enum class E : kotlin.Enum<E> {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
-    
+
     public enum entry B : E {
         private constructor B()
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E): kotlin.Int
@@ -43,7 +43,7 @@ internal final enum class E : kotlin.Enum<E> {
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        
+
         public class object <class-object-for-B> : E.B {
             private constructor <class-object-for-B>()
             public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E): kotlin.Int
@@ -54,7 +54,7 @@ internal final enum class E : kotlin.Enum<E> {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
-    
+
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E
     public final /*synthesized*/ fun values(): kotlin.Array<E>

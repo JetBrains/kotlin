@@ -12,7 +12,7 @@ internal final annotation class A : kotlin.Annotation {
 
 test.A(a = IntegerValueType(12): IntegerValueType(12), c = "Hello": kotlin.String) internal object SomeObject {
     /*primary*/ private constructor SomeObject()
-    
+
     public class object <class-object-for-SomeObject> : test.SomeObject {
         /*primary*/ private constructor <class-object-for-SomeObject>()
     }
