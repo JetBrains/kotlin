@@ -165,31 +165,26 @@ public class KotlinCacheService(val project: Project) {
         }
     }
 
-    public fun getGlobalLazyResolveSession(file: JetFile, platform: TargetPlatform): ResolveSessionForBodies {
-        return getGlobalCache(platform).getLazyResolveSession(file)
-    }
-
     public fun getLazyResolveSession(element: JetElement): ResolveSessionForBodies {
         val file = element.getContainingJetFile()
-        val syntheticFiles = findSyntheticFiles(listOf(file))
-        if (syntheticFiles.isNotEmpty()) {
-            return getCacheForSyntheticFiles(syntheticFiles).getLazyResolveSession(file)
-        }
-
-        return getGlobalLazyResolveSession(file, TargetPlatformDetector.getPlatform(file))
+        return getCacheToAnalyzeFiles(listOf(file)).getLazyResolveSession(file)
     }
 
     public fun getAnalysisResults(elements: Collection<JetElement>): AnalyzeExhaust {
         val files = elements.map { it.getContainingJetFile() }.toSet()
         assertAreInSameModule(files)
 
-        val syntheticFiles = findSyntheticFiles(files)
-        if (syntheticFiles.isNotEmpty()) {
-            return getCacheForSyntheticFiles(syntheticFiles).getAnalysisResultsForElements(elements)
-        }
+        return getCacheToAnalyzeFiles(files).getAnalysisResultsForElements(elements)
+    }
 
-        val firstFile = elements.first().getContainingJetFile()
-        return getGlobalCache(TargetPlatformDetector.getPlatform(firstFile)).getAnalysisResultsForElements(elements)
+    private fun getCacheToAnalyzeFiles(files: Collection<JetFile>): KotlinResolveCache {
+        val syntheticFiles = findSyntheticFiles(files)
+        return if (syntheticFiles.isNotEmpty()) {
+            getCacheForSyntheticFiles(syntheticFiles)
+        }
+        else {
+            getGlobalCache(TargetPlatformDetector.getPlatform(files.first()))
+        }
     }
 
     private fun findSyntheticFiles(files: Collection<JetFile>) = files.map {
