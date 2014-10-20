@@ -2678,6 +2678,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("illegalModifiersOnClass.kt")
+            public void testIllegalModifiersOnClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/illegalModifiersOnClass.kt");
+                doTest(fileName);
+            }
+            
             @TestMetadata("kt1141.kt")
             public void testKt1141() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/kt1141.kt");
