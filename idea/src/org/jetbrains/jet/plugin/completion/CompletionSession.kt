@@ -62,8 +62,8 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession, { isVisibleDescriptor(it) })
 
     protected val project: Project = position.getProject()
-    protected val indicesHelper: KotlinIndicesHelper = KotlinIndicesHelper(project)
     protected val searchScope: GlobalSearchScope = searchScopeForSourceElementDependencies(parameters.getOriginalFile()) ?: GlobalSearchScope.EMPTY_SCOPE
+    protected val indicesHelper: KotlinIndicesHelper = KotlinIndicesHelper(project, resolveSession, searchScope)
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (configuration.completeNonAccessibleDeclarations) return true
@@ -104,12 +104,13 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected fun getKotlinTopLevelDeclarations(): Collection<DeclarationDescriptor> {
         val filter = { (name: String) -> prefixMatcher.prefixMatches(name) }
-        return (indicesHelper.getTopLevelCallables(filter, jetReference!!.expression, resolveSession, searchScope) +
-                   indicesHelper.getTopLevelObjects(filter, resolveSession, searchScope)).filter { isVisibleDescriptor(it) }
+        return (indicesHelper.getTopLevelCallables(filter, jetReference!!.expression) + indicesHelper.getTopLevelObjects(filter))
+                .filter { isVisibleDescriptor(it) }
     }
 
     protected fun getKotlinExtensions(): Collection<CallableDescriptor> {
-        return indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope).filter { isVisibleDescriptor(it) }
+        return indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
+                .filter { isVisibleDescriptor(it) }
     }
 
     protected fun addAllTypes() {

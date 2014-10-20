@@ -134,7 +134,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             resolveSession: ResolveSessionForBodies,
             project: Project
     ): Collection<PrioritizedFqName>
-            = KotlinIndicesHelper(project).getTopLevelCallablesByName(name, context, resolveSession, searchScope)
+            = KotlinIndicesHelper(project, resolveSession, searchScope).getTopLevelCallablesByName(name, context)
             .map { PrioritizedFqName(it) }
             .toSet()
 
@@ -145,7 +145,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
             resolveSession: ResolveSessionForBodies,
             project: Project
     ): Collection<PrioritizedFqName>
-            = KotlinIndicesHelper(project).getCallableExtensions({ it == name }, expression, resolveSession, searchScope)
+            = KotlinIndicesHelper(project, resolveSession, searchScope).getCallableExtensions({ it == name }, expression)
             .map { PrioritizedFqName(it) }
             .toSet()
 
