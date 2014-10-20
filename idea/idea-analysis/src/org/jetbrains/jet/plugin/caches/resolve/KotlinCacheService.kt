@@ -179,9 +179,9 @@ public class KotlinCacheService(val project: Project) {
     }
 
     public fun getAnalysisResults(elements: Collection<JetElement>): AnalyzeExhaust {
-        if (elements.isEmpty()) return AnalyzeExhaust.EMPTY
-
         val files = elements.map { it.getContainingJetFile() }.toSet()
+        assertAreInSameModule(files)
+
         if (files.all { !ProjectRootsUtil.isInProjectSource(it) }
 // TODO: decide what to do with this
 //            && files.all { it !is JetCodeFragment }
@@ -191,6 +191,17 @@ public class KotlinCacheService(val project: Project) {
 
         val firstFile = elements.first().getContainingJetFile()
         return getGlobalCache(TargetPlatformDetector.getPlatform(firstFile)).getAnalysisResultsForElements(elements)
+    }
+
+    private fun assertAreInSameModule(elements: Collection<JetElement>) {
+        if (elements.size <= 1) {
+            return
+        }
+        val thisInfo = elements.first().getModuleInfo()
+        elements.forEach {
+            val extraFileInfo = it.getModuleInfo()
+            assert(extraFileInfo == thisInfo, "All files under analysis should be in the same module.\nExpected: $thisInfo\nWas:${extraFileInfo}")
+        }
     }
 
     public fun <T> get(extension: CacheExtension<T>): T {
