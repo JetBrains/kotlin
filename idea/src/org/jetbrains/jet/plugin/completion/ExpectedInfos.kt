@@ -131,9 +131,18 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: Reso
         val callOperationNode: ASTNode?
         if (parent is JetQualifiedExpression && callElement == parent.getSelectorExpression()) {
             val receiverExpression = parent.getReceiverExpression()
-            val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, receiverExpression] ?: return null
-            receiver = ExpressionReceiver(receiverExpression, expressionType)
-            callOperationNode = parent.getOperationTokenNode()
+            val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, receiverExpression]
+            if (expressionType != null) {
+                receiver = ExpressionReceiver(receiverExpression, expressionType)
+                callOperationNode = parent.getOperationTokenNode()
+            }
+            else if (bindingContext[BindingContext.QUALIFIER, receiverExpression] != null) {
+                receiver = ReceiverValue.NO_RECEIVER
+                callOperationNode = null
+            }
+            else {
+                return null
+            }
         }
         else {
             receiver = ReceiverValue.NO_RECEIVER
