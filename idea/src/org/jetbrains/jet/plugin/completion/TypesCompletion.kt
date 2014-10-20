@@ -59,7 +59,7 @@ class TypesCompletion(val parameters: CompletionParameters,
                 if (JavaResolverPsiUtils.isCompiledKotlinClass(psiClass)) {
                     addLookupElementForCompiledKotlinClass(psiClass, collector)
                 }
-                else {
+                else if (!JavaResolverPsiUtils.isCompiledKotlinPackageClass(psiClass)) {
                     collector.addElementWithAutoInsertionSuppressed(KotlinLookupElementFactory.createLookupElementForJavaClass(psiClass))
                 }
             }
