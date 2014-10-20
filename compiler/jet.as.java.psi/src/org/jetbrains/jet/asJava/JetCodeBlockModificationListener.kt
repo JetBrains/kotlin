@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,115 +14,112 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.asJava;
+package org.jetbrains.jet.asJava
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.PsiModificationTrackerImpl;
-import com.intellij.psi.impl.PsiTreeChangeEventImpl;
-import com.intellij.psi.impl.PsiTreeChangePreprocessor;
-import com.intellij.psi.util.PsiModificationTracker;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetBlockExpression;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.PsiPackage;
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.psi.*
+import com.intellij.psi.impl.PsiModificationTrackerImpl
+import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.*
+import com.intellij.psi.impl.PsiTreeChangeEventImpl
+import com.intellij.psi.impl.PsiTreeChangePreprocessor
+import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.jet.lang.psi.JetClass
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.psi.shouldChangeModificationCount
 
-public class JetCodeBlockModificationListener implements PsiTreeChangePreprocessor {
-    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.asJava.JetCodeBlockModificationListener");
-    
-    private final PsiModificationTrackerImpl myModificationTracker;
+public class JetCodeBlockModificationListener(modificationTracker: PsiModificationTracker) : PsiTreeChangePreprocessor {
+    private val myModificationTracker = modificationTracker as PsiModificationTrackerImpl
 
-    public JetCodeBlockModificationListener(PsiModificationTracker modificationTracker) {
-        myModificationTracker = (PsiModificationTrackerImpl) modificationTracker;
-    }
+    override fun treeChanged(event: PsiTreeChangeEventImpl) {
+        if (event.getFile() !is JetFile) return
 
-    @Override
-    public void treeChanged(@NotNull PsiTreeChangeEventImpl event) {
-        if (!(event.getFile() instanceof JetFile)) return;
-        switch (event.getCode()) {
-            case BEFORE_CHILDREN_CHANGE:
-            case BEFORE_PROPERTY_CHANGE:
-            case BEFORE_CHILD_MOVEMENT:
-            case BEFORE_CHILD_REPLACEMENT:
-            case BEFORE_CHILD_ADDITION:
-            case BEFORE_CHILD_REMOVAL:
-                break;
+        when (event.getCode()) {
+            BEFORE_CHILDREN_CHANGE,
+            BEFORE_PROPERTY_CHANGE,
+            BEFORE_CHILD_MOVEMENT,
+            BEFORE_CHILD_REPLACEMENT,
+            BEFORE_CHILD_ADDITION,
+            BEFORE_CHILD_REMOVAL -> {
+                // skip
+            }
 
-            case CHILD_ADDED:
-            case CHILD_REMOVED:
-            case CHILD_REPLACED:
-                processChange(event.getParent(), event.getOldChild(), event.getChild());
-                break;
+            CHILD_ADDED,
+            CHILD_REMOVED,
+            CHILD_REPLACED -> {
+                processChange(event.getParent(), event.getOldChild(), event.getChild())
+            }
 
-            case CHILDREN_CHANGED:
-                // general childrenChanged() event after each change
+            CHILDREN_CHANGED -> {
                 if (!event.isGenericChange()) {
-                    processChange(event.getParent(), event.getParent(), null);
+                    processChange(event.getParent(), event.getParent(), null)
                 }
-                break;
+            }
 
-            case CHILD_MOVED:
-            case PROPERTY_CHANGED:
-                myModificationTracker.incCounter();
-                break;
+            CHILD_MOVED,
+            PROPERTY_CHANGED -> {
+                myModificationTracker.incCounter()
+            }
 
-            default:
-                LOG.error("Unknown code:" + event.getCode());
-                break;
+            else -> LOG.error("Unknown code:" + event.getCode())
         }
     }
 
-    private void processChange(PsiElement parent, PsiElement child1, PsiElement child2) {
+    private fun processChange(parent: PsiElement?, child1: PsiElement, child2: PsiElement?) {
         try {
             if (!isInsideCodeBlock(parent)) {
-                if (parent.getContainingFile() instanceof JetFile) {
-                    myModificationTracker.incCounter();
+                if (parent != null && parent.getContainingFile() is JetFile) {
+                    myModificationTracker.incCounter()
                 }
                 else {
-                    myModificationTracker.incOutOfCodeBlockModificationCounter();
+                    myModificationTracker.incOutOfCodeBlockModificationCounter()
                 }
-                return;
+                return
             }
 
             if (containsClassesInside(child1) || (child2 != child1 && containsClassesInside(child2))) {
-                myModificationTracker.incCounter();
+                myModificationTracker.incCounter()
             }
-        } catch (PsiInvalidElementAccessException e) {
-            myModificationTracker.incCounter(); // Shall not happen actually, just a pre-release paranoia
+        }
+        catch (e: PsiInvalidElementAccessException) {
+            myModificationTracker.incCounter() // Shall not happen actually, just a pre-release paranoia
         }
     }
 
-    private static boolean containsClassesInside(PsiElement element) {
-        if (element == null) return false;
-        if (element instanceof PsiClass) return true;
+    class object {
+        private val LOG = Logger.getInstance("#org.jetbrains.jet.asJava.JetCodeBlockModificationListener")
 
-        PsiElement child = element.getFirstChild();
-        while (child != null) {
-            if (containsClassesInside(child)) return true;
-            child = child.getNextSibling();
+        private fun containsClassesInside(element: PsiElement?): Boolean {
+            if (element == null) return false
+            if (element is PsiClass) return true
+
+            var child = element.getFirstChild()
+            while (child != null) {
+                if (containsClassesInside(child)) return true
+                child = child!!.getNextSibling()
+            }
+
+            return false
         }
 
-        return false;
-    }
+        private fun isInsideCodeBlock(element: PsiElement?): Boolean {
+            if (element is PsiFileSystemItem) return false
+            if (element == null || element.getParent() == null) return true
 
-    private static boolean isInsideCodeBlock(PsiElement element) {
-        if (element instanceof PsiFileSystemItem) return false;
+            var parent = element
+            while (parent !is PsiFile && parent !is PsiDirectory && parent != null) {
+                if (parent is JetClass) return false // anonymous or local class
 
-        if (element == null || element.getParent() == null) return true;
-
-        PsiElement parent = element;
-        while (true) {
-            if (parent instanceof PsiFile || parent instanceof PsiDirectory || parent == null) return false;
-
-            if (parent instanceof JetClass) return false; // anonymous or local class
-
-            if (parent instanceof JetBlockExpression) {
-                if (!PsiPackage.shouldChangeModificationCount(element)) {
-                    return true;
+                if (parent is JetBlockExpression) {
+                    if (!shouldChangeModificationCount(element)) {
+                        return true;
+                    }
                 }
+
+                parent = parent!!.getParent()
             }
-            parent = parent.getParent();
+
+            return false
         }
     }
 }
