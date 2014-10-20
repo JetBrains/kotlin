@@ -32,7 +32,7 @@ import org.jetbrains.jet.config.Services
 
 public open class KotlinCompile(): AbstractCompile() {
 
-    val srcDirsRoots = HashSet<File>()
+    val srcDirsSources = HashSet<SourceDirectorySet>()
     val compiler = K2JVMCompiler()
 
     private val logger = Logging.getLogger(this.javaClass)
@@ -44,9 +44,9 @@ public open class KotlinCompile(): AbstractCompile() {
 
     // override setSource to track source directory sets
     override fun setSource(source: Any?) {
-        srcDirsRoots.clear()
+        srcDirsSources.clear()
         if (source is SourceDirectorySet) {
-            srcDirsRoots.addAll(source.getSrcDirs())
+            srcDirsSources.add(source)
         }
         super.setSource(source)
     }
@@ -55,7 +55,7 @@ public open class KotlinCompile(): AbstractCompile() {
     override fun source(vararg sources: Any?): SourceTask? {
         for (source in sources) {
             if (source is SourceDirectorySet) {
-                srcDirsRoots.addAll(source.getSrcDirs())
+                srcDirsSources.add(source)
             }
         }
         return super.source(sources)
@@ -63,10 +63,12 @@ public open class KotlinCompile(): AbstractCompile() {
 
     fun findSrcDirRoot(file: File): File? {
         val absPath = file.getAbsolutePath()
-        for (root in srcDirsRoots) {
-            val rootAbsPath = root.getAbsolutePath()
-            if (FilenameUtils.directoryContains(rootAbsPath, absPath)) {
-                return root
+        for (source in srcDirsSources) {
+            for (root in source.getSrcDirs()) {
+                val rootAbsPath = root.getAbsolutePath()
+                if (FilenameUtils.directoryContains(rootAbsPath, absPath)) {
+                    return root
+                }
             }
         }
         return null
