@@ -19,4 +19,4 @@ object Y {
 val <T> T.javaClass : Class<T>
     get() = throw Exception()
 
-fun <reified T> javaClass() : Class<T> = throw Exception()
+fun <<!REIFIED_TYPE_PARAMETER_NO_INLINE!>reified<!> T> javaClass() : Class<T> = throw Exception()

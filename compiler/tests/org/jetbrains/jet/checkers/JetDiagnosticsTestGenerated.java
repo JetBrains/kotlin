@@ -4506,6 +4506,30 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified/InType.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("InlineableReified.kt")
+                public void testInlineableReified() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified/InlineableReified.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("LocalFun.kt")
+                public void testLocalFun() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified/LocalFun.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("NotInlineableReified.kt")
+                public void testNotInlineableReified() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified/NotInlineableReified.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ReifiedClass.kt")
+                public void testReifiedClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified/ReifiedClass.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/generics/varProjection")

@@ -35,10 +35,21 @@ import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import org.jetbrains.jet.lang.psi.JetTypeParameter
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.resolve.annotations.hasIntrinsicAnnotation
 
 public object JavaDeclarationCheckerProvider : AdditionalCheckerProvider {
 
-    override val annotationCheckers: List<AnnotationChecker> = listOf(PlatformStaticAnnotationChecker(), LocalFunInlineChecker())
+    override val annotationCheckers: List<AnnotationChecker> = listOf(
+            PlatformStaticAnnotationChecker(), LocalFunInlineChecker(), ReifiedTypeParameterAnnotationChecker()
+    )
 }
 
 public class LocalFunInlineChecker : AnnotationChecker {
@@ -84,5 +95,36 @@ public class PlatformStaticAnnotationChecker : AnnotationChecker {
                 check(setter, (descriptor as PropertyDescriptor).getSetter()!!, diagnosticHolder)
             }
         }
+    }
+}
+
+public class ReifiedTypeParameterAnnotationChecker : AnnotationChecker {
+
+    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+        if (descriptor.hasIntrinsicAnnotation()) return
+
+        if (descriptor is CallableDescriptor && !descriptor.hasInlineAnnotation()) {
+            checkTypeParameterDescriptorsAreNotReified(descriptor.getTypeParameters(), diagnosticHolder)
+        }
+        if (descriptor is ClassDescriptor) {
+            checkTypeParameterDescriptorsAreNotReified(descriptor.getTypeConstructor().getParameters(), diagnosticHolder)
+        }
+    }
+
+}
+
+private fun checkTypeParameterDescriptorsAreNotReified(
+        typeParameterDescriptors: List<TypeParameterDescriptor>,
+        diagnosticHolder: DiagnosticSink
+) {
+    for (reifiedTypeParameterDescriptor in typeParameterDescriptors.filter { it.isReified() }) {
+        val typeParameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(reifiedTypeParameterDescriptor)
+        if (typeParameterDeclaration !is JetTypeParameter) throw AssertionError("JetTypeParameter expected")
+
+        diagnosticHolder.report(
+                Errors.REIFIED_TYPE_PARAMETER_NO_INLINE.on(
+                        typeParameterDeclaration.getModifierList().getModifier(JetTokens.REIFIED_KEYWORD)!!
+                )
+        )
     }
 }
