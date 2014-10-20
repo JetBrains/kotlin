@@ -16,14 +16,9 @@
 
 package org.jetbrains.jet.jps.build
 
-import com.intellij.testFramework.TestDataPath
-import org.jetbrains.jet.JetTestUtils
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import java.io.File
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
-import org.jetbrains.jet.jps.incremental
-import com.sun.tools.javac.resources.version
 import org.jetbrains.jet.jps.incremental.IncrementalCacheImpl
 import kotlin.test.assertTrue
 
