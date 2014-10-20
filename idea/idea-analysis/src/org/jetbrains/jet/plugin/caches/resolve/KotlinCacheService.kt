@@ -182,15 +182,26 @@ public class KotlinCacheService(val project: Project) {
         val files = elements.map { it.getContainingJetFile() }.toSet()
         assertAreInSameModule(files)
 
-        if (files.all { !ProjectRootsUtil.isInProjectSource(it) }
-// TODO: decide what to do with this
-//            && files.all { it !is JetCodeFragment }
-        ) {
-            return getCacheForSyntheticFile(files).getAnalysisResultsForElements(elements)
+        val syntheticFiles = findSyntheticFiles(files)
+        if (syntheticFiles.isNotEmpty()) {
+            return getCacheForSyntheticFile(syntheticFiles).getAnalysisResultsForElements(elements)
         }
 
         val firstFile = elements.first().getContainingJetFile()
         return getGlobalCache(TargetPlatformDetector.getPlatform(firstFile)).getAnalysisResultsForElements(elements)
+    }
+
+    private fun findSyntheticFiles(files: Collection<JetFile>) = files.map {
+        if (it is JetCodeFragment) it.getContextFile() else it
+    }.filter {
+        !ProjectRootsUtil.isInProjectSource(it)
+    }.toSet()
+
+    private fun JetCodeFragment.getContextFile(): JetFile {
+        val contextElement = getContext() ?: throw AssertionError("Analyzing code fragment of type $javaClass with no context")
+        val contextFile = (contextElement as? JetElement)?.getContainingJetFile()
+                          ?: throw AssertionError("Analyzing kotlin code fragment of type $javaClass with java context of type ${contextElement.javaClass}")
+        return if (contextFile is JetCodeFragment) contextFile.getContextFile() else contextFile
     }
 
     private fun assertAreInSameModule(elements: Collection<JetElement>) {
