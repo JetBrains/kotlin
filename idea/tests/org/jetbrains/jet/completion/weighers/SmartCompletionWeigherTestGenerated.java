@@ -36,6 +36,12 @@ public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletion
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/weighers/smart"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
 
+    @TestMetadata("FunctionExpected.kt")
+    public void testFunctionExpected() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/FunctionExpected.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("MultipleArgsItem.kt")
     public void testMultipleArgsItem() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/MultipleArgsItem.kt");

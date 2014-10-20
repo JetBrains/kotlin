@@ -251,7 +251,9 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                 }
             }
 
-            return lookupElement.addTailAndNameSimilarity(matchedExpectedInfos)
+            return lookupElement
+                    .assignSmartCompletionPriority(SmartCompletionItemPriority.FUNCTION_REFERENCE)
+                    .addTailAndNameSimilarity(matchedExpectedInfos)
         }
 
         if (descriptor is SimpleFunctionDescriptor) {
