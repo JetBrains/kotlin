@@ -171,8 +171,9 @@ public class KotlinCacheService(val project: Project) {
 
     public fun getLazyResolveSession(element: JetElement): ResolveSessionForBodies {
         val file = element.getContainingJetFile()
-        if (!ProjectRootsUtil.isInProjectSource(file)) {
-            return getCacheForSyntheticFile(setOf(file)).getLazyResolveSession(file)
+        val syntheticFiles = findSyntheticFiles(listOf(file))
+        if (syntheticFiles.isNotEmpty()) {
+            return getCacheForSyntheticFile(syntheticFiles).getLazyResolveSession(file)
         }
 
         return getGlobalLazyResolveSession(file, TargetPlatformDetector.getPlatform(file))
