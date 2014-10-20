@@ -1080,7 +1080,19 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/defaultCF.kt");
                 doExtractFunctionTest(fileName);
             }
-
+            
+            @TestMetadata("insertAfterDuplicates.kt")
+            public void testInsertAfterDuplicates() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/insertAfterDuplicates.kt");
+                doExtractFunctionTest(fileName);
+            }
+            
+            @TestMetadata("insertBeforeDuplicates.kt")
+            public void testInsertBeforeDuplicates() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/insertBeforeDuplicates.kt");
+                doExtractFunctionTest(fileName);
+            }
+            
             @TestMetadata("multipleOutputValuesMatching.kt")
             public void testMultipleOutputValuesMatching() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/duplicates/multipleOutputValuesMatching.kt");

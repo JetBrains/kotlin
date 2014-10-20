@@ -11,17 +11,6 @@ fun test(a: Int): Int {
     return t
 }
 
-private fun i(a: Int, b: Int): Int {
-    var b1 = b
-    return if (a > 0) {
-        b1++
-        b1 + a
-    } else {
-        b1--
-        b1 - a
-    }
-}
-
 fun foo1() {
     val x = 1
     var y: Int = x
@@ -67,4 +56,15 @@ fun foo4() {
 fun foo5(x: Int): Int {
     var p: Int = 1
     i(x, p)
+}
+
+private fun i(a: Int, b: Int): Int {
+    var b1 = b
+    return if (a > 0) {
+        b1++
+        b1 + a
+    } else {
+        b1--
+        b1 - a
+    }
 }

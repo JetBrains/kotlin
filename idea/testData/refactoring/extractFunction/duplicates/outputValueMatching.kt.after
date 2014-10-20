@@ -7,11 +7,6 @@ fun test(a: Int): Int {
     return i(a)
 }
 
-private fun i(a: Int): Int {
-    println(a)
-    return a + 1
-}
-
 fun foo1(): Int {
     val x = 1
     val y = i(x)
@@ -38,4 +33,9 @@ fun foo4(a: Int): Int {
 
 fun foo5(a: Int) {
     i(a)
+}
+
+private fun i(a: Int): Int {
+    println(a)
+    return a + 1
 }

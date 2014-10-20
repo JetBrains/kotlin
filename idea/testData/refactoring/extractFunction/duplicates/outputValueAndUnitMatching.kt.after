@@ -10,11 +10,6 @@ fun test(): () -> Int {
     }
 }
 
-private fun i(z: Int): Int {
-    println(z)
-    return z + 1
-}
-
 fun foo1(a: Int): Int {
     val t = println(a)
     return a + 1
@@ -22,4 +17,9 @@ fun foo1(a: Int): Int {
 
 fun foo2(a: Int) {
     i(a)
+}
+
+private fun i(z: Int): Int {
+    println(z)
+    return z + 1
 }

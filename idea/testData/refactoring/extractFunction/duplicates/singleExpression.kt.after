@@ -8,10 +8,6 @@ fun foo(a: Int, b: Int): Int {
     return i(a, b) + 1
 }
 
-private fun i(a: Int, b: Int): Int {
-    return a + b * a
-}
-
 fun bar() {
     fun f() = 1
 
@@ -26,4 +22,8 @@ fun bar() {
     a + c
     i(f(), a)
     i(f(), f())
+}
+
+private fun i(a: Int, b: Int): Int {
+    return a + b * a
 }
