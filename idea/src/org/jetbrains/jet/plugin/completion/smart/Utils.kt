@@ -34,6 +34,8 @@ import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -155,8 +157,26 @@ fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () ->
 }
 
 fun functionType(function: FunctionDescriptor): JetType? {
+    val extensionReceiverType = function.getExtensionReceiverParameter()?.getType()
+    val memberReceiverType = if (function is ConstructorDescriptor) {
+        val classDescriptor = function.getContainingDeclaration()
+        if (classDescriptor.isInner()) {
+            (classDescriptor.getContainingDeclaration() as? ClassifierDescriptor)?.getDefaultType()
+        }
+        else {
+            null
+        }
+    }
+    else {
+        (function.getContainingDeclaration() as? ClassifierDescriptor)?.getDefaultType()
+    }
+    //TODO: this is to be changed when references to member extensions supported
+    val receiverType = if (extensionReceiverType != null && memberReceiverType != null)
+        null
+    else
+        extensionReceiverType ?: memberReceiverType
     return KotlinBuiltIns.getInstance().getFunctionType(function.getAnnotations(),
-                                                        null,
+                                                        receiverType,
                                                         function.getValueParameters().map { it.getType() },
                                                         function.getReturnType() ?: return null)
 }

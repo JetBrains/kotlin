@@ -7,5 +7,5 @@ fun bar() {
 fun String.f1(){}
 fun f2(){}
 
-// EXIST: ::f1
+// EXIST: String::f1
 // ABSENT: ::f2

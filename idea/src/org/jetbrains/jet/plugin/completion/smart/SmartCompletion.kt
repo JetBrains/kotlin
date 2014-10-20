@@ -231,8 +231,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         if (functionExpectedInfos.isEmpty()) return null
 
         fun toLookupElement(descriptor: FunctionDescriptor): LookupElement? {
-            val functionType = functionType(descriptor)
-            if (functionType == null) return null
+            val functionType = functionType(descriptor) ?: return null
 
             val matchedExpectedInfos = functionExpectedInfos.filter { functionType.isSubtypeOf(it.type) }
             if (matchedExpectedInfos.isEmpty()) return null
