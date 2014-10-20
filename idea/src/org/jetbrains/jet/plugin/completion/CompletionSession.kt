@@ -209,7 +209,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                 val filter = result.declarationFilter
                 if (filter != null) {
                     TipsManager.getReferenceVariants(jetReference.expression, bindingContext!!)
-                            .forEach { if (isVisibleDescriptor(it)) collector.addElements(filter(it)) }
+                            .forEach { if (prefixMatcher.prefixMatches(it.getName().asString()) && isVisibleDescriptor(it)) collector.addElements(filter(it)) }
 
                     flushToResultSet()
 
