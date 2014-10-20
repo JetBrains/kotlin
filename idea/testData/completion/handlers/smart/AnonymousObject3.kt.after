@@ -1,6 +1,6 @@
 var r : Runnable = object: Runnable {
     override fun run() {
-        throw UnsupportedOperationException()
+        <caret><selection>throw UnsupportedOperationException()</selection>
     }
 }
 

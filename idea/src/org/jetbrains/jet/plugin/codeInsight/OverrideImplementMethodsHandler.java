@@ -32,6 +32,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -126,6 +127,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         });
 
         if (firstGenerated != null) {
+            PostprocessReformattingAspect.getInstance(firstGenerated.getProject()).doPostponedFormatting();
             QuickfixPackage.moveCaretIntoGeneratedElement(editor, firstGenerated);
         }
     }
