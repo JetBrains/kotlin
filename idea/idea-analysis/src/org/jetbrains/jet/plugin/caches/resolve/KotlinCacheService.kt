@@ -159,7 +159,7 @@ public class KotlinCacheService(val project: Project) {
         }
     }
 
-    private fun getCacheForSyntheticFile(files: Set<JetFile>): KotlinResolveCache {
+    private fun getCacheForSyntheticFiles(files: Set<JetFile>): KotlinResolveCache {
         return synchronized(syntheticFileCaches) {
             syntheticFileCaches[files]
         }
@@ -173,7 +173,7 @@ public class KotlinCacheService(val project: Project) {
         val file = element.getContainingJetFile()
         val syntheticFiles = findSyntheticFiles(listOf(file))
         if (syntheticFiles.isNotEmpty()) {
-            return getCacheForSyntheticFile(syntheticFiles).getLazyResolveSession(file)
+            return getCacheForSyntheticFiles(syntheticFiles).getLazyResolveSession(file)
         }
 
         return getGlobalLazyResolveSession(file, TargetPlatformDetector.getPlatform(file))
@@ -185,7 +185,7 @@ public class KotlinCacheService(val project: Project) {
 
         val syntheticFiles = findSyntheticFiles(files)
         if (syntheticFiles.isNotEmpty()) {
-            return getCacheForSyntheticFile(syntheticFiles).getAnalysisResultsForElements(elements)
+            return getCacheForSyntheticFiles(syntheticFiles).getAnalysisResultsForElements(elements)
         }
 
         val firstFile = elements.first().getContainingJetFile()
