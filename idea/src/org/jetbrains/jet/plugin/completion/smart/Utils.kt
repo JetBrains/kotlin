@@ -209,6 +209,7 @@ enum class SmartCompletionItemPriority {
     LAMBDA_NO_PARAMS
     LAMBDA
     FUNCTION_REFERENCE
+    NULL
 }
 
 val SMART_COMPLETION_ITEM_PRIORITY_KEY = Key<SmartCompletionItemPriority>("SMART_COMPLETION_ITEM_PRIORITY_KEY")
