@@ -35,7 +35,8 @@ public class JetBlockExpression extends JetExpressionImpl implements JetStatemen
 
     @Override
     public boolean shouldChangeModificationCount(PsiElement place) {
-        return JetModifiableBlockHelper.shouldChangeModificationCount(place);
+        // To prent OutOfBlockModification increase from JavaCodeBlockModificationListener
+        return false;
     }
 
     @Override

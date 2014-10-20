@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetModifiableBlockHelper;
 
 public class JetCodeBlockModificationListener implements PsiTreeChangePreprocessor {
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.asJava.JetCodeBlockModificationListener");
@@ -75,7 +76,7 @@ public class JetCodeBlockModificationListener implements PsiTreeChangePreprocess
     private void processChange(PsiElement parent, PsiElement child1, PsiElement child2) {
         try {
             if (!isInsideCodeBlock(parent)) {
-                if (parent != null && parent.getContainingFile() instanceof JetFile) {
+                if (parent.getContainingFile() instanceof JetFile) {
                     myModificationTracker.incCounter();
                 }
                 else {
@@ -84,7 +85,7 @@ public class JetCodeBlockModificationListener implements PsiTreeChangePreprocess
                 return;
             }
 
-            if (containsClassesInside(child1) || child2 != child1 && containsClassesInside(child2)) {
+            if (containsClassesInside(child1) || (child2 != child1 && containsClassesInside(child2))) {
                 myModificationTracker.incCounter();
             }
         } catch (PsiInvalidElementAccessException e) {
@@ -119,7 +120,9 @@ public class JetCodeBlockModificationListener implements PsiTreeChangePreprocess
             }
             if (parent instanceof JetClass) return false; // anonymous or local class
             if (parent instanceof JetBlockExpression) {
-                return true;
+                if (!JetModifiableBlockHelper.shouldChangeModificationCount(element)) {
+                    return true;
+                }
             }
             parent = parent.getParent();
         }

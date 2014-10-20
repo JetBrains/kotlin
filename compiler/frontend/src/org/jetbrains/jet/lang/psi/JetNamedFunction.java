@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiModifiableCodeBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +33,8 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFunctionStub> implements JetFunction, JetWithExpressionInitializer {
+public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFunctionStub>
+        implements JetFunction, JetWithExpressionInitializer, PsiModifiableCodeBlock {
     public JetNamedFunction(@NotNull ASTNode node) {
         super(node);
     }
@@ -188,5 +190,11 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
     public boolean isLocal() {
         PsiElement parent = getParent();
         return !(parent instanceof JetFile || parent instanceof JetClassBody);
+    }
+
+    @Override
+    public boolean shouldChangeModificationCount(PsiElement place) {
+        // Suppress Java check for out-of-block
+        return false;
     }
 }
