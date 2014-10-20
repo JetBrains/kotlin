@@ -1,4 +1,6 @@
-fun <reified T> f(): T = throw UnsupportedOperationException()
+// !DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER
+
+inline fun <reified T> f(): T = throw UnsupportedOperationException()
 
 fun <T> id(p: T): T = p
 
