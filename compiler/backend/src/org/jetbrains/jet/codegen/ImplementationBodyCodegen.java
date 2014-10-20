@@ -485,7 +485,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                 iv.load(0, classAsmType);
                 iv.invokestatic("kotlin/jvm/internal/CollectionToArray", "toArray", "(Ljava/util/Collection;)[Ljava/lang/Object;", false);
-                iv.areturn(Type.getObjectType("[Ljava/lang/Object;"));
+                iv.areturn(Type.getType("[Ljava/lang/Object;"));
 
                 FunctionCodegen.endVisit(mv, "toArray", myClass);
             }
@@ -499,11 +499,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 mv.visitCode();
 
                 iv.load(0, classAsmType);
-                iv.load(1, Type.getObjectType("[Ljava/lang/Object;"));
+                iv.load(1, Type.getType("[Ljava/lang/Object;"));
 
                 iv.invokestatic("kotlin/jvm/internal/CollectionToArray", "toArray",
                                 "(Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;", false);
-                iv.areturn(Type.getObjectType("[Ljava/lang/Object;"));
+                iv.areturn(Type.getType("[Ljava/lang/Object;"));
 
                 FunctionCodegen.endVisit(mv, "toArray", myClass);
             }
