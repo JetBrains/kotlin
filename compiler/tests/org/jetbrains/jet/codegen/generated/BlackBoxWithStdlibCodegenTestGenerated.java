@@ -634,6 +634,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("genericProperty.kt")
+            public void testGenericProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/genericProperty.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("javaBeanConvention.kt")
             public void testJavaBeanConvention() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/javaBeanConvention.kt");
