@@ -342,6 +342,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("InaccessibleDeclarations.kt")
+    public void testInaccessibleDeclarations() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/InaccessibleDeclarations.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InfixCall.kt")
     public void testInfixCall() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/InfixCall.kt");
