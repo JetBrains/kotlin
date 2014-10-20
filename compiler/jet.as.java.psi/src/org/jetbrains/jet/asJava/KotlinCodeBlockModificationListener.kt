@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.shouldChangeModificationCount
 
-public class JetCodeBlockModificationListener(modificationTracker: PsiModificationTracker) : PsiTreeChangePreprocessor {
+public class KotlinCodeBlockModificationListener(modificationTracker: PsiModificationTracker) : PsiTreeChangePreprocessor {
     private val myModificationTracker = modificationTracker as PsiModificationTrackerImpl
 
     override fun treeChanged(event: PsiTreeChangeEventImpl) {
