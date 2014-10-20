@@ -30,6 +30,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -384,12 +385,21 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         BindingContext bindingContext = resolveSession.resolveToElement(callNameExpression);
 
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
-        DeclarationDescriptor placeDescriptor = null;
+        final DeclarationDescriptor placeDescriptor;
         if (scope != null) {
             placeDescriptor = scope.getContainingDeclaration();
         }
+        else {
+            placeDescriptor = null;
+        }
+        Function1<DeclarationDescriptor, Boolean> visibilityFilter = new Function1<DeclarationDescriptor, Boolean>() {
+            @Override
+            public Boolean invoke(DeclarationDescriptor descriptor) {
+                return placeDescriptor == null || JetVisibilityChecker.isVisible(placeDescriptor, descriptor);
+            }
+        };
 
-        Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(callNameExpression, bindingContext);
+        Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(callNameExpression, bindingContext, visibilityFilter);
 
         Name refName = callNameExpression.getReferencedNameAsName();
 
@@ -399,9 +409,6 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) variant;
                 if (functionDescriptor.getName().equals(refName)) {
                     //todo: renamed functions?
-                    if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, functionDescriptor)) {
-                        continue;
-                    }
                     itemsToShow.add(Pair.create(functionDescriptor, resolveSession));
                 }
             }
@@ -410,9 +417,6 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                 if (classDescriptor.getName().equals(refName)) {
                     //todo: renamed classes?
                     for (ConstructorDescriptor constructorDescriptor : classDescriptor.getConstructors()) {
-                        if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, constructorDescriptor)) {
-                            continue;
-                        }
                         itemsToShow.add(Pair.create(constructorDescriptor, resolveSession));
                     }
                 }

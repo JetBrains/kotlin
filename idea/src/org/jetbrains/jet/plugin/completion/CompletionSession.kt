@@ -194,7 +194,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun addReferenceVariants(filterCondition: (DeclarationDescriptor) -> Boolean = { true }) {
-        val descriptors = TipsManager.getReferenceVariants(jetReference!!.expression, bindingContext!!)
+        val descriptors = TipsManager.getReferenceVariants(jetReference!!.expression, bindingContext!!) { isVisibleDescriptor(it) }
         collector.addDescriptorElements(descriptors.filter { filterCondition(it) }, suppressAutoInsertion = false)
     }
 }
@@ -211,8 +211,8 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
                 val filter = result.declarationFilter
                 if (filter != null) {
-                    TipsManager.getReferenceVariants(jetReference.expression, bindingContext!!)
-                            .forEach { if (prefixMatcher.prefixMatches(it.getName().asString()) && isVisibleDescriptor(it)) collector.addElements(filter(it)) }
+                    TipsManager.getReferenceVariants(jetReference.expression, bindingContext!!) { isVisibleDescriptor(it) }
+                            .forEach { if (prefixMatcher.prefixMatches(it.getName().asString())) collector.addElements(filter(it)) }
 
                     flushToResultSet()
 
