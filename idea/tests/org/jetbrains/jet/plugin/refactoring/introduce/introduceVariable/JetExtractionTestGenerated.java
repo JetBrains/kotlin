@@ -296,7 +296,13 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/asProperty/extractToFunction.kt");
                 doExtractFunctionTest(fileName);
             }
-
+            
+            @TestMetadata("extractUnit.kt")
+            public void testExtractUnit() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/asProperty/extractUnit.kt");
+                doExtractFunctionTest(fileName);
+            }
+            
             @TestMetadata("extractWithParams.kt")
             public void testExtractWithParams() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/asProperty/extractWithParams.kt");
