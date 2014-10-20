@@ -195,6 +195,7 @@ public class DeclarationsChecker {
                 switch (typeParameterDescriptor.getVariance()) {
                     case INVARIANT:
                         // Leave conflicting types as is
+                        Filter.REMOVE_IF_EQUAL_TYPE_IN_THE_SET.proceed(conflictingTypes);
                         break;
                     case IN_VARIANCE:
                         // Filter out those who have supertypes in this set (common supertype)
@@ -232,6 +233,12 @@ public class DeclarationsChecker {
             @Override
             public boolean removeNeeded(JetType subject, JetType other) {
                 return JetTypeChecker.DEFAULT.isSubtypeOf(subject, other);
+            }
+        },
+        REMOVE_IF_EQUAL_TYPE_IN_THE_SET {
+            @Override
+            public boolean removeNeeded(JetType subject, JetType other) {
+                return JetTypeChecker.DEFAULT.equalTypes(subject, other);
             }
         };
 

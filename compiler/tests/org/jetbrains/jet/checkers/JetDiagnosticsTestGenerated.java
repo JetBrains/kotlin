@@ -7753,6 +7753,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("supertypeArgumentsExplicit.kt")
+            public void testSupertypeArgumentsExplicit() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/supertypeArgumentsExplicit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("supertypeTypeArguments.kt")
+            public void testSupertypeTypeArguments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/supertypeTypeArguments.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/commonSupertype")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
