@@ -116,7 +116,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                         else -> ExpectedInfoClassification.NOT_MATCHES
                     }
                 }
-                result.addLookupElements(expectedInfos, classifier, { createLookupElement(descriptor, resolveSession) })
+                result.addLookupElements(expectedInfos, classifier, { createLookupElement(descriptor, resolveSession, bindingContext) })
 
                 if (receiver == null) {
                     toFunctionReferenceLookupElement(descriptor, functionExpectedInfos)?.let { result.add(it) }
@@ -127,7 +127,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
         val additionalItems = ArrayList<LookupElement>()
         if (receiver == null) {
-            TypeInstantiationItems(resolveSession, visibilityFilter).addToCollection(additionalItems, expectedInfos)
+            TypeInstantiationItems(resolveSession, bindingContext, visibilityFilter).addToCollection(additionalItems, expectedInfos)
 
             StaticMembers(bindingContext, resolveSession).addToCollection(additionalItems, expectedInfos, expression, itemsToSkip)
 
@@ -236,7 +236,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             val matchedExpectedInfos = functionExpectedInfos.filter { functionType.isSubtypeOf(it.type) }
             if (matchedExpectedInfos.isEmpty()) return null
 
-            var lookupElement = createLookupElement(descriptor, resolveSession)
+            var lookupElement = createLookupElement(descriptor, resolveSession, bindingContext)
             val text = "::" + (if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration().getName() else descriptor.getName())
             lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
                 override fun getLookupString() = text
@@ -293,7 +293,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         if (jetType.isError()) return null
         val classifier = jetType.getConstructor().getDeclarationDescriptor() ?: return null
 
-        val lookupElement = createLookupElement(classifier, resolveSession)
+        val lookupElement = createLookupElement(classifier, resolveSession, bindingContext)
         val lookupString = lookupElement.getLookupString()
 
         val typeArgs = jetType.getArguments()

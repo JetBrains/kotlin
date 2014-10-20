@@ -37,6 +37,8 @@ import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
 import com.intellij.openapi.util.Key
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.jet.lang.resolve.BindingContext
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -184,9 +186,18 @@ fun functionType(function: FunctionDescriptor): JetType? {
                                                         function.getReturnType() ?: return null)
 }
 
-fun createLookupElement(descriptor: DeclarationDescriptor, resolveSession: ResolveSessionForBodies): LookupElement {
-    val element = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
-    return if (descriptor is FunctionDescriptor && descriptor.getValueParameters().isNotEmpty()) element.keepOldArgumentListOnTab() else element
+fun createLookupElement(descriptor: DeclarationDescriptor, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): LookupElement {
+    var element = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
+
+    if (descriptor is FunctionDescriptor && descriptor.getValueParameters().isNotEmpty()) {
+        element = element.keepOldArgumentListOnTab()
+    }
+
+    if (descriptor is ValueParameterDescriptor && bindingContext[BindingContext.AUTO_CREATED_IT, descriptor]) {
+        element = element.assignSmartCompletionPriority(SmartCompletionItemPriority.IT)
+    }
+
+    return element
 }
 
 fun JetType.isSubtypeOf(expectedType: JetType) = !isError() && JetTypeChecker.DEFAULT.isSubtypeOf(this, expectedType)
@@ -197,7 +208,7 @@ fun <T : Any> T?.toSet(): Set<T> = if (this != null) setOf(this) else setOf()
 fun String?.isNullOrEmpty() = this == null || this.isEmpty()
 
 enum class SmartCompletionItemPriority {
-    /*IT*/ //TODO
+    IT
     TRUE
     FALSE
     THIS
