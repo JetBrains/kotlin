@@ -18,11 +18,11 @@ package org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps
 
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.cfg.Label
-import java.util.Collections
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.JetElementInstructionImpl
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.jet.utils.emptyOrSingletonList
 
 public abstract class AbstractJumpInstruction(
         element: JetElement,
@@ -45,5 +45,5 @@ public abstract class AbstractJumpInstruction(
     }
 
     override val nextInstructions: Collection<Instruction>
-        get() = Collections.singleton(resolvedTarget)
+        get() = emptyOrSingletonList(resolvedTarget)
 }

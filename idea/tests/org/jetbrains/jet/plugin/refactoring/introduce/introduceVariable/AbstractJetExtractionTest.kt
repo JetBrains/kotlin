@@ -33,19 +33,17 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.psi.JetPackageDirective
 import org.jetbrains.jet.InTextDirectivesUtils
 import org.jetbrains.jet.renderer.DescriptorRenderer
-import java.util.ArrayList
-import com.intellij.util.containers.ContainerUtil
 import kotlin.test.assertEquals
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandlerHelper
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionGeneratorOptions
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractableCodeDescriptor
-import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.jet.testing.ConfigLibraryUtil
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionData
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions
+import org.jetbrains.jet.utils.emptyOrSingletonList
 
 public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
@@ -111,7 +109,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                             }
 
                             override fun adjustDescriptor(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptor {
-                                val allParameters = ContainerUtil.createMaybeSingletonList(descriptor.receiverParameter) + descriptor.parameters
+                                val allParameters = emptyOrSingletonList(descriptor.receiverParameter) + descriptor.parameters
                                 val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
                                 val actualTypes = allParameters.map {
                                     it.parameterTypeCandidates.map { renderer.renderType(it) }.joinToString(", ", "[", "]")

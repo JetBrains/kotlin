@@ -21,13 +21,13 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.cfg.Label
 import com.google.common.collect.Maps
 import com.google.common.collect.Lists
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.JetElementInstructionImpl
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
+import org.jetbrains.jet.utils.emptyOrSingletonList
 
 public class NondeterministicJumpInstruction(
         element: JetElement,
@@ -60,7 +60,7 @@ public class NondeterministicJumpInstruction(
         }
 
     override val inputValues: List<PseudoValue>
-        get() = ContainerUtil.createMaybeSingletonList(inputValue)
+        get() = emptyOrSingletonList(inputValue)
 
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitNondeterministicJump(this)
