@@ -125,11 +125,6 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
                 }
                 is JetProperty -> {
                     val property = blockDeclarationCandidate : JetProperty
-                    val typeReference = property.getTypeReference()
-                    if (typeReference != null && property.getInitializer().isAncestorOf(element)) {
-                        return true
-                    }
-
                     for (accessor in property.getAccessors()) {
                         when {
                             accessor.getInitializer().isAncestorOf(element) -> return true

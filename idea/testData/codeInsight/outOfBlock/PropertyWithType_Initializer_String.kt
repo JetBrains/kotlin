@@ -1,3 +1,3 @@
-// FALSE
+// TRUE
 
 val test: String = "<caret>"

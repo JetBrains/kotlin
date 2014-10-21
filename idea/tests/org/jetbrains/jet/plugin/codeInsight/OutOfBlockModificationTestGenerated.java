@@ -192,6 +192,24 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         doTest(fileName);
     }
 
+    @TestMetadata("PropNotNullType_Initializer_ObjectLiteral_Fun.kt")
+    public void testPropNotNullType_Initializer_ObjectLiteral_Fun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/PropNotNullType_Initializer_ObjectLiteral_Fun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("PropNullType_Initializer_If_Fun.kt")
+    public void testPropNullType_Initializer_If_Fun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/PropNullType_Initializer_If_Fun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("PropNullType_Initializer_ObjectLiteral_Fun.kt")
+    public void testPropNullType_Initializer_ObjectLiteral_Fun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/PropNullType_Initializer_ObjectLiteral_Fun.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("PropertyNoType_Initializer_String.kt")
     public void testPropertyNoType_Initializer_String() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/PropertyNoType_Initializer_String.kt");
