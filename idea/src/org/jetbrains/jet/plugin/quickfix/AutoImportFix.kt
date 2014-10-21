@@ -49,7 +49,6 @@ import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.asJava.unwrapped
-import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.jet.lang.descriptors.Visibilities
@@ -119,7 +118,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
         val resolveSession = element.getLazyResolveSession()
 
-        val searchScope = searchScopeForSourceElementDependencies(file) ?: return listOf()
+        val searchScope = file.getResolveScope()
 
         val bindingContext = resolveSession.resolveToElement(element)
 

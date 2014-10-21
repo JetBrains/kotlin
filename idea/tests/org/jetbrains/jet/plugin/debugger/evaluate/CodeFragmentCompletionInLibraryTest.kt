@@ -51,17 +51,38 @@ public class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTes
     }
 
     public fun testCompletionInCustomLibrary() {
+        testCompletionInLibraryCodeFragment("<caret>", "EXIST: parameter")
+    }
+
+    public fun testSecondCompletionInCustomLibrary() {
+        testCompletionInLibraryCodeFragment("Sh<caret>", "EXIST: ShortRange", "EXIST: Short", "INVOCATION_COUNT: 2")
+    }
+
+    public fun testExtensionCompletionInCustomLibrary() {
+        testCompletionInLibraryCodeFragment("3.extOn<caret>", "EXIST: extOnInt")
+    }
+
+    public fun testJavaTypesCompletion() {
+        testCompletionInLibraryCodeFragment("Hash<caret>", "EXIST: HashMap", "EXIST: HashSet")
+    }
+
+    private fun testCompletionInLibraryCodeFragment(fragmentText: String, vararg completionDirectives: String) {
+        setupFixtureByCodeFragment(fragmentText)
+        val directives = completionDirectives.map { "//$it" }.joinToString(separator = "\n")
+        testCompletion(directives, TargetPlatform.JVM, {
+            myFixture.complete(CompletionType.BASIC)
+        })
+    }
+
+    private fun setupFixtureByCodeFragment(fragmentText: String) {
         val sourceFile = findLibrarySourceDir().findChild("customLibrary.kt")
         val jetFile = PsiManager.getInstance(getProject()).findFile(sourceFile) as JetFile
         val fooFunctionFromLibrary = jetFile.getDeclarations().first() as JetFunction
         val codeFragment = JetPsiFactory(fooFunctionFromLibrary).createExpressionCodeFragment(
-                "<caret>",
+                fragmentText,
                 KotlinCodeFragmentFactory.getContextElement(fooFunctionFromLibrary.getBodyExpression())
         )
         myFixture.configureFromExistingVirtualFile(codeFragment.getVirtualFile())
-        testCompletion("//EXIST: parameter", TargetPlatform.JVM, {
-            myFixture.complete(CompletionType.BASIC)
-        })
     }
 
     private fun findLibrarySourceDir(): VirtualFile {

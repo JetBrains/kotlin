@@ -29,7 +29,6 @@ import org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
-import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 class TypesCompletion(val parameters: CompletionParameters,
@@ -40,12 +39,13 @@ class TypesCompletion(val parameters: CompletionParameters,
         result.addDescriptorElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses().filter { prefixMatcher.prefixMatches(it.getName().asString()) },
                                      suppressAutoInsertion = true)
 
-        val project = parameters.getOriginalFile().getProject()
-        val searchScope = searchScopeForSourceElementDependencies(parameters.getOriginalFile()) ?: return
+        val file = parameters.getOriginalFile()
+        val project = file.getProject()
+        val searchScope = file.getResolveScope()
         result.addDescriptorElements(KotlinIndicesHelper(project, resolveSession, searchScope, visibilityFilter).getClassDescriptors { prefixMatcher.prefixMatches(it) },
                                      suppressAutoInsertion = true)
 
-        if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
+        if (!ProjectStructureUtil.isJsKotlinModule(file as JetFile)) {
             addAdaptedJavaCompletion(result)
         }
     }

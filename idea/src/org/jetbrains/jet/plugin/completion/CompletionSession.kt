@@ -32,7 +32,6 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -62,7 +61,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession)
 
     protected val project: Project = position.getProject()
-    protected val searchScope: GlobalSearchScope = searchScopeForSourceElementDependencies(parameters.getOriginalFile()) ?: GlobalSearchScope.EMPTY_SCOPE
+    protected val searchScope: GlobalSearchScope = parameters.getOriginalFile().getResolveScope()
     protected val indicesHelper: KotlinIndicesHelper = KotlinIndicesHelper(project, resolveSession, searchScope) { isVisibleDescriptor(it) }
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
