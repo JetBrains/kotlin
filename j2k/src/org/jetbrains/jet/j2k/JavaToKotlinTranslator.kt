@@ -19,7 +19,6 @@ package org.jetbrains.jet.j2k
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.lang.java.JavaLanguage
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
@@ -28,6 +27,7 @@ import org.jetbrains.jet.utils.PathUtil
 import java.io.File
 import java.net.URLClassLoader
 import com.intellij.codeInsight.NullableNotNullManager
+import com.intellij.psi.PsiModifierListOwner
 
 public object JavaToKotlinTranslator {
     private val DISPOSABLE = Disposer.newDisposable()
@@ -41,7 +41,10 @@ public object JavaToKotlinTranslator {
         val applicationEnvironment = JavaCoreApplicationEnvironment(DISPOSABLE)
         val javaCoreEnvironment = JavaCoreProjectEnvironment(DISPOSABLE, applicationEnvironment)
 
-        javaCoreEnvironment.getProject().registerService(javaClass<NullableNotNullManager>(), NullableNotNullManager())
+        javaCoreEnvironment.getProject().registerService(javaClass<NullableNotNullManager>(), object : NullableNotNullManager() {
+            override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)
+            override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
+        })
 
         for (root in PathUtil.getJdkClassesRoots()) {
             javaCoreEnvironment.addJarToClassPath(root)
