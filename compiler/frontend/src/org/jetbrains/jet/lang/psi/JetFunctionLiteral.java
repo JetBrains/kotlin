@@ -53,14 +53,14 @@ public class JetFunctionLiteral extends JetFunctionNotStubbed {
     }
 
     @NotNull
-    public ASTNode getOpenBraceNode() {
-        return getNode().findChildByType(JetTokens.LBRACE);
+    public PsiElement getLBrace() {
+        return findChildByType(JetTokens.LBRACE);
     }
 
     @Nullable
     @IfNotParsed
-    public ASTNode getClosingBraceNode() {
-        return getNode().findChildByType(JetTokens.RBRACE);
+    public PsiElement getRBrace() {
+        return findChildByType(JetTokens.RBRACE);
     }
 
     @Nullable

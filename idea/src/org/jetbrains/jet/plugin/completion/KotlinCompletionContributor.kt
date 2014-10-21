@@ -252,7 +252,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
         }
         if (prev?.getNode()?.getElementType() != JetTokens.LBRACE) return false
         val functionLiteral = prev!!.getParent() as? JetFunctionLiteral ?: return false
-        return functionLiteral.getOpenBraceNode().getPsi() == prev
+        return functionLiteral.getLBrace() == prev
     }
 
     private fun isAtEndOfLine(offset: Int, document: Document): Boolean {

@@ -70,7 +70,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
             oldParameterList.replace(newParameterList)
         }
         else {
-            val openBraceElement = functionLiteral.getOpenBraceNode().getPsi()
+            val openBraceElement = functionLiteral.getLBrace()
             val nextSibling = openBraceElement?.getNextSibling()
             val addNewline = nextSibling is PsiWhiteSpace && nextSibling.getText()?.contains("\n") ?: false
             val (whitespace, arrow) = psiFactory.createWhitespaceAndArrow()
