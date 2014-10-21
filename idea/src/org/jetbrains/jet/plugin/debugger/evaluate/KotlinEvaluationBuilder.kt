@@ -72,6 +72,9 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.codegen.StackValue
 import org.jetbrains.jet.lang.types.Flexibility
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.plugin.util.attachment.attachmentsByPsiFile
+import com.intellij.openapi.diagnostic.Attachment
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -85,6 +88,15 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
         val file = position.getFile()
         if (file !is JetFile) {
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in non-kotlin context")
+        }
+
+        if (codeFragment.getContext() !is JetElement) {
+            val attachments = (attachmentsByPsiFile(position.getFile()) +
+                               attachmentsByPsiFile(codeFragment) +
+                               listOf(Attachment("breakpoint.info", "line: ${position.getLine()}"))
+                              ).copyToArray()
+            logger.error("Trying to evaluate ${codeFragment.javaClass} with context ${codeFragment.getContext()?.javaClass}", *attachments)
+            throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in this context")
         }
 
         val packageName = file.getPackageDirective()?.getFqName()?.asString()
