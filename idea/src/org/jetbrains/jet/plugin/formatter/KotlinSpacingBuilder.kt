@@ -80,12 +80,12 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
             }
         }
 
-        fun emptyLinesIfLineBreakInLeft(emptyLines: Int) {
+        fun emptyLinesIfLineBreakInLeft(emptyLines: Int, numberOfLineFeedsOtherwise: Int = 1, numSpacesOtherwise: Int = 0) {
             newRule {(parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
                 val dependentSpacingRule = DependentSpacingRule(Trigger.HAS_LINE_FEEDS).registerData(Anchor.MIN_LINE_FEEDS, emptyLines + 1)
                 LineFeedDependantSpacing(
-                        0, 0,
-                        minimumLineFeeds = 1,
+                        numSpacesOtherwise, numSpacesOtherwise,
+                        minimumLineFeeds = numberOfLineFeedsOtherwise,
                         keepLineBreaks = codeStyleSettings.KEEP_LINE_BREAKS,
                         keepBlankLines = codeStyleSettings.KEEP_BLANK_LINES_IN_DECLARATIONS,
                         dependency = left.getTextRange(), rule = dependentSpacingRule)

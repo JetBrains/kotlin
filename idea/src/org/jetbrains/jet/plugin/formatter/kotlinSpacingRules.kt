@@ -50,6 +50,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
     val jetCommonSettings = settings.getCommonSettings(JetLanguage.INSTANCE)!!
 
     return rules(settings) {
+        val DECLARATIONS = TokenSet.create(PROPERTY, FUN, CLASS, OBJECT_DECLARATION, ENUM_ENTRY)
+
         custom {
             inPosition(left = CLASS, right = CLASS).emptyLinesIfLineBreakInLeft(1)
             inPosition(left = FUN, right = FUN).emptyLinesIfLineBreakInLeft(1)
@@ -58,6 +60,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             // Case left for alternative constructors
             inPosition(left = FUN, right = CLASS).emptyLinesIfLineBreakInLeft(1)
+
+            inPosition(left = ENUM_ENTRY, right = ENUM_ENTRY).emptyLinesIfLineBreakInLeft(
+                    emptyLines = 0, numSpacesOtherwise = 1, numberOfLineFeedsOtherwise = 0)
         }
 
         simple {
@@ -69,9 +74,19 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             before(DOC_COMMENT).lineBreakInCode()
             between(PROPERTY, PROPERTY).lineBreakInCode()
 
-            between(CLASS, FUN).blankLines(1)
-            between(CLASS, PROPERTY).blankLines(1)
-            between(PROPERTY, CLASS).blankLines(1)
+            // CLASS - CLASS is exception
+            between(CLASS, DECLARATIONS).blankLines(1)
+
+            // FUN - FUN, FUN - PROPERTY, FUN - CLASS are exceptions
+            between(FUN, DECLARATIONS).blankLines(1)
+
+            // PROPERTY - PROPERTY, PROPERTY - FUN are exceptions
+            between(PROPERTY, DECLARATIONS).blankLines(1)
+
+            between(OBJECT_DECLARATION, DECLARATIONS).blankLines(1)
+
+            // ENUM_ENTRY - ENUM_ENTRY is exception
+            between(ENUM_ENTRY, DECLARATIONS).blankLines(1)
 
             before(FUN).lineBreakInCode()
             before(PROPERTY).lineBreakInCode()

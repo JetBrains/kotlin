@@ -148,6 +148,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("EmptyLineAfterObjectDeclaration.after.kt")
+        public void testEmptyLineAfterObjectDeclaration() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineAfterObjectDeclaration.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("EmptyLineAfterPackage.after.kt")
         public void testEmptyLineAfterPackage() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineAfterPackage.after.kt");
@@ -169,6 +175,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("EmptyLineBetweenClasses.after.kt")
         public void testEmptyLineBetweenClasses() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenClasses.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("EmptyLineBetweenEnumEntries.after.kt")
+        public void testEmptyLineBetweenEnumEntries() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenEnumEntries.after.kt");
             doTest(fileName);
         }
 

@@ -33,7 +33,8 @@ enum class Test : A1 {
             Test()
 
     THIRD_ITEM : Test(),
-                 C1() FORTH_ITEM : Test()
+                 C1()
+    FORTH_ITEM : Test()
 }
 
 // SET_TRUE: ALIGN_MULTILINE_EXTENDS_LIST
