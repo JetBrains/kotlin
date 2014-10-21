@@ -23,11 +23,12 @@ import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.*
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.shouldChangeModificationCount
+import org.jetbrains.jet.lang.psi.*
+import com.intellij.psi.util.PsiTreeUtil
 
+/**
+ * Tested in OutOfBlockModificationTestGenerated
+ */
 public class KotlinCodeBlockModificationListener(modificationTracker: PsiModificationTracker) : PsiTreeChangePreprocessor {
     private val myModificationTracker = modificationTracker as PsiModificationTrackerImpl
 
@@ -65,7 +66,7 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
         }
     }
 
-    private fun processChange(parent: PsiElement?, child1: PsiElement, child2: PsiElement?) {
+    private fun processChange(parent: PsiElement?, child1: PsiElement?, child2: PsiElement?) {
         try {
             if (!isInsideCodeBlock(parent)) {
                 if (parent != null && parent.getContainingFile() is JetFile) {
@@ -121,5 +122,66 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
 
             return false
         }
+
+        public fun shouldChangeModificationCount(place: PsiElement): Boolean {
+            // false -> inside code block
+            // true -> means nothing, parent will be checked
+
+            val declaration = PsiTreeUtil.getParentOfType<JetDeclaration>(place, javaClass<JetDeclaration>(), true)
+            if (declaration == null) return true
+
+            return when (declaration) {
+                is JetNamedFunction -> {
+                    val function: JetNamedFunction = declaration
+                    if (function.hasDeclaredReturnType() || function.hasBlockBody()) {
+                        takePartInDeclarationTypeInference(function)
+                    }
+                    else {
+                        shouldChangeModificationCount(function)
+                    }
+                }
+                is JetPropertyAccessor -> {
+                    takePartInDeclarationTypeInference(declaration)
+                }
+                is JetProperty -> {
+                    val property = declaration as JetProperty
+                    if (property.getTypeReference() != null) {
+                        takePartInDeclarationTypeInference(property)
+                    }
+                    else {
+                        shouldChangeModificationCount(property)
+                    }
+                }
+                is JetMultiDeclaration, is JetMultiDeclarationEntry, is JetFunctionLiteral -> {
+                    shouldChangeModificationCount(declaration)
+                }
+                else -> {
+                    true
+                }
+            }
+        }
+
+        private fun takePartInDeclarationTypeInference(place: PsiElement): Boolean {
+            val declaration = PsiTreeUtil.getParentOfType<JetDeclaration>(place, javaClass<JetDeclaration>(), true)
+            if (declaration != null) {
+                if (declaration is JetNamedFunction) {
+                    val function = declaration as JetNamedFunction
+                    if (!function.hasDeclaredReturnType() && !function.hasBlockBody()) {
+                        return true
+                    }
+                }
+                else if (declaration is JetProperty) {
+                    val property = declaration as JetProperty
+                    if (property.getTypeReference() == null) {
+                        return true
+                    }
+                }
+
+                return takePartInDeclarationTypeInference(declaration)
+            }
+
+            return false
+        }
     }
 }
+
