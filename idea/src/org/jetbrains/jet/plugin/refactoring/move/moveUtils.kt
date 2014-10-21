@@ -88,7 +88,7 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
         if (descriptor == null || !descriptor.canBeReferencedViaImport()) continue
 
         val declaration = DescriptorToDeclarationUtil.getDeclaration(file, descriptor)
-        if (declaration == null || isAncestor(declaration, true)) continue
+        if (declaration == null || isAncestor(declaration, false)) continue
 
         val fqName = DescriptorUtils.getFqName(descriptor)
         if (!fqName.isSafe()) continue
