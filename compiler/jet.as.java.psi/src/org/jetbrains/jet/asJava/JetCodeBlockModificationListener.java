@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetModifiableBlockHelper;
+import org.jetbrains.jet.lang.psi.PsiPackage;
 
 public class JetCodeBlockModificationListener implements PsiTreeChangePreprocessor {
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.asJava.JetCodeBlockModificationListener");
@@ -107,20 +107,18 @@ public class JetCodeBlockModificationListener implements PsiTreeChangePreprocess
     }
 
     private static boolean isInsideCodeBlock(PsiElement element) {
-        if (element instanceof PsiFileSystemItem) {
-            return false;
-        }
+        if (element instanceof PsiFileSystemItem) return false;
 
         if (element == null || element.getParent() == null) return true;
 
         PsiElement parent = element;
         while (true) {
-            if (parent instanceof PsiFile || parent instanceof PsiDirectory || parent == null) {
-                return false;
-            }
+            if (parent instanceof PsiFile || parent instanceof PsiDirectory || parent == null) return false;
+
             if (parent instanceof JetClass) return false; // anonymous or local class
+
             if (parent instanceof JetBlockExpression) {
-                if (!JetModifiableBlockHelper.shouldChangeModificationCount(element)) {
+                if (!PsiPackage.shouldChangeModificationCount(element)) {
                     return true;
                 }
             }
