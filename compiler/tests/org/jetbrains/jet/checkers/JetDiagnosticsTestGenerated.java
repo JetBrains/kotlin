@@ -7735,6 +7735,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("nullableTypeArgument.kt")
+            public void testNullableTypeArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullableTypeArgument.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("override.kt")
             public void testOverride() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/override.kt");

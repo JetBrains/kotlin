@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/loadJava/compiledKotlin")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({LazyResolveByStubTestGenerated.Annotations.class, LazyResolveByStubTestGenerated.Class.class, LazyResolveByStubTestGenerated.ClassFun.class, LazyResolveByStubTestGenerated.ClassObject.class, LazyResolveByStubTestGenerated.Constructor.class, LazyResolveByStubTestGenerated.DataClass.class, LazyResolveByStubTestGenerated.Enum.class, LazyResolveByStubTestGenerated.FromLoadJava.class, LazyResolveByStubTestGenerated.Fun.class, LazyResolveByStubTestGenerated.Inline.class, LazyResolveByStubTestGenerated.Prop.class, LazyResolveByStubTestGenerated.Type.class, LazyResolveByStubTestGenerated.Visibility.class})
+@InnerTestClasses({LazyResolveByStubTestGenerated.Annotations.class, LazyResolveByStubTestGenerated.Class.class, LazyResolveByStubTestGenerated.ClassFun.class, LazyResolveByStubTestGenerated.ClassObject.class, LazyResolveByStubTestGenerated.Constructor.class, LazyResolveByStubTestGenerated.DataClass.class, LazyResolveByStubTestGenerated.Enum.class, LazyResolveByStubTestGenerated.FromLoadJava.class, LazyResolveByStubTestGenerated.Fun.class, LazyResolveByStubTestGenerated.Inline.class, LazyResolveByStubTestGenerated.PlatformTypes.class, LazyResolveByStubTestGenerated.Prop.class, LazyResolveByStubTestGenerated.Type.class, LazyResolveByStubTestGenerated.Visibility.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTest {
     public void testAllFilesPresentInCompiledKotlin() throws Exception {
@@ -2350,6 +2350,27 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         @TestMetadata("inlineFunction.kt")
         public void testInlineFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/inline/inlineFunction.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/loadJava/compiledKotlin/platformTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PlatformTypes extends AbstractLazyResolveByStubTest {
+        public void testAllFilesPresentInPlatformTypes() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/platformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("notnullTypeArgument.kt")
+        public void testNotnullTypeArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/platformTypes/notnullTypeArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableTypeArgument.kt")
+        public void testNullableTypeArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/platformTypes/nullableTypeArgument.kt");
             doTest(fileName);
         }
     }

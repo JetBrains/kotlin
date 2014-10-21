@@ -1795,7 +1795,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({CompiledKotlin.Annotations.class, CompiledKotlin.Class.class, CompiledKotlin.ClassFun.class, CompiledKotlin.ClassObject.class, CompiledKotlin.Constructor.class, CompiledKotlin.DataClass.class, CompiledKotlin.Enum.class, CompiledKotlin.FromLoadJava.class, CompiledKotlin.Fun.class, CompiledKotlin.Inline.class, CompiledKotlin.Prop.class, CompiledKotlin.Type.class, CompiledKotlin.Visibility.class})
+    @InnerTestClasses({CompiledKotlin.Annotations.class, CompiledKotlin.Class.class, CompiledKotlin.ClassFun.class, CompiledKotlin.ClassObject.class, CompiledKotlin.Constructor.class, CompiledKotlin.DataClass.class, CompiledKotlin.Enum.class, CompiledKotlin.FromLoadJava.class, CompiledKotlin.Fun.class, CompiledKotlin.Inline.class, CompiledKotlin.PlatformTypes.class, CompiledKotlin.Prop.class, CompiledKotlin.Type.class, CompiledKotlin.Visibility.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CompiledKotlin extends AbstractLoadJavaTest {
         public void testAllFilesPresentInCompiledKotlin() throws Exception {
@@ -4115,6 +4115,27 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("inlineFunction.kt")
             public void testInlineFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/inline/inlineFunction.kt");
+                doTestCompiledKotlin(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/loadJava/compiledKotlin/platformTypes")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PlatformTypes extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInPlatformTypes() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/platformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("notnullTypeArgument.kt")
+            public void testNotnullTypeArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/platformTypes/notnullTypeArgument.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
+            @TestMetadata("nullableTypeArgument.kt")
+            public void testNullableTypeArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/platformTypes/nullableTypeArgument.kt");
                 doTestCompiledKotlin(fileName);
             }
         }

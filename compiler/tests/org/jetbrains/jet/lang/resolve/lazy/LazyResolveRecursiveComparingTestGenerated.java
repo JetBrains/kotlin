@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyResolveRecursiveComparingTest {
     @TestMetadata("compiler/testData/loadJava/compiledKotlin")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({CompiledKotlin.Annotations.class, CompiledKotlin.Class.class, CompiledKotlin.ClassFun.class, CompiledKotlin.ClassObject.class, CompiledKotlin.Constructor.class, CompiledKotlin.DataClass.class, CompiledKotlin.Enum.class, CompiledKotlin.FromLoadJava.class, CompiledKotlin.Fun.class, CompiledKotlin.Inline.class, CompiledKotlin.Prop.class, CompiledKotlin.Type.class, CompiledKotlin.Visibility.class})
+    @InnerTestClasses({CompiledKotlin.Annotations.class, CompiledKotlin.Class.class, CompiledKotlin.ClassFun.class, CompiledKotlin.ClassObject.class, CompiledKotlin.Constructor.class, CompiledKotlin.DataClass.class, CompiledKotlin.Enum.class, CompiledKotlin.FromLoadJava.class, CompiledKotlin.Fun.class, CompiledKotlin.Inline.class, CompiledKotlin.PlatformTypes.class, CompiledKotlin.Prop.class, CompiledKotlin.Type.class, CompiledKotlin.Visibility.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CompiledKotlin extends AbstractLazyResolveRecursiveComparingTest {
         public void testAllFilesPresentInCompiledKotlin() throws Exception {
@@ -2353,6 +2353,27 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("inlineFunction.kt")
             public void testInlineFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/inline/inlineFunction.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/loadJava/compiledKotlin/platformTypes")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PlatformTypes extends AbstractLazyResolveRecursiveComparingTest {
+            public void testAllFilesPresentInPlatformTypes() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/platformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("notnullTypeArgument.kt")
+            public void testNotnullTypeArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/platformTypes/notnullTypeArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullableTypeArgument.kt")
+            public void testNullableTypeArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/platformTypes/nullableTypeArgument.kt");
                 doTest(fileName);
             }
         }

@@ -300,7 +300,7 @@ class LazyJavaTypeResolver(
 
             override fun substitutionResult(replacement: JetType): JetType {
                 return if (replacement.isFlexible()) replacement
-                       else create(TypeUtils.makeNotNullable(replacement), TypeUtils.makeNullable(replacement))
+                       else create(replacement, TypeUtils.makeNullable(replacement))
             }
 
             override fun getSpecificityRelationTo(otherType: JetType): Specificity.Relation {
