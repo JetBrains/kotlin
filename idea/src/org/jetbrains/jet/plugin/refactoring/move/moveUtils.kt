@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.refactoring.move
 import org.jetbrains.jet.plugin.codeInsight.JetFileReferencesResolver
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
@@ -28,7 +27,6 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.JetFileType
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
-import org.jetbrains.jet.plugin.imports.canBeReferencedViaImport
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import java.util.Collections
@@ -56,6 +54,12 @@ import com.intellij.openapi.util.Comparing
 import java.util.Comparator
 import com.intellij.util.IncorrectOperationException
 import com.intellij.psi.PsiFile
+import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind
+import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
 
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
 
@@ -76,35 +80,57 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
         }
     }
 
-    val referenceToContext = JetFileReferencesResolver.resolve(file = file, elements = listOf(this), resolveQualifiers = false)
+    fun processReference(refExpr: JetSimpleNameExpression, bindingContext: BindingContext): UsageInfo? {
+        val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.getImportableDescriptor() ?: return null
 
-    val usages = ArrayList<UsageInfo>()
-    for ((refExpr, bindingContext) in referenceToContext) {
-        if (refExpr !is JetSimpleNameExpression || refExpr.getParent() is JetThisExpression) continue
+        val declaration = DescriptorToDeclarationUtil.getDeclaration(file, descriptor) ?: return null
+        if (isAncestor(declaration, false)) return null
 
-        val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.let { descriptor ->
-            if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration() else descriptor
+        val isCallable = descriptor is CallableDescriptor
+        val isExtension = isCallable && (descriptor as CallableDescriptor).getExtensionReceiverParameter() != null
+
+        if (isCallable && !isExtension) {
+            val containingDescriptor = descriptor.getContainingDeclaration()
+            val receiver = refExpr.getReceiverExpression()
+            if (receiver != null) {
+                val receiverRef = receiver.getQualifiedElementSelector() as? JetSimpleNameExpression ?: return null
+                if (bindingContext[BindingContext.QUALIFIER, receiverRef] == null) return null
+                if (descriptor is CallableMemberDescriptor && descriptor.getKind() == Kind.SYNTHESIZED) {
+                    return processReference(receiverRef, bindingContext)
+                }
+            }
+            else {
+                if (containingDescriptor !is PackageFragmentDescriptor) return null
+            }
         }
-        if (descriptor == null || !descriptor.canBeReferencedViaImport()) continue
-
-        val declaration = DescriptorToDeclarationUtil.getDeclaration(file, descriptor)
-        if (declaration == null || isAncestor(declaration, false)) continue
 
         val fqName = DescriptorUtils.getFqName(descriptor)
-        if (!fqName.isSafe()) continue
+        if (!fqName.isSafe()) return null
 
         val packageName = DescriptorUtils.getParentOfType(descriptor, javaClass<PackageFragmentDescriptor>(), false)?.let {
             DescriptorUtils.getFqName(it).toSafe()
         }
 
-        when {
-            declaration.isExtensionDeclaration(),
+        return when {
+            isExtension,
             packageName == packageNameInfo.oldPackageName,
             packageName == packageNameInfo.newPackageName,
             isImported(descriptor) -> {
-                (refExpr.getReference() as? JetSimpleNameReference)?.let { usages.add(createMoveUsageInfo(it, declaration, false)) }
+                (refExpr.getReference() as? JetSimpleNameReference)?.let { createMoveUsageInfo(it, declaration, false) }
             }
+
+            else -> null
         }
+    }
+
+    val referenceToContext = JetFileReferencesResolver.resolve(file = file, elements = listOf(this))
+
+    val usages = ArrayList<UsageInfo>()
+    for ((refExpr, bindingContext) in referenceToContext) {
+        if (refExpr !is JetSimpleNameExpression || refExpr.getParent() is JetThisExpression) continue
+        if (bindingContext[BindingContext.QUALIFIER, refExpr] != null) continue
+
+        processReference(refExpr, bindingContext)?.let { usages.add(it) }
     }
 
     return usages
