@@ -36,6 +36,18 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/outOfBlock"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("Class_Class_FunNoType_Block.kt")
+    public void testClass_Class_FunNoType_Block() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/Class_Class_FunNoType_Block.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Class_Class_FunNoType_Block_Expression.kt")
+    public void testClass_Class_FunNoType_Block_Expression() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/Class_Class_FunNoType_Block_Expression.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("FunInFun.kt")
     public void testFunInFun() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/FunInFun.kt");
@@ -45,6 +57,24 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
     @TestMetadata("FunNoBody.kt")
     public void testFunNoBody() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/FunNoBody.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FunNoType_Block_Class.kt")
+    public void testFunNoType_Block_Class() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/FunNoType_Block_Class.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FunWithType_Initializer.kt")
+    public void testFunWithType_Initializer() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/FunWithType_Initializer.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FunWithType_Initializer_Expression.kt")
+    public void testFunWithType_Initializer_Expression() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/FunWithType_Initializer_Expression.kt");
         doTest(fileName);
     }
 
@@ -60,6 +90,12 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         doTest(fileName);
     }
 
+    @TestMetadata("InClassInClass.kt")
+    public void testInClassInClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InClassInClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InClassPropertyAccessor.kt")
     public void testInClassPropertyAccessor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InClassPropertyAccessor.kt");
@@ -72,9 +108,33 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         doTest(fileName);
     }
 
+    @TestMetadata("InFunInFunctionInitializerInFun.kt")
+    public void testInFunInFunctionInitializerInFun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InFunInFunctionInitializerInFun.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InFunInMultiDeclaration.kt")
     public void testInFunInMultiDeclaration() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InFunInMultiDeclaration.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InFunInProperty.kt")
+    public void testInFunInProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InFunInProperty.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InFunInPropertyInObjectLiteral.kt")
+    public void testInFunInPropertyInObjectLiteral() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InFunInPropertyInObjectLiteral.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InFunObjectLiteral.kt")
+    public void testInFunObjectLiteral() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InFunObjectLiteral.kt");
         doTest(fileName);
     }
 
@@ -117,6 +177,30 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
     @TestMetadata("InPropertyWithInference.kt")
     public void testInPropertyWithInference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InPropertyWithInference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Object_FunNoType_Block.kt")
+    public void testObject_FunNoType_Block() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/Object_FunNoType_Block.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Object_FunNoType_Block_Expression.kt")
+    public void testObject_FunNoType_Block_Expression() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/Object_FunNoType_Block_Expression.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("PropertyNoType_Initializer_String.kt")
+    public void testPropertyNoType_Initializer_String() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/PropertyNoType_Initializer_String.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("PropertyWithType_Initializer_String.kt")
+    public void testPropertyWithType_Initializer_String() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/PropertyWithType_Initializer_String.kt");
         doTest(fileName);
     }
 }
