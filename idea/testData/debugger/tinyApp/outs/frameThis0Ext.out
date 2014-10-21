@@ -55,11 +55,11 @@ fun foo(f: () -> Unit) {
 // RESULT: 2: I
  frame    = invoke():14, A$testExt$1 {frameThis0Ext}
    this     = this = {frameThis0Ext.A$testExt$1@uniqueID}kotlin.Function0<kotlin.Unit>
-     field    = this$0: frameThis0Ext.A = {frameThis0Ext.A@uniqueID}
-       field    = prop1: int = 1
-     field    = receiver$0: frameThis0Ext.AExt = {frameThis0Ext.AExt@uniqueID}
-       field    = prop2: int = 1
-     field    = $val1: int = 1
+     field    = this$0: frameThis0Ext.A = {frameThis0Ext.A@uniqueID} (sp = null)
+       field    = prop1: int = 1 (sp = frameThis0Ext.kt, 7)
+     field    = receiver$0: frameThis0Ext.AExt = {frameThis0Ext.AExt@uniqueID} (sp = null)
+       field    = prop2: int = 1 (sp = frameThis0Ext.kt, 23)
+     field    = $val1: int = 1 (sp = null)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

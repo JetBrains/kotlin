@@ -70,16 +70,16 @@ fun lambda(f: () -> Unit) {
 // RESULT: 1: I
  frame    = invoke():22, Outer$foo$LocalClass$test$1 {frameExtFunExtFun}
    this     = this = {frameExtFunExtFun.Outer$foo$LocalClass$test$1@uniqueID}kotlin.Function0<kotlin.Unit>
-     field    = this$0: frameExtFunExtFun.Outer$foo$LocalClass = {frameExtFunExtFun.Outer$foo$LocalClass@uniqueID}
-       field    = lcProp: int = 1
-       field    = this$0: frameExtFunExtFun.Outer = {frameExtFunExtFun.Outer@uniqueID}
-         field    = outerProp: int = 1
-       field    = receiver$0: frameExtFunExtFun.A = {frameExtFunExtFun.A@uniqueID}
-         field    = aProp: int = 1
-       field    = $valFoo: int = 1
-     field    = receiver$0: frameExtFunExtFun.B = {frameExtFunExtFun.B@uniqueID}
-       field    = bProp: int = 1
-     field    = $valTest: int = 1
+     field    = this$0: frameExtFunExtFun.Outer$foo$LocalClass = {frameExtFunExtFun.Outer$foo$LocalClass@uniqueID} (sp = null)
+       field    = lcProp: int = 1 (sp = frameExtFunExtFun.kt, 16)
+       field    = this$0: frameExtFunExtFun.Outer = {frameExtFunExtFun.Outer@uniqueID} (sp = null)
+         field    = outerProp: int = 1 (sp = frameExtFunExtFun.kt, 11)
+       field    = receiver$0: frameExtFunExtFun.A = {frameExtFunExtFun.A@uniqueID} (sp = null)
+         field    = aProp: int = 1 (sp = frameExtFunExtFun.kt, 7)
+       field    = $valFoo: int = 1 (sp = null)
+     field    = receiver$0: frameExtFunExtFun.B = {frameExtFunExtFun.B@uniqueID} (sp = null)
+       field    = bProp: int = 1 (sp = frameExtFunExtFun.kt, 38)
+     field    = $valTest: int = 1 (sp = null)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

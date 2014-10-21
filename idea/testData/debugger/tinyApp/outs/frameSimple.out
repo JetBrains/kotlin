@@ -32,17 +32,17 @@ fun main(args: Array<String>) {
 // RESULT: 2: I
  frame    = main():9, FrameSimplePackage$@packagePartHASH {frameSimple}
    static   = static = frameSimple.FrameSimplePackage$@packagePartHASH
-     field    = topVal1: int = 1
+     field    = topVal1: int = 1 (sp = null)
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID}
    local    = val1: int = 1
    local    = val2: java.lang.String = {@uniqueID}str
-     field    = value: char[] = {char[3]@uniqueID}
+     field    = value: char[] = {char[3]@uniqueID} (sp = String.!EXT!)
        unknown  = [0] = 's' 115
        unknown  = [1] = 't' 116
        unknown  = [2] = 'r' 114
-     field    = offset: int = 0
-     field    = count: int = 3
-     field    = hash: int = 0
+     field    = offset: int = 0 (sp = String.!EXT!)
+     field    = count: int = 3 (sp = String.!EXT!)
+     field    = hash: int = 0 (sp = String.!EXT!)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

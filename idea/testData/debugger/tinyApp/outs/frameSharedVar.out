@@ -23,8 +23,8 @@ fun foo(f: () -> Unit) {
 // RESULT: 1: I
  frame    = invoke():7, FrameSharedVarPackage$@packagePartHASH$main$1 {frameSharedVar}
    this     = this = {frameSharedVar.FrameSharedVarPackage$@packagePartHASH$main$1@uniqueID}kotlin.Function0<kotlin.Unit>
-     field    = $var1: kotlin.jvm.internal.Ref$IntRef = {kotlin.jvm.internal.Ref$IntRef@uniqueID}1
-       field    = element: int = 1
+     field    = $var1: kotlin.jvm.internal.Ref$IntRef = {kotlin.jvm.internal.Ref$IntRef@uniqueID}1 (sp = null)
+       field    = element: int = 1 (sp = Ref.!EXT!)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

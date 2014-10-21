@@ -32,8 +32,22 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import com.intellij.debugger.ui.tree.ValueDescriptor
 import com.intellij.debugger.ui.tree.render.DescriptorLabelListener
 import com.intellij.debugger.settings.NodeRendererSettings
+import com.intellij.psi.PsiClass
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.debugger.SourcePosition
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.debugger.impl.DebuggerContextUtil
+import com.intellij.psi.search.GlobalSearchScope
+import com.sun.jdi.AbsentInformationException
+import com.sun.jdi.ClassNotPreparedException
+import com.intellij.psi.PsiElement
+import org.jetbrains.jet.lang.psi.JetClass
+import org.jetbrains.jet.lang.resolve.java.JvmClassName
+import com.sun.jdi.ReferenceType
+import org.jetbrains.jet.codegen.AsmUtil
+import org.jetbrains.jet.lang.psi.JetClassOrObject
 
-public class KotlinObjectRenderer : ClassRenderer() {
+public open class KotlinObjectRenderer : ClassRenderer() {
 
     override fun isApplicable(jdiType: Type?): Boolean {
         if (!super.isApplicable(jdiType)) return false
@@ -65,18 +79,75 @@ public class KotlinObjectRenderer : ClassRenderer() {
         }
         return super.calcLabel(descriptor, evaluationContext, labelListener)
     }
-
-    private fun Type?.isKotlinClass(): Boolean {
-        return this is ClassType && this.allInterfaces().any { it.name() == JvmAbi.K_OBJECT.asString() }
-    }
 }
 
 public class KotlinObjectFieldDescriptor(
         project: Project?,
         objRef: ObjectReference?,
         field: Field?
-): FieldDescriptorImpl(project, objRef, field) {
-    override fun getSourcePosition(project: Project?, context: DebuggerContextImpl?) = null
-    override fun getSourcePosition(project: Project?, context: DebuggerContextImpl?, nearest: Boolean) = null
+) : FieldDescriptorImpl(project, objRef, field) {
+    override fun getSourcePosition(project: Project?, context: DebuggerContextImpl?, nearest: Boolean): SourcePosition? {
+        if (context == null || context.getFrameProxy() == null) return null
+
+        val fieldName = getField().name()
+        if (fieldName == AsmUtil.CAPTURED_THIS_FIELD || fieldName == AsmUtil.CAPTURED_RECEIVER_FIELD) {
+            return null
+        }
+
+        val type = getField().declaringType()
+        val myClass = findClassByType(type, context)?.getNavigationElement()
+        if (myClass !is JetClassOrObject) {
+            return null
+        }
+
+        val field = myClass.getDeclarations().firstOrNull { fieldName == it.getName() }
+        if (field == null) return null
+
+        if (nearest) {
+            return DebuggerContextUtil.findNearest(context, field, myClass.getContainingFile())
+        }
+        return SourcePosition.createFromOffset(field.getContainingFile(), field.getTextOffset())
+    }
+
+    private fun findClassByType(type: ReferenceType, context: DebuggerContextImpl): PsiElement? {
+        val session = context.getDebuggerSession()
+        val scope = if (session != null) session.getSearchScope() else GlobalSearchScope.allScope(myProject)
+        val className = JvmClassName.byInternalName(type.name()).getFqNameForClassNameWithoutDollars().asString()
+
+        val myClass = JavaPsiFacade.getInstance(myProject).findClass(className, scope)
+        if (myClass != null) return myClass
+
+        val position = getLastSourcePosition(type, context)
+        if (position != null) {
+            val element = position.getElementAt()
+            if (element != null) {
+                return PsiTreeUtil.getParentOfType(element, javaClass<JetClassOrObject>())
+            }
+        }
+        return null
+    }
+
+
+    private fun getLastSourcePosition(type: ReferenceType, context: DebuggerContextImpl): SourcePosition? {
+        val debugProcess = context.getDebugProcess()
+        if (debugProcess != null) {
+            try {
+                val locations = type.allLineLocations()
+                if (!locations.isEmpty()) {
+                    val lastLocation = locations.get(locations.size() - 1)
+                    return debugProcess.getPositionManager().getSourcePosition(lastLocation)
+                }
+            }
+            catch (ignored: AbsentInformationException) {
+            }
+            catch (ignored: ClassNotPreparedException) {
+            }
+        }
+        return null
+    }
+}
+
+private fun Type?.isKotlinClass(): Boolean {
+    return this is ClassType && this.allInterfaces().any { it.name() == JvmAbi.K_OBJECT.asString() }
 }
 

@@ -25,7 +25,7 @@ fun A.foo() {
  frame    = foo():13, FrameExtensionFunPackage$@packagePartHASH {frameExtensionFun}
    static   = static = frameExtensionFun.FrameExtensionFunPackage$@packagePartHASH
    local    = $receiver: frameExtensionFun.A = {frameExtensionFun.A@uniqueID}
-     field    = prop: int = 1
+     field    = prop: int = 1 (sp = frameExtensionFun.kt, 7)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

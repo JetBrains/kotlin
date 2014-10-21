@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.debugger.render
 
-import com.intellij.debugger.ui.tree.render.ClassRenderer
 import com.sun.jdi.Type as JdiType
 import com.sun.jdi.Value
 import com.intellij.debugger.ui.tree.render.ChildrenBuilder
@@ -24,7 +23,6 @@ import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.ui.tree.DebuggerTreeNode
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
-import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl
 import com.sun.jdi.ObjectReference
 import com.intellij.xdebugger.settings.XDebuggerSettingsManager
 import com.intellij.debugger.ui.impl.watch.NodeManagerImpl
@@ -32,20 +30,18 @@ import com.intellij.debugger.ui.impl.watch.MessageDescriptor
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import com.sun.jdi.Field
-import com.intellij.debugger.engine.DebuggerUtils
-import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl
-import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.sun.jdi.ReferenceType
 import com.sun.jdi.Type
 import com.sun.jdi.InvocationException
 import com.sun.jdi.Method
 import org.jetbrains.jet.codegen.PropertyCodegen
 import org.jetbrains.jet.lang.resolve.name.Name
+import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl
 
-public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
+public class KotlinClassWithDelegatedPropertyRenderer : KotlinObjectRenderer() {
 
     override fun isApplicable(jdiType: Type?): Boolean {
-        if (!super<ClassRenderer>.isApplicable(jdiType)) return false
+        if (!super.isApplicable(jdiType)) return false
 
         if (jdiType !is ReferenceType) return false
 
@@ -72,7 +68,7 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
                 continue
             }
 
-            val fieldDescriptor = nodeDescriptorFactory.getFieldDescriptor(builder.getParentDescriptor(), value, field)
+            val fieldDescriptor = createFieldDescriptor(builder.getParentDescriptor() as ValueDescriptorImpl, nodeDescriptorFactory, value, field, context)
             children.add(nodeManager.createNode(fieldDescriptor, context))
 
             if (field.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)) {

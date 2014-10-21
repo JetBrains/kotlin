@@ -44,9 +44,9 @@ fun foo(f: () -> Unit) {
 // RESULT: 3: I
  frame    = invoke():15, A$test$1 {frameThis0}
    this     = this = {frameThis0.A$test$1@uniqueID}kotlin.Function0<kotlin.Unit>
-     field    = this$0: frameThis0.A = {frameThis0.A@uniqueID}
-       field    = prop1: int = 1
-     field    = $val1: int = 1
+     field    = this$0: frameThis0.A = {frameThis0.A@uniqueID} (sp = null)
+       field    = prop1: int = 1 (sp = frameThis0.kt, 7)
+     field    = $val1: int = 1 (sp = null)
    local    = val2: int = 1
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 

@@ -34,9 +34,9 @@ fun foo(f: () -> Unit) {
 // RESULT: 2: I
  frame    = invoke():9, FrameInnerLambdaPackage$@packagePartHASH$main$1$1 {frameInnerLambda}
    this     = this = {frameInnerLambda.FrameInnerLambdaPackage$@packagePartHASH$main$1$1@uniqueID}kotlin.Function0<kotlin.Unit>
-     field    = this$0: frameInnerLambda.FrameInnerLambdaPackage$@packagePartHASH$main$1 = {frameInnerLambda.FrameInnerLambdaPackage$@packagePartHASH$main$1@uniqueID}kotlin.Function0<kotlin.Unit>
-       field    = $val1: int = 1
-     field    = $val2: int = 1
+     field    = this$0: frameInnerLambda.FrameInnerLambdaPackage$@packagePartHASH$main$1 = {frameInnerLambda.FrameInnerLambdaPackage$@packagePartHASH$main$1@uniqueID}kotlin.Function0<kotlin.Unit> (sp = null)
+       field    = $val1: int = 1 (sp = null)
+     field    = $val2: int = 1 (sp = null)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

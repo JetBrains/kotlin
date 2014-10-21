@@ -58,8 +58,10 @@ import com.intellij.psi.PsiManager
 import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.openapi.application.ModalityState
-import com.intellij.debugger.ui.tree.render.ClassRenderer
 import com.intellij.debugger.settings.NodeRendererSettings
+import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl
+import com.intellij.debugger.impl.DebuggerContextImpl
+import com.intellij.debugger.SourcePosition
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
@@ -221,13 +223,17 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         invokeRatherLater(this) {
             tree.rebuild(debuggerContext)
             expandAll(tree, Runnable {
-                PRINTER.printTree(tree)
-                resume(this@printFrame)
+                try {
+                    Printer(debuggerContext).printTree(tree)
+                }
+                finally {
+                    resume(this@printFrame)
+                }
             })
         }
     }
 
-    private val PRINTER = object {
+    private inner class Printer(val debuggerContext: DebuggerContextImpl) {
         fun printTree(tree: DebuggerTree) {
             val root = tree.getMutableModel()!!.getRoot() as DebuggerTreeNodeImpl
             printNode(root, 0)
@@ -246,6 +252,8 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                 is LocalVariableDescriptor -> logDescriptor(descriptor, "$curIndent local    = $label\n")
                 is StaticDescriptor ->        logDescriptor(descriptor, "$curIndent static   = $label\n")
                 is ThisDescriptorImpl ->      logDescriptor(descriptor, "$curIndent this     = $label\n")
+                is FieldDescriptorImpl ->     logDescriptor(descriptor, "$curIndent field    = $label"
+                                                    + " (sp = ${render(descriptor.getSourcePosition(myProject, debuggerContext))})\n")
                 is FieldDescriptor ->         logDescriptor(descriptor, "$curIndent field    = $label\n")
                 else ->                       logDescriptor(descriptor, "$curIndent unknown  = $label\n")
             }
@@ -258,6 +266,10 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             while (e.hasMoreElements()) {
                 printNode(e.nextElement() as DebuggerTreeNodeImpl, indent)
             }
+        }
+
+        private fun render(sp: SourcePosition?): String {
+            return renderSourcePosition(sp).replace(":", ", ")
         }
     }
 

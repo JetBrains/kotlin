@@ -30,13 +30,13 @@ class MyDelegateThrowsException {
    static   = static = delegatedPropertyInClass.DelegatedPropertyInClassPackage$@packagePartHASH
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID}
    local    = a: delegatedPropertyInClass.A = {delegatedPropertyInClass.A@uniqueID}
-     field    = prop$delegate: delegatedPropertyInClass.MyDelegate = {delegatedPropertyInClass.MyDelegate@uniqueID}
+     field    = prop$delegate: delegatedPropertyInClass.MyDelegate = {delegatedPropertyInClass.MyDelegate@uniqueID} (sp = null)
      field    = prop: int = 1
-     field    = propEx$delegate: delegatedPropertyInClass.MyDelegateThrowsException = {delegatedPropertyInClass.MyDelegateThrowsException@uniqueID}
+     field    = propEx$delegate: delegatedPropertyInClass.MyDelegateThrowsException = {delegatedPropertyInClass.MyDelegateThrowsException@uniqueID} (sp = null)
      field    = propEx: java.lang.IllegalStateException = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException
-       field    = detailMessage: java.lang.String = null
-       field    = cause: java.lang.Throwable = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException
-       field    = stackTrace: java.lang.StackTraceElement[] = null
+       field    = detailMessage: java.lang.String = null (sp = Throwable.!EXT!)
+       field    = cause: java.lang.Throwable = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = Throwable.!EXT!)
+       field    = stackTrace: java.lang.StackTraceElement[] = null (sp = Throwable.!EXT!)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0
