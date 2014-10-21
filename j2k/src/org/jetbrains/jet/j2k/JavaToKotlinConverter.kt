@@ -59,8 +59,9 @@ public class JavaToKotlinConverter(private val project: Project,
             }
 
             val results = ArrayList<String>(psiElementsAndProcessors.size)
-            for (result in intermediateResults) {
+            for ((i, result) in intermediateResults.withIndices()) {
                 results.add(result?.finishConversion(usageProcessings) ?: "")
+                intermediateResults[i] = null // to not hold unused objects in the heap
             }
 
             val finalResults = ArrayList<String>(psiElementsAndProcessors.size)
