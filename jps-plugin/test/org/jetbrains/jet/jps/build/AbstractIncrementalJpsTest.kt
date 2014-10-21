@@ -33,6 +33,7 @@ import kotlin.test.fail
 import java.util.HashMap
 import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jps.incremental.messages.BuildMessage
+import kotlin.test.assertFalse
 import java.util.regex.Pattern
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
@@ -69,8 +70,9 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         }
     }
 
-    private fun initialMake(): String {
-        return buildGetLog()
+    private fun initialMake() {
+        val log = buildGetLog()
+        assertFalse("COMPILATION FAILED" in log, "Initial make failed:\n$log")
     }
 
     private fun make(): String {
