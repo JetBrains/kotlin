@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -35,7 +36,6 @@ import java.util.List;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.PossiblyBareType.type;
 import static org.jetbrains.jet.lang.types.Variance.*;
-import static org.jetbrains.jet.storage.LockBasedStorageManager.NO_LOCKS;
 
 public class TypeResolver {
 
@@ -262,7 +262,7 @@ public class TypeResolver {
             return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
         }
         else {
-            return new LazyScopeAdapter(NO_LOCKS.createLazyValue(new Function0<JetScope>() {
+            return new LazyScopeAdapter(LockBasedStorageManager.NO_LOCKS.createLazyValue(new Function0<JetScope>() {
                 @Override
                 public JetScope invoke() {
                     return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
