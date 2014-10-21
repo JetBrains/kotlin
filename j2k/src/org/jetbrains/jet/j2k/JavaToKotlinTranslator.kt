@@ -30,7 +30,7 @@ import com.intellij.codeInsight.NullableNotNullManager
 import com.intellij.psi.PsiModifierListOwner
 
 public object JavaToKotlinTranslator {
-    private val DISPOSABLE = Disposer.newDisposable()
+    val DISPOSABLE = Disposer.newDisposable()
 
     private fun createFile(text: String): PsiFile? {
         val javaCoreEnvironment: JavaCoreProjectEnvironment? = setUpJavaCoreEnvironment()

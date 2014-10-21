@@ -127,6 +127,7 @@ import org.jetbrains.jet.generators.tests.reservedWords.generateTestDataForReser
 import org.jetbrains.k2js.test.semantics.AbstractReservedWordTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveInJavaTest
 import org.jetbrains.k2js.test.semantics.AbstractBridgeTest
+import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterForWebDemoTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -628,6 +629,12 @@ fun main(args: Array<String>) {
 
     testGroup("j2k/tests/test", "j2k/tests/testData") {
         testClass(javaClass<AbstractJavaToKotlinConverterTest>()) {
+            model("ast", extension = "java")
+        }
+    }
+
+    testGroup("j2k/tests/test", "j2k/tests/testData") {
+       testClass(javaClass<AbstractJavaToKotlinConverterForWebDemoTest>()) {
             model("ast", extension = "java")
         }
     }
