@@ -16,12 +16,16 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+
+import java.io.File;
+import java.io.IOException;
 
 public abstract class AbstractOutOfBlockModificationTest extends JetLightCodeInsightFixtureTestCase {
     @Override
@@ -35,7 +39,7 @@ public abstract class AbstractOutOfBlockModificationTest extends JetLightCodeIns
         return PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/outOfBlock";
     }
 
-    protected void doTest(String path) {
+    protected void doTest(String path) throws IOException {
         myFixture.configureByFile(path);
 
         boolean expectedOutOfBlock = getExpectedOutOfBlockResult();
@@ -57,7 +61,7 @@ public abstract class AbstractOutOfBlockModificationTest extends JetLightCodeIns
 
         assertTrue("Modification tracker should always be changed after type", modificationCountBeforeType != modificationCountAfterType);
 
-        assertEquals("Result for out of block test is differs from expected on element " + element,
+        assertEquals("Result for out of block test is differs from expected on element in file:\n" + FileUtil.loadFile(new File(path)),
                      expectedOutOfBlock, oobBeforeType != oobAfterCount);
     }
 
