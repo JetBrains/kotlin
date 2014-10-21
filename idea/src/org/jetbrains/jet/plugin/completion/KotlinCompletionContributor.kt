@@ -43,6 +43,10 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.PsiComment
+import org.jetbrains.jet.lang.psi.psiUtil.parents
+import org.jetbrains.jet.lang.psi.JetParameterList
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import org.jetbrains.jet.lang.psi.psiUtil.prevLeafSkipWhitespacesAndComments
 import org.jetbrains.jet.lang.psi.JetValueArgument
 import org.jetbrains.jet.lang.psi.JetValueArgumentList
 
@@ -74,6 +78,8 @@ public class KotlinCompletionContributor : CompletionContributor() {
             context.getCompletionType() == CompletionType.SMART -> DEFAULT_DUMMY_IDENTIFIER
 
             PackageDirectiveCompletion.ACTIVATION_PATTERN.accepts(tokenBefore) -> PackageDirectiveCompletion.DUMMY_IDENTIFIER
+
+            isInFunctionLiteralParameterList(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
 
             else -> specialExtensionReceiverDummyIdentifier(tokenBefore) ?: DEFAULT_DUMMY_IDENTIFIER
         }
@@ -117,6 +123,12 @@ public class KotlinCompletionContributor : CompletionContributor() {
                 }
             }
         }
+    }
+
+    private fun isInFunctionLiteralParameterList(tokenBefore: PsiElement?): Boolean {
+        val parameterList = tokenBefore?.parents(false)?.firstOrNull { it is JetParameterList } ?: return false
+        val parent = parameterList.getParent()
+        return parent is JetFunctionLiteral && parent.getValueParameterList() == parameterList
     }
 
     private val declarationKeywords = TokenSet.create(JetTokens.FUN_KEYWORD, JetTokens.VAL_KEYWORD, JetTokens.VAR_KEYWORD)
@@ -214,6 +226,9 @@ public class KotlinCompletionContributor : CompletionContributor() {
         // no auto-popup on typing after "val", "var" and "fun" because it's likely the name of the declaration which is being typed by user
         if (invocationCount == 0 && isInExtensionReceiver(position)) return true
 
+        // no auto-popup on typing in the very beginning of function literal where name of the first parameter can be
+        if (invocationCount == 0 && isInFunctionLiteralStart(position)) return true
+
         return false
     }
 
@@ -228,6 +243,16 @@ public class KotlinCompletionContributor : CompletionContributor() {
             is JetProperty -> typeRef == parent.getReceiverTypeReference()
             else -> false
         }
+    }
+
+    private fun isInFunctionLiteralStart(position: PsiElement): Boolean {
+        var prev = position.prevLeafSkipWhitespacesAndComments()
+        if (prev?.getNode()?.getElementType() == JetTokens.LPAR) {
+            prev = prev?.prevLeafSkipWhitespacesAndComments()
+        }
+        if (prev?.getNode()?.getElementType() != JetTokens.LBRACE) return false
+        val functionLiteral = prev!!.getParent() as? JetFunctionLiteral ?: return false
+        return functionLiteral.getOpenBraceNode().getPsi() == prev
     }
 
     private fun isAtEndOfLine(offset: Int, document: Document): Boolean {
