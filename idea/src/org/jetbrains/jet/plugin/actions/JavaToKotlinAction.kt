@@ -26,7 +26,6 @@ import org.jetbrains.jet.j2k.ConverterSettings
 import org.jetbrains.jet.j2k.FilesConversionScope
 import org.jetbrains.jet.j2k.IdeaReferenceSearcher
 import org.jetbrains.jet.j2k.JavaToKotlinConverter
-import java.util.LinkedList
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
@@ -35,10 +34,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import java.io.IOException
 import com.intellij.openapi.ui.ex.MessagesEx
-import com.intellij.psi.PsiFile
 import org.jetbrains.jet.plugin.j2k.J2kPostProcessor
-import com.intellij.psi.PsiElement
-import org.jetbrains.jet.j2k.PostProcessor
 import com.intellij.openapi.vfs.CharsetToolkit
 import org.jetbrains.jet.lang.psi.JetFile
 
@@ -49,10 +45,9 @@ public class JavaToKotlinAction : AnAction() {
         val selectedJavaFiles = allJavaFiles(virtualFiles, project)
         if (selectedJavaFiles.isEmpty()) return
 
-        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, FilesConversionScope(selectedJavaFiles), IdeaReferenceSearcher)
         CommandProcessor.getInstance().executeCommand(project, object : Runnable {
             override fun run() {
-                val newFiles = convertFiles(converter, selectedJavaFiles)
+                val newFiles = convertFiles(selectedJavaFiles, project)
                 deleteFiles(selectedJavaFiles)
                 reformatFiles(newFiles, project)
 
@@ -109,17 +104,33 @@ public class JavaToKotlinAction : AnAction() {
         }
     }
 
-    private fun convertFiles(converter: JavaToKotlinConverter, javaFiles: List<PsiJavaFile>): List<VirtualFile> {
+    private fun convertFiles(javaFiles: List<PsiJavaFile>, project: Project): List<VirtualFile> {
+        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, FilesConversionScope(javaFiles), IdeaReferenceSearcher)
+
+        val convertedTexts = converter.elementsToKotlin(javaFiles.map { it to J2kPostProcessor(it) })
+
         val result = ArrayList<VirtualFile>()
-        for (psiFile in javaFiles) {
+        for ((i, psiFile) in javaFiles.withIndices()) {
             ApplicationManager.getApplication().runWriteAction {
-                val file = convertOneFile(converter, psiFile)
+                val file = saveConversionResult(psiFile.getVirtualFile(), convertedTexts[i], project)
                 if (file != null) {
                     result.add(file)
                 }
             }
         }
         return result
+    }
+
+    private fun saveConversionResult(javaFile: VirtualFile, text: String, project: Project): VirtualFile? {
+        try {
+            val kotlinFile = javaFile.copy(this, javaFile.getParent(), javaFile.getNameWithoutExtension() + ".kt")
+            kotlinFile.setBinaryContent(CharsetToolkit.getUtf8Bytes(text))
+            return kotlinFile
+        }
+        catch (e: IOException) {
+            MessagesEx.error(project, e.getMessage()).showLater()
+            return null
+        }
     }
 
     private fun deleteFiles(javaFiles: List<PsiJavaFile>) {
@@ -132,21 +143,6 @@ public class JavaToKotlinAction : AnAction() {
                     MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater()
                 }
             }
-        }
-    }
-
-    private fun convertOneFile(converter: JavaToKotlinConverter, psiFile: PsiJavaFile): VirtualFile? {
-        try {
-            val virtualFile = psiFile.getVirtualFile()!!
-            val postProcessor = J2kPostProcessor(psiFile)
-            val result = converter.elementsToKotlin(Pair<PsiElement, PostProcessor>(psiFile, postProcessor)).get(0) //TODO: convert all files in one call!
-            val kotlinFile = virtualFile.copy(this, virtualFile.getParent(), virtualFile.getNameWithoutExtension() + ".kt")
-            kotlinFile.setBinaryContent(CharsetToolkit.getUtf8Bytes(result))
-            return kotlinFile
-        }
-        catch (e: IOException) {
-            MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater()
-            return null
         }
     }
 }

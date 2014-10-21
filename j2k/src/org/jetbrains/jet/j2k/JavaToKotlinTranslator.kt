@@ -91,7 +91,7 @@ public object JavaToKotlinTranslator {
         val file = createFile(javaCode)
         if (file is PsiJavaFile) {
             val converter = JavaToKotlinConverter(file.getProject(), ConverterSettings.defaultSettings, FilesConversionScope(listOf(file)), EmptyReferenceSearcher)
-            return prettify(converter.elementsToKotlin(file to null)[0])
+            return prettify(converter.elementsToKotlin(listOf(file to null))[0])
         }
         return ""
     }

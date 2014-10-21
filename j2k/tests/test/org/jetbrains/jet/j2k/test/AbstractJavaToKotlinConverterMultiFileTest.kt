@@ -45,7 +45,7 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest() : AbstractJav
         }
 
         val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, FilesConversionScope(psiFiles), IdeaReferenceSearcher)
-        val results: List<String> = converter.elementsToKotlin(*psiFiles.map { it to J2kPostProcessor(it) }.copyToArray())
+        val results: List<String> = converter.elementsToKotlin(psiFiles.map { it to J2kPostProcessor(it) })
                 .map { reformat(it, project) }
 
         for ((i, javaFile) in javaFiles.withIndices()) {

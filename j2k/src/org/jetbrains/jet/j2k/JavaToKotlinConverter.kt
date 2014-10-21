@@ -47,7 +47,7 @@ public class JavaToKotlinConverter(private val project: Project,
                                    private val referenceSearcher: ReferenceSearcher) {
     private val LOG = Logger.getInstance("#org.jetbrains.jet.j2k.JavaToKotlinConverter")
 
-    public fun elementsToKotlin(vararg psiElementsAndProcessors: Pair<PsiElement, PostProcessor?>): List<String> {
+    public fun elementsToKotlin(psiElementsAndProcessors: List<Pair<PsiElement, PostProcessor?>>): List<String> {
         try {
             val intermediateResults = ArrayList<Converter.IntermediateResult?>(psiElementsAndProcessors.size)
             val usageProcessings = ArrayList<UsageProcessing>()
@@ -89,7 +89,7 @@ public class JavaToKotlinConverter(private val project: Project,
             // if we got this exception then we need to turn element creation stack traces on to get better diagnostic
             Element.saveCreationStacktraces = true
             try {
-                return elementsToKotlin(*psiElementsAndProcessors)
+                return elementsToKotlin(psiElementsAndProcessors)
             }
             finally {
                 Element.saveCreationStacktraces = false
