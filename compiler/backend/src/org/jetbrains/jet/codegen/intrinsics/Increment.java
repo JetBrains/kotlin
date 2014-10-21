@@ -18,18 +18,21 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetParenthesizedExpression;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.genIncrement;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
 
 public class Increment extends IntrinsicMethod {
     private final int myDelta;
@@ -51,15 +54,15 @@ public class Increment extends IntrinsicMethod {
         assert isPrimitive(returnType) : "Return type of Increment intrinsic should be of primitive type : " + returnType;
 
         if (arguments.size() > 0) {
-            JetExpression operand = arguments.get(0);
-            while (operand instanceof JetParenthesizedExpression) {
-                operand = ((JetParenthesizedExpression) operand).getExpression();
-            }
+            JetExpression operand = JetPsiUtil.deparenthesize(arguments.get(0));
             if (operand instanceof JetReferenceExpression && returnType == Type.INT_TYPE) {
                 int index = codegen.indexOfLocal((JetReferenceExpression) operand);
                 if (index >= 0) {
-                    StackValue.preIncrement(index, myDelta).put(returnType, v);
-                    return returnType;
+                    JetType operandType = codegen.getBindingContext().get(EXPRESSION_TYPE, operand);
+                    if (operandType != null && KotlinBuiltIns.getInstance().isPrimitiveType(operandType)) {
+                        StackValue.preIncrement(index, myDelta).put(returnType, v);
+                        return returnType;
+                    }
                 }
             }
             StackValue value = codegen.genQualified(receiver, operand);

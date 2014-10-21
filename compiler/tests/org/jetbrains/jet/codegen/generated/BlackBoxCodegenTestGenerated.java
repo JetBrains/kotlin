@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/box")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BlackBoxCodegenTestGenerated.Arrays.class, BlackBoxCodegenTestGenerated.BinaryOp.class, BlackBoxCodegenTestGenerated.Bridges.class, BlackBoxCodegenTestGenerated.BuiltinStubMethods.class, BlackBoxCodegenTestGenerated.Casts.class, BlackBoxCodegenTestGenerated.Classes.class, BlackBoxCodegenTestGenerated.Closures.class, BlackBoxCodegenTestGenerated.Constants.class, BlackBoxCodegenTestGenerated.ControlStructures.class, BlackBoxCodegenTestGenerated.DefaultArguments.class, BlackBoxCodegenTestGenerated.DelegatedProperty.class, BlackBoxCodegenTestGenerated.Elvis.class, BlackBoxCodegenTestGenerated.Enum.class, BlackBoxCodegenTestGenerated.ExclExcl.class, BlackBoxCodegenTestGenerated.ExtensionFunctions.class, BlackBoxCodegenTestGenerated.ExtensionProperties.class, BlackBoxCodegenTestGenerated.FakeOverride.class, BlackBoxCodegenTestGenerated.FieldRename.class, BlackBoxCodegenTestGenerated.Finally.class, BlackBoxCodegenTestGenerated.Functions.class, BlackBoxCodegenTestGenerated.InnerNested.class, BlackBoxCodegenTestGenerated.Instructions.class, BlackBoxCodegenTestGenerated.Intrinsics.class, BlackBoxCodegenTestGenerated.JavaInterop.class, BlackBoxCodegenTestGenerated.Labels.class, BlackBoxCodegenTestGenerated.LocalClasses.class, BlackBoxCodegenTestGenerated.MultiDecl.class, BlackBoxCodegenTestGenerated.Objects.class, BlackBoxCodegenTestGenerated.OperatorConventions.class, BlackBoxCodegenTestGenerated.Package.class, BlackBoxCodegenTestGenerated.PrimitiveTypes.class, BlackBoxCodegenTestGenerated.Properties.class, BlackBoxCodegenTestGenerated.Reflection.class, BlackBoxCodegenTestGenerated.Regressions.class, BlackBoxCodegenTestGenerated.SafeCall.class, BlackBoxCodegenTestGenerated.SamConstructors.class, BlackBoxCodegenTestGenerated.Strings.class, BlackBoxCodegenTestGenerated.Super.class, BlackBoxCodegenTestGenerated.SuperConstructorCall.class, BlackBoxCodegenTestGenerated.ToArray.class, BlackBoxCodegenTestGenerated.Traits.class, BlackBoxCodegenTestGenerated.TypeInfo.class, BlackBoxCodegenTestGenerated.TypeMapping.class, BlackBoxCodegenTestGenerated.UnaryOp.class, BlackBoxCodegenTestGenerated.Unit.class, BlackBoxCodegenTestGenerated.Vararg.class, BlackBoxCodegenTestGenerated.When.class})
+@InnerTestClasses({BlackBoxCodegenTestGenerated.Arrays.class, BlackBoxCodegenTestGenerated.BinaryOp.class, BlackBoxCodegenTestGenerated.Bridges.class, BlackBoxCodegenTestGenerated.BuiltinStubMethods.class, BlackBoxCodegenTestGenerated.Casts.class, BlackBoxCodegenTestGenerated.Classes.class, BlackBoxCodegenTestGenerated.Closures.class, BlackBoxCodegenTestGenerated.Constants.class, BlackBoxCodegenTestGenerated.ControlStructures.class, BlackBoxCodegenTestGenerated.DefaultArguments.class, BlackBoxCodegenTestGenerated.DelegatedProperty.class, BlackBoxCodegenTestGenerated.Elvis.class, BlackBoxCodegenTestGenerated.Enum.class, BlackBoxCodegenTestGenerated.ExclExcl.class, BlackBoxCodegenTestGenerated.ExtensionFunctions.class, BlackBoxCodegenTestGenerated.ExtensionProperties.class, BlackBoxCodegenTestGenerated.FakeOverride.class, BlackBoxCodegenTestGenerated.FieldRename.class, BlackBoxCodegenTestGenerated.Finally.class, BlackBoxCodegenTestGenerated.Functions.class, BlackBoxCodegenTestGenerated.InnerNested.class, BlackBoxCodegenTestGenerated.Instructions.class, BlackBoxCodegenTestGenerated.Intrinsics.class, BlackBoxCodegenTestGenerated.JavaInterop.class, BlackBoxCodegenTestGenerated.Labels.class, BlackBoxCodegenTestGenerated.LocalClasses.class, BlackBoxCodegenTestGenerated.MultiDecl.class, BlackBoxCodegenTestGenerated.Objects.class, BlackBoxCodegenTestGenerated.OperatorConventions.class, BlackBoxCodegenTestGenerated.Package.class, BlackBoxCodegenTestGenerated.PlatformTypes.class, BlackBoxCodegenTestGenerated.PrimitiveTypes.class, BlackBoxCodegenTestGenerated.Properties.class, BlackBoxCodegenTestGenerated.Reflection.class, BlackBoxCodegenTestGenerated.Regressions.class, BlackBoxCodegenTestGenerated.SafeCall.class, BlackBoxCodegenTestGenerated.SamConstructors.class, BlackBoxCodegenTestGenerated.Strings.class, BlackBoxCodegenTestGenerated.Super.class, BlackBoxCodegenTestGenerated.SuperConstructorCall.class, BlackBoxCodegenTestGenerated.ToArray.class, BlackBoxCodegenTestGenerated.Traits.class, BlackBoxCodegenTestGenerated.TypeInfo.class, BlackBoxCodegenTestGenerated.TypeMapping.class, BlackBoxCodegenTestGenerated.UnaryOp.class, BlackBoxCodegenTestGenerated.Unit.class, BlackBoxCodegenTestGenerated.Vararg.class, BlackBoxCodegenTestGenerated.When.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBox() throws Exception {
@@ -3955,6 +3955,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("incWithLabel.kt")
+        public void testIncWithLabel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/incWithLabel.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("longRangeWithExplicitDot.kt")
         public void testLongRangeWithExplicitDot() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/longRangeWithExplicitDot.kt");
@@ -5215,6 +5221,145 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testPrivateTopLevelPropAndVarInInner() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/package/privateTopLevelPropAndVarInInner.kt");
             doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/box/platformTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({PlatformTypes.Primitives.class})
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PlatformTypes extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInPlatformTypes() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/platformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/platformTypes/primitives")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Primitives extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInPrimitives() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/platformTypes/primitives"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("assign.kt")
+            public void testAssign() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/assign.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("compareTo.kt")
+            public void testCompareTo() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/compareTo.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("dec.kt")
+            public void testDec() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/dec.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("div.kt")
+            public void testDiv() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/div.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("equals.kt")
+            public void testEquals() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/equals.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hashCode.kt")
+            public void testHashCode() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/hashCode.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inc.kt")
+            public void testInc() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/inc.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("minus.kt")
+            public void testMinus() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/minus.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mod.kt")
+            public void testMod() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/mod.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("not.kt")
+            public void testNot() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/not.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notEquals.kt")
+            public void testNotEquals() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/notEquals.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("plus.kt")
+            public void testPlus() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/plus.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("plusAssign.kt")
+            public void testPlusAssign() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/plusAssign.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("rangeTo.kt")
+            public void testRangeTo() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/rangeTo.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("times.kt")
+            public void testTimes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/times.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("toShort.kt")
+            public void testToShort() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/toShort.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("toString.kt")
+            public void testToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/toString.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("udentityEquals.kt")
+            public void testUdentityEquals() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/udentityEquals.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unaryMinus.kt")
+            public void testUnaryMinus() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/unaryMinus.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unaryPlus.kt")
+            public void testUnaryPlus() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/platformTypes/primitives/unaryPlus.kt");
+                doTest(fileName);
+            }
         }
     }
 

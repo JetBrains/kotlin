@@ -3005,9 +3005,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 StackValue value = gen(lhs);              // receiver
                 value.dupReceiver(v);                     // receiver receiver
                 value.put(lhsType, v);                    // receiver lhs
-                ((IntrinsicMethod) callable).generate(this, v, typeMapper.mapType(descriptor), expression,
+                Type returnType = typeMapper.mapType(descriptor);
+                ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
                                                       Collections.singletonList(expression.getRight()), StackValue.onStack(lhsType));
-                value.store(lhsType, v);
+                value.store(returnType, v);
                 return StackValue.none();
             }
             else {
@@ -3137,7 +3138,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             throw new UnsupportedOperationException("Don't know how to generate this postfix expression: " + originalOperationName + " " + op);
         }
 
-        Type asmType = expressionType(expression);
+        Type asmResultType = expressionType(expression);
+        Type asmBaseType = expressionType(expression.getBaseExpression());
         DeclarationDescriptor cls = op.getContainingDeclaration();
 
         int increment;
@@ -3152,9 +3154,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         boolean isPrimitiveNumberClassDescriptor = isPrimitiveNumberClassDescriptor(cls);
-        if (isPrimitiveNumberClassDescriptor) {
+        if (isPrimitiveNumberClassDescriptor && AsmUtil.isPrimitive(asmBaseType)) {
             JetExpression operand = expression.getBaseExpression();
-            if (operand instanceof JetReferenceExpression && asmType == Type.INT_TYPE) {
+            if (operand instanceof JetReferenceExpression && asmResultType == Type.INT_TYPE) {
                 int index = indexOfLocal((JetReferenceExpression) operand);
                 if (index >= 0) {
                     return StackValue.postIncrement(index, increment);
@@ -3171,8 +3173,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         pushReceiverAndValueViaDup(value, type); // receiver and new value
 
         Type storeType;
-        if (isPrimitiveNumberClassDescriptor) {
-            genIncrement(asmType, increment, v);
+        if (isPrimitiveNumberClassDescriptor && AsmUtil.isPrimitive(asmBaseType)) {
+            genIncrement(asmResultType, increment, v);
             storeType = type;
         }
         else {
@@ -3181,7 +3183,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         value.store(storeType, v);
-        return StackValue.onStack(asmType);  // old value
+        return StackValue.onStack(asmResultType);  // old value
     }
 
     private void pushReceiverAndValueViaDup(StackValue value, Type type) {
