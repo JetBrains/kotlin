@@ -14,19 +14,20 @@ import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import java.util.HashSet
+import org.jetbrains.jet.lang.psi.JetElement
 
 public class CreateCallableFromUsageFix(
         originalExpression: JetExpression,
         val callableInfos: List<CallableInfo>) : CreateFromUsageFixBase(originalExpression) {
     {
         if (callableInfos.size > 1) {
-            val callableInfo = callableInfos.first()
+            val receiverSet = callableInfos.mapTo(HashSet<TypeInfo>()) { it.receiverTypeInfo }
+            if (receiverSet.size > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
 
-            val receiver = callableInfo.receiverTypeInfo
-            if (!callableInfos.all { it.receiverTypeInfo == receiver }) throw AssertionError("All functions must have common receiver")
-
-            val containers = callableInfo.possibleContainers
-            if (!callableInfos.all { it.possibleContainers == containers }) throw AssertionError("All functions must have common containers")
+            val possibleContainerSet = callableInfos.mapTo(HashSet<List<JetElement>>()) { it.possibleContainers }
+            if (possibleContainerSet.size > 1) throw AssertionError("All functions must have common containers: $possibleContainerSet")
         }
     }
 
@@ -43,7 +44,7 @@ public class CreateCallableFromUsageFix(
     }
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
-        val callableInfo = callableInfos.firstOrNull() ?: return
+        val callableInfo = callableInfos.first()
 
         val callableBuilder = CallableBuilderConfiguration(callableInfos, element as JetExpression, file!!, editor!!).createBuilder()
 
