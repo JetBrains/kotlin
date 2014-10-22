@@ -323,6 +323,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 doTest(fileName);
             }
             
+            @TestMetadata("constantChanged")
+            public void testConstantChanged() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantChanged/");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("constantUnchanged")
+            public void testConstantUnchanged() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantUnchanged/");
+                doTest(fileName);
+            }
+            
             @TestMetadata("notChangeSignature")
             public void testNotChangeSignature() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/notChangeSignature/");
@@ -349,6 +361,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             @TestMetadata("changeSignature")
             public void testChangeSignature() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/changeSignature/");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("constantChanged")
+            public void testConstantChanged() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/constantChanged/");
+                doTest(fileName);
+            }
+            
+            @TestMetadata("constantUnchanged")
+            public void testConstantUnchanged() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/constantUnchanged/");
                 doTest(fileName);
             }
             
