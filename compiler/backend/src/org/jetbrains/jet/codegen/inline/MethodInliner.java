@@ -356,7 +356,6 @@ public class MethodInliner {
 
         AbstractInsnNode cur = node.instructions.getFirst();
         int index = 0;
-        Set<LabelNode> possibleDeadLabels = new HashSet<LabelNode>();
 
         while (cur != null) {
             Frame<SourceValue> frame = sources[index];
@@ -416,15 +415,12 @@ public class MethodInliner {
             if (frame == null) {
                 //clean dead code otherwise there is problems in unreachable finally block, don't touch label it cause try/catch/finally problems
                 if (prevNode.getType() == AbstractInsnNode.LABEL) {
-                    possibleDeadLabels.add((LabelNode) prevNode);
+                    //NB: Cause we generate exception table for default handler using gaps (see ExpressionCodegen.visitTryExpression)
+                    //it may occurs that interval for default handler starts before catch start label, so this label seems as dead,
+                    //but as result all this labels will be merged into one (see KT-5863)
                 } else {
                     node.instructions.remove(prevNode);
                 }
-            } else {
-                //Cause we generate exception table for default handler using gaps (see ExpressionCodegen.visitTryExpression)
-                //it may occurs that interval for default handler starts before catch start label, so this label seems as dead,
-                //but as result all this labels will be merged into one (see KT-5863)
-                possibleDeadLabels.remove(prevNode.getPrevious());
             }
         }
 
@@ -432,12 +428,21 @@ public class MethodInliner {
         List<TryCatchBlockNode> blocks = node.tryCatchBlocks;
         for (Iterator<TryCatchBlockNode> iterator = blocks.iterator(); iterator.hasNext(); ) {
             TryCatchBlockNode block = iterator.next();
-            if (possibleDeadLabels.contains(block.start) && possibleDeadLabels.contains(block.end)) {
+            if (isEmptyTryInterval(block)) {
                 iterator.remove();
             }
         }
 
         return node;
+    }
+
+    private static boolean isEmptyTryInterval(@NotNull TryCatchBlockNode tryCatchBlockNode) {
+        LabelNode start = tryCatchBlockNode.start;
+        AbstractInsnNode end = tryCatchBlockNode.end;
+        while (end != start && end instanceof LabelNode) {
+            end = end.getPrevious();
+        }
+        return start == end;
     }
 
     public LambdaInfo getLambdaIfExists(AbstractInsnNode insnNode) {
