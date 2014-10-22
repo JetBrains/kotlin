@@ -661,6 +661,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         public void afterBody(@NotNull Label loopExit) {
+            markLineNumber(forExpression);
+
             increment(loopExit);
 
             v.mark(bodyEnd);
