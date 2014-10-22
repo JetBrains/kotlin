@@ -589,8 +589,8 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractKotlinSteppingTest>()) {
-            model("debugger/tinyApp/src/stepInto", testMethod = "doStepIntoTest", testClassName = "StepInto")
-            model("debugger/tinyApp/src/stepInto", testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
+            model("debugger/tinyApp/src/stepInto/stepIntoAndSmartStepInto", testMethod = "doStepIntoTest", testClassName = "StepInto")
+            model("debugger/tinyApp/src/stepInto/stepIntoAndSmartStepInto", testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
             model("debugger/tinyApp/src/filters", testMethod = "doStepIntoTest")
         }
 
