@@ -648,9 +648,10 @@
             </classpath>
         </javac2>
 
-        <jar manifest="${basedir}/plugins/android-compiler-plugin/src/META-INF/MANIFEST.MF" destfile="${kotlin-home}/lib/android-compiler-plugin.jar">
+        <jar destfile="${kotlin-home}/lib/android-compiler-plugin.jar">
             <fileset dir="${output}/classes/android-compiler-plugin"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+            <fileset dir="${basedir}/plugins/android-compiler-plugin/src" includes="META-INF/services/**"/>
         </jar>
     </target>
 
