@@ -43,7 +43,7 @@ public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters
     sorter = sorter.weighBefore("stats", PriorityWeigher, KindWeigher)
 
     if (parameters.getCompletionType() == CompletionType.SMART) {
-        sorter = sorter.weighBefore("kotlin.kind", NameSimilarityWeigher, SmartCompletionPriorityWeigher)
+        sorter = sorter.weighBefore("kotlin.kind", NameSimilarityWeigher)
     }
 
     sorter = sorter.weighAfter(
