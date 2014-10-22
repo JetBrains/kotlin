@@ -277,7 +277,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 val psiFactory = JetPsiFactory(currentFile)
 
-                val declaration = when (callableInfo.kind) {
+                val declaration : PsiElement = when (callableInfo.kind) {
                     CallableKind.FUNCTION -> psiFactory.createFunction("fun $header {}")
                     CallableKind.PROPERTY -> {
                         val valVar = if ((callableInfo as PropertyInfo).writable) "var" else "val"
