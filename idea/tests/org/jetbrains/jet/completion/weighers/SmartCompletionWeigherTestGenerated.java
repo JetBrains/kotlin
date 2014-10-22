@@ -36,9 +36,21 @@ public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletion
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/weighers/smart"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
 
+    @TestMetadata("BooleanExpected.kt")
+    public void testBooleanExpected() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/BooleanExpected.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("FunctionExpected.kt")
     public void testFunctionExpected() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/FunctionExpected.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("It.kt")
+    public void testIt() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/It.kt");
         doTest(fileName);
     }
 
@@ -165,6 +177,12 @@ public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletion
     @TestMetadata("NameSimilaritySorterPlacement.kt")
     public void testNameSimilaritySorterPlacement() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NameSimilaritySorterPlacement.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NullableExpected.kt")
+    public void testNullableExpected() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/weighers/smart/NullableExpected.kt");
         doTest(fileName);
     }
 
