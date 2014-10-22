@@ -1,3 +1,3 @@
 P<caret>
 
-// ABSENT: public, private, protected
+// NUMBER: 0

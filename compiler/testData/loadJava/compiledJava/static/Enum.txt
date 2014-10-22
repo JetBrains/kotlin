@@ -2,16 +2,19 @@ package test
 
 public final enum class Enum : kotlin.Enum<test.Enum!> {
     private constructor Enum()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum!): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
 
     public enum entry A : test.Enum {
         private constructor A()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum!): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
 
         public class object <class-object-for-A> : test.Enum.A {
             private constructor <class-object-for-A>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum!): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
@@ -19,11 +22,13 @@ public final enum class Enum : kotlin.Enum<test.Enum!> {
 
     public enum entry B : test.Enum {
         private constructor B()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum!): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
 
         public class object <class-object-for-B> : test.Enum.B {
             private constructor <class-object-for-B>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum!): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
@@ -31,11 +36,13 @@ public final enum class Enum : kotlin.Enum<test.Enum!> {
 
     public enum entry C : test.Enum {
         private constructor C()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum!): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
 
         public class object <class-object-for-C> : test.Enum.C {
             private constructor <class-object-for-C>()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum!): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }

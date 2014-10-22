@@ -144,9 +144,13 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
     private static boolean isBoxing(@NotNull AbstractInsnNode insn) {
         if (insn.getOpcode() != Opcodes.INVOKESTATIC) return false;
 
-        MethodInsnNode methodInsnNode = (MethodInsnNode) insn;
+        MethodInsnNode node = (MethodInsnNode) insn;
 
-        return isWrapperClassName(methodInsnNode.owner) && "valueOf".equals(methodInsnNode.name);
+        return isWrapperClassName(node.owner) && "valueOf".equals(node.name) &&
+               Type.getMethodDescriptor(
+                       Type.getObjectType(node.owner),
+                       AsmUtil.unboxType(Type.getObjectType(node.owner))
+               ).equals(node.desc);
     }
 
     private static boolean isNextMethodCallOfProgressionIterator(

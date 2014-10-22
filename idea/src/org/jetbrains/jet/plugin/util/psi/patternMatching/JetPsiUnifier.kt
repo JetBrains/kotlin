@@ -89,6 +89,7 @@ import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier
 import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.lang.psi.JetOperationReferenceExpression
 
 public trait UnificationResult {
     public enum class Status {
@@ -366,6 +367,7 @@ public class JetPsiUnifier(
         private fun JetElement.shouldIgnoreResolvedCall(): Boolean {
             return when {
                 this is JetConstantExpression -> true
+                this is JetOperationReferenceExpression -> getReferencedNameElementType() == JetTokens.EXCLEXCL
                 this is JetIfExpression -> true
                 this is JetUnaryExpression -> when (getOperationReference().getReferencedNameElementType()) {
                     JetTokens.EXCLEXCL, JetTokens.PLUSPLUS, JetTokens.MINUSMINUS -> true

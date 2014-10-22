@@ -17,13 +17,11 @@
 package org.jetbrains.jet.resolve.annotation;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -33,272 +31,270 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/resolveAnnotations/parameters")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({AnnotationParameterTestGenerated.Expressions.class})
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class AnnotationParameterTestGenerated extends AbstractAnnotationParameterTest {
     public void testAllFilesPresentInParameters() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolveAnnotations/parameters"), Pattern.compile("^(.+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("byte.kt")
     public void testByte() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/byte.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("char.kt")
     public void testChar() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/char.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("double.kt")
     public void testDouble() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/double.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("float.kt")
     public void testFloat() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/float.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("int.kt")
     public void testInt() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/int.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("long.kt")
     public void testLong() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/long.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("short.kt")
     public void testShort() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/short.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("compiler/testData/resolveAnnotations/parameters/expressions")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class Expressions extends AbstractAnnotationParameterTest {
         public void testAllFilesPresentInExpressions() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolveAnnotations/parameters/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
-        
+
         @TestMetadata("andAnd.kt")
         public void testAndAnd() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/andAnd.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("boolean.kt")
         public void testBoolean() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/boolean.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("char.kt")
         public void testChar() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/char.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("compositeCallBinary.kt")
         public void testCompositeCallBinary() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/compositeCallBinary.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("divide.kt")
         public void testDivide() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/divide.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("double.kt")
         public void testDouble() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/double.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("eqeq.kt")
         public void testEqeq() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/eqeq.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("escapedString.kt")
         public void testEscapedString() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/escapedString.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("float.kt")
         public void testFloat() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/float.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("gt.kt")
         public void testGt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/gt.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("gteq.kt")
         public void testGteq() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/gteq.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("infixCallBinary.kt")
         public void testInfixCallBinary() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/infixCallBinary.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("intrincics.kt")
         public void testIntrincics() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/intrincics.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("labeled.kt")
         public void testLabeled() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/labeled.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("long.kt")
         public void testLong() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/long.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("lt.kt")
         public void testLt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/lt.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("lteq.kt")
         public void testLteq() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/lteq.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("maxValue.kt")
         public void testMaxValue() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/maxValue.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("maxValueByte.kt")
         public void testMaxValueByte() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/maxValueByte.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("maxValueInt.kt")
         public void testMaxValueInt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/maxValueInt.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("miltiply.kt")
         public void testMiltiply() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/miltiply.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("minus.kt")
         public void testMinus() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/minus.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("mod.kt")
         public void testMod() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/mod.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("multilineString.kt")
         public void testMultilineString() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/multilineString.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("not.kt")
         public void testNot() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/not.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("noteq.kt")
         public void testNoteq() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/noteq.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("orOr.kt")
         public void testOrOr() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/orOr.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("paranthesized.kt")
         public void testParanthesized() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/paranthesized.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("plus.kt")
         public void testPlus() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/plus.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("simpleCallBinary.kt")
         public void testSimpleCallBinary() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/simpleCallBinary.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("stringPlusInt.kt")
         public void testStringPlusInt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/stringPlusInt.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("stringTemplate.kt")
         public void testStringTemplate() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/stringTemplate.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("strings.kt")
         public void testStrings() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/strings.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("unaryMinus.kt")
         public void testUnaryMinus() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/unaryMinus.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("unaryPlus.kt")
         public void testUnaryPlus() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/unaryPlus.kt");
             doTest(fileName);
         }
-        
     }
-    
 }

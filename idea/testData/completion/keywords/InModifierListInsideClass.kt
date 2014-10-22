@@ -4,3 +4,4 @@ open class Foo {
 }
 
 // EXIST: private, public, protected
+// NUMBER: 3

@@ -1,5 +1,5 @@
 val e.<caret>
 
-// ABSENT: else
+// NUMBER: 0
 
 // For KT-1950

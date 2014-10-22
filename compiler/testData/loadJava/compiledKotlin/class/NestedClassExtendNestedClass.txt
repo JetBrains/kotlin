@@ -2,11 +2,11 @@ package test
 
 internal final class Outer {
     /*primary*/ public constructor Outer()
-    
+
     internal open class Nested1 {
         /*primary*/ public constructor Nested1()
     }
-    
+
     internal final class Nested2 : test.Outer.Nested1 {
         /*primary*/ public constructor Nested2()
     }

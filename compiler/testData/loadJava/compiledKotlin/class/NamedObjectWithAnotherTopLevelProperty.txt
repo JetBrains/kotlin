@@ -8,7 +8,7 @@ public object Obj {
     public final val v: kotlin.String = "val"
         public final fun <get-v>(): kotlin.String
     public final fun f(): kotlin.String
-    
+
     public class object <class-object-for-Obj> : test.Obj {
         /*primary*/ private constructor <class-object-for-Obj>()
         public final override /*1*/ /*fake_override*/ val v: kotlin.String

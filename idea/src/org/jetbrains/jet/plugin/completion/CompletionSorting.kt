@@ -59,9 +59,7 @@ private object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
 }
 
 private object KindWeigher : LookupElementWeigher("kotlin.kind") {
-    enum class Weight : Comparable<Weight> {
-        override fun compareTo(other: Weight) = ordinal().compareTo(other.ordinal())
-
+    private enum class Weight {
         localOrParameter
         property
         keyword
@@ -101,9 +99,7 @@ private class PreferMatchingItemWeigher(private val parameters: CompletionParame
 }
 
 private class JetDeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWeigher("kotlin.declarationRemoteness") {
-    private enum class Weight : Comparable<Weight> {
-        override fun compareTo(other: Weight) = ordinal().compareTo(other.ordinal())
-
+    private enum class Weight {
         kotlinDefaultImport
         thisFile
         imported
@@ -124,8 +120,8 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
             if (isValidJavaFqName(fqName)) {
                 val importPath = ImportPath(fqName)
                 return when {
-                    ImportInsertHelper.needImport(importPath, file) -> Weight.notImported
-                    ImportInsertHelper.isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
+                    ImportInsertHelper.getInstance().needImport(importPath, file) -> Weight.notImported
+                    ImportInsertHelper.getInstance().isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
                     else -> Weight.imported
                 }
             }

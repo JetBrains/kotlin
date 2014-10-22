@@ -17,13 +17,11 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,70 +30,69 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/checkLocalVariablesTable")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVariablesTableTest {
     public void testAllFilesPresentInCheckLocalVariablesTable() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("catchClause.kt")
     public void testCatchClause() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/catchClause.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("copyFunction.kt")
     public void testCopyFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/copyFunction.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("inlineLambdaWithItParam.kt")
     public void testInlineLambdaWithItParam() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/inlineLambdaWithItParam.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("inlineLambdaWithParam.kt")
     public void testInlineLambdaWithParam() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/inlineLambdaWithParam.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("inlineSimple.kt")
     public void testInlineSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/inlineSimple.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("inlineSimpleChain.kt")
     public void testInlineSimpleChain() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/inlineSimpleChain.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("itInLambda.kt")
     public void testItInLambda() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/itInLambda.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("itInReturnedLambda.kt")
     public void testItInReturnedLambda() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/itInReturnedLambda.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("lambdaAsVar.kt")
     public void testLambdaAsVar() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/lambdaAsVar.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("localFun.kt")
     public void testLocalFun() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/localFun.kt");
         doTest(fileName);
     }
-    
 }

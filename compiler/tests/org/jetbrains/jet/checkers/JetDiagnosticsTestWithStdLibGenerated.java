@@ -17,13 +17,11 @@
 package org.jetbrains.jet.checkers;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -33,620 +31,608 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/testsWithStdLib")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({JetDiagnosticsTestWithStdLibGenerated.Annotations.class, JetDiagnosticsTestWithStdLibGenerated.CallableReference.class, JetDiagnosticsTestWithStdLibGenerated.DuplicateJvmSignature.class, JetDiagnosticsTestWithStdLibGenerated.FunctionLiterals.class, JetDiagnosticsTestWithStdLibGenerated.KotlinSignature.class, JetDiagnosticsTestWithStdLibGenerated.NonLocalReturns.class})
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnosticsTestWithStdLib {
     public void testAllFilesPresentInTestsWithStdLib() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib"), Pattern.compile("^(.+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({Annotations.AnnotationApplicability.class, Annotations.AnnotationParameterMustBeConstant.class, Annotations.PlatformStatic.class})
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInAnnotations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
-        
+
         @TestMetadata("ClassObjectAnnotatedWithItsClass.kt")
         public void testClassObjectAnnotatedWithItsClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/ClassObjectAnnotatedWithItsClass.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class AnnotationApplicability extends AbstractJetDiagnosticsTestWithStdLib {
             public void testAllFilesPresentInAnnotationApplicability() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("illegalPlatformName.kt")
             public void testIllegalPlatformName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/illegalPlatformName.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("platformName.kt")
             public void testPlatformName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/platformName.kt");
                 doTest(fileName);
             }
-            
         }
-        
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class AnnotationParameterMustBeConstant extends AbstractJetDiagnosticsTestWithStdLib {
             public void testAllFilesPresentInAnnotationParameterMustBeConstant() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("array.kt")
             public void testArray() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant/array.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("classLiteral.kt")
             public void testClassLiteral() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant/classLiteral.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant/simple.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("vararg.kt")
             public void testVararg() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant/vararg.kt");
                 doTest(fileName);
             }
-            
         }
-        
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class PlatformStatic extends AbstractJetDiagnosticsTestWithStdLib {
             public void testAllFilesPresentInPlatformStatic() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("functions.kt")
             public void testFunctions() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/functions.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("localFun.kt")
             public void testLocalFun() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/localFun.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("property.kt")
             public void testProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/property.kt");
                 doTest(fileName);
             }
-            
         }
-        
     }
-    
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference")
     @TestDataPath("$PROJECT_ROOT")
     @InnerTestClasses({CallableReference.Function.class, CallableReference.Property.class})
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class CallableReference extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInCallableReference() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
         }
-        
+
         @TestMetadata("unused.kt")
         public void testUnused() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/unused.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class Function extends AbstractJetDiagnosticsTestWithStdLib {
             @TestMetadata("abstractClassConstructors.kt")
             public void testAbstractClassConstructors() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/abstractClassConstructors.kt");
                 doTest(fileName);
             }
-            
+
             public void testAllFilesPresentInFunction() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/callableReference/function"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("ambiguityTopLevelVsTopLevel.kt")
             public void testAmbiguityTopLevelVsTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/ambiguityTopLevelVsTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("callableRefrenceOnNestedObject.kt")
             public void testCallableRefrenceOnNestedObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/callableRefrenceOnNestedObject.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("constructorFromClass.kt")
             public void testConstructorFromClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/constructorFromClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("constructorFromExtension.kt")
             public void testConstructorFromExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/constructorFromExtension.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("constructorFromExtensionInClass.kt")
             public void testConstructorFromExtensionInClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/constructorFromExtensionInClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("constructorFromTopLevel.kt")
             public void testConstructorFromTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/constructorFromTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("differentPackageClass.kt")
             public void testDifferentPackageClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/differentPackageClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("differentPackageExtension.kt")
             public void testDifferentPackageExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/differentPackageExtension.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("differentPackageTopLevel.kt")
             public void testDifferentPackageTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/differentPackageTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("empty.kt")
             public void testEmpty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/empty.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("extensionFromClass.kt")
             public void testExtensionFromClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/extensionFromClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("extensionFromExtension.kt")
             public void testExtensionFromExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/extensionFromExtension.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("extensionFromExtensionInClass.kt")
             public void testExtensionFromExtensionInClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/extensionFromExtensionInClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("extensionFromTopLevel.kt")
             public void testExtensionFromTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/extensionFromTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("extensionInClassDisallowed.kt")
             public void testExtensionInClassDisallowed() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/extensionInClassDisallowed.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("extensionOnNullable.kt")
             public void testExtensionOnNullable() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/extensionOnNullable.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("genericClassFromTopLevel.kt")
             public void testGenericClassFromTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/genericClassFromTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("importedInnerConstructor.kt")
             public void testImportedInnerConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/importedInnerConstructor.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("innerConstructorFromClass.kt")
             public void testInnerConstructorFromClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/innerConstructorFromClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("innerConstructorFromExtension.kt")
             public void testInnerConstructorFromExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/innerConstructorFromExtension.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("innerConstructorFromTopLevel.kt")
             public void testInnerConstructorFromTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/innerConstructorFromTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("javaStaticMethod.kt")
             public void testJavaStaticMethod() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/javaStaticMethod.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("lhsNotAClass.kt")
             public void testLhsNotAClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/lhsNotAClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("localConstructor.kt")
             public void testLocalConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/localConstructor.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("localConstructorFromExtensionInLocalClass.kt")
             public void testLocalConstructorFromExtensionInLocalClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/localConstructorFromExtensionInLocalClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("localConstructorFromLocalClass.kt")
             public void testLocalConstructorFromLocalClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/localConstructorFromLocalClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("localConstructorFromLocalExtension.kt")
             public void testLocalConstructorFromLocalExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/localConstructorFromLocalExtension.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("localNamedFun.kt")
             public void testLocalNamedFun() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/localNamedFun.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("localNamedFunFromExtensionInLocalClass.kt")
             public void testLocalNamedFunFromExtensionInLocalClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/localNamedFunFromExtensionInLocalClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("localNamedFunFromLocalClass.kt")
             public void testLocalNamedFunFromLocalClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/localNamedFunFromLocalClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("localNamedFunFromLocalExtension.kt")
             public void testLocalNamedFunFromLocalExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/localNamedFunFromLocalExtension.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("longQualifiedName.kt")
             public void testLongQualifiedName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/longQualifiedName.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("longQualifiedNameGeneric.kt")
             public void testLongQualifiedNameGeneric() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/longQualifiedNameGeneric.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("memberFromClass.kt")
             public void testMemberFromClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/memberFromClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("memberFromExtension.kt")
             public void testMemberFromExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/memberFromExtension.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("memberFromExtensionInClass.kt")
             public void testMemberFromExtensionInClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/memberFromExtensionInClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("memberFromTopLevel.kt")
             public void testMemberFromTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/memberFromTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("nestedConstructorFromClass.kt")
             public void testNestedConstructorFromClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/nestedConstructorFromClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("nestedConstructorFromExtension.kt")
             public void testNestedConstructorFromExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/nestedConstructorFromExtension.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("nestedConstructorFromTopLevel.kt")
             public void testNestedConstructorFromTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/nestedConstructorFromTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("noAmbiguityLocalVsTopLevel.kt")
             public void testNoAmbiguityLocalVsTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/noAmbiguityLocalVsTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("noAmbiguityMemberVsExtension.kt")
             public void testNoAmbiguityMemberVsExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/noAmbiguityMemberVsExtension.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("noAmbiguityMemberVsTopLevel.kt")
             public void testNoAmbiguityMemberVsTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/noAmbiguityMemberVsTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("renameOnImport.kt")
             public void testRenameOnImport() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/renameOnImport.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("topLevelFromClass.kt")
             public void testTopLevelFromClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/topLevelFromClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("topLevelFromExtension.kt")
             public void testTopLevelFromExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/topLevelFromExtension.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("topLevelFromExtensionInClass.kt")
             public void testTopLevelFromExtensionInClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/topLevelFromExtensionInClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("topLevelFromTopLevel.kt")
             public void testTopLevelFromTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/topLevelFromTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("unresolved.kt")
             public void testUnresolved() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/unresolved.kt");
                 doTest(fileName);
             }
-            
         }
-        
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+        @RunWith(JUnit3RunnerWithInners.class)
         public static class Property extends AbstractJetDiagnosticsTestWithStdLib {
             @TestMetadata("abstractPropertyViaSubclasses.kt")
             public void testAbstractPropertyViaSubclasses() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/abstractPropertyViaSubclasses.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("accessViaSubclass.kt")
             public void testAccessViaSubclass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/accessViaSubclass.kt");
                 doTest(fileName);
             }
-            
+
             public void testAllFilesPresentInProperty() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/callableReference/property"), Pattern.compile("^(.+)\\.kt$"), true);
             }
-            
+
             @TestMetadata("classFromClass.kt")
             public void testClassFromClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/classFromClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("extensionFromClass.kt")
             public void testExtensionFromClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/extensionFromClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("extensionFromTopLevel.kt")
             public void testExtensionFromTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/extensionFromTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("extensionPropertyOnNullable.kt")
             public void testExtensionPropertyOnNullable() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/extensionPropertyOnNullable.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("genericClass.kt")
             public void testGenericClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/genericClass.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("javaInstanceField.kt")
             public void testJavaInstanceField() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/javaInstanceField.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("javaStaticFieldViaImport.kt")
             public void testJavaStaticFieldViaImport() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/javaStaticFieldViaImport.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("localVariable.kt")
             public void testLocalVariable() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/localVariable.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("memberFromExtension.kt")
             public void testMemberFromExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/memberFromExtension.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("memberFromTopLevel.kt")
             public void testMemberFromTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/memberFromTopLevel.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("topLevelFromTopLevel.kt")
             public void testTopLevelFromTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/topLevelFromTopLevel.kt");
                 doTest(fileName);
             }
-            
         }
-        
     }
-    
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class DuplicateJvmSignature extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
         }
-        
+
         @TestMetadata("delegatedProperty.kt")
         public void testDelegatedProperty() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/delegatedProperty.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("platformNames.kt")
         public void testPlatformNames() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/platformNames.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("platformNamesDuplicate.kt")
         public void testPlatformNamesDuplicate() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/platformNamesDuplicate.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("platformStaticInClassObject.kt")
         public void testPlatformStaticInClassObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/platformStaticInClassObject.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("platformStaticInObject.kt")
         public void testPlatformStaticInObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/platformStaticInObject.kt");
             doTest(fileName);
         }
-        
     }
-    
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/functionLiterals")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class FunctionLiterals extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInFunctionLiterals() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
         }
-        
+
         @TestMetadata("pseudocodeMemoryOverhead.kt")
         public void testPseudocodeMemoryOverhead() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/functionLiterals/pseudocodeMemoryOverhead.kt");
             doTest(fileName);
         }
-        
     }
-    
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinSignature extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInKotlinSignature() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), true);
         }
-        
+
         @TestMetadata("constructorNamedArguments.kt")
         public void testConstructorNamedArguments() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature/constructorNamedArguments.kt");
             doTest(fileName);
         }
-        
+
         @TestMetadata("parameterNames.kt")
         public void testParameterNames() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature/parameterNames.kt");
             doTest(fileName);
         }
-        
     }
-    
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+    @RunWith(JUnit3RunnerWithInners.class)
     public static class NonLocalReturns extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInNonLocalReturns() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), true);
         }
-        
+
         @TestMetadata("prohibitNonLocalReturnOutOfTryCatchFinally.kt")
         public void testProhibitNonLocalReturnOutOfTryCatchFinally() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/nonLocalReturns/prohibitNonLocalReturnOutOfTryCatchFinally.kt");
             doTest(fileName);
         }
-        
     }
-    
 }

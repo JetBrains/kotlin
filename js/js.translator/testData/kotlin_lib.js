@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-(function () {
+(function (Kotlin) {
     "use strict";
 
     // Shims for String
@@ -291,6 +291,15 @@
             },
             ordinal: function () {
                 return this.ordinal$;
+            },
+            equals_za3rmp$: function (o) {
+                return this === o;
+            },
+            hashCode: function () {
+                return getObjectHashCode(this);
+            },
+            compareTo_za3rmp$: function (o) {
+                return this.ordinal$ < o.ordinal$ ? -1 : this.ordinal$ > o.ordinal$ ? 1 : 0;
             },
             toString: function () {
                 return this.name();
@@ -993,4 +1002,4 @@
     };
 
     Kotlin.createDefinition(lazyInitClasses, Kotlin);
-})();
+})(Kotlin);

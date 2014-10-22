@@ -129,7 +129,7 @@ package kotlin {
         // -- Module: <built-ins lazy module> --
     }
 
-    public abstract class Enum</*0*/ E : kotlin.Enum<E>> {
+    public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
         // -- Module: <built-ins lazy module> --
     }
 

@@ -16,7 +16,13 @@
 
 package kotlin
 
-public abstract class Enum<E: Enum<E>>(name: String, ordinal: Int) {
-  public final fun name()    : String
-  public final fun ordinal() : Int
+public abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<E> {
+    public final fun name(): String
+    public final fun ordinal(): Int
+
+    public override final fun compareTo(other: E): Int
+
+    public override final fun equals(other: Any?): Boolean
+    public override final fun hashCode(): Int
+    public override fun toString(): String
 }

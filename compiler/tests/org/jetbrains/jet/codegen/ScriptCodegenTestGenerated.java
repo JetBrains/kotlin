@@ -17,13 +17,11 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,94 +30,93 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/script")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
     public void testAllFilesPresentInScript() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.+)\\.kts$"), true);
     }
-    
+
     @TestMetadata("empty.kts")
     public void testEmpty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/empty.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("helloWorld.kts")
     public void testHelloWorld() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/helloWorld.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("parameter.kts")
     public void testParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/parameter.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("parameterArray.kts")
     public void testParameterArray() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/parameterArray.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("parameterClosure.kts")
     public void testParameterClosure() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/parameterClosure.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("parameterLong.kts")
     public void testParameterLong() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/parameterLong.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("secondLevelFunction.kts")
     public void testSecondLevelFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/secondLevelFunction.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("secondLevelFunctionClosure.kts")
     public void testSecondLevelFunctionClosure() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/secondLevelFunctionClosure.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("secondLevelVal.kts")
     public void testSecondLevelVal() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/secondLevelVal.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("simpleClass.kts")
     public void testSimpleClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/simpleClass.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("string.kts")
     public void testString() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/string.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("topLevelFunction.kts")
     public void testTopLevelFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelFunction.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("topLevelFunctionClosure.kts")
     public void testTopLevelFunctionClosure() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelFunctionClosure.kts");
         doTest(fileName);
     }
-    
+
     @TestMetadata("topLevelProperty.kts")
     public void testTopLevelProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelProperty.kts");
         doTest(fileName);
     }
-    
 }

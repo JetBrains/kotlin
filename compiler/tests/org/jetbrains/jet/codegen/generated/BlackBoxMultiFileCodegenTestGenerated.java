@@ -17,13 +17,11 @@
 package org.jetbrains.jet.codegen.generated;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,76 +30,75 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxMultiFile")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("accessorForProtected")
     public void testAccessorForProtected() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/accessorForProtected/");
         doTestMultiFile(fileName);
     }
-    
+
     public void testAllFilesPresentInBoxMultiFile() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultiFile"), Pattern.compile("^([^\\.]+)$"), false);
     }
-    
+
     @TestMetadata("internalVisibility")
     public void testInternalVisibility() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/internalVisibility/");
         doTestMultiFile(fileName);
     }
-    
+
     @TestMetadata("kt1515")
     public void testKt1515() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt1515/");
         doTestMultiFile(fileName);
     }
-    
+
     @TestMetadata("kt1528")
     public void testKt1528() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt1528/");
         doTestMultiFile(fileName);
     }
-    
+
     @TestMetadata("kt1845")
     public void testKt1845() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt1845/");
         doTestMultiFile(fileName);
     }
-    
+
     @TestMetadata("kt2060")
     public void testKt2060() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt2060/");
         doTestMultiFile(fileName);
     }
-    
+
     @TestMetadata("kt2257")
     public void testKt2257() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt2257/");
         doTestMultiFile(fileName);
     }
-    
+
     @TestMetadata("nestedPackages")
     public void testNestedPackages() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/nestedPackages/");
         doTestMultiFile(fileName);
     }
-    
+
     @TestMetadata("samWrappersDifferentFiles")
     public void testSamWrappersDifferentFiles() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/samWrappersDifferentFiles/");
         doTestMultiFile(fileName);
     }
-    
+
     @TestMetadata("sameFileName")
     public void testSameFileName() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/sameFileName/");
         doTestMultiFile(fileName);
     }
-    
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/simple/");
         doTestMultiFile(fileName);
     }
-    
 }

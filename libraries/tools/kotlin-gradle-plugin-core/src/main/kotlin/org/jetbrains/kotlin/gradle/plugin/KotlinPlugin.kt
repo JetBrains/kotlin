@@ -199,7 +199,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
                 val javaTask = variant.getJavaCompile()!!
                 val variantName = variant.getName()
 
-                val kotlinTaskName = "compile${variantName}Kotlin"
+                val kotlinTaskName = "compile${variantName.capitalize()}Kotlin"
                 val kotlinTask: KotlinCompile = project.getTasks().create(kotlinTaskName, javaClass<KotlinCompile>())
                 kotlinTask.kotlinOptions = kotlinOptions
 

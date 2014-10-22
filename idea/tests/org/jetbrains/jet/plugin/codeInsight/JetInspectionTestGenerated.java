@@ -17,13 +17,11 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,40 +30,39 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/intentions")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
     public void testAllFilesPresentInIntentions() throws Exception {
         JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/intentions"), Pattern.compile("^(inspections\\.test)$"));
     }
-    
+
     @TestMetadata("attributeCallReplacements/replaceGetIntention/inspectionData/inspections.test")
     public void testAttributeCallReplacements_replaceGetIntention_inspectionData_Inspections_test() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/attributeCallReplacements/replaceGetIntention/inspectionData/inspections.test");
         doTest(fileName);
     }
-    
+
     @TestMetadata("branched/ifThenToElvis/inspectionData/inspections.test")
     public void testBranched_ifThenToElvis_inspectionData_Inspections_test() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/inspectionData/inspections.test");
         doTest(fileName);
     }
-    
+
     @TestMetadata("branched/ifThenToSafeAccess/inspectionData/inspections.test")
     public void testBranched_ifThenToSafeAccess_inspectionData_Inspections_test() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/inspectionData/inspections.test");
         doTest(fileName);
     }
-    
+
     @TestMetadata("removeExplicitTypeArguments/inspectionData/inspections.test")
     public void testRemoveExplicitTypeArguments_inspectionData_Inspections_test() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/inspectionData/inspections.test");
         doTest(fileName);
     }
-    
+
     @TestMetadata("simplifyNegatedBinaryExpressionIntention/inspectionData/inspections.test")
     public void testSimplifyNegatedBinaryExpressionIntention_inspectionData_Inspections_test() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/inspectionData/inspections.test");
         doTest(fileName);
     }
-    
 }

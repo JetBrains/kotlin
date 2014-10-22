@@ -106,7 +106,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                                                                         configurationKind);
 
         PackageViewDescriptor packageFromSource = exhaust.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
-        assert packageFromSource != null;
+        assert packageFromSource != null : "Package " + TEST_PACKAGE_FQNAME + " not found";
         Assert.assertEquals("test", packageFromSource.getName().asString());
 
         PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(

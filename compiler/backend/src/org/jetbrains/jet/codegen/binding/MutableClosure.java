@@ -121,7 +121,7 @@ public final class MutableClosure implements CalculatedClosure {
 
     public void captureVariable(EnclosedValueDescriptor value) {
         if (captureVariables == null) {
-            captureVariables = new HashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
+            captureVariables = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
         }
         captureVariables.put(value.getDescriptor(), value);
     }

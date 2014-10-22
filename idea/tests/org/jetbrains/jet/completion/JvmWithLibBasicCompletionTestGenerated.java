@@ -17,13 +17,11 @@
 package org.jetbrains.jet.completion;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,46 +30,45 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/completion/basic/custom")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class JvmWithLibBasicCompletionTestGenerated extends AbstractJvmWithLibBasicCompletionTest {
     public void testAllFilesPresentInCustom() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/custom"), Pattern.compile("^(.+)\\.kt$"), false);
     }
-    
+
     @TestMetadata("NamedArgumentsJava.kt")
     public void testNamedArgumentsJava() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/custom/NamedArgumentsJava.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NamedArgumentsKotlin.kt")
     public void testNamedArgumentsKotlin() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/custom/NamedArgumentsKotlin.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("TopLevelNonImportedExtFun.kt")
     public void testTopLevelNonImportedExtFun() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/custom/TopLevelNonImportedExtFun.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("TopLevelNonImportedExtProp.kt")
     public void testTopLevelNonImportedExtProp() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/custom/TopLevelNonImportedExtProp.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("TopLevelNonImportedFun.kt")
     public void testTopLevelNonImportedFun() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/custom/TopLevelNonImportedFun.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("TopLevelNonImportedProperty.kt")
     public void testTopLevelNonImportedProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/custom/TopLevelNonImportedProperty.kt");
         doTest(fileName);
     }
-    
 }

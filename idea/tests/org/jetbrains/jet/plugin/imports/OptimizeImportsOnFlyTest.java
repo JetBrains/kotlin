@@ -33,7 +33,7 @@ public class OptimizeImportsOnFlyTest extends LightDaemonAnalyzerTestCase {
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                 @Override
                 public void run() {
-                    ImportInsertHelper.addImportDirectiveIfNeeded(new FqName("java.util.HashSet"), (JetFile) getFile());
+                    ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(new FqName("java.util.HashSet"), (JetFile) getFile());
                 }
             });
         }

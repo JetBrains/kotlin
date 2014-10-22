@@ -2,11 +2,11 @@ package test
 
 internal final class A {
     /*primary*/ public constructor A()
-    
+
     internal object B {
         /*primary*/ private constructor B()
         internal final fun foo(/*0*/ a: kotlin.Int): kotlin.String
-        
+
         public class object <class-object-for-B> : test.A.B {
             /*primary*/ private constructor <class-object-for-B>()
             internal final override /*1*/ /*fake_override*/ fun foo(/*0*/ a: kotlin.Int): kotlin.String

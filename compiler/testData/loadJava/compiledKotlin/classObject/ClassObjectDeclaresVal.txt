@@ -2,7 +2,7 @@ package test
 
 internal final class ClassObjectDeclaresProperty {
     /*primary*/ public constructor ClassObjectDeclaresProperty()
-    
+
     internal class object <class-object-for-ClassObjectDeclaresProperty> {
         /*primary*/ private constructor <class-object-for-ClassObjectDeclaresProperty>()
         internal final val i: kotlin.Int = 1

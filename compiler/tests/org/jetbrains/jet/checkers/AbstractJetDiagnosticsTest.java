@@ -81,7 +81,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             TestModule testModule = entry.getKey();
             List<? extends TestFile> testFilesInModule = entry.getValue();
 
-            List<JetFile> jetFiles = getJetFiles(testFilesInModule);
+            List<JetFile> jetFiles = getJetFiles(testFilesInModule, true);
             allJetFiles.addAll(jetFiles);
 
             ModuleDescriptorImpl module = modules.get(testModule);
@@ -194,8 +194,8 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         JetTestUtils.assertEqualsToFile(expectedFile, rootPackageText.toString());
     }
 
-    public static RecursiveDescriptorComparator.Configuration createdAffectedPackagesConfiguration(List<TestFile> testFiles) {
-        final Set<Name> packagesNames = LazyResolveTestUtil.getTopLevelPackagesFromFileList(getJetFiles(testFiles));
+    public RecursiveDescriptorComparator.Configuration createdAffectedPackagesConfiguration(List<TestFile> testFiles) {
+        final Set<Name> packagesNames = LazyResolveTestUtil.getTopLevelPackagesFromFileList(getJetFiles(testFiles, false));
 
         Predicate<DeclarationDescriptor> stepIntoFilter = new Predicate<DeclarationDescriptor>() {
             @Override

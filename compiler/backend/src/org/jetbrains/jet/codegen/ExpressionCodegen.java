@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
-import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.inline.InlineCodegen;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
@@ -185,7 +184,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    public CalculatedClosure generateObjectLiteral(@NotNull JetObjectLiteralExpression literal) {
+    public ClassDescriptor generateObjectLiteral(@NotNull JetObjectLiteralExpression literal) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
 
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, objectDeclaration);
@@ -198,13 +197,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 literal.getContainingFile()
         );
 
-
         ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION);
-
         new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state, getParentCodegen()).generate();
 
-        //noinspection ConstantConditions
-        return bindingContext.get(CLOSURE, classDescriptor);
+        return classDescriptor;
     }
 
     @NotNull
@@ -1342,20 +1338,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression, StackValue receiver) {
-        CalculatedClosure closure = generateObjectLiteral(expression);
-
-        ConstructorDescriptor constructorDescriptor = bindingContext.get(CONSTRUCTOR, expression.getObjectDeclaration());
-        assert constructorDescriptor != null : "Unresolved constructor: " + expression.getText();
-        JvmMethodSignature constructor = typeMapper.mapSignature(constructorDescriptor);
-
-        Type type = typeMapper.mapType(constructorDescriptor.getContainingDeclaration());
+        ClassDescriptor classDescriptor = generateObjectLiteral(expression);
+        Type type = typeMapper.mapType(classDescriptor);
 
         v.anew(type);
         v.dup();
 
-        pushClosureOnStack(closure, false, defaultCallGenerator);
+        pushClosureOnStack(classDescriptor, true, defaultCallGenerator);
 
-        ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
+        //noinspection ConstantConditions
+        ResolvedCall<ConstructorDescriptor> superCall = bindingContext.get(CLOSURE, classDescriptor).getSuperCall();
         if (superCall != null) {
             // For an anonymous object, we should also generate all non-default arguments that it captures for its super call
             ConstructorDescriptor superConstructor = superCall.getResultingDescriptor();
@@ -1363,7 +1355,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             int params = superValueParameters.size();
             List<Type> superMappedTypes = typeMapper.mapToCallableMethod(superConstructor).getValueParameterTypes();
             assert superMappedTypes.size() >= params : String.format("Incorrect number of mapped parameters vs arguments: %d < %d for %s",
-                                                                     superMappedTypes.size(), params, constructorDescriptor);
+                                                                     superMappedTypes.size(), params, classDescriptor);
 
             List<ResolvedValueArgument> valueArguments = new ArrayList<ResolvedValueArgument>(params);
             List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(params);
@@ -1381,33 +1373,33 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             argumentGenerator.generate(valueArguments);
         }
 
+        ConstructorDescriptor constructorDescriptor = bindingContext.get(CONSTRUCTOR, expression.getObjectDeclaration());
+        assert constructorDescriptor != null : "Unresolved constructor: " + expression.getText();
+        JvmMethodSignature constructor = typeMapper.mapSignature(constructorDescriptor);
         v.invokespecial(type.getInternalName(), "<init>", constructor.getAsmMethod().getDescriptor(), false);
         return StackValue.onStack(type);
     }
 
-    public void pushClosureOnStack(
-            @Nullable CalculatedClosure closure,
-            boolean ignoreThisAndReceiver,
-            @NotNull CallGenerator callGenerator
-    ) {
+    public void pushClosureOnStack(@NotNull ClassDescriptor classDescriptor, boolean putThis, @NotNull CallGenerator callGenerator) {
+        CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
         if (closure == null) return;
 
         int paramIndex = 0;
-        if (!ignoreThisAndReceiver) {
+
+        if (putThis) {
             ClassDescriptor captureThis = closure.getCaptureThis();
             if (captureThis != null) {
                 StackValue thisOrOuter = generateThisOrOuter(captureThis, false);
-
                 assert !isPrimitive(thisOrOuter.type) : "This or outer should be non primitive: " + thisOrOuter.type;
                 callGenerator.putCapturedValueOnStack(thisOrOuter, thisOrOuter.type, paramIndex++);
             }
+        }
 
-            JetType captureReceiver = closure.getCaptureReceiverType();
-            if (captureReceiver != null) {
-                Type asmType = typeMapper.mapType(captureReceiver);
-                StackValue.Local capturedReceiver = StackValue.local(AsmUtil.getReceiverIndex(context, context.getContextDescriptor()), asmType);
-                callGenerator.putCapturedValueOnStack(capturedReceiver, capturedReceiver.type, paramIndex++);
-            }
+        JetType captureReceiver = closure.getCaptureReceiverType();
+        if (captureReceiver != null) {
+            Type asmType = typeMapper.mapType(captureReceiver);
+            StackValue.Local capturedReceiver = StackValue.local(AsmUtil.getReceiverIndex(context, context.getContextDescriptor()), asmType);
+            callGenerator.putCapturedValueOnStack(capturedReceiver, capturedReceiver.type, paramIndex++);
         }
 
         for (Map.Entry<DeclarationDescriptor, EnclosedValueDescriptor> entry : closure.getCaptureVariables().entrySet()) {
@@ -1421,8 +1413,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         ResolvedCall<ConstructorDescriptor> superCall = closure.getSuperCall();
         if (superCall != null) {
-            MutableClosure superClosure = bindingContext.get(CLOSURE, superCall.getResultingDescriptor().getContainingDeclaration());
-            pushClosureOnStack(superClosure, ignoreThisAndReceiver, callGenerator);
+            pushClosureOnStack(
+                    superCall.getResultingDescriptor().getContainingDeclaration(),
+                    putThis && closure.getCaptureThis() == null,
+                    callGenerator
+            );
         }
     }
 
@@ -3010,9 +3005,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 StackValue value = gen(lhs);              // receiver
                 value.dupReceiver(v);                     // receiver receiver
                 value.put(lhsType, v);                    // receiver lhs
-                ((IntrinsicMethod) callable).generate(this, v, typeMapper.mapType(descriptor), expression,
+                Type returnType = typeMapper.mapType(descriptor);
+                ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
                                                       Collections.singletonList(expression.getRight()), StackValue.onStack(lhsType));
-                value.store(lhsType, v);
+                value.store(returnType, v);
                 return StackValue.none();
             }
             else {
@@ -3142,7 +3138,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             throw new UnsupportedOperationException("Don't know how to generate this postfix expression: " + originalOperationName + " " + op);
         }
 
-        Type asmType = expressionType(expression);
+        Type asmResultType = expressionType(expression);
+        Type asmBaseType = expressionType(expression.getBaseExpression());
         DeclarationDescriptor cls = op.getContainingDeclaration();
 
         int increment;
@@ -3157,9 +3154,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         boolean isPrimitiveNumberClassDescriptor = isPrimitiveNumberClassDescriptor(cls);
-        if (isPrimitiveNumberClassDescriptor) {
+        if (isPrimitiveNumberClassDescriptor && AsmUtil.isPrimitive(asmBaseType)) {
             JetExpression operand = expression.getBaseExpression();
-            if (operand instanceof JetReferenceExpression && asmType == Type.INT_TYPE) {
+            if (operand instanceof JetReferenceExpression && asmResultType == Type.INT_TYPE) {
                 int index = indexOfLocal((JetReferenceExpression) operand);
                 if (index >= 0) {
                     return StackValue.postIncrement(index, increment);
@@ -3176,8 +3173,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         pushReceiverAndValueViaDup(value, type); // receiver and new value
 
         Type storeType;
-        if (isPrimitiveNumberClassDescriptor) {
-            genIncrement(asmType, increment, v);
+        if (isPrimitiveNumberClassDescriptor && AsmUtil.isPrimitive(asmBaseType)) {
+            genIncrement(asmResultType, increment, v);
             storeType = type;
         }
         else {
@@ -3186,7 +3183,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         value.store(storeType, v);
-        return StackValue.onStack(asmType);  // old value
+        return StackValue.onStack(asmResultType);  // old value
     }
 
     private void pushReceiverAndValueViaDup(StackValue value, Type type) {
@@ -3339,11 +3336,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             generateReceiverValue(resolvedCall.getDispatchReceiver(), receiverType);
         }
 
-        MutableClosure closure = bindingContext.get(CLOSURE, constructor.getContainingDeclaration());
-
         // Resolved call to local class constructor doesn't have dispatchReceiver, so we need to generate closure on stack
         // See StackValue.receiver for more info
-        pushClosureOnStack(closure, dispatchReceiver != null, defaultCallGenerator);
+        pushClosureOnStack(constructor.getContainingDeclaration(), dispatchReceiver == null, defaultCallGenerator);
 
         ConstructorDescriptor originalOfSamAdapter = (ConstructorDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(constructor);
         CallableMethod method = typeMapper.mapToCallableMethod(originalOfSamAdapter == null ? constructor : originalOfSamAdapter);

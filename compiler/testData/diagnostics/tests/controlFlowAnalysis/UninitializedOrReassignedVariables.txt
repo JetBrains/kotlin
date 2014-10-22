@@ -118,8 +118,9 @@ package uninitialized_reassigned_variables {
 
     internal final enum class ProtocolState : kotlin.Enum<uninitialized_reassigned_variables.ProtocolState> {
         private constructor ProtocolState()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: uninitialized_reassigned_variables.ProtocolState): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         internal abstract fun signal(): uninitialized_reassigned_variables.ProtocolState
@@ -127,8 +128,9 @@ package uninitialized_reassigned_variables {
 
         public enum entry TALKING : uninitialized_reassigned_variables.ProtocolState {
             private constructor TALKING()
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: uninitialized_reassigned_variables.ProtocolState): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             internal open override /*1*/ fun signal(): uninitialized_reassigned_variables.ProtocolState
@@ -136,8 +138,9 @@ package uninitialized_reassigned_variables {
 
             public class object <class-object-for-TALKING> : uninitialized_reassigned_variables.ProtocolState.TALKING {
                 private constructor <class-object-for-TALKING>()
-                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: uninitialized_reassigned_variables.ProtocolState): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
                 public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
                 internal open override /*1*/ /*fake_override*/ fun signal(): uninitialized_reassigned_variables.ProtocolState
@@ -147,8 +150,9 @@ package uninitialized_reassigned_variables {
 
         public enum entry WAITING : uninitialized_reassigned_variables.ProtocolState {
             private constructor WAITING()
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: uninitialized_reassigned_variables.ProtocolState): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             internal open override /*1*/ fun signal(): uninitialized_reassigned_variables.ProtocolState
@@ -156,8 +160,9 @@ package uninitialized_reassigned_variables {
 
             public class object <class-object-for-WAITING> : uninitialized_reassigned_variables.ProtocolState.WAITING {
                 private constructor <class-object-for-WAITING>()
-                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: uninitialized_reassigned_variables.ProtocolState): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
                 public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
                 internal open override /*1*/ /*fake_override*/ fun signal(): uninitialized_reassigned_variables.ProtocolState

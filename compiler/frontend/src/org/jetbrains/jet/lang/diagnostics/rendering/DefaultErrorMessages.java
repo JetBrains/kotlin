@@ -102,6 +102,7 @@ public class DefaultErrorMessages {
         MAP.put(ILLEGAL_ENUM_ANNOTATION, "Annotation ''enum'' is only applicable for class");
         MAP.put(REDUNDANT_MODIFIER_IN_GETTER, "Visibility modifiers are redundant in getter");
         MAP.put(TRAIT_CAN_NOT_BE_FINAL, "Trait cannot be final");
+        MAP.put(TYPE_PARAMETERS_IN_ENUM, "Enum class cannot have type parameters");
         MAP.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM,
                 "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly"); // TODO: message
         MAP.put(RETURN_NOT_ALLOWED, "'return' is not allowed here");
@@ -252,7 +253,7 @@ public class DefaultErrorMessages {
         MAP.put(ABSTRACT_SUPER_CALL, "Abstract member cannot be accessed directly");
         MAP.put(NOT_A_SUPERTYPE, "Not a supertype");
         MAP.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, "Type arguments do not need to be specified in a 'super' qualifier");
-        MAP.put(USELESS_CAST_STATIC_ASSERT_IS_FINE, "No cast needed, use ':' instead");
+        MAP.put(USELESS_CAST_STATIC_ASSERT_IS_FINE, "No cast needed. You can use ':' if you need a cast to a super type");
         MAP.put(USELESS_CAST, "No cast needed");
         MAP.put(CAST_NEVER_SUCCEEDS, "This cast can never succeed");
         MAP.put(USELESS_NULLABLE_CHECK, "Non-null type is checked for instance of nullable type");
@@ -302,7 +303,7 @@ public class DefaultErrorMessages {
         MAP.put(EXPECTED_RETURN_TYPE_MISMATCH, "Expected return type {0}", RENDER_TYPE);
         MAP.put(EXPECTED_PARAMETERS_NUMBER_MISMATCH, "Expected {0,choice,0#no parameters|1#one parameter of type|1<{0,number,integer} parameters of types} {1}", null, RENDER_COLLECTION_OF_TYPES);
 
-        MAP.put(IMPLICIT_CAST_TO_UNIT_OR_ANY, "Type was casted to ''{0}''. Please specify ''{0}'' as expected type, if you mean such cast",
+        MAP.put(IMPLICIT_CAST_TO_UNIT_OR_ANY, "Type is cast to ''{0}''. Please specify ''{0}'' as expected type, if you mean such cast",
                 RENDER_TYPE);
         MAP.put(EXPRESSION_EXPECTED, "{0} is not an expression, and only expressions are allowed here", new Renderer<JetExpression>() {
             @NotNull
@@ -459,7 +460,7 @@ public class DefaultErrorMessages {
 
         MAP.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter {0}", NAME);
         MAP.put(MISSING_RECEIVER, "A receiver of type {0} is required", RENDER_TYPE);
-        MAP.put(NO_RECEIVER_ADMITTED, "No receiver can be passed to this function or property");
+        MAP.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property");
 
         MAP.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class");
 

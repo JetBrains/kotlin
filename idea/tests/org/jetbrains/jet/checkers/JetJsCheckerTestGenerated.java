@@ -17,13 +17,11 @@
 package org.jetbrains.jet.checkers;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,22 +30,21 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/checker/js")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class JetJsCheckerTestGenerated extends AbstractJetJsCheckerTest {
     public void testAllFilesPresentInJs() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/js"), Pattern.compile("^(.+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("basic.kt")
     public void testBasic() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/js/basic.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("helloWorld.kt")
     public void testHelloWorld() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/js/helloWorld.kt");
         doTest(fileName);
     }
-    
 }

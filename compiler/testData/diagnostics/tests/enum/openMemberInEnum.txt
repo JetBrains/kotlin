@@ -4,10 +4,11 @@ internal final enum class EnumWithOpenMembers : kotlin.Enum<EnumWithOpenMembers>
     private constructor EnumWithOpenMembers()
     internal final val b: kotlin.Int = 3
     internal open val bar: kotlin.String = ""
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumWithOpenMembers): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal final fun f(): kotlin.Int
     internal open fun foo(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -16,10 +17,11 @@ internal final enum class EnumWithOpenMembers : kotlin.Enum<EnumWithOpenMembers>
         private constructor E1()
         internal final override /*1*/ /*fake_override*/ val b: kotlin.Int
         internal open override /*1*/ val bar: kotlin.String = "a"
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumWithOpenMembers): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         internal final override /*1*/ /*fake_override*/ fun f(): kotlin.Int
         internal open override /*1*/ fun foo(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -28,10 +30,11 @@ internal final enum class EnumWithOpenMembers : kotlin.Enum<EnumWithOpenMembers>
             private constructor <class-object-for-E1>()
             internal final override /*1*/ /*fake_override*/ val b: kotlin.Int
             internal open override /*1*/ /*fake_override*/ val bar: kotlin.String
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumWithOpenMembers): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             internal final override /*1*/ /*fake_override*/ fun f(): kotlin.Int
             internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -42,10 +45,11 @@ internal final enum class EnumWithOpenMembers : kotlin.Enum<EnumWithOpenMembers>
         private constructor E2()
         internal open override /*1*/ val b: kotlin.Int = 4
         internal open override /*1*/ /*fake_override*/ val bar: kotlin.String
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumWithOpenMembers): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         internal open override /*1*/ fun f(): kotlin.Int
         internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -54,10 +58,11 @@ internal final enum class EnumWithOpenMembers : kotlin.Enum<EnumWithOpenMembers>
             private constructor <class-object-for-E2>()
             internal open override /*1*/ /*fake_override*/ val b: kotlin.Int
             internal open override /*1*/ /*fake_override*/ val bar: kotlin.String
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumWithOpenMembers): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             internal open override /*1*/ /*fake_override*/ fun f(): kotlin.Int
             internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

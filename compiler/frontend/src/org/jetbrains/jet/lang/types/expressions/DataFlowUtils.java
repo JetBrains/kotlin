@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
+import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
@@ -39,6 +40,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.Collection;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -264,5 +266,20 @@ public class DataFlowUtils {
                 expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
         context.trace.report(EXPRESSION_EXPECTED.on(expression, expression));
         return JetTypeInfo.create(null, context.dataFlowInfo);
+    }
+
+    @NotNull
+    public static Collection<JetType> getAllPossibleTypes(
+            @NotNull JetExpression expression,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull JetType type,
+            @NotNull BindingContext bindingContext
+    ) {
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, bindingContext);
+        Collection<JetType> possibleTypes = Sets.newHashSet(type);
+        if (dataFlowValue.isStableIdentifier()) {
+            possibleTypes.addAll(dataFlowInfo.getPossibleTypes(dataFlowValue));
+        }
+        return possibleTypes;
     }
 }

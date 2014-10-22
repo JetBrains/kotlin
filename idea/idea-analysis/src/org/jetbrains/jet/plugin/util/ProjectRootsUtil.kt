@@ -50,7 +50,7 @@ public object ProjectRootsUtil {
 
             val project = element.getProject()
             return@runReadAction isInSources(project, virtualFile, includeLibrarySources, withLibraryClassesRoots)
-        }!!
+        }
     }
 
     platformStatic

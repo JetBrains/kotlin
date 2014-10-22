@@ -10,13 +10,6 @@ enum class ProtocolState {
   abstract fun signal() : ProtocolState
 }
 
-enum class Foo<T> {
-  <!NO_GENERICS_IN_SUPERTYPE_SPECIFIER!>X<!>
-
-}
-
-
-
 fun box() {
    val <!UNUSED_VARIABLE!>x<!>: ProtocolState = ProtocolState.WAITING
 }

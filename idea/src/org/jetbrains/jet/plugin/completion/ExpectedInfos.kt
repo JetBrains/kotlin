@@ -67,6 +67,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus
 
 enum class Tail {
     COMMA
@@ -166,6 +167,9 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: Reso
 
         val expectedInfos = HashSet<ExpectedInfo>()
         for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
+            val status = candidate.getStatus()
+            if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) continue
+
             // consider only candidates with more arguments than in the truncated call and with all arguments before the current one matched
             if (candidate.noErrorsInValueArguments() && (candidate.getCandidateDescriptor().getValueParameters().size > argumentIndex || isFunctionLiteralArgument)) {
                 val descriptor = candidate.getResultingDescriptor()

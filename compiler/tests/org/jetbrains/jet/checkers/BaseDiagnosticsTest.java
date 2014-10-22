@@ -24,7 +24,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -46,6 +45,7 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
+import org.jetbrains.jet.lang.types.Flexibility;
 import org.jetbrains.jet.utils.UtilsPackage;
 import org.junit.Assert;
 
@@ -69,9 +69,21 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
                     CheckerTestUtil.DebugInfoDiagnosticFactory.MISSING_UNRESOLVED,
                     CheckerTestUtil.DebugInfoDiagnosticFactory.UNRESOLVED_WITH_TARGET
             );
+
     public static final String CHECK_TYPE_DIRECTIVE = "CHECK_TYPE";
-    private static final String CHECK_TYPE_DECLARATIONS = "\nclass _<T>" +
+    public static final String CHECK_TYPE_PACKAGE = "tests._checkType";
+    private static final String CHECK_TYPE_DECLARATIONS = "\npackage " + CHECK_TYPE_PACKAGE +
+                                                          "\nclass _<T>" +
                                                           "\nfun <T> T.checkType(f: (_<T>) -> Unit) = f";
+    public static final String CHECK_TYPE_IMPORT = "import " + CHECK_TYPE_PACKAGE + ".*";
+
+    public static final String EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE = "EXPLICIT_FLEXIBLE_TYPES";
+    public static final String EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName().asString();
+    public static final String EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName().asString();
+    private static final String EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS
+            = "\npackage " + EXPLICIT_FLEXIBLE_PACKAGE +
+              "\npublic class " + EXPLICIT_FLEXIBLE_CLASS_NAME + "<L, U>";
+    private static final String EXPLICIT_FLEXIBLE_TYPES_IMPORT = "import " + EXPLICIT_FLEXIBLE_PACKAGE + "." + EXPLICIT_FLEXIBLE_CLASS_NAME;
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -172,13 +184,27 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
             List<TestFile> files
     );
 
-    protected static List<JetFile> getJetFiles(List<? extends TestFile> testFiles) {
+    protected List<JetFile> getJetFiles(List<? extends TestFile> testFiles, boolean includeExtras) {
+        boolean declareFlexibleType = false;
+        boolean declareCheckType = false;
         List<JetFile> jetFiles = Lists.newArrayList();
         for (TestFile testFile : testFiles) {
             if (testFile.getJetFile() != null) {
                 jetFiles.add(testFile.getJetFile());
             }
+            declareFlexibleType |= testFile.declareFlexibleType;
+            declareCheckType |= testFile.declareCheckType;
         }
+
+        if (includeExtras) {
+            if (declareFlexibleType) {
+                jetFiles.add(createPsiFile(null, "EXPLICIT_FLEXIBLE_TYPES.kt", EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS));
+            }
+            if (declareCheckType) {
+                jetFiles.add(createPsiFile(null, "CHECK_TYPE.kt", CHECK_TYPE_DECLARATIONS));
+            }
+        }
+
         return jetFiles;
     }
 
@@ -280,6 +306,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
         private final JetFile jetFile;
         private final Condition<Diagnostic> whatDiagnosticsToConsider;
         private final boolean declareCheckType;
+        private final boolean declareFlexibleType;
 
         public TestFile(
                 @Nullable TestModule module,
@@ -290,6 +317,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
             this.module = module;
             this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives);
             this.declareCheckType = directives.containsKey(CHECK_TYPE_DIRECTIVE);
+            this.declareFlexibleType = directives.containsKey(EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE);
             if (fileName.endsWith(".java")) {
                 PsiFileFactory.getInstance(getProject()).createFileFromText(fileName, JavaLanguage.INSTANCE, textWithMarkers);
                 // TODO: check there's not syntax errors
@@ -297,14 +325,56 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
                 this.expectedText = this.clearText = textWithMarkers;
             }
             else {
-                expectedText = textWithMarkers;
-                clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
-                this.jetFile = createCheckAndReturnPsiFile(
-                        null, fileName, declareCheckType ? clearText + CHECK_TYPE_DECLARATIONS : clearText);
+                this.expectedText = textWithMarkers;
+                String textWithExtras = addExtras(expectedText);
+                this.clearText = CheckerTestUtil.parseDiagnosedRanges(textWithExtras, diagnosedRanges);
+                this.jetFile = createCheckAndReturnPsiFile(null, fileName, clearText);
                 for (CheckerTestUtil.DiagnosedRange diagnosedRange : diagnosedRanges) {
                     diagnosedRange.setFile(jetFile);
                 }
             }
+        }
+
+        @NotNull
+        private String getImports() {
+            String imports = "";
+            if (declareCheckType) {
+                imports += CHECK_TYPE_IMPORT + "\n";
+            }
+            if (declareFlexibleType) {
+                imports += EXPLICIT_FLEXIBLE_TYPES_IMPORT + "\n";
+            }
+            return imports;
+        }
+
+        private String getExtras() {
+            return "/*extras*/\n" + getImports() + "/*extras*/\n";
+        }
+
+        private String addExtras(String text) {
+            return addImports(text, getExtras());
+        }
+
+        private void stripExtras(StringBuilder actualText) {
+            String extras = getExtras();
+            int start = actualText.indexOf(extras);
+            if (start >= 0) {
+                actualText.delete(start, start + extras.length());
+            }
+        }
+
+        private String addImports(String text, String imports) {
+            Pattern pattern = Pattern.compile("^package [\\.\\w\\d]*\n", Pattern.MULTILINE);
+            Matcher matcher = pattern.matcher(text);
+            if (matcher.find()) {
+                // add imports after the package directive
+                text = text.substring(0, matcher.end()) + imports + text.substring(matcher.end());
+            }
+            else {
+                // add imports at the beginning
+                text = imports + text;
+            }
+            return text;
         }
 
         @Nullable
@@ -354,10 +424,12 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
             actualText.append(CheckerTestUtil.addDiagnosticMarkersToText(jetFile, diagnostics, new Function<PsiFile, String>() {
                 @Override
                 public String fun(PsiFile file) {
-                    String text = file.getText();
-                    return declareCheckType ? StringUtil.trimEnd(text, CHECK_TYPE_DECLARATIONS) : text;
+                    return file.getText();
                 }
             }));
+
+            stripExtras(actualText);
+
             return ok[0];
         }
 

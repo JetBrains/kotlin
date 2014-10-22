@@ -3,7 +3,7 @@ package test
 internal final class Test {
     /*primary*/ public constructor Test()
     internal final fun test(): kotlin.Int
-    
+
     internal class object <class-object-for-Test> {
         /*primary*/ private constructor <class-object-for-Test>()
         internal final val a: kotlin.Int

@@ -24,16 +24,15 @@ import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetProperty
 import java.util.HashSet
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration
-import org.jetbrains.jet.lang.psi.JetClassObject
 import org.jetbrains.jet.lang.psi.JetClass
 import com.intellij.psi.PsiPolyVariantReference
+import org.jetbrains.jet.utils.emptyOrSingletonList
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
@@ -51,7 +50,7 @@ public val PsiReference.unwrappedTargets: Set<PsiElement>
 
         return when (this) {
             is PsiPolyVariantReference -> multiResolve(false).map { it.getElement()?.adjust() }.filterNotNullTo(HashSet<PsiElement>())
-            else -> ContainerUtil.createMaybeSingletonSet(resolve()?.adjust())
+            else -> emptyOrSingletonList(resolve()?.adjust()).toSet()
         }
     }
 

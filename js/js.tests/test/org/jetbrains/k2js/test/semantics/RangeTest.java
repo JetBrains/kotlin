@@ -53,4 +53,12 @@ public final class RangeTest extends SingleFileTranslationTest {
     public void testRangeEquals() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testIntDownTo() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testReverse() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

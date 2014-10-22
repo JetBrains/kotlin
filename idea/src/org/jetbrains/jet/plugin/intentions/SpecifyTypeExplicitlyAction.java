@@ -30,7 +30,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -43,8 +44,6 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
-import org.jetbrains.jet.plugin.util.UtilPackage;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +137,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         BindingContext bindingContext = ResolvePackage.getBindingContext(declaration.getContainingJetFile());
         CallableDescriptor descriptor = (CallableDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
-        JetType type = descriptor.getReturnType();
+        JetType type = descriptor != null ? descriptor.getReturnType() : null;
         return type == null ? ErrorUtils.createErrorType("null type") : type;
     }
 

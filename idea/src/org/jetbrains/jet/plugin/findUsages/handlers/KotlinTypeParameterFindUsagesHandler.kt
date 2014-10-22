@@ -47,7 +47,7 @@ public class KotlinTypeParameterFindUsagesHandler(
             val target = options.toSearchTarget(element as JetNamedDeclaration, true)
             val request = DefaultSearchHelper<JetNamedDeclaration>().newRequest(target)
             request.search().all { ref -> KotlinFindUsagesHandler.processUsage(processor, ref) }
-        }!!
+        }
     }
 
     public override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {

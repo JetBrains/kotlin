@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImp
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionResultsHandler;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.tasks.*;
+import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorCollectors;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -286,7 +287,7 @@ public class CallResolver {
             else if (calleeExpression != null) {
 
                 // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
-                JetType calleeType = expressionTypingServices.safeGetType(context.scope, calleeExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace); // We are actually expecting a function, but there seems to be no easy way of expressing this
+                JetType calleeType = expressionTypingServices.safeGetType(context.scope, calleeExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
                 ExpressionReceiver expressionReceiver = new ExpressionReceiver(calleeExpression, calleeType);
 
                 Call call = new CallTransformer.CallForImplicitInvoke(

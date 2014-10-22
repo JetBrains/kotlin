@@ -17,13 +17,11 @@
 package org.jetbrains.jet.plugin.libraries;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -33,58 +31,58 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/libraries/decompiledText")
 @TestDataPath("$PROJECT_ROOT")
 @InnerTestClasses({})
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
     public void testAllFilesPresentInDecompiledText() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/libraries/decompiledText"), Pattern.compile("^([^\\.]+)$"), true);
     }
-    
+
     @TestMetadata("Annotations")
     public void testAnnotations() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/libraries/decompiledText/Annotations/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ClassWithClassObject")
     public void testClassWithClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/libraries/decompiledText/ClassWithClassObject/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("DependencyOnNestedClasses")
     public void testDependencyOnNestedClasses() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/libraries/decompiledText/DependencyOnNestedClasses/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Enum")
     public void testEnum() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/libraries/decompiledText/Enum/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("NestedClasses")
     public void testNestedClasses() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/libraries/decompiledText/NestedClasses/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Object")
     public void testObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/libraries/decompiledText/Object/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("SimpleClass")
     public void testSimpleClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/libraries/decompiledText/SimpleClass/");
         doTest(fileName);
     }
-    
+
     @TestMetadata("TestPackage")
     public void testTestPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/libraries/decompiledText/TestPackage/");
         doTest(fileName);
     }
-    
+
 }

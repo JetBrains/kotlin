@@ -84,7 +84,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
                             else
                                 null
                         }
-                        val finalTarget = finalTargetInfo?.constructor ?: target!! //TODO: see KT-5335
+                        val finalTarget = finalTargetInfo?.constructor ?: target
 
                         toTargetConstructorMap[constructor] = TargetConstructorInfo(finalTarget, parameterDefaults)
                         for (entry in toTargetConstructorMap.entrySet()) {
@@ -238,7 +238,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
             }
 
             val bodyConverter = converter.withExpressionConverter { prevExpressionConverter ->
-                object : ReplacingExpressionConverter(this, parameterUsageReplacementMap, prevExpressionConverter) {
+                object : ReplacingExpressionConverter(parameterUsageReplacementMap, prevExpressionConverter) {
                     override fun convertExpression(expression: PsiExpression, converter: Converter): Expression {
                         if (expression is PsiMethodCallExpression && expression.isSuperConstructorCall()) {
                             return Expression.Empty // skip it
@@ -254,8 +254,9 @@ class ConstructorConverter(private val psiClass: PsiClass,
         }
 
         // we need to replace renamed parameter usages in base class constructor arguments and in default values
-        val correctedConverter = converter.withExpressionConverter { prevExpressionConverter -> ReplacingExpressionConverter(this, parameterUsageReplacementMap, prevExpressionConverter) }
-                                          .withSpecialContext(psiClass) /* to correct nested class references */
+        val correctedConverter = converter.withExpressionConverter {
+            prevExpressionConverter -> ReplacingExpressionConverter(parameterUsageReplacementMap, prevExpressionConverter)
+        }.withSpecialContext(psiClass) /* to correct nested class references */
 
         val statement = primaryConstructor.getBody()?.getStatements()?.firstOrNull()
         val methodCall = (statement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
@@ -460,9 +461,10 @@ class ConstructorConverter(private val psiClass: PsiClass,
         return ref.getCanonicalText() == "super" && ref.resolve()?.isConstructor() ?: false
     }
 
-    private /*inner*//*TODO: see KT-5343*/ open class ReplacingExpressionConverter(val owner: ConstructorConverter,
-                                                                                   val parameterUsageReplacementMap: Map<String, String>,
-                                                                                   val prevExpressionConverter: ExpressionConverter) : ExpressionConverter {
+    private inner open class ReplacingExpressionConverter(
+            val parameterUsageReplacementMap: Map<String, String>,
+            val prevExpressionConverter: ExpressionConverter
+    ) : ExpressionConverter {
         override fun convertExpression(expression: PsiExpression, converter: Converter): Expression {
             if (expression is PsiReferenceExpression && expression.getQualifier() == null) {
                 val replacement = parameterUsageReplacementMap[expression.getReferenceName()]
@@ -471,7 +473,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
                     if (target is PsiParameter) {
                         val scope = target.getDeclarationScope()
                         // we do not check for exactly this constructor because default values reference parameters in other constructors
-                        if (scope.isConstructor() && scope.getParent() == owner.psiClass) {
+                        if (scope.isConstructor() && scope.getParent() == psiClass) {
                             return Identifier(replacement, converter.typeConverter.variableNullability(target).isNullable(converter.settings))
                         }
                     }

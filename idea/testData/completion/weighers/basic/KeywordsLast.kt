@@ -3,4 +3,4 @@ fun main(variables: Array<String>) {
     va<caret>
 }
 
-// ORDER: values, val, variables, var, vararg
+// ORDER: values, val, variables, var

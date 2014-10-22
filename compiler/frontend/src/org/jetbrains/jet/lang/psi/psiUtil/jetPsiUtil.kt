@@ -351,3 +351,9 @@ public fun JetExpression.getAssignmentByLHS(): JetBinaryExpression? {
     val parent = getParent() as? JetBinaryExpression ?: return null
     return if (JetPsiUtil.isAssignment(parent) && parent.getLeft() == this) parent else null
 }
+
+public fun PsiElement.prevLeaf(skipEmptyElements: Boolean = false): PsiElement?
+        = PsiTreeUtil.prevLeaf(this, skipEmptyElements)
+
+public fun PsiElement.nextLeaf(skipEmptyElements: Boolean = false): PsiElement?
+        = PsiTreeUtil.nextLeaf(this, skipEmptyElements)

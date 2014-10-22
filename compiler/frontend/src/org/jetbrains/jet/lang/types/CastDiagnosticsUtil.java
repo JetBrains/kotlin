@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,6 +43,7 @@ public class CastDiagnosticsUtil {
             @NotNull JetType rhsType,
             @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
     ) {
+        if (KotlinBuiltIns.getInstance().isNullableNothing(lhsType) && !TypeUtils.isNullableType(rhsType)) return false;
         if (isRelated(lhsType, rhsType, platformToKotlinClassMap)) return true;
         // This is an oversimplification (which does not render the method incomplete):
         // we consider any type parameter capable of taking any value, which may be made more precise if we considered bounds
@@ -61,8 +63,8 @@ public class CastDiagnosticsUtil {
      * (i.e. java.lang.String -> kotlin.String) and ignore mappings that go the other way.
      */
     private static boolean isRelated(@NotNull JetType a, @NotNull JetType b, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-        List<JetType> aTypes = mapToPlatformIndependentTypes(a, platformToKotlinClassMap);
-        List<JetType> bTypes = mapToPlatformIndependentTypes(b, platformToKotlinClassMap);
+        List<JetType> aTypes = mapToPlatformIndependentTypes(TypeUtils.makeNotNullable(a), platformToKotlinClassMap);
+        List<JetType> bTypes = mapToPlatformIndependentTypes(TypeUtils.makeNotNullable(b), platformToKotlinClassMap);
 
         for (JetType aType : aTypes) {
             for (JetType bType : bTypes) {

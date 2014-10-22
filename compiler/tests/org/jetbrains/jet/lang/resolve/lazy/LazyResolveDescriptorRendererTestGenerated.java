@@ -17,13 +17,11 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,64 +30,63 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/renderer")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class LazyResolveDescriptorRendererTestGenerated extends AbstractLazyResolveDescriptorRendererTest {
     public void testAllFilesPresentInRenderer() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/renderer"), Pattern.compile("^(.+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("Classes.kt")
     public void testClasses() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/Classes.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("Enum.kt")
     public void testEnum() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/Enum.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("ErrorType.kt")
     public void testErrorType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/ErrorType.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("FunctionTypes.kt")
     public void testFunctionTypes() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/FunctionTypes.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("GlobalFunctions.kt")
     public void testGlobalFunctions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/GlobalFunctions.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("GlobalProperties.kt")
     public void testGlobalProperties() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/GlobalProperties.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("InheritedMembersVisibility.kt")
     public void testInheritedMembersVisibility() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/InheritedMembersVisibility.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("KeywordsInNames.kt")
     public void testKeywordsInNames() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/KeywordsInNames.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("UnitType.kt")
     public void testUnitType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/UnitType.kt");
         doTest(fileName);
     }
-    
 }

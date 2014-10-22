@@ -20,11 +20,11 @@ import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.cfg.Label
 import java.util.Arrays
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
+import org.jetbrains.jet.utils.emptyOrSingletonList
 
 public class ConditionalJumpInstruction(
         element: JetElement,
@@ -51,7 +51,7 @@ public class ConditionalJumpInstruction(
         get() = Arrays.asList(nextOnFalse, nextOnTrue)
 
     override val inputValues: List<PseudoValue>
-        get() = ContainerUtil.createMaybeSingletonList(conditionValue)
+        get() = emptyOrSingletonList(conditionValue)
 
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitConditionalJump(this)

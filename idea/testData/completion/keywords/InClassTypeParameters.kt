@@ -1,4 +1,5 @@
 class T<<caret>>
 
-// EXIST: in, out
-// ABSENT: private
+// EXIST: in
+// EXIST: out
+// NUMBER: 2

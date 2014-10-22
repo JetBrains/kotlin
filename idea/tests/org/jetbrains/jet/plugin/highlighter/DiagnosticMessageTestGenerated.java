@@ -17,13 +17,11 @@
 package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.testFramework.TestDataPath;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.runner.RunWith;
+import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
-import org.jetbrains.jet.JUnit3RunnerWithInners;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -32,166 +30,165 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/diagnosticMessage")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(org.jetbrains.jet.JUnit3RunnerWithInners.class)
+@RunWith(JUnit3RunnerWithInners.class)
 public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTest {
     public void testAllFilesPresentInDiagnosticMessage() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/diagnosticMessage"), Pattern.compile("^(.+)\\.kt$"), true);
     }
-    
+
     @TestMetadata("assignedButNeverAccessedVariable.kt")
     public void testAssignedButNeverAccessedVariable() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/assignedButNeverAccessedVariable.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("cannotInferVisibility.kt")
     public void testCannotInferVisibility() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/cannotInferVisibility.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("cannotOverrideInvisibleMember.kt")
     public void testCannotOverrideInvisibleMember() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/cannotOverrideInvisibleMember.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("conflictingOverloadsClass.kt")
     public void testConflictingOverloadsClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/conflictingOverloadsClass.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("conflictingOverloadsDefaultPackage.kt")
     public void testConflictingOverloadsDefaultPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/conflictingOverloadsDefaultPackage.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("conflictingSubstitutions.kt")
     public void testConflictingSubstitutions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/conflictingSubstitutions.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("differentNamesForSameParameter.kt")
     public void testDifferentNamesForSameParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/differentNamesForSameParameter.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("extensionInClassReference.kt")
     public void testExtensionInClassReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/extensionInClassReference.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("functionPlaceholder.kt")
     public void testFunctionPlaceholder() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/functionPlaceholder.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("inaccessibleOuterClassExpression.kt")
     public void testInaccessibleOuterClassExpression() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/inaccessibleOuterClassExpression.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("invisibleMember.kt")
     public void testInvisibleMember() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/invisibleMember.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("multipleDefaultsFromSupertypes.kt")
     public void testMultipleDefaultsFromSupertypes() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/multipleDefaultsFromSupertypes.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("nameInConstraintIsNotATypeParameter.kt")
     public void testNameInConstraintIsNotATypeParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/nameInConstraintIsNotATypeParameter.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("nestedClassAcessedViaInstanceReference.kt")
     public void testNestedClassAcessedViaInstanceReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/nestedClassAcessedViaInstanceReference.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("nestedClassShouldBeQualified.kt")
     public void testNestedClassShouldBeQualified() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/nestedClassShouldBeQualified.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("noneApplicable.kt")
     public void testNoneApplicable() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/noneApplicable.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("noneApplicableGeneric.kt")
     public void testNoneApplicableGeneric() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/noneApplicableGeneric.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("numberValueTypes.kt")
     public void testNumberValueTypes() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/numberValueTypes.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("renderCollectionOfTypes.kt")
     public void testRenderCollectionOfTypes() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/renderCollectionOfTypes.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("typeInferenceExpectedTypeMismatch.kt")
     public void testTypeInferenceExpectedTypeMismatch() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeInferenceExpectedTypeMismatch.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("typeMismatchWithNothing.kt")
     public void testTypeMismatchWithNothing() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeMismatchWithNothing.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("unusedParameter.kt")
     public void testUnusedParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/unusedParameter.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("unusedValue.kt")
     public void testUnusedValue() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/unusedValue.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("unusedVariable.kt")
     public void testUnusedVariable() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/unusedVariable.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("upperBoundViolated.kt")
     public void testUpperBoundViolated() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/upperBoundViolated.kt");
         doTest(fileName);
     }
-    
+
     @TestMetadata("wrongReturnTypeInImplementation.kt")
     public void testWrongReturnTypeInImplementation() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/wrongReturnTypeInImplementation.kt");
         doTest(fileName);
     }
-    
 }

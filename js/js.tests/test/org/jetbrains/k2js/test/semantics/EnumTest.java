@@ -46,4 +46,8 @@ public class EnumTest  extends SingleFileTranslationTest {
     public void testSuperCallInEnumLiteral() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testEnumIsComparable() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

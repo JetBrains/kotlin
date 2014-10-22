@@ -3,7 +3,7 @@ package test
 internal object SomeObject {
     /*primary*/ private constructor SomeObject()
     internal final fun test(/*0*/ a: kotlin.Int): kotlin.Int
-    
+
     public class object <class-object-for-SomeObject> : test.SomeObject {
         /*primary*/ private constructor <class-object-for-SomeObject>()
         internal final override /*1*/ /*fake_override*/ fun test(/*0*/ a: kotlin.Int): kotlin.Int

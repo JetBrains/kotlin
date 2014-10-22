@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.Printer;
 
+import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -109,7 +110,7 @@ public class DependencyInjectorGenerator {
         p.println("}"); // class
 
         importManager.addClass(NotNull.class);
-        importManager.addClass(javax.annotation.PreDestroy.class);
+        importManager.addClass(PreDestroy.class);
         StringBuilder imports = new StringBuilder();
         generateImports(new Printer(imports), injectorPackageName);
 
@@ -128,7 +129,7 @@ public class DependencyInjectorGenerator {
         }
     }
 
-    private void generatePreamble(String injectorPackageName, Printer p) throws IOException {
+    private static void generatePreamble(String injectorPackageName, Printer p) throws IOException {
         String copyright = "injector-generator/copyright.txt";
         p.println(FileUtil.loadFile(new File(copyright)));
 
@@ -252,7 +253,7 @@ public class DependencyInjectorGenerator {
         p.pushIndent();
         for (Iterator<Parameter> iterator = parameters.iterator(); iterator.hasNext(); ) {
             Parameter parameter = iterator.next();
-            p.print(); // indent
+            p.printIndent();
             if (parameter.isRequired()) {
                 p.printWithNoIndent("@NotNull ");
             }

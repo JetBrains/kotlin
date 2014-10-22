@@ -67,7 +67,7 @@ public abstract class JetCallableInsertHandler : BaseDeclarationInsertHandler() 
 
                     if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
                         ApplicationManager.getApplication()?.runWriteAction {
-                            ImportInsertHelper.addImportDirectiveIfNeeded(DescriptorUtils.getFqNameSafe(descriptor), file)
+                            ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(DescriptorUtils.getFqNameSafe(descriptor), file)
                         }
                     }
                 }

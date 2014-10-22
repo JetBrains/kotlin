@@ -2,7 +2,7 @@ package test
 
 internal final class A {
     /*primary*/ public constructor A()
-    
+
     internal final class TestConstructor {
         /*primary*/ public constructor TestConstructor(/*0*/ p: kotlin.Int = ...)
     }

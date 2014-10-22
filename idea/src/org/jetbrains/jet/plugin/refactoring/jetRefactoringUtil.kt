@@ -74,33 +74,6 @@ import com.intellij.openapi.util.text.StringUtil
 import javax.swing.Icon
 import org.jetbrains.jet.plugin.util.string.collapseSpaces
 
-/**
- * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
- * Result is either the same as original element, or [[JetQualifiedExpression]], or [[JetUserType]]
- * Note that FqName may not be empty
- */
-fun JetSimpleNameExpression.changeQualifiedName(fqName: FqName): JetElement {
-    assert (!fqName.isRoot(), "Can't set empty FqName for element $this")
-
-    val shortName = fqName.shortName().asString()
-    val psiFactory = JetPsiFactory(this)
-    val fqNameBase = (getParent() as? JetCallExpression)?.let { parent ->
-        val callCopy = parent.copy() as JetCallExpression
-        callCopy.getCalleeExpression()!!.replace(psiFactory.createSimpleName(shortName)).getParent()!!.getText()
-    } ?: shortName
-
-    val text = if (!fqName.isOneSegmentFQN()) "${fqName.parent().asString()}.$fqNameBase" else fqNameBase
-
-    val elementToReplace = getQualifiedElement()
-    return when (elementToReplace) {
-        is JetUserType -> {
-            val typeText = "$text${elementToReplace.getTypeArgumentList()?.getText() ?: ""}"
-            elementToReplace.replace(psiFactory.createType(typeText).getTypeElement()!!)
-        }
-        else -> elementToReplace.replace(psiFactory.createExpression(text))
-    } as JetElement
-}
-
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
     putCopyableUserData(key, null)
@@ -122,23 +95,6 @@ public fun File.toVirtualFile(): VirtualFile? = LocalFileSystem.getInstance().fi
 
 public fun File.toPsiFile(project: Project): PsiFile? {
     return toVirtualFile()?.let { vfile -> PsiManager.getInstance(project).findFile(vfile) }
-}
-
-/**
- * Returns FqName for given declaration (either Java or Kotlin)
- */
-public fun PsiElement.getKotlinFqName(): FqName? {
-    val element = namedUnwrappedElement
-    return when (element) {
-        is PsiPackage -> FqName(element.getQualifiedName())
-        is PsiClass -> element.getQualifiedName()?.let { FqName(it) }
-        is PsiMember -> (element : PsiMember).getName()?.let { name ->
-            val prefix = element.getContainingClass()?.getQualifiedName()
-            FqName(if (prefix != null) "$prefix.$name" else name)
-        }
-        is JetNamedDeclaration -> element.getFqName()
-        else -> null
-    }
 }
 
 public fun PsiElement.getUsageContext(): PsiElement {

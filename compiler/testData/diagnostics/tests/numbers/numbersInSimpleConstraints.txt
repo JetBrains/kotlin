@@ -13,7 +13,6 @@ package a {
     internal fun testUpperBound(/*0*/ contrS: a.Contr<kotlin.String>, /*1*/ contrB: a.Contr<kotlin.Byte>, /*2*/ contrN: a.Contr<kotlin.Number>): kotlin.Unit
     internal fun </*0*/ T> upperBound(/*0*/ t: T, /*1*/ l: a.Contr<T>): T
     internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<kotlin.Any?>*/): kotlin.Array<kotlin.Any?>
-    internal fun </*0*/ T> T.checkType(/*0*/ f: (a._<T>) -> kotlin.Unit): (a._<T>) -> kotlin.Unit
 
     internal trait Contr</*0*/ in T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -28,13 +27,6 @@ package a {
     }
 
     internal trait Inv</*0*/ T> {
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-
-    internal final class _</*0*/ T> {
-        public constructor _</*0*/ T>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

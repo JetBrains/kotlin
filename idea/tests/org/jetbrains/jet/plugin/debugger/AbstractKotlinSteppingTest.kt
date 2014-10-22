@@ -128,6 +128,6 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
                     else -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
                 }
             }
-        }!!
+        }
     }
 }

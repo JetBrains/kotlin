@@ -342,7 +342,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : extension
      *   : function
      *   : property
-     *   : typedef
+     *   : typeAlias
      *   : object
      *   ;
      */
@@ -752,7 +752,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : property
      *   : class
      *   : extension
-     *   : typedef
+     *   : typeAlias
      *   : anonymousInitializer
      *   : object
      *   ;
@@ -874,7 +874,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * typedef
+     * typeAlias
      *   : modifiers "typealias" SimpleName (typeParameters typeConstraints)? "=" type
      *   ;
      */

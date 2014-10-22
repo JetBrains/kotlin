@@ -81,7 +81,7 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
 
         for ((code, expected) in loadLines(File(path))) {
             val lineResult = repl.eval(code)
-            val actual = when (lineResult.getType()) {
+            val actual = when (lineResult.getType()!!) {
                 ReplInterpreter.LineResultType.SUCCESS -> lineResult.getValue()?.toString() ?: ""
                 ReplInterpreter.LineResultType.ERROR -> lineResult.getErrorText()
                 ReplInterpreter.LineResultType.INCOMPLETE -> INCOMPLETE_LINE_MESSAGE

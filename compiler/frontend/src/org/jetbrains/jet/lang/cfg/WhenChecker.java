@@ -26,8 +26,10 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
 
 public final class WhenChecker {
@@ -44,13 +46,11 @@ public final class WhenChecker {
     }
 
     public static boolean isWhenByEnum(@NotNull JetWhenExpression expression, @NotNull BindingContext context) {
-        return getSubjectClassDescriptorIfEnum(expression, context) != null;
+        return getClassDescriptorOfTypeIfEnum(whenSubjectType(expression, context)) != null;
     }
 
-    private static ClassDescriptor getSubjectClassDescriptorIfEnum(@NotNull JetWhenExpression expression, @NotNull BindingContext context) {
-        JetExpression subjectExpression = expression.getSubjectExpression();
-        if (subjectExpression == null) return null;
-        JetType type = context.get(BindingContext.EXPRESSION_TYPE, subjectExpression);
+    @Nullable
+    private static ClassDescriptor getClassDescriptorOfTypeIfEnum(@Nullable JetType type) {
         if (type == null) return null;
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
         if (!(declarationDescriptor instanceof ClassDescriptor)) return null;
@@ -60,10 +60,17 @@ public final class WhenChecker {
         return classDescriptor;
     }
 
-    private static boolean isWhenExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
-        ClassDescriptor classDescriptor = getSubjectClassDescriptorIfEnum(expression, trace.getBindingContext());
+    @Nullable
+    private static JetType whenSubjectType(@NotNull JetWhenExpression expression, @NotNull BindingContext context) {
+        JetExpression subjectExpression = expression.getSubjectExpression();
+        return subjectExpression == null ? null : context.get(EXPRESSION_TYPE, subjectExpression);
+    }
 
-        if (classDescriptor == null) return false;
+    private static boolean isWhenExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
+        JetType type = whenSubjectType(expression, trace.getBindingContext());
+        ClassDescriptor classDescriptor = getClassDescriptorOfTypeIfEnum(type);
+
+        if (type == null || classDescriptor == null) return false;
 
         boolean isExhaust = true;
         boolean notEmpty = false;
@@ -75,7 +82,7 @@ public final class WhenChecker {
                 }
             }
         }
-        boolean exhaustive = isExhaust && notEmpty;
+        boolean exhaustive = isExhaust && notEmpty && (!TypeUtils.isNullableType(type) || containsNullCase(expression, trace));
         if (exhaustive) {
             trace.record(BindingContext.EXHAUSTIVE_WHEN, expression);
         }
@@ -95,6 +102,22 @@ public final class WhenChecker {
                 }
                 if (isCheckForEnumEntry((JetWhenConditionWithExpression) condition, enumEntry, trace)) {
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsNullCase(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
+        for (JetWhenEntry entry : expression.getEntries()) {
+            for (JetWhenCondition condition : entry.getConditions()) {
+                if (condition instanceof JetWhenConditionWithExpression) {
+                    JetType type = trace.getBindingContext().get(
+                            EXPRESSION_TYPE, ((JetWhenConditionWithExpression) condition).getExpression()
+                    );
+                    if (type != null && KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type)) {
+                        return true;
+                    }
                 }
             }
         }

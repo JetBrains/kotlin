@@ -16,16 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.data
 
-import org.jetbrains.jet.lang.psi.JetTypeParameter
-import org.jetbrains.jet.lang.psi.JetParameter
+import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.descriptors.ClassKind
-import org.jetbrains.jet.lang.psi.JetScript
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.psi.JetClassObject
 
 public class JetScriptInfo(
         val script: JetScript
@@ -37,7 +31,7 @@ public class JetScriptInfo(
     override fun getClassObjects() = listOf<JetClassObject>()
     override fun getScopeAnchor() = script
     override fun getCorrespondingClassOrObject() = null
-    override fun getTypeParameters() = listOf<JetTypeParameter>()
+    override fun getTypeParameterList() = null
     override fun getPrimaryConstructorParameters() = listOf<JetParameter>()
     override fun getClassKind() = ClassKind.CLASS
     override fun getDeclarations() = script.getDeclarations()

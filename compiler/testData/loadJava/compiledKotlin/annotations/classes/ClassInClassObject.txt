@@ -6,14 +6,14 @@ internal final annotation class Anno : kotlin.Annotation {
 
 internal final class Class {
     /*primary*/ public constructor Class()
-    
+
     internal class object <class-object-for-Class> {
         /*primary*/ private constructor <class-object-for-Class>()
-        
+
         test.Anno() internal final inner class Inner {
             /*primary*/ public constructor Inner()
         }
-        
+
         test.Anno() internal final class Nested {
             /*primary*/ public constructor Nested()
         }

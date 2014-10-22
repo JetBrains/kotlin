@@ -41,7 +41,7 @@ class BasicKotlinGradleIT : BaseGradleIT() {
         }
     }
 
-    Ignore fun testKotlinExtraJavaSrc() {
+    Test fun testKotlinExtraJavaSrc() {
         Project("additionalJavaSrc", "1.6").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
         }

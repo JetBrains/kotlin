@@ -50,6 +50,9 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         super.tearDown()
     }
 
+    protected open val customTest: Boolean
+        get() = false
+
     fun buildGetLog(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all()): String {
         val logger = MyLogger(FileUtil.toSystemIndependentName(workDir.getAbsolutePath()))
         val descriptor = createProjectDescriptor(BuildLoggingManager(logger))
@@ -119,7 +122,12 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
             fail("Bad test data format: files ending with both unnumbered and numbered \".new\"/\".delete\" were found")
         }
         if (!haveFilesWithoutNumbers && !haveFilesWithNumbers) {
-            fail("Bad test data format: no files ending with \".new\" or \".delete\" found")
+            if (customTest) {
+                return listOf(listOf())
+            }
+            else {
+                fail("Bad test data format: no files ending with \".new\" or \".delete\" found")
+            }
         }
 
         if (haveFilesWithoutNumbers) {
@@ -174,15 +182,42 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         testDataDir = File(testDataPath)
         workDir = FileUtil.createTempDirectory("jps-build", null)
 
-        JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject!!)
+        val moduleNames = configureModules()
+        initialMake()
+
+        val log = performModificationsAndMake(moduleNames)
+        UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), log)
+
+        rebuildAndCheckOutput()
+        clearCachesRebuildAndCheckOutput()
+    }
+
+    private fun performModificationsAndMake(moduleNames: Set<String>?): String {
+        val logs = ArrayList<String>()
+
+        val modifications = getModificationsToPerform(moduleNames)
+        for (step in modifications) {
+            step.forEach { it.perform(workDir) }
+            performAdditionalModifications()
+
+            val log = make()
+            logs.add(log)
+        }
+
+        return logs.join("\n\n")
+    }
+
+    protected open fun performAdditionalModifications() {
+    }
+
+    // null means one module
+    private fun configureModules(): Set<String>? {
+        var moduleNames: Set<String>?
+        JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject)
                 .setOutputUrl(JpsPathUtil.pathToUrl(getAbsolutePath("out")))
 
         val jdk = addJdk("my jdk")
-
         val moduleDependencies = readModuleDependencies()
-
-        val moduleNames: Set<String>? // null means one module
-
         if (moduleDependencies == null) {
             addModule("module", array(getAbsolutePath("src")), null, null, jdk)
 
@@ -210,24 +245,8 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
 
             moduleNames = nameToModule.keySet()
         }
-        AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject!!)
-
-        initialMake()
-
-        val modifications = getModificationsToPerform(moduleNames)
-        val logs = ArrayList<String>()
-
-        for (step in modifications) {
-            step.forEach { it.perform(workDir) }
-
-            val log = make()
-            logs.add(log)
-        }
-
-        UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), logs.join("\n\n"))
-
-        rebuildAndCheckOutput()
-        clearCachesRebuildAndCheckOutput()
+        AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject)
+        return moduleNames
     }
 
     override fun doGetProjectDir(): File? = workDir

@@ -29,10 +29,10 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqNameSafe;
 
 public final class DecompiledNavigationUtils {
 
@@ -117,7 +117,8 @@ public final class DecompiledNavigationUtils {
                 || ExpressionTypingUtils.isLocal(containerDescriptor.getContainingDeclaration(), containerDescriptor)) {
                 return getContainerFqName(containerDescriptor.getContainingDeclaration());
             }
-            return getFqNameSafe(containerDescriptor);
+            FqNameUnsafe fqNameUnsafe = getFqName(containerDescriptor);
+            return fqNameUnsafe.isSafe() ? fqNameUnsafe.toSafe() : null;
         }
         return null;
     }

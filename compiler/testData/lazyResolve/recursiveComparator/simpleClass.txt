@@ -7,18 +7,18 @@ internal final class A {
 package test.p {
     internal fun foo(): kotlin.Unit
     internal fun foo(/*0*/ a: test.p.C): kotlin.Unit
-    
+
     internal final class C {
         /*primary*/ public constructor C()
         internal final fun f(): kotlin.Unit
     }
-    
+
     internal open class G</*0*/ T> {
         /*primary*/ public constructor G</*0*/ T>()
         internal final fun a(): kotlin.Unit
         internal open fun f(): T
     }
-    
+
     internal final class G2</*0*/ E> : test.p.G<E> {
         /*primary*/ public constructor G2</*0*/ E>()
         internal final override /*1*/ /*fake_override*/ fun a(): kotlin.Unit

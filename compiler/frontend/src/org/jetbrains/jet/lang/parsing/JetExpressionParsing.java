@@ -1279,7 +1279,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : property
      *   : extension
      *   : class
-     *   : typedef
+     *   : typeAlias
      *   : object
      *   ;
      */

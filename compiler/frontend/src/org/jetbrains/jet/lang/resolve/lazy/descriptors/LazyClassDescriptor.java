@@ -58,6 +58,7 @@ import org.jetbrains.jet.storage.StorageManager;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.CLASS_OBJECT_NOT_ALLOWED;
+import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_PARAMETERS_IN_ENUM;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
@@ -529,8 +530,14 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @Override
             public List<TypeParameterDescriptor> invoke() {
                 JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
-                List<JetTypeParameter> typeParameters = classInfo.getTypeParameters();
+                JetTypeParameterList typeParameterList = classInfo.getTypeParameterList();
+                if (typeParameterList == null) return Collections.emptyList();
 
+                if (classInfo.getClassKind() == ClassKind.ENUM_CLASS) {
+                    resolveSession.getTrace().report(TYPE_PARAMETERS_IN_ENUM.on(typeParameterList));
+                }
+
+                List<JetTypeParameter> typeParameters = typeParameterList.getParameters();
                 List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
                 for (int i = 0; i < typeParameters.size(); i++) {
                     parameters.add(new LazyTypeParameterDescriptor(resolveSession, LazyClassDescriptor.this, typeParameters.get(i), i));

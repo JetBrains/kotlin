@@ -246,7 +246,7 @@ public class CallCompleter(
             updatedType = ArgumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context as ResolutionContext<*>, expression)
         }
 
-        updateRecordedTypeForArgument(updatedType, recordedType, expression, context.trace)
+        updatedType = updateRecordedTypeForArgument(updatedType, recordedType, expression, context.trace)
 
         // While the expected type is not known, the function literal arguments are not analyzed (to analyze function literal bodies once),
         // but they should be analyzed when the expected type is known (during the call completion).
@@ -294,8 +294,8 @@ public class CallCompleter(
             recordedType: JetType?,
             argumentExpression: JetExpression,
             trace: BindingTrace
-    ) {
-        if (recordedType == updatedType) return
+    ): JetType? {
+        if (recordedType == updatedType || updatedType == null) return updatedType
 
         fun deparenthesizeOrGetSelector(expression: JetExpression?): JetExpression? {
             val deparenthesized = JetPsiUtil.deparenthesizeOnce(expression, /* deparenthesizeBinaryExpressionWithTypeRHS = */ false)
@@ -315,6 +315,7 @@ public class CallCompleter(
             BindingContextUtils.updateRecordedType(
                     updatedType, expression, trace, /* shouldBeMadeNullable = */ hasNecessarySafeCall(expression, trace))
         }
+        return trace[BindingContext.EXPRESSION_TYPE, argumentExpression]
     }
 
     private fun hasNecessarySafeCall(expression: JetExpression, trace: BindingTrace): Boolean {

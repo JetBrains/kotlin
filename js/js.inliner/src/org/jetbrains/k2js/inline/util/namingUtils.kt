@@ -27,6 +27,7 @@ import java.util.IdentityHashMap
 import kotlin.test.assertTrue
 import org.jetbrains.k2js.inline.context.NamingContext
 import org.jetbrains.k2js.inline.util.needToAlias
+import org.jetbrains.k2js.inline.util.rewriters.LabelNameRefreshingVisitor
 
 public fun aliasArgumentsIfNeeded(
         context: NamingContext,
@@ -70,4 +71,16 @@ public fun renameLocalNames(
         val freshName = context.getFreshName(name)
         context.replaceName(name, freshName.makeRef())
     }
+}
+
+public fun refreshLabelNames(
+        context: NamingContext,
+        function: JsFunction
+) {
+    val scope = function.getScope()
+    if (scope !is JsFunctionScope) throw AssertionError("JsFunction is expected to have JsFunctionScope")
+
+    val visitor = LabelNameRefreshingVisitor(context, scope)
+    visitor.accept(function.getBody())
+    context.applyRenameTo(function)
 }

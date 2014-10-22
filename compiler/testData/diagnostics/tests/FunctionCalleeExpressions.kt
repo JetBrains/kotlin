@@ -78,5 +78,5 @@ fun test() {
     i<!UNSAFE_CALL!>.<!>{Int.() -> 1}();
     {}<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>()
     1<!UNNECESSARY_SAFE_CALL!>?.<!>{Int.() -> 1}()
-    1.<!NO_RECEIVER_ADMITTED!>{}<!>()
+    1.<!NO_RECEIVER_ALLOWED!>{}<!>()
 }

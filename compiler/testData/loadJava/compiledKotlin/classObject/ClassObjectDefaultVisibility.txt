@@ -2,7 +2,7 @@ package test
 
 internal final class Int {
     /*primary*/ public constructor Int()
-    
+
     internal class object <class-object-for-Int> {
         /*primary*/ private constructor <class-object-for-Int>()
     }
@@ -10,7 +10,7 @@ internal final class Int {
 
 private final class Pri {
     /*primary*/ public constructor Pri()
-    
+
     private class object <class-object-for-Pri> {
         /*primary*/ private constructor <class-object-for-Pri>()
     }
@@ -18,7 +18,7 @@ private final class Pri {
 
 public final class Pub {
     /*primary*/ public constructor Pub()
-    
+
     public class object <class-object-for-Pub> {
         /*primary*/ private constructor <class-object-for-Pub>()
     }

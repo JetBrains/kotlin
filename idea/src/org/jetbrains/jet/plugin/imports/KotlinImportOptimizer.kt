@@ -27,8 +27,8 @@ import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.lang.resolve.name.*
 import org.jetbrains.jet.plugin.references.JetReference
 import java.util.HashSet
-import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper.needImport
 import java.util.ArrayList
+import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 
 public class KotlinImportOptimizer() : ImportOptimizer {
 
@@ -54,8 +54,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 }
 
                 if (isUseful(importPath, usedQualifiedNames)
-                    && needImport(importPath, jetFile, directivesBeforeCurrent)
-                    && needImport(importPath, jetFile, directivesAfterCurrent)
+                    && ImportInsertHelper.getInstance().needImport(importPath, jetFile, directivesBeforeCurrent)
+                    && ImportInsertHelper.getInstance().needImport(importPath, jetFile, directivesAfterCurrent)
                 ) {
                     directivesBeforeCurrent.add(anImport)
                 }

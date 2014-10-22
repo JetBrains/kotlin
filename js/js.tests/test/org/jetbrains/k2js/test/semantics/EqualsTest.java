@@ -49,4 +49,8 @@ public final class EqualsTest extends AbstractExpressionTest {
     public void testEqualsNullOrUndefined() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testCompareNullableListWithNull() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

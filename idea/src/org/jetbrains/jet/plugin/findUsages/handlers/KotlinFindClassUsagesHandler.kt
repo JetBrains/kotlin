@@ -81,7 +81,7 @@ public class KotlinFindClassUsagesHandler(
             val declarationUsages = kotlinOptions.toClassDeclarationsHelper().newRequest(target).search()
 
             (classUsages + declarationUsages).all { ref -> KotlinFindUsagesHandler.processUsage(processor, ref) } && processInheritors()
-        }!!
+        }
     }
 
     protected override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean {

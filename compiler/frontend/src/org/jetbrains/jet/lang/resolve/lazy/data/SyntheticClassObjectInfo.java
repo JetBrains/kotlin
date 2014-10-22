@@ -78,10 +78,10 @@ public class SyntheticClassObjectInfo implements JetClassLikeInfo {
         return null;
     }
 
-    @NotNull
+    @Nullable
     @Override
-    public List<JetTypeParameter> getTypeParameters() {
-        return Collections.emptyList();
+    public JetTypeParameterList getTypeParameterList() {
+        return null;
     }
 
     @NotNull

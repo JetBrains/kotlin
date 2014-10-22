@@ -46,7 +46,7 @@ public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                ImportInsertHelper.addImportDirectiveIfNeeded(new FqName("java.util.ArrayList"), (JetFile) getFile());
+                ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(new FqName("java.util.ArrayList"), (JetFile) getFile());
             }
         });
 
@@ -58,7 +58,7 @@ public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                ImportInsertHelper.addImportDirectiveIfNeeded(new FqName("java.util.ArrayList"), (JetFile) getFile());
+                ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(new FqName("java.util.ArrayList"), (JetFile) getFile());
             }
         });
 
@@ -70,7 +70,7 @@ public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                ImportInsertHelper.addImportDirectiveIfNeeded(new FqName(importString), (JetFile) getFile());
+                ImportInsertHelper.getInstance().addImportDirectiveIfNeeded(new FqName(importString), (JetFile) getFile());
             }
         });
         checkResultByFile(getTestName(false) + ".kt.after");

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.cfg.pseudocode.instructions
 
 import org.jetbrains.jet.lang.psi.JetElement
-import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.utils.emptyOrSingletonList
 
 public abstract class InstructionWithNext(
         element: JetElement,
@@ -29,5 +29,5 @@ public abstract class InstructionWithNext(
         }
 
     override val nextInstructions: Collection<Instruction>
-        get() = ContainerUtil.createMaybeSingletonList(next)
+        get() = emptyOrSingletonList(next)
 }

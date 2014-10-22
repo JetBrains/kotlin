@@ -1,5 +1,7 @@
-enum class List<out T>(val size : Int) {
-    Nil : List<Nothing>(0)
+class List<out T>(val size : Int) {
+    class object {
+        val Nil = List<Nothing>(0)
+    }
 }
 
 fun List<String>.join() =

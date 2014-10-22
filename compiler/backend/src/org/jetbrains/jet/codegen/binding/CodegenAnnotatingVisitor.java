@@ -180,7 +180,12 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         assert descriptor != null :
                 String.format("No descriptor for enum entry \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(enumEntry));
 
-        if (!enumEntry.getDeclarations().isEmpty()) {
+        if (enumEntry.getDeclarations().isEmpty()) {
+            for (JetDelegationSpecifier specifier : enumEntry.getDelegationSpecifiers()) {
+                specifier.accept(this);
+            }
+        }
+        else {
             bindingTrace.record(ENUM_ENTRY_CLASS_NEED_SUBCLASS, descriptor);
             super.visitEnumEntry(enumEntry);
         }

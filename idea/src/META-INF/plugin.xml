@@ -61,11 +61,16 @@
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
 
-    <action id="ShowJetExpressionType" class="org.jetbrains.jet.plugin.actions.ShowExpressionTypeAction"
+    <action id="ShowKotlinExpressionType" class="org.jetbrains.jet.plugin.actions.ShowExpressionTypeAction"
             text="Show Expression Type">
-      <keyboard-shortcut keymap="$default" first-keystroke="control shift Q"/>
-      <keyboard-shortcut keymap="Mac OS X" first-keystroke="control shift T"/>
-      <add-to-group group-id="CodeMenu" anchor="last"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="alt EQUALS"/>
+
+      <keyboard-shortcut keymap="Mac OS X" first-keystroke="control shift P"/>
+      <keyboard-shortcut keymap="Mac OS X" first-keystroke="alt EQUALS" remove="true"/>
+
+      <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control shift P"/>
+      <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="alt EQUALS" remove="true"/>
+      <add-to-group group-id="CodeEditorViewGroup" anchor="last"/>
     </action>
     <action id="ConvertJavaToKotlin" class="org.jetbrains.jet.plugin.actions.JavaToKotlinAction"
             text="Convert Java File to Kotlin File">
@@ -131,6 +136,8 @@
 
     <applicationService serviceInterface="org.jetbrains.jet.plugin.configuration.JetModuleTypeManager"
                         serviceImplementation="org.jetbrains.jet.plugin.JetModuleTypeManagerImpl"/>
+    <applicationService serviceInterface="org.jetbrains.jet.plugin.quickfix.ImportInsertHelper"
+                        serviceImplementation="org.jetbrains.jet.plugin.quickfix.ImportInsertHelperImpl"/>
 
     <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"/>
@@ -344,6 +351,7 @@
     <debuggerEditorTextProvider language="jet" implementationClass="org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider"/>
     <debuggerClassFilterProvider implementation="org.jetbrains.jet.plugin.debugger.filter.KotlinDebuggerInternalClassesFilterProvider"/>
     <debugger.nodeRenderer implementation="org.jetbrains.jet.plugin.debugger.render.KotlinClassWithDelegatedPropertyRenderer"/>
+    <debugger.nodeRenderer implementation="org.jetbrains.jet.plugin.debugger.render.KotlinObjectRenderer"/>
     <xdebugger.settings implementation="org.jetbrains.jet.plugin.debugger.KotlinDebuggerSettings"/>
 
     <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler"/>

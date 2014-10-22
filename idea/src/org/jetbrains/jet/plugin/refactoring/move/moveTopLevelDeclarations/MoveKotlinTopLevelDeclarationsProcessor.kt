@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.getPackage
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.move.PackageNameInfo
 import org.jetbrains.jet.plugin.refactoring.createKotlinFile
-import org.jetbrains.jet.plugin.codeInsight.addToShorteningWaitSet
+import org.jetbrains.jet.plugin.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.jet.plugin.refactoring.move.getFileNameAfterMove
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import org.jetbrains.jet.asJava.toLightElements
@@ -64,7 +64,6 @@ import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.PsiModifier
 import com.intellij.util.VisibilityUtil
 import com.intellij.openapi.util.Ref
-import org.jetbrains.jet.plugin.refactoring.getKotlinFqName
 import org.jetbrains.jet.plugin.search.projectScope
 import org.jetbrains.jet.plugin.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
 import org.jetbrains.jet.plugin.refactoring.move.createMoveUsageInfo
@@ -72,7 +71,7 @@ import org.jetbrains.jet.plugin.refactoring.move.postProcessMoveUsages
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.plugin.refactoring.move.MoveRenameUsageInfoForExtension
-import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.plugin.refactoring.fqName.getKotlinFqName
 
 trait Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetNamedDeclaration {
     object Default: Mover {

@@ -5,7 +5,6 @@ internal fun </*0*/ T : kotlin.Any> doIn(/*0*/ i: In<T?>): kotlin.Unit
 internal fun </*0*/ T : kotlin.Any> doOut(/*0*/ o: Out<T?>): T
 internal fun </*0*/ T : kotlin.Any> doT(/*0*/ t: T?): T
 internal fun test(/*0*/ out: Out<kotlin.Int>, /*1*/ i: In<kotlin.Int>, /*2*/ inv: A<kotlin.Int>): kotlin.Unit
-internal fun </*0*/ T> T.checkType(/*0*/ f: (_<T>) -> kotlin.Unit): (_<T>) -> kotlin.Unit
 
 internal trait A</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -20,13 +19,6 @@ internal trait In</*0*/ in T> {
 }
 
 internal trait Out</*0*/ out T> {
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
-internal final class _</*0*/ T> {
-    public constructor _</*0*/ T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

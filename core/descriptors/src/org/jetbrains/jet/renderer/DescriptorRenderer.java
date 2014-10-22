@@ -62,6 +62,10 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     DescriptorRenderer DEBUG_TEXT = new DescriptorRendererBuilder().setDebugMode(true).build();
 
+    DescriptorRenderer FLEXIBLE_TYPES_FOR_CODE = new DescriptorRendererBuilder()
+            .setFlexibleTypesForCode(true)
+            .build();
+
     DescriptorRenderer HTML_COMPACT_WITH_MODIFIERS = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
             .setTextFormat(TextFormat.HTML).build();
