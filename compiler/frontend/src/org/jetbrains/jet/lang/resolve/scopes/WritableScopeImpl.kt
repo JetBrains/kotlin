@@ -57,9 +57,7 @@ public class WritableScopeImpl(scope: JetScope,
 
     private var implicitReceiver: ReceiverParameterDescriptor? = null
 
-    override fun getContainingDeclaration(): DeclarationDescriptor {
-        return ownerDeclarationDescriptor
-    }
+    override fun getContainingDeclaration(): DeclarationDescriptor = ownerDeclarationDescriptor
 
     override fun importScope(imported: JetScope) {
         checkMayWrite()
@@ -129,15 +127,10 @@ public class WritableScopeImpl(scope: JetScope,
         checkMayRead()
 
         val superResult = super.getDeclarationsByLabel(labelName)
-        val labelsToDescriptors = getLabelsToDescriptors()
-        val declarationDescriptors = labelsToDescriptors.get(labelName)
-        if (declarationDescriptors == null) {
-            return superResult
-        }
+        val declarationDescriptors = getLabelsToDescriptors()[labelName]
+        if (declarationDescriptors == null) return superResult
         if (superResult.isEmpty()) return declarationDescriptors
-        val result = ArrayList(declarationDescriptors)
-        result.addAll(superResult)
-        return result
+        return declarationDescriptors + superResult
     }
 
     override fun addLabeledDeclaration(descriptor: DeclarationDescriptor) {
@@ -207,17 +200,12 @@ public class WritableScopeImpl(scope: JetScope,
     override fun getLocalVariable(name: Name): VariableDescriptor? {
         checkMayRead()
 
-        val variableOrClassDescriptors = getVariableOrClassDescriptors()
-        val descriptor = variableOrClassDescriptors.get(name)
-        if (descriptor is VariableDescriptor && !getPropertyGroups().get(name).contains(descriptor)) {
+        val descriptor = getVariableOrClassDescriptors()[name]
+        if (descriptor is VariableDescriptor && !getPropertyGroups()[name].contains(descriptor)) {
             return descriptor
         }
 
-        val variableDescriptor = workerScope.getLocalVariable(name)
-        if (variableDescriptor != null) {
-            return variableDescriptor
-        }
-        return super.getLocalVariable(name)
+        return workerScope.getLocalVariable(name) ?: super.getLocalVariable(name)
     }
 
     private fun getPropertyGroups(): SetMultimap<Name, VariableDescriptor> {
@@ -256,8 +244,7 @@ public class WritableScopeImpl(scope: JetScope,
     override fun addTypeParameterDescriptor(typeParameterDescriptor: TypeParameterDescriptor) {
         checkMayWrite()
 
-        val name = typeParameterDescriptor.getName()
-        addClassifierAlias(name, typeParameterDescriptor)
+        addClassifierAlias(typeParameterDescriptor.getName(), typeParameterDescriptor)
     }
 
     override fun addClassifierDescriptor(classDescriptor: ClassifierDescriptor) {
@@ -305,18 +292,20 @@ public class WritableScopeImpl(scope: JetScope,
     }
 
     private fun checkForPropertyRedeclaration(name: Name, variableDescriptor: VariableDescriptor) {
-        val properties = getPropertyGroups().get(name)
+        val properties = getPropertyGroups()[name]
         val receiverParameter = variableDescriptor.getExtensionReceiverParameter()
         for (oldProperty in properties) {
             val receiverParameterForOldVariable = oldProperty.getExtensionReceiverParameter()
-            if (((receiverParameter != null && receiverParameterForOldVariable != null) && (JetTypeChecker.DEFAULT.equalTypes(receiverParameter.getType(), receiverParameterForOldVariable.getType())))) {
+            if (receiverParameter != null
+                    && receiverParameterForOldVariable != null
+                    && JetTypeChecker.DEFAULT.equalTypes(receiverParameter.getType(), receiverParameterForOldVariable.getType())) {
                 redeclarationHandler.handleRedeclaration(oldProperty, variableDescriptor)
             }
         }
     }
 
     private fun checkForRedeclaration(name: Name, classifierDescriptor: DeclarationDescriptor) {
-        val originalDescriptor = getVariableOrClassDescriptors().get(name)
+        val originalDescriptor = getVariableOrClassDescriptors()[name]
         if (originalDescriptor != null) {
             redeclarationHandler.handleRedeclaration(originalDescriptor, classifierDescriptor)
         }
@@ -325,25 +314,17 @@ public class WritableScopeImpl(scope: JetScope,
     override fun getClassifier(name: Name): ClassifierDescriptor? {
         checkMayRead()
 
-        val variableOrClassDescriptors = getVariableOrClassDescriptors()
-        val descriptor = variableOrClassDescriptors.get(name)
-        if (descriptor is ClassifierDescriptor) return descriptor
-
-        val classifierDescriptor = workerScope.getClassifier(name)
-        if (classifierDescriptor != null) return classifierDescriptor
-
-        return super.getClassifier(name)
+        return getVariableOrClassDescriptors()[name] as? ClassifierDescriptor
+               ?: workerScope.getClassifier(name)
+               ?: super.getClassifier(name)
     }
 
     override fun getPackage(name: Name): PackageViewDescriptor? {
         checkMayRead()
 
-        val aliased = getPackageAliases().get(name)
-        if (aliased != null) return aliased
-
-        val packageView = workerScope.getPackage(name)
-        if (packageView != null) return packageView
-        return super.getPackage(name)
+        return getPackageAliases().get(name)
+               ?: workerScope.getPackage(name)
+               ?: super.getPackage(name)
     }
 
     override fun setImplicitReceiver(implicitReceiver: ReceiverParameterDescriptor) {
@@ -356,25 +337,21 @@ public class WritableScopeImpl(scope: JetScope,
     }
 
     override fun computeImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
-        val implicitReceiverHierarchy = ArrayList<ReceiverParameterDescriptor>()
-        if (implicitReceiver != null) {
-            implicitReceiverHierarchy.add(implicitReceiver)
-        }
-        implicitReceiverHierarchy.addAll(super.computeImplicitReceiversHierarchy())
-        return implicitReceiverHierarchy
+        return if (implicitReceiver != null)
+            listOf(implicitReceiver!!) + super.computeImplicitReceiversHierarchy()
+        else
+            super.computeImplicitReceiversHierarchy()
     }
 
     private fun addToDeclared(descriptor: DeclarationDescriptor) {
         declaredDescriptorsAccessibleBySimpleName.put(descriptor.getName(), descriptor)
     }
 
-    override fun getDeclaredDescriptorsAccessibleBySimpleName(): Multimap<Name, DeclarationDescriptor> {
-        return declaredDescriptorsAccessibleBySimpleName
-    }
+    override fun getDeclaredDescriptorsAccessibleBySimpleName(): Multimap<Name, DeclarationDescriptor>
+            = declaredDescriptorsAccessibleBySimpleName
 
-    override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {
-        return declaredDescriptorsAccessibleBySimpleName.values()
-    }
+    override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor>
+            = declaredDescriptorsAccessibleBySimpleName.values()
 
     override fun printAdditionalScopeStructure(p: Printer) {
         p.println("allDescriptorsDone = ", allDescriptorsDone)
