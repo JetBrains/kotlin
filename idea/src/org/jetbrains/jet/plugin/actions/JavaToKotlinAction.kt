@@ -40,10 +40,8 @@ import org.jetbrains.jet.lang.psi.JetFile
 
 public class JavaToKotlinAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)!!
+        val selectedJavaFiles = selectedJavaFiles(e)
         val project = CommonDataKeys.PROJECT.getData(e.getDataContext())!!
-        val selectedJavaFiles = allJavaFiles(virtualFiles, project)
-        if (selectedJavaFiles.isEmpty()) return
 
         CommandProcessor.getInstance().executeCommand(project, object : Runnable {
             override fun run() {
@@ -59,8 +57,14 @@ public class JavaToKotlinAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        val enabled = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)?.isNotEmpty() ?: false
+        val enabled = selectedJavaFiles(e).isNotEmpty()
         e.getPresentation().setEnabled(enabled)
+    }
+
+    private fun selectedJavaFiles(e: AnActionEvent): List<PsiJavaFile> {
+        val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return listOf()
+        val project = CommonDataKeys.PROJECT.getData(e.getDataContext()) ?: return listOf()
+        return allJavaFiles(virtualFiles, project)
     }
 
     private fun allJavaFiles(filesOrDirs: Array<VirtualFile>, project: Project): List<PsiJavaFile> {
