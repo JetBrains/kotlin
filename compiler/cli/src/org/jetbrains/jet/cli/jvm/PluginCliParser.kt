@@ -34,60 +34,43 @@ import java.net.URLClassLoader
 import java.net.URL
 import java.io.File
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import java.util.ServiceLoader
 
 public object PluginCliParser {
 
     public val PLUGIN_ARGUMENT_PREFIX: String = "plugin:"
 
-    private class Context(
-            val arguments: CommonCompilerArguments,
-            val configuration: CompilerConfiguration,
-            val classLoader: ClassLoader,
-            val pluginManifestAttributes: List<Attributes>
-    )
-
     [platformStatic]
     fun loadPlugins(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
-        val classLoader = URLClassLoader(arguments.pluginClasspaths?.map {File(it).toURI().toURL()}?.copyToArray() ?: array<URL>(), javaClass.getClassLoader())
-        val pluginManifestAttributes = arguments.pluginClasspaths?.map {
-            JarFile(it).getManifest()?.getAttributes("org.jetbrains.kotlin.compiler.plugin")
-        }?.filterNotNull() ?: listOf()
-        val context = Context(arguments, configuration, classLoader, pluginManifestAttributes)
-        context.loadComponentRegistrars()
-        context.processPluginOptions()
+        val classLoader = URLClassLoader(
+                arguments.pluginClasspaths
+                        ?.map { File(it).toURI().toURL() }
+                        ?.copyToArray()
+                        ?: array<URL>(),
+                javaClass.getClassLoader()
+        )
+
+        configuration.addAll(
+                ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS,
+                ServiceLoader.load(javaClass<ComponentRegistrar>(), classLoader).toList()
+        )
+
+        processPluginOptions(arguments, configuration, classLoader)
     }
 
-    private fun Context.loadComponentRegistrars() {
-        for (attributes in pluginManifestAttributes) {
-            val registrar = loadComponent<ComponentRegistrar>(attributes, "ComponentRegistrar")
-            if (registrar == null) continue
-
-            configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, registrar)
-        }
-    }
-
-    private fun Context.loadComponent<T: Any>(attributes: Attributes, componentName: String): T? {
-        val processorClassName = attributes.getValue(componentName)
-        if (processorClassName == null) return null
-
-        try {
-            val processorClass = Class.forName(processorClassName, true, classLoader)
-            [suppress("UNCHECKED_CAST")]
-            return processorClass.newInstance() as T
-        }
-        catch (e: Throwable) {
-            throw CliOptionProcessingException("Loading plugin component failed: $componentName=$processorClassName ($e)", e)
-        }
-    }
-
-    private fun Context.processPluginOptions() {
+    private fun processPluginOptions(
+            arguments: CommonCompilerArguments,
+            configuration: CompilerConfiguration,
+            classLoader: ClassLoader
+    ) {
         val optionValuesByPlugin = arguments.pluginOptions?.map { parsePluginOption(it) }?.groupBy {
             if (it == null) throw CliOptionProcessingException("Wrong plugin option format: $it, should be ${CommonCompilerArguments.PLUGIN_OPTION_FORMAT}")
             it.pluginId
         } ?: mapOf()
 
-        val processors = pluginManifestAttributes.map { loadComponent<CommandLineProcessor>(it, "CommandLineProcessor") }.filterNotNull()
-        for (processor in processors) {
+        val commandLineProcessors = ServiceLoader.load(javaClass<CommandLineProcessor>(), classLoader).toList()
+
+        for (processor in commandLineProcessors) {
             val declaredOptions = processor.pluginOptions.valuesToMap { it.name }
             val optionsToValues = MultiMap<CliOption, PluginOptionValue>()
 
