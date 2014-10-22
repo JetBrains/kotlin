@@ -333,21 +333,6 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 doSingleBreakpointTest(fileName);
             }
         }
-
-        @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/renderer")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Renderer extends AbstractKotlinEvaluateExpressionTest {
-            public void testAllFilesPresentInRenderer() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/renderer"), Pattern.compile("^(.+)\\.kt$"), true);
-            }
-
-            @TestMetadata("toStringRenderer.kt")
-            public void testToStringRenderer() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/renderer/toStringRenderer.kt");
-                doSingleBreakpointTest(fileName);
-            }
-        }
     }
 
     @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints")
