@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.PropertyInfo
 import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
+import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 
 object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -50,7 +51,7 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
             override fun getText(): String = JetBundle.message("create.local.variable.from.usage", propertyInfo.name)
 
             override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
-                with (CallableBuilderConfiguration(propertyInfo, assignment ?: refExpr, file!!, editor!!).createBuilder()) {
+                with (CallableBuilderConfiguration(propertyInfo.singletonOrEmptyList(), assignment ?: refExpr, file!!, editor!!).createBuilder()) {
                     val actualContainer = when (container) {
                         is JetBlockExpression -> container
                         else -> ConvertToBlockBodyAction().convert(container as JetDeclarationWithBody).getBodyExpression()!!

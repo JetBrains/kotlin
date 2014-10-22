@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -43,6 +44,7 @@ import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureDa
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -51,6 +53,7 @@ import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignatu
 public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
     private final JetCallElement callElement;
     private final boolean hasTypeMismatches;
+    private final List<JetType> typesToShorten = new ArrayList<JetType>();
 
     public AddFunctionParametersFix(
             @NotNull JetCallElement callElement,
@@ -106,9 +109,15 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
     }
 
     @Override
+    public boolean startInWriteAction() {
+        return true;
+    }
+
+    @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
         BindingContext bindingContext = ResolvePackage.getBindingContext((JetFile) callElement.getContainingFile());
         runChangeSignature(project, functionDescriptor, addParameterConfiguration(), bindingContext, callElement, getText());
+        QuickFixUtil.shortenReferencesOfTypes(typesToShorten, file);
     }
 
     private JetChangeSignatureConfiguration addParameterConfiguration() {
@@ -128,14 +137,18 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
                         JetType argumentType = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
                         JetType parameterType = parameters.get(i).getType();
 
-                        if (argumentType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType))
-                            changeSignatureData.getParameters().get(i).setTypeText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(argumentType));
+                        if (argumentType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
+                            changeSignatureData.getParameters().get(i).setTypeText(IdeDescriptorRenderers.SOURCE_CODE.renderType(argumentType));
+                            typesToShorten.add(argumentType);
+                        }
                     }
                     else {
                         JetParameterInfo parameterInfo = getNewParameterInfo(bindingContext, argument, validator);
+                        typesToShorten.add(parameterInfo.getType());
 
-                        if (expression != null)
+                        if (expression != null) {
                             parameterInfo.setDefaultValueText(expression.getText());
+                        }
 
                         changeSignatureData.addParameter(parameterInfo);
                     }

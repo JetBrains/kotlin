@@ -25,6 +25,8 @@ import com.intellij.psi.PsiComment
 import java.util.Collections
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
 import com.intellij.openapi.util.TextRange
+import java.util.HashSet
+import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange.Match
 
 private val SIGNIFICANT_FILTER = { (e: PsiElement) -> e !is PsiWhiteSpace && e !is PsiComment && e.getTextLength() > 0 }
 
@@ -67,28 +69,25 @@ public trait JetPsiRange {
         val matches = ArrayList<Match>()
         scope.accept(
                 object: JetTreeVisitorVoid() {
-                    private fun processElement(element: JetElement): Boolean {
-                        val candidates = element
+                    override fun visitJetElement(element: JetElement) {
+                        val range = element
                                 .siblings()
                                 .filter(SIGNIFICANT_FILTER)
                                 .take(elements.size)
                                 .toList()
-                        if (candidates.size != elements.size) return false
-
-                        val range = candidates.toRange()
+                                .toRange()
 
                         val result = unifier.unify(range, this@JetPsiRange)
-                        if (result is UnificationResult.Matched) {
+
+                        if (result is UnificationResult.StronglyMatched) {
                             matches.add(Match(range, result))
-                            return true
                         }
-
-                        return false
-                    }
-
-                    override fun visitJetElement(element: JetElement) {
-                        if (!processElement(element)) {
+                        else {
+                            val matchCountSoFar = matches.size
                             super.visitJetElement(element)
+                            if (result is UnificationResult.WeaklyMatched && matches.size == matchCountSoFar) {
+                                matches.add(Match(range, result))
+                            }
                         }
                     }
                 }

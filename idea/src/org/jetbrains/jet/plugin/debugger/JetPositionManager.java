@@ -319,7 +319,8 @@ public class JetPositionManager implements PositionManager {
                 @Override
                 public Result<JetTypeMapper> compute() {
                     Project project = file.getProject();
-                    Collection<JetFile> packageFiles = findFilesWithExactPackage(fqName, GlobalSearchScope.allScope(project), project);
+                    GlobalSearchScope packageFacadeScope = ResolvePackage.getModuleInfo(file).contentScope();
+                    Collection<JetFile> packageFiles = findFilesWithExactPackage(fqName, packageFacadeScope, project);
 
                     AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResultsForElements(packageFiles);
                     analyzeExhaust.throwIfError();

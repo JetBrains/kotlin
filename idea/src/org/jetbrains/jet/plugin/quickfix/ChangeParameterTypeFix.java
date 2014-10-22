@@ -34,13 +34,13 @@ import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
-    private final String renderedType;
+    private final JetType type;
     private final String containingDeclarationName;
     private final boolean isPrimaryConstructorParameter;
 
     public ChangeParameterTypeFix(@NotNull JetParameter element, @NotNull JetType type) {
         super(element);
-        renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
+        this.type = type;
         JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetNamedDeclaration.class);
         isPrimaryConstructorParameter = declaration instanceof JetClass;
         FqName declarationFQName = declaration == null ? null : declaration.getFqName();
@@ -55,6 +55,7 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
     @NotNull
     @Override
     public String getText() {
+        String renderedType = renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
         return isPrimaryConstructorParameter ?
             JetBundle.message("change.primary.constructor.parameter.type", element.getName(), containingDeclarationName, renderedType) :
             JetBundle.message("change.function.parameter.type", element.getName(), containingDeclarationName, renderedType);
@@ -68,6 +69,7 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        element.setTypeReference(JetPsiFactory(file).createType(renderedType));
+        element.setTypeReference(JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)));
+        QuickFixUtil.shortenReferencesOfType(type, file);
     }
 }

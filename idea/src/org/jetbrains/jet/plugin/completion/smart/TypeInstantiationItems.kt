@@ -36,8 +36,9 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.lang.resolve.BindingContext
 
-class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
+class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bindingContext: BindingContext, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
         val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.type.makeNotNullable() }
         for ((jetType, infos) in expectedInfosGrouped) {
@@ -62,7 +63,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
         }
         if (allConstructors.isNotEmpty() && visibleConstructors.isEmpty()) return
 
-        var lookupElement = createLookupElement(classifier, resolveSession)
+        var lookupElement = createLookupElement(classifier, resolveSession, bindingContext)
 
         var lookupString = lookupElement.getLookupString()
 
@@ -88,6 +89,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
                 ImplementMethodsHandler().invoke(context.getProject(), editor, context.getFile(), true)
             }
             lookupElement = lookupElement.suppressAutoInsertion()
+            lookupElement = lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.ANONYMOUS_OBJECT)
         }
         else {
             //TODO: when constructor has one parameter of lambda type with more than one parameter, generate special additional item
@@ -115,6 +117,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val vi
             if (baseInsertHandler.lambdaInfo != null) {
                 lookupElement.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
             }
+            lookupElement = lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
         }
 
         lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {

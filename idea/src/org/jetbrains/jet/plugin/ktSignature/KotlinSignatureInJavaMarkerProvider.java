@@ -20,21 +20,18 @@ import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
-import com.intellij.diagnostic.AttachmentFactory;
 import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.Function;
@@ -52,6 +49,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
+import org.jetbrains.jet.plugin.util.attachment.AttachmentPackage;
 
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -111,12 +109,10 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             }
         }
         catch (AssertionError error) {
-            VirtualFile virtualFile = psiFile.getVirtualFile();
-            Attachment[] attachments = virtualFile != null
-                                       ? new Attachment[] {AttachmentFactory.createAttachment(virtualFile)}
-                                       : new Attachment[] {};
             LOG.error(LogMessageEx.createEvent(
-                    "Exception while collecting KotlinSignature markers", ExceptionUtil.getThrowableText(error), attachments
+                    "Exception while collecting KotlinSignature markers",
+                    ExceptionUtil.getThrowableText(error),
+                    AttachmentPackage.attachmentsByPsiFile(psiFile)
             ));
         }
     }

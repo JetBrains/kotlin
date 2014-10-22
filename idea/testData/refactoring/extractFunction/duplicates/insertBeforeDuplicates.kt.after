@@ -1,0 +1,8 @@
+fun foo() {
+    fun i(): Int {
+        return 1 + 1
+    }
+
+    val x = i()
+    val y = i()
+}

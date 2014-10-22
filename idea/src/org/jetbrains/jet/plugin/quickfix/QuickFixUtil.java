@@ -22,6 +22,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
@@ -32,14 +34,23 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
+import org.jetbrains.jet.plugin.util.UtilPackage;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 public class QuickFixUtil {
@@ -194,5 +205,43 @@ public class QuickFixUtil {
         }
 
         return usedParameters;
+    }
+
+    public static String renderTypeWithFqNameOnClash(JetType type, String nameToCheckAgainst) {
+        FqName typeFqName = DescriptorUtils.getFqNameSafe(DescriptorUtils.getClassDescriptorForType(type));
+        FqName fqNameToCheckAgainst = new FqName(nameToCheckAgainst);
+        DescriptorRenderer renderer = typeFqName.shortName().equals(fqNameToCheckAgainst.shortName())
+               ? IdeDescriptorRenderers.SOURCE_CODE
+               : IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES;
+        return renderer.renderType(type);
+    }
+
+    public static void shortenReferencesOfType(@NotNull JetType type, @NotNull JetFile file) {
+        shortenReferencesOfTypes(Collections.singletonList(type), file);
+    }
+
+    public static void shortenReferencesOfTypes(@NotNull List<JetType> types, @NotNull JetFile file) {
+        Set<JetType> typesToShorten = KotlinPackage.flatMapTo(
+                types,
+                new LinkedHashSet<JetType>(),
+                new Function1<JetType, Iterable<JetType>>() {
+                    @Override
+                    public Iterable<JetType> invoke(JetType type) {
+                        return UtilPackage.getAllReferencedTypes(type);
+                    }
+                }
+        );
+        ShortenReferences.INSTANCE$.processAllReferencesInFile(
+                KotlinPackage.map(
+                        typesToShorten,
+                        new Function1<JetType, DeclarationDescriptor>() {
+                            @Override
+                            public DeclarationDescriptor invoke(JetType type) {
+                                return DescriptorUtils.getClassDescriptorForType(type);
+                            }
+                        }
+                ),
+                file
+        );
     }
 }

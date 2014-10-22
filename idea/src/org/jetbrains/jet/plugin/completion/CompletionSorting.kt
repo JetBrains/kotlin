@@ -34,6 +34,8 @@ import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.jet.plugin.completion.smart.NameSimilarityWeigher
+import org.jetbrains.jet.plugin.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
+import org.jetbrains.jet.plugin.completion.smart.SmartCompletionItemPriority
 
 public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
@@ -41,7 +43,7 @@ public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters
     sorter = sorter.weighBefore("stats", PriorityWeigher, KindWeigher)
 
     if (parameters.getCompletionType() == CompletionType.SMART) {
-        sorter = sorter.weighBefore("kotlin.kind", NameSimilarityWeigher)
+        sorter = sorter.weighBefore("kotlin.kind", NameSimilarityWeigher, SmartCompletionPriorityWeigher)
     }
 
     sorter = sorter.weighAfter(
@@ -67,7 +69,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
         packages
     }
 
-    override fun weigh(element: LookupElement): Weight {
+    override fun weigh(element: LookupElement): Comparable<Weight> {
         val o = element.getObject()
         return when (o) {
             is DeclarationDescriptorLookupObject -> when (o.descriptor) {
@@ -107,7 +109,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
         notImported
     }
 
-    override fun weigh(element: LookupElement): Weight {
+    override fun weigh(element: LookupElement): Comparable<Weight> {
         val o = element.getObject()
         if (o is DeclarationDescriptorLookupObject) {
             val elementFile = o.psiElement?.getContainingFile()

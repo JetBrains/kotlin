@@ -56,13 +56,16 @@ import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange.Match
 import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.WeaklyMatched
 import org.jetbrains.jet.plugin.util.psi.patternMatching.UnificationResult.StronglyMatched
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.lang.psi.psiUtil.parents
+import java.util.ArrayList
 
 fun ExtractableCodeDescriptor.getDeclarationText(
         options: ExtractionGeneratorOptions = ExtractionGeneratorOptions.DEFAULT,
         withBody: Boolean = true,
-        descriptorRenderer: DescriptorRenderer = IdeDescriptorRenderers.SOURCE_CODE
+        descriptorRenderer: DescriptorRenderer = if (options.flexibleTypesAllowed)
+                                                    DescriptorRenderer.FLEXIBLE_TYPES_FOR_CODE
+                                                 else IdeDescriptorRenderers.SOURCE_CODE
 ): String {
     if (!canGenerateProperty() && options.extractAsProperty) {
         throw IllegalArgumentException("Can't generate property: ${extractionData.getCodeFragmentText()}")
@@ -342,7 +345,7 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
     fun createDeclaration(): JetNamedDeclaration {
         return with(extractionData) {
             if (options.inTempFile) {
-                createTemporaryDeclaration("${getDeclarationText()}\n")
+                createTemporaryDeclaration("${getDeclarationText(options)}\n")
             }
             else {
                 psiFactory.createDeclaration(getDeclarationText(options))
@@ -481,19 +484,19 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
         }
     }
 
-    fun insertDeclaration(declaration: JetNamedDeclaration): JetNamedDeclaration {
+    fun insertDeclaration(declaration: JetNamedDeclaration, anchor: PsiElement): JetNamedDeclaration {
         return with(extractionData) {
-            val targetContainer = targetSibling.getParent()!!
+            val targetContainer = anchor.getParent()!!
             val emptyLines = psiFactory.createWhiteSpace("\n\n")
             if (insertBefore) {
-                val declarationInFile = targetContainer.addBefore(declaration, targetSibling) as JetNamedDeclaration
-                targetContainer.addBefore(emptyLines, targetSibling)
+                val declarationInFile = targetContainer.addBefore(declaration, anchor) as JetNamedDeclaration
+                targetContainer.addBefore(emptyLines, anchor)
 
                 declarationInFile
             }
             else {
-                val declarationInFile = targetContainer.addAfter(declaration, targetSibling) as JetNamedDeclaration
-                targetContainer.addAfter(emptyLines, targetSibling)
+                val declarationInFile = targetContainer.addAfter(declaration, anchor) as JetNamedDeclaration
+                targetContainer.addAfter(emptyLines, anchor)
 
                 declarationInFile
             }
@@ -502,7 +505,22 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
 
     val duplicates = if (options.inTempFile) Collections.emptyList() else findDuplicates()
 
-    val declaration = createDeclaration().let { if (options.inTempFile) it else insertDeclaration(it) }
+    val anchor = with(extractionData) {
+        val anchorCandidates = duplicates.mapTo(ArrayList<PsiElement>()) { it.range.elements.first() }
+        anchorCandidates.add(targetSibling)
+
+        val marginalCandidate = if (insertBefore) {
+            anchorCandidates.minBy { it.getTextRange().getStartOffset() }!!
+        }
+        else {
+            anchorCandidates.maxBy { it.getTextRange().getStartOffset() }!!
+        }
+
+        val targetParent = targetSibling.getParent()
+        marginalCandidate.parents().first { it.getParent() == targetParent }
+    }
+
+    val declaration = createDeclaration().let { if (options.inTempFile) it else insertDeclaration(it, anchor) }
     adjustDeclarationBody(declaration)
 
     if (options.inTempFile) return ExtractionResult(declaration, Collections.emptyMap(), nameByOffset)

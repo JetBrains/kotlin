@@ -33,7 +33,11 @@ import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 
 public object TipsManager{
 
-    public fun getReferenceVariants(expression: JetSimpleNameExpression, context: BindingContext): Collection<DeclarationDescriptor> {
+    public fun getReferenceVariants(expression: JetSimpleNameExpression, context: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean): Collection<DeclarationDescriptor> {
+        return getReferenceVariants(expression, context).filter(visibilityFilter)
+    }
+
+    private fun getReferenceVariants(expression: JetSimpleNameExpression, context: BindingContext): Collection<DeclarationDescriptor> {
         val receiverExpression = expression.getReceiverExpression()
         val parent = expression.getParent()
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()

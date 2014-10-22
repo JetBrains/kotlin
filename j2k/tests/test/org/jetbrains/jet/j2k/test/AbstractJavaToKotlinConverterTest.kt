@@ -32,11 +32,12 @@ import org.jetbrains.jet.test.util.trimIndent
 import org.jetbrains.jet.j2k.FilesConversionScope
 import org.jetbrains.jet.plugin.j2k.J2kPostProcessor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.PsiFile
 import org.jetbrains.jet.j2k.ReferenceSearcherImpl
+import junit.framework.TestCase
+import com.intellij.openapi.util.Disposer
+import org.jetbrains.jet.j2k.translateToKotlin
 
 public abstract class AbstractJavaToKotlinConverterTest() : LightCodeInsightFixtureTestCase() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
@@ -167,5 +168,18 @@ public abstract class AbstractJavaToKotlinConverterTest() : LightCodeInsightFixt
 
     private fun createJavaFile(text: String): PsiJavaFile {
         return myFixture.configureByText("converterTestFile.java", text) as PsiJavaFile
+    }
+
+}
+
+public abstract class AbstractJavaToKotlinConverterForWebDemoTest() : TestCase() {
+    public fun doTest(javaPath: String) {
+        try {
+            val fileContents = FileUtil.loadFile(File(javaPath), true)
+            translateToKotlin(fileContents)
+        }
+        finally {
+            Disposer.dispose(JavaToKotlinTranslator.DISPOSABLE)
+        }
     }
 }

@@ -107,7 +107,7 @@ fun getFunctionForExtractedFragment(
         }
 
         return validationResult.descriptor
-                .generateDeclaration(ExtractionGeneratorOptions(inTempFile = true))
+                .generateDeclaration(ExtractionGeneratorOptions(inTempFile = true, flexibleTypesAllowed = true))
                 .declaration as JetNamedFunction
     }
 

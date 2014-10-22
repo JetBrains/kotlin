@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
-import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.lang.ASTNode;
@@ -34,6 +32,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -128,7 +127,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         });
 
         if (firstGenerated != null) {
-            CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(firstGenerated);
+            PostprocessReformattingAspect.getInstance(firstGenerated.getProject()).doPostponedFormatting();
             QuickfixPackage.moveCaretIntoGeneratedElement(editor, firstGenerated);
         }
     }

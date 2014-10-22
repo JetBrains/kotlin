@@ -66,6 +66,7 @@ import org.jetbrains.jet.lang.psi.JetCallElement
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.jet.plugin.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.plugin.util.isUnit
 
 trait Parameter {
     val argumentText: String
@@ -317,7 +318,8 @@ data class ExtractableCodeDescriptor(
 
 data class ExtractionGeneratorOptions(
         val inTempFile: Boolean = false,
-        val extractAsProperty: Boolean = false
+        val extractAsProperty: Boolean = false,
+        val flexibleTypesAllowed: Boolean = false
 ) {
     class object {
         val DEFAULT = ExtractionGeneratorOptions()
@@ -388,6 +390,7 @@ class ExtractableCodeDescriptorWithConflicts(
 
 fun ExtractableCodeDescriptor.canGenerateProperty(): Boolean {
     if (!parameters.empty) return false
+    if (controlFlow.outputValueBoxer.returnType.isUnit()) return false
 
     val parent = extractionData.targetSibling.getParent()
     return parent is JetFile || parent is JetClassBody

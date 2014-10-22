@@ -34,10 +34,3 @@ public fun Project.allScope(): GlobalSearchScope = GlobalSearchScope.allScope(th
 public fun Project.projectScope(): GlobalSearchScope = GlobalSearchScope.projectScope(this)
 
 public fun PsiFile.fileScope(): GlobalSearchScope = GlobalSearchScope.fileScope(this)
-
-public fun searchScopeForSourceElementDependencies(element: PsiElement): GlobalSearchScope? {
-    val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return null
-    val virtualFile = element.getContainingFile()?.getVirtualFile() ?: return null
-    val isInTests = ModuleRootManager.getInstance(module).getFileIndex().isInTestSourceContent(virtualFile)
-    return GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, isInTests)
-}

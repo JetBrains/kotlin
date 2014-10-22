@@ -35,6 +35,8 @@ import com.intellij.psi.PsiDirectory
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassOrObjectStub
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.PsiComment
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     val calleeExpression = getCalleeExpression()
@@ -357,3 +359,20 @@ public fun PsiElement.prevLeaf(skipEmptyElements: Boolean = false): PsiElement?
 
 public fun PsiElement.nextLeaf(skipEmptyElements: Boolean = false): PsiElement?
         = PsiTreeUtil.nextLeaf(this, skipEmptyElements)
+
+public fun PsiElement.prevLeafSkipWhitespacesAndComments(): PsiElement? {
+    var leaf = prevLeaf()
+    while (leaf is PsiWhiteSpace || leaf is PsiComment) {
+        leaf = leaf!!.prevLeaf()
+    }
+    return leaf
+}
+
+public fun PsiElement.nextLeafSkipWhitespacesAndComments(): PsiElement? {
+    var leaf = nextLeaf()
+    while (leaf is PsiWhiteSpace || leaf is PsiComment) {
+        leaf = leaf!!.nextLeaf()
+    }
+    return leaf
+}
+

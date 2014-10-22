@@ -90,7 +90,7 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testTabInsertBeforeParentheses() = doTest(0, "vvvvv", null, '\t')
 
-    fun testTabInsertInsideBraces() = doTest(0, "vvvvv", null, '\t')
+    fun testTabInsertInsideBraces() = doTest(1, "vvvvv", null, '\t')
 
     fun testTabInsertInsideBrackets() = doTest(0, "vvvvv", null, '\t')
 

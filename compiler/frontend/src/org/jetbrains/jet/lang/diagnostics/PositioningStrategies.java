@@ -492,7 +492,7 @@ public class PositioningStrategies {
             if (valueParameterList != null) {
                 return markElement(valueParameterList);
             }
-            return markNode(functionLiteral.getOpenBraceNode());
+            return markNode(functionLiteral.getLBrace().getNode());
         }
     };
 

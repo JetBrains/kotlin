@@ -32,7 +32,6 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.plugin.search.searchScopeForSourceElementDependencies
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -59,17 +58,17 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession, { isVisibleDescriptor(it) })
+    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession)
 
     protected val project: Project = position.getProject()
-    protected val indicesHelper: KotlinIndicesHelper = KotlinIndicesHelper(project)
-    protected val searchScope: GlobalSearchScope = searchScopeForSourceElementDependencies(parameters.getOriginalFile()) ?: GlobalSearchScope.EMPTY_SCOPE
+    protected val searchScope: GlobalSearchScope = parameters.getOriginalFile().getResolveScope()
+    protected val indicesHelper: KotlinIndicesHelper = KotlinIndicesHelper(project, resolveSession, searchScope) { isVisibleDescriptor(it) }
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (configuration.completeNonAccessibleDeclarations) return true
 
         if (descriptor is DeclarationDescriptorWithVisibility && inDescriptor != null) {
-            return Visibilities.isVisible(descriptor as DeclarationDescriptorWithVisibility, inDescriptor)
+            return Visibilities.isVisible(descriptor, inDescriptor)
         }
 
         return true
@@ -104,12 +103,15 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected fun getKotlinTopLevelDeclarations(): Collection<DeclarationDescriptor> {
         val filter = { (name: String) -> prefixMatcher.prefixMatches(name) }
-        return indicesHelper.getTopLevelCallables(filter, jetReference!!.expression, resolveSession, searchScope) +
-                   indicesHelper.getTopLevelObjects(filter, resolveSession, searchScope)
+        return indicesHelper.getTopLevelCallables(filter, jetReference!!.expression) + indicesHelper.getTopLevelObjects(filter)
     }
 
     protected fun getKotlinExtensions(): Collection<CallableDescriptor> {
-        return indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression, resolveSession, searchScope)
+        return indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
+    }
+
+    protected fun addAllTypes() {
+        TypesCompletion(parameters, resolveSession, prefixMatcher, { isVisibleDescriptor(it) }).addAllTypes(collector)
     }
 }
 
@@ -127,7 +129,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             if (completeReference) {
                 if (shouldRunOnlyTypeCompletion()) {
                     if (configuration.completeNonImportedDeclarations) {
-                        TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
+                        addAllTypes()
                     }
                     else {
                         addReferenceVariants { isPartOfTypeDeclaration(it) }
@@ -152,7 +154,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private fun addNonImported() {
         if (shouldRunTopLevelCompletion()) {
-            TypesCompletion(parameters, resolveSession, prefixMatcher).addAllTypes(collector)
+            addAllTypes()
             collector.addDescriptorElements(getKotlinTopLevelDeclarations(), suppressAutoInsertion = true)
         }
 
@@ -191,7 +193,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun addReferenceVariants(filterCondition: (DeclarationDescriptor) -> Boolean = { true }) {
-        val descriptors = TipsManager.getReferenceVariants(jetReference!!.expression, bindingContext!!)
+        val descriptors = TipsManager.getReferenceVariants(jetReference!!.expression, bindingContext!!) { isVisibleDescriptor(it) }
         collector.addDescriptorElements(descriptors.filter { filterCondition(it) }, suppressAutoInsertion = false)
     }
 }
@@ -208,8 +210,8 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
                 val filter = result.declarationFilter
                 if (filter != null) {
-                    TipsManager.getReferenceVariants(jetReference.expression, bindingContext!!)
-                            .forEach { collector.addElements(filter(it)) }
+                    TipsManager.getReferenceVariants(jetReference.expression, bindingContext!!) { isVisibleDescriptor(it) }
+                            .forEach { if (prefixMatcher.prefixMatches(it.getName().asString())) collector.addElements(filter(it)) }
 
                     flushToResultSet()
 

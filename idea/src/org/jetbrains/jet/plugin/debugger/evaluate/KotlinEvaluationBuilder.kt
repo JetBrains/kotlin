@@ -71,7 +71,10 @@ import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.codegen.StackValue
-import org.jetbrains.jet.analyzer.AnalyzeExhaust
+import org.jetbrains.jet.lang.types.Flexibility
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.plugin.util.attachment.attachmentsByPsiFile
+import com.intellij.openapi.diagnostic.Attachment
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -85,6 +88,15 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
         val file = position.getFile()
         if (file !is JetFile) {
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in non-kotlin context")
+        }
+
+        if (codeFragment.getContext() !is JetElement) {
+            val attachments = (attachmentsByPsiFile(position.getFile()) +
+                               attachmentsByPsiFile(codeFragment) +
+                               listOf(Attachment("breakpoint.info", "line: ${position.getLine()}"))
+                              ).copyToArray()
+            logger.error("Trying to evaluate ${codeFragment.javaClass} with context ${codeFragment.getContext()?.javaClass}", *attachments)
+            throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in this context")
         }
 
         val packageName = file.getPackageDirective()?.getFqName()?.asString()
@@ -232,9 +244,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             return runReadAction {
                 val file = createFileForDebugger(codeFragment, extractedFunction)
 
-                file.checkForErrors()
+                val analyzeExhaust = file.checkForErrors()
 
-                val analyzeExhaust = file.getAnalysisResults()
                 val state = GenerationState(
                         file.getProject(),
                         ClassBuilderFactories.BINARIES,
@@ -259,7 +270,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             throw EvaluateExceptionUtil.createEvaluateException(e)
         }
 
-        private fun JetFile.checkForErrors() {
+        private fun JetFile.checkForErrors() =
             runReadAction {
                 try {
                     AnalyzingUtils.checkForSyntacticErrors(this)
@@ -268,7 +279,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     throw EvaluateExceptionUtil.createEvaluateException(e.getMessage())
                 }
 
-                val analyzeExhaust = this.getAnalysisResults()
+                val analyzeExhaust = this.getAnalysisResults(createFlexibleTypesFile())
                 if (analyzeExhaust.isError()) {
                     throw EvaluateExceptionUtil.createEvaluateException(analyzeExhaust.getError())
                 }
@@ -277,8 +288,9 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 bindingContext.getDiagnostics().firstOrNull { it.getSeverity() == Severity.ERROR }?.let {
                     throw EvaluateExceptionUtil.createEvaluateException(DefaultErrorMessages.RENDERER.render(it))
                 }
+
+                analyzeExhaust
             }
-        }
     }
 }
 
@@ -304,12 +316,28 @@ private fun createFileForDebugger(codeFragment: JetCodeFragment,
     assert(extractedFunctionText != null, "Text of extracted function shouldn't be null")
     fileText = fileText.replace("!FUNCTION!", extractedFunction.getText()!!)
 
-    val virtualFile = LightVirtualFile("debugFile.kt", JetLanguage.INSTANCE, fileText)
-    virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET)
-    val jetFile = (PsiFileFactory.getInstance(codeFragment.getProject()) as PsiFileFactoryImpl)
-            .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false) as JetFile
+    val jetFile = codeFragment.createJetFile("debugFile.kt", fileText)
     jetFile.skipVisibilityCheck = true
-    jetFile.analysisContext = codeFragment
+    return jetFile
+}
+
+private fun PsiElement.createFlexibleTypesFile(): JetFile {
+    return createJetFile(
+            "FLEXIBLE_TYPES.kt",
+            """
+                package ${Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName()}
+                public class ${Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName()}<L, U>
+            """
+    )
+}
+
+private fun PsiElement.createJetFile(fileName: String, fileText: String): JetFile {
+    // Not using JetPsiFactory because we need a virtual file attached to the JetFile
+    val virtualFile = LightVirtualFile(fileName, JetLanguage.INSTANCE, fileText)
+    virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET)
+    val jetFile = (PsiFileFactory.getInstance(getProject()) as PsiFileFactoryImpl)
+            .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false) as JetFile
+    jetFile.analysisContext = this
     return jetFile
 }
 

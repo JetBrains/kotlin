@@ -16,10 +16,18 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
-import com.intellij.psi.*;
-import com.intellij.psi.impl.JavaCodeBlockModificationListener;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.PsiModificationTrackerImpl;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+
+import java.io.File;
+import java.io.IOException;
 
 public abstract class AbstractOutOfBlockModificationTest extends JetLightCodeInsightFixtureTestCase {
     @Override
@@ -33,8 +41,40 @@ public abstract class AbstractOutOfBlockModificationTest extends JetLightCodeIns
         return PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/outOfBlock";
     }
 
-    protected void doTest(String path) {
+    protected void doTest(String path) throws IOException {
         myFixture.configureByFile(path);
+
+        boolean expectedOutOfBlock = getExpectedOutOfBlockResult();
+
+        PsiModificationTrackerImpl tracker =
+                (PsiModificationTrackerImpl) PsiManager.getInstance(myFixture.getProject()).getModificationTracker();
+
+        PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+        assertNotNull("Should be valid element", element);
+
+        long oobBeforeType = tracker.getOutOfCodeBlockModificationCount();
+        long modificationCountBeforeType = tracker.getModificationCount();
+
+        myFixture.type(getStringToType());
+        PsiDocumentManager.getInstance(myFixture.getProject()).commitDocument(myFixture.getDocument(myFixture.getFile()));
+
+        long oobAfterCount = tracker.getOutOfCodeBlockModificationCount();
+        long modificationCountAfterType = tracker.getModificationCount();
+
+        assertTrue("Modification tracker should always be changed after type", modificationCountBeforeType != modificationCountAfterType);
+
+        assertEquals("Result for out of block test is differs from expected on element in file:\n" + FileUtil.loadFile(new File(path)),
+                     expectedOutOfBlock, oobBeforeType != oobAfterCount);
+    }
+
+    private String getStringToType() {
+        String text = myFixture.getDocument(myFixture.getFile()).getText();
+        String typeDirectives = InTextDirectivesUtils.findStringWithPrefixes(text, "TYPE:");
+
+        return typeDirectives != null ? StringUtil.unescapeStringCharacters(typeDirectives) : "a";
+    }
+
+    private boolean getExpectedOutOfBlockResult() {
         String text = myFixture.getDocument(myFixture.getFile()).getText();
 
         boolean expectedOutOfBlock = false;
@@ -48,37 +88,6 @@ public abstract class AbstractOutOfBlockModificationTest extends JetLightCodeIns
             fail("Expectation of code block result test should be configured with " +
                  "\"// TRUE\" or \"// FALSE\" directive in the beginning of the file");
         }
-
-        PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
-        assertNotNull("Should be valid element", element);
-
-        assertEquals("Result for out of block test is differs from expected on element " + element,
-                     !expectedOutOfBlock, isInsideCodeBlock(element));
-    }
-
-    /**
-     * Copy of private {@link JavaCodeBlockModificationListener.isInsideCodeBlock()}
-     */
-    @SuppressWarnings("JavadocReference")
-    private static boolean isInsideCodeBlock(PsiElement element) {
-        if (element instanceof PsiFileSystemItem) {
-            return false;
-        }
-
-        if (element == null || element.getParent() == null) return true;
-
-        PsiElement parent = element;
-        while (true) {
-            if (parent instanceof PsiFile || parent instanceof PsiDirectory || parent == null) {
-                return false;
-            }
-            if (parent instanceof PsiClass) return false; // anonymous or local class
-            if (parent instanceof PsiModifiableCodeBlock) {
-                if (!((PsiModifiableCodeBlock)parent).shouldChangeModificationCount(element)) {
-                    return true;
-                }
-            }
-            parent = parent.getParent();
-        }
+        return expectedOutOfBlock;
     }
 }

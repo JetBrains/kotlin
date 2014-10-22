@@ -64,7 +64,6 @@ import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
 import java.util.Map;
@@ -282,7 +281,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
                 currentParameterList.replace(newParameterList);
             }
             else {
-                PsiElement openBraceElement = functionLiteral.getOpenBraceNode().getPsi();
+                PsiElement openBraceElement = functionLiteral.getLBrace();
 
                 PsiElement nextSibling = openBraceElement.getNextSibling();
                 PsiElement whitespaceToAdd = nextSibling instanceof PsiWhiteSpace && nextSibling.getText().contains("\n")

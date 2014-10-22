@@ -456,6 +456,24 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("MultipleArgsItemByTab.kt")
+    public void testMultipleArgsItemByTab() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/MultipleArgsItemByTab.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NestedDataClass.kt")
+    public void testNestedDataClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/NestedDataClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NestedDataClassComma.kt")
+    public void testNestedDataClassComma() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/NestedDataClassComma.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NullableValue1.kt")
     public void testNullableValue1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/NullableValue1.kt");

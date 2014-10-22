@@ -264,5 +264,8 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(NEXT_NONE_APPLICABLE, CreateNextFunctionActionFactory.INSTANCE$);
         QuickFixes.factories.put(ITERATOR_MISSING, CreateIteratorFunctionActionFactory.INSTANCE$);
         QuickFixes.factories.put(COMPONENT_FUNCTION_MISSING, CreateComponentFunctionActionFactory.INSTANCE$);
+
+        QuickFixes.factories.put(DELEGATE_SPECIAL_FUNCTION_MISSING, CreatePropertyDelegateAccessorsActionFactory.INSTANCE$);
+        QuickFixes.factories.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, CreatePropertyDelegateAccessorsActionFactory.INSTANCE$);
     }
 }

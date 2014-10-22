@@ -46,7 +46,7 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBa
         val newExpr = JetPsiFactory(simpleNameExpression).createExpression("{ it -> 42 }") as JetFunctionLiteralExpression
         funcExpr.addRangeAfter(newExpr.getFunctionLiteral().getValueParameterList(),
                                newExpr.getFunctionLiteral().getArrowNode()!!.getPsi(),
-                               funcExpr.getOpenBraceNode().getPsi())
+                               funcExpr.getLBrace())
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
 
         val paramToRename = funcExpr.getValueParameters().first()

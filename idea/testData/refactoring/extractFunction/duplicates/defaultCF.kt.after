@@ -8,15 +8,15 @@ fun foo(a: Int, b: Int) {
     unit(a, b)
 }
 
-private fun unit(a: Int, b: Int) {
-    println("a = $a")
-    println("b = $b")
-    println(a + b * a)
-}
-
 fun bar() {
     val x = 1
     val y = 2
 
     unit(x, y)
+}
+
+private fun unit(a: Int, b: Int) {
+    println("a = $a")
+    println("b = $b")
+    println(a + b * a)
 }

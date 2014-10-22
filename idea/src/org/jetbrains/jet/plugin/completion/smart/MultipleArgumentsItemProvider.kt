@@ -36,6 +36,7 @@ import org.jetbrains.jet.plugin.completion.PositionalArgumentExpectedInfo
 import java.util.ArrayList
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.completion.assignPriority
+import com.intellij.codeInsight.lookup.Lookup
 
 class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
                                     val typesWithAutoCasts: (DeclarationDescriptor) -> Iterable<JetType>) {
@@ -76,6 +77,15 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
 
         return LookupElementBuilder
                 .create(variables.map { IdeDescriptorRenderers.SOURCE_CODE.renderName(it.getName()) }.joinToString(", "))
+                .withInsertHandler { (context, lookupElement) ->
+                    if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
+                        val offset = context.getOffsetMap().getOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET)
+                        if (offset != -1) {
+                            context.getDocument().deleteString(context.getTailOffset(), offset)
+                        }
+                    }
+
+                }
                 .withIcon(compoundIcon)
                 .addTail(Tail.RPARENTH) //TODO: support square brackets
                 .assignPriority(ItemPriority.MULTIPLE_ARGUMENTS_ITEM)

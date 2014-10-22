@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -50,12 +49,10 @@ import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclaration> {
     private final static Logger LOG = Logger.getInstance(ChangeVariableTypeFix.class);
 
-    private final String renderedType;
     private final JetType type;
 
     public ChangeVariableTypeFix(@NotNull JetVariableDeclaration element, @NotNull JetType type) {
         super(element);
-        renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
         this.type = type;
     }
 
@@ -66,7 +63,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
         FqName fqName = element.getFqName();
         if (fqName != null) propertyName = fqName.asString();
 
-        return JetBundle.message("change.element.type", propertyName, renderedType);
+        return JetBundle.message("change.element.type", propertyName, IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type));
     }
 
     @NotNull
@@ -82,27 +79,29 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        element.setTypeReference(null);
+        JetPsiFactory psiFactory = JetPsiFactory(file);
+
         PsiElement nameIdentifier = element.getNameIdentifier();
         assert nameIdentifier != null : "ChangeVariableTypeFix applied to variable without name";
-        JetPsiFactory psiFactory = JetPsiFactory(file);
-        element.addAfter(psiFactory.createType(renderedType), nameIdentifier);
-        element.addAfter(psiFactory.createColon(), nameIdentifier);
 
+        JetTypeReference replacingTypeReference = psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
+        element.setTypeReference(replacingTypeReference);
         if (element instanceof JetProperty) {
             JetPropertyAccessor getter = ((JetProperty) element).getGetter();
             JetTypeReference getterReturnTypeRef = getter == null ? null : getter.getReturnTypeReference();
             if (getterReturnTypeRef != null) {
-                getterReturnTypeRef.replace(psiFactory.createType(renderedType));
+                getterReturnTypeRef.replace(replacingTypeReference);
             }
 
             JetPropertyAccessor setter = ((JetProperty) element).getSetter();
             JetParameter setterParameter = setter == null ? null : setter.getParameter();
             JetTypeReference setterParameterTypeRef = setterParameter == null ? null : setterParameter.getTypeReference();
             if (setterParameterTypeRef != null) {
-                setterParameterTypeRef.replace(psiFactory.createType(renderedType));
+                setterParameterTypeRef.replace(replacingTypeReference);
             }
         }
+
+        QuickFixUtil.shortenReferencesOfType(type, file);
     }
 
     @NotNull
@@ -110,7 +109,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
+            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetMultiDeclarationEntry entry = ChangeFunctionReturnTypeFix.getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
                 BindingContext context = ResolvePackage.getBindingContext(entry.getContainingJetFile());
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);

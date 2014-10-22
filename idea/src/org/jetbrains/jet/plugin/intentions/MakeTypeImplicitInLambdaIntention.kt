@@ -53,7 +53,7 @@ public class MakeTypeImplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
         }
 
         if (hasExplicitReceiverType(element)) {
-            val childAfterBrace = functionLiteral.getOpenBraceNode().getPsi()?.getNextSibling()
+            val childAfterBrace = functionLiteral.getLBrace()?.getNextSibling()
             val childBeforeParamList = oldParameterList?.getPrevSibling()
             functionLiteral.deleteChildRange(childAfterBrace, childBeforeParamList)
         }

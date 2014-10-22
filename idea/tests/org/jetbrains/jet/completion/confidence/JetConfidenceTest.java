@@ -41,14 +41,6 @@ public class JetConfidenceTest extends LightCompletionTestCase {
         doTest();
     }
 
-    public void testInBeginningOfFunctionLiteral() {
-        doTest();
-    }
-
-    public void testInBeginningOfFunctionLiteralInBrackets() {
-        doTest();
-    }
-
     public void testInBlockOfFunctionLiteral() {
         doTest();
     }

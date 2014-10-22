@@ -567,6 +567,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
                     doTestMultiFileWithInlineCheck(fileName);
                 }
 
+                @TestMetadata("synchonized.1.kt")
+                public void testSynchonized() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/synchonized.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
                 @TestMetadata("throwInFinally.1.kt")
                 public void testThrowInFinally() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/throwInFinally.1.kt");

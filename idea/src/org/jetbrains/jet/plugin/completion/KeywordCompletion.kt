@@ -28,14 +28,11 @@ import com.intellij.psi.PsiErrorElement
 import org.jetbrains.jet.lexer.JetKeywordToken
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
-import org.jetbrains.jet.lang.psi.psiUtil.prevLeaf
 import org.jetbrains.jet.plugin.completion.handlers.KotlinKeywordInsertHandler
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.PsiComment
 
 import org.jetbrains.jet.lexer.JetTokens.*
-import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.jet.lang.psi.psiUtil.prevLeafSkipWhitespacesAndComments
 
 class KeywordLookupObject(val keyword: String)
 
@@ -172,14 +169,6 @@ object KeywordCompletion {
                 else -> true
             }
         }
-    }
-
-    private fun PsiElement.prevLeafSkipWhitespacesAndComments(): PsiElement? {
-        var leaf = prevLeaf()
-        while (leaf is PsiWhiteSpace || leaf is PsiComment) {
-            leaf = leaf!!.prevLeaf()
-        }
-        return leaf
     }
 
     // builds text within scope (or from the start of the file) before position element excluding almost all declarations

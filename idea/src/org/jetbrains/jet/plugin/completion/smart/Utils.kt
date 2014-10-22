@@ -34,6 +34,11 @@ import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
+import com.intellij.openapi.util.Key
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.jet.lang.resolve.BindingContext
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -135,6 +140,7 @@ fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () ->
             }
         }
         lookupElement = lookupElement!!.suppressAutoInsertion()
+        lookupElement = lookupElement!!.assignSmartCompletionPriority(SmartCompletionItemPriority.NULLABLE)
         add(lookupElement!!.addTailAndNameSimilarity(matchedInfos))
     }
 
@@ -150,20 +156,48 @@ fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () ->
             }
         }
         lookupElement = lookupElement!!.suppressAutoInsertion()
+        lookupElement = lookupElement!!.assignSmartCompletionPriority(SmartCompletionItemPriority.NULLABLE)
         add(lookupElement!!.addTailAndNameSimilarity(matchedInfos))
     }
 }
 
 fun functionType(function: FunctionDescriptor): JetType? {
+    val extensionReceiverType = function.getExtensionReceiverParameter()?.getType()
+    val memberReceiverType = if (function is ConstructorDescriptor) {
+        val classDescriptor = function.getContainingDeclaration()
+        if (classDescriptor.isInner()) {
+            (classDescriptor.getContainingDeclaration() as? ClassifierDescriptor)?.getDefaultType()
+        }
+        else {
+            null
+        }
+    }
+    else {
+        (function.getContainingDeclaration() as? ClassifierDescriptor)?.getDefaultType()
+    }
+    //TODO: this is to be changed when references to member extensions supported
+    val receiverType = if (extensionReceiverType != null && memberReceiverType != null)
+        null
+    else
+        extensionReceiverType ?: memberReceiverType
     return KotlinBuiltIns.getInstance().getFunctionType(function.getAnnotations(),
-                                                        null,
+                                                        receiverType,
                                                         function.getValueParameters().map { it.getType() },
                                                         function.getReturnType() ?: return null)
 }
 
-fun createLookupElement(descriptor: DeclarationDescriptor, resolveSession: ResolveSessionForBodies): LookupElement {
-    val element = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
-    return if (descriptor is FunctionDescriptor && descriptor.getValueParameters().isNotEmpty()) element.keepOldArgumentListOnTab() else element
+fun createLookupElement(descriptor: DeclarationDescriptor, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): LookupElement {
+    var element = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
+
+    if (descriptor is FunctionDescriptor && descriptor.getValueParameters().isNotEmpty()) {
+        element = element.keepOldArgumentListOnTab()
+    }
+
+    if (descriptor is ValueParameterDescriptor && bindingContext[BindingContext.AUTO_CREATED_IT, descriptor]) {
+        element = element.assignSmartCompletionPriority(SmartCompletionItemPriority.IT)
+    }
+
+    return element
 }
 
 fun JetType.isSubtypeOf(expectedType: JetType) = !isError() && JetTypeChecker.DEFAULT.isSubtypeOf(this, expectedType)
@@ -172,3 +206,27 @@ fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf(
 fun <T : Any> T?.toSet(): Set<T> = if (this != null) setOf(this) else setOf()
 
 fun String?.isNullOrEmpty() = this == null || this.isEmpty()
+
+enum class SmartCompletionItemPriority {
+    IT
+    TRUE
+    FALSE
+    THIS
+    DEFAULT
+    NULLABLE
+    STATIC_MEMBER
+    INSTANTIATION
+    ANONYMOUS_OBJECT
+    LAMBDA_NO_PARAMS
+    LAMBDA
+    FUNCTION_REFERENCE
+    NULL
+}
+
+val SMART_COMPLETION_ITEM_PRIORITY_KEY = Key<SmartCompletionItemPriority>("SMART_COMPLETION_ITEM_PRIORITY_KEY")
+
+fun LookupElement.assignSmartCompletionPriority(priority: SmartCompletionItemPriority): LookupElement {
+    putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, priority)
+    return this
+}
+

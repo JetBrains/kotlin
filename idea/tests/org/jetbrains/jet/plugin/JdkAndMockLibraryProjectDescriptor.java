@@ -27,6 +27,8 @@ import org.jetbrains.jet.MockLibraryUtil;
 import java.io.File;
 
 public class JdkAndMockLibraryProjectDescriptor extends JetLightProjectDescriptor {
+    public static final String LIBRARY_NAME = "myKotlinLib";
+
     private final String sourcesPath;
     private final boolean withSources;
 
@@ -37,10 +39,10 @@ public class JdkAndMockLibraryProjectDescriptor extends JetLightProjectDescripto
 
     @Override
     public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
-        File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, "myKotlinLib,", withSources);
+        File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, LIBRARY_NAME, withSources);
         String jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.getAbsolutePath()) + "!/";
 
-        Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary("myKotlinLib").getModifiableModel();
+        Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary(LIBRARY_NAME).getModifiableModel();
         libraryModel.addRoot(jarUrl, OrderRootType.CLASSES);
         if (withSources) {
             libraryModel.addRoot(jarUrl + "src/", OrderRootType.SOURCES);
