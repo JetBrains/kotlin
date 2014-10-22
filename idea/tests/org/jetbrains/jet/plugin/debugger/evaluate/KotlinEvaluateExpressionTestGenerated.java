@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluateExpressionTest {
     @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({SingleBreakpoint.Frame.class, SingleBreakpoint.Lambdas.class, SingleBreakpoint.Renderer.class})
+    @InnerTestClasses({SingleBreakpoint.Frame.class, SingleBreakpoint.Lambdas.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SingleBreakpoint extends AbstractKotlinEvaluateExpressionTest {
         @TestMetadata("abstractFunCall.kt")
