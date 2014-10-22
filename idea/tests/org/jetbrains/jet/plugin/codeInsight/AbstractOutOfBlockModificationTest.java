@@ -17,10 +17,12 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -53,7 +55,7 @@ public abstract class AbstractOutOfBlockModificationTest extends JetLightCodeIns
         long oobBeforeType = tracker.getOutOfCodeBlockModificationCount();
         long modificationCountBeforeType = tracker.getModificationCount();
 
-        myFixture.type('a');
+        myFixture.type(getStringToType());
         PsiDocumentManager.getInstance(myFixture.getProject()).commitDocument(myFixture.getDocument(myFixture.getFile()));
 
         long oobAfterCount = tracker.getOutOfCodeBlockModificationCount();
@@ -63,6 +65,13 @@ public abstract class AbstractOutOfBlockModificationTest extends JetLightCodeIns
 
         assertEquals("Result for out of block test is differs from expected on element in file:\n" + FileUtil.loadFile(new File(path)),
                      expectedOutOfBlock, oobBeforeType != oobAfterCount);
+    }
+
+    private String getStringToType() {
+        String text = myFixture.getDocument(myFixture.getFile()).getText();
+        String typeDirectives = InTextDirectivesUtils.findStringWithPrefixes(text, "TYPE:");
+
+        return typeDirectives != null ? StringUtil.unescapeStringCharacters(typeDirectives) : "a";
     }
 
     private boolean getExpectedOutOfBlockResult() {

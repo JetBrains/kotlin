@@ -60,6 +60,12 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         doTest(fileName);
     }
 
+    @TestMetadata("FunNoType_Block.kt")
+    public void testFunNoType_Block() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/FunNoType_Block.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("FunNoType_Block_Class.kt")
     public void testFunNoType_Block_Class() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/FunNoType_Block_Class.kt");
