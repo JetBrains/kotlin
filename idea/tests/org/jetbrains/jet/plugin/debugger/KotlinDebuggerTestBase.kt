@@ -75,7 +75,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             return FileUtil.getNameWithoutExtension(virtualFile.getName()) + ".!EXT!"
         }
 
-        return virtualFile.getName() + ":" + sourcePosition.getLine()
+        return virtualFile.getName() + ":" + (sourcePosition.getLine() + 1)
     }
 
     protected fun finish() {

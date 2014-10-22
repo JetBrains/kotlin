@@ -1,7 +1,7 @@
 LineBreakpoint created at frameAnonymousObject.kt:11
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameAnonymousObject.FrameAnonymousObjectPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-frameAnonymousObject.kt:10
+frameAnonymousObject.kt:11
 package frameAnonymousObject
 
 fun main(args: Array<String>) {
@@ -28,7 +28,7 @@ fun foo(f: () -> Unit) {
  frame    = invoke():11, FrameAnonymousObjectPackage$@packagePartHASH$main$o$1$run$1 {frameAnonymousObject}
    this     = this = {frameAnonymousObject.FrameAnonymousObjectPackage$@packagePartHASH$main$o$1$run$1@uniqueID}kotlin.Function0<kotlin.Unit>
      field    = this$0: frameAnonymousObject.FrameAnonymousObjectPackage$@packagePartHASH$main$o$1 = {frameAnonymousObject.FrameAnonymousObjectPackage$@packagePartHASH$main$o$1@uniqueID} (sp = null)
-       field    = obProp: int = 1 (sp = frameAnonymousObject.kt, 5)
+       field    = obProp: int = 1 (sp = frameAnonymousObject.kt, 6)
        field    = $val1: int = 1 (sp = null)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 

@@ -1,7 +1,7 @@
 LineBreakpoint created at frameExtFunExtFun.kt:22
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameExtFunExtFun.FrameExtFunExtFunPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-frameExtFunExtFun.kt:21
+frameExtFunExtFun.kt:22
 Compile bytecode for valFoo
 Compile bytecode for valTest
 Compile bytecode for aProp
@@ -71,14 +71,14 @@ fun lambda(f: () -> Unit) {
  frame    = invoke():22, Outer$foo$LocalClass$test$1 {frameExtFunExtFun}
    this     = this = {frameExtFunExtFun.Outer$foo$LocalClass$test$1@uniqueID}kotlin.Function0<kotlin.Unit>
      field    = this$0: frameExtFunExtFun.Outer$foo$LocalClass = {frameExtFunExtFun.Outer$foo$LocalClass@uniqueID} (sp = null)
-       field    = lcProp: int = 1 (sp = frameExtFunExtFun.kt, 16)
+       field    = lcProp: int = 1 (sp = frameExtFunExtFun.kt, 17)
        field    = this$0: frameExtFunExtFun.Outer = {frameExtFunExtFun.Outer@uniqueID} (sp = null)
-         field    = outerProp: int = 1 (sp = frameExtFunExtFun.kt, 11)
+         field    = outerProp: int = 1 (sp = frameExtFunExtFun.kt, 12)
        field    = receiver$0: frameExtFunExtFun.A = {frameExtFunExtFun.A@uniqueID} (sp = null)
-         field    = aProp: int = 1 (sp = frameExtFunExtFun.kt, 7)
+         field    = aProp: int = 1 (sp = frameExtFunExtFun.kt, 8)
        field    = $valFoo: int = 1 (sp = null)
      field    = receiver$0: frameExtFunExtFun.B = {frameExtFunExtFun.B@uniqueID} (sp = null)
-       field    = bProp: int = 1 (sp = frameExtFunExtFun.kt, 38)
+       field    = bProp: int = 1 (sp = frameExtFunExtFun.kt, 39)
      field    = $valTest: int = 1 (sp = null)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 

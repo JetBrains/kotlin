@@ -1,7 +1,7 @@
 LineBreakpoint created at frameThis0This0.kt:16
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameThis0This0.FrameThis0This0Package
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-frameThis0This0.kt:15
+frameThis0This0.kt:16
 Compile bytecode for val1
 Compile bytecode for val2
 Compile bytecode for prop1
@@ -48,7 +48,7 @@ fun foo(f: () -> Unit) {
    this     = this = {frameThis0This0.A$test$1$1@uniqueID}kotlin.Function0<kotlin.Unit>
      field    = this$0: frameThis0This0.A$test$1 = {frameThis0This0.A$test$1@uniqueID}kotlin.Function0<kotlin.Unit> (sp = null)
        field    = this$0: frameThis0This0.A = {frameThis0This0.A@uniqueID} (sp = null)
-         field    = prop1: int = 1 (sp = frameThis0This0.kt, 7)
+         field    = prop1: int = 1 (sp = frameThis0This0.kt, 8)
        field    = $val1: int = 1 (sp = null)
      field    = $val2: int = 1 (sp = null)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
