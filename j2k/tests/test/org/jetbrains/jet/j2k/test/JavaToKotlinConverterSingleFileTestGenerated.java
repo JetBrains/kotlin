@@ -1301,6 +1301,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("AccessorsImplementInterface.java")
+        public void testAccessorsImplementInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/fileOrElement/dropAccessors/AccessorsImplementInterface.java");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInDropAccessors() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/fileOrElement/dropAccessors"), Pattern.compile("^(.+)\\.java$"), true);
         }

@@ -145,6 +145,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         val fieldsWithConflict = HashSet<PsiField>()
         for (method in psiClass.getMethods()) {
             val info = getAccessorInfo(method) ?: continue
+            if (method.getHierarchicalMethodSignature().getSuperSignatures().isNotEmpty()) continue // overrides or implements something
             val map = if (info.kind == AccessorKind.GETTER) fieldToGetterInfo else fieldToSetterInfo
 
             val prevInfo = map[info.field]
