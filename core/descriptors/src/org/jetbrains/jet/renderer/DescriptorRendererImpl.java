@@ -308,6 +308,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     @NotNull
     private String renderNormalizedType(@NotNull JetType type) {
+        if (type instanceof LazyType && debugMode) {
+            return type.toString();
+        }
         if (TypesPackage.isFlexible(type)) {
             if (debugMode) {
                 return renderFlexibleTypeWithBothBounds(TypesPackage.flexibility(type).getLowerBound(),
@@ -343,9 +346,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 return renderError(((UninferredParameterTypeConstructor) type.getConstructor()).getTypeParameterDescriptor().getName().toString());
             }
             return "???";
-        }
-        if (type instanceof LazyType && debugMode) {
-            return type.toString();
         }
         if (type.isError()) {
             return renderDefaultType(type);
