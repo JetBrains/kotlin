@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Vendor: JetBrains
-
-Name: org.jetbrains.kotlin.compiler.plugin
-CommandLineProcessor: org.jetbrains.kotlin.android.AndroidCommandLineProcessor
-ComponentRegistrar: org.jetbrains.kotlin.android.AndroidComponentRegistrar
