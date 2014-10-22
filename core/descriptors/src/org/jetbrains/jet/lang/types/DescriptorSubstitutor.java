@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SourceElement;
@@ -35,7 +36,7 @@ public class DescriptorSubstitutor {
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull final TypeSubstitutor originalSubstitutor,
             @NotNull DeclarationDescriptor newContainingDeclaration,
-            @NotNull List<TypeParameterDescriptor> result
+            @NotNull @Mutable List<TypeParameterDescriptor> result
     ) {
         final Map<TypeConstructor, TypeProjection> mutableSubstitution = new HashMap<TypeConstructor, TypeProjection>();
         TypeSubstitutor substitutor = TypeSubstitutor.create(new TypeSubstitution() {

@@ -427,7 +427,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateFunctionsForDataClasses();
 
-        generateBuiltinMethodStubs();
+        new CollectionStubMethodGenerator(state, descriptor, functionCodegen, v).generate();
 
         generateToArray();
 
@@ -508,82 +508,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 FunctionCodegen.endVisit(mv, "toArray", myClass);
             }
         }
-    }
-
-    @NotNull
-    private Set<String> collectSignaturesOfExistingNonAbstractMethods() {
-        Set<String> existingMethodSignatures = new HashSet<String>();
-
-        for (DeclarationDescriptor member : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
-            if (!(member instanceof FunctionDescriptor)) continue;
-            FunctionDescriptor function = (FunctionDescriptor) member;
-            if (function.getModality() == Modality.ABSTRACT) continue;
-            for (FunctionDescriptor overridden : DescriptorUtils.getAllOverriddenDescriptors(function)) {
-                Method overriddenMethod = typeMapper.mapSignature(overridden.getOriginal()).getAsmMethod();
-                existingMethodSignatures.add(overriddenMethod.getName() + overriddenMethod.getDescriptor());
-            }
-
-            Method method = typeMapper.mapSignature(function.getOriginal()).getAsmMethod();
-            existingMethodSignatures.add(method.getName() + method.getDescriptor());
-        }
-
-        return existingMethodSignatures;
-    }
-
-    private void generateMethodStubs(@NotNull Set<String> signatures) {
-        if (signatures.isEmpty()) return;
-
-        Set<String> existingMethodSignatures = collectSignaturesOfExistingNonAbstractMethods();
-
-        for (String signature : signatures) {
-            if (!existingMethodSignatures.add(signature)) return;
-            int access = descriptor.getKind() == ClassKind.TRAIT ?
-                         ACC_PUBLIC | ACC_ABSTRACT :
-                         ACC_PUBLIC;
-            int paren = signature.indexOf('(');
-            MethodVisitor mv = v.newMethod(NO_ORIGIN, access, signature.substring(0, paren), signature.substring(paren), null, null);
-            if (descriptor.getKind() != ClassKind.TRAIT) {
-                mv.visitCode();
-                genThrow(new InstructionAdapter(mv), "java/lang/UnsupportedOperationException", "Mutating immutable collection");
-                FunctionCodegen.endVisit(mv, "built-in stub for " + signature, null);
-            }
-        }
-    }
-
-    private void generateBuiltinMethodStubs() {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        Set<String> methodStubs = new LinkedHashSet<String>();
-        if (isSubclass(descriptor, builtIns.getCollection())) {
-            methodStubs.add("add(Ljava/lang/Object;)Z");
-            methodStubs.add("remove(Ljava/lang/Object;)Z");
-            methodStubs.add("addAll(Ljava/util/Collection;)Z");
-            methodStubs.add("removeAll(Ljava/util/Collection;)Z");
-            methodStubs.add("retainAll(Ljava/util/Collection;)Z");
-            methodStubs.add("clear()V");
-        }
-
-        if (isSubclass(descriptor, builtIns.getList())) {
-            methodStubs.add("set(ILjava/lang/Object;)Ljava/lang/Object;");
-            methodStubs.add("add(ILjava/lang/Object;)V");
-            methodStubs.add("remove(I)Ljava/lang/Object;");
-        }
-
-        if (isSubclass(descriptor, builtIns.getMap())) {
-            methodStubs.add("put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
-            methodStubs.add("remove(Ljava/lang/Object;)Ljava/lang/Object;");
-            methodStubs.add("putAll(Ljava/util/Map;)V");
-            methodStubs.add("clear()V");
-        }
-
-        if (isSubclass(descriptor, builtIns.getMapEntry())) {
-            methodStubs.add("setValue(Ljava/lang/Object;)Ljava/lang/Object;");
-        }
-
-        if (isSubclass(descriptor, builtIns.getIterator())) {
-            methodStubs.add("remove()V");
-        }
-
-        generateMethodStubs(methodStubs);
     }
 
     private void generateFunctionsForDataClasses() {
