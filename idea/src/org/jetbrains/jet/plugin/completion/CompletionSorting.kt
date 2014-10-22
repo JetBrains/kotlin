@@ -59,12 +59,12 @@ public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters
 
 private object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
     override fun weigh(element: LookupElement, context: WeighingContext)
-            = (element.getUserData(ITEM_PRIORITY_KEY) ?: ItemPriority.DEFAULT).ordinal()
+            = element.getUserData(ITEM_PRIORITY_KEY) ?: ItemPriority.DEFAULT
 }
 
 private object SmartCompletionPriorityWeigher : LookupElementWeigher("kotlin.smartCompletionPriority") {
     override fun weigh(element: LookupElement, context: WeighingContext)
-            = (element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) ?: SmartCompletionItemPriority.DEFAULT).ordinal()
+            = element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) ?: SmartCompletionItemPriority.DEFAULT
 }
 
 private object KindWeigher : LookupElementWeigher("kotlin.kind") {
