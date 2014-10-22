@@ -88,7 +88,7 @@ public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingIntentio
                             expression.getRight()
                     )
                     else -> throw IllegalStateException(
-                         "Expression is neither a JetIsExpression or JetBinaryExpression (checked by isApplicableTo): ${(expression : PsiElement).getText()}"
+                         "Expression is neither a JetIsExpression or JetBinaryExpression (checked by isApplicableTo): ${expression.getText()}"
                     )
                 }
         )
