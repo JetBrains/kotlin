@@ -352,7 +352,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             ReceiverParameterDescriptor receiverParameterForOldVariable = oldProperty.getExtensionReceiverParameter();
             if (((receiverParameter != null && receiverParameterForOldVariable != null) &&
                  (JetTypeChecker.DEFAULT.equalTypes(receiverParameter.getType(), receiverParameterForOldVariable.getType())))) {
-                redeclarationHandler.handleRedeclaration(oldProperty, variableDescriptor);
+                getRedeclarationHandler().handleRedeclaration(oldProperty, variableDescriptor);
             }
         }
     }
@@ -360,7 +360,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     private void checkForRedeclaration(@NotNull Name name, DeclarationDescriptor classifierDescriptor) {
         DeclarationDescriptor originalDescriptor = getVariableOrClassDescriptors().get(name);
         if (originalDescriptor != null) {
-            redeclarationHandler.handleRedeclaration(originalDescriptor, classifierDescriptor);
+            getRedeclarationHandler().handleRedeclaration(originalDescriptor, classifierDescriptor);
         }
     }
 

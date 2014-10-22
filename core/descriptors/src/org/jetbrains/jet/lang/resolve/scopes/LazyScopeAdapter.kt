@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.scopes;
+package org.jetbrains.jet.lang.resolve.scopes
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.NotNullLazyValue
 
-public class LazyScopeAdapter extends AbstractScopeAdapter {
-
-    private final NotNullLazyValue<JetScope> scope;
-
-    public LazyScopeAdapter(NotNullLazyValue<JetScope> scope) {
-        this.scope = scope;
-    }
-
-    @NotNull
-    @Override
-    protected JetScope getWorkerScope() {
-        return scope.invoke();
-    }
+public class LazyScopeAdapter(private val scope: NotNullLazyValue<JetScope>) : AbstractScopeAdapter() {
+    override fun getWorkerScope() = scope()
 }
