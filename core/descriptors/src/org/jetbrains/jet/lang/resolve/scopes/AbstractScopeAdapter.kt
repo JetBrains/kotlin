@@ -24,46 +24,46 @@ import org.jetbrains.jet.utils.Printer
  * Introduces a simple wrapper for internal scope.
  */
 public abstract class AbstractScopeAdapter : JetScope {
-    protected abstract fun getWorkerScope(): JetScope
+    protected abstract val workerScope: JetScope
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
-        return getWorkerScope().getImplicitReceiversHierarchy()
+        return workerScope.getImplicitReceiversHierarchy()
     }
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
-        return getWorkerScope().getFunctions(name)
+        return workerScope.getFunctions(name)
     }
 
     override fun getPackage(name: Name): PackageViewDescriptor? {
-        return getWorkerScope().getPackage(name)
+        return workerScope.getPackage(name)
     }
 
     override fun getClassifier(name: Name): ClassifierDescriptor? {
-        return getWorkerScope().getClassifier(name)
+        return workerScope.getClassifier(name)
     }
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> {
-        return getWorkerScope().getProperties(name)
+        return workerScope.getProperties(name)
     }
 
     override fun getLocalVariable(name: Name): VariableDescriptor? {
-        return getWorkerScope().getLocalVariable(name)
+        return workerScope.getLocalVariable(name)
     }
 
     override fun getContainingDeclaration(): DeclarationDescriptor {
-        return getWorkerScope().getContainingDeclaration()
+        return workerScope.getContainingDeclaration()
     }
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> {
-        return getWorkerScope().getDeclarationsByLabel(labelName)
+        return workerScope.getDeclarationsByLabel(labelName)
     }
 
     override fun getAllDescriptors(): Collection<DeclarationDescriptor> {
-        return getWorkerScope().getAllDescriptors()
+        return workerScope.getAllDescriptors()
     }
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {
-        return getWorkerScope().getOwnDeclaredDescriptors()
+        return workerScope.getOwnDeclaredDescriptors()
     }
 
     override fun printScopeStructure(p: Printer) {
@@ -71,7 +71,7 @@ public abstract class AbstractScopeAdapter : JetScope {
         p.pushIndent()
 
         p.print("worker =")
-        getWorkerScope().printScopeStructure(p.withholdIndentOnce())
+        workerScope.printScopeStructure(p.withholdIndentOnce())
 
         p.popIndent()
         p.println("}")

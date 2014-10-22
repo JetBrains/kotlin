@@ -23,9 +23,7 @@ import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.resolve.name.Name
 import java.util.Collections
 
-public class InnerClassesScopeWrapper(private val workerScope: JetScope) : AbstractScopeAdapter() {
-
-    override fun getWorkerScope() = workerScope
+public class InnerClassesScopeWrapper(override val workerScope: JetScope) : AbstractScopeAdapter() {
 
     override fun getClassifier(name: Name) = workerScope.getClassifier(name) as? ClassDescriptor
 

@@ -27,7 +27,7 @@ import kotlin.List
 import kotlin.Set
 import kotlin.Collection
 
-public abstract class WritableScopeWithImports(private val workerScope: JetScope,
+public abstract class WritableScopeWithImports(override val workerScope: JetScope,
                                                protected val redeclarationHandler: RedeclarationHandler,
                                                private val debugName: String) : AbstractScopeAdapter(), WritableScope {
 
@@ -37,8 +37,6 @@ public abstract class WritableScopeWithImports(private val workerScope: JetScope
 
 
     private var lockLevel: WritableScope.LockLevel = WritableScope.LockLevel.WRITING
-
-    override fun getWorkerScope() = workerScope
 
     override fun changeLockLevel(lockLevel: WritableScope.LockLevel): WritableScope {
         if (lockLevel.ordinal() < this.lockLevel.ordinal()) {
@@ -217,7 +215,7 @@ public abstract class WritableScopeWithImports(private val workerScope: JetScope
         printAdditionalScopeStructure(p)
 
         p.print("worker = ")
-        getWorkerScope().printScopeStructure(p.withholdIndentOnce())
+        workerScope.printScopeStructure(p.withholdIndentOnce())
 
         if (getImports().isEmpty()) {
             p.println("imports = {}")

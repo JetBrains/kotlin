@@ -26,8 +26,8 @@ import java.util.Collections
  * Scope lazily delegates requests to class object scope.
  */
 public class ClassObjectMixinScope(private val classObjectDescriptor: ClassDescriptor) : AbstractScopeAdapter() {
-
-    override fun getWorkerScope() = classObjectDescriptor.getDefaultType().getMemberScope()
+    override val workerScope: JetScope
+        get() = classObjectDescriptor.getDefaultType().getMemberScope()
 
     override fun getImplicitReceiversHierarchy() = listOf(classObjectDescriptor.getThisAsReceiverParameter())
 }

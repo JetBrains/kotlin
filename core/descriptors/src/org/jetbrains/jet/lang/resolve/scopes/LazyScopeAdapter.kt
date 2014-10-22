@@ -19,5 +19,6 @@ package org.jetbrains.jet.lang.resolve.scopes
 import org.jetbrains.jet.storage.NotNullLazyValue
 
 public class LazyScopeAdapter(private val scope: NotNullLazyValue<JetScope>) : AbstractScopeAdapter() {
-    override fun getWorkerScope() = scope()
+    override val workerScope: JetScope
+        get() = scope()
 }
