@@ -6,13 +6,6 @@ import kotlin.test.*
 import org.junit.Test as test
 
 class StringJVMTest {
-    test fun stringIterator() {
-        var sum = 0
-        for(c in "239")
-            sum += (c.toInt() - '0'.toInt())
-        assertTrue(sum == 14)
-    }
-
     test fun stringBuilderIterator() {
         var sum = 0
         val sb = StringBuilder()
