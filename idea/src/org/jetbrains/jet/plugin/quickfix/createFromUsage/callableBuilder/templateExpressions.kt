@@ -17,6 +17,8 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import java.util.Collections
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
 /**
  * Special <code>Expression</code> for parameter names based on its type.
@@ -97,8 +99,10 @@ private class TypeExpression(public val typeCandidates: List<TypeCandidate>) : E
 /**
  * A sort-of dummy <code>Expression</code> for parameter lists, to allow us to update the parameter list as the user makes selections.
  */
-private class TypeParameterListExpression(private val typeParameterNamesFromReceiverType: Array<String>,
-                                          private val parameterTypeToTypeParameterNamesMap: Map<String, Array<String>>) : Expression() {
+private class TypeParameterListExpression(private val typeParameterNamesFromReceiverType: List<RenderedTypeParameter>,
+                                          private val parameterTypeToTypeParameterNamesMap: Map<String, List<RenderedTypeParameter>>) : Expression() {
+    public var currentTypeParameters: List<TypeParameterDescriptor> = Collections.emptyList()
+        private set
 
     override fun calculateResult(context: ExpressionContext?): Result {
         context!!
@@ -112,14 +116,14 @@ private class TypeParameterListExpression(private val typeParameterNamesFromRece
         val callable = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetCallableDeclaration>()) ?: return TextResult("")
         val parameters = callable.getValueParameterList()?.getParameters() ?: Collections.emptyList<JetParameter>()
 
-        val typeParameterNames = LinkedHashSet<String>()
-        typeParameterNames.addAll(typeParameterNamesFromReceiverType)
+        val renderedTypeParameters = LinkedHashSet<RenderedTypeParameter>()
+        renderedTypeParameters.addAll(typeParameterNamesFromReceiverType)
         for (parameter in parameters) {
             val parameterTypeRef = parameter.getTypeReference()
             if (parameterTypeRef != null) {
                 val typeParameterNamesFromParameter = parameterTypeToTypeParameterNamesMap[parameterTypeRef.getText()]
                 if (typeParameterNamesFromParameter != null) {
-                    typeParameterNames.addAll(typeParameterNamesFromParameter)
+                    renderedTypeParameters.addAll(typeParameterNamesFromParameter)
                 }
             }
         }
@@ -127,11 +131,17 @@ private class TypeParameterListExpression(private val typeParameterNamesFromRece
         if (returnTypeRef != null) {
             val typeParameterNamesFromReturnType = parameterTypeToTypeParameterNamesMap[returnTypeRef.getText()]
             if (typeParameterNamesFromReturnType != null) {
-                typeParameterNames.addAll(typeParameterNamesFromReturnType)
+                renderedTypeParameters.addAll(typeParameterNamesFromReturnType)
             }
         }
 
-        return TextResult(if (typeParameterNames.empty) "" else typeParameterNames.joinToString(", ", " <", ">"))
+
+        val sortedRenderedTypeParameters = renderedTypeParameters.sortBy { if (it.fake) it.typeParameter.getIndex() else -1}
+        currentTypeParameters = sortedRenderedTypeParameters.map { it.typeParameter }
+
+        return TextResult(
+                if (sortedRenderedTypeParameters.empty) "" else sortedRenderedTypeParameters.map { it.text }.joinToString(", ", " <", ">")
+        )
     }
 
     override fun calculateQuickResult(context: ExpressionContext?): Result = calculateResult(context)

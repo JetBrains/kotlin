@@ -59,7 +59,7 @@ public class CreateCallableFromUsageFix(
             // TODO: Support generation of Java class members
             val containers = receiverTypeCandidates
                     .map { candidate ->
-                        val descriptor = DescriptorUtils.getClassDescriptorForType(candidate.theType)
+                        val descriptor = candidate.theType.getConstructor().getDeclarationDescriptor()
                         (DescriptorToDeclarationUtil.getDeclaration(file, descriptor) as? JetClassOrObject)?.let { candidate to it }
                     }
                     .filterNotNull()

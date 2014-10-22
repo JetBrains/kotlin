@@ -84,8 +84,9 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionF
                             it.getArgumentName()?.getReferenceExpression()?.getReferencedName()
                     )
                 }
+                val typeParameters = callExpr.getTypeArguments().map { TypeInfo(it.getTypeReference(), Variance.INVARIANT) }
                 val returnType = TypeInfo(fullCallExpr, Variance.OUT_VARIANCE)
-                FunctionInfo(calleeExpr.getReferencedName(), receiverType, returnType, possibleContainers, parameters)
+                FunctionInfo(calleeExpr.getReferencedName(), receiverType, returnType, possibleContainers, parameters, typeParameters)
             }
 
             is JetSimpleNameExpression -> {
