@@ -57,11 +57,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.jet.plugin.refactoring.isMultiLine
-import org.jetbrains.kotlin.util.printAndReturn
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
-import org.jetbrains.jet.plugin.intentions.declarations.DeclarationUtils
-import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import com.intellij.psi.SmartPointerManager
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
@@ -106,6 +102,15 @@ class CallableBuilderConfiguration(
         val currentFile: JetFile,
         val currentEditor: Editor
 )
+
+fun CallableBuilderConfiguration(
+        callableInfo: CallableInfo,
+        originalExpression: JetExpression,
+        currentFile: JetFile,
+        currentEditor: Editor
+): CallableBuilderConfiguration {
+    return CallableBuilderConfiguration(Collections.singletonList(callableInfo), originalExpression, currentFile, currentEditor)
+}
 
 trait CallablePlacement {
     class WithReceiver(val receiverTypeCandidate: TypeCandidate): CallablePlacement
