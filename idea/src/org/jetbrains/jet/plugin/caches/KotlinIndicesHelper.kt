@@ -129,7 +129,7 @@ public class KotlinIndicesHelper(private val project: Project,
 
         return allFqNames.filter { nameFilter(it.shortName().asString()) }
                 .toSet()
-                .flatMap { findTopLevelCallables(it, context, jetScope) }
+                .flatMap { findTopLevelCallables(it, context, jetScope).filter(visibilityFilter) }
     }
 
     public fun getCallableExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression): Collection<CallableDescriptor> {
@@ -213,7 +213,7 @@ public class KotlinIndicesHelper(private val project: Project,
     private fun findTopLevelCallables(fqName: FqName, context: JetExpression, jetScope: JetScope): Collection<CallableDescriptor> {
         val importDirective = JetPsiFactory(context.getProject()).createImportDirective(ImportPath(fqName, false))
         val allDescriptors = analyzeImportReference(importDirective, jetScope, BindingTraceContext(), resolveSession.getModuleDescriptor())
-        return allDescriptors.filterIsInstance(javaClass<CallableDescriptor>()).filter { it.getExtensionReceiverParameter() == null && visibilityFilter(it) }
+        return allDescriptors.filterIsInstance(javaClass<CallableDescriptor>()).filter { it.getExtensionReceiverParameter() == null }
     }
 
     private fun analyzeImportReference(
