@@ -87,6 +87,12 @@ abstract public class JetFunctionNotStubbed extends JetTypeParameterListOwnerNot
         return TypeRefHelpersPackage.setTypeReference(this, getValueParameterList(), typeRef);
     }
 
+    @Nullable
+    @Override
+    public PsiElement getColon() {
+        return findChildByType(JetTokens.COLON);
+    }
+
     @Override
     public boolean isLocal() {
         PsiElement parent = getParent();

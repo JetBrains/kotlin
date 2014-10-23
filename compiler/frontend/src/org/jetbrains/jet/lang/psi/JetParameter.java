@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterStub;
@@ -54,6 +55,12 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> i
     @Nullable
     public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
         return TypeRefHelpersPackage.setTypeReference(this, getNameIdentifier(), typeRef);
+    }
+
+    @Nullable
+    @Override
+    public PsiElement getColon() {
+        return findChildByType(JetTokens.COLON);
     }
 
     public boolean hasDefaultValue() {

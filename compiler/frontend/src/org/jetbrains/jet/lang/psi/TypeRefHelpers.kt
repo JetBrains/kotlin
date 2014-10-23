@@ -18,22 +18,21 @@ package org.jetbrains.jet.lang.psi.typeRefHelpers
 
 import org.jetbrains.jet.lang.psi.JetTypeReference
 import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.psiUtil.siblings
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import com.intellij.psi.PsiErrorElement
+import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 
-fun getTypeReference(declaration: JetDeclaration): JetTypeReference? {
+fun getTypeReference(declaration: JetCallableDeclaration): JetTypeReference? {
     return declaration.getFirstChild()!!.siblings(forward = true)
             .dropWhile { it.getNode()!!.getElementType() != JetTokens.COLON }
             .filterIsInstance(javaClass<JetTypeReference>())
             .firstOrNull()
 }
 
-fun setTypeReference(declaration: JetNamedDeclaration, addAfter: PsiElement?, typeRef: JetTypeReference?): JetTypeReference? {
+fun setTypeReference(declaration: JetCallableDeclaration, addAfter: PsiElement?, typeRef: JetTypeReference?): JetTypeReference? {
     val oldTypeRef = getTypeReference(declaration)
     if (typeRef != null) {
         if (oldTypeRef != null) {
@@ -48,7 +47,7 @@ fun setTypeReference(declaration: JetNamedDeclaration, addAfter: PsiElement?, ty
     }
     else {
         if (oldTypeRef != null) {
-            val colon = declaration.getNode()!!.findChildByType(JetTokens.COLON)!!.getPsi()!!
+            val colon = declaration.getColon()!!
             val removeFrom = colon.getPrevSibling() as? PsiWhiteSpace ?: colon
             declaration.deleteChildRange(removeFrom, oldTypeRef)
         }

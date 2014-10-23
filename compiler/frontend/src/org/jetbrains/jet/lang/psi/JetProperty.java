@@ -144,6 +144,12 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         return TypeRefHelpersPackage.setTypeReference(this, getNameIdentifier(), typeRef);
     }
 
+    @Nullable
+    @Override
+    public PsiElement getColon() {
+        return findChildByType(JetTokens.COLON);
+    }
+
     @NotNull
     public List<JetPropertyAccessor> getAccessors() {
         return getStubOrPsiChildrenAsList(JetStubElementTypes.PROPERTY_ACCESSOR);

@@ -55,7 +55,7 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
 
         if (declaration.hasDeclaredReturnType() && declaration is JetCallableDeclaration && canOmitType(declaration)) {
             val typeRef = declaration.getTypeReference()!!
-            val colon = typeRef.siblings(forward = false, withItself = false).first { it.getNode().getElementType() == JetTokens.COLON }
+            val colon = declaration.getColon()!!
             val range = TextRange(colon.getTextRange().getStartOffset(), typeRef.getTextRange().getEndOffset())
             editor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
             editor.getCaretModel().moveToOffset(range.getEndOffset())
