@@ -5,9 +5,11 @@ import java.nio.charset.Charset
 import java.nio.charset.CharsetDecoder
 import java.nio.charset.CharsetEncoder
 
+// Note: hasNext() is incorrect because available() means "number of available bytes WITHOUT BLOCKING"
+
 /** Returns an [Iterator] of bytes in this input stream. */
 public fun InputStream.iterator(): ByteIterator =
-        object: ByteIterator() {
+        object : ByteIterator() {
             override fun hasNext(): Boolean = available() > 0
 
             public override fun nextByte(): Byte = read().toByte()
@@ -74,4 +76,18 @@ public fun InputStream.readBytes(estimatedSize: Int = defaultBufferSize): ByteAr
     val buffer = ByteArrayOutputStream(estimatedSize)
     this.copyTo(buffer)
     return buffer.toByteArray()
+}
+
+/**
+ * Constructs a new FileInputStream of this file and returns it as a result.
+ */
+public fun File.inputStream(): InputStream {
+    return FileInputStream(this)
+}
+
+/**
+ * Constructs a new FileOutputStream of this file and returns it as a result.
+ */
+public fun File.outputStream(): OutputStream {
+    return FileOutputStream(this)
 }
