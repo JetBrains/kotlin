@@ -1,7 +1,6 @@
 package kotlin.io
 
 import java.io.*
-import java.nio.charset.*
 import java.util.*
 
 /**
@@ -11,6 +10,44 @@ import java.util.*
 public fun File.recurse(block: (File) -> Unit): Unit {
     block(this)
     listFiles()?.forEach { it.recurse(block) }
+}
+
+/**
+ * Create an empty directory in the specified directory, using the given prefix and suffix to generate its name.
+ * Prefix shouldn't be shorter than 3 symbols or IllegalArgumentException will be thrown.
+ *
+ * If prefix is not specified then some unspecified name will be used.
+ * If suffix is not specified then ".tmp" will be used.
+ * If directory is not specified then the default temporary-file directory will be used.
+ *
+ * Returns a file object corresponding to a newly-created directory.
+ *
+ * If some error occurs then IOException is thrown.
+ */
+public fun createTempDir(prefix: String = "tmp", suffix: String? = null, directory: File? = null): File {
+    val dir = File.createTempFile(prefix, suffix, directory)
+    dir.delete()
+    if (dir.mkdir()) {
+        return dir
+    } else {
+        throw IOException("Unable to create temporary directory")
+    }
+}
+
+/**
+ * Create a new empty file in the specified directory, using the given prefix and suffix to generate its name.
+ * Prefix shouldn't be shorter than 3 symbols or IllegalArgumentException will be thrown.
+ *
+ * If prefix is not specified then some unspecified name will be used.
+ * If suffix is not specified then ".tmp" will be used.
+ * If directory is not specified then the default temporary-file directory will be used.
+ *
+ * Returns a file object corresponding to a newly-created file.
+ *
+ * If some error occurs then IOException is thrown.
+ */
+public fun createTempFile(prefix: String = "tmp", suffix: String? = null, directory: File? = null): File {
+    return File.createTempFile(prefix, suffix, directory)
 }
 
 /**
@@ -44,6 +81,42 @@ public val File.extension: String
     get() {
         return name.substringAfterLast('.', "")
     }
+
+/**
+ * Replaces all separators in the string used to separate directories with system ones and returns the resulting string.
+ */
+public fun String.separatorsToSystem(): String {
+    val otherSep = if (File.separator == "/") "\\" else "/"
+    return replace(otherSep, File.separator)
+}
+
+/**
+ * Replaces all path separators in the string with system ones and returns the resulting string.
+ */
+public fun String.pathSeparatorsToSystem(): String {
+    val otherSep = if (File.pathSeparator == ":") ";" else ":"
+    return replace(otherSep, File.pathSeparator)
+}
+
+/**
+ * Replaces path and directories separators with corresponding system ones and returns the resulting string.
+ */
+public fun String.allSeparatorsToSystem(): String {
+    return separatorsToSystem().pathSeparatorsToSystem()
+}
+
+/**
+ * Returns a pathname of this file with all path separators replaced with File.pathSeparator
+ */
+public fun File.separatorsToSystem(): String {
+    return toString().separatorsToSystem()
+}
+
+/**
+ * Returns file's name without an extension.
+ */
+public val File.nameWithoutExtension: String
+    get() = name.substringBeforeLast(".")
 
 /**
  * Returns true if the given file is in the same directory or a descendant directory

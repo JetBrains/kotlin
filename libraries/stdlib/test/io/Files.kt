@@ -1,14 +1,32 @@
 package test.io
 
 import org.junit.Test as test
-import java.io.File
 import kotlin.test.assertEquals
+import java.io.File
 
 class FilesTest {
+    test fun testCreateTempDir() {
+        val dirSuf = System.currentTimeMillis().toString()
+        val dir1 = createTempDir("temp", dirSuf)
+        assert(dir1.exists() && dir1.isDirectory() && dir1.name.startsWith("temp") && dir1.name.endsWith(dirSuf))
+        try {
+            createTempDir("a")
+            assert(false)
+        } catch(e: IllegalArgumentException) {}
+
+        val dir2 = createTempDir("temp")
+        assert(dir2.exists() && dir2.isDirectory() && dir2.name.endsWith(".tmp"))
+
+        val dir3 = createTempDir()
+        assert(dir3.exists() && dir3.isDirectory())
+
+        dir1.delete()
+        dir2.delete()
+        dir3.delete()
+    }
+
     test fun listFilesWithFilter() {
-        val dir = File.createTempFile("temp", System.nanoTime().toString())
-        dir.delete()
-        dir.mkdir()
+        val dir = createTempDir("temp")
 
         File.createTempFile("temp1", ".kt", dir)
         File.createTempFile("temp2", ".java", dir)
@@ -58,5 +76,40 @@ class FilesTest {
         assertEquals("kotlin", file1.relativePath(file2))
         assertEquals("", file1.relativePath(file1))
         assertEquals(file3.canonicalPath, file1.relativePath(file3))
+    }
+
+    test fun extension() {
+        assertEquals("bbb", File("aaa.bbb").extension)
+        assertEquals("", File("aaa").extension)
+        assertEquals("", File("aaa.").extension)
+        // maybe we should think that such files have name .bbb and no extension
+        assertEquals("bbb", File(".bbb").extension)
+    }
+
+    test fun nameWithoutExtension() {
+        assertEquals("aaa", File("aaa.bbb").nameWithoutExtension)
+        assertEquals("aaa", File("aaa").nameWithoutExtension)
+        assertEquals("aaa", File("aaa.").nameWithoutExtension)
+        assertEquals("", File(".bbb").nameWithoutExtension)
+    }
+
+    test fun separatorsToSystem() {
+        var path = "/aaa/bbb/ccc"
+        assertEquals(path.replace("/", File.separator), File(path).separatorsToSystem())
+
+        path = "C:\\Program Files\\My Awesome Program"
+        assertEquals(path.replace("\\", File.separator), File(path).separatorsToSystem())
+
+        path = "/Libraries\\Java:/Libraries/Python:/Libraries/Ruby"
+        assertEquals(path.replace(":", File.pathSeparator), path.pathSeparatorsToSystem())
+
+        path = "/Libraries\\Java;/Libraries/Python;/Libraries/Ruby"
+        assertEquals(path.replace(";", File.pathSeparator), path.pathSeparatorsToSystem())
+
+        path = "/Libraries\\Java;/Libraries/Python:\\Libraries/Ruby"
+        assertEquals(path.replace("/", File.separator).replace("\\", File.separator)
+                .replace(":", File.pathSeparator).replace(";", File.pathSeparator), path.allSeparatorsToSystem())
+
+        assertEquals("test", "test".allSeparatorsToSystem())
     }
 }
