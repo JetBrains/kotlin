@@ -35,8 +35,13 @@ import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import kotlin.test.assertFalse
 import java.util.regex.Pattern
+import kotlin.test.assertEquals
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
+    class object {
+        val COMPILATION_FAILED = "COMPILATION FAILED"
+    }
+
     private var testDataDir: File by Delegates.notNull()
 
     var workDir: File by Delegates.notNull()
@@ -65,7 +70,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
                                 .getMessages(BuildMessage.Kind.ERROR)
                                 .joinToString("\n")
                                 .replace(workDir.getAbsolutePath(), "\$PROJECT")
-                return logger.log + "COMPILATION FAILED\n" + errorMessages + "\n"
+                return logger.log + "$COMPILATION_FAILED\n" + errorMessages + "\n"
             }
             else {
                 return logger.log
@@ -77,15 +82,15 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
 
     private fun initialMake() {
         val log = buildGetLog()
-        assertFalse("COMPILATION FAILED" in log, "Initial make failed:\n$log")
+        assertFalse(COMPILATION_FAILED in log, "Initial make failed:\n$log")
     }
 
     private fun make(): String {
         return buildGetLog()
     }
 
-    private fun rebuild() {
-        buildGetLog(CompileScopeTestBuilder.rebuild().allModules())
+    private fun rebuild(): String {
+        return buildGetLog(CompileScopeTestBuilder.rebuild().allModules())
     }
 
     private fun getModificationsToPerform(moduleNames: Collection<String>?): List<List<Modification>> {
@@ -147,22 +152,24 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         }
     }
 
-    private fun rebuildAndCheckOutput() {
+    private fun rebuildAndCheckOutput(lastMakeFailed: Boolean) {
         val outDir = File(getAbsolutePath("out"))
         val outAfterMake = File(getAbsolutePath("out-after-make"))
         FileUtil.copyDir(outDir, outAfterMake)
 
-        rebuild()
+        val rebuildLog = rebuild()
+        val rebuildFailed = rebuildLog.contains(COMPILATION_FAILED)
+        assertEquals(rebuildFailed, lastMakeFailed, "Rebuild failed: $rebuildFailed, last make failed: $lastMakeFailed. Rebuild log: $rebuildLog")
 
-        assertEqualDirectories(outDir, outAfterMake)
+        assertEqualDirectories(outDir, outAfterMake, lastMakeFailed)
 
         FileUtil.delete(outAfterMake)
     }
 
-    private fun clearCachesRebuildAndCheckOutput() {
+    private fun clearCachesRebuildAndCheckOutput(lastMakeFailed: Boolean) {
         FileUtil.delete(BuildDataPathsImpl(myDataStorageRoot).getDataStorageRoot()!!)
 
-        rebuildAndCheckOutput()
+        rebuildAndCheckOutput(lastMakeFailed)
     }
 
     private fun readModuleDependencies(): Map<String, List<String>>? {
@@ -192,26 +199,31 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         val moduleNames = configureModules()
         initialMake()
 
-        val log = performModificationsAndMake(moduleNames)
+        val (log, lastMakeFailed) = performModificationsAndMake(moduleNames)
         UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), log)
 
-        rebuildAndCheckOutput()
-        clearCachesRebuildAndCheckOutput()
+        rebuildAndCheckOutput(lastMakeFailed)
+        clearCachesRebuildAndCheckOutput(lastMakeFailed)
     }
 
-    private fun performModificationsAndMake(moduleNames: Set<String>?): String {
+
+    private data class MakeLogAndFailureFlag(val log: String, val makeFailed: Boolean)
+
+    private fun performModificationsAndMake(moduleNames: Set<String>?): MakeLogAndFailureFlag {
         val logs = ArrayList<String>()
 
         val modifications = getModificationsToPerform(moduleNames)
+        var lastCompilationFailed = false
         for (step in modifications) {
             step.forEach { it.perform(workDir) }
             performAdditionalModifications()
 
             val log = make()
+            lastCompilationFailed = log.contains(COMPILATION_FAILED)
             logs.add(log)
         }
 
-        return logs.join("\n\n")
+        return MakeLogAndFailureFlag(logs.join("\n\n"), lastCompilationFailed)
     }
 
     protected open fun performAdditionalModifications() {
