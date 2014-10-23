@@ -810,11 +810,13 @@
         <extensionPoint name="updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
         <extensionPoint name="projectConfigurator" interface="org.jetbrains.jet.plugin.configuration.KotlinProjectConfigurator"/>
         <extensionPoint name="suppressStringProvider" interface="org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression$SuppressStringProvider"/>
+        <extensionPoint name="diagnosticSuppressor" interface="org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression$DiagnosticSuppressor"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator"/>
         <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator"/>
         <suppressStringProvider implementation="org.jetbrains.k2js.analyze.SuppressUnusedParameterForJsNative"/>
+        <diagnosticSuppressor implementation="org.jetbrains.k2js.analyze.SuppressWarningsFromExternalModules"/>
     </extensions>
 </idea-plugin>

@@ -152,6 +152,9 @@ public class JetCoreEnvironment {
     private static void registerApplicationExtensionPointsForCLI() {
         registerApplicationExtensionPoint(DiagnosticsWithSuppression.SuppressStringProvider.EP_NAME,
                                           DiagnosticsWithSuppression.SuppressStringProvider.class);
+
+        registerApplicationExtensionPoint(DiagnosticsWithSuppression.DiagnosticSuppressor.EP_NAME,
+                                          DiagnosticsWithSuppression.DiagnosticSuppressor.class);
     }
 
     private static void registerApplicationServicesForCLI(@NotNull JavaCoreApplicationEnvironment applicationEnvironment) {
