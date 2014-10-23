@@ -19,18 +19,16 @@ package org.jetbrains.jet.lang.resolve.scopes
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.types.TypeSubstitutor
-import org.jetbrains.jet.utils.Printer
 import org.jetbrains.jet.utils.*
 
 import java.util.*
-import kotlin.Map
-import kotlin.Collection
-import kotlin.List
+import kotlin.properties.Delegates
 
 public class SubstitutingScope(private val workerScope: JetScope, private val substitutor: TypeSubstitutor) : JetScope {
 
     private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor?>? = null
-    private var allDescriptors: Collection<DeclarationDescriptor>? = null
+
+    private val _allDescriptors by Delegates.lazy { substitute(workerScope.getAllDescriptors()) }
 
     private fun <D : DeclarationDescriptor> substitute(descriptor: D?): D? {
         if (descriptor == null) return null
@@ -86,12 +84,7 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
         throw UnsupportedOperationException() // TODO
     }
 
-    override fun getAllDescriptors(): Collection<DeclarationDescriptor> {
-        if (allDescriptors == null) {
-            allDescriptors = substitute(workerScope.getAllDescriptors())
-        }
-        return allDescriptors!!
-    }
+    override fun getAllDescriptors() = _allDescriptors
 
     override fun getOwnDeclaredDescriptors() = substitute(workerScope.getOwnDeclaredDescriptors())
 
