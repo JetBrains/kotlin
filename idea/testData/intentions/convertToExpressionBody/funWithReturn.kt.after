@@ -1,1 +1,1 @@
-fun foo(): String = "abc"
+fun foo()<selection>: String</selection> = "abc"
