@@ -23,6 +23,8 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.jet.config.CompilerConfiguration;
 
 import java.io.File;
 import java.util.Arrays;
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.asJava.KotlinLightClassStructureTest.ClassProperty.*;
+import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 
 @SuppressWarnings("JUnitTestClassNamingConvention")
 public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase {
@@ -105,21 +108,47 @@ public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase
         }
 
         public void testGeneric1() throws Exception {
-            checkGenericParameter("test.Generic1", 0, "T");
+            checkClassGenericParameter("test.Generic1", 0, "T");
         }
 
         public void testGeneric1WithBounds() throws Exception {
-            checkGenericParameter("test.Generic1WithBounds", 0, "T", "test.Bound1");
+            checkClassGenericParameter("test.Generic1WithBounds", 0, "T", "test.Bound1");
         }
 
         public void testGeneric2() throws Exception {
-            checkGenericParameter("test.Generic2", 0, "A");
-            checkGenericParameter("test.Generic2", 1, "B");
+            checkClassGenericParameter("test.Generic2", 0, "A");
+            checkClassGenericParameter("test.Generic2", 1, "B");
         }
 
         public void testGeneric2WithBounds() throws Exception {
-            checkGenericParameter("test.Generic2WithBounds", 0, "A", "test.Bound1", "test.Bound2");
-            checkGenericParameter("test.Generic2WithBounds", 1, "B", "test.Generic1<A>");
+            checkClassGenericParameter("test.Generic2WithBounds", 0, "A", "test.Bound1", "test.Bound2");
+            checkClassGenericParameter("test.Generic2WithBounds", 1, "B", "test.Generic1<A>");
+        }
+    }
+
+    public static class PlatformStaticMethodsWithGenerics extends KotlinLightClassStructureTest {
+        @Override
+        protected List<File> getKotlinSourceRoots() {
+            return Collections.singletonList(
+                    new File("compiler/testData/asJava/lightClassStructure/PlatformStaticMethodsGenerics.kt")
+            );
+        }
+
+        public void testInClassObjectSynthetic() throws Exception {
+            checkMethodGenericParameter("test.PlatformStaticClass", "inClassObject", 0, "T");
+        }
+
+        public void testInClassObjectActual() throws Exception {
+            checkMethodGenericParameter("test.PlatformStaticClass.object", "inClassObject", 0, "T");
+        }
+
+        public void testInClass() throws Exception {
+            checkMethodGenericParameter("test.PlatformStaticClass", "inClass", 0, "T");
+        }
+
+        @Override
+        protected void extraConfiguration(@NotNull CompilerConfiguration configuration) {
+            configuration.add(CLASSPATH_KEY, ForTestCompileRuntime.runtimeJarForTests());
         }
     }
 
@@ -183,8 +212,27 @@ public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase
         checkModifiers(findClass(classFqName), properties);
     }
 
-    protected static void checkGenericParameter(PsiClass psiClass, int index, String name, String... bounds) {
-        PsiTypeParameter typeParameter = psiClass.getTypeParameters()[index];
+    protected void checkClassGenericParameter(String classFqName, int index, String name, String... bounds) {
+        checkGenericParameter(findClass(classFqName).getTypeParameters()[index], index, name, bounds);
+    }
+
+    protected void checkMethodGenericParameter(String classFqName, String methodName, int index, String name, String... bounds) {
+        PsiClass aClass = findClass(classFqName);
+
+        PsiMethod method = null;
+        for (PsiMethod psiMethod : aClass.getMethods()) {
+            if (methodName.equals(psiMethod.getName())) {
+                assertNull(String.format("Several methods with name '%s' found in class '%s'", methodName, classFqName), method);
+                method = psiMethod;
+            }
+        }
+
+        assertNotNull(String.format("Methods name '%s' wasn't found in class '%s'", methodName, classFqName), method);
+
+        checkGenericParameter(method.getTypeParameters()[index], index, name, bounds);
+    }
+
+    protected static void checkGenericParameter(PsiTypeParameter typeParameter, int index, String name, String[] bounds) {
         assertEquals(name, typeParameter.getName());
         assertEquals(index, typeParameter.getIndex());
         Set<String> expectedBounds = Sets.newHashSet(bounds);
@@ -199,10 +247,6 @@ public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase
         ));
 
         assertEquals(expectedBounds, actualBounds);
-    }
-
-    protected void checkGenericParameter(String classFqName, int index, String name, String... bounds) {
-        checkGenericParameter(findClass(classFqName), index, name, bounds);
     }
 
     enum ClassProperty {
