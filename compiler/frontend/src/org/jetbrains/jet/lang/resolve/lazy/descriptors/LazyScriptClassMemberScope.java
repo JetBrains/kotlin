@@ -51,9 +51,9 @@ public class LazyScriptClassMemberScope extends LazyClassMemberScope {
                 new Function0<PropertyDescriptor>() {
                     @Override
                     public PropertyDescriptor invoke() {
-                        JetScriptInfo scriptInfo = (JetScriptInfo) declarationProvider.getOwnerInfo();
+                        JetScriptInfo scriptInfo = (JetScriptInfo) getDeclarationProvider().getOwnerInfo();
 
-                        return ScriptDescriptorImpl.createScriptResultProperty(resolveSession.getScriptDescriptor(scriptInfo.getScript()));
+                        return ScriptDescriptorImpl.createScriptResultProperty(getResolveSession().getScriptDescriptor(scriptInfo.getScript()));
                     }
                 }
         );
@@ -99,7 +99,7 @@ public class LazyScriptClassMemberScope extends LazyClassMemberScope {
 
     @Override
     protected void createPropertiesFromPrimaryConstructorParameters(@NotNull Name name, @NotNull Set<VariableDescriptor> result) {
-        JetScriptInfo scriptInfo = (JetScriptInfo) declarationProvider.getOwnerInfo();
+        JetScriptInfo scriptInfo = (JetScriptInfo) getDeclarationProvider().getOwnerInfo();
 
         // From primary constructor parameters
         ConstructorDescriptor primaryConstructor = getPrimaryConstructor();
@@ -110,7 +110,7 @@ public class LazyScriptClassMemberScope extends LazyClassMemberScope {
 
             result.add(
                     ScriptDescriptorImpl.createPropertyFromScriptParameter(
-                               resolveSession.getScriptDescriptor(scriptInfo.getScript()),
+                               getResolveSession().getScriptDescriptor(scriptInfo.getScript()),
                                valueParameterDescriptor
                     )
             );
@@ -120,8 +120,8 @@ public class LazyScriptClassMemberScope extends LazyClassMemberScope {
     @Override
     @Nullable
     protected ConstructorDescriptor resolvePrimaryConstructor() {
-        JetScriptInfo scriptInfo = (JetScriptInfo) declarationProvider.getOwnerInfo();
-        ScriptDescriptor scriptDescriptor = resolveSession.getScriptDescriptor(scriptInfo.getScript());
+        JetScriptInfo scriptInfo = (JetScriptInfo) getDeclarationProvider().getOwnerInfo();
+        ScriptDescriptor scriptDescriptor = getResolveSession().getScriptDescriptor(scriptInfo.getScript());
         ConstructorDescriptorImpl constructor = ScriptDescriptorImpl.createConstructor(scriptDescriptor,
                                                                                        scriptDescriptor.getScriptCodeDescriptor()
                                                                                                .getValueParameters());
