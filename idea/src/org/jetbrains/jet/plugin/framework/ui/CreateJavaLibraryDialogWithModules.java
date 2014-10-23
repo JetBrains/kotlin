@@ -19,9 +19,7 @@ package org.jetbrains.jet.plugin.framework.ui;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
@@ -33,9 +31,11 @@ public class CreateJavaLibraryDialogWithModules extends CreateJavaLibraryDialogB
             @NotNull Project project,
             @NotNull List<Module> modules,
             @NotNull String defaultPath,
-            boolean showPathPanel
+            boolean showPathPanel,
+            @NotNull String title,
+            @NotNull String caption
     ) {
-        super(project, defaultPath);
+        super(project, defaultPath, title, caption);
 
         chooseModulePanel = new ChooseModulePanel(project, modules);
         chooseModulesPanelPlace.add(chooseModulePanel.getContentPane(), BorderLayout.CENTER);

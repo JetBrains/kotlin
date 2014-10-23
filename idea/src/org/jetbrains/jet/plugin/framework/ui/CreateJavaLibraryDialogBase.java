@@ -39,11 +39,13 @@ public abstract class CreateJavaLibraryDialogBase extends DialogWrapper {
 
     public CreateJavaLibraryDialogBase(
             @Nullable Project project,
-            @NotNull String defaultPath
+            @NotNull String defaultPath,
+            @NotNull String title,
+            @NotNull String caption
     ) {
         super(project);
 
-        setTitle("Create Kotlin Java Runtime Library");
+        setTitle(title);
 
         init();
 
@@ -64,7 +66,7 @@ public abstract class CreateJavaLibraryDialogBase extends DialogWrapper {
         });
         chooseLibraryPathPlace.add(pathPanel.getContentPane(), BorderLayout.CENTER);
 
-        modulesSeparator.setCaption("Kotlin Java Runtime Library");
+        modulesSeparator.setCaption(caption);
     }
 
     protected void updateComponents() {
