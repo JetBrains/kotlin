@@ -43,7 +43,7 @@ public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters
     sorter = sorter.weighBefore("stats", PriorityWeigher, KindWeigher)
 
     if (parameters.getCompletionType() == CompletionType.SMART) {
-        sorter = sorter.weighBefore("kotlin.kind", NameSimilarityWeigher)
+        sorter = sorter.weighBefore("kotlin.kind", NameSimilarityWeigher, SmartCompletionPriorityWeigher)
     }
 
     sorter = sorter.weighAfter(
@@ -58,6 +58,11 @@ public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters
 
 private object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
     override fun weigh(element: LookupElement): Comparable<Int>? = (element.getUserData(ITEM_PRIORITY_KEY) ?: ItemPriority.DEFAULT).ordinal()
+}
+
+private object SmartCompletionPriorityWeigher : LookupElementWeigher("kotlin.smartCompletionPriority") {
+    override fun weigh(element: LookupElement)
+            = element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) ?: SmartCompletionItemPriority.DEFAULT
 }
 
 private object KindWeigher : LookupElementWeigher("kotlin.kind") {
