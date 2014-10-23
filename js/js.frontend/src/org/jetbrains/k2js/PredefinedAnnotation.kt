@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.utils;
+package org.jetbrains.k2js
 
-import org.jetbrains.annotations.NotNull;
-
-public enum PredefinedAnnotation {
-    LIBRARY("kotlin.js.library"),
-    NATIVE("kotlin.js.native");
-
-    PredefinedAnnotation(@NotNull String fqName) {
-        this.fqName = fqName;
-    }
-
-    @NotNull
-    private final String fqName;
-
-    @NotNull
-    public String getFQName() {
-        return fqName;
-    }
+public enum class PredefinedAnnotation(public val fqName: String) {
+    LIBRARY : PredefinedAnnotation("kotlin.js.library")
+    NATIVE : PredefinedAnnotation("kotlin.js.native")
 }

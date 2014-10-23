@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.k2js.PredefinedAnnotation;
 
 import java.util.List;
 import java.util.Set;
@@ -108,7 +109,7 @@ public final class AnnotationsUtils {
     @Nullable
     private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor,
             @NotNull PredefinedAnnotation annotation) {
-        return getAnnotationByName(descriptor, annotation.getFQName());
+        return getAnnotationByName(descriptor, annotation.getFqName());
     }
 
     @Nullable
@@ -135,7 +136,7 @@ public final class AnnotationsUtils {
 
     public static boolean hasAnnotationOrInsideAnnotatedClass(@NotNull DeclarationDescriptor descriptor,
             @NotNull PredefinedAnnotation annotation) {
-        return hasAnnotationOrInsideAnnotatedClass(descriptor, annotation.getFQName());
+        return hasAnnotationOrInsideAnnotatedClass(descriptor, annotation.getFqName());
     }
 
     private static boolean hasAnnotationOrInsideAnnotatedClass(@NotNull DeclarationDescriptor descriptor, @NotNull String fqn) {

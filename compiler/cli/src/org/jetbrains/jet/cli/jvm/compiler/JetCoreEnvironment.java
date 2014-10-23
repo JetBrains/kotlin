@@ -53,6 +53,7 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.CliDeclarationProviderFactoryService;
@@ -64,6 +65,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intellij.core.CoreApplicationEnvironment.registerApplicationExtensionPoint;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARNING;
 
@@ -139,10 +141,17 @@ public class JetCoreEnvironment {
     private static JavaCoreApplicationEnvironment createApplicationEnvironment(@NotNull Disposable parentDisposable) {
         JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
 
+        registerApplicationExtensionPointsForCLI();
+
         registerApplicationServicesForCLI(applicationEnvironment);
         registerApplicationServices(applicationEnvironment);
 
         return applicationEnvironment;
+    }
+
+    private static void registerApplicationExtensionPointsForCLI() {
+        registerApplicationExtensionPoint(DiagnosticsWithSuppression.SuppressStringProvider.EP_NAME,
+                                          DiagnosticsWithSuppression.SuppressStringProvider.class);
     }
 
     private static void registerApplicationServicesForCLI(@NotNull JavaCoreApplicationEnvironment applicationEnvironment) {

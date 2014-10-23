@@ -19,6 +19,7 @@ package org.jetbrains.jet.cli.js;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -43,10 +44,11 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression;
+import org.jetbrains.k2js.analyze.SuppressUnusedParameterForJsNative;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.*;
 import org.jetbrains.k2js.facade.MainCallParameters;
@@ -91,6 +93,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         CompileEnvironmentUtil.addSourceFilesCheckingForDuplicates(configuration, arguments.freeArgs);
         JetCoreEnvironment environmentForJS = JetCoreEnvironment.createForProduction(rootDisposable, configuration);
+        Extensions.getRootArea()
+                .getExtensionPoint(DiagnosticsWithSuppression.SuppressStringProvider.EP_NAME)
+                .registerExtension(new SuppressUnusedParameterForJsNative());
 
         Project project = environmentForJS.getProject();
         List<JetFile> sourcesFiles = environmentForJS.getSourceFiles();
