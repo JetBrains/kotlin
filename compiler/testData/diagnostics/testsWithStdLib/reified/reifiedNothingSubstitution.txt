@@ -1,0 +1,4 @@
+package
+
+internal fun box(): kotlin.Unit
+kotlin.inline() internal fun </*0*/ reified T> foo(/*0*/ block: () -> T): kotlin.String

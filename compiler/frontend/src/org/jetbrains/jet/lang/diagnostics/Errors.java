@@ -382,6 +382,7 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, TypeParameterDescriptor> TYPE_PARAMETER_AS_REIFIED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> REIFIED_TYPE_PARAMETER_NO_INLINE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, JetType> REIFIED_TYPE_NOTHING_SUBSTITUTION = DiagnosticFactory1.create(ERROR);
 
     // Type inference
 
