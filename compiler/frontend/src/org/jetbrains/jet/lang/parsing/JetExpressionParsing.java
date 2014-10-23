@@ -1250,7 +1250,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     error(severalStatementsError);
                 }
                 else {
-                    errorUntil(severalStatementsError, TokenSet.create(EOL_OR_SEMICOLON));
+                    errorUntil(severalStatementsError, TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE));
                 }
             }
         }

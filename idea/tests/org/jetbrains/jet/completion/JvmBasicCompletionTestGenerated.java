@@ -364,6 +364,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("InFunctionLiteral.kt")
+        public void testInFunctionLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InFunctionLiteral.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InGlobalPropertyInitializer.kt")
         public void testInGlobalPropertyInitializer() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/InGlobalPropertyInitializer.kt");

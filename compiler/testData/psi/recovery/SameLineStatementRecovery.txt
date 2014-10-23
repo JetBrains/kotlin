@@ -625,14 +625,19 @@ JetFile: SameLineStatementRecovery.kt
         PsiElement(IDENTIFIER)('get')
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace(' ')
-        PsiElement(return)('return')
-        PsiWhiteSpace(' ')
-        PsiElement(INTEGER_LITERAL)('12')
-        PsiWhiteSpace(' ')
-        PsiElement(RBRACE)('}')
+      PsiWhiteSpace(' ')
+      FUNCTION_LITERAL_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace(' ')
+          BLOCK
+            RETURN
+              PsiElement(return)('return')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('12')
+          PsiWhiteSpace(' ')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')

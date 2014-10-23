@@ -1269,6 +1269,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("InvalidCharInSingleLineLambda.kt")
+            public void testInvalidCharInSingleLineLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/InvalidCharInSingleLineLambda.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("kt2172.kt")
             public void testKt2172() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/kt2172.kt");
