@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.MockLibraryUtil;
+import org.jetbrains.jet.asJava.FakeLightClassForFileOfPackage;
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -49,6 +50,7 @@ import org.jetbrains.jet.testing.ConfigLibraryUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
@@ -188,10 +190,13 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
         for (PsiClass psiClass : psiClasses) {
             if (psiClass instanceof KotlinLightClassForPackage) {
-                PsiElement element = psiClass.getNavigationElement();
-                if (element instanceof JetFile) {
-                    createBreakpoints((JetFile) element);
+                Collection<JetFile> files = ((KotlinLightClassForPackage) psiClass).getFiles();
+                for (JetFile jetFile : files) {
+                    createBreakpoints(jetFile);
                 }
+            }
+            else if (psiClass instanceof FakeLightClassForFileOfPackage) {
+                // skip, because we already create breakpoints using KotlinLightClassForPackage
             }
             else {
                 createBreakpoints(psiClass.getContainingFile());
