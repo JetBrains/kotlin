@@ -192,6 +192,8 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             val body = method.getBody() ?: return null
             val returnStatement = (body.getStatements().singleOrNull() as? PsiReturnStatement) ?: return null
             val field = fieldByExpression(returnStatement.getReturnValue()) ?: return null
+            if (field.getType() != method.getReturnType()) return null
+            if (converter.typeConverter.variableMutability(field) != converter.typeConverter.methodMutability(method)) return null
             val propertyName = StringUtil.decapitalize(name.substring("get".length))
             return AccessorInfo(method, field, AccessorKind.GETTER, propertyName)
         }
@@ -201,7 +203,9 @@ class ClassBodyConverter(private val psiClass: PsiClass,
             val assignment = statement.getExpression() as? PsiAssignmentExpression ?: return null
             if (assignment.getOperationTokenType() != JavaTokenType.EQ) return null
             val field = fieldByExpression(assignment.getLExpression()) ?: return null
-            if ((assignment.getRExpression() as? PsiReferenceExpression)?.resolve() != method.getParameterList().getParameters().single()) return null
+            val parameter = method.getParameterList().getParameters().single()
+            if ((assignment.getRExpression() as? PsiReferenceExpression)?.resolve() != parameter) return null
+            if (field.getType() != parameter.getType()) return null
             val propertyName = StringUtil.decapitalize(name.substring("set".length))
             return AccessorInfo(method, field, AccessorKind.SETTER, propertyName)
         }

@@ -29,12 +29,14 @@ import org.jetbrains.jet.j2k.ast.ClassType
 import org.jetbrains.jet.j2k.ast.ReferenceElement
 import org.jetbrains.jet.j2k.ast.Identifier
 import java.util.HashMap
+import org.jetbrains.jet.j2k.ast.Mutability
+import java.util.HashSet
 
 class TypeConverter(val converter: Converter) {
-    public fun convertType(type: PsiType?, nullability: Nullability = Nullability.Default): Type {
+    public fun convertType(type: PsiType?, nullability: Nullability = Nullability.Default, mutability: Mutability = Mutability.Default): Type {
         if (type == null) return ErrorType().assignNoPrototype()
 
-        val result = type.accept<Type>(TypeVisitor(converter))!!.assignNoPrototype()
+        val result = type.accept<Type>(TypeVisitor(converter, type, mutability))!!.assignNoPrototype()
         return when (nullability) {
             Nullability.NotNull -> result.toNotNullType()
             Nullability.Nullable -> result.toNullableType()
@@ -52,19 +54,25 @@ class TypeConverter(val converter: Converter) {
                       converter.settings).assignNoPrototype()
         }
         else {
-            convertType(variable.getType(), variableNullability(variable))
+            convertType(variable.getType(), variableNullability(variable), variableMutability(variable))
         }
         return result.assignPrototype(variable.getTypeElement())
     }
 
     public fun convertMethodReturnType(method: PsiMethod): Type
-            = convertType(method.getReturnType(), methodNullability(method)).assignPrototype(method.getReturnTypeElement())
+            = convertType(method.getReturnType(), methodNullability(method), methodMutability(method)).assignPrototype(method.getReturnTypeElement())
 
     public fun variableNullability(variable: PsiVariable): Nullability
             = nullabilityFlavor.forVariableType(variable)
 
     public fun methodNullability(method: PsiMethod): Nullability
             = nullabilityFlavor.forMethodReturnType(method)
+
+    public fun variableMutability(variable: PsiVariable): Mutability
+            = mutabilityFlavor.forVariableType(variable)
+
+    public fun methodMutability(method: PsiMethod): Mutability
+            = mutabilityFlavor.forMethodReturnType(method)
 
     private fun PsiVariable.isMainMethodParameter() = this is PsiParameter && (getDeclarationScope() as? PsiMethod)?.isMainMethod() ?: false
 
@@ -89,6 +97,7 @@ class TypeConverter(val converter: Converter) {
 
     private abstract inner class TypeFlavor<T>(val default: T) {
         private val cache = HashMap<PsiElement, T>()
+        private val typesBeingCalculated = HashSet<PsiElement>()
 
         open val forEnumConstant: T = default
         open fun fromType(type: PsiType): T = default
@@ -102,7 +111,7 @@ class TypeConverter(val converter: Converter) {
         fun forVariableType(variable: PsiVariable): T {
             val cached = cache[variable]
             if (cached != null) return cached
-            val value = forVariableTypeNoCache(variable)
+            val value = withRecursionPrevention(variable) { forVariableTypeNoCache(variable) }
             cache[variable] = value
             return value
         }
@@ -154,7 +163,7 @@ class TypeConverter(val converter: Converter) {
         fun forMethodReturnType(method: PsiMethod): T {
             val cached = cache[method]
             if (cached != null) return cached
-            val value = forMethodReturnTypeNoCache(method)
+            val value = withRecursionPrevention(method) { forMethodReturnTypeNoCache(method) }
             cache[method] = value
             return value
         }
@@ -190,6 +199,17 @@ class TypeConverter(val converter: Converter) {
             }
 
             return default
+        }
+
+        private fun withRecursionPrevention(element: PsiElement, calculator: () -> T): T {
+            if (element in typesBeingCalculated) return default
+            typesBeingCalculated.add(element)
+            try {
+                return calculator()
+            }
+            finally {
+                typesBeingCalculated.remove(element)
+            }
         }
     }
 
@@ -253,7 +273,7 @@ class TypeConverter(val converter: Converter) {
         }
 
         private fun isNullableFromUsage(usage: PsiExpression): Boolean {
-            val parent = usage.getParent() ?: return false
+            val parent = usage.getParent()
             if (parent is PsiAssignmentExpression && parent.getOperationTokenType() == JavaTokenType.EQ && usage == parent.getLExpression()) {
                 return parent.getRExpression()?.nullability() == Nullability.Nullable
             }
@@ -333,6 +353,46 @@ class TypeConverter(val converter: Converter) {
         }
     }
 
+    private val mutabilityFlavor = object : TypeFlavor<Mutability>(Mutability.Default) {
+        override val forEnumConstant: Mutability get() = Mutability.NonMutable
+
+        override fun fromType(type: PsiType): Mutability {
+            val target = (type as? PsiClassType)?.resolve() ?: return Mutability.NonMutable
+            if (target.getQualifiedName() !in TypeVisitor.toKotlinMutableTypesMap.keySet()) return Mutability.NonMutable
+            return Mutability.Default
+        }
+
+        override fun fromAnnotations(owner: PsiModifierListOwner): Mutability {
+            return super<TypeFlavor>.fromAnnotations(owner) //TODO: ReadOnly annotation
+        }
+
+        override fun fromUsage(usage: PsiExpression)
+                = if (isMutableFromUsage(usage)) Mutability.Mutable else Mutability.Default
+
+        private fun isMutableFromUsage(usage: PsiExpression): Boolean {
+            val parent = usage.getParent()
+            if (parent is PsiReferenceExpression && usage == parent.getQualifierExpression() && parent.getParent() is PsiMethodCallExpression) {
+                return parent.getReferenceName() in modificationMethodNames
+            }
+            else if (parent is PsiExpressionList) {
+                val call = parent.getParent() as? PsiCall ?: return false
+                val method = call.resolveMethod() ?: return false
+                val paramIndex = parent.getExpressions().indexOf(usage)
+                val parameterList = method.getParameterList()
+                if (paramIndex >= parameterList.getParametersCount()) return false
+                return variableMutability(parameterList.getParameters()[paramIndex]) == Mutability.Mutable
+            }
+            else if (parent is PsiVariable && usage == parent.getInitializer()) {
+                return variableMutability(parent) == Mutability.Mutable
+            }
+            else if (parent is PsiAssignmentExpression && parent.getOperationTokenType() == JavaTokenType.EQ && usage == parent.getRExpression()) {
+                val leftSideVar = (parent.getLExpression() as? PsiReferenceExpression)?.resolve() as? PsiVariable ?: return false
+                return variableMutability(leftSideVar) == Mutability.Mutable
+            }
+            return false
+        }
+    }
+
     class object {
         private val boxingTypes: Set<String> = setOf(
                 CommonClassNames.JAVA_LANG_BYTE,
@@ -343,6 +403,10 @@ class TypeConverter(val converter: Converter) {
                 CommonClassNames.JAVA_LANG_LONG,
                 CommonClassNames.JAVA_LANG_SHORT,
                 CommonClassNames.JAVA_LANG_BOOLEAN
+        )
+
+        private val modificationMethodNames = setOf(
+                "add", "remove", "set", "addAll", "removeAll", "retainAll", "clear", "put", "putAll"
         )
     }
 }

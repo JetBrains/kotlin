@@ -24,7 +24,9 @@ import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
 
 private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
 
-class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>() {
+class TypeVisitor(private val converter: Converter,
+                  private val topLevelType: PsiType,
+                  private val topLevelTypeMutability: Mutability) : PsiTypeVisitor<Type>() {
 
     private val typeConverter: TypeConverter = converter.typeConverter
 
@@ -49,17 +51,19 @@ class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>() {
     }
 
     override fun visitClassType(classType: PsiClassType): Type {
-        val refElement = constructReferenceElement(classType)
+        val mutability = if (classType identityEquals topLevelType) topLevelTypeMutability else Mutability.Default
+        val refElement = constructReferenceElement(classType, mutability)
         return ClassType(refElement, Nullability.Default, converter.settings)
     }
 
-    private fun constructReferenceElement(classType: PsiClassType): ReferenceElement {
+    private fun constructReferenceElement(classType: PsiClassType, mutability: Mutability): ReferenceElement {
         val typeArgs = convertTypeArgs(classType)
 
         val psiClass = classType.resolve()
         if (psiClass != null) {
             val javaClassName = psiClass.getQualifiedName()
-            val kotlinClassName = toKotlinTypesMap[javaClassName]
+            val kotlinClassName = (if (mutability.isMutable(converter.settings)) toKotlinMutableTypesMap[javaClassName] else null)
+                                  ?: toKotlinTypesMap[javaClassName]
             if (kotlinClassName != null) {
                 val kotlinShortName = getShortName(kotlinClassName)
                 if (kotlinShortName == getShortName(javaClassName!!) && converter.importNames.contains(getPackageName(javaClassName) + ".*")) {
@@ -81,20 +85,20 @@ class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>() {
 
     private fun convertTypeArgs(classType: PsiClassType): List<Type> {
         if (classType.getParameterCount() == 0) {
-            return createTypeArgsForRawTypeUsage(classType)
+            return createTypeArgsForRawTypeUsage(classType, Mutability.Default)
         }
         else {
             return typeConverter.convertTypes(classType.getParameters())
         }
     }
 
-    private fun createTypeArgsForRawTypeUsage(classType: PsiClassType): List<Type> {
+    private fun createTypeArgsForRawTypeUsage(classType: PsiClassType, mutability: Mutability): List<Type> {
         if (classType is PsiClassReferenceType) {
             val targetClass = classType.getReference().resolve() as? PsiClass
             if (targetClass != null) {
                 return targetClass.getTypeParameters().map {
                     val superType = it.getSuperTypes().first() // there must be at least one super type always
-                    ClassType(constructReferenceElement(superType), Nullability.Default, converter.settings).assignNoPrototype()
+                    ClassType(constructReferenceElement(superType, mutability), Nullability.Default, converter.settings).assignNoPrototype()
                 }
             }
         }
@@ -130,6 +134,13 @@ class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>() {
                 CommonClassNames.JAVA_UTIL_COLLECTION to "kotlin.Collection",
                 CommonClassNames.JAVA_UTIL_SET to "kotlin.Set",
                 CommonClassNames.JAVA_UTIL_MAP to "kotlin.Map"
+        )
+
+        public val toKotlinMutableTypesMap: Map<String, String> = mapOf(
+                CommonClassNames.JAVA_UTIL_LIST to "kotlin.MutableList",
+                CommonClassNames.JAVA_UTIL_COLLECTION to "kotlin.MutableCollection",
+                CommonClassNames.JAVA_UTIL_SET to "kotlin.MutableSet",
+                CommonClassNames.JAVA_UTIL_MAP to "kotlin.MutableMap"
         )
     }
 }
