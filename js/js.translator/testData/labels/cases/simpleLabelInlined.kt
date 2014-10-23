@@ -2,8 +2,8 @@ package foo
 
 // CHECK_NOT_CALLED: testBreak
 // CHECK_NOT_CALLED: testContinue
-// CHECK_LABELS_COUNT: function=testBreakNoinline name=loop$ count=1
-// CHECK_LABELS_COUNT: function=testContinueNoinline name=loop$ count=1
+// CHECK_LABELS_COUNT: function=testBreakNoinline name=loop count=1
+// CHECK_LABELS_COUNT: function=testContinueNoinline name=loop count=1
 
 inline fun testBreak(): Int {
     var i = 0

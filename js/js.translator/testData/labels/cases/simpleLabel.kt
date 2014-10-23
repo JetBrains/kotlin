@@ -1,7 +1,7 @@
 package foo
 
-// CHECK_LABELS_COUNT: function=testBreak name=loop$ count=1
-// CHECK_LABELS_COUNT: function=testContinue name=loop$ count=1
+// CHECK_LABELS_COUNT: function=testBreak name=loop count=1
+// CHECK_LABELS_COUNT: function=testContinue name=loop count=1
 
 fun testBreak() {
     var i = 0
