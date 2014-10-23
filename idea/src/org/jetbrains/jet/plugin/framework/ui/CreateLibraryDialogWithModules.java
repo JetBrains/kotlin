@@ -23,11 +23,11 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.List;
 
-public class CreateJavaLibraryDialogWithModules extends CreateJavaLibraryDialogBase {
+public class CreateLibraryDialogWithModules extends CreateLibraryDialogBase {
 
     private final ChooseModulePanel chooseModulePanel;
 
-    public CreateJavaLibraryDialogWithModules(
+    public CreateLibraryDialogWithModules(
             @NotNull Project project,
             @NotNull List<Module> modules,
             @NotNull String defaultPath,

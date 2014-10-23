@@ -27,7 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.framework.JavaRuntimeLibraryDescription;
 import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
-import org.jetbrains.jet.plugin.framework.ui.CreateJavaLibraryDialogWithModules;
+import org.jetbrains.jet.plugin.framework.ui.CreateLibraryDialogWithModules;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryCoreUtil;
 import org.jetbrains.jet.utils.PathUtil;
@@ -95,7 +95,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
         String copyLibIntoPath = null;
 
         if (nonConfiguredModules.size() > 1 || showPathPanelForJava) {
-            CreateJavaLibraryDialogWithModules dialog = new CreateJavaLibraryDialogWithModules(
+            CreateLibraryDialogWithModules dialog = new CreateLibraryDialogWithModules(
                     project, nonConfiguredModules, defaultPath, showPathPanelForJava,
                     JavaRuntimeLibraryDescription.DIALOG_TITLE,
                     JavaRuntimeLibraryDescription.DIALOG_CAPTION);

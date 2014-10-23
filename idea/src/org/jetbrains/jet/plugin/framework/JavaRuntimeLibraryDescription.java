@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
-import org.jetbrains.jet.plugin.framework.ui.CreateJavaLibraryDialog;
+import org.jetbrains.jet.plugin.framework.ui.CreateLibraryDialog;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 
 import javax.swing.*;
@@ -110,7 +110,7 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescriptorWithDe
             }
         }
         else {
-            CreateJavaLibraryDialog dialog =new CreateJavaLibraryDialog(defaultPathToJarFile, DIALOG_TITLE, DIALOG_CAPTION);
+            CreateLibraryDialog dialog =new CreateLibraryDialog(defaultPathToJarFile, DIALOG_TITLE, DIALOG_CAPTION);
             dialog.show();
 
             if (!dialog.isOK()) return null;

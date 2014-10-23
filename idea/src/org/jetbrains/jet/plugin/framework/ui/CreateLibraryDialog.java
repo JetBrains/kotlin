@@ -18,9 +18,9 @@ package org.jetbrains.jet.plugin.framework.ui;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CreateJavaLibraryDialog extends CreateJavaLibraryDialogBase {
+public class CreateLibraryDialog extends CreateLibraryDialogBase {
 
-    public CreateJavaLibraryDialog(@NotNull String defaultPath, @NotNull String title, @NotNull String caption) {
+    public CreateLibraryDialog(@NotNull String defaultPath, @NotNull String title, @NotNull String caption) {
         super(null, defaultPath, title, caption);
         updateComponents();
     }

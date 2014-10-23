@@ -28,7 +28,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public abstract class CreateJavaLibraryDialogBase extends DialogWrapper {
+public abstract class CreateLibraryDialogBase extends DialogWrapper {
     protected JPanel contentPane;
     protected JLabel compilerTextLabel;
     protected JPanel chooseModulesPanelPlace;
@@ -37,7 +37,7 @@ public abstract class CreateJavaLibraryDialogBase extends DialogWrapper {
 
     protected final ChooseLibraryPathPanel pathPanel;
 
-    public CreateJavaLibraryDialogBase(
+    public CreateLibraryDialogBase(
             @Nullable Project project,
             @NotNull String defaultPath,
             @NotNull String title,
