@@ -818,5 +818,6 @@
         <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator"/>
         <suppressStringProvider implementation="org.jetbrains.k2js.analyze.SuppressUnusedParameterForJsNative"/>
         <diagnosticSuppressor implementation="org.jetbrains.k2js.analyze.SuppressWarningsFromExternalModules"/>
+        <diagnosticSuppressor implementation="org.jetbrains.jet.plugin.debugger.DiagnosticSuppressorForDebugger"/>
     </extensions>
 </idea-plugin>
