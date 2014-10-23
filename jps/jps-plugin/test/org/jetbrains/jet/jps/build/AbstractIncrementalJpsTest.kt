@@ -60,7 +60,12 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         try {
             val buildResult = doBuild(descriptor, scope)!!
             if (!buildResult.isSuccessful()) {
-                return logger.log + "COMPILATION FAILED\n" + buildResult.getMessages(BuildMessage.Kind.ERROR).joinToString("\n") + "\n"
+                val errorMessages =
+                        buildResult
+                                .getMessages(BuildMessage.Kind.ERROR)
+                                .joinToString("\n")
+                                .replace(workDir.getAbsolutePath(), "\$PROJECT")
+                return logger.log + "COMPILATION FAILED\n" + errorMessages + "\n"
             }
             else {
                 return logger.log
