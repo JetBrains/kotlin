@@ -25,12 +25,12 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Map;
 
-public class TypeParameterAsReifiedCheck implements CallResolverExtension {
+public class ReifiedTypeParameterSubstitutionCheck implements CallResolverExtension {
     @Override
     public <F extends CallableDescriptor> void run(
             @NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context
@@ -40,13 +40,25 @@ public class TypeParameterAsReifiedCheck implements CallResolverExtension {
             TypeParameterDescriptor parameter = entry.getKey();
             JetType argument = entry.getValue();
             ClassifierDescriptor argumentDeclarationDescription = argument.getConstructor().getDeclarationDescriptor();
-            if (parameter.isReified() && argumentDeclarationDescription instanceof TypeParameterDescriptor &&
+
+            if (parameter.isReified()) {
+                if (argumentDeclarationDescription instanceof TypeParameterDescriptor &&
                     !((TypeParameterDescriptor) argumentDeclarationDescription).isReified()
-            ) {
-                JetExpression callee = context.call.getCalleeExpression();
-                PsiElement element = callee != null ? callee : context.call.getCallElement();
-                context.trace.report(Errors.TYPE_PARAMETER_AS_REIFIED.on(element, typeArguments.keySet().iterator().next()));
+                ) {
+                    context.trace.report(
+                            Errors.TYPE_PARAMETER_AS_REIFIED.on(getCallElement(context), typeArguments.keySet().iterator().next())
+                    );
+                }
+                else if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(argument)) {
+                    context.trace.report(Errors.REIFIED_TYPE_NOTHING_SUBSTITUTION.on(getCallElement(context), argument));
+                }
             }
         }
+    }
+
+    @NotNull
+    private static PsiElement getCallElement(@NotNull BasicCallResolutionContext context) {
+        JetExpression callee = context.call.getCalleeExpression();
+        return callee != null ? callee : context.call.getCallElement();
     }
 }
