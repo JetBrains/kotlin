@@ -66,12 +66,6 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
 
     @Override
     @NotNull
-    public File getJsLibJsPath() {
-        return getLibraryFile(PathUtil.JS_LIB_JS_NAME);
-    }
-
-    @Override
-    @NotNull
     public File getJsLibJarPath() {
         return getLibraryFile(PathUtil.JS_LIB_JAR_NAME);
     }

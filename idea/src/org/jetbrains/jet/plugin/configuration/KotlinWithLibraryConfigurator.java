@@ -48,18 +48,18 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     protected abstract String getLibraryName();
 
     @NotNull
-    protected abstract String getJarName();
+    public abstract String getJarName();
 
     @NotNull
-    protected abstract String getSourcesJarName();
+    public abstract String getSourcesJarName();
 
     @NotNull
     protected abstract String getMessageForOverrideDialog();
 
     @NotNull
-    protected abstract File getExistedJarFile();
+    public abstract File getExistedJarFile();
 
-    protected abstract File getExistedSourcesJarFile();
+    public abstract File getExistedSourcesJarFile();
 
     @Override
     public boolean isApplicable(@NotNull Module module) {

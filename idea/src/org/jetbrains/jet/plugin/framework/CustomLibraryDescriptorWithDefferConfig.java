@@ -17,31 +17,66 @@
 package org.jetbrains.jet.plugin.framework;
 
 import com.google.common.collect.Lists;
+import com.intellij.framework.library.LibraryVersionProperties;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryKind;
+import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
 import org.jetbrains.jet.plugin.configuration.KotlinWithLibraryConfigurator;
+import org.jetbrains.jet.plugin.framework.ui.CreateLibraryDialog;
+import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 import org.jetbrains.jet.plugin.util.projectStructure.ProjectStructurePackage;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.jetbrains.jet.plugin.configuration.KotlinWithLibraryConfigurator.getFileInDir;
+
 public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibraryDescription {
+
+    private static final String DEFAULT_LIB_DIR_NAME = "lib";
+
     @NotNull
     public abstract LibraryKind getLibraryKind();
 
     @Nullable
     public abstract DeferredCopyFileRequests getCopyFileRequests();
+
+    protected final boolean useRelativePaths;
+
+    protected DeferredCopyFileRequests deferredCopyFileRequests;
+
+    @NotNull
+    protected abstract String getLibraryName();
+
+    @NotNull
+    protected abstract String getDialogTitle();
+
+    @NotNull
+    protected abstract String getDialogCaption();
+
+    /**
+     * @param project null when project doesn't exist yet (called from project wizard)
+     */
+    public CustomLibraryDescriptorWithDefferConfig(@Nullable Project project) {
+        useRelativePaths = project == null;
+    }
 
     public void finishLibConfiguration(@NotNull Module module, @NotNull ModifiableRootModel rootModel) {
         DeferredCopyFileRequests deferredCopyFileRequests = getCopyFileRequests();
@@ -111,5 +146,68 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
                 this.replaceInLib = replaceInLib;
             }
         }
+    }
+
+    @Nullable
+    @Override
+    public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
+        KotlinWithLibraryConfigurator configurator =
+                (KotlinWithLibraryConfigurator) ConfigureKotlinInProjectUtils.getConfiguratorByName(KotlinJavaModuleConfigurator.NAME);
+        assert configurator != null : "Configurator with name " + KotlinJavaModuleConfigurator.NAME + " should exists";
+
+        deferredCopyFileRequests = new DeferredCopyFileRequests(configurator);
+
+        String defaultPathToJarFile = useRelativePaths ? DEFAULT_LIB_DIR_NAME
+                                                       : FileUIUtils.createRelativePath(null, contextDirectory, DEFAULT_LIB_DIR_NAME);
+
+        File bundledLibJarFile = configurator.getExistedJarFile();
+        File bundledLibSourcesJarFile = configurator.getExistedSourcesJarFile();
+
+        File libraryFile;
+        File librarySrcFile;
+
+        File stdJarInDefaultPath = getFileInDir(configurator.getJarName(), defaultPathToJarFile);
+        if (!useRelativePaths && stdJarInDefaultPath.exists()) {
+            libraryFile = stdJarInDefaultPath;
+
+            File sourcesJar = getFileInDir(configurator.getSourcesJarName(), defaultPathToJarFile);
+            if (sourcesJar.exists()) {
+                librarySrcFile = sourcesJar;
+            }
+            else {
+                deferredCopyFileRequests.addCopyWithReplaceRequest(bundledLibSourcesJarFile, libraryFile.getParent());
+                librarySrcFile = bundledLibSourcesJarFile;
+            }
+        }
+        else {
+            CreateLibraryDialog dialog =new CreateLibraryDialog(defaultPathToJarFile, getDialogTitle(), getDialogCaption());
+            dialog.show();
+
+            if (!dialog.isOK()) return null;
+
+            String copyIntoPath = dialog.getCopyIntoPath();
+            if (copyIntoPath != null) {
+                deferredCopyFileRequests.addCopyWithReplaceRequest(bundledLibJarFile, copyIntoPath);
+                deferredCopyFileRequests.addCopyWithReplaceRequest(bundledLibSourcesJarFile, copyIntoPath);
+            }
+
+            libraryFile = bundledLibJarFile;
+            librarySrcFile = bundledLibSourcesJarFile;
+        }
+
+        return createConfiguration(libraryFile, librarySrcFile);
+    }
+
+    protected NewLibraryConfiguration createConfiguration(@NotNull File libraryFile, @NotNull File librarySrcFile) {
+        final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
+        final String libraryFileSrcUrl = VfsUtil.getUrlForLibraryRoot(librarySrcFile);
+
+        return new NewLibraryConfiguration(getLibraryName(), null, new LibraryVersionProperties()) {
+            @Override
+            public void addRoots(@NotNull LibraryEditor editor) {
+                editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);
+                editor.addRoot(libraryFileSrcUrl, OrderRootType.SOURCES);
+            }
+        };
     }
 }
