@@ -507,6 +507,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
                     doTestMultiFileWithInlineCheck(fileName);
                 }
 
+                @TestMetadata("exceptionInFinally.1.kt")
+                public void testExceptionInFinally() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/exceptionInFinally.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
                 @TestMetadata("forInFinally.1.kt")
                 public void testForInFinally() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/forInFinally.1.kt");
@@ -576,6 +582,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
                 @TestMetadata("throwInFinally.1.kt")
                 public void testThrowInFinally() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/throwInFinally.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("tryCatchInFinally.1.kt")
+                public void testTryCatchInFinally() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/tryCatchInFinally.1.kt");
                     doTestMultiFileWithInlineCheck(fileName);
                 }
             }
