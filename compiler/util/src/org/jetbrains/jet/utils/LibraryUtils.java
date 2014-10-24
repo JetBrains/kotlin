@@ -33,9 +33,11 @@ public class LibraryUtils {
 
     public static final String TITLE_KOTLIN_JVM_RUNTIME_AND_STDLIB;
     public static final String TITLE_KOTLIN_JAVASCRIPT_STDLIB;
+    public static final String TITLE_KOTLIN_JAVASCRIPT_LIB;
 
     static {
         String jsStdLib = "";
+        String jsLib = "";
         String jvmStdLib = "";
 
         InputStream manifestProperties = LibraryUtils.class.getResourceAsStream("/manifest.properties");
@@ -45,6 +47,7 @@ public class LibraryUtils {
                 properties.load(manifestProperties);
                 jvmStdLib = properties.getProperty("manifest.impl.title.kotlin.jvm.runtime");
                 jsStdLib = properties.getProperty("manifest.impl.title.kotlin.javascript.stdlib");
+                jsLib = properties.getProperty("manifest.spec.title.kotlin.javascript.lib");
             }
             catch (IOException e) {
                 LOG.error(e);
@@ -56,6 +59,7 @@ public class LibraryUtils {
 
         TITLE_KOTLIN_JVM_RUNTIME_AND_STDLIB = jvmStdLib;
         TITLE_KOTLIN_JAVASCRIPT_STDLIB = jsStdLib;
+        TITLE_KOTLIN_JAVASCRIPT_LIB = jsLib;
     }
 
     private LibraryUtils() {}
@@ -90,6 +94,18 @@ public class LibraryUtils {
 
         String title = attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE);
         return title != null && title.equals(expected);
+    }
+
+    private static boolean checkSpecTitle(@NotNull File library, String expected) {
+        Attributes attributes = getManifestMainAttributesFromJar(library);
+        if (attributes == null) return false;
+
+        String title = attributes.getValue(Attributes.Name.SPECIFICATION_TITLE);
+        return title != null && title.equals(expected);
+    }
+
+    public static boolean isKotlinJavascriptLibrary(@NotNull File library) {
+        return checkSpecTitle(library, TITLE_KOTLIN_JAVASCRIPT_LIB);
     }
 
     public static boolean isJsRuntimeLibrary(@NotNull File library) {
