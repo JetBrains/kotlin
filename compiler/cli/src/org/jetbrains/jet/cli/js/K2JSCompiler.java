@@ -215,7 +215,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         List<String> libraryFiles = new SmartList<String>();
         if (!arguments.noStdlib) {
-            libraryFiles.add(0, PathUtil.getKotlinPathsForCompiler().getJsLibJarPath().getAbsolutePath());
+            libraryFiles.add(0, PathUtil.getKotlinPathsForCompiler().getJsStdLibJarPath().getAbsolutePath());
         }
 
         if (arguments.libraryFiles != null) {

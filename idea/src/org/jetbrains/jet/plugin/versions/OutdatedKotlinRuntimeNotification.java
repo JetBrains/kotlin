@@ -24,7 +24,6 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.Library;
@@ -37,6 +36,7 @@ import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.jet.plugin.framework.LibraryPresentationProviderUtil;
 
@@ -155,12 +155,16 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
         List<VersionedLibrary> outdatedLibraries = Lists.newArrayList();
 
         for (Library library : KotlinRuntimeLibraryUtil.findKotlinLibraries(project)) {
-            LibraryVersionProperties javaRuntimeProperties =
+            LibraryVersionProperties libraryVersionProperties =
                     LibraryPresentationProviderUtil.getLibraryProperties(JavaRuntimePresentationProvider.getInstance(), library);
-            if (javaRuntimeProperties == null) {
+            if (libraryVersionProperties == null) {
+                libraryVersionProperties =
+                        LibraryPresentationProviderUtil.getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), library);
+            }
+            if (libraryVersionProperties == null) {
                 continue;
             }
-            String libraryVersion = javaRuntimeProperties.getVersionString();
+            String libraryVersion = libraryVersionProperties.getVersionString();
 
             boolean isOutdated = "snapshot".equals(libraryVersion)
                                  || libraryVersion == null

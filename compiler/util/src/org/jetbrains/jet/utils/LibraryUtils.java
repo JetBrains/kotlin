@@ -17,6 +17,7 @@
 package org.jetbrains.jet.utils;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -146,5 +148,15 @@ public class LibraryUtils {
 
     public static boolean isJvmRuntimeLibrary(@NotNull File library) {
         return checkImplTitle(library, TITLE_KOTLIN_JVM_RUNTIME_AND_STDLIB);
+    }
+
+    public static VirtualFile getJarFile(@NotNull List<VirtualFile> classesRoots, @NotNull String jarName) {
+        for (VirtualFile root : classesRoots) {
+            if (root.getName().equals(jarName)) {
+                return root;
+            }
+        }
+
+        return null;
     }
 }

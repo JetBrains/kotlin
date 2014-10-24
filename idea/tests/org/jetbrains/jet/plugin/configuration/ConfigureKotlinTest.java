@@ -264,7 +264,7 @@ public class ConfigureKotlinTest extends PlatformTestCase {
     }
 
     private static String getPathToExistentJsJar() {
-        return PathUtil.getKotlinPathsForDistDirectory().getJsLibJarPath().getParent();
+        return PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().getParent();
     }
 
     @Override

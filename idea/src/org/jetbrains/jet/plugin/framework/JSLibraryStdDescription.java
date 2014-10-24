@@ -87,6 +87,6 @@ public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDefferCo
         KotlinJsModuleConfigurator configurator = (KotlinJsModuleConfigurator) getConfiguratorByName(NAME);
         assert configurator != null : "Cannot find configurator with name " + NAME;
 
-        return createConfiguration(configurator.getExistedJarFile(), configurator.getExistedJarFile());
+        return createConfiguration(configurator.getExistedJarFile(), configurator.getExistedSourcesJarFile());
     }
 }

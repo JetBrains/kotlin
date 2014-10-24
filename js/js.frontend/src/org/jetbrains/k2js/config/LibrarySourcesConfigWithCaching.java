@@ -39,7 +39,7 @@ import java.util.List;
 
 public class LibrarySourcesConfigWithCaching extends LibrarySourcesConfig {
     public static final List<String> JS_STDLIB =
-            Arrays.asList(PathUtil.getKotlinPathsForDistDirectory().getJsLibJarPath().getAbsolutePath());
+            Arrays.asList(PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath().getAbsolutePath());
 
     private static List<JetFile> jsLibFiles;
     private static AnalysisResult result;
