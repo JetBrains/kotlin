@@ -17,5 +17,8 @@
         <extensionPoint name="findUsagesHandlerDecorator"
                         interface="org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator"
                         area="IDEA_PROJECT"/>
+        <extensionPoint name="isReferenceToExtension"
+                        interface="org.jetbrains.jet.plugin.findUsages.handlers.KotlinIsReferenceToExtension"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 </idea-plugin>
