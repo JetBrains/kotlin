@@ -1,3 +1,4 @@
+// ERROR: This type is final, so it cannot be inherited from
 package test
 
 class Base {

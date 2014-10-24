@@ -59,6 +59,6 @@ public class WithVarargConstructor {
     public WithVarargConstructor(int p, Object... objects) { }
 }
 
-class T {
+public class T {
     public Set<String> set;
 }

@@ -1,3 +1,5 @@
+// ERROR: 'test' in 'Base' is final and cannot be overridden
+// ERROR: This type is final, so it cannot be inherited from
 package com.voltvoodoo.saplo4j.model
 
 import java.io.Serializable

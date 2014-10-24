@@ -1,3 +1,4 @@
+// ERROR: Unresolved reference: clone
 class X {
     override fun hashCode(): Int {
         return super.hashCode()

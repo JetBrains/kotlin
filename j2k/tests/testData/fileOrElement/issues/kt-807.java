@@ -3,7 +3,7 @@ import java.io.*;
 class FileRead {
     public static void main(String args[]) {
         try {
-            FileInputStream fstream = new FileInputStream("textfile.txt");
+            FileInputStream fstream = new FileInputStream();
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String strLine;

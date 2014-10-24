@@ -1,10 +1,10 @@
 // !forceNotNullTypes: false
 // !specifyLocalVariableTypeByDefault: true
-import java.util.BitSet
+import java.util.HashSet
 
 class Foo {
-    fun foo(o: BitSet?) {
-        val o2: BitSet? = o
+    fun foo(o: HashSet<Any?>?) {
+        val o2: HashSet<Any?>? = o
         var foo: Int = 0
         foo = o2!!.size()
     }

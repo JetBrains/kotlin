@@ -1,12 +1,12 @@
 package org.test
 
-import java.util.LinkedList
+import java.util.ArrayList
 
 class Member
 
 class User {
     fun main() {
-        val members = LinkedList<Member>()
+        val members = ArrayList<Member>()
         members.add(Member())
     }
 }

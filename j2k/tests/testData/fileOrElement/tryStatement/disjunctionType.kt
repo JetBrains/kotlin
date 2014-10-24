@@ -1,3 +1,4 @@
+// ERROR: Unresolved reference: bar
 import java.io.IOException
 
 class A {

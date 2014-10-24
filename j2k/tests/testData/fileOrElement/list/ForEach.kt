@@ -1,3 +1,4 @@
+// ERROR: Unresolved reference: LinkedList
 import java.util.*
 
 public class ForEach {

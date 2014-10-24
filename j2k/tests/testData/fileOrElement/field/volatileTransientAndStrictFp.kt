@@ -1,3 +1,4 @@
+// ERROR: An integer literal does not conform to the expected type kotlin.Double
 class A {
     deprecated("")
     volatile var field1 = 0

@@ -1,7 +1,9 @@
+// ERROR: This type is final, so it cannot be inherited from
 package a.b
 
 class Base {
-    fun foo()
+    fun foo() {
+    }
 }
 
 class A : Base() {

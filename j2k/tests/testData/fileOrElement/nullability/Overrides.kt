@@ -1,3 +1,6 @@
+// ERROR: 'foo' in 'Base' is final and cannot be overridden
+// ERROR: 'bar' in 'Base' is final and cannot be overridden
+// ERROR: This type is final, so it cannot be inherited from
 class Base {
     public fun foo(s: String?): String? {
         return ""

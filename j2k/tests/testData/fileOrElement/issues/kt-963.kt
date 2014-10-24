@@ -1,3 +1,4 @@
+// ERROR: Variable cannot be initialized before declaration
 package demo
 
 class C(a: Int) {

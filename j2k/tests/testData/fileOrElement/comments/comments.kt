@@ -1,3 +1,4 @@
+// ERROR: Class 'A' must be declared abstract or implement abstract member public abstract fun run(): kotlin.Unit defined in java.lang.Runnable
 package foo
 
 // we use package 'foo'

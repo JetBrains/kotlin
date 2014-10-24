@@ -4,6 +4,6 @@ class Library {
 
 class User {
   void main() {
-    Library.myString.isEmpty();
+    new Library().myString.isEmpty();
   }
 }

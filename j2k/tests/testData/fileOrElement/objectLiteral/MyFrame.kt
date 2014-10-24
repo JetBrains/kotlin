@@ -1,7 +1,19 @@
+// ERROR: This type is final, so it cannot be inherited from
+// ERROR: This type is final, so it cannot be inherited from
+// ERROR: This type is final, so it cannot be inherited from
 package demo
 
-class WindowAdapter {
-    public fun windowClosing() {
+trait WindowListener {
+    public fun windowClosing()
+}
+
+class WindowAdapter : WindowListener {
+    override fun windowClosing() {
+    }
+}
+
+class Frame {
+    public fun addWindowListener(listener: WindowListener) {
     }
 }
 

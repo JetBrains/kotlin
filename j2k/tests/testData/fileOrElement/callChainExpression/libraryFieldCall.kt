@@ -1,3 +1,4 @@
+// ERROR: Property must be initialized or be abstract
 class Library {
     class object {
         val ourOut: java.io.PrintStream
@@ -6,6 +7,6 @@ class Library {
 
 class User {
     fun main() {
-        Library.ourOut.print()
+        Library.ourOut.print(1)
     }
 }

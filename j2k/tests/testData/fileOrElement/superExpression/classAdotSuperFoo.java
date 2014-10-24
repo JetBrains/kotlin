@@ -2,7 +2,7 @@
 package a.b;
 
 class Base {
-  void foo();
+  void foo(){}
 }
 
 class A extends Base {

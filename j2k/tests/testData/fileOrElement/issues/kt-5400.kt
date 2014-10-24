@@ -1,3 +1,5 @@
+// ERROR: This type is final, so it cannot be inherited from
+// ERROR: Property must be initialized or be abstract
 class Base {
     inner class Nested
 }

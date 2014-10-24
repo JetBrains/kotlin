@@ -3,6 +3,6 @@ package test;
 
 class User {
   void main() {
-    java.util.List list = new java.util.LinkedList();
+    java.util.List list = new java.util.ArrayList();
   }
 }

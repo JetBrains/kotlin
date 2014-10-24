@@ -32,6 +32,10 @@ import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.jet.j2k.IdeaReferenceSearcher
 import org.jetbrains.jet.j2k.JavaToKotlinConverter
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
+import org.jetbrains.jet.lang.diagnostics.Severity
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
 
 public abstract class AbstractJavaToKotlinConverterSingleFileTest() : AbstractJavaToKotlinConverterTest() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
@@ -80,8 +84,18 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest() : AbstractJa
 
         val reformatInFun = prefix in setOf("element", "expression", "statement")
 
-        val actual = reformat(rawConverted, project, reformatInFun)
+        var actual = reformat(rawConverted, project, reformatInFun)
         val kotlinPath = javaPath.replace(".java", ".kt")
+
+        if (prefix == "file") {
+            val diagnostics = createKotlinFile(actual).getAnalysisResults().getBindingContext().getDiagnostics()
+            val errors = diagnostics.filter { it.getSeverity() == Severity.ERROR }
+            if (!errors.isEmpty()) {
+                val header = errors.map { "// ERROR: " + DefaultErrorMessages.RENDERER.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
+                actual = header + actual
+            }
+        }
+
         val expectedFile = File(kotlinPath)
         JetTestUtils.assertEqualsToFile(expectedFile, actual)
     }
@@ -145,5 +159,9 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest() : AbstractJa
 
     private fun createJavaFile(text: String): PsiJavaFile {
         return myFixture.configureByText("converterTestFile.java", text) as PsiJavaFile
+    }
+
+    private fun createKotlinFile(text: String): JetFile {
+        return myFixture.configureByText("converterTestFile.kt", text) as JetFile
     }
 }

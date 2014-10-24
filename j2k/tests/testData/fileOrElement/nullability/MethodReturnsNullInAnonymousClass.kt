@@ -1,3 +1,4 @@
+// ERROR: Return type of 'get' is not a subtype of the return type of overridden member public abstract fun get(): kotlin.String defined in Getter
 trait Getter {
     public fun get(): String
 }

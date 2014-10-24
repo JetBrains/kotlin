@@ -1,3 +1,8 @@
+// ERROR: 'clone' in 'Base' is final and cannot be overridden
+// ERROR: 'finalize' in 'Base' is final and cannot be overridden
+// ERROR: This type is final, so it cannot be inherited from
+// ERROR: Unresolved reference: clone
+// ERROR: Unresolved reference: finalize
 package test
 
 class Test : Base() {

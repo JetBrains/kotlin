@@ -1,7 +1,6 @@
 class Test {
-    var str: String
-
     class object {
+        var str: String
         {
             str = "Ola"
         }

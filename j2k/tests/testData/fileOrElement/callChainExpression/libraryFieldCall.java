@@ -4,6 +4,6 @@ class Library {
 
 class User {
   void main() {
-    Library.ourOut.print();
+    Library.ourOut.print(1);
   }
 }

@@ -1,9 +1,9 @@
 //file
 import java.util.List;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 class User {
   void main() {
-    List<String> list = new LinkedList<String>();
+    List<String> list = new ArrayList<String>();
   }
 }

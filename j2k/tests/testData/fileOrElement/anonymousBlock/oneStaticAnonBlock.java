@@ -1,5 +1,5 @@
 class Test {
-  String str;
+  static String str;
   static {
      str = "Ola";
   }

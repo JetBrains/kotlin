@@ -1,3 +1,4 @@
+// ERROR: Null can not be a value of a non-null type kotlin.Iterator<kotlin.String>
 package demo
 
 class Test : Iterable<String> {

@@ -1,3 +1,4 @@
+// ERROR: No value passed for parameter field
 import kotlinApi.*
 
 class C : KotlinClass() {

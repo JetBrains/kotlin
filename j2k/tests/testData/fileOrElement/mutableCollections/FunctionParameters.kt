@@ -1,3 +1,4 @@
+// ERROR: Type mismatch: inferred type is T? but T was expected
 import java.util.*
 import kotlin.Collection
 

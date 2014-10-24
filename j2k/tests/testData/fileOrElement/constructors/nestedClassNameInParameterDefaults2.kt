@@ -1,3 +1,4 @@
+// ERROR: Property must be initialized or be abstract
 import A.Nested
 
 class A(nested: Nested = Nested(Nested.FIELD)) {

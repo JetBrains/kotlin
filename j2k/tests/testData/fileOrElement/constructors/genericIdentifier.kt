@@ -1,3 +1,9 @@
+// ERROR: 'public fun <T> Identifier(name: T, isNullable: kotlin.Boolean): Identifier<T>' is already defined in root package
+// ERROR: 'public constructor Identifier<T>(name: T, myHasDollar: kotlin.Boolean)' is already defined in root package
+// ERROR: Cannot choose among the following candidates without completing type inference:  public fun <T> Identifier(name: T, isNullable: kotlin.Boolean): Identifier<T> defined in root package public constructor Identifier<T>(name: T, myHasDollar: kotlin.Boolean) defined in Identifier
+// ERROR: Cannot choose among the following candidates without completing type inference:  public fun <T> Identifier(name: T, isNullable: kotlin.Boolean): Identifier<T> defined in root package public constructor Identifier<T>(name: T, myHasDollar: kotlin.Boolean) defined in Identifier
+// ERROR: Cannot choose among the following candidates without completing type inference:  public fun <T> Identifier(name: T, isNullable: kotlin.Boolean): Identifier<T> defined in root package public constructor Identifier<T>(name: T, myHasDollar: kotlin.Boolean) defined in Identifier
+// ERROR: Overload resolution ambiguity:  public fun <T> Identifier(name: kotlin.String, isNullable: kotlin.Boolean): Identifier<kotlin.String> defined in root package public constructor Identifier<T>(name: kotlin.String, myHasDollar: kotlin.Boolean) defined in Identifier
 public fun <T> Identifier(name: T): Identifier<T> {
     return Identifier(name, false)
 }

@@ -11,9 +11,9 @@ class A {
 
     private/*it's private*/ int field = 0;
 
-    public /*it's public*/ char foo() { }
+    public /*it's public*/ char foo(String s) { }
 
-    protected/*it's protected*/ void foo() { }
+    protected/*it's protected*/ void foo(char c) { }
 
     public/*it's public*/ static/*and static*/ final/*and final*/ int C = 1;
 }

@@ -8,7 +8,7 @@ trait I {
 public class C {
     throws(javaClass<IOException>())
     fun foo() {
-        FileInputStream("foo").use { stream ->
+        ByteArrayInputStream(ByteArray(10)).use { stream ->
             bar(object : I {
                 throws(javaClass<IOException>())
                 override fun doIt(stream: InputStream): Int {

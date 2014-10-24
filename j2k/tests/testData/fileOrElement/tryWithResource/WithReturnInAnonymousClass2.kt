@@ -1,3 +1,5 @@
+// ERROR: 'return' is not allowed here
+// ERROR: A 'return' expression required in a function with a block body ('{...}')
 import java.io.*
 
 trait I {
@@ -8,7 +10,7 @@ trait I {
 public class C {
     throws(javaClass<IOException>())
     fun foo(): Int {
-        FileInputStream("foo").use { stream ->
+        ByteArrayInputStream(ByteArray(10)).use { stream ->
             return bar(object : I {
                 throws(javaClass<IOException>())
                 override fun doIt(stream: InputStream): Int {

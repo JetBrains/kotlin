@@ -1,7 +1,7 @@
-import java.util.LinkedList
+import java.util.ArrayList
 
 class User {
     fun main() {
-        val list = LinkedList<String>()
+        val list = ArrayList<String>()
     }
 }

@@ -1,9 +1,17 @@
 //file
 package demo;
 
-class WindowAdapter {
+interface WindowListener {
+  void windowClosing ();
+}
+
+class WindowAdapter implements WindowListener {
   public void windowClosing () {
   }
+}
+
+class Frame {
+  public void addWindowListener(WindowListener listener){}
 }
 
 public final class Client extends Frame {
@@ -12,7 +20,7 @@ public final class Client extends Frame {
       @Override
       public void windowClosing () {
       }
-    }
+    };
 
     addWindowListener(a);
 

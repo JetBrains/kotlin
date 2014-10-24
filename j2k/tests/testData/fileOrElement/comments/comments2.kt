@@ -1,3 +1,5 @@
+// ERROR: A 'return' expression required in a function with a block body ('{...}')
+// ERROR: A 'return' expression required in a function with a block body ('{...}')
 package foo
 
 class A {
@@ -13,10 +15,10 @@ class A {
 
     private /*it's private*/ val field = 0
 
-    public /*it's public*/ fun foo(): Char {
+    public /*it's public*/ fun foo(s: String): Char {
     }
 
-    protected /*it's protected*/ fun foo() {
+    protected /*it's protected*/ fun foo(c: Char) {
     }
 
     class object {

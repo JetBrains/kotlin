@@ -1,3 +1,5 @@
+// ERROR: This type is final, so it cannot be inherited from
+// ERROR: Unresolved reference: clone
 class Base
 
 class X : Base() {

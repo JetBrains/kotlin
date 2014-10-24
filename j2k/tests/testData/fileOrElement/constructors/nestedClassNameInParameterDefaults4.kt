@@ -1,3 +1,4 @@
+// ERROR: Property must be initialized or be abstract
 package pack
 
 import pack.A.*

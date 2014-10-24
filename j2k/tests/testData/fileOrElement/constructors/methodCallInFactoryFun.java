@@ -5,6 +5,7 @@ class C {
 
     int foo(int p){ return p; }
     private static int staticFoo(int p){ return p; }
+    public static int staticFoo2(){ return 0; }
 
     C(int arg1, int arg2, int arg3) {
         this.arg1 = arg1;
