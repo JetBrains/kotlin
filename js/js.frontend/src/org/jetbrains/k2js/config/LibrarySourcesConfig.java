@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.utils.LibraryUtils.isJsRuntimeLibrary;
+import static org.jetbrains.jet.utils.LibraryUtils.isKotlinJavascriptStdLibrary;
 
 public class LibrarySourcesConfig extends Config {
     @NotNull
@@ -90,7 +90,7 @@ public class LibrarySourcesConfig extends Config {
             if (path.endsWith(".jar") || path.endsWith(".zip")) {
                 file = jarFileSystem.findFileByPath(path + URLUtil.JAR_SEPARATOR);
 
-                if (isJsRuntimeLibrary(new File(path))) {
+                if (isKotlinJavascriptStdLibrary(new File(path))) {
                     actualModuleName = STDLIB_JS_MODULE_NAME;
                 }
             }

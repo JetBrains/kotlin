@@ -42,7 +42,7 @@ class JpsUtils {
         Set<JpsLibrary> libraries = getAllDependencies(target).getLibraries();
         for (JpsLibrary library : libraries) {
             for (JpsLibraryRoot root : library.getRoots(JpsOrderRootType.COMPILED)) {
-                if (LibraryUtils.isJsRuntimeLibrary(JpsPathUtil.urlToFile(root.getUrl())))
+                if (LibraryUtils.isKotlinJavascriptStdLibrary(JpsPathUtil.urlToFile(root.getUrl())))
                     return true;
             }
         }

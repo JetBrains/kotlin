@@ -108,7 +108,7 @@ public class LibraryUtils {
         return checkSpecTitle(library, TITLE_KOTLIN_JAVASCRIPT_LIB);
     }
 
-    public static boolean isJsRuntimeLibrary(@NotNull File library) {
+    public static boolean isKotlinJavascriptStdLibrary(@NotNull File library) {
         return checkImplTitle(library, TITLE_KOTLIN_JAVASCRIPT_STDLIB);
     }
 

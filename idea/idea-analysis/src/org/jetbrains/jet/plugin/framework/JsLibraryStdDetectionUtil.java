@@ -22,7 +22,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.utils.LibraryUtils;
-import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.util.List;
@@ -41,7 +40,7 @@ public class JsLibraryStdDetectionUtil {
             VirtualFile jar = VfsUtilCore.getVirtualFileForJar(root);
             assert jar != null;
 
-            if (LibraryUtils.isJsRuntimeLibrary(new File(jar.getPath()))) {
+            if (LibraryUtils.isKotlinJavascriptStdLibrary(new File(jar.getPath()))) {
                 assert JsHeaderLibraryDetectionUtil.isJsHeaderLibraryDetected(classesRoots) : "StdLib should also be detected as headers library";
 
                 return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(root), Attributes.Name.IMPLEMENTATION_VERSION);
