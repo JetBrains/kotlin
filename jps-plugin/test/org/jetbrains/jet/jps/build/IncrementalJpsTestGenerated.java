@@ -327,7 +327,7 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
 
         @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({})
+        @InnerTestClasses({JavaUsedInKotlin.SamConversions.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JavaUsedInKotlin extends AbstractIncrementalJpsTest {
             public void testAllFilesPresentInJavaUsedInKotlin() throws Exception {
@@ -376,6 +376,28 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions")
+            @TestDataPath("$PROJECT_ROOT")
+            @InnerTestClasses({})
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class SamConversions extends AbstractIncrementalJpsTest {
+                public void testAllFilesPresentInSamConversions() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions"), Pattern.compile("^([^\\.]+)$"), true);
+                }
+
+                @TestMetadata("methodAdded")
+                public void testMethodAdded() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAdded/");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("methodSignatureChanged")
+                public void testMethodSignatureChanged() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChanged/");
+                    doTest(fileName);
+                }
+
+            }
         }
 
         @TestMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava")
