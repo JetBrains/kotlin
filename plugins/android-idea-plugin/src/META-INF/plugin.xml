@@ -14,6 +14,11 @@
   <extensions defaultExtensionNs="com.intellij">
       <projectService serviceInterface="org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor"
                       serviceImplementation="org.jetbrains.jet.plugin.android.IDEAndroidUIXmlProcessor"/>
+      <compileServer.plugin classpath="jps/kotlin-android-extensions-jps.jar;android-compiler-plugin.jar"/>
+
+      <renamePsiElementProcessor id="KotlinAndroidSyntheticProperty"
+                                 implementation="org.jetbrains.jet.plugin.android.AndroidRenameProcessor"
+                                 order="first"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
