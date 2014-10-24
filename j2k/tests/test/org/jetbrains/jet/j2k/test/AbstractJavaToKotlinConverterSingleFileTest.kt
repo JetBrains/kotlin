@@ -85,17 +85,12 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest() : AbstractJa
         val reformatInFun = prefix in setOf("element", "expression", "statement")
 
         var actual = reformat(rawConverted, project, reformatInFun)
-        val kotlinPath = javaPath.replace(".java", ".kt")
 
         if (prefix == "file") {
-            val diagnostics = createKotlinFile(actual).getAnalysisResults().getBindingContext().getDiagnostics()
-            val errors = diagnostics.filter { it.getSeverity() == Severity.ERROR }
-            if (!errors.isEmpty()) {
-                val header = errors.map { "// ERROR: " + DefaultErrorMessages.RENDERER.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
-                actual = header + actual
-            }
+            actual = addErrorsDump(createKotlinFile(actual))
         }
 
+        val kotlinPath = javaPath.replace(".java", ".kt")
         val expectedFile = File(kotlinPath)
         JetTestUtils.assertEqualsToFile(expectedFile, actual)
     }

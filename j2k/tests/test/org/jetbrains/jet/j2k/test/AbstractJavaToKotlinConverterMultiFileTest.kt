@@ -31,16 +31,18 @@ import org.jetbrains.jet.j2k.JavaToKotlinConverter
 import com.intellij.psi.PsiManager
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.ConverterSettings
+import org.jetbrains.jet.lang.psi.JetFile
 
 public abstract class AbstractJavaToKotlinConverterMultiFileTest() : AbstractJavaToKotlinConverterTest() {
     public fun doTest(dirPath: String) {
         val project = LightPlatformTestCase.getProject()!!
+        val psiManager = PsiManager.getInstance(project)
 
         val javaFiles = File(dirPath).listFiles {(file, name): Boolean -> name.endsWith(".java") }
         val psiFiles = ArrayList<PsiJavaFile>()
         for (javaFile: File in javaFiles) {
             val virtualFile = addFile(javaFile, "test")
-            val psiFile = PsiManager.getInstance(project).findFile(virtualFile) as PsiJavaFile
+            val psiFile = psiManager.findFile(virtualFile) as PsiJavaFile
             psiFiles.add(psiFile)
         }
 
@@ -48,10 +50,17 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest() : AbstractJav
         val results: List<String> = converter.elementsToKotlin(psiFiles.map { it to J2kPostProcessor(it) })
                 .map { reformat(it, project) }
 
-        for ((i, javaFile) in javaFiles.withIndices()) {
-            val kotlinPath = javaFile.getPath().replace(".java", ".kt")
-            val expectedFile = File(kotlinPath)
-            JetTestUtils.assertEqualsToFile(expectedFile, results[i])
+        fun expectedFile(i: Int) = File(javaFiles[i].getPath().replace(".java", ".kt"))
+
+        val jetFiles = ArrayList<JetFile>()
+        for (i in javaFiles.indices) {
+            deleteFile(psiFiles[i].getVirtualFile())
+            val virtualFile = addFile(results[i], expectedFile(i).getName(), "test")
+            jetFiles.add(psiManager.findFile(virtualFile) as JetFile)
+        }
+
+        for ((i, jetFile) in jetFiles.withIndices()) {
+            JetTestUtils.assertEqualsToFile(expectedFile(i), addErrorsDump(jetFile))
         }
     }
 

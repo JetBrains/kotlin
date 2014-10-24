@@ -27,6 +27,10 @@ import junit.framework.TestCase
 import org.jetbrains.jet.j2k.translateToKotlin
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.jet.j2k.JavaToKotlinTranslator
+import org.jetbrains.jet.lang.diagnostics.Severity
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.JetTestCaseBuilder
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 
@@ -49,17 +53,32 @@ public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtur
         addFile(File("j2k/tests/testData/$fileName"), packageName)
     }
 
-    fun addFile(file: File, packageName: String): VirtualFile {
+    protected fun addFile(file: File, dirName: String): VirtualFile {
+        return addFile(FileUtil.loadFile(file, true), file.getName(), dirName)
+    }
+
+    protected fun addFile(text: String, fileName: String, dirName: String): VirtualFile {
         return ApplicationManager.getApplication()!!.runWriteAction(object: Computable<VirtualFile> {
             override fun compute(): VirtualFile? {
-                val code = FileUtil.loadFile(file, true)
                 val root = LightPlatformTestCase.getSourceRoot()!!
-                val virtualDir = root.findChild(packageName) ?: root.createChildDirectory(null, packageName)
-                val virtualFile = virtualDir.createChildData(null, file.getName())!!
-                virtualFile.getOutputStream(null)!!.writer().use { it.write(code) }
+                val virtualDir = root.findChild(dirName) ?: root.createChildDirectory(null, dirName)
+                val virtualFile = virtualDir.createChildData(null, fileName)!!
+                virtualFile.getOutputStream(null)!!.writer().use { it.write(text) }
                 return virtualFile
             }
         })
+    }
+
+    protected fun deleteFile(virtualFile: VirtualFile) {
+        ApplicationManager.getApplication()!!.runWriteAction { virtualFile.delete(this) }
+    }
+
+    protected fun addErrorsDump(jetFile: JetFile): String {
+        val diagnostics = jetFile.getAnalysisResults().getBindingContext().getDiagnostics()
+        val errors = diagnostics.filter { it.getSeverity() == Severity.ERROR }
+        if (errors.isEmpty()) return jetFile.getText()
+        val header = errors.map { "// ERROR: " + DefaultErrorMessages.RENDERER.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
+        return header + jetFile.getText()
     }
 }
 
