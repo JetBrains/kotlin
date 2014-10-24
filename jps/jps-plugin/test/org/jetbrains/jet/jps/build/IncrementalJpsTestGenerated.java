@@ -295,11 +295,34 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
 
     @TestMetadata("jps-plugin/testData/incremental/withJava")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({WithJava.JavaUsedInKotlin.class, WithJava.KotlinUsedInJava.class})
+    @InnerTestClasses({WithJava.ConvertBetweenJavaAndKotlin.class, WithJava.JavaUsedInKotlin.class, WithJava.KotlinUsedInJava.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WithJava extends AbstractIncrementalJpsTest {
         public void testAllFilesPresentInWithJava() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin")
+        @TestDataPath("$PROJECT_ROOT")
+        @InnerTestClasses({})
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ConvertBetweenJavaAndKotlin extends AbstractIncrementalJpsTest {
+            public void testAllFilesPresentInConvertBetweenJavaAndKotlin() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin"), Pattern.compile("^([^\\.]+)$"), true);
+            }
+
+            @TestMetadata("javaToKotlin")
+            public void testJavaToKotlin() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/javaToKotlin/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kotlinToJava")
+            public void testKotlinToJava() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/kotlinToJava/");
+                doTest(fileName);
+            }
+
         }
 
         @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin")
