@@ -129,6 +129,7 @@ import org.jetbrains.k2js.test.semantics.AbstractBridgeTest
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.jet.plugin.decompiler.textBuilder.AbstractDecompiledTextTest
+import org.jetbrains.jet.completion.AbstractMultiFileSmartCompletionTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -359,6 +360,13 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractCodeFragmentCompletionTest>()) {
             model("completion/basic/codeFragments", extension = "kt")
+        }
+
+        testClass(javaClass<AbstractMultiFileJvmBasicCompletionTest>()) {
+            model("completion/basic/multifile", extension = null, recursive = false)
+        }
+        testClass(javaClass<AbstractMultiFileSmartCompletionTest>()) {
+            model("completion/smartMultiFile", extension = null, recursive = false)
         }
 
         testClass(javaClass<AbstractGotoSuperTest>()) {
@@ -603,10 +611,6 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractStubBuilderTest>()) {
             model("stubs", extension = "kt")
-        }
-
-        testClass(javaClass<AbstractMultiFileJvmBasicCompletionTest>()) {
-            model("completion/basic/multifile", extension = null, recursive = false)
         }
 
         testClass(javaClass<AbstractMultiFileHighlightingTest>()) {
