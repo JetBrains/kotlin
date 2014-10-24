@@ -1,4 +1,3 @@
-//class
 class B {
   B(int i) {}
   int call() {return 1;}

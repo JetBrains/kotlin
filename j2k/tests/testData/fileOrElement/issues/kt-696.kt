@@ -1,7 +1,6 @@
-// ERROR: This type is final, so it cannot be inherited from
 package test
 
-class Base {
+open class Base {
     override fun hashCode(): Int {
         return super.hashCode()
     }

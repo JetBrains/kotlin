@@ -1,5 +1,4 @@
-// ERROR: This type is final, so it cannot be inherited from
-class Base {
+open class Base {
     private val myFirst: String? = null
 }
 

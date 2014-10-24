@@ -1,7 +1,7 @@
 // !openByDefault: true
 
 open class A {
-    open fun foo1() {
+    open open fun foo1() {
     }
 
     private fun foo2() {

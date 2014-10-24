@@ -95,7 +95,7 @@ class Converter private(private val elementToConvert: PsiElement,
     private fun convertTopElement(element: PsiElement): Element? = when (element) {
         is PsiJavaFile -> convertFile(element)
         is PsiClass -> convertClass(element)
-        is PsiMethod -> convertMethod(element, null, null)
+        is PsiMethod -> convertMethod(element, null, null, false)
         is PsiField -> convertField(element, null)
         is PsiStatement -> createDefaultCodeConverter().convertStatement(element)
         is PsiExpression -> createDefaultCodeConverter().convertExpression(element)
@@ -179,15 +179,19 @@ class Converter private(private val elementToConvert: PsiElement,
         val extendsTypes = convertToNotNullableTypes(psiClass.getExtendsListTypes())
         val name = psiClass.declarationIdentifier()
 
-        var classBody = ClassBodyConverter(psiClass, this).convertBody()
-
         return when {
-            psiClass.isInterface() -> Trait(name, annotations, modifiers, typeParameters, extendsTypes, listOf(), implementsTypes, classBody)
+            psiClass.isInterface() -> {
+                var classBody = ClassBodyConverter(psiClass, this, false).convertBody()
+                Trait(name, annotations, modifiers, typeParameters, extendsTypes, listOf(), implementsTypes, classBody)
+            }
 
-            psiClass.isEnum() -> Enum(name, annotations, modifiers, typeParameters, listOf(), listOf(), implementsTypes, classBody)
+            psiClass.isEnum() -> {
+                var classBody = ClassBodyConverter(psiClass, this, false).convertBody()
+                Enum(name, annotations, modifiers, typeParameters, listOf(), listOf(), implementsTypes, classBody)
+            }
 
             else -> {
-                if (settings.openByDefault && !psiClass.hasModifierProperty(PsiModifier.FINAL)) {
+                if (needOpenModifier(psiClass)) {
                     modifiers = modifiers.with(Modifier.OPEN)
                 }
 
@@ -195,9 +199,18 @@ class Converter private(private val elementToConvert: PsiElement,
                     modifiers = modifiers.with(Modifier.INNER)
                 }
 
+                var classBody = ClassBodyConverter(psiClass, this, modifiers.contains(Modifier.OPEN)).convertBody()
+
                 Class(name, annotations, modifiers, typeParameters, extendsTypes, classBody.baseClassParams, implementsTypes, classBody)
             }
         }.assignPrototype(psiClass)
+    }
+
+    private fun needOpenModifier(psiClass: PsiClass): Boolean {
+        return if (settings.openByDefault)
+            !psiClass.hasModifierProperty(PsiModifier.FINAL) && !psiClass.hasModifierProperty(PsiModifier.ABSTRACT)
+        else
+            referenceSearcher.hasInheritors(psiClass)
     }
 
     private fun convertAnnotationType(psiClass: PsiClass): Class {
@@ -224,7 +237,7 @@ class Converter private(private val elementToConvert: PsiElement,
         val constructorSignature = PrimaryConstructorSignature(Annotations.Empty(), Modifiers.Empty(), parameterList).assignNoPrototype()
 
         // to convert fields and nested types - they are not allowed in Kotlin but we convert them and let user refactor code
-        var classBody = ClassBodyConverter(psiClass, this).convertBody()
+        var classBody = ClassBodyConverter(psiClass, this, false).convertBody()
         classBody = ClassBody(constructorSignature, classBody.baseClassParams, classBody.members, classBody.classObjectMembers, listOf(), classBody.lBrace, classBody.rBrace)
 
         val annotationAnnotation = Annotation(Identifier("annotation").assignNoPrototype(), listOf(), false, false).assignNoPrototype()
@@ -299,11 +312,18 @@ class Converter private(private val elementToConvert: PsiElement,
         return if (convertedType == initializerType) null else convertedType
     }
 
-    public fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>?, constructorConverter: ConstructorConverter?): Member? {
+    public fun convertMethod(method: PsiMethod,
+                             membersToRemove: MutableSet<PsiMember>?,
+                             constructorConverter: ConstructorConverter?,
+                             isInOpenClass: Boolean): Member? {
         val returnType = typeConverter.convertMethodReturnType(method)
 
         val annotations = (convertAnnotations(method) + convertThrows(method)).assignNoPrototype()
+
         var modifiers = convertModifiers(method)
+        if (needOpenModifier(method, isInOpenClass, modifiers)) {
+            modifiers = modifiers.with(Modifier.OPEN)
+        }
 
         val statementsToInsert = ArrayList<Statement>()
         for (parameter in method.getParameterList().getParameters()) {
@@ -390,6 +410,19 @@ class Converter private(private val elementToConvert: PsiElement,
         }
 
         return false
+    }
+
+    private fun needOpenModifier(method: PsiMethod, isInOpenClass: Boolean, modifiers: Modifiers): Boolean {
+        if (!isInOpenClass) return false
+        if (modifiers.contains(Modifier.OVERRIDE) || modifiers.contains(Modifier.ABSTRACT)) return false
+        if (settings.openByDefault) {
+           return !method.hasModifierProperty(PsiModifier.FINAL)
+                  && !method.hasModifierProperty(PsiModifier.PRIVATE)
+                  && !method.hasModifierProperty(PsiModifier.STATIC)
+        }
+        else {
+            return referenceSearcher.hasOverrides(method)
+        }
     }
 
     public fun convertCodeReferenceElement(element: PsiJavaCodeReferenceElement, hasExternalQualifier: Boolean, typeArgsConverted: List<Element>? = null): ReferenceElement {

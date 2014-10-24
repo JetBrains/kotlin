@@ -23,16 +23,22 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiMethodCallExpression
-import java.util.Collections
+import com.intellij.psi.PsiClass
+import com.intellij.psi.search.searches.ClassInheritorsSearch
+import com.intellij.psi.search.searches.OverridingMethodsSearch
 
 public trait ReferenceSearcher {
     fun findVariableUsages(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression>
     fun findMethodCalls(method: PsiMethod, scope: PsiElement): Collection<PsiMethodCallExpression>
+    fun hasInheritors(`class`: PsiClass): Boolean
+    fun hasOverrides(method: PsiMethod): Boolean
 }
 
 public object EmptyReferenceSearcher: ReferenceSearcher {
     override fun findVariableUsages(variable: PsiVariable, scope: PsiElement) = listOf<PsiReferenceExpression>()
     override fun findMethodCalls(method: PsiMethod, scope: PsiElement) = listOf<PsiMethodCallExpression>()
+    override fun hasInheritors(`class`: PsiClass) = false
+    override fun hasOverrides(method: PsiMethod) = false
 }
 
 public object IdeaReferenceSearcher : ReferenceSearcher {
@@ -51,4 +57,8 @@ public object IdeaReferenceSearcher : ReferenceSearcher {
             }
         }.filterNotNull()
     }
+
+    override fun hasInheritors(`class`: PsiClass) = ClassInheritorsSearch.search(`class`, false).any()
+
+    override fun hasOverrides(method: PsiMethod) = OverridingMethodsSearch.search(method, false).any()
 }

@@ -1,5 +1,5 @@
-class B(i: Int) {
-    fun call(): Int {
+open class B(i: Int) {
+    open fun call(): Int {
         return 1
     }
 }

@@ -1,5 +1,4 @@
-// ERROR: This type is final, so it cannot be inherited from
-class Base(nested: Base.Nested) {
+open class Base(nested: Base.Nested) {
 
     class Nested(p: Int) {
         class object {

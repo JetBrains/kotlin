@@ -2162,6 +2162,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/fileOrElement/inheritance/classOneExtendsBaseWithZeroParamsNonEmptyConstructor.java");
             doTest(fileName);
         }
+
+        @TestMetadata("openModifier.java")
+        public void testOpenModifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/fileOrElement/inheritance/openModifier.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/tests/testData/fileOrElement/isOperator")

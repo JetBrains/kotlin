@@ -1,6 +1,5 @@
-// ERROR: This type is final, so it cannot be inherited from
 // ERROR: Unresolved reference: clone
-class Base
+open class Base
 
 class X : Base() {
     override fun hashCode(): Int {

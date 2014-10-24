@@ -1,5 +1,3 @@
-// ERROR: 'test' in 'Base' is final and cannot be overridden
-// ERROR: This type is final, so it cannot be inherited from
 package com.voltvoodoo.saplo4j.model
 
 import java.io.Serializable
@@ -12,8 +10,8 @@ public class Language(protected var code: String) : Serializable {
 }
 
 
-class Base {
-    fun test() {
+open class Base {
+    open fun test() {
     }
 
     override fun toString(): String {

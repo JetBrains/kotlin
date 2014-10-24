@@ -1,16 +1,13 @@
-// ERROR: 'foo' in 'Base' is final and cannot be overridden
-// ERROR: 'bar' in 'Base' is final and cannot be overridden
-// ERROR: This type is final, so it cannot be inherited from
-class Base {
-    public fun foo(s: String?): String? {
+open class Base {
+    public open fun foo(s: String?): String? {
         return ""
     }
 
-    public fun bar(s: String?): String? {
+    public open fun bar(s: String?): String? {
         return if (s != null) s + 1 else null
     }
 
-    public fun zoo(o: Any): String {
+    public open fun zoo(o: Any): String {
         return ""
     }
 }

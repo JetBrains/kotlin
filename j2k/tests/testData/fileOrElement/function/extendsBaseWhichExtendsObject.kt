@@ -1,6 +1,3 @@
-// ERROR: 'clone' in 'Base' is final and cannot be overridden
-// ERROR: 'finalize' in 'Base' is final and cannot be overridden
-// ERROR: This type is final, so it cannot be inherited from
 // ERROR: Unresolved reference: clone
 // ERROR: Unresolved reference: finalize
 package test
@@ -29,7 +26,7 @@ class Test : Base() {
     }
 }
 
-class Base {
+open class Base {
     override fun hashCode(): Int {
         return super.hashCode()
     }
@@ -39,7 +36,7 @@ class Base {
     }
 
     throws(javaClass<CloneNotSupportedException>())
-    protected fun clone(): Any {
+    protected open fun clone(): Any {
         return super.clone()
     }
 
@@ -48,7 +45,7 @@ class Base {
     }
 
     throws(javaClass<Throwable>())
-    protected fun finalize() {
+    protected open fun finalize() {
         super.finalize()
     }
 }

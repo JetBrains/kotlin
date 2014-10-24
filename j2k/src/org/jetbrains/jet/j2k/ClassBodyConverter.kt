@@ -47,7 +47,8 @@ enum class AccessorKind {
 }
 
 class ClassBodyConverter(private val psiClass: PsiClass,
-                         private val converter: Converter) {
+                         private val converter: Converter,
+                         private val isOpenClass: Boolean) {
     private val membersToRemove = HashSet<PsiMember>()
     private val fieldCorrections = HashMap<PsiField, FieldCorrectionInfo>()
 
@@ -110,7 +111,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                                         membersToRemove: MutableSet<PsiMember>,
                                         constructorConverter: ConstructorConverter?): Member? {
         return when (member) {
-            is PsiMethod -> convertMethod(member, membersToRemove, constructorConverter)
+            is PsiMethod -> convertMethod(member, membersToRemove, constructorConverter, isOpenClass)
             is PsiField -> convertField(member, fieldCorrections[member])
             is PsiClass -> convertClass(member)
             is PsiClassInitializer -> convertInitializer(member)

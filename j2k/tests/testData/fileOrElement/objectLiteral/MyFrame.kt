@@ -1,18 +1,15 @@
-// ERROR: This type is final, so it cannot be inherited from
-// ERROR: This type is final, so it cannot be inherited from
-// ERROR: This type is final, so it cannot be inherited from
 package demo
 
 trait WindowListener {
     public fun windowClosing()
 }
 
-class WindowAdapter : WindowListener {
+open class WindowAdapter : WindowListener {
     override fun windowClosing() {
     }
 }
 
-class Frame {
+open class Frame {
     public fun addWindowListener(listener: WindowListener) {
     }
 }
