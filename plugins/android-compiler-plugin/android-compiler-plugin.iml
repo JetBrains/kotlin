@@ -13,6 +13,7 @@
     <orderEntry type="module" module-name="cli" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="backend" scope="PROVIDED" />
+    <orderEntry type="module" module-name="jet.as.java.psi" exported="" scope="PROVIDED" />
   </component>
 </module>
 
