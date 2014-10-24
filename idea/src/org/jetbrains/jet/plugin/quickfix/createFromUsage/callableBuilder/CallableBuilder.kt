@@ -223,9 +223,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val placement = placement
             when {
                 placement is CallablePlacement.NoReceiver -> {
-                    receiverClassDescriptor = null
                     isExtension = false
                     containingElement = placement.containingElement
+                    receiverClassDescriptor = (containingElement as? JetClassOrObject)?.let { currentFileContext[BindingContext.CLASS, it] }
                 }
                 placement is CallablePlacement.WithReceiver -> {
                     receiverClassDescriptor =
@@ -293,6 +293,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 receiverType: JetType?,
                 result: MutableMap<JetType, JetType>
         ) {
+            if (placement is CallablePlacement.NoReceiver) return
+
             val classTypeParameters = receiverType?.getArguments() ?: Collections.emptyList()
             val ownerTypeArguments = (placement as? CallablePlacement.WithReceiver)?.receiverTypeCandidate?.theType?.getArguments()
                                      ?: Collections.emptyList()
