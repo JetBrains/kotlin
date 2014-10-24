@@ -63,6 +63,10 @@ class DelegatingFindMemberUsagesHandler(
         return kotlinHandler.getPrimaryElements()
     }
 
+    override fun getSecondaryElements(): Array<out PsiElement>? {
+        return kotlinHandler.getSecondaryElements()
+    }
+
     override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {
         return kotlinHandler.getFindUsagesOptions(dataContext)
     }
