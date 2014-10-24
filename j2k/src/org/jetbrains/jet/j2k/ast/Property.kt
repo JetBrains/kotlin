@@ -18,8 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
 
-//TODO: rename it to Property
-class Field(
+class Property(
         val identifier: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,

@@ -30,8 +30,8 @@ fun PsiVariable.countWriteAccesses(searcher: ReferenceSearcher, scope: PsiElemen
 fun PsiVariable.hasWriteAccesses(searcher: ReferenceSearcher, scope: PsiElement?): Boolean
         = if (scope != null) searcher.findVariableUsages(this, scope).any { PsiUtil.isAccessedForWriting(it) } else false
 
-fun getDefaultInitializer(field: Field): Expression? {
-    val t = field.type
+fun getDefaultInitializer(property: Property): Expression? {
+    val t = property.type
     val result = if (t.isNullable) {
         LiteralExpression("null")
     }

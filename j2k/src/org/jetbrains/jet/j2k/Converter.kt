@@ -269,7 +269,7 @@ class Converter private(private val elementToConvert: PsiElement,
 
             addUsageProcessing(FieldToPropertyProcessing(field, correction?.name ?: field.getName(), propertyType.isNullable))
 
-            Field(name,
+            Property(name,
                   annotations,
                   modifiers,
                   propertyType,

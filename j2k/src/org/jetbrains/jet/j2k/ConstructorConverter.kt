@@ -344,19 +344,19 @@ class ConstructorConverter(private val psiClass: PsiClass,
     private fun generateArtificialPrimaryConstructor(classBody: ClassBody): ClassBody {
         assert(classBody.primaryConstructorSignature == null)
 
-        val fieldsToInitialize = classBody.members.filterIsInstance(javaClass<Field>()).filter { it.isVal }
+        val propertiesToInitialize = classBody.members.filterIsInstance(javaClass<Property>()).filter { it.isVal }
         for (function in classBody.factoryFunctions) {
             function.body!!.updateGenerator { (codeConverter, block) ->
                 // 2 cases: secondary constructor either calls another constructor or does not call any
                 val newStatements = processFactoryFunctionWithConstructorCall(block) ?:
-                                    insertCallToArtificialPrimary(block, fieldsToInitialize)
+                                    insertCallToArtificialPrimary(block, propertiesToInitialize)
                 Block(newStatements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
             }
         }
 
-        val parameters = fieldsToInitialize.map { field ->
-            val varValModifier = if (field.isVal) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var
-            Parameter(field.identifier, field.type, varValModifier, field.annotations, field.modifiers.filter { it in ACCESS_MODIFIERS }).assignPrototypesFrom(field)
+        val parameters = propertiesToInitialize.map { property ->
+            val varValModifier = if (property.isVal) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var
+            Parameter(property.identifier, property.type, varValModifier, property.annotations, property.modifiers.filter { it in ACCESS_MODIFIERS }).assignPrototypesFrom(property)
         }
 
         val modifiers = Modifiers.Empty()
@@ -364,7 +364,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
         //val modifiers = Modifiers(listOf(Modifier.PRIVATE)).assignNoPrototype()
         val parameterList = ParameterList(parameters).assignNoPrototype()
         val constructorSignature = PrimaryConstructorSignature(Annotations.Empty(), modifiers, parameterList).assignNoPrototype()
-        val updatedMembers = classBody.members.filter { !fieldsToInitialize.contains(it) }
+        val updatedMembers = classBody.members.filter { !propertiesToInitialize.contains(it) }
         return ClassBody(constructorSignature, classBody.baseClassParams, updatedMembers, classBody.classObjectMembers, classBody.factoryFunctions, classBody.lBrace, classBody.rBrace)
     }
 
@@ -406,10 +406,10 @@ class ConstructorConverter(private val psiClass: PsiClass,
         return null
     }
 
-    private fun insertCallToArtificialPrimary(body: Block, fieldsToInitialize: Collection<Field>): List<Statement> {
-        val initializers = HashMap<Field, Expression?>()
-        for (field in fieldsToInitialize) {
-            initializers.put(field, getDefaultInitializer(field))
+    private fun insertCallToArtificialPrimary(body: Block, propertiesToInitialize: Collection<Property>): List<Statement> {
+        val initializers = HashMap<Property, Expression?>()
+        for (property in propertiesToInitialize) {
+            initializers.put(property, getDefaultInitializer(property))
         }
 
         val statements = ArrayList<Statement>()
@@ -419,9 +419,9 @@ class ConstructorConverter(private val psiClass: PsiClass,
                 val assignee = statement.left
                 if (assignee is QualifiedExpression && (assignee.qualifier as? Identifier)?.name == tempValName) {
                     val name = (assignee.identifier as Identifier).name
-                    for (field in fieldsToInitialize) {
-                        if (name == field.identifier.name) {
-                            initializers.put(field, statement.right)
+                    for (property in propertiesToInitialize) {
+                        if (name == property.identifier.name) {
+                            initializers.put(property, statement.right)
                             keepStatement = false
                         }
 
@@ -435,7 +435,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
             }
         }
 
-        val arguments = fieldsToInitialize.map { initializers[it] ?: LiteralExpression("null").assignNoPrototype() }
+        val arguments = propertiesToInitialize.map { initializers[it] ?: LiteralExpression("null").assignNoPrototype() }
         val initializer = MethodCallExpression.buildNotNull(null, className, arguments).assignNoPrototype()
         if (statements.isNotEmpty()) {
             val localVar = LocalVariable(tempValIdentifier(),
