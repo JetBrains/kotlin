@@ -52,7 +52,7 @@ then choose the `tools.jar` in the JDK's `lib` directory.
 If you are not dealing with Android, you may need to disable the Android Plugin in order to compile the project.
 
 Since Kotlin project contains code written in Kotlin itself, you will also need a Kotlin plugin to build the project in IntelliJ IDEA.
-To keep the plugin version in sync with the rest of the team and our [Continuous Integration server](http://teamcity.jetbrains.com/project.html?projectId=Kotlin&tab=projectOverview)
+To keep the plugin version in sync with the rest of the team and our [Continuous Integration server](https://teamcity.jetbrains.com/project.html?projectId=Kotlin&tab=projectOverview)
 you should install the according to the [instructions below](#plugin-for-contributors).
 
 If you want to have an IDEA installation without the Kotlin plugin which is separate to your default IDEA installation which has the Kotlin

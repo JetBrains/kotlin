@@ -19,11 +19,11 @@ In IDEA navigate to: Preferences \-> Plugins \-> Browse Repositories. Enter
 
 Then you should be able to select the Kotlin plugin and Download and Install. The repository above contains reasonable stable builds published approximately every week.
 
-{note:title=If you want to retrieve nightly builds through a plugin repository, use}[http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/.lastSuccessful/updatePlugins.xml]{note}
+{note:title=If you want to retrieve nightly builds through a plugin repository, use}[https://teamcity.jetbrains.com/guestAuth/repository/download/bt345/.lastSuccessful/updatePlugins.xml]{note}
 
 h3. Download the Kotlin plugin manually
 
-Alternatively, you can download the nightly builds of the IDEA Plugin from [our build server|http://teamcity.jetbrains.com/viewType.html?tab=buildTypeStatusDiv&buildTypeId=bt345&guest=1], look under "Artifacts".
+Alternatively, you can download the nightly builds of the IDEA Plugin from [our build server|https://teamcity.jetbrains.com/viewType.html?tab=buildTypeStatusDiv&buildTypeId=bt345&guest=1], look under "Artifacts".
 
 Then navigate to Preferences \-> Plugins \-> Install plugin from disk...
 
@@ -56,7 +56,7 @@ h2. Downloading the Kotlin Runtime
 
 The IDEA plugin already includes a Kotlin runtime. If you want to use Kotlin yourself from the command line or Ant you may need this too (unless you use other build tools like the [Kotlin Maven Plugin|Kotlin Build Tools#Maven]).
 
-Download it from the [build server|http://teamcity.jetbrains.com/viewType.html?tab=buildTypeStatusDiv&buildTypeId=bt345&guest=1], look under "Artifacts".
+Download it from the [build server|https://teamcity.jetbrains.com/viewType.html?tab=buildTypeStatusDiv&buildTypeId=bt345&guest=1], look under "Artifacts".
 
 h2. Common Issues
 

@@ -29,7 +29,7 @@
 
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
         <execute_update
-            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
+            base.url="https://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
             build.zip="${idea.archive.name}"/>
     </target>
 
@@ -196,7 +196,7 @@
         </unzip>
 
         <!-- Bootstrap compiler -->
-        <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
+        <get src="https://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
              dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>
         <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
         <unzip src="dependencies/download/bootstrap-compiler.zip" dest="dependencies/bootstrap-compiler"/>
@@ -371,10 +371,10 @@
     <target name="fetch-annotations">
         <mkdir dir="dependencies/annotations"/>
         <get
-            src="http://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-jdk-annotations.jar"
+            src="https://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-jdk-annotations.jar"
             dest="dependencies/annotations/kotlin-jdk-annotations.jar" usetimestamp="true"/>
         <get
-            src="http://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-android-sdk-annotations.jar"
+            src="https://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-android-sdk-annotations.jar"
             dest="dependencies/annotations/kotlin-android-sdk-annotations.jar" usetimestamp="true"/>
     </target>
 
