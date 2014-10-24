@@ -39,9 +39,6 @@ public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
             val name = if (resolved is JetProperty) {
                 resolved.getName()
             }
-            else if (isRClassField(resolved)) {
-                (resolved as PsiField).getName()
-            }
             else null
             if (name != null) {
                 val parser = ServiceManager.getService(sourceElement.getProject(), javaClass<AndroidUIXmlProcessor>())
