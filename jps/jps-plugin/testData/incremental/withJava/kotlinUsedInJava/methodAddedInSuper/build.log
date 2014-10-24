@@ -1,0 +1,11 @@
+Cleaning output files:
+out/production/module/Super.class
+End of files
+Compiling files:
+src/Super.kt
+End of files
+Compiling files:
+src/Sub.java
+End of files
+COMPILATION FAILED
+java:ERROR:$PROJECT/src/Sub.java:2: y() in Sub cannot override y() in Super; overridden method is final

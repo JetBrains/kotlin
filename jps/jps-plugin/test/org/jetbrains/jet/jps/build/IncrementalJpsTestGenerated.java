@@ -358,6 +358,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("methodAddedInSuper")
+            public void testMethodAddedInSuper() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/methodAddedInSuper/");
+                doTest(fileName);
+            }
+
             @TestMetadata("methodRenamed")
             public void testMethodRenamed() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/methodRenamed/");
@@ -408,6 +414,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             @TestMetadata("funRenamed")
             public void testFunRenamed() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/funRenamed/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("methodAddedInSuper")
+            public void testMethodAddedInSuper() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/methodAddedInSuper/");
                 doTest(fileName);
             }
 
