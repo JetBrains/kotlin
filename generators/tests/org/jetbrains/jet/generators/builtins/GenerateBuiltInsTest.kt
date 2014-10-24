@@ -21,7 +21,7 @@ import org.jetbrains.jet.generators.builtins.generateBuiltIns.generateBuiltIns
 import java.io.StringWriter
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.util.io.FileUtil
-import junit.framework.Assert
+import org.junit.Assert
 import com.intellij.testFramework.UsefulTestCase
 
 class GenerateBuiltInsTest : UsefulTestCase() {

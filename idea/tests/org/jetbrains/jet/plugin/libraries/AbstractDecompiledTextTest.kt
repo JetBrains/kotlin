@@ -22,7 +22,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.testFramework.UsefulTestCase.*
-import junit.framework.Assert.*
+import org.junit.Assert.*
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor
 import com.intellij.openapi.util.text.StringUtil

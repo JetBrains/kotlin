@@ -20,7 +20,7 @@ import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.JetTestCaseBuilder
 import com.intellij.psi.PsiManager
-import junit.framework.Assert
+import org.junit.Assert
 import com.intellij.psi.PsiCompiledFile
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
 import java.io.File

@@ -23,7 +23,7 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import com.intellij.psi.PsiManager
-import junit.framework.Assert
+import org.junit.Assert
 import com.intellij.psi.ClassFileViewProvider
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.PsiCompiledFile

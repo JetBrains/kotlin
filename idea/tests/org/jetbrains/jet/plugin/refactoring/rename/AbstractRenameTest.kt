@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.refactoring.rename
 import com.intellij.refactoring.MultiFileTestCase
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
-import junit.framework.Assert
+import org.junit.Assert
 import com.google.gson.JsonParser
 import com.google.gson.JsonObject
 import com.intellij.refactoring.util.CommonRefactoringUtil

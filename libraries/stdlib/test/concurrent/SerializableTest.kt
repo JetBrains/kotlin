@@ -6,7 +6,7 @@ import java.io.ByteArrayInputStream
 import java.io.ObjectInputStream
 import java.io.Serializable
 import junit.framework.TestCase
-import junit.framework.Assert
+import org.junit.Assert
 
 private class Serial(val name: String) : Serializable {
     override fun toString() = name
