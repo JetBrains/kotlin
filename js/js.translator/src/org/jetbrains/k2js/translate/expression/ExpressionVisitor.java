@@ -186,8 +186,10 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitCallExpression(@NotNull JetCallExpression expression,
-            @NotNull TranslationContext context) {
+    public JsNode visitCallExpression(
+            @NotNull JetCallExpression expression,
+            @NotNull TranslationContext context
+    ) {
         if (shouldBeInlined(expression, context) &&
             BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext())) {
             TemporaryVariable temporaryVariable = context.declareTemporary(null);
