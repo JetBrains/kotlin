@@ -618,7 +618,7 @@ public class JsParser {
 
         // Create it, and set the params.
         //
-        JsFunction toFn = new JsFunction(getScope());
+        JsFunction toFn = new JsFunction(getScope(), "jsCode");
 
         // Creating a function also creates a new scope, which we push onto
         // the scope stack.
