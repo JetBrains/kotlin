@@ -39,8 +39,6 @@ package com.google.gwt.dev.js.rhino;
  * This class allows the creation of nodes, and follows the Factory pattern.
  *
  * @see Node
- * @author Mike McCabe
- * @author Norris Boyd
  */
 public class IRFactory {
 

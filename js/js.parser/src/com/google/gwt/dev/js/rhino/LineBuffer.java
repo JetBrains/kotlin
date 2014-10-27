@@ -49,8 +49,6 @@ import java.io.IOException;
  * TokenStream class, and should not be considered general.
  *
  * Credits to Kipp Hickman and John Bandhauer.
- *
- * @author Mike McCabe
  */
 final class LineBuffer {
     /*

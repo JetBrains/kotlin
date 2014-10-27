@@ -43,8 +43,6 @@ package com.google.gwt.dev.js.rhino;
 
 /**
  * This is the class that implements the runtime.
- *
- * @author Norris Boyd
  */
 
 public class ScriptRuntime {

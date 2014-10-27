@@ -46,9 +46,6 @@ import java.io.ObjectOutputStream;
  * The map does not synchronize any of its operation, so either use
  * it from a single thread or do own synchronization or perform all mutation
  * operations on one thread before passing the map to others
- *
- * @author Igor Bukanov
- *
  */
 
 public class ObjToIntMap implements Serializable {

@@ -46,9 +46,6 @@ import java.io.IOException;
  * package.
  * 
  * @see TokenStream
- * 
- * @author Mike McCabe
- * @author Brendan Eich
  */
 
 public class Parser {
