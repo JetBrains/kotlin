@@ -24,7 +24,7 @@ import com.intellij.psi.compiled.ClsStubBuilder;
 import org.jetbrains.annotations.NotNull;
 
 public class JetClassFileDecompiler extends ClassFileDecompilers.Full {
-    private final ClsStubBuilder stubBuilder = new JetClsStubBuilder();
+    private final ClsStubBuilder stubBuilder = new KotlinClsStubBuilder();
 
     @Override
     public boolean accepts(@NotNull VirtualFile file) {
