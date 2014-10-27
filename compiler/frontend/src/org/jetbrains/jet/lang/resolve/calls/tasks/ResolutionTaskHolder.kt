@@ -23,8 +23,10 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetReferenceExpression
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.jet.storage.StorageManager
 
 public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
+        private val storageManager: StorageManager,
         private val basicCallResolutionContext: BasicCallResolutionContext,
         private val priorityProvider: ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>>,
         private val tracing: TracingStrategy

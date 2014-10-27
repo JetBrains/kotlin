@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 import java.util.List;
@@ -48,6 +49,13 @@ import static org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
 public class TaskPrioritizer {
+
+    @NotNull
+    private final StorageManager storageManager;
+
+    public TaskPrioritizer(@NotNull StorageManager manager) {
+        storageManager = manager;
+    }
 
     public static <D extends CallableDescriptor> void splitLexicallyLocalDescriptors(
             @NotNull Collection<ResolutionCandidate<D>> allDescriptors,
@@ -78,7 +86,7 @@ public class TaskPrioritizer {
     }
 
     @NotNull
-    public static <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasks(
+    public <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasks(
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull TracingStrategy tracing,
@@ -86,7 +94,7 @@ public class TaskPrioritizer {
     ) {
         ReceiverValue explicitReceiver = context.call.getExplicitReceiver();
         ResolutionTaskHolder<D, F> result =
-                new ResolutionTaskHolder<D, F>(context, new MyPriorityProvider<D>(context), tracing);
+                new ResolutionTaskHolder<D, F>(storageManager, context, new MyPriorityProvider<D>(context), tracing);
         TaskPrioritizerContext<D, F> taskPrioritizerContext =
                 new TaskPrioritizerContext<D, F>(name, result, context, context.scope, callableDescriptorCollectors);
 
@@ -344,13 +352,13 @@ public class TaskPrioritizer {
         return false;
     }
 
-    public static <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasksFromCandidates(
+    public <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasksFromCandidates(
             @NotNull BasicCallResolutionContext context,
             @NotNull Collection<ResolutionCandidate<D>> candidates,
             @NotNull TracingStrategy tracing
     ) {
         ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(
-                context, new MyPriorityProvider<D>(context), tracing);
+                storageManager, context, new MyPriorityProvider<D>(context), tracing);
         result.addCandidates(candidates);
         return result.getTasks();
     }

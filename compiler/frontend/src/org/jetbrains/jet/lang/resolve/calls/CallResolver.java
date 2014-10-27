@@ -72,6 +72,9 @@ public class CallResolver {
     private ArgumentTypeResolver argumentTypeResolver;
     @NotNull
     private CallCompleter callCompleter;
+    @NotNull
+    private TaskPrioritizer taskPrioritizer;
+
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
         this.expressionTypingServices = expressionTypingServices;
@@ -97,6 +100,11 @@ public class CallResolver {
         this.callCompleter = callCompleter;
     }
 
+    @Inject
+    public void setTaskPrioritizer(@NotNull TaskPrioritizer taskPrioritizer) {
+        this.taskPrioritizer = taskPrioritizer;
+    }
+
     @NotNull
     public OverloadResolutionResults<VariableDescriptor> resolveSimpleProperty(@NotNull BasicCallResolutionContext context) {
         JetExpression calleeExpression = context.call.getCalleeExpression();
@@ -113,8 +121,7 @@ public class CallResolver {
         }
         TracingStrategy tracing = TracingStrategyImpl.create(nameExpression, context.call);
         List<ResolutionTask<VariableDescriptor, VariableDescriptor>> prioritizedTasks =
-                TaskPrioritizer.<VariableDescriptor, VariableDescriptor>computePrioritizedTasks(
-                        context, referencedName, tracing, callableDescriptorCollectors);
+                taskPrioritizer.<VariableDescriptor, VariableDescriptor>computePrioritizedTasks(context, referencedName, tracing, callableDescriptorCollectors);
         return doResolveCallOrGetCachedResults(context, prioritizedTasks, CallTransformer.PROPERTY_CALL_TRANSFORMER, tracing);
     }
 
@@ -158,7 +165,7 @@ public class CallResolver {
             @NotNull CallableDescriptorCollectors<CallableDescriptor> collectors
     ) {
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
-                TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, tracing, collectors);
+                taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, tracing, collectors);
         return doResolveCallOrGetCachedResults(context, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
     }
 
@@ -209,7 +216,7 @@ public class CallResolver {
             Name name = expression.getReferencedNameAsName();
 
             TracingStrategy tracing = TracingStrategyImpl.create(expression, context.call);
-            prioritizedTasks = TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(
+            prioritizedTasks = taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(
                     context, name, tracing, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
             ResolutionTask.DescriptorCheckStrategy abstractConstructorCheck = new ResolutionTask.DescriptorCheckStrategy() {
                 @Override
@@ -258,7 +265,7 @@ public class CallResolver {
                     Collection<ResolutionCandidate<CallableDescriptor>> candidates =
                             TaskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(
                                     context.scope, constructors, context.call);
-                    prioritizedTasks = TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
+                    prioritizedTasks = taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
                             context, candidates, TracingStrategyImpl.create(functionReference, context.call));
                 }
                 else {
@@ -321,8 +328,7 @@ public class CallResolver {
                 BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.ENABLED, dataFlowInfoForArguments);
 
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
-                TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
-                        basicCallResolutionContext, Collections.singleton(candidate), tracing);
+                taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(basicCallResolutionContext, Collections.singleton(candidate), tracing);
         return doResolveCallOrGetCachedResults(
                 basicCallResolutionContext, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
     }
