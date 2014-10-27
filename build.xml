@@ -221,7 +221,7 @@
         <property name="compiled.stdlib.js" value="stdlib.js" />
         <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData" />
 
-        <kotlin2js output="${output}/${compiled.stdlib.js}" main="noCall">
+        <kotlin2js output="${output}/${compiled.stdlib.js}" noStdlib="true" main="noCall">
             <src>
                 <fileset refid="kotlin.builtin.files" />
                 <resources refid="js.lib.files" />

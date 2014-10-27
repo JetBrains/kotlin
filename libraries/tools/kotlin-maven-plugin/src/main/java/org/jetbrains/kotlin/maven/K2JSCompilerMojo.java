@@ -155,6 +155,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments) throws MojoExecutionException {
         arguments.outputFile = outputFile;
+        arguments.noStdlib = true;
     }
 
     @NotNull

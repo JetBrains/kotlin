@@ -39,7 +39,6 @@ public class  Kotlin2JvmTask : KotlinCompilerBaseTask<K2JVMCompilerArguments>() 
     override val arguments = K2JVMCompilerArguments()
     override val compiler = K2JVMCompiler()
 
-    public var noStdlib: Boolean = false
     public var externalAnnotations: Path? = null
     public var includeRuntime: Boolean = true
 

@@ -18,12 +18,8 @@ package org.jetbrains.jet.buildtools.ant
 
 import org.apache.tools.ant.types.Path
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream
 import org.jetbrains.jet.cli.js.K2JSCompiler
 import java.io.File
-import org.apache.tools.ant.BuildException
-import org.jetbrains.jet.cli.common.ExitCode
-import org.jetbrains.jet.config.Services
 
 /**
  * Kotlin JavaScript compiler Ant task.
@@ -57,6 +53,13 @@ public class Kotlin2JsTask : KotlinCompilerBaseTask<K2JSCompilerArguments>() {
 
     override fun fillSpecificArguments() {
         arguments.outputFile = getPath(output!!)
+
+        arguments.noStdlib = noStdlib
+
+        // TODO: write test
+        library?.let {
+            arguments.libraryFiles = it.list().map { getPath(File(it)) }.copyToArray()
+        }
 
         arguments.outputPrefix = outputPrefix?.canonicalPath
         arguments.outputPostfix = outputPostfix?.canonicalPath

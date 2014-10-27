@@ -87,6 +87,11 @@ public class AntTaskJsTest extends AntTaskBaseTest {
     }
 
     @Test
+    public void simpleWithStdlib() throws Exception {
+        doJsAntTest();
+    }
+
+    @Test
     public void simpleWithMainFQArgs() throws Exception {
         doJsAntTest();
     }

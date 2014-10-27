@@ -61,6 +61,8 @@ public abstract class KotlinCompilerBaseTask<T : CommonCompilerArguments> : Task
     public var verbose: Boolean = false
     public var printVersion: Boolean = false
 
+    public var noStdlib: Boolean = false
+
     public val additionalArguments: MutableList<Commandline.Argument> = arrayListOf()
 
     public fun createSrc(): Path {
