@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/nativeDeclarations.kt
+-output
+$TEMP_DIR$/out.js
