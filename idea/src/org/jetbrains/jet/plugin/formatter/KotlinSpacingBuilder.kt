@@ -24,6 +24,9 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.jet.plugin.JetLanguage
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.lang.ASTNode
+import com.intellij.formatting.DependentSpacingRule.Trigger
+import com.intellij.formatting.DependentSpacingRule.Anchor
+import com.intellij.openapi.util.TextRange
 
 class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
     class SpacingNodeBlock(node: ASTNode): AbstractBlock(node, null, null) {
@@ -77,6 +80,18 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
             }
         }
 
+        fun emptyLinesIfLineBreakInLeft(emptyLines: Int) {
+            newRule {(parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
+                val dependentSpacingRule = DependentSpacingRule(Trigger.HAS_LINE_FEEDS).registerData(Anchor.MIN_LINE_FEEDS, emptyLines + 1)
+                LineFeedDependantSpacing(
+                        0, 0,
+                        minimumLineFeeds = 1,
+                        keepLineBreaks = codeStyleSettings.KEEP_LINE_BREAKS,
+                        keepBlankLines = codeStyleSettings.KEEP_BLANK_LINES_IN_DECLARATIONS,
+                        dependency = left.getTextRange(), rule = dependentSpacingRule)
+            }
+        }
+
         fun spacing(spacing: Spacing) {
             newRule { (parent, left, right) -> spacing }
         }
@@ -116,6 +131,20 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
         val builder = CustomSpacingBuilder()
         builder.init()
         builders.add(builder)
+    }
+
+    private class LineFeedDependantSpacing(
+            minSpaces: Int,
+            maxSpaces: Int,
+            val minimumLineFeeds: Int,
+            keepLineBreaks: Boolean,
+            keepBlankLines: Int,
+            dependency: TextRange,
+            rule: DependentSpacingRule) : DependantSpacingImpl(minSpaces, maxSpaces, dependency, keepLineBreaks, keepBlankLines, rule) {
+        override fun getMinLineFeeds(): Int {
+            val superMin = super.getMinLineFeeds()
+            return if (superMin == 0) minimumLineFeeds else superMin
+        }
     }
 }
 

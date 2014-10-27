@@ -51,26 +51,13 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
     return rules(settings) {
         custom {
-            val emptyLineIfLeftMultiline = { (parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
-                val multilineLF = 2
-                val singleLineLF = 1
-
-                val dependentSpacingRule = DependentSpacingRule(Trigger.HAS_LINE_FEEDS).registerData(Anchor.MIN_LINE_FEEDS, multilineLF)
-                LineFeedDependantSpacing(
-                        0, 0,
-                        minimumLineFeeds = singleLineLF,
-                        keepLineBreaks = settings.KEEP_LINE_BREAKS,
-                        keepBlankLines = settings.KEEP_BLANK_LINES_IN_DECLARATIONS,
-                        dependency = left.getTextRange(), rule = dependentSpacingRule)
-            }
-
-            inPosition(left = CLASS, right = CLASS).customRule(emptyLineIfLeftMultiline)
-            inPosition(left = FUN, right = FUN).customRule(emptyLineIfLeftMultiline)
-            inPosition(left = PROPERTY, right = FUN).customRule(emptyLineIfLeftMultiline)
-            inPosition(left = FUN, right = PROPERTY).customRule(emptyLineIfLeftMultiline)
+            inPosition(left = CLASS, right = CLASS).emptyLinesIfLineBreakInLeft(1)
+            inPosition(left = FUN, right = FUN).emptyLinesIfLineBreakInLeft(1)
+            inPosition(left = PROPERTY, right = FUN).emptyLinesIfLineBreakInLeft(1)
+            inPosition(left = FUN, right = PROPERTY).emptyLinesIfLineBreakInLeft(1)
 
             // Case left for alternative constructors
-            inPosition(left = FUN, right = CLASS).customRule(emptyLineIfLeftMultiline)
+            inPosition(left = FUN, right = CLASS).emptyLinesIfLineBreakInLeft(1)
         }
 
         simple {
@@ -88,7 +75,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             before(FUN).lineBreakInCode()
             before(PROPERTY).lineBreakInCode()
-
 
             // =============== Spacing ================
             betweenInside(LBRACE, RBRACE, CLASS_BODY).spaces(0)
@@ -301,19 +287,5 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             // if when entry has block, spacing after arrow should be set by lbrace rule
             aroundInside(ARROW, WHEN_ENTRY).spaceIf(jetSettings.SPACE_AROUND_WHEN_ARROW)
         }
-    }
-}
-
-public class LineFeedDependantSpacing(
-        minSpaces: Int,
-        maxSpaces: Int,
-        val minimumLineFeeds: Int,
-        keepLineBreaks: Boolean,
-        keepBlankLines: Int,
-        dependency: TextRange,
-        rule: DependentSpacingRule) : DependantSpacingImpl(minSpaces, maxSpaces, dependency, keepLineBreaks, keepBlankLines, rule) {
-    override fun getMinLineFeeds(): Int {
-        val superMin = super.getMinLineFeeds()
-        return if (superMin == 0) minimumLineFeeds else superMin
     }
 }
