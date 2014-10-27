@@ -61,6 +61,12 @@ public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("FunctionTypes")
+    public void testFunctionTypes() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/libraries/decompiledText/FunctionTypes/");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedClasses")
     public void testNestedClasses() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/libraries/decompiledText/NestedClasses/");
