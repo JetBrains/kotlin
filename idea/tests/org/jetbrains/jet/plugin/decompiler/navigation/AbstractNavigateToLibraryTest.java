@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries
+package org.jetbrains.jet.plugin.decompiler.navigation;
 
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.resolve.name.ClassId
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-public trait ResolverForDecompiler {
-    public fun resolveTopLevelClass(classId: ClassId): ClassDescriptor?
-
-    public fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor>
+public abstract class AbstractNavigateToLibraryTest extends LightCodeInsightFixtureTestCase {
+    protected static final String PACKAGE = "testData.libraries";
+    protected static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries/navigation";
 }

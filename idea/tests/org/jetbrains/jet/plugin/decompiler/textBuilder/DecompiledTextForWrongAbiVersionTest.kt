@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries
+package org.jetbrains.jet.plugin.decompiler.textBuilder
 
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
@@ -27,6 +27,8 @@ import java.io.File
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
+import org.jetbrains.jet.plugin.decompiler.navigation.NavigateToDecompiledLibraryTest
+import org.jetbrains.jet.plugin.decompiler.INCOMPATIBLE_ABI_VERSION_COMMENT
 
 public class DecompiledTextForWrongAbiVersionTest : JetLightCodeInsightFixtureTestCase() {
 

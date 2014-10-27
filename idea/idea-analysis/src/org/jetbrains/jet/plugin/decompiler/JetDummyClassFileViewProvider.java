@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries;
+package org.jetbrains.jet.plugin.decompiler;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;

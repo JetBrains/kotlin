@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries
+package org.jetbrains.jet.plugin.decompiler
 
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.openapi.vfs.VirtualFile

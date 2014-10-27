@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries
+package org.jetbrains.jet.plugin.decompiler.textBuilder
 
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor

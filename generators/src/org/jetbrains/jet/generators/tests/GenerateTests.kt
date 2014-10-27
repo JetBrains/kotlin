@@ -95,7 +95,6 @@ import org.jetbrains.jet.plugin.navigation.AbstractKotlinGotoTest
 import org.jetbrains.jet.plugin.AbstractExpressionSelectionTest
 import org.jetbrains.jet.plugin.refactoring.move.AbstractJetMoveTest
 import org.jetbrains.jet.cfg.AbstractDataFlowTest
-import org.jetbrains.jet.plugin.libraries.AbstractDecompiledTextTest
 import org.jetbrains.jet.plugin.imports.AbstractOptimizeImportsTest
 import org.jetbrains.jet.plugin.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.jet.plugin.stubs.AbstractStubBuilderTest
@@ -129,6 +128,7 @@ import org.jetbrains.jet.resolve.AbstractReferenceResolveInJavaTest
 import org.jetbrains.k2js.test.semantics.AbstractBridgeTest
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterForWebDemoTest
+import org.jetbrains.jet.plugin.decompiler.textBuilder.AbstractDecompiledTextTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")

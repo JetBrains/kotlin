@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries
+package org.jetbrains.jet.plugin.decompiler
 
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
@@ -31,6 +31,7 @@ import com.intellij.psi.PsiJavaFile
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
+import org.jetbrains.jet.plugin.decompiler.navigation.NavigateToDecompiledLibraryTest
 
 public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() {
 

@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
-import org.jetbrains.jet.plugin.libraries.DecompiledNavigationUtils
+import org.jetbrains.jet.plugin.decompiler.navigation.DecompiledNavigationUtils
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver
 import java.util.HashSet
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor

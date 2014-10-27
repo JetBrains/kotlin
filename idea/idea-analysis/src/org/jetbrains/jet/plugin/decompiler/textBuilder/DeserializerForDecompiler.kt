@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries
+package org.jetbrains.jet.plugin.decompiler.textBuilder
 
 import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.descriptors.serialization.ClassDataFinder
@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.descriptors.serialization.ClassData
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.jet.plugin.decompiler.isKotlinCompiledFile
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)

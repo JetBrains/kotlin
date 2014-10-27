@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries
+package org.jetbrains.jet.plugin.decompiler.textBuilder
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile

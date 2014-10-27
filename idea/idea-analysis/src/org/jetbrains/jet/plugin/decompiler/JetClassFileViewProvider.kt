@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries
+package org.jetbrains.jet.plugin.decompiler
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
@@ -24,6 +24,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.jet.plugin.JetLanguage
 import kotlin.properties.Delegates
+import org.jetbrains.jet.plugin.decompiler.textBuilder.buildDecompiledText
 
 public class JetClassFileViewProvider(
         manager: PsiManager,

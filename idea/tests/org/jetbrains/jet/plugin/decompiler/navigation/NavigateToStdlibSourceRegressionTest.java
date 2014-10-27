@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries;
+package org.jetbrains.jet.plugin.decompiler.navigation;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.ProjectDescriptorWithStdlibSources;
-
-import java.io.File;
-import java.io.IOException;
 
 public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegressionTest {
     /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries;
+package org.jetbrains.jet.plugin.decompiler.navigation;
 
 import com.google.common.collect.Maps;
 import com.intellij.openapi.editor.Document;
@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
+import org.jetbrains.jet.plugin.decompiler.JetClsFile;
 
 import java.util.Map;
 
@@ -155,7 +156,7 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
     }
 
     @NotNull
-    /*package*/ static VirtualFile getClassFile(
+    public static VirtualFile getClassFile(
             @NotNull String packageName,
             @NotNull String className,
             @NotNull Module module
@@ -170,7 +171,7 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
     }
 
     @Nullable
-    /*package*/ static VirtualFile findTestLibraryRoot(@NotNull Module module) {
+    public static VirtualFile findTestLibraryRoot(@NotNull Module module) {
         for (OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
             if (orderEntry instanceof LibraryOrderEntry) {
                 return findTestLibraryRoot((LibraryOrderEntry) orderEntry);

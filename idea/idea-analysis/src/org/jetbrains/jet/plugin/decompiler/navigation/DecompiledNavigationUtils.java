@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries;
+package org.jetbrains.jet.plugin.decompiler.navigation;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -31,6 +31,8 @@ import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
+import org.jetbrains.jet.plugin.decompiler.DecompilerPackage;
+import org.jetbrains.jet.plugin.decompiler.JetClsFile;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 
@@ -58,7 +60,7 @@ public final class DecompiledNavigationUtils {
         DeclarationDescriptor effectiveReferencedDescriptor = getEffectiveReferencedDescriptor(referencedDescriptor);
         VirtualFile virtualFile = findVirtualFileContainingDescriptor(project, effectiveReferencedDescriptor);
 
-        if (virtualFile == null || !LibrariesPackage.isKotlinCompiledFile(virtualFile)) return null;
+        if (virtualFile == null || !DecompilerPackage.isKotlinCompiledFile(virtualFile)) return null;
 
         PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
         if (!(psiFile instanceof JetClsFile)) {

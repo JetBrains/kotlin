@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries;
+package org.jetbrains.jet.plugin.decompiler;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
@@ -28,7 +28,7 @@ public class JetClassFileDecompiler extends ClassFileDecompilers.Full {
 
     @Override
     public boolean accepts(@NotNull VirtualFile file) {
-        return LibrariesPackage.isKotlinCompiledFile(file);
+        return DecompilerPackage.isKotlinCompiledFile(file);
     }
 
     @NotNull
@@ -40,6 +40,6 @@ public class JetClassFileDecompiler extends ClassFileDecompilers.Full {
     @NotNull
     @Override
     public FileViewProvider createFileViewProvider(@NotNull VirtualFile file, @NotNull PsiManager manager, boolean physical) {
-        return new JetClassFileViewProvider(manager, file, physical, LibrariesPackage.isKotlinInternalCompiledFile(file));
+        return new JetClassFileViewProvider(manager, file, physical, DecompilerPackage.isKotlinInternalCompiledFile(file));
     }
 }

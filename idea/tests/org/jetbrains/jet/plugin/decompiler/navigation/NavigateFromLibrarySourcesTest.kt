@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries
+package org.jetbrains.jet.plugin.decompiler.navigation
 
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor

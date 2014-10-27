@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries;
+package org.jetbrains.jet.plugin.decompiler.navigation;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -69,7 +69,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.plugin.libraries.MemberMatching.*;
+import static org.jetbrains.jet.plugin.decompiler.navigation.MemberMatching.*;
 
 public class JetSourceNavigationHelper {
     private static boolean forceResolve = false;
@@ -361,7 +361,7 @@ public class JetSourceNavigationHelper {
     }
 
     @TestOnly
-    static void setForceResolve(boolean forceResolve) {
+    public static void setForceResolve(boolean forceResolve) {
         JetSourceNavigationHelper.forceResolve = forceResolve;
     }
 

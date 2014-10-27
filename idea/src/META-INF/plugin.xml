@@ -396,8 +396,8 @@
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetAnnotationsIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelObjectShortNameIndex"/>
 
-    <psi.classFileDecompiler implementation="org.jetbrains.jet.plugin.libraries.JetClassFileDecompiler"/>
-    <psi.classFileDecompiler implementation="org.jetbrains.jet.plugin.libraries.JetDecompilerForWrongAbiVersion"/>
+    <psi.classFileDecompiler implementation="org.jetbrains.jet.plugin.decompiler.JetClassFileDecompiler"/>
+    <psi.classFileDecompiler implementation="org.jetbrains.jet.plugin.decompiler.JetDecompilerForWrongAbiVersion"/>
 
     <fileBasedIndex implementation="org.jetbrains.jet.plugin.versions.KotlinAbiVersionIndex"/>
     <fileBasedIndex implementation="org.jetbrains.jet.plugin.vfilefinder.KotlinClassFileIndex"/>

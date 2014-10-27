@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries
+package org.jetbrains.jet.plugin.decompiler
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.impl.compiled.ClsFileImpl
@@ -23,6 +23,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import kotlin.properties.Delegates
+import org.jetbrains.jet.plugin.decompiler.textBuilder.descriptorToKey
 
 public class JetClsFile(val provider: JetClassFileViewProvider) : ClsFileImpl(provider) {
 
