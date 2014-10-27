@@ -168,7 +168,7 @@ fun createMoveUsageInfo(
 
 public fun JetNamedDeclaration.getFileNameAfterMove(): String? {
     return (getContainingFile() as? JetFile)?.let { file ->
-        if (file.getDeclarations().size > 1) "${getName()}.${JetFileType.INSTANCE.getDefaultExtension()}" else file.getName()
+        if (file.getDeclarations().size > 1) "${getName()}.${JetFileType.EXTENSION}" else file.getName()
     }
 }
 

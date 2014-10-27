@@ -24,7 +24,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class JetFileType extends LanguageFileType {
+    public static final String EXTENSION = "kt";
     public static final JetFileType INSTANCE = new JetFileType();
+
     private final NotNullLazyValue<Icon> myIcon = new NotNullLazyValue<Icon>() {
         @NotNull
         @Override
@@ -52,7 +54,7 @@ public class JetFileType extends LanguageFileType {
     @Override
     @NotNull
     public String getDefaultExtension() {
-        return "kt";
+        return EXTENSION;
     }
 
     @Override

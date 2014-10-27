@@ -36,7 +36,7 @@ public class JsHeaderLibraryDetectionUtil {
                 @Override
                 protected boolean accept(VirtualFile file) {
                     String extension = file.getExtension();
-                    return extension != null && extension.equals(JetFileType.INSTANCE.getDefaultExtension());
+                    return extension != null && extension.equals(JetFileType.EXTENSION);
                 }
             };
 
