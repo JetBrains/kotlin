@@ -328,6 +328,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NewLineForRBrace.after.kt")
+        public void testNewLineForRBrace() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/NewLineForRBrace.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Parameters.after.kt")
         public void testParameters() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/Parameters.after.kt");

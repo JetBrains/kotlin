@@ -1,5 +1,4 @@
-enum class E1 { F S T
-}
+enum class E1 { F S T }
 
 enum class E2 {
     F S T
@@ -15,8 +14,7 @@ enum class E4 {
     S T
 }
 
-enum class E5 { F S {} T
-}
+enum class E5 { F S {} T }
 
 enum class E6 {
     F S T {}
