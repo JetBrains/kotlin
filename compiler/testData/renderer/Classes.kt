@@ -1,9 +1,10 @@
 package rendererTest
 
 annotation class TheAnnotation
+annotation class AnotherAnnotation
 
 [TheAnnotation]
-public open class TheClass<out T : Int, X> {
+public open class TheClass<out T : Int, X> [AnotherAnnotation] () {
   private val privateVal: Int = 5
 
   val shouldBeFinal: Int = 5
@@ -31,8 +32,10 @@ public trait TwoUpperBounds<T> where T : Number, T : Any
 //package rendererTest
 //internal final annotation class TheAnnotation : kotlin.Annotation defined in rendererTest
 //public constructor TheAnnotation() defined in rendererTest.TheAnnotation
+//internal final annotation class AnotherAnnotation : kotlin.Annotation defined in rendererTest
+//public constructor AnotherAnnotation() defined in rendererTest.AnotherAnnotation
 //rendererTest.TheAnnotation public open class TheClass<out T : kotlin.Int, X> defined in rendererTest
-//public constructor TheClass<out T : kotlin.Int, X>() defined in rendererTest.TheClass
+//rendererTest.AnotherAnnotation public constructor TheClass<out T : kotlin.Int, X>() defined in rendererTest.TheClass
 //<out T : kotlin.Int> defined in rendererTest.TheClass
 //<X> defined in rendererTest.TheClass
 //private final val privateVal: kotlin.Int defined in rendererTest.TheClass

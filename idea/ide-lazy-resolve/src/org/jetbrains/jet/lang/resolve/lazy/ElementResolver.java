@@ -234,10 +234,10 @@ public abstract class ElementResolver {
     private static void annotationAdditionalResolve(ResolveSession resolveSession, JetAnnotationEntry jetAnnotationEntry) {
         Annotations annotations = null;
 
-        JetDeclaration declaration = PsiTreeUtil.getParentOfType(jetAnnotationEntry, JetDeclaration.class);
+        JetModifierList modifierList = PsiTreeUtil.getParentOfType(jetAnnotationEntry, JetModifierList.class);
+        JetDeclaration declaration = PsiTreeUtil.getParentOfType(modifierList, JetDeclaration.class);
         if (declaration != null) {
-            Annotated descriptor = resolveSession.resolveToDescriptor(declaration);
-            annotations = descriptor.getAnnotations();
+            annotations = getAnnotationsByDeclaration(resolveSession, modifierList, declaration);
         }
         else {
             JetFileAnnotationList fileAnnotationList = PsiTreeUtil.getParentOfType(jetAnnotationEntry, JetFileAnnotationList.class);
@@ -250,6 +250,20 @@ public abstract class ElementResolver {
             AnnotationResolver.resolveAnnotationsArguments(annotations, resolveSession.getTrace());
             ForceResolveUtil.forceResolveAllContents(annotations);
         }
+    }
+
+    private static Annotations getAnnotationsByDeclaration(
+            ResolveSession resolveSession,
+            JetModifierList modifierList,
+            JetDeclaration declaration
+    ) {
+        Annotations annotations;Annotated descriptor = resolveSession.resolveToDescriptor(declaration);
+        if (declaration instanceof JetClass && modifierList == ((JetClass) declaration).getPrimaryConstructorModifierList()) {
+            descriptor = ((ClassDescriptor)descriptor).getUnsubstitutedPrimaryConstructor();
+            assert descriptor != null : "No constructor found: " + declaration.getText();
+        }
+        annotations = descriptor.getAnnotations();
+        return annotations;
     }
 
     private static void typeParameterAdditionalResolve(KotlinCodeAnalyzer analyzer, JetTypeParameter typeParameter) {
