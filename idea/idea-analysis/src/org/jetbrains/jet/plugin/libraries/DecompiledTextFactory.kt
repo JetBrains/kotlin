@@ -30,6 +30,8 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject
 import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass
 import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.lang.types.isFlexible
 
 public fun buildDecompiledText(
         classFile: VirtualFile,
@@ -53,9 +55,12 @@ public fun buildDecompiledText(
 }
 
 private val DECOMPILED_COMMENT = "/* compiled code */"
+private val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
+
 public val descriptorRendererForDecompiler: DescriptorRenderer = DescriptorRendererBuilder()
         .setWithDefinedIn(false)
         .setClassWithPrimaryConstructor(true)
+        .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)
         .build()
 
 //TODO: should use more accurate way to identify descriptors
@@ -98,6 +103,13 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
             descriptorRendererForDecompiler.render(descriptor).replace("= ...", "= " + DECOMPILED_COMMENT)
         builder.append(header)
         var endOffset = builder.length()
+
+        if (descriptor is CallableDescriptor) {
+            //NOTE: assuming that only return types can be flexible
+            if (descriptor.getReturnType().isFlexible()) {
+                builder.append(" ").append(FLEXIBLE_TYPE_COMMENT)
+            }
+        }
 
         if (descriptor is FunctionDescriptor || descriptor is PropertyDescriptor) {
             if ((descriptor as MemberDescriptor).getModality() != Modality.ABSTRACT) {
