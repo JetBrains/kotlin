@@ -38,12 +38,16 @@ import org.jetbrains.jet.j2k.ReferenceSearcherImpl
 import junit.framework.TestCase
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.jet.j2k.translateToKotlin
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import org.jetbrains.jet.JetTestCaseBuilder
 
 public abstract class AbstractJavaToKotlinConverterTest() : LightCodeInsightFixtureTestCase() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
 
     override fun setUp() {
         super.setUp()
+
+        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory())
 
         fun addFile(fileName: String, packageName: String) {
             val code = FileUtil.loadFile(File("j2k/tests/testData/$fileName"), true)
@@ -57,6 +61,11 @@ public abstract class AbstractJavaToKotlinConverterTest() : LightCodeInsightFixt
             addFile("KotlinApi.kt", "kotlinApi")
             addFile("JavaApi.java", "javaApi")
         }
+    }
+
+    override fun tearDown() {
+        VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory())
+        super<LightCodeInsightFixtureTestCase>.tearDown()
     }
 
     public fun doTest(javaPath: String) {
