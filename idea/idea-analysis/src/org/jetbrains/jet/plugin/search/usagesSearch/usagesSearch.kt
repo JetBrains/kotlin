@@ -77,10 +77,16 @@ public data class UsagesSearchLocation(
 
 public data class UsagesSearchTarget<out T : PsiElement>(
         val element: T,
-        val scope: SearchScope,
+        private val scope: SearchScope,
         val location: UsagesSearchLocation = UsagesSearchLocation.DEFAULT,
         val restrictByTargetScope: Boolean = true
-)
+) {
+    fun <U: PsiElement> retarget(element: U) =
+            UsagesSearchTarget(element, scope, location, restrictByTargetScope)
+
+    val effectiveScope: SearchScope
+        get() = if (restrictByTargetScope) scope and element.effectiveScope else scope
+}
 
 public trait UsagesSearchFilter {
     class object {
@@ -150,7 +156,7 @@ public class KotlinPsiSearchHelper(private val project: Project): PsiSearchHelpe
     public fun processFilesWithText(item: UsagesSearchRequestItem, consumer: Processor<PsiReference>): Boolean {
         return item.words.all { word ->
             val textProcessor = ResultTextProcessorImpl(item, consumer)
-            processElementsWithWord(textProcessor, item.target.scope, word, UsageSearchContext.IN_CODE, true)
+            processElementsWithWord(textProcessor, item.target.effectiveScope, word, UsageSearchContext.IN_CODE, true)
         }
     }
 }
@@ -173,12 +179,6 @@ public object UsagesSearch: QueryFactory<PsiReference, UsagesSearchRequest>() {
 }
 
 fun UsagesSearchRequest.search(): Query<PsiReference> = UsagesSearch.search(this)
-
-fun <A: PsiElement, B: PsiElement> UsagesSearchTarget<A>.retarget(element: B) =
-        UsagesSearchTarget(element, scope, location, restrictByTargetScope)
-
-val <T: PsiElement> UsagesSearchTarget<T>.effectiveScope: SearchScope
-    get() = if (restrictByTargetScope) scope and element.effectiveScope else scope
 
 val PsiElement.effectiveScope: SearchScope
     get() = PsiSearchHelper.SERVICE.getInstance(getProject())!!.getUseScope(this)

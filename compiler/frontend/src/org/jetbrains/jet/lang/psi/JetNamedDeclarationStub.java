@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -89,9 +90,12 @@ abstract class JetNamedDeclarationStub<T extends PsiJetStubWithFqName> extends J
     @NotNull
     @Override
     public SearchScope getUseScope() {
-        JetElement enclosingBlock = JetPsiUtil.getEnclosingElementForLocalDeclaration(this);
-        if (enclosingBlock != null) {
-            return new LocalSearchScope(enclosingBlock);
+        JetElement enclosingBlock = JetPsiUtil.getEnclosingElementForLocalDeclaration(this, false);
+        if (enclosingBlock != null) return new LocalSearchScope(enclosingBlock);
+
+        if (hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+            JetElement containingClass = PsiTreeUtil.getParentOfType(this, JetClassOrObject.class);
+            if (containingClass != null) return new LocalSearchScope(containingClass);
         }
 
         return super.getUseScope();

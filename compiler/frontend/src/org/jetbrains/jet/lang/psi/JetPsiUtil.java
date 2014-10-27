@@ -819,12 +819,19 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetElement getEnclosingElementForLocalDeclaration(@NotNull JetDeclaration declaration) {
-        if (declaration instanceof JetTypeParameter) {
+        return getEnclosingElementForLocalDeclaration(declaration, true);
+    }
+
+    @Nullable
+    public static JetElement getEnclosingElementForLocalDeclaration(@NotNull JetDeclaration declaration, boolean skipParameters) {
+        if (declaration instanceof JetTypeParameter && skipParameters) {
             declaration = PsiTreeUtil.getParentOfType(declaration, JetNamedDeclaration.class);
         }
         else if (declaration instanceof JetParameter) {
+            if (((JetParameter) declaration).getValOrVarNode() != null) return null;
+
             PsiElement parent = declaration.getParent();
-            if (parent != null && parent.getParent() instanceof JetNamedFunction) {
+            if (skipParameters && parent != null && parent.getParent() instanceof JetNamedFunction) {
                 declaration = (JetNamedFunction) parent.getParent();
             }
         }
