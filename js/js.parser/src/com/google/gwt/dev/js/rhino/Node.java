@@ -214,16 +214,8 @@ public class Node implements Cloneable {
         return this.intDatum;
     }
 
-    public boolean hasChildren() {
-        return first != null;
-    }
-
     public Node getFirstChild() {
         return first;
-    }
-
-    public Node getLastChild() {
-        return last;
     }
 
     public Node getNext() {
@@ -238,33 +230,12 @@ public class Node implements Cloneable {
         return c;
     }
 
-
-    public Node getChildBefore(Node child) {
-        if (child == first)
-            return null;
-        Node n = first;
-        while (n.next != child) {
-            n = n.next;
-            if (n == null)
-                throw new RuntimeException("node is not a child");
-        }
-        return n;
-    }
-
     public Node getLastSibling() {
         Node n = this;
         while (n.next != null) {
             n = n.next;
         }
         return n;
-    }
-
-    public void addChildToFront(Node child) {
-        child.next = first;
-        first = child;
-        if (last == null) {
-            last = child;
-        }
     }
 
     public void addChildToBack(Node child) {
@@ -277,15 +248,6 @@ public class Node implements Cloneable {
         last = child;
     }
 
-    public void addChildrenToFront(Node children) {
-        Node lastSib = children.getLastSibling();
-        lastSib.next = first;
-        first = children;
-        if (last == null) {
-            last = lastSib;
-        }
-    }
-
     public void addChildrenToBack(Node children) {
         if (last != null) {
             last.next = children;
@@ -294,67 +256,6 @@ public class Node implements Cloneable {
         if (first == null) {
             first = children;
         }
-    }
-
-    /**
-     * Add 'child' before 'node'.
-     */
-    public void addChildBefore(Node newChild, Node node) {
-        if (newChild.next != null)
-            throw new RuntimeException(
-                      "newChild had siblings in addChildBefore");
-        if (first == node) {
-            newChild.next = first;
-            first = newChild;
-            return;
-        }
-        Node prev = getChildBefore(node);
-        addChildAfter(newChild, prev);
-    }
-
-    /**
-     * Add 'child' after 'node'.
-     */
-    public void addChildAfter(Node newChild, Node node) {
-        if (newChild.next != null)
-            throw new RuntimeException(
-                      "newChild had siblings in addChildAfter");
-        newChild.next = node.next;
-        node.next = newChild;
-        if (last == node)
-            last = newChild;
-    }
-
-    public void removeChild(Node child) {
-        Node prev = getChildBefore(child);
-        if (prev == null)
-            first = first.next;
-        else
-            prev.next = child.next;
-        if (child == last) last = prev;
-        child.next = null;
-    }
-
-    public void replaceChild(Node child, Node newChild) {
-        newChild.next = child.next;
-        if (child == first) {
-            first = newChild;
-        } else {
-            Node prev = getChildBefore(child);
-            prev.next = newChild;
-        }
-        if (child == last)
-            last = newChild;
-        child.next = null;
-    }
-
-    public void replaceChildAfter(Node prevChild, Node newChild) {
-        Node child = prevChild.next;
-        newChild.next = child.next;
-        prevChild.next = newChild;
-        if (child == last)
-            last = newChild;
-        child.next = null;
     }
 
     public static final int
@@ -458,16 +359,6 @@ public class Node implements Cloneable {
         return props.getObject(propType);
     }
 
-    public int getIntProp(int propType, int defaultValue) {
-        if (props == null)
-            return defaultValue;
-        return props.getInt(propType, defaultValue);
-    }
-
-    public int getExistingIntProp(int propType) {
-        return props.getExistingInt(propType);
-    }
-
     public void putProp(int propType, Object prop) {
         if (prop == null) {
             removeProp(propType);
@@ -561,37 +452,6 @@ public class Node implements Cloneable {
             || this.getIntDatum() == ((Node) o).getIntDatum();
     }
 
-    public Node cloneNode() {
-        Node result;
-        try {
-            result = (Node) super.clone();
-            result.next = null;
-            result.first = null;
-            result.last = null;
-        }
-        catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        return result;
-    }
-
-    public Node cloneTree() {
-        Node result = cloneNode();
-        for (Node n2 = getFirstChild(); n2 != null; n2 = n2.getNext()) {
-            Node n2clone = n2.cloneTree();
-            if (result.last != null) {
-                result.last.next = n2clone;
-            }
-            if (result.first == null) {
-                result.first = n2clone;
-            }
-            result.last = n2clone;
-        }
-        return result;
-    }
-
-
-
     @Override
     public String toString() {
         if (Context.printTrees) {
@@ -661,68 +521,8 @@ public class Node implements Cloneable {
         return null;
     }
 
-    public String toStringTree() {
-        return toStringTreeHelper(0);
-    }
-
-
-    private String toStringTreeHelper(int level) {
-        if (Context.printTrees) {
-            StringBuffer s = new StringBuffer();
-            for (int i=0; i < level; i++) {
-                s.append("    ");
-            }
-            s.append(toString());
-            s.append('\n');
-            for (Node cursor = getFirstChild(); cursor != null;
-                 cursor = cursor.getNext())
-            {
-                Node n = cursor;
-                s.append(n.toStringTreeHelper(level+1));
-            }
-            return s.toString();
-        }
-        return "";
-    }
-
-    /**
-     * Checks if the subtree under this node is the same as another subtree.
-     * Returns null if it's equal, or a message describing the differences.
-     */
-    public String checkTreeEquals(Node node2) {
-        boolean eq = false;
-
-        if (type == node2.getType() &&
-            getChildCount() == node2.getChildCount() &&
-            getClass() == node2.getClass()) {
-
-            eq = this.equals(node2);
-        }
-
-        if (!eq) {
-            return "Node tree inequality:\nTree1:\n" + toStringTreeHelper(1) +
-                "\n\nTree2:\n" + node2.toStringTreeHelper(1);
-        }
-
-        String res = null;
-        Node n, n2;
-        for (n = first, n2 = node2.first;
-             res == null && n != null;
-             n = n.next, n2 = n2.next) {
-            res = n.checkTreeEquals(n2);
-            if (res != null) {
-                return res;
-            }
-        }
-        return res;
-    }
-
     public void setIsSyntheticBlock(boolean val) {
         isSyntheticBlock = val;
-    }
-
-    public boolean isSyntheticBlock() {
-        return isSyntheticBlock;
     }
 
     int type;              // type of the node; TokenStream.NAME for example

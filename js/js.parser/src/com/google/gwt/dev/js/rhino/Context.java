@@ -81,8 +81,6 @@ import java.util.MissingResourceException;
  */
 
 public class Context {
-    public static final String languageVersionProperty = "language version";
-    public static final String errorReporterProperty   = "error reporter";
 
     /**
      * Create a new Context.
@@ -309,26 +307,6 @@ public class Context {
     }
 
     /**
-     * Get the implementation version.
-     *
-     * <p>
-     * The implementation version is of the form
-     * <pre>
-     *    "<i>name langVer</i> <code>release</code> <i>relNum date</i>"
-     * </pre>
-     * where <i>name</i> is the name of the product, <i>langVer</i> is
-     * the language version, <i>relNum</i> is the release number, and
-     * <i>date</i> is the release date for that specific
-     * release in the form "yyyy mm dd".
-     *
-     * @return a string that encodes the product, language version, release
-     *         number, and date.
-     */
-     public String getImplementationVersion() {
-        return "Rhino 1.5 release 4.1 2003 04 21";
-     }
-
-    /**
      * Get the current error reporter.
      *
      * @see org.mozilla.javascript.ErrorReporter
@@ -362,49 +340,6 @@ public class Context {
     }
 
     /**
-     * Set the current locale.
-     *
-     * @see java.util.Locale
-     */
-    public Locale setLocale(Locale loc) {
-        Locale result = locale;
-        locale = loc;
-        return result;
-    }
-
-    /**
-     * Notify any registered listeners that a bounded property has changed
-     * @see #addPropertyChangeListener(java.beans.PropertyChangeListener)
-     * @see #removePropertyChangeListener(java.beans.PropertyChangeListener)
-     * @see java.beans.PropertyChangeListener
-     * @see java.beans.PropertyChangeEvent
-     * @param  property  the bound property
-     * @param  oldValue  the old value
-     * @param  newVale   the new value
-     */
-    void firePropertyChange(String property, Object oldValue,
-                            Object newValue)
-    {
-        Object[] array = listeners;
-        if (array != null) {
-            firePropertyChangeImpl(array, property, oldValue, newValue);
-        }
-    }
-
-    private void firePropertyChangeImpl(Object[] array, String property,
-                                        Object oldValue, Object newValue)
-    {
-        for (int i = array.length; i-- != 0;) {
-            Object obj = array[i];
-            if (obj instanceof PropertyChangeListener) {
-                PropertyChangeListener l = (PropertyChangeListener)obj;
-                l.propertyChange(new PropertyChangeEvent(
-                    this, property, oldValue, newValue));
-            }
-    }
-    }
-
-    /**
      * Report a warning using the error reporter for the current thread.
      *
      * @param message the warning message to report
@@ -422,20 +357,6 @@ public class Context {
         cx.getErrorReporter().warning(message, sourceName, lineno,
                                       lineSource, lineOffset);
     }
-
-    /**
-     * Report a warning using the error reporter for the current thread.
-     *
-     * @param message the warning message to report
-     * @see org.mozilla.javascript.ErrorReporter
-     */
-    /*
-    public static void reportWarning(String message) {
-        int[] linep = { 0 };
-        String filename = getSourcePositionFromStack(linep);
-        Context.reportWarning(message, filename, linep[0], null, 0);
-    }
-    */
 
     /**
      * Report an error using the error reporter for the current thread.
@@ -459,155 +380,6 @@ public class Context {
         } else {
             throw new EvaluatorException(message);
         }
-    }
-
-    /**
-     * Report an error using the error reporter for the current thread.
-     *
-     * @param message the error message to report
-     * @see org.mozilla.javascript.ErrorReporter
-     */
-    /*
-    public static void reportError(String message) {
-        int[] linep = { 0 };
-        String filename = getSourcePositionFromStack(linep);
-        Context.reportError(message, filename, linep[0], null, 0);
-    }
-    */
-
-    /**
-     * Report a runtime error using the error reporter for the current thread.
-     *
-     * @param message the error message to report
-     * @param sourceName a string describing the source, such as a filename
-     * @param lineno the starting line number
-     * @param lineSource the text of the line (may be null)
-     * @param lineOffset the offset into lineSource where problem was detected
-     * @return a runtime exception that will be thrown to terminate the
-     *         execution of the script
-     * @see org.mozilla.javascript.ErrorReporter
-     */
-    /*
-    public static EvaluatorException reportRuntimeError(String message,
-                                                      String sourceName,
-                                                      int lineno,
-                                                      String lineSource,
-                                                      int lineOffset)
-    {
-        Context cx = getCurrentContext();
-        if (cx != null) {
-            cx.errorCount++;
-            return cx.getErrorReporter().
-                            runtimeError(message, sourceName, lineno,
-                                         lineSource, lineOffset);
-        } else {
-            throw new EvaluatorException(message);
-        }
-    }
-
-    static EvaluatorException reportRuntimeError0(String messageId) {
-        return reportRuntimeError(getMessage0(messageId));
-    }
-
-    static EvaluatorException reportRuntimeError1
-        (String messageId, Object arg1)
-    {
-        return reportRuntimeError(getMessage1(messageId, arg1));
-    }
-
-    static EvaluatorException reportRuntimeError2
-        (String messageId, Object arg1, Object arg2)
-    {
-        return reportRuntimeError(getMessage2(messageId, arg1, arg2));
-    }
-
-    static EvaluatorException reportRuntimeError3
-        (String messageId, Object arg1, Object arg2, Object arg3)
-    {
-        return reportRuntimeError(getMessage3(messageId, arg1, arg2, arg3));
-    }
-    */
-
-    /**
-     * Report a runtime error using the error reporter for the current thread.
-     *
-     * @param message the error message to report
-     * @see org.mozilla.javascript.ErrorReporter
-     */
-    /*
-    public static EvaluatorException reportRuntimeError(String message) {
-        int[] linep = { 0 };
-        String filename = getSourcePositionFromStack(linep);
-        return Context.reportRuntimeError(message, filename, linep[0], null, 0);
-    }
-    */
-
-    /**
-     * Get a value corresponding to a key.
-     * <p>
-     * Since the Context is associated with a thread it can be
-     * used to maintain values that can be later retrieved using
-     * the current thread.
-     * <p>
-     * Note that the values are maintained with the Context, so
-     * if the Context is disassociated from the thread the values
-     * cannot be retreived. Also, if private data is to be maintained
-     * in this manner the key should be a java.lang.Object
-     * whose reference is not divulged to untrusted code.
-     * @param key the key used to lookup the value
-     * @return a value previously stored using putThreadLocal.
-     */
-    public final Object getThreadLocal(Object key) {
-        if (hashtable == null)
-            return null;
-        return hashtable.get(key);
-    }
-
-    /**
-     * Put a value that can later be retrieved using a given key.
-     * <p>
-     * @param key the key used to index the value
-     * @param value the value to save
-     */
-    public void putThreadLocal(Object key, Object value) {
-        if (hashtable == null)
-            hashtable = new Hashtable();
-        hashtable.put(key, value);
-    }
-
-    /**
-     * Remove values from thread-local storage.
-     * @param key the key for the entry to remove.
-     * @since 1.5 release 2
-     */
-    public void removeThreadLocal(Object key) {
-        if (hashtable == null)
-            return;
-        hashtable.remove(key);
-    }
-
-    /**
-     * Return whether functions are compiled by this context using
-     * dynamic scope.
-     * <p>
-     * If functions are compiled with dynamic scope, then they execute
-     * in the scope of their caller, rather than in their parent scope.
-     * This is useful for sharing functions across multiple scopes.
-     * @since 1.5 Release 1
-     */
-    public final boolean hasCompileFunctionsWithDynamicScope() {
-        return compileFunctionsWithDynamicScopeFlag;
-    }
-
-    /**
-     * Set whether functions compiled by this context should use
-     * dynamic scope.
-     * <p>
-     * @param flag if true, compile functions with dynamic scope
-     * @since 1.5 Release 1
-     */
-    public void setCompileFunctionsWithDynamicScope(boolean flag) {
-        compileFunctionsWithDynamicScopeFlag = flag;
     }
 
     /**
@@ -690,21 +462,11 @@ public class Context {
         return getMessage(messageId, null);
     }
 
-    static String getMessage1(String messageId, Object arg1) {
-        Object[] arguments = {arg1};
-        return getMessage(messageId, arguments);
-    }
-
     static String getMessage2(String messageId, Object arg1, Object arg2) {
         Object[] arguments = {arg1, arg2};
         return getMessage(messageId, arguments);
     }
 
-    static String getMessage3
-        (String messageId, Object arg1, Object arg2, Object arg3) {
-        Object[] arguments = {arg1, arg2, arg3};
-        return getMessage(messageId, arguments);
-    }
     /**
      * Internal method that reports an error for missing calls to
      * enter().
@@ -733,11 +495,6 @@ public class Context {
     // debug flags
     static final boolean printTrees = true;
     static final boolean printICode = true;
-
-    final boolean isVersionECMA1() {
-        return version == VERSION_DEFAULT || version >= VERSION_1_3;
-    }
-
 
 // Rudimentary support for Design-by-Contract
     static void codeBug() {

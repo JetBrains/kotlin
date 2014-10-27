@@ -655,10 +655,6 @@ public class TokenStream {
         return false;
     }
 
-    public void clearPushback() {
-        this.pushbackToken = EOF;
-    }
-
     public void ungetToken(int tt) {
         if (this.pushbackToken != EOF && tt != ERROR) {
             String message = Context.getMessage2("msg.token.replaces.pushback",
@@ -688,37 +684,6 @@ public class TokenStream {
         return result;
     }
 
-    public static boolean isJSKeyword(String s) {
-        return getKeywordId(s) != 0;
-    }
-
-    public static boolean isJSIdentifier(String s) {
-        int length = s.length();
-
-        if (length == 0 || !Character.isJavaIdentifierStart(s.charAt(0)))
-            return false;
-
-        for (int i=1; i<length; i++) {
-            char c = s.charAt(i);
-            if (!Character.isJavaIdentifierPart(c)) {
-                if (c == '\\') {
-                    if (! ((i + 5) < length)
-                        && (s.charAt(i + 1) == 'u')
-                        && 0 <= xDigitToInt(s.charAt(i + 2))
-                        && 0 <= xDigitToInt(s.charAt(i + 3))
-                        && 0 <= xDigitToInt(s.charAt(i + 4))
-                        && 0 <= xDigitToInt(s.charAt(i + 5))) {
-                        return true;
-                     }
-                }
-
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     private static boolean isAlpha(int c) {
         return ((c >= 'a' && c <= 'z')
                 || (c >= 'A' && c <= 'Z'));
@@ -744,11 +709,6 @@ public class TokenStream {
                 || c == '\u000C' || c == '\u000B'
                 || c == '\u00A0'
                 || Character.getType((char)c) == Character.SPACE_SEPARATOR);
-    }
-
-    public static boolean isJSLineTerminator(int c) {
-        return (c == '\n' || c == '\r'
-                || c == 0x2028 || c == 0x2029);
     }
 
     private void skipLine() throws IOException {

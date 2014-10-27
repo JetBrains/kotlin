@@ -404,37 +404,6 @@ public class IRFactory {
         return new Node(TokenStream.ASSIGN, left, right, nodeOp);
     }
 
-    private Node createConvert(Class toType, Node expr) {
-        if (toType == null)
-            return expr;
-        Node result = new Node(TokenStream.CONVERT, expr);
-        result.putProp(Node.TYPE_PROP, Number.class);
-        return result;
-    }
-
-    public static boolean hasSideEffects(Node exprTree) {
-        switch (exprTree.getType()) {
-            case TokenStream.INC:
-            case TokenStream.DEC:
-            case TokenStream.SETPROP:
-            case TokenStream.SETELEM:
-            case TokenStream.SETNAME:
-            case TokenStream.CALL:
-            case TokenStream.NEW:
-                return true;
-            default:
-                Node child = exprTree.getFirstChild();
-                while (child != null) {
-                    if (hasSideEffects(child))
-                        return true;
-                    else
-                        child = child.getNext();
-                }
-                break;
-        }
-        return false;
-    }
-
     private void reportError(String msgResource) {
 
         String message = Context.getMessage0(msgResource);

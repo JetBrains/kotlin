@@ -49,31 +49,6 @@ public class ScriptRuntime {
 
     public static double NaN = 0.0d / 0.0;
 
-    public static String numberToString(double d, int base) {
-        if (Double.isNaN(d))
-            return "NaN";
-        if (d == Double.POSITIVE_INFINITY)
-            return "Infinity";
-        if (d == Double.NEGATIVE_INFINITY)
-            return "-Infinity";
-        if (d == 0.0)
-            return "0";
-
-        if ((base < 2) || (base > 36)) {
-            throw new Error(Context.getMessage1("msg.bad.radix",
-                                                Integer.toString(base)));
-        }
-
-        if (base != 10) {
-            return DToA.JS_dtobasestr(base, d);
-        } else {
-            StringBuffer result = new StringBuffer();
-            DToA.JS_dtostr(result, DToA.DTOSTR_STANDARD, 0, d);
-            return result.toString();
-        }
-
-    }
-
     /*
      * Helper function for toNumber, parseInt, and TokenStream.getToken.
      */
@@ -169,70 +144,6 @@ public class ScriptRuntime {
             /* We don't worry about inaccurate numbers for any other base. */
         }
         return sum;
-    }
-
-    /**
-     * For escaping strings printed by object and array literals; not quite
-     * the same as 'escape.'
-     */
-    public static String escapeString(String s) {
-
-        StringBuffer sb = null;
-
-        for(int i = 0, L = s.length(); i != L; ++i) {
-            int c = s.charAt(i);
-
-            if (' ' <= c && c <= '~' && c != '"' && c != '\\') {
-                // an ordinary print character (like C isprint()) and not "
-                // or \ . Note single quote ' is not escaped
-                if (sb != null) {
-                    sb.append((char)c);
-                }
-                continue;
-            }
-            if (sb == null) {
-                sb = new StringBuffer(L + 3);
-                sb.append(s);
-                sb.setLength(i);
-            }
-
-            int escape = -1;
-            switch (c) {
-                case '\b':  escape = 'b';  break;
-                case '\f':  escape = 'f';  break;
-                case '\n':  escape = 'n';  break;
-                case '\r':  escape = 'r';  break;
-                case '\t':  escape = 't';  break;
-                case 0xb:   escape = 'v';  break; // Java lacks \v.
-                case '"':   escape = '"';  break;
-                case ' ':   escape = ' ';  break;
-                case '\\':  escape = '\\'; break;
-            }
-            if (escape >= 0) {
-                // an \escaped sort of character
-                sb.append('\\');
-                sb.append((char)escape);
-            } else {
-                int hexSize;
-                if (c < 256) {
-                    // 2-digit hex
-                    sb.append("\\x");
-                    hexSize = 2;
-                } else {
-                    // Unicode.
-                    sb.append("\\u");
-                    hexSize = 4;
-                }
-                // append hexadecimal form of c left-padded with 0
-                for (int shift = (hexSize - 1) * 4; shift >= 0; shift -= 4) {
-                    int digit = 0xf & (c >> shift);
-                    int hc = (digit < 10) ? '0' + digit : 'a' - 10 + digit;
-                    sb.append((char)hc);
-                }
-            }
-        }
-
-        return (sb == null) ? s : sb.toString();
     }
 
 }
