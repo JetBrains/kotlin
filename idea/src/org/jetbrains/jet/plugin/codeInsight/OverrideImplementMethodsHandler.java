@@ -28,7 +28,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -121,7 +120,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                 Project project = classOrObject.getProject();
                 SmartPsiElementPointer<PsiElement> pointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(firstGenerated);
 
-                PostprocessReformattingAspect.getInstance(project).doPostponedFormatting();
+                PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument());
 
                 PsiElement element = pointer.getElement();
                 if (element != null) {
