@@ -1,0 +1,11 @@
+Cleaning output files:
+out/production/module/test/TestPackage$prop2$*.class
+out/production/module/test/TestPackage.class
+End of files
+Compiling files:
+src/prop2.kt
+End of files
+COMPILATION FAILED
+Kotlin:ERROR:Platform declaration clash: The following declarations have the same JVM signature (getProperty()I):
+    fun <get-property>(): kotlin.Int
+    fun <get-property>(): kotlin.Int

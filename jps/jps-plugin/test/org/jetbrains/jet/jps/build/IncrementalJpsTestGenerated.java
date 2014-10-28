@@ -99,6 +99,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("classRedeclaration")
+        public void testClassRedeclaration() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/classRedeclaration/");
+            doTest(fileName);
+        }
+
         @TestMetadata("classSignatureChanged")
         public void testClassSignatureChanged() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/classSignatureChanged/");
@@ -114,6 +120,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("compilationErrorThenFixed")
         public void testCompilationErrorThenFixed() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/compilationErrorThenFixed/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("conflictingPlatformDeclarations")
+        public void testConflictingPlatformDeclarations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/conflictingPlatformDeclarations/");
             doTest(fileName);
         }
 
@@ -138,6 +150,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("filesExchangePackages")
         public void testFilesExchangePackages() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/filesExchangePackages/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("funRedeclaration")
+        public void testFunRedeclaration() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/funRedeclaration/");
             doTest(fileName);
         }
 
@@ -246,6 +264,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("packageRemoved")
         public void testPackageRemoved() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/packageRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyRedeclaration")
+        public void testPropertyRedeclaration() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/propertyRedeclaration/");
             doTest(fileName);
         }
 
