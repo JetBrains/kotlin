@@ -321,7 +321,7 @@ public class ReplInterpreter {
     @Nullable
     private ScriptDescriptor doAnalyze(@NotNull JetFile psiFile, @NotNull MessageCollector messageCollector) {
         WritableScope scope = new WritableScopeImpl(
-                JetScope.EMPTY, module,
+                JetScope.Empty.INSTANCE$, module,
                 new TraceBasedRedeclarationHandler(trace), "Root scope in analyzePackage"
         );
 

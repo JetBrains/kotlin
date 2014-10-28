@@ -67,7 +67,7 @@ public class MyDeclarations(
         val matcher = INTEGER_VALUE_TYPE_PATTERN.matcher(name)
         if (matcher.find()) {
             val number = matcher.group(1)!!
-            return JetTypeImpl(Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong()), false, listOf(), JetScope.EMPTY)
+            return JetTypeImpl(Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong()), false, listOf(), JetScope.Empty)
         }
         return typeResolver.resolveType(
             scopeToResolveTypeParameters, JetPsiFactory(project).createType(name),

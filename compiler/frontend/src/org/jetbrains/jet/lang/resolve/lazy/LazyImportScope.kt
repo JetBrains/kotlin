@@ -65,7 +65,7 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
                     cachedStatus.scope
                 }
                 else {
-                    val directiveImportScope = WritableScopeImpl(JetScope.EMPTY, containingDeclaration, RedeclarationHandler.DO_NOTHING, "Scope for import '" + directive.getDebugText() + "' resolve in " + toString())
+                    val directiveImportScope = WritableScopeImpl(JetScope.Empty, containingDeclaration, RedeclarationHandler.DO_NOTHING, "Scope for import '" + directive.getDebugText() + "' resolve in " + toString())
                     directiveImportScope.changeLockLevel(WritableScope.LockLevel.BOTH)
 
                     val importer = Importer.StandardImporter(directiveImportScope)

@@ -96,12 +96,12 @@ public class IncrementalPackageFragmentProvider(
 
         val _memberScope: NotNullLazyValue<JetScope> = storageManager.createLazyValue {
             if (fqName !in fqNamesToLoad) {
-                JetScope.EMPTY
+                JetScope.Empty
             }
             else {
                 val packageDataBytes = incrementalCache.getPackageData(fqName)
                 if (packageDataBytes == null) {
-                    JetScope.EMPTY
+                    JetScope.Empty
                 }
                 else {
                     IncrementalPackageScope(JavaProtoBufUtil.readPackageDataFrom(packageDataBytes))

@@ -87,6 +87,6 @@ private class MissingDependencyErrorClassDescriptor(containing: DeclarationDescr
         val emptyConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true, SourceElement.NO_SOURCE)
         emptyConstructor.initialize(listOf(), listOf(), Visibilities.INTERNAL)
         emptyConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"))
-        initialize(JetScope.EMPTY, setOf(emptyConstructor), emptyConstructor)
+        initialize(JetScope.Empty, setOf(emptyConstructor), emptyConstructor)
     }
 }

@@ -165,7 +165,7 @@ public abstract class WritableScopeWithImports(override val workerScope: JetScop
 
     private fun getCurrentIndividualImportScope(): WritableScope {
         if (currentIndividualImportScope == null) {
-            val writableScope = WritableScopeImpl(JetScope.EMPTY, getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "Individual import scope")
+            val writableScope = WritableScopeImpl(JetScope.Empty, getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "Individual import scope")
             writableScope.changeLockLevel(WritableScope.LockLevel.BOTH)
             importScope(writableScope)
             currentIndividualImportScope = writableScope
