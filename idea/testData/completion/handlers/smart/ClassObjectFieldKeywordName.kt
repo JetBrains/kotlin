@@ -10,4 +10,4 @@ fun foo(){
     val v: `class`= <caret>
 }
 
-// ELEMENT: class.val
+// ELEMENT: val

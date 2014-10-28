@@ -9,5 +9,5 @@ fun foo(): X {
     return <caret>
 }
 
-// ABSENT: X.f
-// EXIST: X.g
+// ABSENT: f
+// EXIST: { lookupString:"g", itemText:"X.g()" }

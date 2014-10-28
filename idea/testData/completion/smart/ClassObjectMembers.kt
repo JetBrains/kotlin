@@ -14,10 +14,10 @@ fun foo(){
     val k : K = <caret>
 }
 
-// EXIST: { lookupString:"K.foo", itemText:"K.foo", tailText:" (sample)", typeText:"K" }
-// EXIST: { lookupString:"K.bar", itemText:"K.bar()", tailText:" (sample)", typeText:"K" }
-// ABSENT: K.x
+// EXIST: { lookupString:"foo", itemText:"K.foo", tailText:" (sample)", typeText:"K" }
+// EXIST: { lookupString:"bar", itemText:"K.bar()", tailText:" (sample)", typeText:"K" }
+// ABSENT: { itemText: "K.x" }
 // ABSENT: { itemText:"K.kk" }
-// EXIST: { lookupString:"K.kk", itemText:"!! K.kk", tailText:" (sample)", typeText:"K?" }
-// EXIST: { lookupString:"K.kk", itemText:"?: K.kk", tailText:" (sample)", typeText:"K?" }
-// ABSENT: K.privateVal
+// EXIST: { lookupString:"kk", itemText:"!! K.kk", tailText:" (sample)", typeText:"K?" }
+// EXIST: { lookupString:"kk", itemText:"?: K.kk", tailText:" (sample)", typeText:"K?" }
+// ABSENT: { itemText: "K.privateVal" }

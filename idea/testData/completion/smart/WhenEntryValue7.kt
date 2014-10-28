@@ -11,5 +11,5 @@ fun foo(e: E) {
     }
 }
 
-// EXIST: E.A
+// EXIST: A
 // ABSENT: else

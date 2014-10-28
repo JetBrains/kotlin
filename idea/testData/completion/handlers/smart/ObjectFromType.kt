@@ -10,4 +10,4 @@ fun foo(): Outer.T {
     return <caret>
 }
 
-// ELEMENT: "T.Null"
+// ELEMENT: Null

@@ -9,4 +9,4 @@ fun bar(){
     foo(Foo.X, <caret>)
 }
 
-// ELEMENT: Foo.X
+// ELEMENT: X

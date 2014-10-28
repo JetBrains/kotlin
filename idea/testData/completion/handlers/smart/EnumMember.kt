@@ -7,4 +7,4 @@ fun foo(){
     val f : Foo = <caret>
 }
 
-// ELEMENT: Foo.X
+// ELEMENT: X

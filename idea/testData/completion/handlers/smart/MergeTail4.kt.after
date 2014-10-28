@@ -13,4 +13,4 @@ fun foo() {
     foo(C.f3(), <caret>
 }
 
-// ELEMENT: C.f3
+// ELEMENT: f3

@@ -7,8 +7,8 @@ fun f(e1: E, e2: E?, x: Any) {
     if (e1 != <caret>
 }
 
-// EXIST: E.A
-// EXIST: E.B
+// EXIST: { lookupString:"A", itemText:"E.A" }
+// EXIST: { lookupString:"B", itemText:"E.B" }
 // EXIST: e2
 // ABSENT: e1
 // ABSENT: x
