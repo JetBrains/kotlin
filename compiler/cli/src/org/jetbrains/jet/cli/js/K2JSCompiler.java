@@ -97,10 +97,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         Project project = environmentForJS.getProject();
         List<JetFile> sourcesFiles = environmentForJS.getSourceFiles();
 
-        ClassPathLibrarySourcesLoader sourceLoader = new ClassPathLibrarySourcesLoader(project);
-        List<JetFile> additionalSourceFiles = sourceLoader.findSourceFiles();
-        sourcesFiles.addAll(additionalSourceFiles);
-
         if (arguments.verbose) {
             reportCompiledSourcesList(messageCollector, sourcesFiles);
         }
@@ -222,13 +218,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             ContainerUtil.addAllNotNull(libraryFiles, arguments.libraryFiles);
         }
 
-        if (!libraryFiles.isEmpty()) {
-            return new LibrarySourcesConfig(project, moduleId, libraryFiles, ecmaVersion, arguments.sourceMap, inlineEnabled);
-        }
-        else {
-            // lets discover the JS library definitions on the classpath
-            return new ClassPathLibraryDefintionsConfig(project, moduleId, ecmaVersion, arguments.sourceMap, inlineEnabled);
-        }
+        return new LibrarySourcesConfig(project, moduleId, libraryFiles, ecmaVersion, arguments.sourceMap, inlineEnabled);
     }
 
     public static MainCallParameters createMainCallParameters(String main) {
