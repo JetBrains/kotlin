@@ -3138,6 +3138,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("overridePublicFun.kt")
+        public void testOverridePublicFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/overridePublicFun.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("protectedFunNoSelection.kt")
         public void testProtectedFunNoSelection() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/protectedFunNoSelection.kt");

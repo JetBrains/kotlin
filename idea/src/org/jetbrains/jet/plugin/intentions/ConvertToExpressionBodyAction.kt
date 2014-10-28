@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lexer.JetTokens
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.jet.lang.psi.psiUtil.siblings
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
 
@@ -63,6 +62,7 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
     }
 
     private fun canOmitType(declaration: JetCallableDeclaration): Boolean {
+        if (declaration.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) ?: false) return true
         val descriptor = declaration.getLazyResolveSession().resolveToDescriptor(declaration)
         return !((descriptor as? DeclarationDescriptorWithVisibility)?.getVisibility()?.isPublicAPI() ?: false)
     }
