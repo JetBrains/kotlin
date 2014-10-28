@@ -77,6 +77,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("AnonymousObjectWithPrefix.kt")
+    public void testAnonymousObjectWithPrefix() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/AnonymousObjectWithPrefix.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AnyExpected.kt")
     public void testAnyExpected() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/AnyExpected.kt");
