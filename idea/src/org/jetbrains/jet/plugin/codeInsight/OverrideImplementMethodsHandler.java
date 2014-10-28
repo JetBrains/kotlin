@@ -25,13 +25,9 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -89,9 +85,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             @NotNull final JetClassOrObject classOrObject,
             @NotNull final List<DescriptorClassMember> selectedElements
     ) {
-        PsiElement firstGenerated = ApplicationManager.getApplication().runWriteAction(new Computable<PsiElement>() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
-            public PsiElement compute() {
+            public void run() {
                 JetClassBody body = classOrObject.getBody();
                 if (body == null) {
                     JetPsiFactory psiFactory = JetPsiFactory(classOrObject);
@@ -101,9 +97,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
                 PsiElement afterAnchor = findInsertAfterAnchor(editor, body);
 
-                if (afterAnchor == null) {
-                    return null;
-                }
+                if (afterAnchor == null) return;
 
                 PsiElement firstGenerated = null;
 
@@ -122,14 +116,19 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
                 ShortenReferences.INSTANCE$.process(elementsToCompact);
 
-                return firstGenerated;
+                if (firstGenerated == null) return;
+
+                Project project = classOrObject.getProject();
+                SmartPsiElementPointer<PsiElement> pointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(firstGenerated);
+
+                PostprocessReformattingAspect.getInstance(project).doPostponedFormatting();
+
+                PsiElement element = pointer.getElement();
+                if (element != null) {
+                    QuickfixPackage.moveCaretIntoGeneratedElement(editor, element);
+                }
             }
         });
-
-        if (firstGenerated != null) {
-            PostprocessReformattingAspect.getInstance(firstGenerated.getProject()).doPostponedFormatting();
-            QuickfixPackage.moveCaretIntoGeneratedElement(editor, firstGenerated);
-        }
     }
 
     @Nullable
