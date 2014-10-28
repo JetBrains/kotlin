@@ -53,23 +53,21 @@ public abstract class DeserializedMemberScope protected(
         return map
     }
 
-    private fun <D : CallableMemberDescriptor> computeMembersByName(name: Name, callableKind: Filter<ProtoBuf.Callable.CallableKind>): MutableCollection<D> {
-        val memberProtos = membersProtos.invoke().get(name)
+    private fun <D : CallableMemberDescriptor> computeMembersByName(name: Name, callableKind: (ProtoBuf.Callable.CallableKind) -> Boolean): LinkedHashSet<D> {
+        val memberProtos = membersProtos()[name] ?: return LinkedHashSet()
 
-        val descriptors = LinkedHashSet<D>(if (memberProtos != null) memberProtos.size() else 0)
-        if (memberProtos != null) {
-            for (memberProto in memberProtos) {
-                if (callableKind.accept(Flags.CALLABLE_KIND.get(memberProto.getFlags()))) {
-                    [suppress("UNCHECKED_CAST")]
-                    descriptors.add(context.deserializer.loadCallable(memberProto) as D)
-                }
+        val descriptors = LinkedHashSet<D>(memberProtos.size())
+        for (memberProto in memberProtos) {
+            if (callableKind(Flags.CALLABLE_KIND[memberProto.getFlags()])) {
+                [suppress("UNCHECKED_CAST")]
+                descriptors.add(context.deserializer.loadCallable(memberProto) as D)
             }
         }
         return descriptors
     }
 
     private fun computeFunctions(name: Name): Collection<FunctionDescriptor> {
-        val descriptors = computeMembersByName<FunctionDescriptor>(name, FUNCTION)
+        val descriptors = computeMembersByName<FunctionDescriptor>(name) { it == ProtoBuf.Callable.CallableKind.FUN }
         computeNonDeclaredFunctions(name, descriptors)
         return descriptors.toReadOnlyList()
     }
@@ -80,7 +78,7 @@ public abstract class DeserializedMemberScope protected(
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> = functions(name)
 
     private fun computeProperties(name: Name): Collection<VariableDescriptor> {
-        val descriptors = computeMembersByName<PropertyDescriptor>(name, PROPERTY)
+        val descriptors = computeMembersByName<PropertyDescriptor>(name) { it == ProtoBuf.Callable.CallableKind.VAL || it == ProtoBuf.Callable.CallableKind.VAR }
         computeNonDeclaredProperties(name, descriptors)
         return descriptors.toReadOnlyList()
     }
@@ -107,7 +105,7 @@ public abstract class DeserializedMemberScope protected(
     private fun computeAllDescriptors(): Collection<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>(0)
 
-        for (name in membersProtos.invoke().keySet()) {
+        for (name in membersProtos().keySet()) {
             result.addAll(getFunctions(name))
             result.addAll(getProperties(name))
         }
@@ -125,19 +123,12 @@ public abstract class DeserializedMemberScope protected(
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         val receiver = getImplicitReceiver()
-        if (receiver != null) {
-            return listOf(receiver)
-        }
-        return listOf()
+        return if (receiver != null) listOf(receiver) else listOf()
     }
 
     protected abstract fun getImplicitReceiver(): ReceiverParameterDescriptor?
 
-    override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = getAllDescriptors()
-
-    private trait Filter<T> {
-        fun accept(value: T): Boolean
-    }
+    override fun getOwnDeclaredDescriptors() = getAllDescriptors()
 
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")
@@ -147,19 +138,5 @@ public abstract class DeserializedMemberScope protected(
 
         p.popIndent()
         p.println("}")
-    }
-
-    class object {
-
-        private val FUNCTION = object : Filter<ProtoBuf.Callable.CallableKind> {
-            override fun accept(value: ProtoBuf.Callable.CallableKind): Boolean {
-                return value == ProtoBuf.Callable.CallableKind.FUN
-            }
-        }
-        private val PROPERTY = object : Filter<ProtoBuf.Callable.CallableKind> {
-            override fun accept(value: ProtoBuf.Callable.CallableKind): Boolean {
-                return value == ProtoBuf.Callable.CallableKind.VAL || value == ProtoBuf.Callable.CallableKind.VAR
-            }
-        }
     }
 }
