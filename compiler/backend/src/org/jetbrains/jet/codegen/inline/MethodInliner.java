@@ -586,11 +586,11 @@ public class MethodInliner {
 
     @NotNull
     //process local and global returns (local substituted with goto end-label global kept unchanged)
-    public static List<ExternalFinallyBlockInfo> processReturns(@NotNull MethodNode node, @NotNull LabelOwner labelOwner, boolean remapReturn, Label endLabel) {
+    public static List<PointForExternalFinallyBlocks> processReturns(@NotNull MethodNode node, @NotNull LabelOwner labelOwner, boolean remapReturn, Label endLabel) {
         if (!remapReturn) {
             return Collections.emptyList();
         }
-        List<ExternalFinallyBlockInfo> result = new ArrayList<ExternalFinallyBlockInfo>();
+        List<PointForExternalFinallyBlocks> result = new ArrayList<PointForExternalFinallyBlocks>();
         InsnList instructions = node.instructions;
         AbstractInsnNode insnNode = instructions.getFirst();
         while (insnNode != null) {
@@ -621,7 +621,7 @@ public class MethodInliner {
                 }
 
                 //genetate finally block before nonLocalReturn flag/return/goto
-                result.add(new ExternalFinallyBlockInfo(isLocalReturn ? insnNode : insnNode.getPrevious(), getReturnType(insnNode.getOpcode())
+                result.add(new PointForExternalFinallyBlocks(isLocalReturn ? insnNode : insnNode.getPrevious(), getReturnType(insnNode.getOpcode())
                 ));
             }
             insnNode = insnNode.getNext();
@@ -629,13 +629,14 @@ public class MethodInliner {
         return result;
     }
 
-    public static class ExternalFinallyBlockInfo {
+    //Place to insert finally blocks from try blocks that wraps inline fun call
+    public static class PointForExternalFinallyBlocks {
 
         final AbstractInsnNode beforeIns;
 
         final Type returnType;
 
-        public ExternalFinallyBlockInfo(AbstractInsnNode beforeIns, Type returnType) {
+        public PointForExternalFinallyBlocks(AbstractInsnNode beforeIns, Type returnType) {
             this.beforeIns = beforeIns;
             this.returnType = returnType;
         }

@@ -422,6 +422,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/callSite.1.kt");
                     doBoxTestWithInlineCheck(fileName);
                 }
+
+                @TestMetadata("exceptionTableSplit.1.kt")
+                public void testExceptionTableSplit() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/exceptionTableSplit.1.kt");
+                    doBoxTestWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("exceptionTableSplitNoReturn.1.kt")
+                public void testExceptionTableSplitNoReturn() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/exceptionTableSplitNoReturn.1.kt");
+                    doBoxTestWithInlineCheck(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite")
