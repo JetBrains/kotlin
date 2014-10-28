@@ -241,6 +241,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             val text = "::" + (if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration().getName() else descriptor.getName())
             lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
                 override fun getLookupString() = text
+                override fun getAllLookupStrings() = setOf(text)
 
                 override fun renderElement(presentation: LookupElementPresentation) {
                     super.renderElement(presentation)

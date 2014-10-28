@@ -25,34 +25,45 @@ import com.intellij.openapi.util.Key
 
 public class KotlinCompletionCharFilter() : CharFilter() {
     class object {
-        public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key<Boolean>("JetCompletionCharFilter.ACCEPT_OPENNING_BRACE")
-        public val ACCEPT_EQ: Key<Boolean> = Key<Boolean>("JetCompletionCharFilter.ACCEPT_EQ")
+        public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key<Boolean>("KotlinCompletionCharFilter.ACCEPT_OPENNING_BRACE")
+        public val ACCEPT_EQ: Key<Boolean> = Key<Boolean>("KotlinCompletionCharFilter.ACCEPT_EQ")
     }
 
     public override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
         if (lookup.getPsiFile() !is JetFile) return null
+        if (!lookup.isCompletion()) return null
 
-        if (c == '.' && prefixLength == 0 && !lookup.isSelectionTouched()) {
-            val caret = lookup.getEditor().getCaretModel().getOffset()
-            if (caret > 0 && (lookup.getEditor().getDocument().getCharsSequence().charAt(caret - 1)) == '.') {
-                return Result.HIDE_LOOKUP
+        if (Character.isJavaIdentifierPart(c) || c == ':' /* used in '::xxx'*/) return CharFilter.Result.ADD_TO_PREFIX
+        return when (c) {
+            '.' -> {
+                if (prefixLength == 0 && !lookup.isSelectionTouched()) {
+                    val caret = lookup.getEditor().getCaretModel().getOffset()
+                    if (caret > 0 && lookup.getEditor().getDocument().getCharsSequence()[caret - 1] == '.') {
+                        return Result.HIDE_LOOKUP
+                    }
+                }
+                Result.SELECT_ITEM_AND_FINISH_LOOKUP
             }
-        }
 
-        if (c == '{') {
-            val currentItem = lookup.getCurrentItem()
-            if (currentItem != null && currentItem.getUserData(ACCEPT_OPENING_BRACE) ?: false) {
-                return Result.SELECT_ITEM_AND_FINISH_LOOKUP
+            '(' -> {
+                val currentItem = lookup.getCurrentItem()
+                if (currentItem != null && currentItem.getUserData(ACCEPT_OPENING_BRACE) ?: false)
+                    Result.SELECT_ITEM_AND_FINISH_LOOKUP
+                else
+                    Result.HIDE_LOOKUP
             }
-        }
 
-        if (c == '=') {
-            val currentItem = lookup.getCurrentItem()
-            if (currentItem != null && currentItem.getUserData(ACCEPT_EQ) ?: false) {
-                return Result.SELECT_ITEM_AND_FINISH_LOOKUP
+            '=' -> {
+                val currentItem = lookup.getCurrentItem()
+                if (currentItem != null && currentItem.getUserData(ACCEPT_EQ) ?: false)
+                    Result.SELECT_ITEM_AND_FINISH_LOOKUP
+                else
+                    Result.HIDE_LOOKUP
             }
-        }
 
-        return null
+            ',', ' ' -> Result.SELECT_ITEM_AND_FINISH_LOOKUP
+
+            else -> return CharFilter.Result.HIDE_LOOKUP
+        }
     }
 }
