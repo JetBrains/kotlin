@@ -32,7 +32,7 @@ JetFile: FunctionLiterals_ERR.kt
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
               PsiElement(IDENTIFIER)('a')
-            PsiErrorElement:Expecting ')
+            PsiErrorElement:Expecting ')'
               <empty list>
           PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
@@ -317,7 +317,7 @@ JetFile: FunctionLiterals_ERR.kt
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('b')
-            PsiErrorElement:Expecting ')
+            PsiErrorElement:Expecting ')'
               <empty list>
           PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
@@ -387,5 +387,5 @@ JetFile: FunctionLiterals_ERR.kt
           BLOCK
             <empty list>
           PsiElement(RBRACE)('}')
-      PsiErrorElement:Expecting '}
+      PsiErrorElement:Expecting '}'
         <empty list>

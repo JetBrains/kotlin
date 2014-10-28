@@ -1220,7 +1220,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         myBuilder.restoreNewlinesState();
 
-        expect(RPAR, "Expecting ')", TokenSet.create(ARROW, COLON));
+        expect(RPAR, "Expecting ')'", TokenSet.create(ARROW, COLON));
         list.done(VALUE_PARAMETER_LIST);
     }
 

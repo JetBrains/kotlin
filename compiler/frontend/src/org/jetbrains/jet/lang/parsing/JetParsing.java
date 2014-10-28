@@ -1262,7 +1262,7 @@ public class JetParsing extends AbstractJetParsing {
 
         myExpressionParsing.parseStatements();
 
-        expect(RBRACE, "Expecting '}");
+        expect(RBRACE, "Expecting '}'");
         myBuilder.restoreNewlinesState();
 
         block.done(BLOCK);
