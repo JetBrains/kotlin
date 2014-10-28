@@ -110,6 +110,10 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
         val qualifierText = qualifiedNameForSourceCode(classDescriptor)
 
         return object: LookupElementDecorator<LookupElement>(lookupElement) {
+            override fun getAllLookupStrings(): Set<String> {
+                return setOf(lookupElement.getLookupString(), qualifierPresentation)
+            }
+
             override fun renderElement(presentation: LookupElementPresentation) {
                 getDelegate().renderElement(presentation)
 
