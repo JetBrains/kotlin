@@ -37,6 +37,7 @@ import com.intellij.openapi.ui.ex.MessagesEx
 import org.jetbrains.jet.plugin.j2k.J2kPostProcessor
 import com.intellij.openapi.vfs.CharsetToolkit
 import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.utils.addIfNotNull
 
 public class JavaToKotlinAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -116,10 +117,7 @@ public class JavaToKotlinAction : AnAction() {
         val result = ArrayList<VirtualFile>()
         for ((i, psiFile) in javaFiles.withIndices()) {
             ApplicationManager.getApplication().runWriteAction {
-                val file = saveConversionResult(psiFile.getVirtualFile(), convertedTexts[i], project)
-                if (file != null) {
-                    result.add(file)
-                }
+                result.addIfNotNull(saveConversionResult(psiFile.getVirtualFile(), convertedTexts[i], project))
             }
         }
         return result

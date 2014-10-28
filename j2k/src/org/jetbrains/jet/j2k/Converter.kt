@@ -64,8 +64,7 @@ class Converter private(private val elementToConvert: PsiElement,
         }
     }
 
-    public fun withSpecialContext(context: PsiElement): Converter
-            = Converter(elementToConvert, settings, conversionScope, referenceSearcher, postProcessor, commonState, PersonalState(context))
+    public fun withSpecialContext(context: PsiElement): Converter = withState(PersonalState(context))
 
     private fun withState(state: PersonalState): Converter
             = Converter(elementToConvert, settings, conversionScope, referenceSearcher, postProcessor, commonState, state)
