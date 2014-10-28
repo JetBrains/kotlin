@@ -1059,6 +1059,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("fieldsInitializedFromParamsAnnotations.java")
+        public void testFieldsInitializedFromParamsAnnotations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/fileOrElement/constructors/fieldsInitializedFromParamsAnnotations.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("genericIdentifier.java")
         public void testGenericIdentifier() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/fileOrElement/constructors/genericIdentifier.java");

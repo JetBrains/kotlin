@@ -242,7 +242,7 @@ class Converter private(private val elementToConvert: PsiElement,
 
         val annotationAnnotation = Annotation(Identifier("annotation").assignNoPrototype(), listOf(), false, false).assignNoPrototype()
         return Class(psiClass.declarationIdentifier(),
-                     (convertAnnotations(psiClass) + Annotations(listOf(annotationAnnotation))).assignNoPrototype(),
+                     convertAnnotations(psiClass) + Annotations(listOf(annotationAnnotation)),
                      convertModifiers(psiClass).without(Modifier.ABSTRACT),
                      TypeParameterList.Empty(),
                      listOf(),
@@ -318,7 +318,7 @@ class Converter private(private val elementToConvert: PsiElement,
                              isInOpenClass: Boolean): Member? {
         val returnType = typeConverter.convertMethodReturnType(method)
 
-        val annotations = (convertAnnotations(method) + convertThrows(method)).assignNoPrototype()
+        val annotations = convertAnnotations(method) + convertThrows(method)
 
         var modifiers = convertModifiers(method)
         if (needOpenModifier(method, isInOpenClass, modifiers)) {

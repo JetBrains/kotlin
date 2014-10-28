@@ -26,7 +26,7 @@ class AnnotationConverter(private val converter: Converter) {
             + listOf(CommonClassNames.JAVA_LANG_OVERRIDE)).toSet()
 
     public fun convertAnnotations(owner: PsiModifierListOwner): Annotations
-            = (convertAnnotationsOnly(owner) + convertModifiersToAnnotations(owner)).assignNoPrototype()
+            = convertAnnotationsOnly(owner) + convertModifiersToAnnotations(owner)
 
     private fun convertAnnotationsOnly(owner: PsiModifierListOwner): Annotations {
         val modifierList = owner.getModifierList()
