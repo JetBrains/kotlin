@@ -310,8 +310,6 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         }
 
         return object: LookupElementDecorator<LookupElement>(lookupElement) {
-            override fun getLookupString() = lookupString
-
             override fun renderElement(presentation: LookupElementPresentation) {
                 getDelegate().renderElement(presentation)
                 presentation.setItemText(itemText)
