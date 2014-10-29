@@ -334,6 +334,11 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         val selectorExpression = expression.getSelectorExpression()
         // 1.toInt(); 1.plus(1);
         if (selectorExpression is JetCallExpression) {
+            val qualifiedCallValue = evaluate(selectorExpression, expectedType)
+            if (qualifiedCallValue != null) {
+                return qualifiedCallValue
+            }
+
             val calleeExpression = selectorExpression.getCalleeExpression()
             if (calleeExpression !is JetSimpleNameExpression) {
                 return null

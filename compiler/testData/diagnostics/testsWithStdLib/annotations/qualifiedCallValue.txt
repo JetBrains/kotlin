@@ -1,0 +1,66 @@
+package
+
+package a {
+
+    package a.b {
+
+        package a.b.c {
+            kotlin.deprecated(value = "aaa": kotlin.String) a.b.c.ann1(p = kotlin.deprecated(value = "aaa": kotlin.String): kotlin.deprecated) a.b.c.ann1() a.b.c.ann2(p = a.b.c.ann1(): a.b.c.ann1) a.b.c.A.IAnn() a.b.c.ann3(p = a.b.c.A.IAnn(): a.b.c.A.IAnn) a.b.c.A.IAnn() a.b.c.ann3(p = a.b.c.A.IAnn(): a.b.c.A.IAnn) a.b.c.annJavaClass(p = a.b.c.A.class: java.lang.Class<a.b.c.A>) a.b.c.annArray(p = {"a"}: kotlin.Array<kotlin.String>) internal fun test(): kotlin.Int
+
+            internal final class A {
+                public constructor A()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+                internal final annotation class IAnn : kotlin.Annotation {
+                    public constructor IAnn()
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+            }
+
+            internal final annotation class ann1 : kotlin.Annotation {
+                public constructor ann1(/*0*/ p: kotlin.deprecated = ...)
+                internal final val p: kotlin.deprecated
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            internal final annotation class ann2 : kotlin.Annotation {
+                public constructor ann2(/*0*/ p: a.b.c.ann1 = ...)
+                internal final val p: a.b.c.ann1
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            internal final annotation class ann3 : kotlin.Annotation {
+                public constructor ann3(/*0*/ p: a.b.c.A.IAnn = ..., /*1*/ p2: a.b.c.A.IAnn = ...)
+                internal final val p: a.b.c.A.IAnn
+                internal final val p2: a.b.c.A.IAnn
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            internal final annotation class annArray : kotlin.Annotation {
+                public constructor annArray(/*0*/ p: kotlin.Array<kotlin.String> = ...)
+                internal final val p: kotlin.Array<kotlin.String>
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            internal final annotation class annJavaClass : kotlin.Annotation {
+                public constructor annJavaClass(/*0*/ p: java.lang.Class<out kotlin.Any?> = ...)
+                internal final val p: java.lang.Class<out kotlin.Any?>
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+    }
+}

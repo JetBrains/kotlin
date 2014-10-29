@@ -225,7 +225,8 @@ public class CallExpressionResolver {
     }
 
     private static boolean canInstantiateAnnotationClass(@NotNull JetCallExpression expression) {
-        PsiElement parent = expression.getParent();
+        //noinspection unchecked
+        PsiElement parent = PsiTreeUtil.getParentOfType(expression, JetValueArgument.class, JetParameter.class);
         if (parent instanceof JetValueArgument) {
             return PsiTreeUtil.getParentOfType(parent, JetAnnotationEntry.class) != null;
         }
