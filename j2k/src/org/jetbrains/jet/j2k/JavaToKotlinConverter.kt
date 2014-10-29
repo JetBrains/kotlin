@@ -53,7 +53,7 @@ public class JavaToKotlinConverter(private val project: Project,
 
     public fun elementsToKotlin(psiElementsAndProcessors: List<Pair<PsiElement, PostProcessor?>>): List<String> {
         try {
-            val intermediateResults = ArrayList<Converter.IntermediateResult?>(psiElementsAndProcessors.size)
+            val intermediateResults = ArrayList<((Map<PsiElement, UsageProcessing>) -> String)?>(psiElementsAndProcessors.size)
             val usageProcessings = HashMap<PsiElement, UsageProcessing>()
             val usageProcessingCollector: (UsageProcessing) -> Unit = { usageProcessing ->
                 assert(!usageProcessings.containsKey(usageProcessing.targetElement))
@@ -68,7 +68,7 @@ public class JavaToKotlinConverter(private val project: Project,
 
             val results = ArrayList<String>(psiElementsAndProcessors.size)
             for ((i, result) in intermediateResults.withIndices()) {
-                results.add(result?.finishConversion(usageProcessings) ?: "")
+                results.add(if (result != null) result(usageProcessings) else "")
                 intermediateResults[i] = null // to not hold unused objects in the heap
             }
 

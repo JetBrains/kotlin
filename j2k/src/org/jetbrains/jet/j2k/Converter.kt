@@ -74,20 +74,14 @@ class Converter private(private val elementToConvert: PsiElement,
 
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
-    public trait IntermediateResult {
-        fun finishConversion(usageProcessings: Map<PsiElement, UsageProcessing>): String
-    }
-
-    public fun convert(): IntermediateResult? {
+    public fun convert(): ((Map<PsiElement, UsageProcessing>) -> String)? {
         val element = convertTopElement(elementToConvert) ?: return null
-        return object: IntermediateResult {
-            override fun finishConversion(usageProcessings: Map<PsiElement, UsageProcessing>): String {
-                unfoldDeferredElements(usageProcessings)
+        return { usageProcessings ->
+            unfoldDeferredElements(usageProcessings)
 
-                val builder = CodeBuilder(elementToConvert)
-                builder.append(element)
-                return builder.result
-            }
+            val builder = CodeBuilder(elementToConvert)
+            builder.append(element)
+            builder.result
         }
     }
 
