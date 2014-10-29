@@ -39,10 +39,12 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFileVisitor
 
 public class JavaToKotlinAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val selectedJavaFiles = selectedJavaFiles(e)
+        val selectedJavaFiles = selectedJavaFiles(e).toList()
         val project = CommonDataKeys.PROJECT.getData(e.getDataContext())!!
 
         CommandProcessor.getInstance().executeCommand(project, object : Runnable {
@@ -59,44 +61,35 @@ public class JavaToKotlinAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        val enabled = selectedJavaFiles(e).isNotEmpty()
+        val enabled = selectedJavaFiles(e).any()
         e.getPresentation().setEnabled(enabled)
     }
 
-    private fun selectedJavaFiles(e: AnActionEvent): List<PsiJavaFile> {
-        val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return listOf()
-        val project = CommonDataKeys.PROJECT.getData(e.getDataContext()) ?: return listOf()
+    private fun selectedJavaFiles(e: AnActionEvent): Stream<PsiJavaFile> {
+        val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return streamOf()
+        val project = CommonDataKeys.PROJECT.getData(e.getDataContext()) ?: return streamOf()
         return allJavaFiles(virtualFiles, project)
     }
 
-    private fun allJavaFiles(filesOrDirs: Array<VirtualFile>, project: Project): List<PsiJavaFile> {
-        val allFiles = allFiles(filesOrDirs)
+    private fun allJavaFiles(filesOrDirs: Array<VirtualFile>, project: Project): Stream<PsiJavaFile> {
         val manager = PsiManager.getInstance(project)
-        val result = ArrayList<PsiJavaFile>()
-        for (file in allFiles) {
-            val psiFile = manager.findFile(file)
-            if (psiFile is PsiJavaFile) {
-                result.add(psiFile)
-            }
-        }
-        return result
+        return allFiles(filesOrDirs)
+                .stream()
+                .map { manager.findFile(it) as? PsiJavaFile }
+                .filterNotNull()
     }
 
     private fun allFiles(filesOrDirs: Array<VirtualFile>): Collection<VirtualFile> {
         val result = ArrayList<VirtualFile>()
-        filesOrDirs.forEach { result.addFilesRecursive(it) }
+        for (file in filesOrDirs) {
+            VfsUtilCore.visitChildrenRecursively(file, object : VirtualFileVisitor<Unit>() {
+                override fun visitFile(file: VirtualFile): Boolean {
+                    result.add(file)
+                    return true
+                }
+            })
+        }
         return result
-    }
-
-    private fun MutableCollection<VirtualFile>.addFilesRecursive(root: VirtualFile) {
-        if (root.isDirectory()) {
-            root.getChildren()!!.forEach {
-                addFilesRecursive(it)
-            }
-        }
-        else {
-            add(root)
-        }
     }
 
     private fun reformatFiles(kotlinFiles: List<VirtualFile>, project: Project) {
