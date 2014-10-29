@@ -167,8 +167,8 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
 
             if (leftValue !is Boolean || rightValue !is Boolean) return null
             val result = when(operationToken) {
-                JetTokens.ANDAND -> leftValue as Boolean && rightValue as Boolean
-                JetTokens.OROR -> leftValue as Boolean || rightValue as Boolean
+                JetTokens.ANDAND -> leftValue && rightValue
+                JetTokens.OROR -> leftValue || rightValue
                 else -> throw IllegalArgumentException("Unknown boolean operation token ${operationToken}")
             }
             val usesVariableAsConstant = leftConstant.usesVariableAsConstant() || rightConstant.usesVariableAsConstant()
@@ -523,7 +523,7 @@ private fun createCompileTimeConstantForEquals(result: Any?, operationReference:
             JetTokens.EQEQ -> BooleanValue(result, c.canBeUsedInAnnotation, c.usesVariableAsConstant)
             JetTokens.EXCLEQ -> BooleanValue(!result, c.canBeUsedInAnnotation, c.usesVariableAsConstant)
             JetTokens.IDENTIFIER -> {
-                assert ((operationReference as JetSimpleNameExpression).getReferencedNameAsName() == OperatorConventions.EQUALS, "This method should be called only for equals operations")
+                assert (operationReference.getReferencedNameAsName() == OperatorConventions.EQUALS, "This method should be called only for equals operations")
                 return BooleanValue(result, c.canBeUsedInAnnotation, c.usesVariableAsConstant)
             }
             else -> throw IllegalStateException("Unknown equals operation token: $operationToken ${operationReference.getText()}")
@@ -542,7 +542,7 @@ private fun createCompileTimeConstantForCompareTo(result: Any?, operationReferen
             JetTokens.GT -> BooleanValue(result > 0, c.canBeUsedInAnnotation, c.usesVariableAsConstant)
             JetTokens.GTEQ -> BooleanValue(result >= 0, c.canBeUsedInAnnotation, c.usesVariableAsConstant)
             JetTokens.IDENTIFIER -> {
-                assert ((operationReference as JetSimpleNameExpression).getReferencedNameAsName() == OperatorConventions.COMPARE_TO, "This method should be called only for compareTo operations")
+                assert (operationReference.getReferencedNameAsName() == OperatorConventions.COMPARE_TO, "This method should be called only for compareTo operations")
                 return IntValue(result, c.canBeUsedInAnnotation, c.isPure, c.usesVariableAsConstant)
             }
             else -> throw IllegalStateException("Unknown compareTo operation token: $operationToken")
