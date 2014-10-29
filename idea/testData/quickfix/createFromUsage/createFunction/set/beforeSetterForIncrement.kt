@@ -1,4 +1,4 @@
-// "Create function 'set' from usage" "true"
+// "Create function 'set'" "true"
 class A {
     fun get(s: String): Int = 1
 }

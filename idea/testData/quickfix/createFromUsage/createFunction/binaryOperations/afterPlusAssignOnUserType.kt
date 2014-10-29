@@ -1,4 +1,4 @@
-// "Create function 'plusAssign' from usage" "true"
+// "Create function 'plusAssign'" "true"
 
 class A<T>(val n: T) {
     fun plusAssign(arg: T) {

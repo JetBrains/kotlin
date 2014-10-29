@@ -1,4 +1,4 @@
-// "Create function 'foo' from usage" "true"
+// "Create function 'foo'" "true"
 
 class B<T>(val t: T) {
     fun <T1> foo(i: Int, arg: T1): Int {

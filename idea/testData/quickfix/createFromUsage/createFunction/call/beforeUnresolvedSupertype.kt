@@ -1,4 +1,4 @@
-// "Create function 'foo' from usage" "true"
+// "Create function 'foo'" "true"
 // ERROR: Unresolved reference: B
 
 class A: B {

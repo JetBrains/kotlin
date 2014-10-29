@@ -1,4 +1,4 @@
-// "Create function 'foo' from usage" "false"
+// "Create function 'foo'" "false"
 // ACTION: Convert to expression body
 // ACTION: Replace with infix function call
 // ERROR: Unresolved reference: x

@@ -1,4 +1,4 @@
-// "Create function 'foo' from usage" "true"
+// "Create function 'foo'" "true"
 
 fun test(): Int {
     return foo<Int>(2, "2")

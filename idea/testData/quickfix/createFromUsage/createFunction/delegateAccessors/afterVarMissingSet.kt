@@ -1,4 +1,4 @@
-// "Create function 'set' from usage" "true"
+// "Create function 'set'" "true"
 class F {
     fun get(x: X, propertyMetadata: PropertyMetadata): Int = 1
 
