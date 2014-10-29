@@ -9,13 +9,13 @@
   <idea-version since-build="138.977" until-build="138.9999"/>
 
   <depends optional="false">org.jetbrains.kotlin</depends>
-  <depends optional="false" config-file="android.xml">org.jetbrains.android</depends>
+  <depends optional="false">org.jetbrains.android</depends>
 
   <extensions defaultExtensionNs="com.intellij">
       <projectService serviceInterface="org.jetbrains.jet.lang.resolve.android.AndroidUIXmlProcessor"
                       serviceImplementation="org.jetbrains.jet.plugin.android.IDEAndroidUIXmlProcessor"/>
       <compileServer.plugin classpath="jps/kotlin-android-extensions-jps.jar;android-compiler-plugin.jar"/>
-
+      <gotoDeclarationHandler implementation="org.jetbrains.jet.plugin.android.AndroidGotoDeclarationHandler"/>
       <renamePsiElementProcessor id="KotlinAndroidSyntheticProperty"
                                  implementation="org.jetbrains.jet.plugin.android.AndroidRenameProcessor"
                                  order="first"/>
