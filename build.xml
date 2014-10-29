@@ -677,7 +677,7 @@
             depends="init,prepareDist,preloader,builtins,compiler_quick"
             description="Builds compiler jar from project out dir"/>
 
-    <target name="zip" depends="dist">
+    <target name="zip-compiler" depends="dist">
         <zip destfile="${output}/${output.name}.zip">
             <zipfileset prefix="kotlinc" dir="${kotlin-home}" excludes="bin/*"/>
             <zipfileset prefix="kotlinc/bin" dir="${kotlin-home}/bin" includes="*.bat" filemode="644"/>
@@ -780,5 +780,12 @@
 
     </target>
 
-    <target name="build-artifacts" depends="zip,kotlin-for-upsource"/>
+    <target name="zip-test-data">
+        <zip destfile="${output}/kotlin-test-data.zip">
+            <zipfileset dir="compiler/testData" prefix="compiler"/>
+            <zipfileset dir="idea/testData" prefix="ide"/>
+        </zip>
+    </target>
+
+    <target name="build-artifacts" depends="zip-compiler,kotlin-for-upsource,zip-test-data"/>
 </project>
