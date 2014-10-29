@@ -1,10 +1,10 @@
-inline fun test(s: ()->Int): Int {
+inline fun test(s: ()->Int){
     var i = 0;
     try {
         i = s()
         i = i + 10
     } finally {
-        return i
+        i
     }
 }
 
