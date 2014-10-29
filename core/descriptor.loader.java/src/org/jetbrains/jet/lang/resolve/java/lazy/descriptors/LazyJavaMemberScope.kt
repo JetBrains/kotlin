@@ -72,8 +72,6 @@ public abstract class LazyJavaMemberScope(
 
     protected abstract fun getDispatchReceiverParameter(): ReceiverParameterDescriptor?
 
-    protected abstract fun computeAdditionalFunctions(name: Name): Collection<SimpleFunctionDescriptor>
-
     private val _functions = c.storageManager.createMemoizedFunction {
         (name: Name): Collection<FunctionDescriptor> ->
         val methods = memberIndex().findMethodsByName(name)
@@ -88,7 +86,6 @@ public abstract class LazyJavaMemberScope(
                             else
                                 listOf(function).stream()
                         }
-                        .plus(computeAdditionalFunctions(name))
                         .toList()
         )
 

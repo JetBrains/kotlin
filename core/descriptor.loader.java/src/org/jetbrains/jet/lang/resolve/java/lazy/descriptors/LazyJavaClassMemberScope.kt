@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaMemberScope.MethodSignatureData
-import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
@@ -84,8 +83,6 @@ public class LazyJavaClassMemberScope(
         result.addAll(DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, getContainingDeclaration(),
                                                                    c.errorReporter))
     }
-
-    override fun computeAdditionalFunctions(name: Name) = listOf<SimpleFunctionDescriptor>()
 
     private fun getPropertiesFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
         return descriptor.getTypeConstructor().getSupertypes().flatMap {

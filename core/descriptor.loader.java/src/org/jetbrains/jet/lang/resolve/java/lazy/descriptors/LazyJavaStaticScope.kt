@@ -110,8 +110,6 @@ public class LazyPackageFragmentScopeForJavaPackage(
         override fun getAllMethodNames(): Collection<Name> = getAllClassNames()
     }
 
-    override fun computeAdditionalFunctions(name: Name) = listOf<SimpleFunctionDescriptor>()
-
     override fun getAllClassNames(): Collection<Name> {
         return jPackage.getClasses().stream()
                 .filter { c -> c.getOriginKind() != JavaClass.OriginKind.KOTLIN_LIGHT_CLASS }
@@ -160,16 +158,6 @@ public class LazyJavaStaticClassScope(
         return super.getAllFunctionNames()
     }
 
-    override fun computeAdditionalFunctions(name: Name): Collection<SimpleFunctionDescriptor> {
-        if (jClass.isEnum()) {
-            when (name) {
-                DescriptorUtils.ENUM_VALUE_OF -> return listOf(createEnumValueOfMethod(getContainingDeclaration()))
-                DescriptorUtils.ENUM_VALUES -> return listOf(createEnumValuesMethod(getContainingDeclaration()))
-            }
-        }
-        return listOf()
-    }
-
     override fun getAllClassNames(): Collection<Name> = listOf()
     override fun getClassifier(name: Name): ClassifierDescriptor? = null
 
@@ -178,6 +166,13 @@ public class LazyJavaStaticClassScope(
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         val nestedClassesScope = getContainingDeclaration().getUnsubstitutedInnerClassesScope()
         result.addIfNotNull(c.samConversionResolver.resolveSamConstructor(name, nestedClassesScope))
+
+        if (jClass.isEnum()) {
+            when (name) {
+                DescriptorUtils.ENUM_VALUE_OF -> result.add(createEnumValueOfMethod(getContainingDeclaration()))
+                DescriptorUtils.ENUM_VALUES -> result.add(createEnumValuesMethod(getContainingDeclaration()))
+            }
+        }
     }
 
     override fun getContainingDeclaration() = super.getContainingDeclaration() as LazyJavaClassDescriptor
