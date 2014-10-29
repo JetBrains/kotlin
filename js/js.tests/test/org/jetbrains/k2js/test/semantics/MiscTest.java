@@ -189,4 +189,8 @@ public final class MiscTest extends AbstractExpressionTest {
     public void testRightAssocForGeneratedConditionalOperator() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testToGeneratorInStdlib() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
