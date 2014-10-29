@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -91,10 +92,9 @@ public class TracingStrategyForInvoke extends AbstractTracingStrategy {
 
     private void functionExpectedOrNoReceiverAllowed(BindingTrace trace) {
         if (KotlinBuiltIns.getInstance().isFunctionType(calleeType)) {
-            //LOG.assert
-            if (!call.getExplicitReceiver().exists()) {
-                LOG.error("'Invoke' is not found on expression of function type (" + calleeType + "): " + call.getCallElement().getText());
-            }
+            LOG.assertTrue(call.getExplicitReceiver().exists(),
+                           "'Invoke' is not found on expression of function type (" + calleeType + "): "
+                           + PsiUtilPackage.getTextWithLocation(call.getCallElement()));
             trace.report(NO_RECEIVER_ALLOWED.on(reference));
         }
         else {
