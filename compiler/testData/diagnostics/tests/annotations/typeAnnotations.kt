@@ -1,0 +1,6 @@
+// !DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
+class A
+
+fun [<!UNRESOLVED_REFERENCE!>x<!>] A.foo(a: [<!UNRESOLVED_REFERENCE!>x<!>] Int) {
+    val v: [<!UNRESOLVED_REFERENCE!>x<!>] Int = 1
+}

@@ -88,7 +88,7 @@ public class TypeResolver {
         JetType cachedType = c.trace.getBindingContext().get(BindingContext.TYPE, typeReference);
         if (cachedType != null) return type(cachedType);
 
-        Annotations annotations = annotationResolver.getResolvedAnnotations(typeReference.getAnnotations(), c.trace);
+        Annotations annotations = annotationResolver.resolveAnnotationsWithArguments(c.scope, typeReference.getAnnotations(), c.trace);
 
         JetTypeElement typeElement = typeReference.getTypeElement();
         PossiblyBareType type = resolveTypeElement(c, annotations, typeElement);
