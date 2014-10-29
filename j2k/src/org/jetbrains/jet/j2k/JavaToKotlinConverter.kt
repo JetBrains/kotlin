@@ -48,7 +48,7 @@ public class JavaToKotlinConverter(private val project: Project,
                                    private val settings: ConverterSettings,
                                    private val conversionScope: ConversionScope /*TODO: drop this parameter*/,
                                    private val referenceSearcher: ReferenceSearcher,
-                                   private val lazyResolveSessionGetter: ((JetElement) -> KotlinCodeAnalyzer)?) {
+                                   private val resolveSessionGetter: ((JetElement) -> KotlinCodeAnalyzer)?) {
     private val LOG = Logger.getInstance("#org.jetbrains.jet.j2k.JavaToKotlinConverter")
 
     public fun elementsToKotlin(psiElementsAndProcessors: List<Pair<PsiElement, PostProcessor?>>): List<String> {
@@ -61,7 +61,7 @@ public class JavaToKotlinConverter(private val project: Project,
                 usageProcessings.put(usageProcessing.targetElement, usageProcessing)
             }
             for ((psiElement, postProcessor) in psiElementsAndProcessors) {
-                val converter = Converter.create(psiElement, settings, conversionScope, referenceSearcher, lazyResolveSessionGetter, postProcessor, usageProcessingCollector)
+                val converter = Converter.create(psiElement, settings, conversionScope, referenceSearcher, resolveSessionGetter, postProcessor, usageProcessingCollector)
                 val result = converter.convert()
                 intermediateResults.add(result)
             }

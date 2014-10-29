@@ -34,7 +34,7 @@ class Converter private(private val elementToConvert: PsiElement,
                         val settings: ConverterSettings,
                         val conversionScope: ConversionScope,
                         val referenceSearcher: ReferenceSearcher,
-                        val lazyResolveSessionGetter: ((JetElement) -> KotlinCodeAnalyzer)?,
+                        val resolveSessionGetter: ((JetElement) -> KotlinCodeAnalyzer)?,
                         private val postProcessor: PostProcessor?,
                         private val commonState: Converter.CommonState,
                         private val personalState: Converter.PersonalState) {
@@ -61,16 +61,16 @@ class Converter private(private val elementToConvert: PsiElement,
 
     class object {
         public fun create(elementToConvert: PsiElement, settings: ConverterSettings, conversionScope: ConversionScope,
-                          referenceSearcher: ReferenceSearcher, lazyResolveSessionGetter: ((JetElement) -> KotlinCodeAnalyzer)?, postProcessor: PostProcessor?,
+                          referenceSearcher: ReferenceSearcher, resolveSessionGetter: ((JetElement) -> KotlinCodeAnalyzer)?, postProcessor: PostProcessor?,
                           usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
-            return Converter(elementToConvert, settings, conversionScope, referenceSearcher, lazyResolveSessionGetter, postProcessor, CommonState(usageProcessingsCollector), PersonalState(null))
+            return Converter(elementToConvert, settings, conversionScope, referenceSearcher, resolveSessionGetter, postProcessor, CommonState(usageProcessingsCollector), PersonalState(null))
         }
     }
 
     public fun withSpecialContext(context: PsiElement): Converter = withState(PersonalState(context))
 
     private fun withState(state: PersonalState): Converter
-            = Converter(elementToConvert, settings, conversionScope, referenceSearcher, lazyResolveSessionGetter, postProcessor, commonState, state)
+            = Converter(elementToConvert, settings, conversionScope, referenceSearcher, resolveSessionGetter, postProcessor, commonState, state)
 
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
