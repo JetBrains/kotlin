@@ -41,7 +41,6 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
-import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
@@ -72,33 +71,25 @@ public abstract class LazyJavaMemberScope(
 
     protected abstract fun getDispatchReceiverParameter(): ReceiverParameterDescriptor?
 
-    private val _functions = c.storageManager.createMemoizedFunction {
-        (name: Name): Collection<FunctionDescriptor> ->
-        val methods = memberIndex().findMethodsByName(name)
-        val functions = LinkedHashSet<SimpleFunctionDescriptor>(
-                methods.stream()
-                        .flatMap {
-                            m ->
-                            val function = resolveMethodToFunctionDescriptor(m, true)
-                            val samAdapter = resolveSamAdapter(function)
-                            if (samAdapter != null)
-                                listOf(function, samAdapter).stream()
-                            else
-                                listOf(function).stream()
-                        }
-                        .toList()
-        )
+    private val functions = c.storageManager.createMemoizedFunction {(name: Name): Collection<FunctionDescriptor> ->
+        val result = LinkedHashSet<SimpleFunctionDescriptor>()
 
-        computeNonDeclaredFunctions(functions, name)
+        for (method in memberIndex().findMethodsByName(name)) {
+            val descriptor = resolveMethodToFunctionDescriptor(method, true)
+            result.add(descriptor)
+            result.addIfNotNull(c.samConversionResolver.resolveSamAdapter(descriptor))
+        }
+
+        computeNonDeclaredFunctions(result, name)
 
         // Make sure that lazy things are computed before we release the lock
-        for (f in functions) {
+        for (f in result) {
             for (p in f.getValueParameters()) {
                 p.hasDefaultValue()
             }
         }
 
-        functions.toReadOnlyList()
+        result.toReadOnlyList()
     }
 
     data class MethodSignatureData(
@@ -213,18 +204,12 @@ public abstract class LazyJavaMemberScope(
         return ResolvedValueParameters(descriptors, synthesizedNames)
     }
 
-    private fun resolveSamAdapter(original: JavaMethodDescriptor): JavaMethodDescriptor? {
-        return if (SingleAbstractMethodUtils.isSamAdapterNecessary(original))
-                    SingleAbstractMethodUtils.createSamAdapterFunction(original) as JavaMethodDescriptor
-               else null
-    }
-
-    override fun getFunctions(name: Name) = _functions(name)
+    override fun getFunctions(name: Name) = functions(name)
     protected open fun getAllFunctionNames(): Collection<Name> = memberIndex().getAllMethodNames()
 
     protected abstract fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>)
 
-    val _properties = c.storageManager.createMemoizedFunction {
+    private val properties = c.storageManager.createMemoizedFunction {
         (name: Name) ->
         val properties = ArrayList<PropertyDescriptor>()
 
@@ -291,7 +276,7 @@ public abstract class LazyJavaMemberScope(
         return propertyType
     }
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> = _properties(name)
+    override fun getProperties(name: Name): Collection<VariableDescriptor> = properties(name)
     protected open fun getAllPropertyNames(): Collection<Name> = memberIndex().getAllFieldNames()
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null

@@ -21,11 +21,24 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor
 
 public object SamConversionResolverImpl : SamConversionResolver {
     override fun resolveSamConstructor(name: Name, scope: JetScope): SamConstructorDescriptor? {
         val classifier = scope.getClassifier(name) as? LazyJavaClassDescriptor ?: return null
         if (classifier.getFunctionTypeForSamInterface() == null) return null
         return SingleAbstractMethodUtils.createSamConstructorFunction(scope.getContainingDeclaration(), classifier)
+    }
+
+    suppress("UNCHECKED_CAST")
+    override fun <D : FunctionDescriptor> resolveSamAdapter(original: D): D? {
+        return when {
+            !SingleAbstractMethodUtils.isSamAdapterNecessary(original) -> null
+            original is JavaConstructorDescriptor -> SingleAbstractMethodUtils.createSamAdapterConstructor(original) as D
+            original is JavaMethodDescriptor -> SingleAbstractMethodUtils.createSamAdapterFunction(original) as D
+            else -> null
+        }
     }
 }

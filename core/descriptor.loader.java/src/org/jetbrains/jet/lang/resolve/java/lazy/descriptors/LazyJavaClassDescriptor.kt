@@ -90,7 +90,7 @@ class LazyJavaClassDescriptor(
     override fun getClassObjectDescriptor(): ClassDescriptor? = null
     override fun getClassObjectType(): JetType? = getClassObjectDescriptor()?.let { d -> d.getDefaultType() }
 
-    override fun getConstructors() = _scopeForMemberLookup._constructors()
+    override fun getConstructors() = _scopeForMemberLookup.constructors()
 
     private val _annotations = c.storageManager.createLazyValue { c.resolveAnnotations(jClass) }
     override fun getAnnotations() = _annotations()

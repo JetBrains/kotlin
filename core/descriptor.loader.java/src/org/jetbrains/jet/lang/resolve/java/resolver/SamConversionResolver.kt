@@ -19,7 +19,10 @@ package org.jetbrains.jet.lang.resolve.java.resolver
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
 public trait SamConversionResolver {
     public fun resolveSamConstructor(name: Name, scope: JetScope): SamConstructorDescriptor?
+
+    public fun <D : FunctionDescriptor> resolveSamAdapter(original: D): D?
 }

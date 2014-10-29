@@ -222,6 +222,7 @@ public class SingleAbstractMethodUtils {
                     @Nullable JetType returnType
             ) {
                 result.initialize(typeParameters, valueParameters, original.getVisibility());
+                result.setReturnType(result.getContainingDeclaration().getDefaultType());
             }
         });
     }
