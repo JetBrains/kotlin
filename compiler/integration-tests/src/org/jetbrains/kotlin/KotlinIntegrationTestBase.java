@@ -31,6 +31,7 @@ import kotlin.KotlinPackage;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.cli.common.KotlinVersion;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.test.Tmpdir;
 import org.jetbrains.jet.utils.PathUtil;
@@ -95,6 +96,8 @@ public abstract class KotlinIntegrationTestBase {
         content = normalizePath(content, getTestDataDir(), "[TestData]");
         content = normalizePath(content, tmpdir.getTmpDir(), "[Temp]");
         content = normalizePath(content, getCompilerLib(), "[CompilerLib]");
+        content = normalizePath(content, getKotlinProjectHome(), "[KotlinProjectHome]");
+        content = content.replaceAll(KotlinVersion.VERSION, "[KotlinVersion]");
         content = StringUtil.convertLineSeparators(content);
         return content;
     }

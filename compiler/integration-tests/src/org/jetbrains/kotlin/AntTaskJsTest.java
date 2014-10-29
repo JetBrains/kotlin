@@ -102,6 +102,21 @@ public class AntTaskJsTest extends AntTaskBaseTest {
         doJsAntTest();
     }
 
+    @Test
+    public void suppressWarnings() throws Exception {
+        doJsAntTest();
+    }
+
+    @Test
+    public void verbose() throws Exception {
+        doJsAntTest();
+    }
+
+    @Test
+    public void version() throws Exception {
+        doJsAntTest();
+    }
+
 
     @Test
     public void noSrcParam() throws Exception {

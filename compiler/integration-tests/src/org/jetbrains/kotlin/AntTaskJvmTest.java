@@ -77,6 +77,21 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
     }
 
     @Test
+    public void suppressWarnings() throws Exception {
+        doJvmAntTest();
+    }
+
+    @Test
+    public void verbose() throws Exception {
+        doJvmAntTest();
+    }
+
+    @Test
+    public void version() throws Exception {
+        doJvmAntTest();
+    }
+
+    @Test
     public void javacCompiler() throws Exception {
         doJvmAntTest("-cp", getClassPathForAnt(),
                      "-Dkotlin.home", getCompilerLib().getAbsolutePath());

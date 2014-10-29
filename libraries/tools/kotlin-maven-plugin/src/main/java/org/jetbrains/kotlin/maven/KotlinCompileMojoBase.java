@@ -64,6 +64,13 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         return defaultSourceDirs;
     }
 
+    /**
+     * Suppress all warnings.
+     *
+     * @parameter default-value="false"
+     */
+    public boolean nowarn;
+
     // TODO not sure why this doesn't work :(
     // * @parameter default-value="$(project.basedir}/src/main/resources"
 
@@ -237,6 +244,8 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         if (sources == null || sources.isEmpty()) {
             throw new MojoExecutionException("No source roots to compile");
         }
+
+        arguments.suppressWarnings = nowarn;
 
         arguments.freeArgs.addAll(sources);
         LOG.info("Compiling Kotlin sources from " + sources );

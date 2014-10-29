@@ -7,8 +7,10 @@ import java.util.Scanner
 import org.junit.Before
 import org.junit.After
 import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 import kotlin.test.assertEquals
 import kotlin.test.fail
+import org.gradle.api.logging.LogLevel
 
 open class BaseGradleIT(resourcesRoot: String = "src/test/resources") {
 
@@ -23,7 +25,7 @@ open class BaseGradleIT(resourcesRoot: String = "src/test/resources") {
         deleteRecursively(workingDir)
     }
 
-    class Project(val projectName: String, val wrapperVersion: String = "1.4")
+    class Project(val projectName: String, val wrapperVersion: String = "1.4", val minLogLevel: LogLevel = LogLevel.DEBUG)
 
     class CompiledProject(val project: Project, val output: String, val resultCode: Int)
 
@@ -50,14 +52,21 @@ open class BaseGradleIT(resourcesRoot: String = "src/test/resources") {
         return this
     }
 
+    fun CompiledProject.assertNotContains(vararg expected: String): CompiledProject {
+        for (str in expected) {
+            assertFalse(output.contains(str), "Should not contain '$str', actual output: $output")
+        }
+        return this
+    }
+
     fun CompiledProject.assertReportExists(pathToReport: String = ""): CompiledProject {
         assertTrue(File(File(workingDir, project.projectName), pathToReport).exists(), "The report [$pathToReport] does not exist.")
         return this
     }
 
-    private fun createCommand(params: Array<String>): List<String> {
+    private fun Project.createCommand(params: Array<String>): List<String> {
         val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("local-repo").getAbsolutePath()
-        val tailParameters = params + listOf(pathToKotlinPlugin, "--no-daemon", "--debug")
+        val tailParameters = params + listOf(pathToKotlinPlugin, "--no-daemon", "--${minLogLevel.name().toLowerCase()}")
 
         return if (isWindows())
             listOf("cmd", "/C", "gradlew.bat") + tailParameters

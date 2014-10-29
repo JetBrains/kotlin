@@ -29,6 +29,8 @@ import org.apache.tools.ant.types.Commandline
 import com.sampullara.cli.Args
 import java.io.IOException
 import org.jetbrains.jet.config
+import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.jet.cli.common.messages.MessageRenderer
 
 /**
  * {@code file.getCanonicalPath()} convenience wrapper.
@@ -55,6 +57,9 @@ public abstract class KotlinCompilerBaseTask<T : CommonCompilerArguments> : Task
 
     public var src: Path? = null
     public var output: File? = null
+    public var nowarn: Boolean = false
+    public var verbose: Boolean = false
+    public var printVersion: Boolean = false
 
     public val additionalArguments: MutableList<Commandline.Argument> = arrayListOf()
 
@@ -87,6 +92,10 @@ public abstract class KotlinCompilerBaseTask<T : CommonCompilerArguments> : Task
 
         output ?: throw BuildException("\"output\" should be specified")
 
+        arguments.suppressWarnings = nowarn
+        arguments.verbose = verbose
+        arguments.version = printVersion
+
         val args = additionalArguments.flatMap { it.getParts()!!.toList() }
         try {
             Args.parse(arguments, args.copyToArray())
@@ -105,7 +114,8 @@ public abstract class KotlinCompilerBaseTask<T : CommonCompilerArguments> : Task
 
         log("Compiling ${arguments.freeArgs} => [${outputPath}]");
 
-        val exitCode = compiler.exec(MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR, config.Services.EMPTY, arguments)
+        val collector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN, arguments.verbose)
+        val exitCode = compiler.exec(collector, config.Services.EMPTY, arguments)
 
         if (exitCode != ExitCode.OK) {
             throw BuildException("Compilation finished with exit code $exitCode")
