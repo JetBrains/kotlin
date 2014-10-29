@@ -1317,6 +1317,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/tests/testData/fileOrElement/dropAccessors"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("AnonymousClass.java")
+        public void testAnonymousClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/fileOrElement/dropAccessors/AnonymousClass.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("CannotDropOnlySetter.java")
         public void testCannotDropOnlySetter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/fileOrElement/dropAccessors/CannotDropOnlySetter.java");

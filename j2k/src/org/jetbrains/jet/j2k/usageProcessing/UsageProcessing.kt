@@ -38,22 +38,20 @@ trait ExternalCodeProcessor {
     fun processUsage(reference: PsiReference)
 }
 
-class UsageProcessingExpressionConverter(processings: Collection<UsageProcessing>) : SpecialExpressionConverter {
-    private val targetToProcessing = processings.toMap { it.targetElement } // we assume that there will be no more than one processing for one target element
-
+class UsageProcessingExpressionConverter(val processings: Map<PsiElement, UsageProcessing>) : SpecialExpressionConverter {
     override fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression? {
-        if (targetToProcessing.isEmpty()) return null
+        if (processings.isEmpty()) return null
 
         when (expression) {
             is PsiReferenceExpression -> {
                 val target = expression.resolve() as? PsiVariable ?: return null
-                val processor = targetToProcessing[target]?.convertedCodeProcessor ?: return null
+                val processor = processings[target]?.convertedCodeProcessor ?: return null
                 return processor.convertVariableUsage(expression, codeConverter)
             }
 
             is PsiMethodCallExpression -> {
                 val target = expression.getMethodExpression().resolve() as? PsiMethod ?: return null
-                val processor = targetToProcessing[target]?.convertedCodeProcessor ?: return null
+                val processor = processings[target]?.convertedCodeProcessor ?: return null
                 return processor.convertMethodUsage(expression, codeConverter)
             }
 

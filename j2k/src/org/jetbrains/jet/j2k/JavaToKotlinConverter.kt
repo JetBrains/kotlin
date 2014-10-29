@@ -28,6 +28,7 @@ import java.util.ArrayList
 import org.jetbrains.jet.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
+import java.util.HashMap
 
 public trait ConversionScope {
     public fun contains(element: PsiElement): Boolean
@@ -53,12 +54,16 @@ public class JavaToKotlinConverter(private val project: Project,
     public fun elementsToKotlin(psiElementsAndProcessors: List<Pair<PsiElement, PostProcessor?>>): List<String> {
         try {
             val intermediateResults = ArrayList<Converter.IntermediateResult?>(psiElementsAndProcessors.size)
-            val usageProcessings = ArrayList<UsageProcessing>()
+            val usageProcessings = HashMap<PsiElement, UsageProcessing>()
+            val usageProcessingCollector: (UsageProcessing) -> Unit = { usageProcessing ->
+                assert(!usageProcessings.containsKey(usageProcessing.targetElement))
+                    { "Duplicated UsageProcessing for target element ${usageProcessing.targetElement}" }
+                usageProcessings.put(usageProcessing.targetElement, usageProcessing)
+            }
             for ((psiElement, postProcessor) in psiElementsAndProcessors) {
-                val converter = Converter.create(psiElement, settings, conversionScope, referenceSearcher, lazyResolveSessionGetter, postProcessor)
+                val converter = Converter.create(psiElement, settings, conversionScope, referenceSearcher, lazyResolveSessionGetter, postProcessor, usageProcessingCollector)
                 val result = converter.convert()
                 intermediateResults.add(result)
-                result?.usageProcessings?.let { usageProcessings.addAll(it) }
             }
 
             val results = ArrayList<String>(psiElementsAndProcessors.size)

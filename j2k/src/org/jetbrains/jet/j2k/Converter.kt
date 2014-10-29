@@ -40,10 +40,9 @@ class Converter private(private val elementToConvert: PsiElement,
                         private val personalState: Converter.PersonalState) {
 
     // state which is shared between all converter's based on this one
-    private class CommonState {
+    private class CommonState(val usageProcessingsCollector: (UsageProcessing) -> Unit) {
         val importsToAdd = LinkedHashSet<String>()
         val deferredElements = ArrayList<DeferredElement<*>>()
-        val usageProcessings = ArrayList<UsageProcessing>()
         val postUnfoldActions = ArrayList<() -> Unit>()
     }
 
@@ -62,8 +61,9 @@ class Converter private(private val elementToConvert: PsiElement,
 
     class object {
         public fun create(elementToConvert: PsiElement, settings: ConverterSettings, conversionScope: ConversionScope,
-                          referenceSearcher: ReferenceSearcher, lazyResolveSessionGetter: ((JetElement) -> KotlinCodeAnalyzer)?, postProcessor: PostProcessor?): Converter {
-            return Converter(elementToConvert, settings, conversionScope, referenceSearcher, lazyResolveSessionGetter, postProcessor, CommonState(), PersonalState(null))
+                          referenceSearcher: ReferenceSearcher, lazyResolveSessionGetter: ((JetElement) -> KotlinCodeAnalyzer)?, postProcessor: PostProcessor?,
+                          usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
+            return Converter(elementToConvert, settings, conversionScope, referenceSearcher, lazyResolveSessionGetter, postProcessor, CommonState(usageProcessingsCollector), PersonalState(null))
         }
     }
 
@@ -75,22 +75,19 @@ class Converter private(private val elementToConvert: PsiElement,
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
     public trait IntermediateResult {
-        fun finishConversion(usageProcessings: Collection<UsageProcessing>): String
-        val usageProcessings: Collection<UsageProcessing>
+        fun finishConversion(usageProcessings: Map<PsiElement, UsageProcessing>): String
     }
 
     public fun convert(): IntermediateResult? {
         val element = convertTopElement(elementToConvert) ?: return null
         return object: IntermediateResult {
-            override fun finishConversion(usageProcessings: Collection<UsageProcessing>): String {
+            override fun finishConversion(usageProcessings: Map<PsiElement, UsageProcessing>): String {
                 unfoldDeferredElements(usageProcessings)
 
                 val builder = CodeBuilder(elementToConvert)
                 builder.append(element)
                 return builder.result
             }
-
-            override val usageProcessings: Collection<UsageProcessing> = commonState.usageProcessings
         }
     }
 
@@ -108,7 +105,7 @@ class Converter private(private val elementToConvert: PsiElement,
         else -> null
     }
 
-    private fun unfoldDeferredElements(usageProcessings: Collection<UsageProcessing>) {
+    private fun unfoldDeferredElements(usageProcessings: Map<PsiElement, UsageProcessing>) {
         val codeConverter = createDefaultCodeConverter().withSpecialExpressionConverter(UsageProcessingExpressionConverter(usageProcessings))
 
         // we use loop with index because new deferred elements can be added during unfolding
@@ -128,7 +125,7 @@ class Converter private(private val elementToConvert: PsiElement,
     }
 
     public fun addUsageProcessing(processing: UsageProcessing) {
-        commonState.usageProcessings.add(processing)
+        commonState.usageProcessingsCollector(processing)
     }
 
     public fun addPostUnfoldDeferredElementsAction(action: () -> Unit) {
