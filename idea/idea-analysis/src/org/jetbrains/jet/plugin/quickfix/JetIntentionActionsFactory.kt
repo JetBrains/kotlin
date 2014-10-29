@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.quickfix;
+package org.jetbrains.jet.plugin.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import com.intellij.codeInsight.intention.IntentionAction
+import org.jetbrains.jet.lang.diagnostics.Diagnostic
 
-import java.util.List;
-
-public interface JetIntentionActionsFactory {
-
-    @NotNull
-    List<IntentionAction> createActions(@NotNull Diagnostic diagnostic);
+public trait JetIntentionActionsFactory {
+    public fun createActions(diagnostic: Diagnostic): List<IntentionAction>
 }

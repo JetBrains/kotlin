@@ -14,39 +14,24 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.quickfix;
+package org.jetbrains.jet.plugin.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetCodeFragment;
+import com.intellij.codeInsight.intention.IntentionAction
+import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import org.jetbrains.jet.lang.psi.JetCodeFragment
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collections
+import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 
-public abstract class JetSingleIntentionActionFactory implements JetIntentionActionsFactory {
+public abstract class JetSingleIntentionActionFactory : JetIntentionActionsFactory {
+    public abstract fun createAction(diagnostic: Diagnostic): IntentionAction?
 
-    @Nullable
-    public abstract IntentionAction createAction(@NotNull Diagnostic diagnostic);
-
-    @NotNull
-    @Override
-    public final List<IntentionAction> createActions(@NotNull Diagnostic diagnostic) {
-        List<IntentionAction> intentionActionList = new LinkedList<IntentionAction>();
-
-        if (diagnostic.getPsiElement().getContainingFile() instanceof JetCodeFragment && !isApplicableForCodeFragment()) {
-            return intentionActionList;
+    override fun createActions(diagnostic: Diagnostic): List<IntentionAction> {
+        if (diagnostic.getPsiElement().getContainingFile() is JetCodeFragment && !isApplicableForCodeFragment()) {
+            return Collections.emptyList()
         }
-
-        IntentionAction intentionAction = createAction(diagnostic);
-        if (intentionAction != null) {
-            intentionActionList.add(intentionAction);
-        }
-        return intentionActionList;
+        return createAction(diagnostic).singletonOrEmptyList()
     }
 
-    public boolean isApplicableForCodeFragment() {
-        return false;
-    }
+    public fun isApplicableForCodeFragment(): Boolean = false
 }
