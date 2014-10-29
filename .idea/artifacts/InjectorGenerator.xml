@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="InjectorGenerator">
-    <output-path>$PROJECT_DIR$/out/artifacts/InjectorGenerator</output-path>
+    <output-path>$PROJECT_DIR$/out/artifacts/internal/</output-path>
     <root id="archive" name="injector-generator.jar">
       <element id="module-output" name="injector-generator" />
       <element id="dir-copy" path="$PROJECT_DIR$/injector-generator" />
