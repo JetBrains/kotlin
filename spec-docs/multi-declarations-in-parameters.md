@@ -71,8 +71,8 @@ No return type nor receiver type in the short form:
 { fun ( ((a, b), c) ): R -> ... } // ??? a decomposed pair whose first component is a pair
 { fun (((a, b), c: C)) -> ... } // ??? a decomposed pair whose first component is a pair
 { fun (((a, b), c): Pair<Pair<A, B>, C>) -> ... } // ??? a decomposed pair whose first component is a pair
-Rather hairy.
 ```
+Rather hairy.
 
 But we have this form possibly coming (needed for local returns):
 ``` kotlin
@@ -89,17 +89,12 @@ fun ( ((a, b), c) ): R { ... } // ??? a decomposed pair whose first component is
 fun (((a, b), c: C)): R { ... } // ??? a decomposed pair whose first component is a pair
 fun (((a, b), c): Pair<Pair<A, B>, C>): R { ... } // ??? a decomposed pair whose first component is a pair
 fun (a) {} // return type is Unit
+```
 Difference from normal functions: we can omit parameter types, we can omit the name (don't have to).
 Difference from lambdas: can specify return type and receiver type + returns are local.
-```
 
 ## Open question: Nested decompositions
 
 ``` kotlin
 fun foo((a, (b, c)): Pair<Int, Pair<String, Any>>)
 ```
-
-
-
-
-
