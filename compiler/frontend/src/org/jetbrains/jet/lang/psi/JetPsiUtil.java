@@ -336,11 +336,6 @@ public class JetPsiUtil {
         return KotlinBuiltIns.getInstance().getUnit().getName().asString().equals(typeReference.getText());
     }
 
-    public static boolean isSafeCall(@NotNull Call call) {
-        ASTNode callOperationNode = call.getCallOperationNode();
-        return callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
-    }
-
     // SCRIPT: is declaration in script?
     public static boolean isScriptDeclaration(@NotNull JetDeclaration namedDeclaration) {
         return getScript(namedDeclaration) != null;

@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
+import org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     val calleeExpression = getCalleeExpression()
@@ -378,3 +379,15 @@ public fun PsiElement.nextLeafSkipWhitespacesAndComments(): PsiElement? {
 
 public fun JetExpression.isDotReceiver(): Boolean =
         (getParent() as? JetDotQualifiedExpression)?.getReceiverExpression() == this
+
+public fun Call.isSafeCall(): Boolean {
+    if (this is CallForImplicitInvoke) {
+        //implicit safe 'invoke'
+        if (getOuterCall().isExplicitSafeCall()) {
+            return true
+        }
+    }
+    return isExplicitSafeCall()
+}
+
+public fun Call.isExplicitSafeCall(): Boolean = getCallOperationNode()?.getElementType() == JetTokens.SAFE_ACCESS

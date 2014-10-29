@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.ValueArgument;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
@@ -37,7 +38,9 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.UNKNOWN_STATUS;
@@ -74,7 +77,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private final ReceiverValue dispatchReceiver; // receiver object of a method
     private final ReceiverValue extensionReceiver; // receiver of an extension function
     private final ExplicitReceiverKind explicitReceiverKind;
-    private final boolean isSafeCall;
 
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
@@ -99,7 +101,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         this.dispatchReceiver = candidate.getDispatchReceiver();
         this.extensionReceiver = candidate.getExtensionReceiver();
         this.explicitReceiverKind = candidate.getExplicitReceiverKind();
-        this.isSafeCall = candidate.isSafeCall();
         this.trace = trace;
         this.tracing = tracing;
         this.dataFlowInfoForArguments = dataFlowInfoForArguments;
@@ -285,7 +286,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @Override
     public boolean isSafeCall() {
-        return isSafeCall;
+        return PsiUtilPackage.isSafeCall(call);
     }
 
     @NotNull

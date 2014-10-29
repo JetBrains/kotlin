@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
@@ -583,7 +584,7 @@ public class CandidateResolver {
         D candidateDescriptor = candidateCall.getCandidateDescriptor();
         if (TypeUtils.dependsOnTypeParameters(receiverParameter.getType(), candidateDescriptor.getTypeParameters())) return SUCCESS;
 
-        boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.isSafeCall();
+        boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && PsiUtilPackage.isExplicitSafeCall(candidateCall.getCall());
         boolean isSubtypeBySmartCast = SmartCastUtils.isSubTypeBySmartCastIgnoringNullability(
                 receiverArgument, receiverParameter.getType(), context);
         if (!isSubtypeBySmartCast) {

@@ -7124,6 +7124,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("safeCallWithInvoke.kt")
+            public void testSafeCallWithInvoke() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullableTypes/safeCallWithInvoke.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("uselessElvis.kt")
             public void testUselessElvis() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/nullableTypes/uselessElvis.kt");
