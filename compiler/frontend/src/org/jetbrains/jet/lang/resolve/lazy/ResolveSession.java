@@ -407,7 +407,15 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                         return getBindingContext().get(BindingContext.VALUE_PARAMETER, parameter);
                     }
                 }
-                return super.visitParameter(parameter, data);
+                else if (grandFather instanceof JetNamedFunction) {
+                    FunctionDescriptor function = (FunctionDescriptor) visitNamedFunction((JetNamedFunction) grandFather, data);
+                    function.getValueParameters();
+                    return getBindingContext().get(BindingContext.VALUE_PARAMETER, parameter);
+                }
+                else {
+                    //TODO: support parameters in accessors and other places(?)
+                    return super.visitParameter(parameter, data);
+                }
             }
 
             @Override

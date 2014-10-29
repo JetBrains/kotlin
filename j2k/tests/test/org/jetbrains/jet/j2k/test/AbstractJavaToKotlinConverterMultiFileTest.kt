@@ -32,6 +32,7 @@ import com.intellij.psi.PsiManager
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.ConverterSettings
 import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 
 public abstract class AbstractJavaToKotlinConverterMultiFileTest() : AbstractJavaToKotlinConverterTest() {
     public fun doTest(dirPath: String) {
@@ -46,7 +47,7 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest() : AbstractJav
             psiFiles.add(psiFile)
         }
 
-        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, FilesConversionScope(psiFiles), IdeaReferenceSearcher)
+        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, FilesConversionScope(psiFiles), IdeaReferenceSearcher, { it.getLazyResolveSession() })
         val results: List<String> = converter.elementsToKotlin(psiFiles.map { it to J2kPostProcessor(it) })
                 .map { reformat(it, project) }
 

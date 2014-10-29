@@ -26,6 +26,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import com.intellij.openapi.diagnostic.Logger
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.usageProcessing.UsageProcessing
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
 
 public trait ConversionScope {
     public fun contains(element: PsiElement): Boolean
@@ -44,7 +46,8 @@ public trait PostProcessor {
 public class JavaToKotlinConverter(private val project: Project,
                                    private val settings: ConverterSettings,
                                    private val conversionScope: ConversionScope /*TODO: drop this parameter*/,
-                                   private val referenceSearcher: ReferenceSearcher) {
+                                   private val referenceSearcher: ReferenceSearcher,
+                                   private val lazyResolveSessionGetter: ((JetElement) -> KotlinCodeAnalyzer)?) {
     private val LOG = Logger.getInstance("#org.jetbrains.jet.j2k.JavaToKotlinConverter")
 
     public fun elementsToKotlin(psiElementsAndProcessors: List<Pair<PsiElement, PostProcessor?>>): List<String> {
@@ -52,7 +55,7 @@ public class JavaToKotlinConverter(private val project: Project,
             val intermediateResults = ArrayList<Converter.IntermediateResult?>(psiElementsAndProcessors.size)
             val usageProcessings = ArrayList<UsageProcessing>()
             for ((psiElement, postProcessor) in psiElementsAndProcessors) {
-                val converter = Converter.create(psiElement, settings, conversionScope, referenceSearcher, postProcessor)
+                val converter = Converter.create(psiElement, settings, conversionScope, referenceSearcher, lazyResolveSessionGetter, postProcessor)
                 val result = converter.convert()
                 intermediateResults.add(result)
                 result?.usageProcessings?.let { usageProcessings.addAll(it) }

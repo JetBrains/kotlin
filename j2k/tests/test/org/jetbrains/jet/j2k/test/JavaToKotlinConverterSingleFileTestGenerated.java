@@ -2799,6 +2799,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("Overrides.java")
+        public void testOverrides() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/fileOrElement/mutableCollections/Overrides.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("Recursion.java")
         public void testRecursion() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/tests/testData/fileOrElement/mutableCollections/Recursion.java");
