@@ -6258,6 +6258,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("InnerClassFromJava.kt")
+            public void testInnerClassFromJava() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/InnerClassFromJava.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("innerNestedClassFromJava.kt")
             public void testInnerNestedClassFromJava() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/innerNestedClassFromJava.kt");
@@ -6269,13 +6275,13 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/invisiblePackagePrivateInheritedMember.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("javaStaticImport.kt")
             public void testJavaStaticImport() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/javaStaticImport.kt");
                 doTest(fileName);
             }
-            
+
             @TestMetadata("KJKInheritance.kt")
             public void testKJKInheritance() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/KJKInheritance.kt");
