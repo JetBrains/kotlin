@@ -128,7 +128,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
         return new JetIntentionActionsFactory() {
             @NotNull
             @Override
-            public List<IntentionAction> createActions(@NotNull Diagnostic diagnostic) {
+            protected List<IntentionAction> doCreateActions(@NotNull Diagnostic diagnostic) {
                 List<IntentionAction> actions = new LinkedList<IntentionAction>();
 
                 JetProperty property = QuickFixUtil.getParentElementOfType(diagnostic, JetProperty.class);

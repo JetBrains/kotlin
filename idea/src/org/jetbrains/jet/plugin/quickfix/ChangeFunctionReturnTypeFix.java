@@ -191,7 +191,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
         return new JetIntentionActionsFactory() {
             @NotNull
             @Override
-            public List<IntentionAction> createActions(@NotNull Diagnostic diagnostic) {
+            protected List<IntentionAction> doCreateActions(@NotNull Diagnostic diagnostic) {
                 List<IntentionAction> actions = new LinkedList<IntentionAction>();
 
                 JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);

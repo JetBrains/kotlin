@@ -18,20 +18,11 @@ package org.jetbrains.jet.plugin.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.psi.JetCodeFragment
 
-import java.util.Collections
 import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 
-public abstract class JetSingleIntentionActionFactory : JetIntentionActionsFactory {
-    public abstract fun createAction(diagnostic: Diagnostic): IntentionAction?
+public abstract class JetSingleIntentionActionFactory : JetIntentionActionsFactory() {
+    protected abstract fun createAction(diagnostic: Diagnostic): IntentionAction?
 
-    override fun createActions(diagnostic: Diagnostic): List<IntentionAction> {
-        if (diagnostic.getPsiElement().getContainingFile() is JetCodeFragment && !isApplicableForCodeFragment()) {
-            return Collections.emptyList()
-        }
-        return createAction(diagnostic).singletonOrEmptyList()
-    }
-
-    public fun isApplicableForCodeFragment(): Boolean = false
+    final override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> = createAction(diagnostic).singletonOrEmptyList()
 }
