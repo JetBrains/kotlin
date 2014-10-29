@@ -243,6 +243,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             outputConsumer.registerOutputFile(target, outputFile, sourceFiles.map { it.getPath() })
         }
 
+        if (compilationErrors) {
+            return ABORT
+        }
+        
         if (IncrementalCompilation.ENABLED) {
             if (recompilationDecision == IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL) {
                 allCompiledFiles.clear()
