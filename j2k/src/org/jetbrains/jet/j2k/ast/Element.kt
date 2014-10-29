@@ -57,7 +57,18 @@ fun Element.canonicalCode(): String {
 }
 
 abstract class Element {
-    public open var prototypes: List<PrototypeInfo>? = null
+    public var prototypes: List<PrototypeInfo>? = null
+        set(value) {
+            // do not assign prototypes to singleton instances
+            if (canBeSingleton) {
+                $prototypes = listOf()
+                return
+            }
+            $prototypes = value
+        }
+
+    protected open val canBeSingleton: Boolean
+        get() = isEmpty
 
     public var createdAt: String?
             = if (saveCreationStacktraces)
@@ -75,17 +86,11 @@ abstract class Element {
     object Empty : Element() {
         override fun generateCode(builder: CodeBuilder) { }
         override val isEmpty: Boolean get() = true
-        override var prototypes: List<PrototypeInfo>? by EmptyElementPrototypes // to not hold references to psi
     }
 
     class object {
         var saveCreationStacktraces = false
     }
-}
-
-object EmptyElementPrototypes {
-    public fun get(thisRef: Element, desc: PropertyMetadata): List<PrototypeInfo>? = null
-    public fun set(thisRef: Element, desc: PropertyMetadata, value: List<PrototypeInfo>?) { }
 }
 
 // this class should never be created directly - Converter.deferredElement() should be used!
@@ -99,6 +104,10 @@ class DeferredElement<TResult : Element>(
     {
         assignNoPrototype()
     }
+
+    // need to override it to not use isEmpty
+    override val canBeSingleton: Boolean
+        get() = false
 
     public fun unfold(codeConverter: CodeConverter) {
         assert(result == null)

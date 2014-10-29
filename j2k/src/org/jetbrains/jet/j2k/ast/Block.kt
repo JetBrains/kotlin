@@ -32,7 +32,7 @@ class Block(val statements: List<Statement>, val lBrace: LBrace, val rBrace: RBr
     }
 
     class object {
-        fun Empty() = Block(listOf(), LBrace(), RBrace())
+        val Empty = Block(listOf(), LBrace(), RBrace())
     }
 }
 

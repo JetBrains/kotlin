@@ -39,7 +39,7 @@ class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, v
                     if (refExpr.resolve() == null)
                         identifier
                     else
-                        QualifiedExpression(ThisExpression(Identifier.Empty()).assignNoPrototype(), identifier) //TODO: this is not correct in case of nested/anonymous classes
+                        QualifiedExpression(ThisExpression(Identifier.Empty).assignNoPrototype(), identifier) //TODO: this is not correct in case of nested/anonymous classes
                 }
             }
         }

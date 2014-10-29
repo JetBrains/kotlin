@@ -236,7 +236,7 @@ class Converter private(private val elementToConvert: PsiElement,
                               annotationConverter.convertAnnotationMethodDefault(method)).assignPrototype(method, noBlankLinesInheritance)
                 }
         val parameterList = ParameterList(parameters).assignNoPrototype()
-        val constructorSignature = PrimaryConstructorSignature(Annotations.Empty(), Modifiers.Empty(), parameterList).assignNoPrototype()
+        val constructorSignature = PrimaryConstructorSignature(Annotations.Empty, Modifiers.Empty, parameterList).assignNoPrototype()
 
         // to convert fields and nested types - they are not allowed in Kotlin but we convert them and let user refactor code
         var classBody = ClassBodyConverter(psiClass, this, false).convertBody()
@@ -246,7 +246,7 @@ class Converter private(private val elementToConvert: PsiElement,
         return Class(psiClass.declarationIdentifier(),
                      convertAnnotations(psiClass) + Annotations(listOf(annotationAnnotation)),
                      convertModifiers(psiClass).without(Modifier.ABSTRACT),
-                     TypeParameterList.Empty(),
+                     TypeParameterList.Empty,
                      listOf(),
                      listOf(),
                      listOf(),
@@ -331,8 +331,8 @@ class Converter private(private val elementToConvert: PsiElement,
         for (parameter in method.getParameterList().getParameters()) {
             if (parameter.hasWriteAccesses(referenceSearcher, method)) {
                 val variable = LocalVariable(parameter.declarationIdentifier(),
-                                             Annotations.Empty(),
-                                             Modifiers.Empty(),
+                                             Annotations.Empty,
+                                             Modifiers.Empty,
                                              null,
                                              parameter.declarationIdentifier(),
                                              false).assignNoPrototype()
@@ -479,7 +479,7 @@ class Converter private(private val elementToConvert: PsiElement,
     public fun convertParameter(parameter: PsiParameter,
                          nullability: Nullability = Nullability.Default,
                          varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
-                         modifiers: Modifiers = Modifiers.Empty(),
+                         modifiers: Modifiers = Modifiers.Empty,
                          defaultValue: DeferredElement<Expression>? = null): Parameter {
         var type = typeConverter.convertVariableType(parameter)
         when (nullability) {
@@ -491,7 +491,7 @@ class Converter private(private val elementToConvert: PsiElement,
     }
 
     public fun convertIdentifier(identifier: PsiIdentifier?): Identifier {
-        if (identifier == null) return Identifier.Empty()
+        if (identifier == null) return Identifier.Empty
 
         return Identifier(identifier.getText()!!).assignPrototype(identifier)
     }
@@ -513,7 +513,7 @@ class Converter private(private val elementToConvert: PsiElement,
         val types = throwsList.getReferencedTypes()
         val refElements = throwsList.getReferenceElements()
         assert(types.size == refElements.size)
-        if (types.isEmpty()) return Annotations.Empty()
+        if (types.isEmpty()) return Annotations.Empty
         val arguments = types.indices.map { index ->
             val convertedType = typeConverter.convertType(types[index], Nullability.NotNull)
             null to deferredElement<Expression> { MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(convertedType)).assignPrototype(refElements[index]) }

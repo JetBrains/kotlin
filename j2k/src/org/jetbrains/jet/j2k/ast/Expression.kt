@@ -25,6 +25,5 @@ abstract class Expression() : Statement() {
     object Empty : Expression() {
         override fun generateCode(builder: CodeBuilder) {}
         override val isEmpty: Boolean get() = true
-        override var prototypes: List<PrototypeInfo>? by EmptyElementPrototypes // to not hold references to psi
     }
 }

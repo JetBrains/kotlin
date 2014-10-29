@@ -65,7 +65,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
 
     override fun visitBreakStatement(statement: PsiBreakStatement) {
         if (statement.getLabelIdentifier() == null) {
-            result = BreakStatement(Identifier.Empty())
+            result = BreakStatement(Identifier.Empty)
         }
         else {
             result = BreakStatement(converter.convertIdentifier(statement.getLabelIdentifier()))
@@ -74,7 +74,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
 
     override fun visitContinueStatement(statement: PsiContinueStatement) {
         if (statement.getLabelIdentifier() == null) {
-            result = ContinueStatement(Identifier.Empty())
+            result = ContinueStatement(Identifier.Empty)
         }
         else {
             result = ContinueStatement(converter.convertIdentifier(statement.getLabelIdentifier()))
@@ -190,7 +190,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
                                                    convertedType,
                                                    Parameter.VarValModifier.None,
                                                    annotations,
-                                                   Modifiers.Empty()).assignPrototype(parameter)
+                                                   Modifiers.Empty).assignPrototype(parameter)
                 catches.add(CatchStatement(convertedParameter, blockConverted).assignNoPrototype())
             }
         }

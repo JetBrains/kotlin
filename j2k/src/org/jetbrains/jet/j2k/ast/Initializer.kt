@@ -18,11 +18,15 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
 
-class Initializer(val body: DeferredElement<Block>, modifiers: Modifiers) : Member(Annotations.Empty(), modifiers) {
+class Initializer(val body: DeferredElement<Block>, modifiers: Modifiers) : Member(Annotations.Empty, modifiers) {
     override fun generateCode(builder: CodeBuilder) {
         builder.append(body)
     }
 
     override val isEmpty: Boolean
         get() = body.isEmpty
+
+    // need to override it to not use isEmpty
+    override val canBeSingleton: Boolean
+        get() = false
 }

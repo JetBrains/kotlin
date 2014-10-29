@@ -166,7 +166,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
             val params = converter.convertParameterList(constructor.getParameterList())
             val containingClass = constructor.getContainingClass()
             val typeParameterList = converter.convertTypeParameterList(containingClass?.getTypeParameterList())
-            val factoryFunctionType = ClassType(ReferenceElement(containingClass?.declarationIdentifier() ?: Identifier.Empty(), typeParameterList.parameters).assignNoPrototype(),
+            val factoryFunctionType = ClassType(ReferenceElement(containingClass?.declarationIdentifier() ?: Identifier.Empty, typeParameterList.parameters).assignNoPrototype(),
                                                 Nullability.NotNull,
                                                 converter.settings).assignNoPrototype()
 
@@ -254,7 +254,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
             }
         }
         else {
-            { it -> Block.Empty() }
+            { it -> Block.Empty }
         }
 
         // we need to replace renamed parameter usages in base class constructor arguments and in default values
@@ -359,11 +359,11 @@ class ConstructorConverter(private val psiClass: PsiClass,
             Parameter(property.identifier, property.type, varValModifier, property.annotations, property.modifiers.filter { it in ACCESS_MODIFIERS }).assignPrototypesFrom(property)
         }
 
-        val modifiers = Modifiers.Empty()
+        val modifiers = Modifiers.Empty
         //TODO: we can generate it private when secondary constructors are supported by Kotlin
         //val modifiers = Modifiers(listOf(Modifier.PRIVATE)).assignNoPrototype()
         val parameterList = ParameterList(parameters).assignNoPrototype()
-        val constructorSignature = PrimaryConstructorSignature(Annotations.Empty(), modifiers, parameterList).assignNoPrototype()
+        val constructorSignature = PrimaryConstructorSignature(Annotations.Empty, modifiers, parameterList).assignNoPrototype()
         val updatedMembers = classBody.members.filter { !propertiesToInitialize.contains(it) }
         return ClassBody(constructorSignature, classBody.baseClassParams, updatedMembers, classBody.classObjectMembers, classBody.factoryFunctions, classBody.lBrace, classBody.rBrace)
     }
@@ -395,7 +395,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
                         statements[i] = ReturnStatement(constructorCall).assignNoPrototype()
                         return statements
                     }
-                    val localVar = LocalVariable(tempValIdentifier(), Annotations.Empty(), Modifiers.Empty(), null, constructorCall, true).assignNoPrototype()
+                    val localVar = LocalVariable(tempValIdentifier(), Annotations.Empty, Modifiers.Empty, null, constructorCall, true).assignNoPrototype()
                     statements[i] = DeclarationStatement(listOf(localVar)).assignNoPrototype()
                     statements.add(ReturnStatement(tempValIdentifier()).assignNoPrototype())
                     return statements
@@ -439,8 +439,8 @@ class ConstructorConverter(private val psiClass: PsiClass,
         val initializer = MethodCallExpression.buildNotNull(null, className, arguments).assignNoPrototype()
         if (statements.isNotEmpty()) {
             val localVar = LocalVariable(tempValIdentifier(),
-                                         Annotations.Empty(),
-                                         Modifiers.Empty(),
+                                         Annotations.Empty,
+                                         Modifiers.Empty,
                                          null,
                                          initializer,
                                          true).assignNoPrototype()

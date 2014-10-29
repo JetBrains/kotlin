@@ -22,7 +22,7 @@ import org.jetbrains.jet.j2k.CodeConverter
 
 fun PsiNameIdentifierOwner.declarationIdentifier(): Identifier {
     val name = getName()
-    return if (name != null) Identifier(name, false).assignPrototype(getNameIdentifier()!!) else Identifier.Empty()
+    return if (name != null) Identifier(name, false).assignPrototype(getNameIdentifier()!!) else Identifier.Empty
 }
 
 class Identifier(
@@ -51,7 +51,7 @@ class Identifier(
     override fun toString() = if (isNullable) "$name?" else name
 
     class object {
-        fun Empty() = Identifier("")
+        val Empty = Identifier("")
 
         val ONLY_KOTLIN_KEYWORDS: Set<String> = setOf(
                 "package", "as", "type", "val", "var", "fun", "is", "in", "object", "when", "trait", "This"

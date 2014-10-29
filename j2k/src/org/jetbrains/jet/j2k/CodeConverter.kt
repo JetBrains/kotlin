@@ -68,7 +68,7 @@ class CodeConverter(public val converter: Converter,
             = CodeConverter(converter, expressionConverter, statementConverter, methodReturnType)
 
     public fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean = true, statementFilter: (PsiStatement) -> Boolean = { true }): Block {
-        if (block == null) return Block.Empty()
+        if (block == null) return Block.Empty
 
         val lBrace = LBrace().assignPrototype(block.getLBrace())
         val rBrace = RBrace().assignPrototype(block.getRBrace())
@@ -103,7 +103,7 @@ class CodeConverter(public val converter: Converter,
     }
 
     public fun convertExpression(expression: PsiExpression?, expectedType: PsiType?): Expression {
-        if (expression == null) return Identifier.Empty()
+        if (expression == null) return Identifier.Empty
 
         var convertedExpression = convertExpression(expression)
         if (expectedType == null || expectedType == PsiType.VOID) return convertedExpression

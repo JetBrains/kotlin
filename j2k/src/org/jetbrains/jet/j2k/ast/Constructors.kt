@@ -28,7 +28,7 @@ class PrimaryConstructor(annotations: Annotations,
     override fun generateCode(builder: CodeBuilder) { throw IncorrectOperationException() }
 
     public fun initializer(): Initializer
-            = Initializer(body, Modifiers.Empty()).assignPrototypesFrom(this, CommentsAndSpacesInheritance(commentsBefore = false))
+            = Initializer(body, Modifiers.Empty).assignPrototypesFrom(this, CommentsAndSpacesInheritance(commentsBefore = false))
 
     public fun createSignature(converter: Converter): PrimaryConstructorSignature {
         val signature = PrimaryConstructorSignature(annotations, modifiers, parameterList)

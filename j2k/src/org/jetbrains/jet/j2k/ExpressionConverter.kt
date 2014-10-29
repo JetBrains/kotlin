@@ -398,13 +398,13 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     override fun visitSuperExpression(expression: PsiSuperExpression) {
         val psiQualifier = expression.getQualifier()
         val qualifier = psiQualifier?.getReferenceName()
-        result = SuperExpression(if (qualifier != null) Identifier(qualifier).assignPrototype(psiQualifier) else Identifier.Empty())
+        result = SuperExpression(if (qualifier != null) Identifier(qualifier).assignPrototype(psiQualifier) else Identifier.Empty)
     }
 
     override fun visitThisExpression(expression: PsiThisExpression) {
         val psiQualifier = expression.getQualifier()
         val qualifier = psiQualifier?.getReferenceName()
-        result = ThisExpression(if (qualifier != null) Identifier(qualifier).assignPrototype(psiQualifier) else Identifier.Empty())
+        result = ThisExpression(if (qualifier != null) Identifier(qualifier).assignPrototype(psiQualifier) else Identifier.Empty)
     }
 
     override fun visitTypeCastExpression(expression: PsiTypeCastExpression) {
