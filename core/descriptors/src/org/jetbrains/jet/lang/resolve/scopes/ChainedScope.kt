@@ -31,7 +31,7 @@ public class ChainedScope(private val containingDeclaration: DeclarationDescript
                           private val debugName: String,
                           vararg scopes: JetScope) : JetScope {
     private val scopeChain = scopes.clone()
-    private var allDescriptors: MutableCollection<DeclarationDescriptor>? = null
+    private var _allDescriptors: MutableCollection<DeclarationDescriptor>? = null
     private var implicitReceiverHierarchy: List<ReceiverParameterDescriptor>? = null
 
     override fun getClassifier(name: Name): ClassifierDescriptor?
@@ -72,14 +72,15 @@ public class ChainedScope(private val containingDeclaration: DeclarationDescript
         return result
     }
 
-    override fun getAllDescriptors(): Collection<DeclarationDescriptor> {
-        if (allDescriptors == null) {
-            allDescriptors = HashSet<DeclarationDescriptor>()
+    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+                                nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
+        if (_allDescriptors == null) {
+            _allDescriptors = HashSet<DeclarationDescriptor>()
             for (scope in scopeChain) {
-                allDescriptors!!.addAll(scope.getAllDescriptors())
+                _allDescriptors!!.addAll(scope.getAllDescriptors())
             }
         }
-        return allDescriptors!!
+        return _allDescriptors!!
     }
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {

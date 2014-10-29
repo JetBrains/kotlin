@@ -31,7 +31,7 @@ import org.jetbrains.jet.utils.Printer
 public class WriteThroughScope(outerScope: JetScope, private val writableWorker: WritableScope, redeclarationHandler: RedeclarationHandler, debugName: String)
   : WritableScopeWithImports(outerScope, redeclarationHandler, debugName) {
 
-    private var allDescriptors: MutableCollection<DeclarationDescriptor>? = null
+    private var _allDescriptors: MutableCollection<DeclarationDescriptor>? = null
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> {
         checkMayRead()
@@ -164,18 +164,19 @@ public class WriteThroughScope(outerScope: JetScope, private val writableWorker:
         writableWorker.setImplicitReceiver(implicitReceiver)
     }
 
-    override fun getAllDescriptors(): Collection<DeclarationDescriptor> {
+    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+                                nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
         checkMayRead()
 
-        if (allDescriptors == null) {
-            allDescriptors = Lists.newArrayList<DeclarationDescriptor>()
-            allDescriptors!!.addAll(workerScope.getAllDescriptors())
+        if (_allDescriptors == null) {
+            _allDescriptors = Lists.newArrayList<DeclarationDescriptor>()
+            _allDescriptors!!.addAll(workerScope.getAllDescriptors())
 
             for (imported in getImports()) {
-                allDescriptors!!.addAll(imported.getAllDescriptors())
+                _allDescriptors!!.addAll(imported.getAllDescriptors())
             }
         }
-        return allDescriptors!!
+        return _allDescriptors!!
     }
 
     override fun printAdditionalScopeStructure(p: Printer) {

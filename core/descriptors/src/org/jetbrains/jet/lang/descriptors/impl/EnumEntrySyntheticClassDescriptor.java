@@ -256,7 +256,10 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
-        public Collection<DeclarationDescriptor> getAllDescriptors() {
+        public Collection<DeclarationDescriptor> getDescriptors(
+                @NotNull Function1<? super DescriptorKind, ? extends Boolean> kindFilter,
+                @NotNull Function1<? super String, ? extends Boolean> nameFilter
+        ) {
             return allDescriptors.invoke();
         }
 

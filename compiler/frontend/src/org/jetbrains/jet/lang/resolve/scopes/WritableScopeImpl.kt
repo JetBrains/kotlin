@@ -99,7 +99,8 @@ public class WritableScopeImpl(scope: JetScope,
         super.clearImports()
     }
 
-    override fun getAllDescriptors(): Collection<DeclarationDescriptor> {
+    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+                                nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
         checkMayRead()
 
         if (!allDescriptorsDone) {

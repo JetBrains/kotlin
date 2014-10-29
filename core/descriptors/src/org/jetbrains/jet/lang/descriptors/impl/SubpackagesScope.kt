@@ -18,13 +18,13 @@ package org.jetbrains.jet.lang.descriptors.impl
 
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
-import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl
-import org.jetbrains.jet.utils.Printer
 import org.jetbrains.jet.utils.*
 
 import java.util.ArrayList
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.JetScope.DescriptorKind
 
 public class SubpackagesScope(private val containingDeclaration: PackageViewDescriptor) : JetScopeImpl() {
     override fun getContainingDeclaration(): DeclarationDescriptor {
@@ -35,7 +35,8 @@ public class SubpackagesScope(private val containingDeclaration: PackageViewDesc
         return if (name.isSpecial()) null else containingDeclaration.getModule().getPackage(containingDeclaration.getFqName().child(name))
     }
 
-    override fun getAllDescriptors(): Collection<DeclarationDescriptor> {
+    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+                                nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
         val subFqNames = containingDeclaration.getModule().getPackageFragmentProvider().getSubPackagesOf(containingDeclaration.getFqName())
         val result = ArrayList<DeclarationDescriptor>(subFqNames.size())
         for (subFqName in subFqNames) {

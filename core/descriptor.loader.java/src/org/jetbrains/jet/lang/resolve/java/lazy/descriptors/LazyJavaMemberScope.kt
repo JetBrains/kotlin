@@ -283,7 +283,9 @@ public abstract class LazyJavaMemberScope(
     override fun getDeclarationsByLabel(labelName: Name) = listOf<DeclarationDescriptor>()
 
     override fun getOwnDeclaredDescriptors() = getAllDescriptors()
-    override fun getAllDescriptors() = allDescriptors()
+
+    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+                                nameFilter: (String) -> Boolean) = allDescriptors()
 
     private fun computeAllDescriptors(): List<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()

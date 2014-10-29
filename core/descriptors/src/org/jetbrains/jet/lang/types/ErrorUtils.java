@@ -125,6 +125,15 @@ public class ErrorUtils {
 
         @NotNull
         @Override
+        public Collection<DeclarationDescriptor> getDescriptors(
+                @NotNull Function1<? super DescriptorKind, ? extends Boolean> kindFilter,
+                @NotNull Function1<? super String, ? extends Boolean> nameFilter
+        ) {
+            return Collections.emptyList();
+        }
+
+        @NotNull
+        @Override
         public Collection<DeclarationDescriptor> getAllDescriptors() {
             return Collections.emptyList();
         }
@@ -192,6 +201,15 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull Name labelName) {
+            throw new IllegalStateException();
+        }
+
+        @NotNull
+        @Override
+        public Collection<DeclarationDescriptor> getDescriptors(
+                @NotNull Function1<? super DescriptorKind, ? extends Boolean> kindFilter,
+                @NotNull Function1<? super String, ? extends Boolean> nameFilter
+        ) {
             throw new IllegalStateException();
         }
 

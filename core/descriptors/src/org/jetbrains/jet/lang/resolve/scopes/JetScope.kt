@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.scopes
 
-import org.jetbrains.annotations.ReadOnly
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.utils.Printer
@@ -45,7 +44,14 @@ public trait JetScope {
      *
      * @return All visible descriptors from current scope.
      */
-    public fun getAllDescriptors(): Collection<DeclarationDescriptor>
+    public fun getAllDescriptors(): Collection<DeclarationDescriptor> = getDescriptors(DescriptorKind.ALL, {true})
+
+    /**
+     * All visible descriptors from current scope possibly filtered by the given name and kind filters
+     * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
+     */
+    public fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean = DescriptorKind.ALL,
+                              nameFilter: (String) -> kotlin.Boolean = { true }): Collection<DeclarationDescriptor>
 
     /**
      * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
@@ -69,6 +75,27 @@ public trait JetScope {
         override fun printScopeStructure(p: Printer) {
             p.println("Empty")
         }
+    }
+
+    public enum class DescriptorKind {
+        CLASSIFIER
+        PACKAGE
+        NON_EXTENSION_FUNCTION
+        EXTENSION_FUNCTION
+        NON_EXTENSION_PROPERTY
+        EXTENSION_PROPERTY
+        LOCAL_VARIABLE
+
+        class object {
+            public val ALL: (DescriptorKind) -> Boolean = { true }
+            public val EXTENSIONS: (DescriptorKind) -> Boolean = { it == EXTENSION_FUNCTION || it == EXTENSION_PROPERTY }
+            public val FUNCTIONS: (DescriptorKind) -> Boolean = { it == NON_EXTENSION_FUNCTION || it == EXTENSION_FUNCTION }
+            public val NON_EXTENSION_CALLABLES: (DescriptorKind) -> Boolean = { it == NON_EXTENSION_FUNCTION || it == NON_EXTENSION_PROPERTY || it == LOCAL_VARIABLE }
+        }
+    }
+
+    class object {
+        public val ALL_NAME_FILTER: (String) -> Boolean = { true }
     }
 }
 
