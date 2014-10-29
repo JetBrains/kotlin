@@ -17,9 +17,9 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="intellij-core-analysis" level="project" />
     <orderEntry type="library" name="guava" level="project" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="library" name="intellij-core" level="project" />
+    <orderEntry type="module" module-name="frontend.java" />
   </component>
 </module>
-

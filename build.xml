@@ -692,7 +692,7 @@
                 source="${java.target}" target="${java.target}">
             <withKotlin externalannotations="${external.annotations.path}"/>
             <src>
-                <dirset dir="${basedir}/idea/ide-lazy-resolve">
+                <dirset dir="${basedir}/idea/ide-common">
                     <include name="src"/>
                 </dirset>
                 <dirset dir="${basedir}/idea/idea-analysis">
@@ -768,7 +768,7 @@
         <fileset dir="js/js.frontend/src"/>
         <fileset dir="js/js.inliner/src"/>
         <fileset dir="idea/idea-analysis/src"/>
-        <fileset dir="idea/ide-lazy-resolve/src"/>
+        <fileset dir="idea/ide-common/src"/>
 
         <manifest>
           <attribute name="Built-By" value="${manifest.impl.vendor}"/>
