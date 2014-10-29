@@ -23,7 +23,7 @@ class EnumConstant(
         annotations: Annotations,
         modifiers: Modifiers,
         val type: Type,
-        val params: LazyElement<ExpressionList>
+        val params: DeferredElement<ExpressionList>
 ) : Member(annotations, modifiers) {
 
     override fun generateCode(builder: CodeBuilder) {

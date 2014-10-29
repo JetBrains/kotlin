@@ -42,7 +42,7 @@ class Converter private(private val elementToConvert: PsiElement,
     // state which is shared between all converter's based on this one
     private class CommonState {
         val importsToAdd = LinkedHashSet<String>()
-        val lazyElements = ArrayList<LazyElement<*>>()
+        val deferredElements = ArrayList<DeferredElement<*>>()
         val usageProcessings = ArrayList<UsageProcessing>()
         val postUnfoldActions = ArrayList<() -> Unit>()
     }
@@ -83,7 +83,7 @@ class Converter private(private val elementToConvert: PsiElement,
         val element = convertTopElement(elementToConvert) ?: return null
         return object: IntermediateResult {
             override fun finishConversion(usageProcessings: Collection<UsageProcessing>): String {
-                unfoldLazyElements(usageProcessings)
+                unfoldDeferredElements(usageProcessings)
 
                 val builder = CodeBuilder(elementToConvert)
                 builder.append(element)
@@ -108,22 +108,22 @@ class Converter private(private val elementToConvert: PsiElement,
         else -> null
     }
 
-    private fun unfoldLazyElements(usageProcessings: Collection<UsageProcessing>) {
+    private fun unfoldDeferredElements(usageProcessings: Collection<UsageProcessing>) {
         val codeConverter = createDefaultCodeConverter().withSpecialExpressionConverter(UsageProcessingExpressionConverter(usageProcessings))
 
-        // we use loop with index because new lazy elements can be added during unfolding
+        // we use loop with index because new deferred elements can be added during unfolding
         var i = 0
-        while (i < commonState.lazyElements.size) {
-            val lazyElement = commonState.lazyElements[i++]
-            lazyElement.unfold(codeConverter.withConverter(this.withState(lazyElement.converterState)))
+        while (i < commonState.deferredElements.size) {
+            val deferredElement = commonState.deferredElements[i++]
+            deferredElement.unfold(codeConverter.withConverter(this.withState(deferredElement.converterState)))
         }
 
         commonState.postUnfoldActions.forEach { it() }
     }
 
-    public fun<TResult : Element> lazyElement(generator: (CodeConverter) -> TResult): LazyElement<TResult> {
-        val element = LazyElement(generator, personalState)
-        commonState.lazyElements.add(element)
+    public fun<TResult : Element> deferredElement(generator: (CodeConverter) -> TResult): DeferredElement<TResult> {
+        val element = DeferredElement(generator, personalState)
+        commonState.deferredElements.add(element)
         return element
     }
 
@@ -131,7 +131,7 @@ class Converter private(private val elementToConvert: PsiElement,
         commonState.usageProcessings.add(processing)
     }
 
-    public fun addPostUnfoldLazyElementsAction(action: () -> Unit) {
+    public fun addPostUnfoldDeferredElementsAction(action: () -> Unit) {
         commonState.postUnfoldActions.add(action)
     }
 
@@ -146,7 +146,7 @@ class Converter private(private val elementToConvert: PsiElement,
             }
         }.filterNotNull()
 
-        addPostUnfoldLazyElementsAction {
+        addPostUnfoldDeferredElementsAction {
             assert(importList != null)
             if (importsToAdd.isNotEmpty()) {
                 importList!!.imports = importList.imports + importsToAdd.map { Import(it).assignNoPrototype() }
@@ -254,7 +254,7 @@ class Converter private(private val elementToConvert: PsiElement,
     }
 
     public fun convertInitializer(initializer: PsiClassInitializer): Initializer {
-        return Initializer(lazyElement { codeConverter -> codeConverter.convertBlock(initializer.getBody()) },
+        return Initializer(deferredElement { codeConverter -> codeConverter.convertBlock(initializer.getBody()) },
                            convertModifiers(initializer)).assignPrototype(initializer)
     }
 
@@ -273,7 +273,7 @@ class Converter private(private val elementToConvert: PsiElement,
                          annotations,
                          modifiers,
                          typeConverter.convertType(field.getType(), Nullability.NotNull),
-                         lazyElement { codeConverter -> ExpressionList(codeConverter.convertExpressions(argumentList?.getExpressions() ?: array())).assignPrototype(argumentList) })
+                         deferredElement { codeConverter -> ExpressionList(codeConverter.convertExpressions(argumentList?.getExpressions() ?: array())).assignPrototype(argumentList) })
         }
         else {
             val isVal = isVal(referenceSearcher, field)
@@ -288,7 +288,7 @@ class Converter private(private val elementToConvert: PsiElement,
                   annotations,
                   modifiers,
                   propertyType,
-                  lazyElement { codeConverter -> codeConverter.convertExpression(field.getInitializer(), field.getType()) },
+                  deferredElement { codeConverter -> codeConverter.convertExpression(field.getInitializer(), field.getType()) },
                   isVal,
                   typeToDeclare != null,
                   shouldGenerateDefaultInitializer(referenceSearcher, field),
@@ -369,7 +369,7 @@ class Converter private(private val elementToConvert: PsiElement,
 
             var params = convertParameterList(method.getParameterList())
             val typeParameterList = convertTypeParameterList(method.getTypeParameterList())
-            var body = lazyElement { (codeConverter: CodeConverter) ->
+            var body = deferredElement { (codeConverter: CodeConverter) ->
                 val body = codeConverter.withMethodReturnType(method.getReturnType()).convertBlock(method.getBody())
                 postProcessBody(body)
             }
@@ -480,7 +480,7 @@ class Converter private(private val elementToConvert: PsiElement,
                          nullability: Nullability = Nullability.Default,
                          varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
                          modifiers: Modifiers = Modifiers.Empty(),
-                         defaultValue: LazyElement<Expression>? = null): Parameter {
+                         defaultValue: DeferredElement<Expression>? = null): Parameter {
         var type = typeConverter.convertVariableType(parameter)
         when (nullability) {
             Nullability.NotNull -> type = type.toNotNullType()
@@ -516,7 +516,7 @@ class Converter private(private val elementToConvert: PsiElement,
         if (types.isEmpty()) return Annotations.Empty()
         val arguments = types.indices.map { index ->
             val convertedType = typeConverter.convertType(types[index], Nullability.NotNull)
-            null to lazyElement<Expression> { MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(convertedType)).assignPrototype(refElements[index]) }
+            null to deferredElement<Expression> { MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(convertedType)).assignPrototype(refElements[index]) }
         }
         val annotation = Annotation(Identifier("throws").assignNoPrototype(), arguments, false, true)
         return Annotations(listOf(annotation.assignPrototype(throwsList))).assignPrototype(throwsList)

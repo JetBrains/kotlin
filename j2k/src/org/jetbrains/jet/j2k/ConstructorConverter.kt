@@ -149,7 +149,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
         }
     }
 
-    public var baseClassParams: List<LazyElement<Expression>> = listOf()
+    public var baseClassParams: List<DeferredElement<Expression>> = listOf()
         private set
 
     public fun convertConstructor(constructor: PsiMethod,
@@ -193,7 +193,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
             }
 
             return FactoryFunction(constructor.declarationIdentifier(), annotations, correctFactoryFunctionAccess(modifiers),
-                                   factoryFunctionType, params, typeParameterList, converter.lazyElement(::convertBody))
+                                   factoryFunctionType, params, typeParameterList, converter.deferredElement(::convertBody))
         }
     }
 
@@ -267,7 +267,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
         val methodCall = (statement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
         if (methodCall != null && methodCall.isSuperConstructorCall()) {
             baseClassParams = methodCall.getArgumentList().getExpressions().map {
-                correctedConverter.lazyElement { codeConverter -> codeConverter.correct().convertExpression(it) }
+                correctedConverter.deferredElement { codeConverter -> codeConverter.correct().convertExpression(it) }
             }
         }
 
@@ -275,7 +275,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
             val parameter = params[i]
             val indexFromEnd = params.size - i - 1
             val defaultValue = if (indexFromEnd < lastParamDefaults.size)
-                correctedConverter.lazyElement { codeConverter -> codeConverter.correct().convertExpression(lastParamDefaults[indexFromEnd], parameter.getType()) }
+                correctedConverter.deferredElement { codeConverter -> codeConverter.correct().convertExpression(lastParamDefaults[indexFromEnd], parameter.getType()) }
             else
                 null
             if (!parameterToField.containsKey(parameter)) {
@@ -297,7 +297,7 @@ class ConstructorConverter(private val psiClass: PsiClass,
                           defaultValue).assignPrototypes(listOf(parameter, field), CommentsAndSpacesInheritance(blankLinesBefore = false))
             }
         }).assignPrototype(primaryConstructor.getParameterList())
-        return PrimaryConstructor(annotations, modifiers, parameterList, converter.lazyElement(bodyGenerator)).assignPrototype(primaryConstructor)
+        return PrimaryConstructor(annotations, modifiers, parameterList, converter.deferredElement(bodyGenerator)).assignPrototype(primaryConstructor)
     }
 
     private fun findBackingFieldForConstructorParameter(parameter: PsiParameter, constructor: PsiMethod): Pair<PsiField, PsiStatement>? {

@@ -88,8 +88,8 @@ object EmptyElementPrototypes {
     public fun set(thisRef: Element, desc: PropertyMetadata, value: List<PrototypeInfo>?) { }
 }
 
-// this class should never be created directly - Converter.lazyElement() should be used!
-class LazyElement<TResult : Element>(
+// this class should never be created directly - Converter.deferredElement() should be used!
+class DeferredElement<TResult : Element>(
         private var generator: (CodeConverter) -> TResult,
         public val converterState: Converter.PersonalState
 ) : Element() {
@@ -114,7 +114,7 @@ class LazyElement<TResult : Element>(
 
     private val resultNotNull: TResult
         get() {
-            assert(result != null) { "No code generated for lazy element $this. Possible reason is that it has been created directly instead of Converter.lazyElement() call." }
+            assert(result != null) { "No code generated for deferred element $this. Possible reason is that it has been created directly instead of Converter.lazyElement() call." }
             return result!!
         }
 

@@ -68,8 +68,8 @@ class AnnotationConverter(private val converter: Converter) {
     public fun convertAnnotation(annotation: PsiAnnotation, brackets: Boolean, newLineAfter: Boolean): Annotation? {
         val qualifiedName = annotation.getQualifiedName()
         if (qualifiedName == CommonClassNames.JAVA_LANG_DEPRECATED && annotation.getParameterList().getAttributes().isEmpty()) {
-            val lazyExpression = converter.lazyElement<Expression> { LiteralExpression("\"\"").assignNoPrototype() }
-            return Annotation(Identifier("deprecated").assignNoPrototype(), listOf(null to lazyExpression), brackets, newLineAfter).assignPrototype(annotation) //TODO: insert comment
+            val deferredExpression = converter.deferredElement<Expression> { LiteralExpression("\"\"").assignNoPrototype() }
+            return Annotation(Identifier("deprecated").assignNoPrototype(), listOf(null to deferredExpression), brackets, newLineAfter).assignPrototype(annotation) //TODO: insert comment
         }
 
         val nameRef = annotation.getNameReferenceElement()
@@ -86,14 +86,14 @@ class AnnotationConverter(private val converter: Converter) {
             val isVarArg = method == lastMethod /* converted to vararg in Kotlin */
             val attrValues = convertAttributeValue(value, expectedType, isVarArg, it.getName() == null)
 
-            attrValues.map { attrName to converter.lazyElement(it) }
+            attrValues.map { attrName to converter.deferredElement(it) }
         }
         return Annotation(name, arguments, brackets, newLineAfter).assignPrototype(annotation)
     }
 
-    public fun convertAnnotationMethodDefault(method: PsiAnnotationMethod): LazyElement<Expression>? {
+    public fun convertAnnotationMethodDefault(method: PsiAnnotationMethod): DeferredElement<Expression>? {
         val value = method.getDefaultValue() ?: return null
-        return converter.lazyElement(convertAttributeValue(value, method.getReturnType(), false, false).single())
+        return converter.deferredElement(convertAttributeValue(value, method.getReturnType(), false, false).single())
     }
 
     private fun convertAttributeValue(value: PsiAnnotationMemberValue?, expectedType: PsiType?, isVararg: Boolean, isUnnamed: Boolean): List<(CodeConverter) -> Expression> {

@@ -23,7 +23,7 @@ class Parameter(val identifier: Identifier,
                 val varVal: Parameter.VarValModifier,
                 val annotations: Annotations,
                 val modifiers: Modifiers,
-                val defaultValue: LazyElement<Expression>? = null) : Element() {
+                val defaultValue: DeferredElement<Expression>? = null) : Element() {
     public enum class VarValModifier {
         None
         Val

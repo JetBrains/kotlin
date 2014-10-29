@@ -22,7 +22,7 @@ import com.intellij.util.IncorrectOperationException
 class PrimaryConstructor(annotations: Annotations,
                          modifiers: Modifiers,
                          val parameterList: ParameterList,
-                         val body: LazyElement<Block>)
+                         val body: DeferredElement<Block>)
   :  Member(annotations, modifiers) {
 
     override fun generateCode(builder: CodeBuilder) { throw IncorrectOperationException() }
@@ -34,7 +34,7 @@ class PrimaryConstructor(annotations: Annotations,
         val signature = PrimaryConstructorSignature(annotations, modifiers, parameterList)
 
         // assign prototypes later because we don't know yet whether the body is empty or not
-        converter.addPostUnfoldLazyElementsAction {
+        converter.addPostUnfoldDeferredElementsAction {
             val inheritance = CommentsAndSpacesInheritance(blankLinesBefore = false, commentsAfter = body.isEmpty, commentsInside = body.isEmpty)
             signature.assignPrototypesFrom(this, inheritance)
         }
@@ -66,5 +66,5 @@ class FactoryFunction(name: Identifier,
                       returnType: Type,
                       parameterList: ParameterList,
                       typeParameterList: TypeParameterList,
-                      body: LazyElement<Block>)
+                      body: DeferredElement<Block>)
 : Function(name, annotations, modifiers, returnType, typeParameterList, parameterList, body, false)

@@ -23,7 +23,7 @@ class Property(
         annotations: Annotations,
         modifiers: Modifiers,
         val type: Type,
-        private val initializer: LazyElement<Expression>,
+        private val initializer: DeferredElement<Expression>,
         val isVal: Boolean,
         val explicitType: Boolean,
         private val defaultInitializer: Boolean,

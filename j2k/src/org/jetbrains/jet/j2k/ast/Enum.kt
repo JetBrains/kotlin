@@ -24,7 +24,7 @@ class Enum(
         modifiers: Modifiers,
         typeParameterList: TypeParameterList,
         extendsTypes: List<Type>,
-        baseClassParams: List<LazyElement<Expression>>,
+        baseClassParams: List<DeferredElement<Expression>>,
         implementsTypes: List<Type>,
         body: ClassBody
 ) : Class(name, annotations, modifiers, typeParameterList, extendsTypes, baseClassParams, implementsTypes, body) {

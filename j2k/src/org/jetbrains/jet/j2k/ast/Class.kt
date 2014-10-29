@@ -24,7 +24,7 @@ open class Class(
         modifiers: Modifiers,
         val typeParameterList: TypeParameterList,
         val extendsTypes: List<Type>,
-        val baseClassParams: List<LazyElement<Expression>>,
+        val baseClassParams: List<DeferredElement<Expression>>,
         val implementsTypes: List<Type>,
         val body: ClassBody
 ) : Member(annotations, modifiers) {

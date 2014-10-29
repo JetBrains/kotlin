@@ -25,7 +25,7 @@ open class Function(
         val returnType: Type,
         val typeParameterList: TypeParameterList,
         val parameterList: ParameterList,
-        val body: LazyElement<Block>?,
+        val body: DeferredElement<Block>?,
         val isInTrait: Boolean
 ) : Member(annotations, modifiers) {
 
