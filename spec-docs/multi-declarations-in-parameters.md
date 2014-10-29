@@ -122,7 +122,7 @@ foo(pair) // caller can not pass two separate values here
 
 No changes to the call-site checking are required.
 
-### Function declaration Sites
+### Function declaration sites
 
 Function *declarations* are not allowed to omit types of their parameters:
 ``` kotlin
@@ -149,11 +149,86 @@ One can use components of previously declared parameters in default values:
 fun foo((a, b): AB, c: C = C(a, b)) {...}
 ```
 
+A parameter can be decomposed iff there are appropriate component functions available at the declaration site:
+``` kotlin
+fun Int.component1() = 1
+fun Int.component2() = 1
+fun foo((a, b): Int) {...}
+```
+other wise it's an error.
+
+Component functions must be checked against the declared types of component parameters if they are present:
+``` kotlin
+fun foo((a: String, b): Int) {...} // error: Int.component1()'s return type is Int, incompatible with String
+```
+
+### Function expressions
+
+Function expression syntax differs from function declaration syntax in the following ways:
+- function name can be omitted
+  - consequently, receiver type can precede the parameter list directly
+- type parameters are not allowed
+- `where` clause is not allowed
+- parameter types can be omitted (even for decomposed parameters)
+- parameter default values are not allowed
+- varargs are allowed, but useless (warning issued)
+
+NOTE: local returns are allowed in function expressions without qualification.
+ISSUE: when a function expression is inlined, unqualified returns must remain local. Wouldn't this confuse the reader?
+
+NOTE: function expression can not be passed to a function call outside the parentheses
+
+### Lambda expressions
+
+In a lambda, only parameters (possibly decomposed) and their types can be specified. There's no way to explicitly specify the return type or receiver type. Those have to be inferred, otherwise function expression must be used.
+
+TODO: support qualified returns in lambdas (when return type is unknown, nad has to be inferrred).
+
+### Nested multi-declarations
+
+Example:
+``` kotlin
+val (a, (b, c)) = abc // e.g. of type Pair<A, Pair<B, C>>
+```
+
+This translates to
+```
+tmp1 <- abc
+a <- tmp1.component1()
+tmp2 <- tmp1.component2()
+b <- tmp2.component1()
+c <- tmp2.component2()
+```
+
+If some of the types of `a`, `b` or `c` are specified, teh front-end verifies that respective component fucntion results match the expected types.
+
+Biggest issue: type inference for function literals. 
+
+Expected type known entirely:
+``` kotlin
+fun foo((Pair<A, Pair<B, C>>) -> Unit) {}
+
+foo { (a, (b, c)) -> ... }
+```
+In this case all we need is check that appropriate component functions are available (and that their types match specifications, if any).
+
+Expected type contains type parameters:
+``` kotlin
+fun <T> foo(t: T, (T) -> Unit) {...}
+
+foo(ABC) {(a, (b, c)) -> ...}
+```
+In this case we can't check the component conventions before T is fully resolved to a type.
+
+It seems that this does not impose any significant issues on the inference, and can go right before the normal type checking of the body of a lambda.
+
 ## Semantics and Back-end changes
 
 TODO
 - what is the Java name of this parameter: `(a, b): Pair<A, B>`?
 - make components available in decault parameter values
+- create locals for components, assign values (on nested decompositions, avoid calling smae component twice)
+- make sure that funciton expressions are inlined as well as lambda expressions
 
 ## IDE Changes
 
