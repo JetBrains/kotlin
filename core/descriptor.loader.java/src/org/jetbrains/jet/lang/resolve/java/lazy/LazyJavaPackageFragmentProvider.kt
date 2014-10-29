@@ -43,6 +43,7 @@ public class LazyJavaPackageFragmentProvider(
             outerContext.methodSignatureChecker,
             outerContext.javaResolverCache,
             outerContext.javaPropertyInitializerEvaluator,
+            outerContext.samConversionResolver,
             outerContext.sourceElementFactory,
             outerContext.moduleClassResolver
     )

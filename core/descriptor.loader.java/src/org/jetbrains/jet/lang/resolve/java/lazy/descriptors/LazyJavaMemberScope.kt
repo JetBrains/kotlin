@@ -67,6 +67,7 @@ public abstract class LazyJavaMemberScope(
 
     protected abstract fun computeMemberIndex(): MemberIndex
 
+    // Fake overrides, SAM constructors/adapters, values()/valueOf(), etc.
     protected abstract fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name)
 
     protected abstract fun getDispatchReceiverParameter(): ReceiverParameterDescriptor?

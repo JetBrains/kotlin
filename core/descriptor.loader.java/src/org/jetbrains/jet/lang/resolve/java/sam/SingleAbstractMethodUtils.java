@@ -141,7 +141,7 @@ public class SingleAbstractMethodUtils {
 
     @NotNull
     public static SamConstructorDescriptor createSamConstructorFunction(
-            @NotNull ClassOrPackageFragmentDescriptor owner,
+            @NotNull DeclarationDescriptor owner,
             @NotNull JavaClassDescriptor samInterface
     ) {
         assert isSamInterface(samInterface) : samInterface;
