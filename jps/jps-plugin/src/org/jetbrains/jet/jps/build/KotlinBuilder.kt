@@ -59,6 +59,7 @@ import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.jet.compiler.CompilerSettings
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jet.compiler.runner.OutputItemsCollector
+import org.jetbrains.jet.compiler.runner.SimpleOutputItem
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -147,63 +148,12 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return NOTHING_DONE
         }
 
-        // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
-        val sourceToTarget = HashMap<File, ModuleBuildTarget>()
-        if (chunk.getTargets().size() > 1) {
-            for (target in chunk.getTargets()) {
-                for (file in KotlinSourceFileCollector.getAllKotlinSourceFiles(target)) {
-                    sourceToTarget.put(file, target)
-                }
-            }
-        }
-
         val compilationErrors = Utils.ERRORS_DETECTED_KEY[context, false]
+        val outputsItemsAndTargets = getOutputItemsAndTargets(chunk, outputItemCollector)
 
-        for ((target, cache) in incrementalCaches) {
-            cache.clearCacheForRemovedFiles(
-                    KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target),
-                    target.getOutputDir()!!,
-                    !compilationErrors
-            )
-        }
-
-        var recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
-
-        for (outputItem in outputItemCollector.getOutputs()) {
-            var target: ModuleBuildTarget? = null
-            val sourceFiles = outputItem.getSourceFiles()
-            if (!sourceFiles.isEmpty()) {
-                target = sourceToTarget[sourceFiles.iterator().next()]
-            }
-
-            if (target == null) {
-                target = representativeTarget
-            }
-
-            val outputFile = outputItem.getOutputFile()
-
-            if (IncrementalCompilation.ENABLED) {
-                val newDecision = incrementalCaches[target]!!.saveFileToCache(sourceFiles, outputFile)
-                recompilationDecision = recompilationDecision.merge(newDecision)
-            }
-
-            outputConsumer.registerOutputFile(target, outputFile, sourceFiles.map { it.getPath() })
-        }
-
-        val delta = context.getProjectDescriptor().dataManager.getMappings()!!.createDelta()
-        val callback = delta!!.getCallback()!!
-
-        for (outputItem in outputItemCollector.getOutputs()) {
-            val outputFile = outputItem.getOutputFile()
-            callback.associate(FileUtil.toSystemIndependentName(outputFile.getAbsolutePath()),
-                               outputItem.getSourceFiles().map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
-                               ClassReader(outputFile.readBytes())
-            )
-        }
-
-        val allCompiled = filesToCompile.values()
-        val compiledInThisRound = if (compilationErrors) listOf<File>() else allCompiled
-        JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
+        var recompilationDecision = updateKotlinIncrementalCache(compilationErrors, dirtyFilesHolder, incrementalCaches, outputsItemsAndTargets)
+        registerOutputItems(outputConsumer, outputsItemsAndTargets)
+        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, outputsItemsAndTargets)
 
         if (compilationErrors) {
             return ABORT
@@ -224,6 +174,95 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         return OK
+    }
+
+    private fun getOutputItemsAndTargets(
+            chunk: ModuleChunk,
+            outputItemCollector: OutputItemsCollectorImpl
+    ): List<Pair<SimpleOutputItem, ModuleBuildTarget>> {
+        // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
+        val sourceToTarget = HashMap<File, ModuleBuildTarget>()
+        if (chunk.getTargets().size() > 1) {
+            for (target in chunk.getTargets()) {
+                for (file in KotlinSourceFileCollector.getAllKotlinSourceFiles(target)) {
+                    sourceToTarget.put(file, target)
+                }
+            }
+        }
+
+        val result = ArrayList<Pair<SimpleOutputItem, ModuleBuildTarget>>()
+
+        val representativeTarget = chunk.representativeTarget()
+        for (outputItem in outputItemCollector.getOutputs()) {
+            var target: ModuleBuildTarget? = null
+            val sourceFiles = outputItem.getSourceFiles()
+            if (!sourceFiles.isEmpty()) {
+                target = sourceToTarget[sourceFiles.iterator().next()]
+            }
+
+            if (target == null) {
+                target = representativeTarget
+            }
+
+            result.add(Pair(outputItem, target!!))
+        }
+        return result
+    }
+
+    private fun updateJavaMappings(
+            chunk: ModuleChunk,
+            compilationErrors: Boolean,
+            context: CompileContext,
+            dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
+            filesToCompile: MultiMap<ModuleBuildTarget, File>,
+            outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>
+    ) {
+        val delta = context.getProjectDescriptor().dataManager.getMappings()!!.createDelta()
+        val callback = delta!!.getCallback()!!
+
+        for ((outputItem, _) in outputsItemsAndTargets) {
+            val outputFile = outputItem.getOutputFile()
+            callback.associate(FileUtil.toSystemIndependentName(outputFile.getAbsolutePath()),
+                               outputItem.getSourceFiles().map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
+                               ClassReader(outputFile.readBytes())
+            )
+        }
+
+        val allCompiled = filesToCompile.values()
+        val compiledInThisRound = if (compilationErrors) listOf<File>() else allCompiled
+        JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
+    }
+
+    private fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>) {
+        for ((outputItem, target) in outputsItemsAndTargets) {
+            outputConsumer.registerOutputFile(target, outputItem.getOutputFile(), outputItem.getSourceFiles().map { it.getPath() })
+        }
+    }
+
+    private fun updateKotlinIncrementalCache(
+            compilationErrors: Boolean,
+            dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
+            incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
+            outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>
+    ): IncrementalCacheImpl.RecompilationDecision {
+        if (!IncrementalCompilation.ENABLED) {
+            return IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
+        }
+
+        for ((target, cache) in incrementalCaches) {
+            cache.clearCacheForRemovedFiles(
+                    KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target),
+                    target.getOutputDir()!!,
+                    !compilationErrors
+            )
+        }
+
+        var recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
+        for ((outputItem, target) in outputsItemsAndTargets) {
+            val newDecision = incrementalCaches[target]!!.saveFileToCache(outputItem.getSourceFiles(), outputItem.getOutputFile())
+            recompilationDecision = recompilationDecision.merge(newDecision)
+        }
+        return recompilationDecision
     }
 
     // if null is returned, nothing was done
