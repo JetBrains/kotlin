@@ -25,7 +25,9 @@ import com.intellij.testFramework.UsefulTestCase.*
 import org.junit.Assert.*
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiRecursiveElementVisitor
+import com.intellij.psi.PsiErrorElement
+import org.jetbrains.jet.lang.psi.JetPsiUtil
 
 public abstract class AbstractDecompiledTextTest() : JetLightCodeInsightFixtureTestCase() {
 
@@ -38,6 +40,11 @@ public abstract class AbstractDecompiledTextTest() : JetLightCodeInsightFixtureT
         val decompiledPsiFile = (clsFileForClassFile as ClsFileImpl).getDecompiledPsiFile()
         assertNotNull(decompiledPsiFile)
         assertSameLinesWithFile(path.substring(0, path.length - 1) + ".expected.kt", decompiledPsiFile!!.getText())
+        decompiledPsiFile.accept(object : PsiRecursiveElementVisitor() {
+            override fun visitErrorElement(element: PsiErrorElement) {
+                fail("Decompiled file should not contain error elements!\n${JetPsiUtil.getElementTextWithContext(element)}")
+            }
+        })
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
