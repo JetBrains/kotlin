@@ -632,6 +632,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doBoxTestWithInlineCheck(fileName);
         }
 
+        @TestMetadata("propertyModifiers.1.kt")
+        public void testPropertyModifiers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/propertyModifiers.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
         @TestMetadata("rootConstructor.1.kt")
         public void testRootConstructor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/rootConstructor.1.kt");

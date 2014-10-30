@@ -166,7 +166,7 @@ public class JvmCodegenUtil {
         if (JetTypeMapper.isAccessor(property)) return false;
 
         // Inline functions can't use direct access because a field may not be visible at the call site
-        if (context.isInlineFunction()) return false;
+        if (context.isInlineFunction() && property.getVisibility() != Visibilities.PRIVATE) return false;
 
         // Only properties of the same class can be directly accessed, except when we are evaluating expressions in the debugger
         if (!isCallInsideSameClassAsDeclared(property, context) && !isDebuggerContext(context)) return false;

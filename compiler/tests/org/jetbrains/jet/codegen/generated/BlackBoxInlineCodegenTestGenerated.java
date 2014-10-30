@@ -632,6 +632,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
             doTestMultiFileWithInlineCheck(fileName);
         }
 
+        @TestMetadata("propertyModifiers.1.kt")
+        public void testPropertyModifiers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/propertyModifiers.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
         @TestMetadata("rootConstructor.1.kt")
         public void testRootConstructor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/rootConstructor.1.kt");
