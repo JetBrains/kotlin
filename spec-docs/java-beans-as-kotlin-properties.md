@@ -66,7 +66,7 @@ var a: A
 
 - field access (may clash with property)
 - static field access (critical, syntax can't be changed)
-- How much old code does this break
+- How much old code does this break?
   - usages of Java APIs with getters/setters
   - inheritors of Java classes overriding getters/setters
 
@@ -82,6 +82,7 @@ var a: A
 ## Changes in JavaDescriptorResolver
 
 **Definition**. Getter of name N is // TODO: recognize "is" prefix?
+
 **Definition**. Setter of name N is // TODO
 
 - All getters and setters of the same name are merged into (replaced by) a single property.
