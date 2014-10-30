@@ -35,7 +35,7 @@ public class IDEAndroidResourceManager(project: Project, searchPath: String?) : 
     override fun getLayoutXmlFiles(): Collection<PsiFile> {
         try {
             val directories = getAndroidFacet().getAllResourceDirectories()
-            return directories.flatMap { (it.findChild("layout")?.getChildren() ?: array<VirtualFile>()).map { vritualFileToPsi(it)!! } }
+            return directories.flatMap { (it.findChild("layout")?.getChildren() ?: array<VirtualFile>()).map { virtualFileToPsi(it)!! } }
         } catch (e: NoAndroidFacetException) {
             return listOf()
         }
