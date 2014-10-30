@@ -1,8 +1,8 @@
-JetFile: FunctionsWithFunctionReceivers.kt
+JetFile: PropertiesWithFunctionReceiversAnnotations.kt
   PACKAGE_DIRECTIVE
     <empty list>
-  FUN
-    PsiElement(fun)('fun')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       PsiElement(LPAR)('(')
@@ -57,12 +57,15 @@ JetFile: FunctionsWithFunctionReceivers.kt
       PsiElement(RPAR)(')')
     PsiElement(DOT)('.')
     PsiElement(IDENTIFIER)('foo')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('P')
   PsiWhiteSpace('\n')
-  FUN
-    PsiElement(fun)('fun')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       PsiElement(LPAR)('(')
@@ -132,13 +135,15 @@ JetFile: FunctionsWithFunctionReceivers.kt
       PsiElement(RPAR)(')')
     PsiElement(DOT)('.')
     PsiElement(IDENTIFIER)('foo')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
-    PsiElement(SEMICOLON)(';')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('P')
   PsiWhiteSpace('\n')
-  FUN
-    PsiElement(fun)('fun')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       ANNOTATION
@@ -203,16 +208,15 @@ JetFile: FunctionsWithFunctionReceivers.kt
       PsiElement(RPAR)(')')
     PsiElement(DOT)('.')
     PsiElement(IDENTIFIER)('foo')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    BLOCK
-      PsiElement(LBRACE)('{')
-      PsiElement(RBRACE)('}')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('P')
   PsiWhiteSpace('\n')
-  FUN
-    PsiElement(fun)('fun')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
       PsiElement(LT)('<')
@@ -235,38 +239,10 @@ JetFile: FunctionsWithFunctionReceivers.kt
                   PsiElement(IDENTIFIER)('a')
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
+      PsiElement(LPAR)('(')
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          VALUE_PARAMETER
-            TYPE_REFERENCE
-              PsiElement(LPAR)('(')
-              FUNCTION_TYPE
-                FUNCTION_TYPE_RECEIVER
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('B')
-                PsiElement(DOT)('.')
-                VALUE_PARAMETER_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_PARAMETER
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('A')
-                  PsiErrorElement:Expecting comma or ')'
-                    <empty list>
-                  PsiWhiteSpace(' ')
-                  PsiErrorElement:Expecting ')'
-                    PsiElement(ARROW)('->')
-                PsiErrorElement:Expecting '->' to specify return type of a function type
-                  <empty list>
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('B')
-              PsiElement(RPAR)(')')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(ARROW)('->')
@@ -275,25 +251,29 @@ JetFile: FunctionsWithFunctionReceivers.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unit')
-    PsiErrorElement:Expecting '.' before a function name
       PsiElement(RPAR)(')')
-    PsiErrorElement:Expecting function name
-      PsiElement(DOT)('.')
-    PsiErrorElement:Expecting '('
-      <empty list>
-  FUN
+    PsiElement(DOT)('.')
+    PsiElement(IDENTIFIER)('foo')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('P')
+  PsiWhiteSpace('\n')
+  PROPERTY
     MODIFIER_LIST
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n')
-    PsiElement(fun)('fun')
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+        PsiElement(RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
       PsiElement(LT)('<')
@@ -343,100 +323,9 @@ JetFile: FunctionsWithFunctionReceivers.kt
       PsiElement(RPAR)(')')
     PsiElement(DOT)('.')
     PsiElement(IDENTIFIER)('foo')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
-  PsiWhiteSpace('\n')
-  FUN
-    PsiElement(fun)('fun')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      NULLABLE_TYPE
-        PsiElement(LPAR)('(')
-        FUNCTION_TYPE
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('G')
-        PsiElement(RPAR)(')')
-        PsiElement(QUEST)('?')
-    PsiElement(DOT)('.')
-    PsiElement(IDENTIFIER)('foo')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
-  PsiWhiteSpace('\n')
-  FUN
-    PsiElement(fun)('fun')
-    PsiWhiteSpace(' ')
-    TYPE_REFERENCE
-      NULLABLE_TYPE
-        NULLABLE_TYPE
-          PsiElement(LPAR)('(')
-          FUNCTION_TYPE
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              VALUE_PARAMETER
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(ARROW)('->')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('G')
-          PsiElement(RPAR)(')')
-          PsiElement(QUEST)('?')
-        PsiElement(QUEST)('?')
-    PsiElement(DOT)('.')
-    PsiElement(IDENTIFIER)('foo')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
-  PsiWhiteSpace('\n\n')
-  PsiComment(EOL_COMMENT)('//--------------')
-  PsiWhiteSpace('\n')
-  FUN
-    PsiElement(fun)('fun')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
-    TYPE_PARAMETER_LIST
-      PsiElement(LT)('<')
-      TYPE_PARAMETER
-        PsiElement(IDENTIFIER)('T')
-      PsiElement(GT)('>')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
-  PsiWhiteSpace('\n')
-  CLASS
-    MODIFIER_LIST
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-              PsiElement(DOT)('.')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('b')
-    PsiWhiteSpace(' ')
-    PsiElement(class)('class')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('C')
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('P')

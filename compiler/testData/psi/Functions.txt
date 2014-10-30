@@ -12,15 +12,16 @@ JetFile: Functions.kt
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
-    ANNOTATION
-      PsiElement(LBRACKET)('[')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-      PsiElement(RBRACKET)(']')
+    PsiErrorElement:Annotations are not allowed in this position
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+        PsiElement(RBRACKET)(']')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     VALUE_PARAMETER_LIST
@@ -168,15 +169,16 @@ JetFile: Functions.kt
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
-    ANNOTATION
-      PsiElement(LBRACKET)('[')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-      PsiElement(RBRACKET)(']')
+    PsiErrorElement:Annotations are not allowed in this position
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+        PsiElement(RBRACKET)(']')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     VALUE_PARAMETER_LIST
@@ -331,15 +333,16 @@ JetFile: Functions.kt
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
-    ANNOTATION
-      PsiElement(LBRACKET)('[')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-      PsiElement(RBRACKET)(']')
+    PsiErrorElement:Annotations are not allowed in this position
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+        PsiElement(RBRACKET)(']')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     VALUE_PARAMETER_LIST
