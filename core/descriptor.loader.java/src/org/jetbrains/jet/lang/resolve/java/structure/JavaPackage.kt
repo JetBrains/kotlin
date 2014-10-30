@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.structure;
+package org.jetbrains.jet.lang.resolve.java.structure
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName
 
-import java.util.Collection;
-
-public interface JavaPackage extends JavaElement {
+public trait JavaPackage : JavaElement {
     /**
      * NOTE: do not use this method directly
      * @see org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils#getClassesInPackage(JavaPackage)
      */
-    @NotNull
-    Collection<JavaClass> getClasses();
+    public fun getClasses(): Collection<JavaClass>
 
-    @NotNull
-    Collection<JavaPackage> getSubPackages();
+    public fun getSubPackages(): Collection<JavaPackage>
 
-    @NotNull
-    FqName getFqName();
+    public fun getFqName(): FqName
 }
