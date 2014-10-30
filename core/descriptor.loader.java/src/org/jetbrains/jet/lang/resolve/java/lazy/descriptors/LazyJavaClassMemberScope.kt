@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.java.JavaVisibilities
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaMemberScope.MethodSignatureData
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
@@ -97,7 +96,7 @@ public class LazyJavaClassMemberScope(
                 propagated.getReceiverType(), propagated.getValueParameters(), propagated.getTypeParameters(),
                 propagated.hasStableParameterNames())
 
-        return MethodSignatureData(effectiveSignature, superFunctions, propagated.getErrors() + effectiveSignature.getErrors())
+        return LazyJavaMemberScope.MethodSignatureData(effectiveSignature, superFunctions, propagated.getErrors() + effectiveSignature.getErrors())
     }
 
     private fun resolveConstructor(constructor: JavaConstructor): JavaConstructorDescriptor {
