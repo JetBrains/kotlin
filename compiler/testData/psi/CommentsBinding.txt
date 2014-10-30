@@ -171,6 +171,33 @@ JetFile: CommentsBinding.kt
                   PsiElement(IDENTIFIER)('Int')
             PsiWhiteSpace(' ')
             PsiComment(BLOCK_COMMENT)('/* p2 */')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('p3')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('String')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+              PsiElement(DOT)('.')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('c')
+                  PsiElement(RPAR)(')')
+            PsiComment(BLOCK_COMMENT)('/*parameter with default value*/')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BLOCK

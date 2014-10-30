@@ -30,7 +30,7 @@ class D {
     val v2 = 2
 
     // Function foo()
-    fun foo(/* parameters */ p1: Int/* p1 */, p2: Int /* p2 */) {
+    fun foo(/* parameters */ p1: Int/* p1 */, p2: Int /* p2 */, p3: String = a.b(c)/*parameter with default value*/) {
         // before local var
         val local = 1 // local var
         // before local fun
