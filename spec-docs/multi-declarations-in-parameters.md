@@ -24,12 +24,6 @@ foo(pair, bar)
 class C(val (a, b): Pair<Int, String>) {}
 ```
 
-## TODO
-
-  - nested decompositions?
-  - grammar
-  - required return type for lambdas with `return`
-
 ## Syntax
 
 Old lambda syntax:
@@ -73,7 +67,7 @@ No return type nor receiver type in the short form:
 ```
 Rather hairy.
 
-But we have this form possibly coming (needed for local returns):
+But we have this form coming (needed for local returns):
 ``` kotlin
 foo(fun(): R {
     return r // local return
@@ -226,7 +220,8 @@ It seems that this does not impose any significant issues on the inference, and 
 
 TODO
 - what is the Java name of this parameter: `(a, b): Pair<A, B>`?
-- make components available in decault parameter values
+  - maybe `a_b`
+- make components available in default parameter values
 - create locals for components, assign values (on nested decompositions, avoid calling smae component twice)
 - make sure that funciton expressions are inlined as well as lambda expressions
 
@@ -239,9 +234,3 @@ Affected functionality:
 - Change signature
 - Move lambda outside/inside parentheses
 - Specify types explicitly in a lambda (use conversion to anonymous function)
-
-## Open question: Nested decompositions
-
-``` kotlin
-fun foo((a, (b, c)): Pair<Int, Pair<String, Any>>)
-```
