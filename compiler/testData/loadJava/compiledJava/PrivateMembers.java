@@ -10,17 +10,10 @@ public class PrivateMembers {
     private void method() {
     }
 
-    private void samAdapter(SamInterface r) {
-    }
-
     private static void staticMethod() {
     }
 
     private class Inner {
-    }
-
-    private interface SamInterface {
-        void foo();
     }
 
     private static class Nested {

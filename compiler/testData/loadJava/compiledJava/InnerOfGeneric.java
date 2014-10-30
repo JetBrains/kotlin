@@ -3,12 +3,12 @@ package test;
 import java.util.Iterator;
 
 public class InnerOfGeneric {
-    public interface S<E> {
-       Iterator<E> iterator();
+    public class S<E> {
+        public Iterator<E> iterator() { return null; }
     }
 
     public abstract class A<K> {
-        public abstract class Inner implements S<K> {
+        public abstract class Inner extends S<K> {
         }
     }
 
