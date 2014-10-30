@@ -87,8 +87,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val representativeTarget = chunk.representativeTarget()
 
-        val outputDir = representativeTarget.getOutputDir()
-
         val dataManager = context.getProjectDescriptor().dataManager
         val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getStorage(it, IncrementalCacheStorageProvider) }
 
@@ -114,7 +112,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val environment = CompilerEnvironment.getEnvironmentFor(
                 PathUtil.getKotlinPathsForJpsPluginOrJpsTests(),
-                outputDir,
                 javaClass.getClassLoader(),
                 { className ->
                     className!!.startsWith("org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.")
@@ -127,8 +124,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             environment.reportErrorsTo(messageCollector)
             return ABORT
         }
-
-        assert(outputDir != null, "CompilerEnvironment must have checked for outputDir to be not null, but it didn't")
 
         val outputItemCollector = OutputItemsCollectorImpl()
 
@@ -161,6 +156,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             if (sourceFiles.isEmpty()) {
                 return NOTHING_DONE
             }
+
+            val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
 
             val outputFile = File(outputDir, representativeTarget.getModule().getName() + ".js")
             val libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget)

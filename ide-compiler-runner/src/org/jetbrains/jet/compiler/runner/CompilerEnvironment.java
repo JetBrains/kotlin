@@ -24,8 +24,6 @@ import org.jetbrains.jet.preloading.ClassCondition;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
-import java.io.File;
-
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 
@@ -34,18 +32,15 @@ public final class CompilerEnvironment {
     @NotNull
     public static CompilerEnvironment getEnvironmentFor(
             @NotNull KotlinPaths kotlinPaths,
-            @Nullable File outputDir,
             @Nullable ClassLoader parentClassLoader,
             @NotNull ClassCondition classesToLoadByParent,
             @NotNull Services compilerServices
     ) {
-        return new CompilerEnvironment(kotlinPaths, outputDir, parentClassLoader, classesToLoadByParent, compilerServices);
+        return new CompilerEnvironment(kotlinPaths, parentClassLoader, classesToLoadByParent, compilerServices);
     }
 
     @NotNull
     private final KotlinPaths kotlinPaths;
-    @Nullable
-    private final File output;
     @Nullable
     private final ClassLoader parentClassLoader;
     @NotNull
@@ -55,31 +50,23 @@ public final class CompilerEnvironment {
 
     private CompilerEnvironment(
             @NotNull KotlinPaths kotlinPaths,
-            @Nullable File output,
             @Nullable ClassLoader parentClassLoader,
             @NotNull ClassCondition classesToLoadByParent,
             @NotNull Services services
     ) {
         this.kotlinPaths = kotlinPaths;
-        this.output = output;
         this.parentClassLoader = parentClassLoader;
         this.classesToLoadByParent = classesToLoadByParent;
         this.services = services;
     }
 
     public boolean success() {
-        return kotlinPaths.getHomePath().exists() && output != null;
+        return kotlinPaths.getHomePath().exists();
     }
 
     @NotNull
     public KotlinPaths getKotlinPaths() {
         return kotlinPaths;
-    }
-
-    @NotNull
-    public File getOutput() {
-        assert output != null;
-        return output;
     }
 
     @Nullable
@@ -93,9 +80,6 @@ public final class CompilerEnvironment {
     }
 
     public void reportErrorsTo(@NotNull MessageCollector messageCollector) {
-        if (output == null) {
-            messageCollector.report(ERROR, "[Internal Error] No output directory", NO_LOCATION);
-        }
         if (!kotlinPaths.getHomePath().exists()) {
             messageCollector.report(ERROR, "Cannot find kotlinc home: " + kotlinPaths.getHomePath() + ". Make sure plugin is properly installed, " +
                                            "or specify " + PathUtil.JPS_KOTLIN_HOME_PROPERTY + " system property", NO_LOCATION);
