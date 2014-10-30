@@ -16,20 +16,23 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure.impl
 
-import com.intellij.openapi.util.Condition
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiPackage
-import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage
 import org.jetbrains.jet.lang.resolve.name.FqName
 
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.classes
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.packages
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 
 public class JavaPackageImpl(psiPackage: PsiPackage) : JavaElementImpl<PsiPackage>(psiPackage), JavaPackage {
 
-    override fun getClasses() = classes(getPsi().getClasses().filter { it.getName() != null })
+    override fun getClasses(nameFilter: (String) -> Boolean): MutableCollection<JavaClass> {
+        val psiClasses = getPsi().getClasses().filter {
+            val name = it.getName()
+            name != null && nameFilter(name)
+        }
+        return classes(psiClasses)
+    }
 
     override fun getSubPackages() = packages(getPsi().getSubPackages())
 

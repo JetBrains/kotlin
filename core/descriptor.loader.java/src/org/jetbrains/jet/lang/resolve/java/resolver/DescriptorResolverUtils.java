@@ -114,20 +114,4 @@ public final class DescriptorResolverUtils {
         }
         return false;
     }
-
-    @NotNull
-    public static Collection<JavaClass> getClassesInPackage(@NotNull JavaPackage javaPackage) {
-        Collection<JavaClass> classes = javaPackage.getClasses();
-        Set<FqName> addedQualifiedNames = new HashSet<FqName>(classes.size());
-        List<JavaClass> result = new ArrayList<JavaClass>(classes.size());
-
-        for (JavaClass javaClass : classes) {
-            FqName fqName = javaClass.getFqName();
-            if (fqName != null && addedQualifiedNames.add(fqName)) {
-                result.add(javaClass);
-            }
-        }
-
-        return result;
-    }
 }

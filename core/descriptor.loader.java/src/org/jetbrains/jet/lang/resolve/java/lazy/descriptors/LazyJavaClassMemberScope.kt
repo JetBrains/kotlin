@@ -45,7 +45,7 @@ public class LazyJavaClassMemberScope(
     override fun computeMemberIndex(): MemberIndex {
         return object : ClassMemberIndex(jClass, { !it.isStatic() }) {
             // For SAM-constructors
-            override fun getAllMethodNames(): Collection<Name> = super.getAllMethodNames() + getAllClassNames()
+            override fun getAllMethodNames(): Collection<Name> = super.getAllMethodNames() + getClassNames({ true })
         }
     }
 
@@ -230,7 +230,7 @@ public class LazyJavaClassMemberScope(
             DescriptorUtils.getDispatchReceiverParameterIfNeeded(getContainingDeclaration())
 
     override fun getClassifier(name: Name): ClassifierDescriptor? = nestedClasses(name)
-    override fun getAllClassNames(): Collection<Name> = nestedClassIndex().keySet() + enumEntryIndex().keySet()
+    override fun getClassNames(nameFilter: (String) -> Boolean): Collection<Name> = nestedClassIndex().keySet() + enumEntryIndex().keySet()
 
     // TODO
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
