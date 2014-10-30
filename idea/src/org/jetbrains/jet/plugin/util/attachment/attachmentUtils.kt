@@ -20,16 +20,37 @@ import com.intellij.psi.PsiFile
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.diagnostic.AttachmentFactory
 
-public fun attachmentsByPsiFile(file: PsiFile?): Array<Attachment> {
-    if (file == null) return array()
+public fun attachmentByPsiFileAsArray(file: PsiFile?): Array<Attachment> {
+    val attachment = attachmentByPsiFile(file)
+    if (attachment == null) {
+        return array()
+    }
+    return array(attachment)
+}
+
+public fun attachmentByPsiFile(file: PsiFile?): Attachment? {
+    if (file == null) return null
 
     val virtualFile = file.getVirtualFile()
-    if (virtualFile != null) return array(AttachmentFactory.createAttachment(virtualFile))
+    if (virtualFile != null) return AttachmentFactory.createAttachment(virtualFile)
 
     val text = try { file.getText() } catch(e: Exception) { null }
     val name = try { file.getName() } catch(e: Exception) { null }
 
-    if (text != null && name != null) return array(Attachment(name, text))
+    if (text != null && name != null) return Attachment(name, text)
 
-    return array()
+    return null
+}
+
+public fun mergeAttachments(vararg attachments: Attachment?): Attachment {
+    val builder = StringBuilder()
+    attachments.forEach {
+        if (it != null) {
+            builder.append("\n----- START ${it.getPath()} -----\n")
+            builder.append(it.getDisplayText())
+            builder.append("\n----- END   ${it.getPath()} -----\n")
+        }
+    }
+
+    return Attachment("message.txt", builder.toString())
 }
