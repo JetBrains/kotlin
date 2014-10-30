@@ -26,6 +26,7 @@ import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.jet.lang.resolve.android.AndroidManifest
 import com.intellij.openapi.module.ModuleManager
 import java.util.ArrayList
+import com.intellij.openapi.vfs.VirtualFile
 
 public class IDEAndroidResourceManager(project: Project, searchPath: String?) : AndroidResourceManagerBase(project, searchPath) {
 
@@ -33,10 +34,10 @@ public class IDEAndroidResourceManager(project: Project, searchPath: String?) : 
 
     override fun getLayoutXmlFiles(): Collection<PsiFile> {
         try {
-            val facet = getAndroidFacet()
-            return facet.getAllResourceDirectories() flatMap { it.findChild("layout")?.getChildren()!! map { vritualFileToPsi(it)!! } }
+            val directories = getAndroidFacet().getAllResourceDirectories()
+            return directories.flatMap { (it.findChild("layout")?.getChildren() ?: array<VirtualFile>()).map { vritualFileToPsi(it)!! } }
         } catch (e: NoAndroidFacetException) {
-            return ArrayList(0)
+            return listOf()
         }
     }
 

@@ -60,6 +60,12 @@ public class CrossParserTestGenerated extends AbstractCrossParserTest {
         doTest(fileName);
     }
 
+    @TestMetadata("nolayout")
+    public void testNolayout() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/crossParser/nolayout/");
+        doTest(fileName);
+    }
+
     @TestMetadata("singleFile")
     public void testSingleFile() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/crossParser/singleFile/");
