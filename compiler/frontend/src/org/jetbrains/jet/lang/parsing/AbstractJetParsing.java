@@ -20,6 +20,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -375,6 +376,11 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
     protected boolean eol() {
         return myBuilder.newlineBeforeCurrentToken() || eof();
+    }
+
+    protected static void closeDeclarationWithCommentBinders(@NotNull PsiBuilder.Marker marker, @NotNull IElementType elementType) {
+        marker.done(elementType);
+        marker.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
     }
 
     protected abstract JetParsing create(SemanticWhitespaceAwarePsiBuilder builder);

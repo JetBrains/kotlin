@@ -385,8 +385,7 @@ public class JetParsing extends AbstractJetParsing {
             decl.drop();
         }
         else {
-            decl.done(declType);
-            decl.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
+            closeDeclarationWithCommentBinders(decl, declType);
         }
     }
 
@@ -686,9 +685,7 @@ public class JetParsing extends AbstractJetParsing {
                 entryOrMember.drop();
             }
             else {
-                entryOrMember.done(type);
-                entryOrMember.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$,
-                                                        TrailingWhitespacesAndCommentsBinder.INSTANCE$);
+                closeDeclarationWithCommentBinders(entryOrMember, type);
             }
         }
 
@@ -778,8 +775,7 @@ public class JetParsing extends AbstractJetParsing {
             decl.drop();
         }
         else {
-            decl.done(declType);
-            decl.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
+            closeDeclarationWithCommentBinders(decl, declType);
         }
     }
 
@@ -877,10 +873,7 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker objectDeclaration = mark();
         parseObject(false, true);
-        objectDeclaration.done(OBJECT_DECLARATION);
-        objectDeclaration.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$,
-                                                    TrailingWhitespacesAndCommentsBinder.INSTANCE$);
-
+        closeDeclarationWithCommentBinders(objectDeclaration, OBJECT_DECLARATION);
         return CLASS_OBJECT;
     }
 
