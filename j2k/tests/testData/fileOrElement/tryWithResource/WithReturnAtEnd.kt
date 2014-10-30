@@ -1,5 +1,3 @@
-// ERROR: 'return' is not allowed here
-// ERROR: A 'return' expression required in a function with a block body ('{...}')
 import java.io.*
 
 public class C {
