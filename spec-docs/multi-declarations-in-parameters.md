@@ -27,6 +27,7 @@ class C(val (a, b): Pair<Int, String>) {}
 ## TODO
 
 - names of decomposed parameters in Kotlin, e.g. for named arguments
+
 ## Syntax
 
 Old lambda syntax:
