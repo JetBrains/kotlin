@@ -350,10 +350,14 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (type.isError()) {
             return renderDefaultType(type);
         }
-        if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type) && prettyFunctionTypes) {
+        if (shouldRenderAsPrettyFunctionType(type)) {
             return renderFunctionType(type);
         }
         return renderDefaultType(type);
+    }
+
+    private boolean shouldRenderAsPrettyFunctionType(@NotNull JetType type) {
+        return KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type) && prettyFunctionTypes;
     }
 
     @NotNull
@@ -767,7 +771,12 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private void renderReceiver(CallableDescriptor callableDescriptor, StringBuilder builder) {
         ReceiverParameterDescriptor receiver = callableDescriptor.getExtensionReceiverParameter();
         if (receiver != null) {
-            builder.append(escape(renderType(receiver.getType()))).append(".");
+            JetType type = receiver.getType();
+            String result = escape(renderType(type));
+            if (shouldRenderAsPrettyFunctionType(type) && !TypeUtils.isNullableType(type)) {
+                result = "(" + result + ")";
+            }
+            builder.append(result).append(".");
         }
     }
 
