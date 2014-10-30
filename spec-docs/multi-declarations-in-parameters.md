@@ -57,7 +57,7 @@ No return type nor receiver type in the short form:
 { ((a, b), c: C) -> ... } // ??? a decomposed pair whose first component is a pair
 ```
 
-> (BAD DECISION) To disambiguate, we could demand a prefix:
+> (BAD OPTION) To disambiguate, we could demand a prefix:
 ``` kotlin
 { fun Recv.(((a: A, b: B): Pair<A, B>, c: C): Pair<Pair<A, B>, C>): R -> ... } // ??? a decomposed pair whose first component is a pair
 { fun (((a: A, b: B): Pair<A, B>, c: C): Pair<Pair<A, B>, C>): R -> ... } // ??? a decomposed pair whose first component is a pair
