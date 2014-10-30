@@ -292,7 +292,7 @@ public abstract class LazyJavaMemberScope(
 
     //TODO: use nameFilter
     protected fun computeDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                   nameFilter: (String) -> kotlin.Boolean): List<DeclarationDescriptor> {
+                                   nameFilter: (String) -> Boolean): List<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()
 
         if (kindFilter(JetScope.DescriptorKind.CLASSIFIER)) {
@@ -321,7 +321,7 @@ public abstract class LazyJavaMemberScope(
 
     protected open fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
                                            kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                           nameFilter: (String) -> kotlin.Boolean) {
+                                           nameFilter: (String) -> Boolean) {
         // Do nothing
     }
 
