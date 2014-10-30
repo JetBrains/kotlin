@@ -90,8 +90,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return NOTHING_DONE
         }
 
-        val representativeTarget = chunk.representativeTarget()
-
         val dataManager = context.getProjectDescriptor().dataManager
         val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getStorage(it, IncrementalCacheStorageProvider) }
 
@@ -100,44 +98,27 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return CHUNK_REBUILD_REQUIRED
         }
 
-        // For non-incremental build: take all sources
-        if (!dirtyFilesHolder.hasDirtyFiles() && !dirtyFilesHolder.hasRemovedFiles()) {
-            return NOTHING_DONE
-        }
-
-        if (!hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)) {
+        if (!dirtyFilesHolder.hasDirtyFiles() && !dirtyFilesHolder.hasRemovedFiles()
+            || !hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)) {
             return NOTHING_DONE
         }
 
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, NO_LOCATION)
 
-        val compilerServices = Services.Builder()
-                .register(javaClass<IncrementalCacheProvider>(), IncrementalCacheProviderImpl(incrementalCaches))
-                .build()
-
-        val environment = CompilerEnvironment.getEnvironmentFor(
-                PathUtil.getKotlinPathsForJpsPluginOrJpsTests(),
-                javaClass.getClassLoader(),
-                { className ->
-                    className!!.startsWith("org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.")
-                    || className == "org.jetbrains.jet.config.Services"
-                },
-                compilerServices
-        )
-
+        val environment = createCompileEnvironment(incrementalCaches)
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector)
             return ABORT
         }
 
-        val project = representativeTarget.getModule().getProject()!!
+        val project = context.getProjectDescriptor().getProject()
         val commonArguments = JpsKotlinCompilerSettings.getCommonCompilerArguments(project)
         commonArguments.verbose = true // Make compiler report source to output files mapping
 
         val allCompiledFiles = getAllCompiledFilesContainer(context)
         val filesToCompile = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder)
 
-        val outputItemCollector = if (JpsUtils.isJsKotlinModule(representativeTarget)) {
+        val outputItemCollector = if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
             compileToJs(chunk, commonArguments, environment, messageCollector, project)
         }
         else {
@@ -174,6 +155,23 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         return OK
+    }
+
+    private fun createCompileEnvironment(incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>): CompilerEnvironment {
+        val compilerServices = Services.Builder()
+                .register(javaClass<IncrementalCacheProvider>(), IncrementalCacheProviderImpl(incrementalCaches))
+                .build()
+
+        val environment = CompilerEnvironment.getEnvironmentFor(
+                PathUtil.getKotlinPathsForJpsPluginOrJpsTests(),
+                javaClass.getClassLoader(),
+                { className ->
+                    className!!.startsWith("org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.")
+                    || className == "org.jetbrains.jet.config.Services"
+                },
+                compilerServices
+        )
+        return environment
     }
 
     private fun getOutputItemsAndTargets(
