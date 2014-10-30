@@ -13,7 +13,7 @@ A getA()
 val a: A
 ```
   
-```
+``` kotlin
 // getter and setter
 A getA()
 void setA(A)
@@ -21,7 +21,7 @@ void setA(A)
 var a: A
 ```
   
-```
+``` kotlin
 // only setter (write-only)
 void setA(A)
 ->
@@ -30,7 +30,7 @@ var a: A
   set(v) {...}
 ```
   
-```
+``` kotlin
 // private getter (effectively write-only)  
 private A getA()
 public void setA(A)
@@ -40,7 +40,7 @@ var a: A
   public set(v) = ...
 ```
   
-```
+``` kotlin
 // Different setter type  
 A getA()
 void setA(B)
@@ -50,7 +50,7 @@ var a: A
   set(v: B) = ...
 ```
   
-```
+``` kotlin
 // Overloaded setters
 A getA()
 void setA(B)
