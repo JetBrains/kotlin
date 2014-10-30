@@ -508,7 +508,7 @@ public class JetParsing extends AbstractJetParsing {
                 }
             }
 
-            expect(RBRACKET, "Expecting ']' to close an list of annotation");
+            expect(RBRACKET, "Expecting ']' to close the annotation list");
             myBuilder.restoreNewlinesState();
 
             annotation.done(ANNOTATION);
