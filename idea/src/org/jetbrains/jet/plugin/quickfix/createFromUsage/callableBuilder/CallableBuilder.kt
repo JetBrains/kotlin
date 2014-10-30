@@ -80,7 +80,7 @@ class TypeCandidate(val theType: JetType, scope: JetScope? = null) {
     var renderedTypeParameters: List<RenderedTypeParameter>? = null
         private set
 
-    fun render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fakeFunction: FunctionDescriptor) {
+    fun render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fakeFunction: FunctionDescriptor?) {
         renderedType = theType.renderShort(typeParameterNameMap);
         renderedTypeParameters = typeParameters.map {
             RenderedTypeParameter(it, it.getContainingDeclaration() == fakeFunction, typeParameterNameMap[it]!!)
@@ -114,7 +114,8 @@ class CallableBuilderConfiguration(
         val callableInfos: List<CallableInfo>,
         val originalExpression: JetExpression,
         val currentFile: JetFile,
-        val currentEditor: Editor
+        val currentEditor: Editor,
+        val enableSubstitutions: Boolean = true
 )
 
 fun CallableBuilderConfiguration(
@@ -254,18 +255,24 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 (receiverClassDescriptor as ClassDescriptorWithResolutionScopes).getScopeForMemberDeclarationResolution()
             }
 
+            val fakeFunction: FunctionDescriptor?
             // figure out type substitutions for type parameters
             val substitutionMap = LinkedHashMap<JetType, JetType>()
-            collectSubstitutionsForReceiverTypeParameters(receiverType, substitutionMap)
-            val typeArgumentsForFakeFunction = callableInfo.typeParameterInfos
-                    .map {
-                        val typeCandidates = computeTypeCandidates(it)
-                        assert (typeCandidates.size == 1, "Ambiguous type candidates for type parameter $it: $typeCandidates")
-                        typeCandidates.first().theType
-                    }
-                    .subtract(substitutionMap.keySet())
-            val fakeFunction = createFakeFunctionDescriptor(scope, typeArgumentsForFakeFunction.size)
-            collectSubstitutionsForCallableTypeParameters(fakeFunction, typeArgumentsForFakeFunction, substitutionMap)
+            if (config.enableSubstitutions) {
+                collectSubstitutionsForReceiverTypeParameters(receiverType, substitutionMap)
+                val typeArgumentsForFakeFunction = callableInfo.typeParameterInfos
+                        .map {
+                            val typeCandidates = computeTypeCandidates(it)
+                            assert (typeCandidates.size == 1, "Ambiguous type candidates for type parameter $it: $typeCandidates")
+                            typeCandidates.first().theType
+                        }
+                        .subtract(substitutionMap.keySet())
+                fakeFunction = createFakeFunctionDescriptor(scope, typeArgumentsForFakeFunction.size)
+                collectSubstitutionsForCallableTypeParameters(fakeFunction!!, typeArgumentsForFakeFunction, substitutionMap)
+            }
+            else {
+                fakeFunction = null
+            }
             substitutions = substitutionMap.map { JetTypeSubstitution(it.key, it.value) }
 
             callableInfo.parameterInfos.forEach {
@@ -336,7 +343,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         private fun renderTypeCandidates(
                 typeInfo: TypeInfo,
                 typeParameterNameMap: Map<TypeParameterDescriptor, String>,
-                fakeFunction: FunctionDescriptor
+                fakeFunction: FunctionDescriptor?
         ) {
             typeCandidates[typeInfo]?.forEach { it.render(typeParameterNameMap, fakeFunction) }
         }
