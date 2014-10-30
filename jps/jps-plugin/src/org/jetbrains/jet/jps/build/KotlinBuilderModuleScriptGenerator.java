@@ -31,6 +31,7 @@ import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.builders.logging.ProjectBuilderLogger;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
+import org.jetbrains.jps.incremental.ProjectBuildException;
 import org.jetbrains.jps.model.java.JpsAnnotationRootType;
 import org.jetbrains.jps.model.java.JpsJavaSdkType;
 import org.jetbrains.jps.model.library.JpsLibrary;
@@ -60,7 +61,7 @@ public class KotlinBuilderModuleScriptGenerator {
             MultiMap<ModuleBuildTarget, File> sourceFiles, // ignored for non-incremental compilation
             boolean hasRemovedFiles
     )
-            throws IOException
+            throws IOException, ProjectBuildException
     {
         KotlinModuleDescriptionBuilder builder = FACTORY.create();
 
@@ -68,11 +69,11 @@ public class KotlinBuilderModuleScriptGenerator {
 
         Set<File> outputDirs = new HashSet<File>();
         for (ModuleBuildTarget target : chunk.getTargets()) {
-            outputDirs.add(getOutputDir(target));
+            outputDirs.add(getOutputDirSafe(target));
         }
         ProjectBuilderLogger logger = context.getLoggingManager().getProjectBuilderLogger();
         for (ModuleBuildTarget target : chunk.getTargets()) {
-            File outputDir = getOutputDir(target);
+            File outputDir = getOutputDirSafe(target);
 
             List<File> moduleSources = new ArrayList<File>(
                     IncrementalCompilation.ENABLED
@@ -108,10 +109,10 @@ public class KotlinBuilderModuleScriptGenerator {
     }
 
     @NotNull
-    private static File getOutputDir(@NotNull ModuleBuildTarget target) {
+    public static File getOutputDirSafe(@NotNull ModuleBuildTarget target) throws ProjectBuildException {
         File outputDir = target.getOutputDir();
         if (outputDir == null) {
-            throw new IllegalStateException("No output directory found for " + target);
+            throw new ProjectBuildException("No output directory found for " + target);
         }
         return outputDir;
     }
