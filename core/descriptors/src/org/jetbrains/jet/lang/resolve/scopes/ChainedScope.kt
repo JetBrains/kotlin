@@ -23,15 +23,11 @@ import org.jetbrains.jet.utils.Printer
 import java.util.*
 
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeSelectorUtil.*
-import kotlin.Collection
-import kotlin.List
-import kotlin.Set
 
 public class ChainedScope(private val containingDeclaration: DeclarationDescriptor?/* it's nullable as a hack for TypeUtils.intersect() */,
                           private val debugName: String,
                           vararg scopes: JetScope) : JetScope {
     private val scopeChain = scopes.clone()
-    private var _allDescriptors: MutableCollection<DeclarationDescriptor>? = null
     private var implicitReceiverHierarchy: List<ReceiverParameterDescriptor>? = null
 
     override fun getClassifier(name: Name): ClassifierDescriptor?
@@ -74,13 +70,9 @@ public class ChainedScope(private val containingDeclaration: DeclarationDescript
 
     override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
                                 nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
-        if (_allDescriptors == null) {
-            _allDescriptors = HashSet<DeclarationDescriptor>()
-            for (scope in scopeChain) {
-                _allDescriptors!!.addAll(scope.getDescriptors())
-            }
-        }
-        return _allDescriptors!!
+        val result = HashSet<DeclarationDescriptor>()
+        scopeChain.flatMapTo(result) { it.getDescriptors(kindFilter, nameFilter) }
+        return result
     }
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {
