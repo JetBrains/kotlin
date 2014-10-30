@@ -768,8 +768,8 @@ public class JetPsiUtil {
     }
 
     @NotNull
-    public static String getElementTextWithContext(@NotNull JetElement element) {
-        if (element instanceof JetFile) {
+    public static String getElementTextWithContext(@NotNull PsiElement element) {
+        if (element instanceof PsiFile) {
             return element.getContainingFile().getText();
         }
 
@@ -777,7 +777,7 @@ public class JetPsiUtil {
         PsiElement inFileParent = PsiTreeUtil.findFirstParent(element, new Condition<PsiElement>() {
             @Override
             public boolean value(PsiElement parentCandidate) {
-                return parentCandidate != null && parentCandidate.getParent() instanceof JetFile;
+                return parentCandidate != null && parentCandidate.getParent() instanceof PsiFile;
             }
         });
 
