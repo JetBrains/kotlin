@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.parsing;
 
 import com.google.common.collect.ImmutableMap;
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.WhitespacesAndCommentsBinder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -960,13 +959,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         IElementType declType = parseLocalDeclarationRest(enumDetector.isDetected());
 
         if (declType != null) {
-            decl.done(declType);
-            // we do not attach preceding comments to local variables because they are likely commenting a few statements below
-            WhitespacesAndCommentsBinder leftBinder = declType == JetNodeTypes.PROPERTY || declType == JetNodeTypes.MULTI_VARIABLE_DECLARATION
-                                                      ? null
-                                                      : PrecedingWhitespacesAndCommentsBinder.INSTANCE$;
-            decl.setCustomEdgeTokenBinders(leftBinder,
-                                           TrailingWhitespacesAndCommentsBinder.INSTANCE$);
+            // we do not attach preceding comments (non-doc) to local variables because they are likely commenting a few statements below
+            closeDeclarationWithCommentBinders(decl, declType, declType != JetNodeTypes.PROPERTY && declType != JetNodeTypes.MULTI_VARIABLE_DECLARATION);
             return true;
         }
         else {

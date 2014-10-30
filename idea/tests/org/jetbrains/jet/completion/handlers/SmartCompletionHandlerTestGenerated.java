@@ -40,7 +40,6 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
 
     @TestMetadata("AfterAs2.kt")
     public void testAfterAs2() throws Exception {
-
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/smart/AfterAs2.kt");
         doTest(fileName);
     }

@@ -21,7 +21,7 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.jet.lexer.JetTokens
 import com.intellij.openapi.util.text.StringUtil
 
-object PrecedingWhitespacesAndCommentsBinder : WhitespacesAndCommentsBinder {
+object PrecedingCommentsBinder : WhitespacesAndCommentsBinder {
 
     override fun getEdgePosition(tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
         if (tokens.isEmpty()) return 0
@@ -52,8 +52,28 @@ object PrecedingWhitespacesAndCommentsBinder : WhitespacesAndCommentsBinder {
     }
 }
 
+object PrecedingDocCommentsBinder : WhitespacesAndCommentsBinder {
+
+    override fun getEdgePosition(tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
+        if (tokens.isEmpty()) return 0
+
+        for (idx in tokens.indices.reversed()) {
+            val tokenType = tokens[idx]
+            when (tokenType) {
+                JetTokens.DOC_COMMENT -> return idx
+
+                JetTokens.WHITE_SPACE -> continue
+
+                else ->  break
+            }
+        }
+
+        return tokens.size
+    }
+}
+
 // Binds comments on the same line
-object TrailingWhitespacesAndCommentsBinder : WhitespacesAndCommentsBinder {
+object TrailingCommentsBinder : WhitespacesAndCommentsBinder {
 
     override fun getEdgePosition(tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
         if (tokens.isEmpty()) return 0

@@ -378,9 +378,10 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         return myBuilder.newlineBeforeCurrentToken() || eof();
     }
 
-    protected static void closeDeclarationWithCommentBinders(@NotNull PsiBuilder.Marker marker, @NotNull IElementType elementType) {
+    protected static void closeDeclarationWithCommentBinders(@NotNull PsiBuilder.Marker marker, @NotNull IElementType elementType, boolean precedingNonDocComments) {
         marker.done(elementType);
-        marker.setCustomEdgeTokenBinders(PrecedingWhitespacesAndCommentsBinder.INSTANCE$, TrailingWhitespacesAndCommentsBinder.INSTANCE$);
+        marker.setCustomEdgeTokenBinders(precedingNonDocComments ? PrecedingCommentsBinder.INSTANCE$ : PrecedingDocCommentsBinder.INSTANCE$,
+                                         TrailingCommentsBinder.INSTANCE$);
     }
 
     protected abstract JetParsing create(SemanticWhitespaceAwarePsiBuilder builder);

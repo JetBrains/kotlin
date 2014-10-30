@@ -400,8 +400,8 @@ JetFile: CommentsBinding.kt
       PsiWhiteSpace(' ')
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('1')
-    PsiWhiteSpace(' ')
-    PsiComment(EOL_COMMENT)('// this is getter')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('// this is getter')
     PsiWhiteSpace('\n  ')
     PROPERTY_ACCESSOR
       PsiElement(set)('set')
@@ -414,8 +414,8 @@ JetFile: CommentsBinding.kt
       BLOCK
         PsiElement(LBRACE)('{')
         PsiElement(RBRACE)('}')
-    PsiWhiteSpace(' ')
-    PsiComment(EOL_COMMENT)('// this is setter')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('// this is setter')
   PsiWhiteSpace('\n\n')
   PROPERTY
     PsiElement(val)('val')
@@ -441,5 +441,5 @@ JetFile: CommentsBinding.kt
       PsiWhiteSpace(' ')
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('1')
-    PsiWhiteSpace(' ')
-    PsiComment(EOL_COMMENT)('// prop2')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('// prop2')
