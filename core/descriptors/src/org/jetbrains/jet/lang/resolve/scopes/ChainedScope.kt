@@ -48,9 +48,7 @@ public class ChainedScope(private val containingDeclaration: DeclarationDescript
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         if (implicitReceiverHierarchy == null) {
             val result = ArrayList<ReceiverParameterDescriptor>()
-            for (jetScope in scopeChain) {
-                result.addAll(jetScope.getImplicitReceiversHierarchy())
-            }
+            scopeChain.flatMapTo(result) { it.getImplicitReceiversHierarchy() }
             result.trimToSize()
             implicitReceiverHierarchy = result
         }
@@ -59,14 +57,7 @@ public class ChainedScope(private val containingDeclaration: DeclarationDescript
 
     override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclaration!!
 
-    override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> {
-        val result = ArrayList<DeclarationDescriptor>()
-        for (jetScope in scopeChain) {
-            result.addAll(jetScope.getDeclarationsByLabel(labelName))
-        }
-        result.trimToSize()
-        return result
-    }
+    override fun getDeclarationsByLabel(labelName: Name) = scopeChain.flatMap { it.getDeclarationsByLabel(labelName) }
 
     override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
                                 nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
