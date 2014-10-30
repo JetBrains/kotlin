@@ -28,7 +28,7 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
 
     private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor?>? = null
 
-    private val _allDescriptors by Delegates.lazy { substitute(workerScope.getAllDescriptors()) }
+    private val _allDescriptors by Delegates.lazy { substitute(workerScope.getDescriptors()) }
 
     private fun <D : DeclarationDescriptor> substitute(descriptor: D?): D? {
         if (descriptor == null) return null

@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -215,7 +216,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         PackageViewDescriptor packageView = getModule().getPackage(fqn);
         if (packageView == null) return Collections.emptyList();
 
-        Collection<DeclarationDescriptor> members = packageView.getMemberScope().getAllDescriptors();
+        Collection<DeclarationDescriptor> members = packageView.getMemberScope().getDescriptors(JetScope.DescriptorKind.PACKAGES, JetScope.ALL_NAME_FILTER);
         return ContainerUtil.mapNotNull(members, new Function<DeclarationDescriptor, FqName>() {
             @Override
             public FqName fun(DeclarationDescriptor member) {

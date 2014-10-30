@@ -170,10 +170,10 @@ public class WriteThroughScope(outerScope: JetScope, private val writableWorker:
 
         if (_allDescriptors == null) {
             _allDescriptors = Lists.newArrayList<DeclarationDescriptor>()
-            _allDescriptors!!.addAll(workerScope.getAllDescriptors())
+            _allDescriptors!!.addAll(workerScope.getDescriptors())
 
             for (imported in getImports()) {
-                _allDescriptors!!.addAll(imported.getAllDescriptors())
+                _allDescriptors!!.addAll(imported.getDescriptors())
             }
         }
         return _allDescriptors!!

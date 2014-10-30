@@ -109,9 +109,9 @@ public class WritableScopeImpl(scope: JetScope,
             // make sure no descriptors added to allDescriptors collection
             changeLockLevel(WritableScope.LockLevel.READING)
 
-            allDescriptors.addAll(workerScope.getAllDescriptors())
+            allDescriptors.addAll(workerScope.getDescriptors())
             for (imported in getImports()) {
-                allDescriptors.addAll(imported.getAllDescriptors())
+                allDescriptors.addAll(imported.getDescriptors())
             }
         }
         return allDescriptors

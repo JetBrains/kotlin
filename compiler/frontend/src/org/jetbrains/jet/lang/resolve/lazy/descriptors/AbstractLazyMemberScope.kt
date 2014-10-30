@@ -183,7 +183,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
     // a generic implementation can't do this properly
     abstract override fun toString(): String
 
-    override fun getOwnDeclaredDescriptors() = getAllDescriptors()
+    override fun getOwnDeclaredDescriptors() = getDescriptors()
 
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")

@@ -44,7 +44,7 @@ public trait JetScope {
      *
      * @return All visible descriptors from current scope.
      */
-    public fun getAllDescriptors(): Collection<DeclarationDescriptor> = getDescriptors(DescriptorKind.ALL, {true})
+    public fun getAllDescriptors(): Collection<DeclarationDescriptor> = getDescriptors()
 
     /**
      * All visible descriptors from current scope possibly filtered by the given name and kind filters
@@ -90,7 +90,12 @@ public trait JetScope {
             public val ALL: (DescriptorKind) -> Boolean = { true }
             public val EXTENSIONS: (DescriptorKind) -> Boolean = { it == EXTENSION_FUNCTION || it == EXTENSION_PROPERTY }
             public val FUNCTIONS: (DescriptorKind) -> Boolean = { it == NON_EXTENSION_FUNCTION || it == EXTENSION_FUNCTION }
+            public val CALLABLES: (DescriptorKind) -> Boolean = { it != CLASSIFIER && it != PACKAGE }
             public val NON_EXTENSION_CALLABLES: (DescriptorKind) -> Boolean = { it == NON_EXTENSION_FUNCTION || it == NON_EXTENSION_PROPERTY || it == LOCAL_VARIABLE }
+            public val NON_EXTENSIONS: (DescriptorKind) -> Boolean = { it != EXTENSION_FUNCTION && it != EXTENSION_PROPERTY }
+            public val CLASSIFIERS: (DescriptorKind) -> Boolean = { it == CLASSIFIER }
+            public val PACKAGES: (DescriptorKind) -> Boolean = { it == PACKAGE }
+            public val VARIABLES_AND_PROPERTIES: (DescriptorKind) -> Boolean = { it == LOCAL_VARIABLE || it == NON_EXTENSION_PROPERTY || it == EXTENSION_PROPERTY }
         }
     }
 

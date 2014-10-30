@@ -206,7 +206,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
     override fun computeExtraDescriptors(): Collection<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
         for (supertype in thisDescriptor.getTypeConstructor().getSupertypes()) {
-            for (descriptor in supertype.getMemberScope().getAllDescriptors()) {
+            for (descriptor in supertype.getMemberScope().getDescriptors()) {
                 if (descriptor is FunctionDescriptor) {
                     result.addAll(getFunctions(descriptor.getName()))
                 }

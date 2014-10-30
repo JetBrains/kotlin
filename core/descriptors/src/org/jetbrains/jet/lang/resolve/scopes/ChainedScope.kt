@@ -77,7 +77,7 @@ public class ChainedScope(private val containingDeclaration: DeclarationDescript
         if (_allDescriptors == null) {
             _allDescriptors = HashSet<DeclarationDescriptor>()
             for (scope in scopeChain) {
-                _allDescriptors!!.addAll(scope.getAllDescriptors())
+                _allDescriptors!!.addAll(scope.getDescriptors())
             }
         }
         return _allDescriptors!!

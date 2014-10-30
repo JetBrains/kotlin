@@ -102,7 +102,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
     override fun getFunctions(name: Name) = deserializedPackageScope().getFunctions(name) + super.getFunctions(name)
 
     override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>) {
-        result.addAll(deserializedPackageScope().getAllDescriptors())
+        result.addAll(deserializedPackageScope().getDescriptors())
     }
 
     override fun computeMemberIndex(): MemberIndex = object : MemberIndex by EMPTY_MEMBER_INDEX {

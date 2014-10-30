@@ -20,6 +20,7 @@ import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 public object ClassSerializationUtil {
     public trait Sink {
@@ -30,7 +31,7 @@ public object ClassSerializationUtil {
         val classProto = serializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
         sink.writeClass(classDescriptor, classProto)
 
-        serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors(), serializer, sink)
+        serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getDescriptors(), serializer, sink)
 
         val classObjectDescriptor = classDescriptor.getClassObjectDescriptor()
         if (classObjectDescriptor != null) {

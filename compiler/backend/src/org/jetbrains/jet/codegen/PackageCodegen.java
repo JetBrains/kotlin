@@ -54,6 +54,7 @@ import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -150,7 +151,7 @@ public class PackageCodegen {
             return Collections.emptyList();
         }
         List<DeserializedCallableMemberDescriptor> callables = Lists.newArrayList();
-        for (DeclarationDescriptor member : packageFragment.getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor member : packageFragment.getMemberScope().getDescriptors(JetScope.DescriptorKind.CALLABLES, JetScope.ALL_NAME_FILTER)) {
             if (member instanceof DeserializedCallableMemberDescriptor) {
                 callables.add((DeserializedCallableMemberDescriptor) member);
             }

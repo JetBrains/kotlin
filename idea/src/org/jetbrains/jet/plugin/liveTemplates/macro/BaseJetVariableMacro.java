@@ -75,7 +75,7 @@ public abstract class BaseJetVariableMacro extends Macro {
                 new InjectorForMacros(project, resolveSession.getModuleDescriptor()).getExpressionTypingComponents();
 
         List<VariableDescriptor> filteredDescriptors = new ArrayList<VariableDescriptor>();
-        for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
+        for (DeclarationDescriptor declarationDescriptor : scope.getDescriptors(JetScope.DescriptorKind.VARIABLES_AND_PROPERTIES, JetScope.ALL_NAME_FILTER)) {
             if (declarationDescriptor instanceof VariableDescriptor) {
                 VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
                 if (isSuitable(variableDescriptor, scope, project, components)) {

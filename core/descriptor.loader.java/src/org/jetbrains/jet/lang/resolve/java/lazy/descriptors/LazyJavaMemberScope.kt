@@ -282,7 +282,7 @@ public abstract class LazyJavaMemberScope(
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
     override fun getDeclarationsByLabel(labelName: Name) = listOf<DeclarationDescriptor>()
 
-    override fun getOwnDeclaredDescriptors() = getAllDescriptors()
+    override fun getOwnDeclaredDescriptors() = getDescriptors()
 
     override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
                                 nameFilter: (String) -> Boolean) = allDescriptors()
