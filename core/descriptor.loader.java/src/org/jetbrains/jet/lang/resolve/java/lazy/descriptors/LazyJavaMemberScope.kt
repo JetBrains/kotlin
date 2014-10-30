@@ -50,7 +50,7 @@ public abstract class LazyJavaMemberScope(
         private val containingDeclaration: DeclarationDescriptor
 ) : JetScope {
     private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
-            {computeAllDescriptors()},
+            { computeDescriptors({ true }, { true }) },
             // This is to avoid the following recursive case:
             //    when computing getAllPackageNames() we ask the JavaPsiFacade for all subpackages of foo
             //    it, in turn, asks JavaElementFinder for subpackages of Kotlin package foo, which calls getAllPackageNames() recursively
@@ -290,28 +290,38 @@ public abstract class LazyJavaMemberScope(
     override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
                                 nameFilter: (String) -> Boolean) = allDescriptors()
 
-    private fun computeAllDescriptors(): List<DeclarationDescriptor> {
+    //TODO: use nameFilter
+    protected fun computeDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+                                   nameFilter: (String) -> kotlin.Boolean): List<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()
 
-        for (name in getAllClassNames()) {
-            // Null signifies that a class found in Java is not present in Kotlin (e.g. package class)
-            result.addIfNotNull(getClassifier(name))
+        if (kindFilter(JetScope.DescriptorKind.CLASSIFIER)) {
+            for (name in getAllClassNames()) {
+                // Null signifies that a class found in Java is not present in Kotlin (e.g. package class)
+                result.addIfNotNull(getClassifier(name))
+            }
         }
 
-        for (name in getAllFunctionNames()) {
-            result.addAll(getFunctions(name))
+        if (kindFilter(JetScope.DescriptorKind.NON_EXTENSION_FUNCTION)) {
+            for (name in getAllFunctionNames()) {
+                result.addAll(getFunctions(name))
+            }
         }
 
-        for (name in getAllPropertyNames()) {
-            result.addAll(getProperties(name))
+        if (kindFilter(JetScope.DescriptorKind.NON_EXTENSION_PROPERTY)) {
+            for (name in getAllPropertyNames()) {
+                result.addAll(getProperties(name))
+            }
         }
 
-        addExtraDescriptors(result)
+        addExtraDescriptors(result, kindFilter, nameFilter)
 
         return result.toReadOnlyList()
     }
 
-    protected open fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>) {
+    protected open fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
+                                           kindFilter: (JetScope.DescriptorKind) -> Boolean,
+                                           nameFilter: (String) -> kotlin.Boolean) {
         // Do nothing
     }
 
