@@ -33,11 +33,16 @@ import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 
 public object TipsManager{
 
-    public fun getReferenceVariants(expression: JetSimpleNameExpression, context: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean): Collection<DeclarationDescriptor> {
-        return getReferenceVariants(expression, context).filter(visibilityFilter)
+    public fun getReferenceVariants(expression: JetSimpleNameExpression,
+                                    context: BindingContext,
+                                    nameFilter: (String) -> Boolean,
+                                    visibilityFilter: (DeclarationDescriptor) -> Boolean): Collection<DeclarationDescriptor> {
+        return getReferenceVariants(expression, context, nameFilter).filter(visibilityFilter)
     }
 
-    private fun getReferenceVariants(expression: JetSimpleNameExpression, context: BindingContext): Collection<DeclarationDescriptor> {
+    private fun getReferenceVariants(expression: JetSimpleNameExpression,
+                                     context: BindingContext,
+                                     nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
         val receiverExpression = expression.getReceiverExpression()
         val parent = expression.getParent()
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
@@ -58,7 +63,7 @@ public object TipsManager{
                 if (qualifier != null) {
                     //TODO: filter out extensions!
                     // It's impossible to add extension function for package or class (if it's class object, expression type is not null)
-                    qualifier.scope.getDescriptors(JetScope.DescriptorKind.NON_EXTENSIONS).filterTo(descriptors, ::filterIfInfix)
+                    qualifier.scope.getDescriptors(JetScope.DescriptorKind.NON_EXTENSIONS, nameFilter).filterTo(descriptors, ::filterIfInfix)
                 }
 
                 val expressionType = context[BindingContext.EXPRESSION_TYPE, receiverExpression]
@@ -81,7 +86,7 @@ public object TipsManager{
         }
 
         if (parent is JetImportDirective || parent is JetPackageDirective) {
-            return excludeNonPackageDescriptors(resolutionScope.getDescriptors({ it == JetScope.DescriptorKind.PACKAGE }))
+            return excludeNonPackageDescriptors(resolutionScope.getDescriptors({ it == JetScope.DescriptorKind.PACKAGE }, nameFilter))
         }
         else {
             val descriptorsSet = HashSet<DeclarationDescriptor>()
@@ -90,7 +95,7 @@ public object TipsManager{
                 receiverDescriptor.getType().getMemberScope().getDescriptors().filterTo(descriptorsSet) { !it.isExtension }
             }
 
-            descriptorsSet.addAll(resolutionScope.getDescriptors())
+            descriptorsSet.addAll(resolutionScope.getDescriptors({ true }, nameFilter))
 
             descriptorsSet.excludeNotCallableExtensions(resolutionScope, context, context.getDataFlowInfo(expression))
 
@@ -98,9 +103,11 @@ public object TipsManager{
         }
     }
 
-    public fun getPackageReferenceVariants(expression: JetSimpleNameExpression, context: BindingContext): Collection<DeclarationDescriptor> {
+    public fun getPackageReferenceVariants(expression: JetSimpleNameExpression,
+                                           context: BindingContext,
+                                           nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
-        return excludeNonPackageDescriptors(resolutionScope.getDescriptors({ it == JetScope.DescriptorKind.PACKAGE }))
+        return excludeNonPackageDescriptors(resolutionScope.getDescriptors({ it == JetScope.DescriptorKind.PACKAGE }, nameFilter))
     }
 
     public fun excludeNotCallableExtensions(descriptors: Collection<DeclarationDescriptor>,

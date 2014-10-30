@@ -370,7 +370,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             return null;
         }
 
-        JetSimpleNameExpression callNameExpression = getCallSimpleNameExpression(argumentList);
+        final JetSimpleNameExpression callNameExpression = getCallSimpleNameExpression(argumentList);
         if (callNameExpression == null) {
             return null;
         }
@@ -399,9 +399,16 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             }
         };
 
-        Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(callNameExpression, bindingContext, visibilityFilter);
-
         Name refName = callNameExpression.getReferencedNameAsName();
+
+        final String refNameString = refName.isSpecial() ? null : refName.asString();
+        Function1<String, Boolean> nameFilter = new Function1<String, Boolean>() {
+            @Override
+            public Boolean invoke(String s) {
+                return refNameString == null || s.equals(refNameString);
+            }
+        };
+        Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(callNameExpression, bindingContext, nameFilter, visibilityFilter);
 
         Collection<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>>();
         for (DeclarationDescriptor variant : variants) {

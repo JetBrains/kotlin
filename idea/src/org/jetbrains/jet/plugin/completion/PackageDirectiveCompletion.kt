@@ -47,12 +47,13 @@ object PackageDirectiveCompletion {
 
         try {
             val prefixLength = parameters.getOffset() - ref.expression.getTextOffset()
-            var result = result.withPrefixMatcher(PlainPrefixMatcher(name.substring(0, prefixLength)))
+            val prefixMatcher = PlainPrefixMatcher(name.substring(0, prefixLength))
+            val result = result.withPrefixMatcher(prefixMatcher)
 
             val resolveSession = ref.expression.getLazyResolveSession()
             val bindingContext = resolveSession.resolveToElement(ref.expression)
 
-            val variants = TipsManager.getPackageReferenceVariants(ref.expression, bindingContext)
+            val variants = TipsManager.getPackageReferenceVariants(ref.expression, bindingContext, { prefixMatcher.prefixMatches(it) })
             for (variant in variants) {
                 val lookupElement = KotlinLookupElementFactory.createLookupElement(resolveSession, variant)
                 if (!lookupElement.getLookupString().contains(DUMMY_IDENTIFIER)) {

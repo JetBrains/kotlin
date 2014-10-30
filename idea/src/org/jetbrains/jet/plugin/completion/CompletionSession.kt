@@ -86,6 +86,13 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected abstract fun doComplete()
 
+    protected fun getReferenceVariants(): Collection<DeclarationDescriptor> {
+        return TipsManager.getReferenceVariants(jetReference!!.expression,
+                                                bindingContext!!,
+                                                { prefixMatcher.prefixMatches(it) },
+                                                { isVisibleDescriptor(it) })
+    }
+
     protected fun shouldRunTopLevelCompletion(): Boolean {
         if (!configuration.completeNonImportedDeclarations) return false
 
@@ -193,8 +200,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun addReferenceVariants(filterCondition: (DeclarationDescriptor) -> Boolean = { true }) {
-        val descriptors = TipsManager.getReferenceVariants(jetReference!!.expression, bindingContext!!) { isVisibleDescriptor(it) }
-        collector.addDescriptorElements(descriptors.filter { filterCondition(it) }, suppressAutoInsertion = false)
+        collector.addDescriptorElements(getReferenceVariants().filter { filterCondition(it) }, suppressAutoInsertion = false)
     }
 }
 
@@ -210,8 +216,11 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
                 val filter = result.declarationFilter
                 if (filter != null) {
-                    TipsManager.getReferenceVariants(jetReference.expression, bindingContext!!) { isVisibleDescriptor(it) }
-                            .forEach { if (prefixMatcher.prefixMatches(it.getName().asString())) collector.addElements(filter(it)) }
+                    getReferenceVariants().forEach {
+                        if (prefixMatcher.prefixMatches(it.getName().asString())) {
+                            collector.addElements(filter(it))
+                        }
+                    }
 
                     flushToResultSet()
 
