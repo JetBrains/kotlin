@@ -55,6 +55,10 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.jet.compiler.CompilerSettings
+import org.jetbrains.jps.model.JpsProject
+import org.jetbrains.jet.compiler.runner.OutputItemsCollector
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -125,79 +129,22 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return ABORT
         }
 
-        val outputItemCollector = OutputItemsCollectorImpl()
-
         val project = representativeTarget.getModule().getProject()!!
         val commonArguments = JpsKotlinCompilerSettings.getCommonCompilerArguments(project)
         commonArguments.verbose = true // Make compiler report source to output files mapping
 
-        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
-
         val allCompiledFiles = getAllCompiledFilesContainer(context)
-        val filesToCompile: MultiMap<ModuleBuildTarget, File>
+        val filesToCompile = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder)
 
-        if (JpsUtils.isJsKotlinModule(representativeTarget)) {
-            if (chunk.getModules().size() > 1) {
-                // We do not support circular dependencies, but if they are present, we do our best should not break the build,
-                // so we simply yield a warning and report NOTHING_DONE
-                messageCollector.report(WARNING, "Circular dependencies are not supported. "
-                                                 + "The following JS modules depend on each other: "
-                                                 + chunk.getModules().map { it.getName() }.joinToString(", ")
-                                                 + ". "
-                                                 + "Kotlin is not compiled for these modules", NO_LOCATION)
-                return NOTHING_DONE
-            }
-
-            val sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(representativeTarget)
-            //List<File> sourceFiles = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder);
-
-            filesToCompile = MultiMap.emptyInstance() // won't be used
-
-            if (sourceFiles.isEmpty()) {
-                return NOTHING_DONE
-            }
-
-            val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
-
-            val outputFile = File(outputDir, representativeTarget.getModule().getName() + ".js")
-            val libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget)
-            val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(project)
-
-            runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile)
+        val outputItemCollector = if (JpsUtils.isJsKotlinModule(representativeTarget)) {
+            compileToJs(chunk, commonArguments, environment, messageCollector, project)
         }
         else {
-            if (chunk.getModules().size() > 1) {
-                messageCollector.report(WARNING, "Circular dependencies are only partially supported. "
-                                                 + "The following modules depend on each other: "
-                                                 + chunk.getModules().map { it.getName() }.joinToString(", ")
-                                                 + ". "
-                                                 + "Kotlin will compile them, but some strange effect may happen", NO_LOCATION)
-            }
+            compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile, messageCollector)
+        }
 
-            filesToCompile = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder)
-            allCompiledFiles.addAll(filesToCompile.values())
-
-            val processedTargetsWithRemoved = getProcessedTargetsWithRemovedFilesContainer(context)
-
-            var haveRemovedFiles = false
-            for (target in chunk.getTargets()) {
-                if (!KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target).isEmpty()) {
-                    if (processedTargetsWithRemoved.add(target)) {
-                        haveRemovedFiles = true
-                    }
-                }
-            }
-
-            val moduleFile = KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, chunk, filesToCompile, haveRemovedFiles)
-            if (moduleFile == null) {
-                // No Kotlin sources found
-                return NOTHING_DONE
-            }
-
-            val k2JvmArguments = JpsKotlinCompilerSettings.getK2JvmCompilerArguments(project)
-
-            runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment, moduleFile, outputItemCollector)
-            moduleFile.delete()
+        if (outputItemCollector == null) {
+            return NOTHING_DONE
         }
 
         // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
@@ -277,6 +224,92 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         return OK
+    }
+
+    // if null is returned, nothing was done
+    private fun compileToJs(chunk: ModuleChunk,
+                            commonArguments: CommonCompilerArguments,
+                            environment: CompilerEnvironment,
+                            messageCollector: KotlinBuilder.MessageCollectorAdapter,
+                            project: JpsProject
+    ): OutputItemsCollectorImpl? {
+        val outputItemCollector = OutputItemsCollectorImpl()
+
+        val representativeTarget = chunk.representativeTarget()
+        if (chunk.getModules().size() > 1) {
+            // We do not support circular dependencies, but if they are present, we do our best should not break the build,
+            // so we simply yield a warning and report NOTHING_DONE
+            messageCollector.report(WARNING, "Circular dependencies are not supported. "
+                                             + "The following JS modules depend on each other: "
+                                             + chunk.getModules().map { it.getName() }.joinToString(", ")
+                                             + ". "
+                                             + "Kotlin is not compiled for these modules", NO_LOCATION)
+            return null
+        }
+
+        val sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(representativeTarget)
+        if (sourceFiles.isEmpty()) {
+            return null
+        }
+
+        val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
+
+        val outputFile = File(outputDir, representativeTarget.getModule().getName() + ".js")
+        val libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget)
+        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
+        val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(project)
+
+        runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile)
+        return outputItemCollector
+    }
+
+    // if null is returned, nothing was done
+    private fun compileToJvm(allCompiledFiles: MutableSet<File>,
+                             chunk: ModuleChunk,
+                             commonArguments: CommonCompilerArguments,
+                             context: CompileContext,
+                             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
+                             environment: CompilerEnvironment,
+                             filesToCompile: MultiMap<ModuleBuildTarget, File>,
+                             messageCollector: KotlinBuilder.MessageCollectorAdapter
+    ): OutputItemsCollectorImpl? {
+        val outputItemCollector = OutputItemsCollectorImpl()
+
+        if (chunk.getModules().size() > 1) {
+            messageCollector.report(WARNING, "Circular dependencies are only partially supported. "
+                                             + "The following modules depend on each other: "
+                                             + chunk.getModules().map { it.getName() }.joinToString(", ")
+                                             + ". "
+                                             + "Kotlin will compile them, but some strange effect may happen", NO_LOCATION)
+        }
+
+        allCompiledFiles.addAll(filesToCompile.values())
+
+        val processedTargetsWithRemoved = getProcessedTargetsWithRemovedFilesContainer(context)
+
+        var haveRemovedFiles = false
+        for (target in chunk.getTargets()) {
+            if (!KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target).isEmpty()) {
+                if (processedTargetsWithRemoved.add(target)) {
+                    haveRemovedFiles = true
+                }
+            }
+        }
+
+        val moduleFile = KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, chunk, filesToCompile, haveRemovedFiles)
+        if (moduleFile == null) {
+            // No Kotlin sources found
+            return null
+        }
+
+        val project = context.getProjectDescriptor().getProject()
+        val k2JvmArguments = JpsKotlinCompilerSettings.getK2JvmCompilerArguments(project)
+        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
+
+        runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment, moduleFile, outputItemCollector)
+        moduleFile.delete()
+
+        return outputItemCollector
     }
 
     public class MessageCollectorAdapter(private val context: CompileContext) : MessageCollector {
