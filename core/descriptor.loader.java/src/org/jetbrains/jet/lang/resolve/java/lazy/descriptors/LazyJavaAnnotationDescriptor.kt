@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
-import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaType
 import org.jetbrains.jet.utils.valuesToMap
 import org.jetbrains.jet.utils.keysToMapExceptNulls
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
@@ -164,7 +163,7 @@ class LazyJavaAnnotationDescriptor(
 
         val arguments = listOf(TypeProjectionImpl(type))
 
-        val javaClassObjectType = object : LazyJavaType(c.storageManager) {
+        val javaClassObjectType = object : AbstractLazyType(c.storageManager) {
             override fun computeTypeConstructor() = jlClass.getTypeConstructor()
             override fun computeArguments() = arguments
             override fun computeMemberScope() = jlClass.getMemberScope(arguments)

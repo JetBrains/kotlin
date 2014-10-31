@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.lazy.types
+package org.jetbrains.jet.lang.types
 
 import org.jetbrains.jet.storage.StorageManager
-import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 
-abstract class LazyJavaType(storageManager: StorageManager) : AbstractJetType(), LazyType {
+public abstract class AbstractLazyType(storageManager: StorageManager) : AbstractJetType(), LazyType {
 
     private val _typeConstructor = storageManager.createLazyValue {computeTypeConstructor()}
     override fun getConstructor(): TypeConstructor = _typeConstructor()

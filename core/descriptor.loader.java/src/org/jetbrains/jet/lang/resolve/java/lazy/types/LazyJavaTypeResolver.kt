@@ -104,7 +104,7 @@ class LazyJavaTypeResolver(
     private inner class LazyJavaClassifierType(
             private val javaType: JavaClassifierType,
             private val attr: JavaTypeAttributes
-    ) : LazyJavaType(c.storageManager) {
+    ) : AbstractLazyType(c.storageManager) {
 
         private val classifier = c.storageManager.createNullableLazyValue { javaType.getClassifier() }
 
