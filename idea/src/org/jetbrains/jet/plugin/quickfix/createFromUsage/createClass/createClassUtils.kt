@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.psi.Call
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.noSubstitutions
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 
@@ -90,7 +91,7 @@ private fun JetExpression.getInheritableTypeInfo(
     if (!(canHaveSubtypes || isEnum)
         || descriptor is TypeParameterDescriptor) return TypeInfo.Empty to { classKind -> false }
 
-    return TypeInfo.ByType(type, Variance.OUT_VARIANCE) to { classKind ->
+    return TypeInfo.ByType(type, Variance.OUT_VARIANCE).noSubstitutions() to { classKind ->
         when (classKind) {
             ClassKind.ENUM_ENTRY -> isEnum && containingDeclaration == DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
             else -> canHaveSubtypes

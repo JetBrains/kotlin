@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory;
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.CreateClassFromTypeReferenceActionFactory;
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.CreateClassFromReferenceExpressionActionFactory;
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction.*;
@@ -241,6 +242,10 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateFunctionOrPropertyFromCallActionFactory.INSTANCE$);
         QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateFunctionOrPropertyFromCallActionFactory.INSTANCE$);
         QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateFunctionOrPropertyFromCallActionFactory.INSTANCE$);
+
+        QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, CreateClassFromConstructorCallActionFactory.INSTANCE$);
+        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromConstructorCallActionFactory.INSTANCE$);
+        QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateClassFromConstructorCallActionFactory.INSTANCE$);
 
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateLocalVariableActionFactory.INSTANCE$);
         QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateLocalVariableActionFactory.INSTANCE$);
