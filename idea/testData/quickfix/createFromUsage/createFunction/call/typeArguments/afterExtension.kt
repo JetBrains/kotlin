@@ -6,6 +6,6 @@ class A<T>(val items: List<T>) {
     }
 }
 
-fun <E, T, T1> List<E>.foo(arg: T, arg1: T1): T {
+fun <E, T, U> List<E>.foo(arg: T, arg1: U): T {
     throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
 }

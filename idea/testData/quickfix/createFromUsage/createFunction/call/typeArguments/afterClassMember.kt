@@ -1,7 +1,7 @@
 // "Create function 'foo'" "true"
 
 class B<T>(val t: T) {
-    fun <T1, T2> foo(arg: T1, arg1: T2): T1 {
+    fun <U, V> foo(arg: U, arg1: V): U {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

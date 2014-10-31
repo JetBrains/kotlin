@@ -330,17 +330,20 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     CallableMemberDescriptor.Kind.SYNTHESIZED,
                     SourceElement.NO_SOURCE
             )
+
             val validator = CollectingValidator { scope.getClassifier(Name.identifier(it)) == null }
+            val parameterNames = JetNameSuggester.suggestNamesForTypeParameters(typeParameterCount, validator)
             val typeParameters = typeParameterCount.indices.map {
                 TypeParameterDescriptorImpl.createWithDefaultBound(
                         fakeFunction,
                         Annotations.EMPTY,
                         false,
                         Variance.INVARIANT,
-                        Name.identifier(validator.validateName("T")),
+                        Name.identifier(parameterNames[it]),
                         it
                 )
             }
+
             return fakeFunction.initialize(null, null, typeParameters, Collections.emptyList(), null, null, Visibilities.INTERNAL)
         }
 
