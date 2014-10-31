@@ -23,25 +23,25 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetImportDirectiveStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetImportDirectiveStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinImportDirectiveStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinImportDirectiveStubImpl;
 
 import java.io.IOException;
 
-public class JetImportDirectiveElementType extends JetStubElementType<PsiJetImportDirectiveStub, JetImportDirective> {
+public class JetImportDirectiveElementType extends JetStubElementType<KotlinImportDirectiveStub, JetImportDirective> {
     public JetImportDirectiveElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetImportDirective.class, PsiJetImportDirectiveStub.class);
+        super(debugName, JetImportDirective.class, KotlinImportDirectiveStub.class);
     }
 
     @Override
-    public PsiJetImportDirectiveStub createStub(@NotNull JetImportDirective psi, StubElement parentStub) {
+    public KotlinImportDirectiveStub createStub(@NotNull JetImportDirective psi, StubElement parentStub) {
         StringRef aliasName = StringRef.fromString(psi.getAliasName());
-        return new PsiJetImportDirectiveStubImpl(parentStub, psi.isAbsoluteInRootPackage(), psi.isAllUnder(),
+        return new KotlinImportDirectiveStubImpl(parentStub, psi.isAbsoluteInRootPackage(), psi.isAllUnder(),
                                                  aliasName, psi.isValidImport());
     }
 
     @Override
-    public void serialize(@NotNull PsiJetImportDirectiveStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinImportDirectiveStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeBoolean(stub.isAbsoluteInRootPackage());
         dataStream.writeBoolean(stub.isAllUnder());
         dataStream.writeName(stub.getAliasName());
@@ -50,11 +50,11 @@ public class JetImportDirectiveElementType extends JetStubElementType<PsiJetImpo
 
     @NotNull
     @Override
-    public PsiJetImportDirectiveStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinImportDirectiveStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         boolean isAbsoluteInRootPackage = dataStream.readBoolean();
         boolean isAllUnder = dataStream.readBoolean();
         StringRef aliasName = dataStream.readName();
         boolean isValid = dataStream.readBoolean();
-        return new PsiJetImportDirectiveStubImpl(parentStub, isAbsoluteInRootPackage, isAllUnder, aliasName, isValid);
+        return new KotlinImportDirectiveStubImpl(parentStub, isAbsoluteInRootPackage, isAllUnder, aliasName, isValid);
     }
 }

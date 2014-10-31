@@ -25,42 +25,42 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationEntryStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetAnnotationEntryStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinAnnotationEntryStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinAnnotationEntryStubImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.IOException;
 
-public class JetAnnotationEntryElementType extends JetStubElementType<PsiJetAnnotationEntryStub, JetAnnotationEntry> {
+public class JetAnnotationEntryElementType extends JetStubElementType<KotlinAnnotationEntryStub, JetAnnotationEntry> {
 
     public JetAnnotationEntryElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetAnnotationEntry.class, PsiJetAnnotationEntryStub.class);
+        super(debugName, JetAnnotationEntry.class, KotlinAnnotationEntryStub.class);
     }
 
     @Override
-    public PsiJetAnnotationEntryStub createStub(@NotNull JetAnnotationEntry psi, StubElement parentStub) {
+    public KotlinAnnotationEntryStub createStub(@NotNull JetAnnotationEntry psi, StubElement parentStub) {
         Name shortName = JetPsiUtil.getShortName(psi);
         String resultName = shortName != null ? shortName.asString() : psi.getText();
         boolean hasValueArguments = psi.getValueArgumentList() != null;
-        return new PsiJetAnnotationEntryStubImpl(parentStub, StringRef.fromString(resultName), hasValueArguments);
+        return new KotlinAnnotationEntryStubImpl(parentStub, StringRef.fromString(resultName), hasValueArguments);
     }
 
     @Override
-    public void serialize(@NotNull PsiJetAnnotationEntryStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinAnnotationEntryStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getShortName());
         dataStream.writeBoolean(stub.hasValueArguments());
     }
 
     @NotNull
     @Override
-    public PsiJetAnnotationEntryStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinAnnotationEntryStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef text = dataStream.readName();
         boolean hasValueArguments = dataStream.readBoolean();
-        return new PsiJetAnnotationEntryStubImpl(parentStub, text, hasValueArguments);
+        return new KotlinAnnotationEntryStubImpl(parentStub, text, hasValueArguments);
     }
 
     @Override
-    public void indexStub(@NotNull PsiJetAnnotationEntryStub stub, @NotNull IndexSink sink) {
+    public void indexStub(@NotNull KotlinAnnotationEntryStub stub, @NotNull IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexAnnotation(stub, sink);
     }
 }

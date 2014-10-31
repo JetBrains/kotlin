@@ -20,18 +20,18 @@ import com.intellij.lang.ASTNode;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.List;
 
-public class JetFileAnnotationList extends JetElementImplStub<PsiJetPlaceHolderStub<JetFileAnnotationList>> {
+public class JetFileAnnotationList extends JetElementImplStub<KotlinPlaceHolderStub<JetFileAnnotationList>> {
 
     public JetFileAnnotationList(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetFileAnnotationList(@NotNull PsiJetPlaceHolderStub<JetFileAnnotationList> stub) {
+    public JetFileAnnotationList(@NotNull KotlinPlaceHolderStub<JetFileAnnotationList> stub) {
         super(stub, JetStubElementTypes.FILE_ANNOTATION_LIST);
     }
 

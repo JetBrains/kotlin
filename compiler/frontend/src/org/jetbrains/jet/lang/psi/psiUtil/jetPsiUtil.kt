@@ -32,7 +32,7 @@ import com.intellij.psi.PsiParameter
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.PsiDirectory
-import org.jetbrains.jet.lang.psi.stubs.PsiJetClassOrObjectStub
+import org.jetbrains.jet.lang.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import com.intellij.psi.PsiWhiteSpace
@@ -126,7 +126,7 @@ public fun JetElement.wrapInBlock(): JetBlockExpression {
  *
  * @return the list of possible superclass names
  */
-public fun <T: JetClassOrObject> StubBasedPsiElementBase<out PsiJetClassOrObjectStub<T>>.getSuperNames(): List<String> {
+public fun <T: JetClassOrObject> StubBasedPsiElementBase<out KotlinClassOrObjectStub<T>>.getSuperNames(): List<String> {
     fun addSuperName(result: MutableList<String>, referencedName: String): Unit {
         result.add(referencedName)
 

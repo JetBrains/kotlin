@@ -18,18 +18,18 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class JetDelegationSpecifierList extends JetElementImplStub<PsiJetPlaceHolderStub<JetDelegationSpecifierList>> {
+public class JetDelegationSpecifierList extends JetElementImplStub<KotlinPlaceHolderStub<JetDelegationSpecifierList>> {
     public JetDelegationSpecifierList(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetDelegationSpecifierList(@NotNull PsiJetPlaceHolderStub<JetDelegationSpecifierList> stub) {
+    public JetDelegationSpecifierList(@NotNull KotlinPlaceHolderStub<JetDelegationSpecifierList> stub) {
         super(stub, JetStubElementTypes.DELEGATION_SPECIFIER_LIST);
     }
 

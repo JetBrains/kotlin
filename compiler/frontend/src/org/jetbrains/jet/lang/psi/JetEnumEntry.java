@@ -22,7 +22,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinClassStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.Collections;
@@ -33,13 +33,13 @@ public class JetEnumEntry extends JetClass {
         super(node);
     }
 
-    public JetEnumEntry(@NotNull PsiJetClassStub stub) {
+    public JetEnumEntry(@NotNull KotlinClassStub stub) {
         super(stub);
     }
 
     @Override
     public String getName() {
-        PsiJetClassStub classStub = getStub();
+        KotlinClassStub classStub = getStub();
         if (classStub != null) {
             return classStub.getName();
         }

@@ -22,33 +22,33 @@ import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetModifierList;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetModifierListStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetModifierListStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinModifierListStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinModifierListStubImpl;
 
 import java.io.IOException;
 
-import static org.jetbrains.jet.lang.psi.stubs.impl.PsiJetModifierListStubImpl.computeMaskFromPsi;
+import static org.jetbrains.jet.lang.psi.stubs.impl.KotlinModifierListStubImpl.computeMaskFromPsi;
 
-public class JetModifierListElementType<T extends JetModifierList> extends JetStubElementType<PsiJetModifierListStub, T> {
+public class JetModifierListElementType<T extends JetModifierList> extends JetStubElementType<KotlinModifierListStub, T> {
     public JetModifierListElementType(@NotNull @NonNls String debugName, @NotNull Class<T> psiClass) {
-        super(debugName, psiClass, PsiJetModifierListStub.class);
+        super(debugName, psiClass, KotlinModifierListStub.class);
     }
 
     @Override
-    public PsiJetModifierListStub createStub(@NotNull T psi, StubElement parentStub) {
-        return new PsiJetModifierListStubImpl(parentStub, computeMaskFromPsi(psi), this);
+    public KotlinModifierListStub createStub(@NotNull T psi, StubElement parentStub) {
+        return new KotlinModifierListStubImpl(parentStub, computeMaskFromPsi(psi), this);
     }
 
     @Override
-    public void serialize(@NotNull PsiJetModifierListStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        int mask = ((PsiJetModifierListStubImpl) stub).getMask();
+    public void serialize(@NotNull KotlinModifierListStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+        int mask = ((KotlinModifierListStubImpl) stub).getMask();
         dataStream.writeVarInt(mask);
     }
 
     @NotNull
     @Override
-    public PsiJetModifierListStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinModifierListStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         int mask = dataStream.readVarInt();
-        return new PsiJetModifierListStubImpl(parentStub, mask, this);
+        return new KotlinModifierListStubImpl(parentStub, mask, this);
     }
 }

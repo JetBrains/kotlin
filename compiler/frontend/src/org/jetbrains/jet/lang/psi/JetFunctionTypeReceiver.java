@@ -18,15 +18,15 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-public class JetFunctionTypeReceiver extends JetElementImplStub<PsiJetPlaceHolderStub<JetFunctionTypeReceiver>> {
+public class JetFunctionTypeReceiver extends JetElementImplStub<KotlinPlaceHolderStub<JetFunctionTypeReceiver>> {
     public JetFunctionTypeReceiver(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetFunctionTypeReceiver(@NotNull PsiJetPlaceHolderStub<JetFunctionTypeReceiver> stub) {
+    public JetFunctionTypeReceiver(@NotNull KotlinPlaceHolderStub<JetFunctionTypeReceiver> stub) {
         super(stub, JetStubElementTypes.FUNCTION_TYPE_RECEIVER);
     }
 

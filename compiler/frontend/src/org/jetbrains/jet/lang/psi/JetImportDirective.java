@@ -21,20 +21,20 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetImportDirectiveStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinImportDirectiveStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetImportDirective extends JetElementImplStub<PsiJetImportDirectiveStub> {
+public class JetImportDirective extends JetElementImplStub<KotlinImportDirectiveStub> {
 
     public JetImportDirective(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetImportDirective(@NotNull PsiJetImportDirectiveStub stub) {
+    public JetImportDirective(@NotNull KotlinImportDirectiveStub stub) {
         super(stub, JetStubElementTypes.IMPORT_DIRECTIVE);
     }
 
@@ -44,7 +44,7 @@ public class JetImportDirective extends JetElementImplStub<PsiJetImportDirective
     }
 
     public boolean isAbsoluteInRootPackage() {
-        PsiJetImportDirectiveStub stub = getStub();
+        KotlinImportDirectiveStub stub = getStub();
         if (stub != null) {
             return stub.isAbsoluteInRootPackage();
         }
@@ -78,7 +78,7 @@ public class JetImportDirective extends JetElementImplStub<PsiJetImportDirective
 
     @Nullable
     public String getAliasName() {
-        PsiJetImportDirectiveStub stub = getStub();
+        KotlinImportDirectiveStub stub = getStub();
         if (stub != null) {
             return stub.getAliasName();
         }
@@ -90,7 +90,7 @@ public class JetImportDirective extends JetElementImplStub<PsiJetImportDirective
     }
 
     public boolean isAllUnder() {
-        PsiJetImportDirectiveStub stub = getStub();
+        KotlinImportDirectiveStub stub = getStub();
         if (stub != null) {
             return stub.isAllUnder();
         }
@@ -117,7 +117,7 @@ public class JetImportDirective extends JetElementImplStub<PsiJetImportDirective
     }
 
     public boolean isValidImport() {
-        PsiJetImportDirectiveStub stub = getStub();
+        KotlinImportDirectiveStub stub = getStub();
         if (stub != null) {
             return stub.isValid();
         }

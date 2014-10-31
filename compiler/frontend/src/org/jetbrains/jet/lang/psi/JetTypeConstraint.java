@@ -19,16 +19,16 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeConstraintStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinTypeConstraintStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetTypeConstraint extends JetElementImplStub<PsiJetTypeConstraintStub> {
+public class JetTypeConstraint extends JetElementImplStub<KotlinTypeConstraintStub> {
     public JetTypeConstraint(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetTypeConstraint(@NotNull PsiJetTypeConstraintStub stub) {
+    public JetTypeConstraint(@NotNull KotlinTypeConstraintStub stub) {
         super(stub, JetStubElementTypes.TYPE_CONSTRAINT);
     }
 
@@ -38,7 +38,7 @@ public class JetTypeConstraint extends JetElementImplStub<PsiJetTypeConstraintSt
     }
 
     public boolean isClassObjectConstraint() {
-        PsiJetTypeConstraintStub stub = getStub();
+        KotlinTypeConstraintStub stub = getStub();
         if (stub != null) {
             return stub.isClassObjectConstraint();
         }

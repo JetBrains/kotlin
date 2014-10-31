@@ -23,17 +23,17 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes
 import org.junit.Assert
 import org.jetbrains.jet.lang.psi.JetPackageDirective
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.jet.lang.psi.JetImportList
 import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub
+import org.jetbrains.jet.lang.psi.stubs.KotlinFunctionStub
 import org.jetbrains.jet.lang.psi.JetTypeReference
-import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub
+import org.jetbrains.jet.lang.psi.stubs.KotlinClassStub
 import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub
+import org.jetbrains.jet.lang.psi.stubs.KotlinObjectStub
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration
 import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub
+import org.jetbrains.jet.lang.psi.stubs.KotlinPropertyStub
 import kotlin.test.assertEquals
 import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.lang.psi.JetClassInitializer
@@ -52,14 +52,14 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     fun packageDirective(text: String) {
         val (file, tree) = createFileAndStubTree(text)
         val packageDirective = tree.findChildStubByType(JetStubElementTypes.PACKAGE_DIRECTIVE)
-        val psi = JetPackageDirective(packageDirective as PsiJetPlaceHolderStub)
+        val psi = JetPackageDirective(packageDirective as KotlinPlaceHolderStub)
         Assert.assertEquals(file.getPackageDirective()!!.getText(), psi.getDebugText())
     }
 
     fun function(text: String) {
         val (file, tree) = createFileAndStubTree(text)
         val function = tree.findChildStubByType(JetStubElementTypes.FUNCTION)
-        val psi = JetNamedFunction(function as PsiJetFunctionStub)
+        val psi = JetNamedFunction(function as KotlinFunctionStub)
         Assert.assertEquals("STUB: " + file.findChildByClass(javaClass<JetNamedFunction>())!!.getText(), psi.getDebugText())
     }
 
@@ -69,7 +69,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
         val parameterList = function.findChildStubByType(JetStubElementTypes.VALUE_PARAMETER_LIST)!!
         val valueParameter = parameterList.findChildStubByType(JetStubElementTypes.VALUE_PARAMETER)!!
         val typeReferenceStub = valueParameter.findChildStubByType(JetStubElementTypes.TYPE_REFERENCE)
-        val psiFromStub = JetTypeReference(typeReferenceStub as PsiJetPlaceHolderStub)
+        val psiFromStub = JetTypeReference(typeReferenceStub as KotlinPlaceHolderStub)
         val typeReferenceByPsi = file.findChildByClass(javaClass<JetNamedFunction>())!!.getValueParameters()[0].getTypeReference()
         Assert.assertEquals(typeReferenceByPsi!!.getText(), psiFromStub.getDebugText())
     }
@@ -77,7 +77,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     fun clazz(text: String, expectedText: String? = null) {
         val (file, tree) = createFileAndStubTree(text)
         val clazz = tree.findChildStubByType(JetStubElementTypes.CLASS)!!
-        val psiFromStub = JetClass(clazz as PsiJetClassStub)
+        val psiFromStub = JetClass(clazz as KotlinClassStub)
         val classByPsi = file.findChildByClass(javaClass<JetClass>())
         val toCheckAgainst = "STUB: " + (expectedText ?: classByPsi!!.getText())
         Assert.assertEquals(toCheckAgainst, psiFromStub.getDebugText())
@@ -89,7 +89,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     fun obj(text: String, expectedText: String? = null) {
         val (file, tree) = createFileAndStubTree(text)
         val obj = tree.findChildStubByType(JetStubElementTypes.OBJECT_DECLARATION)!!
-        val psiFromStub = JetObjectDeclaration(obj as PsiJetObjectStub)
+        val psiFromStub = JetObjectDeclaration(obj as KotlinObjectStub)
         val objectByPsi = file.findChildByClass(javaClass<JetObjectDeclaration>())
         val toCheckAgainst = "STUB: " + (expectedText ?: objectByPsi!!.getText())
         Assert.assertEquals(toCheckAgainst, psiFromStub.getDebugText())
@@ -98,7 +98,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     fun property(text: String, expectedText: String? = null) {
         val (file, tree) = createFileAndStubTree(text)
         val property = tree.findChildStubByType(JetStubElementTypes.PROPERTY)!!
-        val psiFromStub = JetProperty(property as PsiJetPropertyStub)
+        val psiFromStub = JetProperty(property as KotlinPropertyStub)
         val propertyByPsi = file.findChildByClass(javaClass<JetProperty>())
         val toCheckAgainst = "STUB: " + (expectedText ?: propertyByPsi!!.getText())
         Assert.assertEquals(toCheckAgainst, psiFromStub.getDebugText())
@@ -107,7 +107,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     fun importList(text: String) {
         val (file, tree) = createFileAndStubTree(text)
         val importList = tree.findChildStubByType(JetStubElementTypes.IMPORT_LIST)
-        val psi = JetImportList(importList as PsiJetPlaceHolderStub)
+        val psi = JetImportList(importList as KotlinPlaceHolderStub)
         Assert.assertEquals(file.getImportList()!!.getText(), psi.getDebugText())
     }
 
@@ -190,21 +190,21 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     fun testClassBody() {
         val tree = createStubTree("class A {\n {} fun f(): Int val c: Int}")
         val classBody = tree.findChildStubByType(JetStubElementTypes.CLASS)!!.findChildStubByType(JetStubElementTypes.CLASS_BODY)
-        assertEquals("class body for STUB: class A", JetClassBody(classBody as PsiJetPlaceHolderStub).getDebugText())
+        assertEquals("class body for STUB: class A", JetClassBody(classBody as KotlinPlaceHolderStub).getDebugText())
     }
 
     fun testClassInitializer() {
         val tree = createStubTree("class A {\n {} }")
         val initializer = tree.findChildStubByType(JetStubElementTypes.CLASS)!!.findChildStubByType(JetStubElementTypes.CLASS_BODY)!!
                 .findChildStubByType(JetStubElementTypes.ANONYMOUS_INITIALIZER)
-        assertEquals("initializer in STUB: class A", JetClassInitializer(initializer as PsiJetPlaceHolderStub).getDebugText())
+        assertEquals("initializer in STUB: class A", JetClassInitializer(initializer as KotlinPlaceHolderStub).getDebugText())
     }
 
     fun testClassObject() {
         val tree = createStubTree("class A { class object {} }")
         val classObject = tree.findChildStubByType(JetStubElementTypes.CLASS)!!.findChildStubByType(JetStubElementTypes.CLASS_BODY)!!
                 .findChildStubByType(JetStubElementTypes.CLASS_OBJECT)
-        assertEquals("class object in STUB: class A", JetClassObject(classObject as PsiJetPlaceHolderStub).getDebugText())
+        assertEquals("class object in STUB: class A", JetClassObject(classObject as KotlinPlaceHolderStub).getDebugText())
     }
 
     fun testPropertyAccessors() {

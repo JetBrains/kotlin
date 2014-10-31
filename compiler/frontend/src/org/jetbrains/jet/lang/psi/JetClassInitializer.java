@@ -20,15 +20,15 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-public class JetClassInitializer extends JetDeclarationStub<PsiJetPlaceHolderStub<JetClassInitializer>> implements JetStatementExpression {
+public class JetClassInitializer extends JetDeclarationStub<KotlinPlaceHolderStub<JetClassInitializer>> implements JetStatementExpression {
     public JetClassInitializer(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetClassInitializer(@NotNull PsiJetPlaceHolderStub<JetClassInitializer> stub) {
+    public JetClassInitializer(@NotNull KotlinPlaceHolderStub<JetClassInitializer> stub) {
         super(stub, JetStubElementTypes.ANONYMOUS_INITIALIZER);
     }
 

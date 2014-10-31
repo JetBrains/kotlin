@@ -21,7 +21,7 @@ import com.intellij.psi.stubs.DefaultStubBuilder;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetFileStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinFileStubImpl;
 
 public class JetFileStubBuilder extends DefaultStubBuilder {
     @Override
@@ -31,6 +31,6 @@ public class JetFileStubBuilder extends DefaultStubBuilder {
         }
 
         JetFile jetFile = (JetFile) file;
-        return new PsiJetFileStubImpl(jetFile, jetFile.getPackageFqNameByTree().asString(), jetFile.isScriptByTree());
+        return new KotlinFileStubImpl(jetFile, jetFile.getPackageFqNameByTree().asString(), jetFile.isScriptByTree());
     }
 }

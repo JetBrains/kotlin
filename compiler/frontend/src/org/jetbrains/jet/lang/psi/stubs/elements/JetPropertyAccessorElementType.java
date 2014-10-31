@@ -22,23 +22,23 @@ import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyAccessorStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetPropertyAccessorStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPropertyAccessorStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinPropertyAccessorStubImpl;
 
 import java.io.IOException;
 
-public class JetPropertyAccessorElementType extends JetStubElementType<PsiJetPropertyAccessorStub, JetPropertyAccessor> {
+public class JetPropertyAccessorElementType extends JetStubElementType<KotlinPropertyAccessorStub, JetPropertyAccessor> {
     public JetPropertyAccessorElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetPropertyAccessor.class, PsiJetPropertyAccessorStub.class);
+        super(debugName, JetPropertyAccessor.class, KotlinPropertyAccessorStub.class);
     }
 
     @Override
-    public PsiJetPropertyAccessorStub createStub(@NotNull JetPropertyAccessor psi, StubElement parentStub) {
-        return new PsiJetPropertyAccessorStubImpl(parentStub, psi.isGetter(), psi.hasBody(), psi.hasBlockBody());
+    public KotlinPropertyAccessorStub createStub(@NotNull JetPropertyAccessor psi, StubElement parentStub) {
+        return new KotlinPropertyAccessorStubImpl(parentStub, psi.isGetter(), psi.hasBody(), psi.hasBlockBody());
     }
 
     @Override
-    public void serialize(@NotNull PsiJetPropertyAccessorStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinPropertyAccessorStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeBoolean(stub.isGetter());
         dataStream.writeBoolean(stub.hasBody());
         dataStream.writeBoolean(stub.hasBlockBody());
@@ -46,10 +46,10 @@ public class JetPropertyAccessorElementType extends JetStubElementType<PsiJetPro
 
     @NotNull
     @Override
-    public PsiJetPropertyAccessorStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinPropertyAccessorStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         boolean isGetter = dataStream.readBoolean();
         boolean hasBody = dataStream.readBoolean();
         boolean hasBlockBody = dataStream.readBoolean();
-        return new PsiJetPropertyAccessorStubImpl(parentStub, isGetter, hasBody, hasBlockBody);
+        return new KotlinPropertyAccessorStubImpl(parentStub, isGetter, hasBody, hasBlockBody);
     }
 }

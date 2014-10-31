@@ -21,23 +21,23 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeProjectionStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinTypeProjectionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetTypeProjection extends JetModifierListOwnerStub<PsiJetTypeProjectionStub> {
+public class JetTypeProjection extends JetModifierListOwnerStub<KotlinTypeProjectionStub> {
 
     public JetTypeProjection(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetTypeProjection(@NotNull PsiJetTypeProjectionStub stub) {
+    public JetTypeProjection(@NotNull KotlinTypeProjectionStub stub) {
         super(stub, JetStubElementTypes.TYPE_PROJECTION);
     }
 
     @NotNull
     public JetProjectionKind getProjectionKind() {
-        PsiJetTypeProjectionStub stub = getStub();
+        KotlinTypeProjectionStub stub = getStub();
         if (stub != null) {
             return stub.getProjectionKind();
         }

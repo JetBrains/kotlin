@@ -18,17 +18,17 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.List;
 
-public class JetTypeParameterList extends JetElementImplStub<PsiJetPlaceHolderStub<JetTypeParameterList>> {
+public class JetTypeParameterList extends JetElementImplStub<KotlinPlaceHolderStub<JetTypeParameterList>> {
     public JetTypeParameterList(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetTypeParameterList(@NotNull PsiJetPlaceHolderStub<JetTypeParameterList> stub) {
+    public JetTypeParameterList(@NotNull KotlinPlaceHolderStub<JetTypeParameterList> stub) {
         super(stub, JetStubElementTypes.TYPE_PARAMETER_LIST);
     }
 

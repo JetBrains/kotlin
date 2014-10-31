@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -26,10 +25,9 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetObjectStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinObjectStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinObjectStubImpl;
 import org.jetbrains.jet.lang.psi.stubs.impl.Utils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -37,22 +35,22 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.io.IOException;
 import java.util.List;
 
-public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, JetObjectDeclaration> {
+public class JetObjectElementType extends JetStubElementType<KotlinObjectStub, JetObjectDeclaration> {
     public JetObjectElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetObjectDeclaration.class, PsiJetObjectStub.class);
+        super(debugName, JetObjectDeclaration.class, KotlinObjectStub.class);
     }
 
     @Override
-    public PsiJetObjectStub createStub(@NotNull JetObjectDeclaration psi, StubElement parentStub) {
+    public KotlinObjectStub createStub(@NotNull JetObjectDeclaration psi, StubElement parentStub) {
         String name = psi.getName();
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         List<String> superNames = PsiUtilPackage.getSuperNames(psi);
-        return new PsiJetObjectStubImpl(parentStub, StringRef.fromString(name), fqName, Utils.INSTANCE$.wrapStrings(superNames),
+        return new KotlinObjectStubImpl(parentStub, StringRef.fromString(name), fqName, Utils.INSTANCE$.wrapStrings(superNames),
                                         psi.isTopLevel(), isClassObject(psi), psi.isLocal(), psi.isObjectLiteral());
     }
 
     @Override
-    public void serialize(@NotNull PsiJetObjectStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinObjectStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
 
         FqName fqName = stub.getFqName();
@@ -72,7 +70,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
 
     @NotNull
     @Override
-    public PsiJetObjectStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinObjectStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         StringRef fqNameStr = dataStream.readName();
         FqName fqName = fqNameStr != null ? new FqName(fqNameStr.toString()) : null;
@@ -88,11 +86,11 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
             superNames[i] = dataStream.readName();
         }
 
-        return new PsiJetObjectStubImpl(parentStub, name, fqName, superNames, isTopLevel, isClassObject, isLocal, isObjectLiteral);
+        return new KotlinObjectStubImpl(parentStub, name, fqName, superNames, isTopLevel, isClassObject, isLocal, isObjectLiteral);
     }
 
     @Override
-    public void indexStub(@NotNull PsiJetObjectStub stub, @NotNull IndexSink sink) {
+    public void indexStub(@NotNull KotlinObjectStub stub, @NotNull IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexObject(stub, sink);
     }
 

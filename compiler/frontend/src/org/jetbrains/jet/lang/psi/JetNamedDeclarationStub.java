@@ -26,14 +26,14 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetStubWithFqName;
+import org.jetbrains.jet.lang.psi.stubs.KotlinStubWithFqName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
-abstract class JetNamedDeclarationStub<T extends PsiJetStubWithFqName> extends JetDeclarationStub<T> implements JetNamedDeclaration {
+abstract class JetNamedDeclarationStub<T extends KotlinStubWithFqName> extends JetDeclarationStub<T> implements JetNamedDeclaration {
     public JetNamedDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }

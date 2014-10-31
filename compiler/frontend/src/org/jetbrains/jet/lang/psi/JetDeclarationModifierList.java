@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetModifierListStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinModifierListStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 public class JetDeclarationModifierList extends JetModifierList {
@@ -26,7 +26,7 @@ public class JetDeclarationModifierList extends JetModifierList {
         super(node);
     }
 
-    public JetDeclarationModifierList(@NotNull PsiJetModifierListStub stub) {
+    public JetDeclarationModifierList(@NotNull KotlinModifierListStub stub) {
         super(stub, JetStubElementTypes.MODIFIER_LIST);
     }
 }
