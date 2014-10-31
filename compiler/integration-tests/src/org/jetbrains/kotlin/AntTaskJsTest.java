@@ -65,11 +65,15 @@ public class AntTaskJsTest extends AntTaskBaseTest {
     private static void checkFilePrefixPostfix(@NotNull File file, @Nullable File prefix, @Nullable File postfix) throws IOException {
         String fileContent = FileUtil.loadFile(file, true);
 
-        String prefixContent = FileUtilsPackage.readTextOrEmpty(prefix);
-        assertTrue(fileContent.startsWith(prefixContent));
+        if (prefix != null) {
+            String prefixContent = FileUtil.loadFile(prefix, true);
+            assertTrue(fileContent.startsWith(prefixContent));
+        }
 
-        String postfixContent = FileUtilsPackage.readTextOrEmpty(postfix);
-        assertTrue(fileContent.endsWith(postfixContent));
+        if (postfix != null) {
+            String postfixContent = FileUtil.loadFile(postfix, true);
+            assertTrue(fileContent.endsWith(postfixContent));
+        }
     }
 
     @Test
