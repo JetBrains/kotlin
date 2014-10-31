@@ -3714,6 +3714,7 @@ The "returned" value of try expression with no finally is either the last expres
     private StackValue generateExpressionMatch(StackValue expressionToMatch, JetExpression patternExpression) {
         if (expressionToMatch != null) {
             Type subjectType = expressionToMatch.type;
+            markStartLineNumber(patternExpression);
             expressionToMatch.put(subjectType, v);
             JetType condJetType = bindingContext.get(EXPRESSION_TYPE, patternExpression);
             Type condType;
@@ -3738,6 +3739,7 @@ The "returned" value of try expression with no finally is either the last expres
 
     private StackValue generateIsCheck(StackValue expressionToMatch, JetTypeReference typeReference, boolean negated) {
         JetType jetType = bindingContext.get(TYPE, typeReference);
+        markStartLineNumber(typeReference);
         generateInstanceOf(expressionToMatch, jetType, false);
         StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
         return negated ? StackValue.not(value) : value;
