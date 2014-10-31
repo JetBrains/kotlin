@@ -99,7 +99,7 @@ private class TypeExpression(public val typeCandidates: List<TypeCandidate>) : E
 /**
  * A sort-of dummy <code>Expression</code> for parameter lists, to allow us to update the parameter list as the user makes selections.
  */
-private class TypeParameterListExpression(private val typeParameterNamesFromReceiverType: List<RenderedTypeParameter>,
+private class TypeParameterListExpression(private val mandatoryTypeParameters: List<RenderedTypeParameter>,
                                           private val parameterTypeToTypeParameterNamesMap: Map<String, List<RenderedTypeParameter>>) : Expression() {
     public var currentTypeParameters: List<TypeParameterDescriptor> = Collections.emptyList()
         private set
@@ -117,7 +117,7 @@ private class TypeParameterListExpression(private val typeParameterNamesFromRece
         val parameters = callable.getValueParameterList()?.getParameters() ?: Collections.emptyList<JetParameter>()
 
         val renderedTypeParameters = LinkedHashSet<RenderedTypeParameter>()
-        renderedTypeParameters.addAll(typeParameterNamesFromReceiverType)
+        renderedTypeParameters.addAll(mandatoryTypeParameters)
         for (parameter in parameters) {
             val parameterTypeRef = parameter.getTypeReference()
             if (parameterTypeRef != null) {

@@ -101,7 +101,7 @@ class TypeCandidate(val theType: JetType, scope: JetScope? = null) {
     override fun toString() = theType.toString()
 }
 
-class RenderedTypeParameter(
+data class RenderedTypeParameter(
         val typeParameter: TypeParameterDescriptor,
         val fake: Boolean,
         val text: String
@@ -216,6 +216,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         val receiverClassDescriptor: ClassDescriptor?
         val typeParameterNameMap: Map<TypeParameterDescriptor, String>
         val receiverTypeCandidate: TypeCandidate?
+        val mandatoryTypeParametersAsCandidates: List<TypeCandidate>
         val substitutions: List<JetTypeSubstitution>
 
         {
@@ -269,9 +270,11 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         .subtract(substitutionMap.keySet())
                 fakeFunction = createFakeFunctionDescriptor(scope, typeArgumentsForFakeFunction.size)
                 collectSubstitutionsForCallableTypeParameters(fakeFunction!!, typeArgumentsForFakeFunction, substitutionMap)
+                mandatoryTypeParametersAsCandidates = typeArgumentsForFakeFunction.map { TypeCandidate(substitutionMap[it], scope) }
             }
             else {
                 fakeFunction = null
+                mandatoryTypeParametersAsCandidates = Collections.emptyList()
             }
             substitutions = substitutionMap.map { JetTypeSubstitution(it.key, it.value) }
 
@@ -294,6 +297,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 renderTypeCandidates(callableInfo.returnTypeInfo, typeParameterNameMap, fakeFunction)
             }
             receiverTypeCandidate?.render(typeParameterNameMap, fakeFunction)
+            mandatoryTypeParametersAsCandidates.forEach { it.render(typeParameterNameMap, fakeFunction) }
         }
 
         private fun collectSubstitutionsForReceiverTypeParameters(
@@ -454,10 +458,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         private fun getTypeParameterRenames(scope: JetScope): Map<TypeParameterDescriptor, String> {
             val allTypeParametersNotInScope = LinkedHashSet<TypeParameterDescriptor>()
 
-            allTypeParametersNotInScope.addAll(receiverTypeCandidate?.typeParameters?.toList() ?: Collections.emptyList())
-
-            callableInfo.parameterInfos.stream()
-                    .flatMap { typeCandidates[it.typeInfo]!!.stream() }
+            mandatoryTypeParametersAsCandidates.stream()
+                    .plus(callableInfo.parameterInfos.stream().flatMap { typeCandidates[it.typeInfo]!!.stream() })
                     .flatMap { it.typeParameters.stream() }
                     .toCollection(allTypeParametersNotInScope)
 
@@ -584,7 +586,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
         private fun setupTypeParameterListTemplate(builder: TemplateBuilderImpl, declaration: JetCallableDeclaration): TypeParameterListExpression {
             val typeParameterMap = HashMap<String, List<RenderedTypeParameter>>()
-            val receiverTypeParameterNames = receiverTypeCandidate?.let { it.renderedTypeParameters!! } ?: Collections.emptyList()
+
+            val mandatoryTypeParameters = ArrayList<RenderedTypeParameter>()
+            //receiverTypeCandidate?.let { mandatoryTypeParameters.addAll(it.renderedTypeParameters!!) }
+            mandatoryTypeParametersAsCandidates.stream().flatMapTo(mandatoryTypeParameters) { it.renderedTypeParameters!!.stream() }
 
             callableInfo.parameterInfos.stream().flatMap { typeCandidates[it.typeInfo]!!.stream() }.forEach {
                 typeParameterMap[it.renderedType!!] = it.renderedTypeParameters!!
@@ -597,7 +602,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
             // ((3, 3) is after "fun")
             builder.replaceElement(declaration, TextRange.create(3, 3), TYPE_PARAMETER_LIST_VARIABLE_NAME, null, false)
-            return TypeParameterListExpression(receiverTypeParameterNames, typeParameterMap)
+            return TypeParameterListExpression(mandatoryTypeParameters, typeParameterMap)
         }
 
         private fun setupParameterTypeTemplates(builder: TemplateBuilder, parameterList: List<JetParameter>): List<TypeExpression> {
