@@ -3,14 +3,18 @@
     <output-path>$PROJECT_DIR$/out/artifacts/KotlinAndroidExtensionsPlugin</output-path>
     <root id="root">
       <element id="directory" name="lib">
-        <element id="archive" name="kotlin-android-extensions-plugin.jar">
+        <element id="archive" name="kotlin-android-extensions.jar">
           <element id="module-output" name="android-compiler-plugin" />
           <element id="module-output" name="android-idea-plugin" />
         </element>
         <element id="directory" name="jps">
           <element id="archive" name="kotlin-android-extensions-jps.jar">
             <element id="module-output" name="android-jps-plugin" />
+            <element id="module-output" name="plugin-api" />
           </element>
+        </element>
+        <element id="archive" name="android-compiler-plugin.jar">
+          <element id="extracted-dir" path="$PROJECT_DIR$/dist/kotlinc/lib/android-compiler-plugin.jar" path-in-jar="/" />
         </element>
       </element>
     </root>
