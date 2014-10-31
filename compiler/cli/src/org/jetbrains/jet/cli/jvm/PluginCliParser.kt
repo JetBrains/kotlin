@@ -33,9 +33,9 @@ public object PluginCliParser {
     public val PLUGIN_ARGUMENT_PREFIX: String = "plugin:"
 
     private fun getCommandLineProcessors(arguments: CommonCompilerArguments): Collection<CommandLineProcessor> {
-        return arguments.pluginClasspaths!!.map {
+        return arguments.pluginClasspaths?.map {
             loadCommandLineProcessor(JarFile(it).getManifest()?.getAttributes("org.jetbrains.kotlin.compiler.plugin"))
-        }.filterNotNull()
+        }?.filterNotNull() ?: listOf()
     }
 
     private fun loadCommandLineProcessor(attributes: Attributes?): CommandLineProcessor? {
@@ -55,10 +55,10 @@ public object PluginCliParser {
 
     [platformStatic]
     fun processPluginOptions(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
-        val optionValuesByPlugin = arguments.pluginOptions!!.map { parsePluginOption(it) }.groupBy {
+        val optionValuesByPlugin = arguments.pluginOptions?.map { parsePluginOption(it) }?.groupBy {
             if (it == null) throw CliOptionProcessingException("Wrong plugin option format: $it, should be ${CommonCompilerArguments.PLUGIN_OPTION_FORMAT}")
             it.optionName
-        }
+        } ?: mapOf()
 
         val processors = getCommandLineProcessors(arguments)
         for (processor in processors) {
