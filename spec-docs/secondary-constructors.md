@@ -34,12 +34,14 @@ class Foo: MySuper { // initialization of superclass is not allowed
 
 ## TODO
 
-- order of computation
-  - property initializers
-  - anonymous initializers
-- prefix for anonymous initializer
+- -order of computation-
+  - -property initializers-
+  - -anonymous initializers-
+- -prefix for anonymous initializer-
 - is delegation allowed when no primary constructor is present?
-- prevent circular delegation of constructors
+- -prevent circular delegation of constructors-
+- Make `constructor` a soft keyword?
+- Allow omitting parameterless delegating calls?
 
 ## Syntax for primary constructor
 
@@ -78,6 +80,8 @@ constructorDelegationCall
 
 Passing lambdas outside parentheses is not allowed in `constructorDelegationCall`.
 
+??? CONSIDER: maybe we can make `constructor` a soft keyword. That would mean simply that we can not have an annotation named `constructor` on class members, unless it's surrounded by square brackets.
+
 ## Rules for delegating calls
 
 The only situation when an explicit constructor may not have an explicit delegating call is
@@ -107,8 +111,20 @@ The primary constructor's body consists of
 - property initializers and bodies of anonymous initializers following in the order of appearence in the class body
 
 If the primary constructor is not present, property initializers and anonymous initializers are conceptually "prepended" to the body 
-of each explicit constructor that has a delegating call to super class, and their contents are checked accordingly for definite 
+of each explicit constructor that has a delegating call to super class, and their contents are checked accordingly for definite
 initialization of properties etc.
+
+## Syntax for anonymous initializers
+
+Anonymous initializer in the class body must be prefixed with the `constructor` keyword, without parentheses:
+
+``` kotlin
+class C {
+  constructor {
+    ... // anonymous initializer
+  }
+}
+```
 
 ## Checks for constructors
 
