@@ -30,6 +30,7 @@ import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -37,9 +38,8 @@ public class StubBasedPackageMemberDeclarationProvider(
         private val searchScope: GlobalSearchScope
 ) : PackageMemberDeclarationProvider {
 
-    override fun getAllDeclarations(): List<JetDeclaration> {
-        return TOP_LEVEL_DECLARATION_INDICES.flatMap {
-            index ->
+    override fun getDeclarations(kindFilter: (JetScope.DescriptorKind) -> Boolean, nameFilter: (Name) -> Boolean): List<JetDeclaration> {
+        return TOP_LEVEL_DECLARATION_INDICES.flatMap { index ->
             val fqNames = index.getAllKeys(project).toSet().map { FqName(it) }.filter { !it.isRoot() && it.parent() == fqName }
             fqNames.flatMap { index.get(it.asString(), project, searchScope) }
         }

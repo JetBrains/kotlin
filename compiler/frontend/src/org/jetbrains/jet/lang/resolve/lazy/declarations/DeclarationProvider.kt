@@ -16,15 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.declarations
 
-import org.jetbrains.annotations.ReadOnly
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.JetScope.DescriptorKind
 
 public trait DeclarationProvider {
-    public fun getAllDeclarations(): List<JetDeclaration>
+    public fun getDeclarations(kindFilter: (JetScope.DescriptorKind) -> Boolean, nameFilter: (Name) -> Boolean): List<JetDeclaration>
 
     public fun getFunctionDeclarations(name: Name): Collection<JetNamedFunction>
 

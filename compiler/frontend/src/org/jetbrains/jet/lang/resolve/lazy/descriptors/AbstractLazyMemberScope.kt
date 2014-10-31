@@ -120,23 +120,38 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
 
     protected fun computeDescriptorsFromDeclaredElements(kindFilter: (JetScope.DescriptorKind) -> Boolean,
                                                          nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        val declarations = declarationProvider.getAllDeclarations()
+        val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
         val result = ArrayList<DeclarationDescriptor>(declarations.size())
         for (declaration in declarations) {
             if (declaration is JetClassOrObject) {
-                result.addAll(classDescriptors(declaration.getNameAsSafeName()))
+                val name = declaration.getNameAsSafeName()
+                if (nameFilter(name)) {
+                    result.addAll(classDescriptors(name))
+                }
             }
             else if (declaration is JetFunction) {
-                result.addAll(getFunctions(declaration.getNameAsSafeName()))
+                val name = declaration.getNameAsSafeName()
+                if (nameFilter(name)) {
+                    result.addAll(getFunctions(name))
+                }
             }
             else if (declaration is JetProperty) {
-                result.addAll(getProperties(declaration.getNameAsSafeName()))
+                val name = declaration.getNameAsSafeName()
+                if (nameFilter(name)) {
+                    result.addAll(getProperties(name))
+                }
             }
             else if (declaration is JetParameter) {
-                result.addAll(getProperties(declaration.getNameAsSafeName()))
+                val name = declaration.getNameAsSafeName()
+                if (nameFilter(name)) {
+                    result.addAll(getProperties(name))
+                }
             }
             else if (declaration is JetScript) {
-                result.addAll(classDescriptors(ScriptNameUtil.classNameForScript(declaration).shortName()))
+                val name = ScriptNameUtil.classNameForScript(declaration).shortName()
+                if (nameFilter(name)) {
+                    result.addAll(classDescriptors(name))
+                }
             }
             else if (declaration is JetTypedef || declaration is JetMultiDeclaration) {
                 // Do nothing for typedefs as they are not supported.
