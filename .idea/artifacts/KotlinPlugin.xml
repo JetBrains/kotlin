@@ -39,8 +39,6 @@
           <element id="module-output" name="ide-common" />
           <element id="file-copy" path="$PROJECT_DIR$/resources/kotlinManifest.properties" />
           <element id="module-output" name="kotlin-android-plugin" />
-          <element id="module-output" name="android-compiler-plugin" />
-          <element id="module-output" name="android-idea-plugin" />
         </element>
         <element id="library" level="project" name="javax.inject" />
         <element id="directory" name="jps">
