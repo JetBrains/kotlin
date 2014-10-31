@@ -80,7 +80,7 @@ constructorDelegationCall
 
 Passing lambdas outside parentheses is not allowed in `constructorDelegationCall`.
 
-??? CONSIDER: maybe we can make `constructor` a soft keyword. That would mean simply that we can not have an annotation named `constructor` on class members, unless it's surrounded by square brackets.
+**??? CONSIDER: maybe we can make `constructor` a soft keyword.** That would mean simply that we can not have an annotation named `constructor` on class members, unless it's surrounded by square brackets.
 
 ## Rules for delegating calls
 
@@ -92,6 +92,7 @@ class Parent {}
 class Child: Parent {
   constructor() { ... } // implicitly calls `super()`
 }
+```
 
 If there's a primary constructor, all explicit constructors must have explicit delegating calls that (directly or indirectly) call the primary constructor.
 
@@ -100,6 +101,7 @@ class Parent {}
 class Child(): Parent() {
   constructor(a: Int) : this() { ... }
 }
+```
 
 **??? CONSIDER: maybe allow no explicit call when there is a constructor that can be called with no arguments passed?**
 
