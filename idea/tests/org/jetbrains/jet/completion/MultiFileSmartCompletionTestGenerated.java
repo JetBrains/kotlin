@@ -19,6 +19,7 @@ package org.jetbrains.jet.completion;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -33,6 +34,12 @@ import java.util.regex.Pattern;
 public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmartCompletionTest {
     public void testAllFilesPresentInSmartMultiFile() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/smartMultiFile"), Pattern.compile("^([^\\.]+)$"), false);
+    }
+
+    @TestMetadata("FunctionFromAnotherPackage")
+    public void testFunctionFromAnotherPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smartMultiFile/FunctionFromAnotherPackage/");
+        doTest(fileName);
     }
 
     @TestMetadata("JavaStaticMethodArgument")
