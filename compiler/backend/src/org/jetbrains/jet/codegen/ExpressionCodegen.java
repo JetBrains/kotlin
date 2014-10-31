@@ -28,6 +28,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.*;
@@ -1553,19 +1554,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public void markLineNumber(@NotNull JetElement statement, boolean markEndOffset) {
-        Document document = statement.getContainingFile().getViewProvider().getDocument();
-        if (document != null) {
-            TextRange textRange = statement.getTextRange();
-            int lineNumber = document.getLineNumber(markEndOffset ? textRange.getEndOffset() : textRange.getStartOffset());  // 0-based
-            if (lineNumber == myLastLineNumber) {
-                return;
-            }
-            myLastLineNumber = lineNumber;
-
-            Label label = new Label();
-            v.visitLabel(label);
-            v.visitLineNumber(lineNumber + 1, label);  // 1-based
+        Integer lineNumber = CodegenUtil.getLineNumberForElement(statement, markEndOffset);
+        if (lineNumber == null || lineNumber == myLastLineNumber) {
+            return;
         }
+        myLastLineNumber = lineNumber;
+
+        Label label = new Label();
+        v.visitLabel(label);
+        v.visitLineNumber(lineNumber, label);
     }
 
     private void doFinallyOnReturn() {
