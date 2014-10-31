@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionTest {
     @TestMetadata("idea/testData/completion/basic/common")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Common.Extensions.class, Common.NamedParameters.class})
+    @InnerTestClasses({Common.Extensions.class, Common.NamedParameters.class, Common.Visibility.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Common extends AbstractJvmBasicCompletionTest {
         @TestMetadata("AfterFloatOnNewLine.kt")
@@ -850,30 +850,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
-        @TestMetadata("VisibilityClassMembersFromExternal.kt")
-        public void testVisibilityClassMembersFromExternal() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/VisibilityClassMembersFromExternal.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("VisibilityClassMembersFromExternalForce.kt")
-        public void testVisibilityClassMembersFromExternalForce() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/VisibilityClassMembersFromExternalForce.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("VisibilityInSubclass.kt")
-        public void testVisibilityInSubclass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/VisibilityInSubclass.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("VisibilityInSubclassForce.kt")
-        public void testVisibilityInSubclassForce() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/VisibilityInSubclassForce.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("idea/testData/completion/basic/common/extensions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1044,6 +1020,87 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("WithParameterExpression.kt")
             public void testWithParameterExpression() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/namedParameters/WithParameterExpression.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/completion/basic/common/visibility")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Visibility extends AbstractJvmBasicCompletionTest {
+            public void testAllFilesPresentInVisibility() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/completion/basic/common/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("VisibilityClassMembersFromExternal.kt")
+            public void testVisibilityClassMembersFromExternal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/visibility/VisibilityClassMembersFromExternal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VisibilityClassMembersFromExternalForce.kt")
+            public void testVisibilityClassMembersFromExternalForce() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/visibility/VisibilityClassMembersFromExternalForce.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VisibilityInSubclass.kt")
+            public void testVisibilityInSubclass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/visibility/VisibilityInSubclass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VisibilityInSubclassForce.kt")
+            public void testVisibilityInSubclassForce() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/visibility/VisibilityInSubclassForce.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VisibilityPrivateToThis.kt")
+            public void testVisibilityPrivateToThis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/visibility/VisibilityPrivateToThis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VisibilityPrivateToThisInConstructor.kt")
+            public void testVisibilityPrivateToThisInConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/visibility/VisibilityPrivateToThisInConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VisibilityPrivateToThisInConstructorWithThis.kt")
+            public void testVisibilityPrivateToThisInConstructorWithThis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/visibility/VisibilityPrivateToThisInConstructorWithThis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VisibilityPrivateToThisInSpecialScope.kt")
+            public void testVisibilityPrivateToThisInSpecialScope() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/visibility/VisibilityPrivateToThisInSpecialScope.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VisibilityPrivateToThisWithReceiver.kt")
+            public void testVisibilityPrivateToThisWithReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/visibility/VisibilityPrivateToThisWithReceiver.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VisibilityPrivateToThisWithReceiver2.kt")
+            public void testVisibilityPrivateToThisWithReceiver2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/visibility/VisibilityPrivateToThisWithReceiver2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VisibilityPrivateToThisWithThis.kt")
+            public void testVisibilityPrivateToThisWithThis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/visibility/VisibilityPrivateToThisWithThis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VisibilityPrivateToThisWithWrongThis.kt")
+            public void testVisibilityPrivateToThisWithWrongThis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/visibility/VisibilityPrivateToThisWithWrongThis.kt");
                 doTest(fileName);
             }
         }
