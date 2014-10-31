@@ -573,7 +573,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractDecompiledTextTest>()) {
-            model("libraries/decompiledText", pattern = """^([^\.]+)$""")
+            model("decompiler/decompiledText", pattern = """^([^\.]+)$""")
         }
 
         testClass(javaClass<AbstractOptimizeImportsTest>()) {

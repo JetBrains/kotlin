@@ -35,7 +35,7 @@ import org.jetbrains.jet.plugin.decompiler.navigation.NavigateToDecompiledLibrar
 
 public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() {
 
-    private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries/internalClasses"
+    private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/internalClasses"
 
     fun testPackagePartIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(PACKAGE_PART)
 

@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil
 
 public abstract class AbstractDecompiledTextTest() : JetLightCodeInsightFixtureTestCase() {
 
-    private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries/decompiledText"
+    private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/decompiledText"
 
     public fun doTest(path: String) {
         val classFile = NavigateToDecompiledLibraryTest.getClassFile("test", getTestName(false), myModule!!)
