@@ -37,6 +37,7 @@ import java.util.*
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.jet.lang.resolve.DelegationResolver.generateDelegatedMembers
+import org.jetbrains.jet.storage.NotNullLazyValue
 
 public open class LazyClassMemberScope(resolveSession: ResolveSession,
                                   declarationProvider: ClassMemberDeclarationProvider,
@@ -44,10 +45,42 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
                                   trace: BindingTrace)
 : AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider>(resolveSession, declarationProvider, thisClass, trace) {
 
+    private val descriptorsFromDeclaredElements = storageManager.createLazyValue<Collection<DeclarationDescriptor>> {
+        computeDescriptorsFromDeclaredElements({true}, {true})
+    }
+    private val extraDescriptors: NotNullLazyValue<Collection<DeclarationDescriptor>> = storageManager.createLazyValue {
+        computeExtraDescriptors()
+    }
+
+    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        val result = LinkedHashSet(descriptorsFromDeclaredElements())
+        result.addAll(extraDescriptors())
+        return result
+    }
+
+    protected open fun computeExtraDescriptors(): Collection<DeclarationDescriptor> {
+        val result = ArrayList<DeclarationDescriptor>()
+        for (supertype in thisDescriptor.getTypeConstructor().getSupertypes()) {
+            for (descriptor in supertype.getMemberScope().getDescriptors()) {
+                if (descriptor is FunctionDescriptor) {
+                    result.addAll(getFunctions(descriptor.getName()))
+                }
+                else if (descriptor is PropertyDescriptor) {
+                    result.addAll(getProperties(descriptor.getName()))
+                }
+                // Nothing else is inherited
+            }
+        }
+
+        addDataClassMethods(result)
+
+        result.trimToSize()
+        return result
+    }
+
     private trait MemberExtractor<T : CallableMemberDescriptor> {
-
         public fun extract(extractFrom: JetType, name: Name): Collection<T>
-
     }
 
     private val primaryConstructor: NullableLazyValue<ConstructorDescriptor>
@@ -201,26 +234,6 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
             type -> extractor.extract(type, name)
         }
         return generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, trace, lazyMemberExtractor, lazyTypeResolver)
-    }
-
-    override fun computeExtraDescriptors(): Collection<DeclarationDescriptor> {
-        val result = ArrayList<DeclarationDescriptor>()
-        for (supertype in thisDescriptor.getTypeConstructor().getSupertypes()) {
-            for (descriptor in supertype.getMemberScope().getDescriptors()) {
-                if (descriptor is FunctionDescriptor) {
-                    result.addAll(getFunctions(descriptor.getName()))
-                }
-                else if (descriptor is PropertyDescriptor) {
-                    result.addAll(getProperties(descriptor.getName()))
-                }
-                // Nothing else is inherited
-            }
-        }
-
-        addDataClassMethods(result)
-
-        result.trimToSize()
-        return result
     }
 
     private fun addDataClassMethods(result: MutableCollection<DeclarationDescriptor>) {

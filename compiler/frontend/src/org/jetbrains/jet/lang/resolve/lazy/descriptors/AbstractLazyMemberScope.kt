@@ -29,10 +29,10 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull
-import org.jetbrains.jet.storage.NotNullLazyValue
 import org.jetbrains.jet.utils.Printer
 
 import java.util.*
+import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.utils.toReadOnlyList
 
 public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider> protected(
@@ -41,12 +41,10 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
         protected val thisDescriptor: D,
         protected val trace: BindingTrace) : JetScope {
 
-    private val storageManager = resolveSession.getStorageManager()
+    protected val storageManager: StorageManager = resolveSession.getStorageManager()
     private val classDescriptors: MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> = storageManager.createMemoizedFunction { resolveClassDescriptor(it) }
     private val functionDescriptors: MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>> = storageManager.createMemoizedFunction { doGetFunctions(it) }
     private val propertyDescriptors: MemoizedFunctionToNotNull<Name, Collection<VariableDescriptor>> = storageManager.createMemoizedFunction { doGetProperties(it) }
-    private val descriptorsFromDeclaredElements: NotNullLazyValue<Collection<DeclarationDescriptor>> = storageManager.createLazyValue { computeDescriptorsFromDeclaredElements() }
-    private val extraDescriptors: NotNullLazyValue<Collection<DeclarationDescriptor>> = storageManager.createLazyValue { computeExtraDescriptors() }
 
     private fun resolveClassDescriptor(name: Name): List<ClassDescriptor> {
         return declarationProvider.getClassOrObjectDeclarations(name).map {
@@ -120,14 +118,8 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
 
     override fun getDeclarationsByLabel(labelName: Name) = setOf<DeclarationDescriptor>()
 
-    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        val result = LinkedHashSet(descriptorsFromDeclaredElements())
-        result.addAll(extraDescriptors())
-        return result
-    }
-
-    private fun computeDescriptorsFromDeclaredElements(): Collection<DeclarationDescriptor> {
+    protected fun computeDescriptorsFromDeclaredElements(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+                                                         nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val declarations = declarationProvider.getAllDeclarations()
         val result = ArrayList<DeclarationDescriptor>(declarations.size())
         for (declaration in declarations) {
@@ -156,8 +148,6 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
         }
         return result.toReadOnlyList()
     }
-
-    protected abstract fun computeExtraDescriptors(): Collection<DeclarationDescriptor>
 
     override fun getImplicitReceiversHierarchy() = listOf<ReceiverParameterDescriptor>()
 
