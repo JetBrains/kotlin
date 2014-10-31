@@ -34,14 +34,14 @@ class Foo: MySuper { // initialization of superclass is not allowed
 
 ## TODO
 
-- -order of computation-
-  - -property initializers-
-  - -anonymous initializers-
-- -prefix for anonymous initializer-
-- is delegation allowed when no primary constructor is present?
-- -prevent circular delegation of constructors-
-- Make `constructor` a soft keyword?
-- Allow omitting parameterless delegating calls?
+- [X] order of computation
+  - [X] property initializers
+  - [X] anonymous initializers
+- [X] prefix for anonymous initializer 
+- [ ] is delegation allowed when no primary constructor is present?
+- [X] prevent circular delegation of constructors
+- [ ] Make `constructor` a soft keyword?
+- [ ] Allow omitting parameterless delegating calls?
 
 ## Syntax for primary constructor
 
