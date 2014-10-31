@@ -45,7 +45,7 @@ public class LazyJavaClassMemberScope(
     override fun computeMemberIndex(): MemberIndex {
         return object : ClassMemberIndex(jClass, { !it.isStatic() }) {
             // For SAM-constructors
-            override fun getAllMethodNames(): Collection<Name> = super.getAllMethodNames() + getClassNames({ true })
+            override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> = super.getMethodNames(nameFilter) + getClassNames(nameFilter)
         }
     }
 
@@ -214,7 +214,7 @@ public class LazyJavaClassMemberScope(
             if (field != null) {
                 EnumEntrySyntheticClassDescriptor.create(c.storageManager, getContainingDeclaration(), name,
                                                          c.storageManager.createLazyValue {
-                                                             memberIndex().getAllFieldNames() + memberIndex().getAllMethodNames()
+                                                             memberIndex().getAllFieldNames() + memberIndex().getMethodNames({true})
                                                          }, c.sourceElementFactory.source(field))
             }
             else null

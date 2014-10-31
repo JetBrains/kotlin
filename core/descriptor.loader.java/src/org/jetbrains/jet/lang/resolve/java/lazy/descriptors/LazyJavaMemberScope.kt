@@ -208,7 +208,7 @@ public abstract class LazyJavaMemberScope(
     }
 
     override fun getFunctions(name: Name) = functions(name)
-    protected open fun getAllFunctionNames(): Collection<Name> = memberIndex().getAllMethodNames()
+    protected open fun getFunctionNames(nameFilter: (Name) -> Boolean): Collection<Name> = memberIndex().getMethodNames(nameFilter)
 
     protected abstract fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>)
 
@@ -290,7 +290,6 @@ public abstract class LazyJavaMemberScope(
     override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
                                 nameFilter: (Name) -> Boolean) = allDescriptors()
 
-    //TODO: use nameFilter
     protected fun computeDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
                                      nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()
@@ -305,14 +304,18 @@ public abstract class LazyJavaMemberScope(
         }
 
         if (kindFilter(JetScope.DescriptorKind.NON_EXTENSION_FUNCTION)) {
-            for (name in getAllFunctionNames()) {
-                result.addAll(getFunctions(name))
+            for (name in getFunctionNames(nameFilter)) {
+                if (nameFilter(name)) {
+                    result.addAll(getFunctions(name))
+                }
             }
         }
 
         if (kindFilter(JetScope.DescriptorKind.NON_EXTENSION_PROPERTY)) {
             for (name in getAllPropertyNames()) {
-                result.addAll(getProperties(name))
+                if (nameFilter(name)) {
+                    result.addAll(getProperties(name))
+                }
             }
         }
 

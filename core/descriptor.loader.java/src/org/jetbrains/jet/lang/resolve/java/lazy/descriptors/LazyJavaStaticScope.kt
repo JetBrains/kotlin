@@ -108,7 +108,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
 
     override fun computeMemberIndex(): MemberIndex = object : MemberIndex by EMPTY_MEMBER_INDEX {
         // For SAM-constructors
-        override fun getAllMethodNames(): Collection<Name> = getClassNames({ true })
+        override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> = getClassNames(nameFilter)
     }
 
     override fun getClassNames(nameFilter: (Name) -> Boolean): Collection<Name> {
@@ -148,20 +148,20 @@ public class LazyJavaStaticClassScope(
     override fun computeMemberIndex(): MemberIndex {
         val delegate = ClassMemberIndex(jClass) { it.isStatic() }
         return object : MemberIndex by delegate {
-            override fun getAllMethodNames(): Collection<Name> {
+            override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> {
                 // Should be a super call, but KT-2860
-                return delegate.getAllMethodNames() +
+                return delegate.getMethodNames(nameFilter) +
                        // For SAM-constructors
                        jClass.getInnerClasses().map { it.getName() }
             }
         }
     }
 
-    override fun getAllFunctionNames(): Collection<Name> {
+    override fun getFunctionNames(nameFilter: (Name) -> Boolean): Collection<Name> {
         if (jClass.isEnum()) {
-            return super.getAllFunctionNames() + listOf(DescriptorUtils.ENUM_VALUE_OF, DescriptorUtils.ENUM_VALUES)
+            return super.getFunctionNames(nameFilter) + listOf(DescriptorUtils.ENUM_VALUE_OF, DescriptorUtils.ENUM_VALUES)
         }
-        return super.getAllFunctionNames()
+        return super.getFunctionNames(nameFilter)
     }
 
     override fun getClassNames(nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
