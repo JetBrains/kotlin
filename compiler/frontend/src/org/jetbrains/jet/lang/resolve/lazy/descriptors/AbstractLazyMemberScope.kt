@@ -119,7 +119,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
     override fun getDeclarationsByLabel(labelName: Name) = setOf<DeclarationDescriptor>()
 
     protected fun computeDescriptorsFromDeclaredElements(kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                                         nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+                                                         nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
         val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
         val result = ArrayList<DeclarationDescriptor>(declarations.size())
         for (declaration in declarations) {

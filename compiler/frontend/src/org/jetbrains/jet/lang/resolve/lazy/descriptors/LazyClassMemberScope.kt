@@ -45,7 +45,7 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
                                   trace: BindingTrace)
 : AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider>(resolveSession, declarationProvider, thisClass, trace) {
 
-    private val descriptorsFromDeclaredElements = storageManager.createLazyValue<Collection<DeclarationDescriptor>> {
+    private val descriptorsFromDeclaredElements = storageManager.createLazyValue {
         computeDescriptorsFromDeclaredElements({true}, {true})
     }
     private val extraDescriptors: NotNullLazyValue<Collection<DeclarationDescriptor>> = storageManager.createLazyValue {
