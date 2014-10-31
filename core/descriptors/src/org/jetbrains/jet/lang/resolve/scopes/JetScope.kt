@@ -51,7 +51,7 @@ public trait JetScope {
      * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
      */
     public fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean = DescriptorKind.ALL,
-                              nameFilter: (String) -> Boolean = { true }): Collection<DeclarationDescriptor>
+                              nameFilter: (Name) -> Boolean = { true }): Collection<DeclarationDescriptor>
 
     /**
      * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
@@ -100,7 +100,7 @@ public trait JetScope {
     }
 
     class object {
-        public val ALL_NAME_FILTER: (String) -> Boolean = { true }
+        public val ALL_NAME_FILTER: (Name) -> Boolean = { true }
     }
 }
 

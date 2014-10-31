@@ -30,19 +30,20 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 import java.util.*
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
+import org.jetbrains.jet.lang.resolve.name.Name
 
 public object TipsManager{
 
     public fun getReferenceVariants(expression: JetSimpleNameExpression,
                                     context: BindingContext,
-                                    nameFilter: (String) -> Boolean,
+                                    nameFilter: (Name) -> Boolean,
                                     visibilityFilter: (DeclarationDescriptor) -> Boolean): Collection<DeclarationDescriptor> {
         return getReferenceVariants(expression, context, nameFilter).filter(visibilityFilter)
     }
 
     private fun getReferenceVariants(expression: JetSimpleNameExpression,
                                      context: BindingContext,
-                                     nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
+                                     nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val receiverExpression = expression.getReceiverExpression()
         val parent = expression.getParent()
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
@@ -105,7 +106,7 @@ public object TipsManager{
 
     public fun getPackageReferenceVariants(expression: JetSimpleNameExpression,
                                            context: BindingContext,
-                                           nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
+                                           nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
         return excludeNonPackageDescriptors(resolutionScope.getDescriptors({ it == JetScope.DescriptorKind.PACKAGE }, nameFilter))
     }

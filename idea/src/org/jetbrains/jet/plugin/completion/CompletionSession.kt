@@ -87,10 +87,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected abstract fun doComplete()
 
     protected fun getReferenceVariants(): Collection<DeclarationDescriptor> {
-        return TipsManager.getReferenceVariants(jetReference!!.expression,
-                                                bindingContext!!,
-                                                { prefixMatcher.prefixMatches(it) },
-                                                { isVisibleDescriptor(it) })
+        return TipsManager.getReferenceVariants(jetReference!!.expression, bindingContext!!, prefixMatcher.asNameFilter(), { isVisibleDescriptor(it) })
     }
 
     protected fun shouldRunTopLevelCompletion(): Boolean {

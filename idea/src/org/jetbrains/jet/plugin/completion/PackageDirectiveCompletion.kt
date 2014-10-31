@@ -53,7 +53,7 @@ object PackageDirectiveCompletion {
             val resolveSession = ref.expression.getLazyResolveSession()
             val bindingContext = resolveSession.resolveToElement(ref.expression)
 
-            val variants = TipsManager.getPackageReferenceVariants(ref.expression, bindingContext, { prefixMatcher.prefixMatches(it) })
+            val variants = TipsManager.getPackageReferenceVariants(ref.expression, bindingContext, prefixMatcher.asNameFilter())
             for (variant in variants) {
                 val lookupElement = KotlinLookupElementFactory.createLookupElement(resolveSession, variant)
                 if (!lookupElement.getLookupString().contains(DUMMY_IDENTIFIER)) {

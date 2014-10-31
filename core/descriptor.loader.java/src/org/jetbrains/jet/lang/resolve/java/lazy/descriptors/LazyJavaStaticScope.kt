@@ -102,7 +102,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
 
     override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
                                      kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                     nameFilter: (String) -> Boolean) {
+                                     nameFilter: (Name) -> Boolean) {
         result.addAll(deserializedPackageScope().getDescriptors(kindFilter, nameFilter))
     }
 
@@ -111,7 +111,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
         override fun getAllMethodNames(): Collection<Name> = getClassNames({ true })
     }
 
-    override fun getClassNames(nameFilter: (String) -> Boolean): Collection<Name> {
+    override fun getClassNames(nameFilter: (Name) -> Boolean): Collection<Name> {
         return jPackage.getClasses(nameFilter).stream()
                 .filter { c -> c.getOriginKind() != JavaClass.OriginKind.KOTLIN_LIGHT_CLASS }
                 .map { c -> c.getName() }.toList()
@@ -134,7 +134,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
     override fun getAllPropertyNames() = listOf<Name>()
 
     // we don't use implementation from super which caches all descriptors and does not use filters
-    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean, nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         return computeDescriptors(kindFilter, nameFilter)
     }
 }
@@ -163,8 +163,8 @@ public class LazyJavaStaticClassScope(
         }
         return super.getAllFunctionNames()
     }
-    
-    override fun getClassNames(nameFilter: (String) -> Boolean): Collection<Name> = listOf()
+
+    override fun getClassNames(nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
     override fun getClassifier(name: Name): ClassifierDescriptor? = null
 
     override fun getSubPackages(): Collection<FqName> = listOf()

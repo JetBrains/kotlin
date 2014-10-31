@@ -288,16 +288,16 @@ public abstract class LazyJavaMemberScope(
     override fun getOwnDeclaredDescriptors() = getDescriptors()
 
     override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                nameFilter: (String) -> Boolean) = allDescriptors()
+                                nameFilter: (Name) -> Boolean) = allDescriptors()
 
     //TODO: use nameFilter
     protected fun computeDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                     nameFilter: (String) -> Boolean): List<DeclarationDescriptor> {
+                                     nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()
 
         if (kindFilter(JetScope.DescriptorKind.CLASSIFIER)) {
             for (name in getClassNames(nameFilter)) {
-                if (nameFilter(name.asString())) {
+                if (nameFilter(name)) {
                     // Null signifies that a class found in Java is not present in Kotlin (e.g. package class)
                     result.addIfNotNull(getClassifier(name))
                 }
@@ -323,11 +323,11 @@ public abstract class LazyJavaMemberScope(
 
     protected open fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
                                            kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                           nameFilter: (String) -> Boolean) {
+                                           nameFilter: (Name) -> Boolean) {
         // Do nothing
     }
 
-    protected abstract fun getClassNames(nameFilter: (String) -> Boolean): Collection<Name>
+    protected abstract fun getClassNames(nameFilter: (Name) -> Boolean): Collection<Name>
 
     override fun toString() = "Lazy scope for ${getContainingDeclaration()}"
     

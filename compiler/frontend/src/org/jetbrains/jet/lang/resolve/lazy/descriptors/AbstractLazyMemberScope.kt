@@ -121,7 +121,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
     override fun getDeclarationsByLabel(labelName: Name) = setOf<DeclarationDescriptor>()
 
     override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
+                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val result = LinkedHashSet(descriptorsFromDeclaredElements())
         result.addAll(extraDescriptors())
         return result

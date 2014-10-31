@@ -120,7 +120,7 @@ public abstract class DeserializedMemberScope protected(
     protected abstract fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>)
 
     override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> = allDescriptors.invoke()
+                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = allDescriptors.invoke()
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         val receiver = getImplicitReceiver()

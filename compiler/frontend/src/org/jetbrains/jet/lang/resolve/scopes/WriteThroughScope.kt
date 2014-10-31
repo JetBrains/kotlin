@@ -165,7 +165,7 @@ public class WriteThroughScope(outerScope: JetScope, private val writableWorker:
     }
 
     override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                nameFilter: (String) -> Boolean): Collection<DeclarationDescriptor> {
+                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         checkMayRead()
 
         if (_allDescriptors == null) {

@@ -174,7 +174,7 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
     override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                nameFilter: (String) -> Boolean) = collectFromImports(LookupMode.EVERYTHING, JetScopeSelectorUtil.ALL_DESCRIPTORS_SCOPE_SELECTOR)
+                                nameFilter: (Name) -> Boolean) = collectFromImports(LookupMode.EVERYTHING, JetScopeSelectorUtil.ALL_DESCRIPTORS_SCOPE_SELECTOR)
 
     override fun getImplicitReceiversHierarchy() = listOf<ReceiverParameterDescriptor>()
 

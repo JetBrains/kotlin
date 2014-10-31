@@ -127,7 +127,7 @@ public class ErrorUtils {
         @Override
         public Collection<DeclarationDescriptor> getDescriptors(
                 @NotNull Function1<? super DescriptorKind, ? extends Boolean> kindFilter,
-                @NotNull Function1<? super String, ? extends Boolean> nameFilter
+                @NotNull Function1<? super Name, ? extends Boolean> nameFilter
         ) {
             return Collections.emptyList();
         }
@@ -208,7 +208,7 @@ public class ErrorUtils {
         @Override
         public Collection<DeclarationDescriptor> getDescriptors(
                 @NotNull Function1<? super DescriptorKind, ? extends Boolean> kindFilter,
-                @NotNull Function1<? super String, ? extends Boolean> nameFilter
+                @NotNull Function1<? super Name, ? extends Boolean> nameFilter
         ) {
             throw new IllegalStateException();
         }

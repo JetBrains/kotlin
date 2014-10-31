@@ -23,13 +23,14 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.classes
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.packages
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
+import org.jetbrains.jet.lang.resolve.name.Name
 
 public class JavaPackageImpl(psiPackage: PsiPackage) : JavaElementImpl<PsiPackage>(psiPackage), JavaPackage {
 
-    override fun getClasses(nameFilter: (String) -> Boolean): MutableCollection<JavaClass> {
+    override fun getClasses(nameFilter: (Name) -> Boolean): MutableCollection<JavaClass> {
         val psiClasses = getPsi().getClasses().filter {
             val name = it.getName()
-            name != null && nameFilter(name)
+            name != null && nameFilter(Name.identifier(name))
         }
         return classes(psiClasses)
     }

@@ -399,13 +399,12 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             }
         };
 
-        Name refName = callNameExpression.getReferencedNameAsName();
+        final Name refName = callNameExpression.getReferencedNameAsName();
 
-        final String refNameString = refName.isSpecial() ? null : refName.asString();
-        Function1<String, Boolean> nameFilter = new Function1<String, Boolean>() {
+        Function1<Name, Boolean> nameFilter = new Function1<Name, Boolean>() {
             @Override
-            public Boolean invoke(String s) {
-                return refNameString == null || s.equals(refNameString);
+            public Boolean invoke(Name name) {
+                return name.equals(refName);
             }
         };
         Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(callNameExpression, bindingContext, nameFilter, visibilityFilter);
