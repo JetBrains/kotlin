@@ -340,6 +340,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ParameterDocComments.after.kt")
+        public void testParameterDocComments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ParameterDocComments.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Parameters.after.kt")
         public void testParameters() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/Parameters.after.kt");

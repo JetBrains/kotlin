@@ -29,11 +29,7 @@ import com.intellij.formatting.ASTBlock
 import org.jetbrains.jet.plugin.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
 import com.intellij.formatting.SpacingBuilder
 import com.intellij.formatting.SpacingBuilder.RuleBuilder
-import com.intellij.formatting.DependentSpacingRule
-import com.intellij.formatting.DependentSpacingRule.Trigger
-import com.intellij.formatting.DependentSpacingRule.Anchor
-import com.intellij.openapi.util.TextRange
-import com.intellij.formatting.DependantSpacingImpl
+import org.jetbrains.jet.lexer.JetTokens
 
 val MODIFIERS_LIST_ENTRIES = TokenSet.orSet(TokenSet.create(ANNOTATION_ENTRY, ANNOTATION), MODIFIER_KEYWORDS)
 
@@ -63,6 +59,17 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             inPosition(left = ENUM_ENTRY, right = ENUM_ENTRY).emptyLinesIfLineBreakInLeft(
                     emptyLines = 0, numSpacesOtherwise = 1, numberOfLineFeedsOtherwise = 0)
+
+            val parameterWithDocCommentRule = {
+                (parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
+                if (right.getNode().getFirstChildNode().getElementType() == JetTokens.DOC_COMMENT) {
+                    Spacing.createSpacing(0, 0, 1, true, settings.KEEP_BLANK_LINES_IN_DECLARATIONS)
+                }
+                else {
+                    null
+                }
+            }
+            inPosition(parent = VALUE_PARAMETER_LIST, right = VALUE_PARAMETER).customRule(parameterWithDocCommentRule)
         }
 
         simple {
