@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.scopes.*
 import org.jetbrains.jet.utils.Printer
 
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode
+import java.util.HashSet
 
 public class LazyImportScope(private val resolveSession: ResolveSession,
                              private val containingDeclaration: PackageViewDescriptor,
@@ -143,22 +144,6 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
         }
     }
 
-    private fun <D : DeclarationDescriptor> collectFromImports(lookupMode: LookupMode, descriptorsSelector: JetScopeSelectorUtil.ScopeDescriptorSelector<D>): Collection<D> {
-        return resolveSession.getStorageManager().compute {
-            val descriptors = Sets.newHashSet<D>()
-            for (directive in importsProvider.getAllImports()) {
-                if (directive == directiveUnderResolve) {
-                    // This is the recursion in imports analysis
-                    throw IllegalStateException("Recursion while resolving many imports: " + directive.getText())
-                }
-
-                descriptors.addAll(descriptorsSelector.get(getImportScope(directive, lookupMode)))
-            }
-
-            descriptors
-        }
-    }
-
     private fun getImportScope(directive: JetImportDirective, lookupMode: LookupMode) = importedScopesProvider(directive).scopeForMode(lookupMode)
 
     override fun getClassifier(name: Name) = selectFirstFromImports(name, LookupMode.ONLY_CLASSES, JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR)
@@ -173,8 +158,21 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
-    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
-                                nameFilter: (Name) -> Boolean) = collectFromImports(LookupMode.EVERYTHING, JetScopeSelectorUtil.ALL_DESCRIPTORS_SCOPE_SELECTOR)
+    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        return resolveSession.getStorageManager().compute {
+            val descriptors = HashSet<DeclarationDescriptor>()
+            for (directive in importsProvider.getAllImports()) {
+                if (directive == directiveUnderResolve) {
+                    // This is the recursion in imports analysis
+                    throw IllegalStateException("Recursion while resolving many imports: " + directive.getText())
+                }
+
+                descriptors.addAll(getImportScope(directive, LookupMode.EVERYTHING).getDescriptors(kindFilter, nameFilter))
+            }
+
+            descriptors
+        }
+    }
 
     override fun getImplicitReceiversHierarchy() = listOf<ReceiverParameterDescriptor>()
 
