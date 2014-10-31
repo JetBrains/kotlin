@@ -43,9 +43,8 @@ public class JetClassObject extends JetDeclarationStub<KotlinPlaceHolderStub<Jet
         return getRequiredStubOrPsiChild(JetStubElementTypes.OBJECT_DECLARATION);
     }
 
-    @Nullable @IfNotParsed
-    public PsiElement getClassKeywordNode() {
-        ASTNode keywordNode = getNode().findChildByType(JetTokens.CLASS_KEYWORD);
-        return keywordNode != null ? keywordNode.getPsi() : null;
+    @NotNull
+    public PsiElement getClassKeyword() {
+        return findChildByType(JetTokens.CLASS_KEYWORD);
     }
 }

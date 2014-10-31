@@ -61,8 +61,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
 
                     @Override
                     public void visitClassObject(@NotNull JetClassObject classObject) {
-                        PsiElement classKeyword = classObject.getClassKeywordNode();
-                        if (classKeyword != null) memberSuspects.add(classKeyword);
+                        memberSuspects.add(classObject.getClassKeyword());
                     }
 
                     @Override
