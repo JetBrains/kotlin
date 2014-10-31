@@ -106,7 +106,7 @@ public class JetClassElementType extends JetStubElementType<KotlinClassStub, Jet
         StubIndexServiceFactory.getInstance().indexClass(stub, sink);
     }
 
-    private static JetClassElementType getStubType(boolean isEnumEntry) {
+    public static JetClassElementType getStubType(boolean isEnumEntry) {
         return isEnumEntry ? JetStubElementTypes.ENUM_ENTRY : JetStubElementTypes.CLASS;
     }
 }

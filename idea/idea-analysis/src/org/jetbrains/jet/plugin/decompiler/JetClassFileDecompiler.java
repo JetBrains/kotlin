@@ -22,6 +22,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.compiled.ClassFileDecompilers;
 import com.intellij.psi.compiled.ClsStubBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.decompiler.stubBuilder.KotlinClsStubBuilder;
 
 public class JetClassFileDecompiler extends ClassFileDecompilers.Full {
     private final ClsStubBuilder stubBuilder = new KotlinClsStubBuilder();
