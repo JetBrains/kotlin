@@ -1,7 +1,7 @@
 // "Create function 'compareTo'" "true"
 
 class A<T>(val n: T) {
-    fun compareTo(arg: T): Int {
+    fun compareTo(t: T): Int {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

@@ -191,9 +191,9 @@ public class JetNameSuggester {
     }
 
     private static void addForClassType(ArrayList<String> result, JetType jetType, JetNameValidator validator) {
-        ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(jetType);
-        if (classDescriptor != null) {
-            Name className = classDescriptor.getName();
+        ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+        if (descriptor != null) {
+            Name className = descriptor.getName();
             if (!className.isSpecial()) {
                 addCamelNames(result, className.asString(), validator);
             }

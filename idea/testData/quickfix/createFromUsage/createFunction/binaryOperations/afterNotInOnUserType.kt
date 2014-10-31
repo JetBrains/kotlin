@@ -1,7 +1,7 @@
 // "Create function 'contains'" "true"
 
 class A<T>(val n: T) {
-    fun contains(arg: T): Boolean {
+    fun contains(t: T): Boolean {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
