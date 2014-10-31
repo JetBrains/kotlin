@@ -215,6 +215,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             filesToCompile: MultiMap<ModuleBuildTarget, File>,
             outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>
     ) {
+        if (!IncrementalCompilation.ENABLED) {
+            return
+        }
+
         val delta = context.getProjectDescriptor().dataManager.getMappings()!!.createDelta()
         val callback = delta!!.getCallback()!!
 
