@@ -6,7 +6,7 @@ class A(
         /**
          * Doc comment for val-parameter
          */
-        val p: Int
+        /*var*/val p: Int
 ) {
     /**
      * Doc comment for function

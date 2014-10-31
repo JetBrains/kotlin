@@ -58,14 +58,7 @@ object PrecedingDocCommentsBinder : WhitespacesAndCommentsBinder {
         if (tokens.isEmpty()) return 0
 
         for (idx in tokens.indices.reversed()) {
-            val tokenType = tokens[idx]
-            when (tokenType) {
-                JetTokens.DOC_COMMENT -> return idx
-
-                JetTokens.WHITE_SPACE -> continue
-
-                else ->  break
-            }
+            if (tokens[idx] == JetTokens.DOC_COMMENT) return idx
         }
 
         return tokens.size

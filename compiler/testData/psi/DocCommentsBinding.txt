@@ -27,6 +27,7 @@ JetFile: DocCommentsBinding.kt
           PsiWhiteSpace('\n         ')
           PsiElement(KDOC_END)('*/')
         PsiWhiteSpace('\n        ')
+        PsiComment(BLOCK_COMMENT)('/*var*/')
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('p')
