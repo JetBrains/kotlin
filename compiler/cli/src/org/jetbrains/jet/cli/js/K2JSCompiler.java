@@ -153,7 +153,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                 assert file != null;
                 VirtualFile virtualFile = file.getVirtualFile();
                 if (virtualFile != null) {
-                    return FileUtil.toSystemIndependentName(virtualFile.getPath());
+                    return FileUtil.toSystemDependentName(virtualFile.getPath());
                 }
                 return file.getName() + "(no virtual file)";
             }
