@@ -167,7 +167,11 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
                     throw IllegalStateException("Recursion while resolving many imports: " + directive.getText())
                 }
 
-                descriptors.addAll(getImportScope(directive, LookupMode.EVERYTHING).getDescriptors(kindFilter, nameFilter))
+                val importPath = directive.getImportPath() ?: continue
+                val importedName = importPath.getImportedName()
+                if (importedName == null || nameFilter(importedName)) {
+                    descriptors.addAll(getImportScope(directive, LookupMode.EVERYTHING).getDescriptors(kindFilter, nameFilter))
+                }
             }
 
             descriptors
