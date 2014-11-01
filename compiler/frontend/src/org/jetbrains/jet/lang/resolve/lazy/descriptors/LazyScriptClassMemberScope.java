@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.Collection;
 import java.util.Set;
@@ -61,13 +62,13 @@ public class LazyScriptClassMemberScope extends LazyClassMemberScope {
     @NotNull
     @Override
     protected Collection<DeclarationDescriptor> computeExtraDescriptors() {
-        return KotlinPackage.plus(
+        return UtilsPackage.toReadOnlyList(KotlinPackage.plus(
                 super.computeExtraDescriptors(),
                 KotlinPackage.plus(
                     getProperties(Name.identifier(ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME)),
                     getPropertiesForScriptParameters()
                 )
-        );
+        ));
     }
 
     private Collection<VariableDescriptor> getPropertiesForScriptParameters() {

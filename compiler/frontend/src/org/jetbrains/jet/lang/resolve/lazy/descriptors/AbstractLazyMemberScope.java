@@ -39,6 +39,7 @@ import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -106,7 +107,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     private List<ClassDescriptor> resolveClassDescriptor(@NotNull final Name name) {
         Collection<JetClassLikeInfo> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
 
-        return ContainerUtil.mapNotNull(classOrObjectDeclarations, new Function<JetClassLikeInfo, ClassDescriptor>() {
+        return UtilsPackage.toReadOnlyList(ContainerUtil.mapNotNull(classOrObjectDeclarations, new Function<JetClassLikeInfo, ClassDescriptor>() {
             @Override
             public ClassDescriptor fun(JetClassLikeInfo classLikeInfo) {
                 // SCRIPT: Creating a script class
@@ -115,7 +116,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                 }
                 return new LazyClassDescriptor(resolveSession, thisDescriptor, name, classLikeInfo);
             }
-        });
+        }));
     }
 
     @Override
@@ -153,7 +154,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         getNonDeclaredFunctions(name, result);
 
-        return result;
+        return UtilsPackage.toReadOnlySet(result);
     }
 
     @NotNull
@@ -189,7 +190,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         getNonDeclaredProperties(name, result);
 
-        return result;
+        return UtilsPackage.toReadOnlySet(result);
     }
 
     protected abstract void getNonDeclaredProperties(@NotNull Name name, @NotNull Set<VariableDescriptor> result);
@@ -252,8 +253,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                 throw new IllegalArgumentException("Unsupported declaration kind: " + declaration);
             }
         }
-        result.trimToSize();
-        return result;
+
+        return UtilsPackage.toReadOnlyList(result);
     }
 
     @NotNull

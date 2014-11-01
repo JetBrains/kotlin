@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.storage.NullableLazyValue;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -299,7 +300,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @Override
     @NotNull
     protected Collection<DeclarationDescriptor> computeExtraDescriptors() {
-        ArrayList<DeclarationDescriptor> result = new ArrayList<DeclarationDescriptor>();
+        List<DeclarationDescriptor> result = new ArrayList<DeclarationDescriptor>();
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
             for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
                 if (descriptor instanceof FunctionDescriptor) {
@@ -314,8 +315,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
         addDataClassMethods(result);
 
-        result.trimToSize();
-        return result;
+        return UtilsPackage.toReadOnlyList(result);
     }
 
     private void addDataClassMethods(@NotNull Collection<DeclarationDescriptor> result) {
