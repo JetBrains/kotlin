@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
+import org.jetbrains.jet.context.LazinessToken;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.resolve.calls.CallCompleter;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
@@ -77,6 +78,7 @@ public class InjectorForBodyResolve {
     private final TypeResolver typeResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
+    private final LazinessToken lazinessToken;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
@@ -115,7 +117,8 @@ public class InjectorForBodyResolve {
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager);
+        this.lazinessToken = new LazinessToken();
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);

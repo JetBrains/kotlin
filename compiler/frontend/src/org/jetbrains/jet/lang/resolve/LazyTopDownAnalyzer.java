@@ -99,7 +99,7 @@ public class LazyTopDownAnalyzer {
             @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull Collection<? extends PsiElement> declarations
     ) {
-        assert topDownAnalysisParameters.isLazyTopDownAnalysis() : "Lazy analyzer is run in non-lazy mode";
+        assert topDownAnalysisParameters.isLazy() : "Lazy analyzer is run in non-lazy mode";
 
         final TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
         final Multimap<FqName, JetElement> topLevelFqNames = HashMultimap.create();

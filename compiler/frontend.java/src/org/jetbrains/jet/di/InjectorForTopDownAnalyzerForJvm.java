@@ -55,6 +55,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.context.LazinessToken;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.resolve.calls.CallCompleter;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
@@ -123,6 +124,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final TypeResolver typeResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
+    private final LazinessToken lazinessToken;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
@@ -196,7 +198,8 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModuleDescriptor(), javaFlexibleTypeCapabilitiesProvider, storageManager);
+        this.lazinessToken = new LazinessToken();
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModuleDescriptor(), javaFlexibleTypeCapabilitiesProvider, storageManager, lazinessToken);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);

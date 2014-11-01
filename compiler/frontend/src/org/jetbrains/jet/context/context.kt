@@ -41,3 +41,15 @@ public fun GlobalContext(): GlobalContextImpl {
     val tracker = ExceptionTracker()
     return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(tracker), tracker)
 }
+
+deprecated("Used temporarily while we are in transition from to lazy resolve")
+public open class LazinessToken {
+    deprecated("Used temporarily while we are in transition from to lazy resolve")
+    public open fun isLazy(): Boolean = false
+}
+
+deprecated("Used temporarily while we are in transition from to lazy resolve")
+public class LazyResolveToken : LazinessToken() {
+    deprecated("Used temporarily while we are in transition from to lazy resolve")
+    override fun isLazy() = true
+}

@@ -115,7 +115,7 @@ public class BodyResolver {
 
         resolvePropertyDeclarationBodies(c);
 
-        if (!c.getTopDownAnalysisParameters().isLazyTopDownAnalysis()) {
+        if (!c.getTopDownAnalysisParameters().isLazy()) {
             resolveClassAnnotations(c);
         }
         resolveAnonymousInitializers(c);
@@ -322,7 +322,7 @@ public class BodyResolver {
     }
 
     private void resolveAnonymousInitializers(@NotNull BodiesResolveContext c) {
-        if (c.getTopDownAnalysisParameters().isLazyTopDownAnalysis()) {
+        if (c.getTopDownAnalysisParameters().isLazy()) {
             for (Map.Entry<JetClassInitializer, ClassDescriptorWithResolutionScopes> entry : c.getAnonymousInitializers().entrySet()) {
                 JetClassInitializer initializer = entry.getKey();
                 ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
@@ -586,7 +586,7 @@ public class BodyResolver {
             JetScope declaringScope = c.getDeclaringScopes().apply(declaration);
             assert declaringScope != null;
 
-            if (!c.getTopDownAnalysisParameters().isLazyTopDownAnalysis()) {
+            if (!c.getTopDownAnalysisParameters().isLazy()) {
                 resolveAnnotationArguments(declaringScope, declaration);
             }
             resolveFunctionBody(c, trace, declaration, descriptor, declaringScope);

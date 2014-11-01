@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.context.LazyResolveToken;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -62,6 +63,7 @@ public class InjectorForLazyResolve {
     private final BindingTrace bindingTrace;
     private final AdditionalCheckerProvider additionalCheckerProvider;
     private final ResolveSession resolveSession;
+    private final LazyResolveToken lazyResolveToken;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -101,6 +103,7 @@ public class InjectorForLazyResolve {
         this.bindingTrace = bindingTrace;
         this.additionalCheckerProvider = additionalCheckerProvider;
         this.resolveSession = new ResolveSession(project, globalContext, moduleDescriptor, declarationProviderFactory, bindingTrace);
+        this.lazyResolveToken = new LazyResolveToken();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -115,7 +118,7 @@ public class InjectorForLazyResolve {
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager);
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, lazyResolveToken);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);

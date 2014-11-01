@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.types.Variance.*
 import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider
 import kotlin.platform.platformStatic
 import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.jet.context.LazinessToken
 import javax.inject.Inject
 
 public class TypeResolver(
@@ -38,7 +39,8 @@ public class TypeResolver(
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val moduleDescriptor: ModuleDescriptor,
         private val flexibleTypeCapabilitiesProvider: FlexibleTypeCapabilitiesProvider,
-        private val storageManager: StorageManager
+        private val storageManager: StorageManager,
+        private val lazinessToken: LazinessToken
 ) {
 
     public open class FlexibleTypeCapabilitiesProvider {
@@ -61,7 +63,7 @@ public class TypeResolver(
         val cachedType = c.trace.getBindingContext().get(BindingContext.TYPE, typeReference)
         if (cachedType != null) return type(cachedType)
 
-        if (!c.allowBareTypes) {
+        if (!c.allowBareTypes && lazinessToken.isLazy()) {
             // Bare types can be allowed only inside expressions; lazy type resolution is only relevant for declarations
             class LazyKotlinType : DelegatingType() {
                 private val _delegate = storageManager.createLazyValue { doResolvePossiblyBareType(c, typeReference).getActualType() }

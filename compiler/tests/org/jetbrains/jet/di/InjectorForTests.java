@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
+import org.jetbrains.jet.context.LazinessToken;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -71,6 +72,7 @@ public class InjectorForTests {
     private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
+    private final LazinessToken lazinessToken;
 
     public InjectorForTests(
         @NotNull Project project,
@@ -89,7 +91,8 @@ public class InjectorForTests {
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
         this.storageManager = globalContext.getStorageManager();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager);
+        this.lazinessToken = new LazinessToken();
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken);
         this.additionalCheckerProvider = org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider.INSTANCE$;
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
