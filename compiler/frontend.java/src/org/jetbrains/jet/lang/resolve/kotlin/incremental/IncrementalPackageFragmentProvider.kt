@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.descriptors.serialization.PackageData
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache
+import org.jetbrains.jet.lang.resolve.name.Name
 
 public class IncrementalPackageFragmentProvider(
         sourceFiles: Collection<JetFile>,
@@ -81,7 +82,7 @@ public class IncrementalPackageFragmentProvider(
         fqNamesToLoad.forEach { createPackageFragment(it) }
     }
 
-    override fun getSubPackagesOf(fqName: FqName): Collection<FqName> {
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         return fqNameToSubFqNames[fqName].orEmpty()
     }
 

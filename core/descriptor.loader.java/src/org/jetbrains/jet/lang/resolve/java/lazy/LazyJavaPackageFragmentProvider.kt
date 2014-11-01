@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.*
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
+import org.jetbrains.jet.lang.resolve.name.Name
 
 public class LazyJavaPackageFragmentProvider(
         outerContext: GlobalJavaResolverContext,
@@ -78,7 +79,7 @@ public class LazyJavaPackageFragmentProvider(
 
     override fun getPackageFragments(fqName: FqName) = getPackageFragment(fqName)?.let {listOf(it)}.orEmpty()
 
-    override fun getSubPackagesOf(fqName: FqName) = getPackageFragment(fqName)?.getMemberScope()?.getSubPackages().orEmpty()
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) = getPackageFragment(fqName)?.getMemberScope()?.getSubPackages().orEmpty()
 
     fun resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass) = c.deserializedDescriptorResolver.resolveClass(kotlinClass)
 

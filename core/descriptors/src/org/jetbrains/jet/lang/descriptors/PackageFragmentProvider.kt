@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.descriptors
 
-import org.jetbrains.annotations.ReadOnly
 import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.resolve.name.Name
 
 public trait PackageFragmentProvider {
     public fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor>
@@ -25,5 +25,5 @@ public trait PackageFragmentProvider {
     /**
      * @return declared subpackages of {@code fqName}
      */
-    public fun getSubPackagesOf(fqName: FqName): Collection<FqName>
+    public fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 }

@@ -143,7 +143,8 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
             @NotNull
             @Override
-            public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
+            public Collection<FqName> getSubPackagesOf(
+                    @NotNull FqName fqName, @NotNull Function1<? super Name, ? extends Boolean> nameFilter) {
                 LazyPackageDescriptor packageDescriptor = getPackageFragment(fqName);
                 if (packageDescriptor == null) {
                     return Collections.emptyList();
@@ -457,7 +458,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             @NotNull LazyPackageDescriptor current
     ) {
         result.add(current);
-        for (FqName subPackage : packageFragmentProvider.getSubPackagesOf(current.getFqName())) {
+        for (FqName subPackage : packageFragmentProvider.getSubPackagesOf(current.getFqName(), JetScope.ALL_NAME_FILTER)) {
             LazyPackageDescriptor fragment = getPackageFragment(subPackage);
             assert fragment != null : "Couldn't find fragment for " + subPackage;
             collectAllPackages(result, fragment);

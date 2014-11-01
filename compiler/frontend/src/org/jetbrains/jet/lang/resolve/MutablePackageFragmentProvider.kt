@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import java.util.HashMap
+import org.jetbrains.jet.lang.resolve.name.Name
 
 public class MutablePackageFragmentProvider(public val module: ModuleDescriptor) : PackageFragmentProvider {
 
@@ -37,7 +38,7 @@ public class MutablePackageFragmentProvider(public val module: ModuleDescriptor)
     override fun getPackageFragments(fqName: FqName)
             = ContainerUtil.createMaybeSingletonList<PackageFragmentDescriptor>(fqNameToPackage.get(fqName))
 
-    override fun getSubPackagesOf(fqName: FqName) = subPackages[fqName]
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) = subPackages[fqName]
 
     public fun getOrCreateFragment(fqName: FqName): MutablePackageFragmentDescriptor {
         if (!fqNameToPackage.containsKey(fqName)) {

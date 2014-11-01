@@ -56,7 +56,7 @@ private class PackageFragmentProviderForMissingDependencies(val moduleDescriptor
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
         return listOf(PackageFragmentWithMissingDependencies(fqName, moduleDescriptor))
     }
-    override fun getSubPackagesOf(fqName: FqName): Collection<FqName> {
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         throw UnsupportedOperationException("This method is not supposed to be called.")
     }
 }

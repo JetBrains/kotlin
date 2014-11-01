@@ -95,7 +95,7 @@ class BuiltinsPackageFragment(storageManager: StorageManager, module: ModuleDesc
         override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor>
                 = if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME == fqName) listOf(this@BuiltinsPackageFragment) else listOf()
 
-        override fun getSubPackagesOf(fqName: FqName): Collection<FqName>
+        override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
                 = if (fqName.isRoot()) setOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) else listOf()
     }
 

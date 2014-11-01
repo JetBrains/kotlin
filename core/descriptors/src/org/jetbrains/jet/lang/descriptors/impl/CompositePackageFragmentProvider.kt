@@ -21,8 +21,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.name.FqName
 
 import java.util.*
-import kotlin.List
-import kotlin.Collection
+import org.jetbrains.jet.lang.resolve.name.Name
 
 public class CompositePackageFragmentProvider(// can be modified from outside
         private val providers: List<PackageFragmentProvider>) : PackageFragmentProvider {
@@ -36,10 +35,10 @@ public class CompositePackageFragmentProvider(// can be modified from outside
         return result
     }
 
-    override fun getSubPackagesOf(fqName: FqName): Collection<FqName> {
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         val result = HashSet<FqName>()
         for (provider in providers) {
-            result.addAll(provider.getSubPackagesOf(fqName))
+            result.addAll(provider.getSubPackagesOf(fqName, nameFilter))
         }
         return result
     }

@@ -127,7 +127,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
             return listOf(createDummyPackageFragment(fqName))
         }
 
-        override fun getSubPackagesOf(fqName: FqName): Collection<FqName> {
+        override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
             throw UnsupportedOperationException("This method is not supposed to be called.")
         }
     }
