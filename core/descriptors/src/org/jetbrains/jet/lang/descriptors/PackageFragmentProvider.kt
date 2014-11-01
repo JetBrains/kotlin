@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.descriptors;
+package org.jetbrains.jet.lang.descriptors
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.annotations.ReadOnly
+import org.jetbrains.jet.lang.resolve.name.FqName
 
-import java.util.Collection;
-import java.util.List;
-
-public interface PackageFragmentProvider {
-    @NotNull
-    @ReadOnly
-    List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName);
+public trait PackageFragmentProvider {
+    public fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor>
 
     /**
      * @return declared subpackages of {@code fqName}
      */
-    @NotNull
-    @ReadOnly
-    Collection<FqName> getSubPackagesOf(@NotNull FqName fqName);
+    public fun getSubPackagesOf(fqName: FqName): Collection<FqName>
 }
