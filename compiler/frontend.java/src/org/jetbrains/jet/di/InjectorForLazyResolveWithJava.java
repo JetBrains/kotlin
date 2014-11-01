@@ -171,7 +171,7 @@ public class InjectorForLazyResolveWithJava {
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, javaFlexibleTypeCapabilitiesProvider);
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, javaFlexibleTypeCapabilitiesProvider, storageManager);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);

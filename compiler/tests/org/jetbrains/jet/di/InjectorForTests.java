@@ -87,9 +87,9 @@ public class InjectorForTests {
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider);
         this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
         this.storageManager = globalContext.getStorageManager();
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager);
         this.additionalCheckerProvider = org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider.INSTANCE$;
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();

@@ -25,19 +25,20 @@ import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.storage.LockBasedStorageManager
 
-import java.util.ArrayList
-
 import org.jetbrains.jet.lang.diagnostics.Errors.*
 import org.jetbrains.jet.lang.resolve.PossiblyBareType.type
 import org.jetbrains.jet.lang.types.Variance.*
 import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider
 import kotlin.platform.platformStatic
+import org.jetbrains.jet.storage.StorageManager
+import javax.inject.Inject
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val moduleDescriptor: ModuleDescriptor,
-        private val flexibleTypeCapabilitiesProvider: FlexibleTypeCapabilitiesProvider
+        private val flexibleTypeCapabilitiesProvider: FlexibleTypeCapabilitiesProvider,
+        private val storageManager: StorageManager
 ) {
 
     public open class FlexibleTypeCapabilitiesProvider {
@@ -60,13 +61,31 @@ public class TypeResolver(
         val cachedType = c.trace.getBindingContext().get(BindingContext.TYPE, typeReference)
         if (cachedType != null) return type(cachedType)
 
-        val annotations = annotationResolver.resolveAnnotationsWithArguments(c.scope, typeReference.getAnnotations(), c.trace)
+        if (!c.allowBareTypes) {
+            // Bare types can be allowed only inside expressions; lazy type resolution is only relevant for declarations
+            class LazyKotlinType : DelegatingType() {
+                private val _delegate = storageManager.createLazyValue { doResolvePossiblyBareType(c, typeReference).getActualType() }
+                override fun getDelegate() = _delegate()
+            }
 
-        val typeElement = typeReference.getTypeElement()
-        val type = resolveTypeElement(c, annotations, typeElement)
+            val lazyKotlinType = LazyKotlinType()
+            c.trace.record(BindingContext.TYPE, typeReference, lazyKotlinType)
+            return type(lazyKotlinType);
+        }
+
+        val type = doResolvePossiblyBareType(c, typeReference)
         if (!type.isBare()) {
             c.trace.record(BindingContext.TYPE, typeReference, type.getActualType())
         }
+        return type
+    }
+
+    private fun doResolvePossiblyBareType(c: TypeResolutionContext, typeReference: JetTypeReference): PossiblyBareType {
+        val annotations = annotationResolver.resolveAnnotationsWithArguments(c.scope, typeReference.getAnnotations(), c.trace)
+
+        val typeElement = typeReference.getTypeElement()
+
+        val type = resolveTypeElement(c, annotations, typeElement)
         c.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference, c.scope)
 
         return type

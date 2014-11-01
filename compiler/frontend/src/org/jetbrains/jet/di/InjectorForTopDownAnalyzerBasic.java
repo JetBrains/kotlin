@@ -138,7 +138,7 @@ public class InjectorForTopDownAnalyzerBasic {
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModuleDescriptor(), flexibleTypeCapabilitiesProvider);
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModuleDescriptor(), flexibleTypeCapabilitiesProvider, storageManager);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
