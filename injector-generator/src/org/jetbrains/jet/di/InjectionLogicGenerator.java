@@ -79,6 +79,9 @@ public abstract class InjectionLogicGenerator {
                     ConstructorCall call = (ConstructorCall) initialization;
                     return call.getConstructorArguments();
                 }
+                else if (initialization instanceof MethodCall) {
+                    return Collections.singletonList(((MethodCall) initialization).getReceiver());
+                }
                 return Collections.emptyList();
             }
         });
