@@ -135,7 +135,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     private Collection<FunctionDescriptor> computeFunctions(@NotNull Name name) {
         Collection<FunctionDescriptor> descriptors = computeMembersByName(name, FUNCTION);
         computeNonDeclaredFunctions(name, descriptors);
-        return descriptors;
+        return new ArrayList<FunctionDescriptor>(descriptors);
     }
 
     protected void computeNonDeclaredFunctions(@NotNull Name name, @NotNull Collection<FunctionDescriptor> functions) {
@@ -152,7 +152,7 @@ public abstract class DeserializedMemberScope implements JetScope {
         Collection<PropertyDescriptor> descriptors = computeMembersByName(name, PROPERTY);
         computeNonDeclaredProperties(name, descriptors);
         //noinspection unchecked
-        return (Collection) descriptors;
+        return new ArrayList<VariableDescriptor>((Collection) descriptors);
     }
 
     protected void computeNonDeclaredProperties(@NotNull Name name, @NotNull Collection<PropertyDescriptor> descriptors) {

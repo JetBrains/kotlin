@@ -100,7 +100,7 @@ public abstract class LazyJavaMemberScope(
             }
         }
 
-        functions
+        ArrayList(functions)
     }
 
     data class MethodSignatureData(
@@ -237,6 +237,7 @@ public abstract class LazyJavaMemberScope(
 
         computeNonDeclaredProperties(name, properties)
 
+        properties.trimToSize()
         properties
     }
 
@@ -323,7 +324,7 @@ public abstract class LazyJavaMemberScope(
 
         addExtraDescriptors(result)
 
-        return result
+        return ArrayList(result)
     }
 
     protected open fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>) {
