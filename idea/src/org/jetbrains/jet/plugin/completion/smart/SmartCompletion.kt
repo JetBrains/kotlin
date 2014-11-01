@@ -34,6 +34,7 @@ import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,
@@ -106,7 +107,8 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
             val result = ArrayList<LookupElement>()
-            if (!itemsToSkip.contains(descriptor)) {
+            if (!itemsToSkip.contains(descriptor)
+                    && descriptor !is SamConstructorDescriptor /* SAM-constructor is added explicitly and is not needed here */) {
                 val types = typesWithSmartCasts(descriptor)
                 val nonNullTypes = types.map { it.makeNotNullable() }
                 val classifier = { (expectedInfo: ExpectedInfo) ->

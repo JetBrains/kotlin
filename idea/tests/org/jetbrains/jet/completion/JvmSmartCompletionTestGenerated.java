@@ -234,12 +234,6 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
-    @TestMetadata("FunctionReference6.kt")
-    public void testFunctionReference6() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/FunctionReference6.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("FunctionReference7.kt")
     public void testFunctionReference7() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/FunctionReference7.kt");
