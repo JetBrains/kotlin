@@ -107,7 +107,7 @@ public abstract class DeserializedMemberScope protected(
 
         for (name in membersProtos().keySet()) {
             if (nameFilter(name)) {
-                if (kindFilter(JetScope.DescriptorKind.NON_EXTENSION_FUNCTION) || kindFilter(JetScope.DescriptorKind.EXTENSION_FUNCTION)) {
+                if (kindFilter(JetScope.DescriptorKind.ORDINARY_FUNCTION) || kindFilter(JetScope.DescriptorKind.EXTENSION_FUNCTION)) {
                     result.addAll(getFunctions(name))
                 }
                 if (kindFilter(JetScope.DescriptorKind.NON_EXTENSION_PROPERTY) || kindFilter(JetScope.DescriptorKind.EXTENSION_PROPERTY)) {
@@ -118,7 +118,7 @@ public abstract class DeserializedMemberScope protected(
 
         addNonDeclaredDescriptors(result)
 
-        if (kindFilter(JetScope.DescriptorKind.CLASSIFIER)) {
+        if (kindFilter(JetScope.DescriptorKind.TYPE) || kindFilter(JetScope.DescriptorKind.OBJECT) || kindFilter(JetScope.DescriptorKind.ENUM_ENTRY)) {
             addClassDescriptors(result, nameFilter)
         }
 

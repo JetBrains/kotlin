@@ -78,10 +78,13 @@ public trait JetScope {
     }
 
     public enum class DescriptorKind {
-        CLASSIFIER
+        TYPE // class, trait ot type parameter
+        ENUM_ENTRY
+        OBJECT
         PACKAGE
-        NON_EXTENSION_FUNCTION
+        ORDINARY_FUNCTION // not extension and not SAM-constructor
         EXTENSION_FUNCTION
+        SAM_CONSTRUCTOR
         NON_EXTENSION_PROPERTY
         EXTENSION_PROPERTY
         LOCAL_VARIABLE
@@ -89,11 +92,19 @@ public trait JetScope {
         class object {
             public val ALL: (DescriptorKind) -> Boolean = { true }
             public val EXTENSIONS: (DescriptorKind) -> Boolean = { it == EXTENSION_FUNCTION || it == EXTENSION_PROPERTY }
-            public val FUNCTIONS: (DescriptorKind) -> Boolean = { it == NON_EXTENSION_FUNCTION || it == EXTENSION_FUNCTION }
-            public val CALLABLES: (DescriptorKind) -> Boolean = { it != CLASSIFIER && it != PACKAGE }
-            public val NON_EXTENSION_CALLABLES: (DescriptorKind) -> Boolean = { it == NON_EXTENSION_FUNCTION || it == NON_EXTENSION_PROPERTY || it == LOCAL_VARIABLE }
+            public val FUNCTIONS: (DescriptorKind) -> Boolean = { it == ORDINARY_FUNCTION || it == EXTENSION_FUNCTION || it == SAM_CONSTRUCTOR }
+            public val CALLABLES: (DescriptorKind) -> Boolean = { it == ORDINARY_FUNCTION
+                                                                  || it == EXTENSION_FUNCTION
+                                                                  || it == SAM_CONSTRUCTOR
+                                                                  || it == NON_EXTENSION_PROPERTY
+                                                                  || it == EXTENSION_PROPERTY
+                                                                  || it == LOCAL_VARIABLE }
+            public val NON_EXTENSION_CALLABLES: (DescriptorKind) -> Boolean = { it == ORDINARY_FUNCTION
+                                                                                || it == SAM_CONSTRUCTOR
+                                                                                || it == NON_EXTENSION_PROPERTY
+                                                                                || it == LOCAL_VARIABLE }
             public val NON_EXTENSIONS: (DescriptorKind) -> Boolean = { it != EXTENSION_FUNCTION && it != EXTENSION_PROPERTY }
-            public val CLASSIFIERS: (DescriptorKind) -> Boolean = { it == CLASSIFIER }
+            public val CLASSIFIERS: (DescriptorKind) -> Boolean = { it == TYPE || it == ENUM_ENTRY || it == OBJECT }
             public val PACKAGES: (DescriptorKind) -> Boolean = { it == PACKAGE }
             public val VARIABLES_AND_PROPERTIES: (DescriptorKind) -> Boolean = { it == LOCAL_VARIABLE || it == NON_EXTENSION_PROPERTY || it == EXTENSION_PROPERTY }
         }

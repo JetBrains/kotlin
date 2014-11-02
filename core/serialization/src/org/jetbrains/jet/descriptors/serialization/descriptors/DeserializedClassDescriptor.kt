@@ -72,7 +72,7 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
         if (classId.isTopLevelClass()) {
             val fragments = context.packageFragmentProvider.getPackageFragments(classId.getPackageFqName())
             assert(fragments.size() == 1) { "there should be exactly one package: $fragments, class id is $classId" }
-            return fragments.iterator().next()
+            return fragments.single()
         }
         else {
             return context.deserializeClass(classId.getOuterClassId()) ?: ErrorUtils.getErrorModule()

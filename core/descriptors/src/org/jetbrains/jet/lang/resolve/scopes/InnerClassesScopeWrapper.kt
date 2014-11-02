@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.resolve.name.Name
 
 public class InnerClassesScopeWrapper(override val workerScope: JetScope) : AbstractScopeAdapter() {
+    private val descriptorKinds = setOf(JetScope.DescriptorKind.TYPE, JetScope.DescriptorKind.OBJECT, JetScope.DescriptorKind.ENUM_ENTRY)
 
     override fun getClassifier(name: Name) = workerScope.getClassifier(name) as? ClassDescriptor
 
@@ -28,8 +29,8 @@ public class InnerClassesScopeWrapper(override val workerScope: JetScope) : Abst
 
     override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
                                 nameFilter: (Name) -> Boolean): List<ClassDescriptor> {
-        if (!kindFilter(JetScope.DescriptorKind.CLASSIFIER)) return listOf()
-        return workerScope.getDescriptors({ it == JetScope.DescriptorKind.CLASSIFIER }, nameFilter).filterIsInstance(javaClass<ClassDescriptor>())
+        if (!descriptorKinds.any { kindFilter(it) }) return listOf()
+        return workerScope.getDescriptors(JetScope.DescriptorKind.CLASSIFIERS, nameFilter).filterIsInstance(javaClass<ClassDescriptor>())
     }
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
