@@ -211,11 +211,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
                 val filter = result.declarationFilter
                 if (filter != null) {
-                    getReferenceVariants(DESCRIPTOR_KIND_MASK).forEach {
-                        if (prefixMatcher.prefixMatches(it.getName().asString())) {
-                            collector.addElements(filter(it))
-                        }
-                    }
+                    getReferenceVariants(DESCRIPTOR_KIND_MASK).forEach { collector.addElements(filter(it)) }
 
                     flushToResultSet()
 

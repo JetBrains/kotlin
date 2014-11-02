@@ -413,19 +413,13 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         Collection<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>>();
         for (DeclarationDescriptor variant : variants) {
             if (variant instanceof FunctionDescriptor) {
-                FunctionDescriptor functionDescriptor = (FunctionDescriptor) variant;
-                if (functionDescriptor.getName().equals(refName)) {
-                    //todo: renamed functions?
-                    itemsToShow.add(Pair.create(functionDescriptor, resolveSession));
-                }
+                //todo: renamed functions?
+                itemsToShow.add(Pair.create((FunctionDescriptor) variant, resolveSession));
             }
             else if (variant instanceof ClassDescriptor) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) variant;
-                if (classDescriptor.getName().equals(refName)) {
-                    //todo: renamed classes?
-                    for (ConstructorDescriptor constructorDescriptor : classDescriptor.getConstructors()) {
-                        itemsToShow.add(Pair.create(constructorDescriptor, resolveSession));
-                    }
+                //todo: renamed classes?
+                for (ConstructorDescriptor constructorDescriptor : ((ClassDescriptor) variant).getConstructors()) {
+                    itemsToShow.add(Pair.create(constructorDescriptor, resolveSession));
                 }
             }
         }

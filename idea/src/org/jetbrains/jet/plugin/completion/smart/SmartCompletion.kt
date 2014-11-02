@@ -107,8 +107,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
             val result = ArrayList<LookupElement>()
-            if (!itemsToSkip.contains(descriptor)
-                    && descriptor !is SamConstructorDescriptor /* SAM-constructor is added explicitly and is not needed here */) {
+            if (!itemsToSkip.contains(descriptor)) {
                 val types = typesWithSmartCasts(descriptor)
                 val nonNullTypes = types.map { it.makeNotNullable() }
                 val classifier = { (expectedInfo: ExpectedInfo) ->
