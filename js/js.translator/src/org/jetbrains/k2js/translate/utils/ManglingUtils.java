@@ -144,7 +144,7 @@ public class ManglingUtils {
         int counter = 0;
 
         if (jetScope != null) {
-            Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(JetScope.DescriptorKind.CALLABLES, JetScope.ALL_NAME_FILTER);
+            Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(JetScope.CALLABLES_MASK, JetScope.ALL_NAME_FILTER);
             List<CallableMemberDescriptor>
                     overloadedFunctions = ContainerUtil.mapNotNull(declarations, new Function<DeclarationDescriptor, CallableMemberDescriptor>() {
                 @Override

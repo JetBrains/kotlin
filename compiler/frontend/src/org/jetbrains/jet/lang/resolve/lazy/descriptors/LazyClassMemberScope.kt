@@ -46,13 +46,13 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
 : AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider>(resolveSession, declarationProvider, thisClass, trace) {
 
     private val descriptorsFromDeclaredElements = storageManager.createLazyValue {
-        computeDescriptorsFromDeclaredElements({true}, {true})
+        computeDescriptorsFromDeclaredElements(JetScope.ALL_KINDS_MASK, JetScope.ALL_NAME_FILTER)
     }
     private val extraDescriptors: NotNullLazyValue<Collection<DeclarationDescriptor>> = storageManager.createLazyValue {
         computeExtraDescriptors()
     }
 
-    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+    override fun getDescriptors(kindFilterMask: Int,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val result = LinkedHashSet(descriptorsFromDeclaredElements())
         result.addAll(extraDescriptors())

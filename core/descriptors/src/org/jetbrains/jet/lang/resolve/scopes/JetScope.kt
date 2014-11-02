@@ -50,7 +50,7 @@ public trait JetScope {
      * All visible descriptors from current scope possibly filtered by the given name and kind filters
      * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
      */
-    public fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean = DescriptorKind.ALL,
+    public fun getDescriptors(kindFilterMask: Int = ALL_KINDS_MASK,
                               nameFilter: (Name) -> Boolean = { true }): Collection<DeclarationDescriptor>
 
     /**
@@ -77,40 +77,28 @@ public trait JetScope {
         }
     }
 
-    public enum class DescriptorKind {
-        TYPE // class, trait ot type parameter
-        ENUM_ENTRY
-        OBJECT
-        PACKAGE
-        ORDINARY_FUNCTION // not extension and not SAM-constructor
-        EXTENSION_FUNCTION
-        SAM_CONSTRUCTOR
-        NON_EXTENSION_PROPERTY
-        EXTENSION_PROPERTY
-        LOCAL_VARIABLE
-
-        class object {
-            public val ALL: (DescriptorKind) -> Boolean = { true }
-            public val EXTENSIONS: (DescriptorKind) -> Boolean = { it == EXTENSION_FUNCTION || it == EXTENSION_PROPERTY }
-            public val FUNCTIONS: (DescriptorKind) -> Boolean = { it == ORDINARY_FUNCTION || it == EXTENSION_FUNCTION || it == SAM_CONSTRUCTOR }
-            public val CALLABLES: (DescriptorKind) -> Boolean = { it == ORDINARY_FUNCTION
-                                                                  || it == EXTENSION_FUNCTION
-                                                                  || it == SAM_CONSTRUCTOR
-                                                                  || it == NON_EXTENSION_PROPERTY
-                                                                  || it == EXTENSION_PROPERTY
-                                                                  || it == LOCAL_VARIABLE }
-            public val NON_EXTENSION_CALLABLES: (DescriptorKind) -> Boolean = { it == ORDINARY_FUNCTION
-                                                                                || it == SAM_CONSTRUCTOR
-                                                                                || it == NON_EXTENSION_PROPERTY
-                                                                                || it == LOCAL_VARIABLE }
-            public val NON_EXTENSIONS: (DescriptorKind) -> Boolean = { it != EXTENSION_FUNCTION && it != EXTENSION_PROPERTY }
-            public val CLASSIFIERS: (DescriptorKind) -> Boolean = { it == TYPE || it == ENUM_ENTRY || it == OBJECT }
-            public val PACKAGES: (DescriptorKind) -> Boolean = { it == PACKAGE }
-            public val VARIABLES_AND_PROPERTIES: (DescriptorKind) -> Boolean = { it == LOCAL_VARIABLE || it == NON_EXTENSION_PROPERTY || it == EXTENSION_PROPERTY }
-        }
-    }
-
     class object {
+        public val TYPE: Int = 0x001 // class, trait ot type parameter
+        public val ENUM_ENTRY: Int = 0x002
+        public val OBJECT: Int = 0x004
+        public val PACKAGE: Int = 0x008
+        public val ORDINARY_FUNCTION: Int = 0x010 // not extension and not SAM-constructor
+        public val EXTENSION_FUNCTION: Int = 0x020
+        public val SAM_CONSTRUCTOR: Int = 0x040
+        public val NON_EXTENSION_PROPERTY: Int = 0x080
+        public val EXTENSION_PROPERTY: Int = 0x100
+        public val LOCAL_VARIABLE: Int = 0x200
+
+        public val ALL_KINDS_MASK: Int = 0xFFFF
+
+        public val EXTENSIONS_MASK: Int = EXTENSION_FUNCTION or EXTENSION_PROPERTY
+        public val FUNCTIONS_MASK: Int = ORDINARY_FUNCTION or EXTENSION_FUNCTION or SAM_CONSTRUCTOR
+        public val PROPERTIES_MASK: Int = NON_EXTENSION_PROPERTY or EXTENSION_PROPERTY
+        public val CALLABLES_MASK: Int = ORDINARY_FUNCTION or EXTENSION_FUNCTION or SAM_CONSTRUCTOR or NON_EXTENSION_PROPERTY or EXTENSION_PROPERTY or LOCAL_VARIABLE
+        public val NON_EXTENSIONS_MASK: Int = ALL_KINDS_MASK and (EXTENSION_FUNCTION or EXTENSION_PROPERTY).inv()
+        public val CLASSIFIERS_MASK: Int = TYPE or ENUM_ENTRY or OBJECT
+        public val VARIABLES_AND_PROPERTIES_MASK: Int = LOCAL_VARIABLE or NON_EXTENSION_PROPERTY or EXTENSION_PROPERTY
+
         public val ALL_NAME_FILTER: (Name) -> Boolean = { true }
     }
 }

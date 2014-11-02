@@ -216,7 +216,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         PackageViewDescriptor packageView = getModule().getPackage(fqn);
         if (packageView == null) return Collections.emptyList();
 
-        Collection<DeclarationDescriptor> members = packageView.getMemberScope().getDescriptors(JetScope.DescriptorKind.PACKAGES, JetScope.ALL_NAME_FILTER);
+        Collection<DeclarationDescriptor> members = packageView.getMemberScope().getDescriptors(JetScope.PACKAGE, JetScope.ALL_NAME_FILTER);
         return ContainerUtil.mapNotNull(members, new Function<DeclarationDescriptor, FqName>() {
             @Override
             public FqName fun(DeclarationDescriptor member) {

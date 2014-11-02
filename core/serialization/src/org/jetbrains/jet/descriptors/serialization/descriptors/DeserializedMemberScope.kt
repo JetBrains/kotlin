@@ -101,16 +101,16 @@ public abstract class DeserializedMemberScope protected(
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
-    protected fun computeDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+    protected fun computeDescriptors(kindFilterMask: Int,
                                      nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>(0)
 
         for (name in membersProtos().keySet()) {
             if (nameFilter(name)) {
-                if (kindFilter(JetScope.DescriptorKind.ORDINARY_FUNCTION) || kindFilter(JetScope.DescriptorKind.EXTENSION_FUNCTION)) {
+                if (kindFilterMask and JetScope.FUNCTIONS_MASK != 0) {
                     result.addAll(getFunctions(name))
                 }
-                if (kindFilter(JetScope.DescriptorKind.NON_EXTENSION_PROPERTY) || kindFilter(JetScope.DescriptorKind.EXTENSION_PROPERTY)) {
+                if (kindFilterMask and JetScope.PROPERTIES_MASK != 0) {
                     result.addAll(getProperties(name))
                 }
             }
@@ -118,7 +118,7 @@ public abstract class DeserializedMemberScope protected(
 
         addNonDeclaredDescriptors(result)
 
-        if (kindFilter(JetScope.DescriptorKind.TYPE) || kindFilter(JetScope.DescriptorKind.OBJECT) || kindFilter(JetScope.DescriptorKind.ENUM_ENTRY)) {
+        if (kindFilterMask and JetScope.CLASSIFIERS_MASK != 0) {
             addClassDescriptors(result, nameFilter)
         }
 

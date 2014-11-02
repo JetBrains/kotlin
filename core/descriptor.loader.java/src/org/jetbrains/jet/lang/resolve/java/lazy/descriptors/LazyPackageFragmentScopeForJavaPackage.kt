@@ -68,9 +68,9 @@ public class LazyPackageFragmentScopeForJavaPackage(
     override fun getFunctions(name: Name) = deserializedPackageScope().getFunctions(name) + super.getFunctions(name)
 
     override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
-                                     kindFilter: (JetScope.DescriptorKind) -> Boolean,
+                                     kindFilterMask: Int,
                                      nameFilter: (Name) -> Boolean) {
-        result.addAll(deserializedPackageScope().getDescriptors(kindFilter, nameFilter))
+        result.addAll(deserializedPackageScope().getDescriptors(kindFilterMask, nameFilter))
     }
 
     override fun computeMemberIndex(): MemberIndex = object : MemberIndex by EMPTY_MEMBER_INDEX {
@@ -101,7 +101,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
     override fun getAllPropertyNames() = listOf<Name>()
 
     // we don't use implementation from super which caches all descriptors and does not use filters
-    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        return computeDescriptors(kindFilter, nameFilter)
+    override fun getDescriptors(kindFilterMask: Int, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        return computeDescriptors(kindFilterMask, nameFilter)
     }
 }

@@ -94,15 +94,15 @@ public class WritableScopeImpl(scope: JetScope,
         super.clearImports()
     }
 
-    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+    override fun getDescriptors(kindFilterMask: Int,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         checkMayRead()
         changeLockLevel(WritableScope.LockLevel.READING)
 
         val result = ArrayList<DeclarationDescriptor>()
         result.addAll(explicitlyAddedDescriptors)
-        result.addAll(workerScope.getDescriptors(kindFilter, nameFilter))
-        getImports().flatMapTo(result) { it.getDescriptors(kindFilter, nameFilter) }
+        result.addAll(workerScope.getDescriptors(kindFilterMask, nameFilter))
+        getImports().flatMapTo(result) { it.getDescriptors(kindFilterMask, nameFilter) }
         return result
     }
 

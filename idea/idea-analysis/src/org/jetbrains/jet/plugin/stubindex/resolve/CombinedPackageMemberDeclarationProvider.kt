@@ -19,15 +19,14 @@ package org.jetbrains.jet.plugin.stubindex.resolve
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.scopes.JetScope.DescriptorKind
 
 public class CombinedPackageMemberDeclarationProvider(val providers: Collection<PackageMemberDeclarationProvider>) : PackageMemberDeclarationProvider {
     override fun getAllDeclaredSubPackages() = providers.flatMap { it.getAllDeclaredSubPackages() }
 
     override fun getPackageFiles() = providers.flatMap { it.getPackageFiles() }
 
-    override fun getDeclarations(kindFilter: (JetScope.DescriptorKind) -> Boolean, nameFilter: (Name) -> Boolean)
-            = providers.flatMap { it.getDeclarations(kindFilter, nameFilter) }
+    override fun getDeclarations(kindFilterMask: Int, nameFilter: (Name) -> Boolean)
+            = providers.flatMap { it.getDeclarations(kindFilterMask, nameFilter) }
 
     override fun getFunctionDeclarations(name: Name) = providers.flatMap { it.getFunctionDeclarations(name) }
 

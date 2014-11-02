@@ -118,9 +118,9 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
 
     override fun getDeclarationsByLabel(labelName: Name) = setOf<DeclarationDescriptor>()
 
-    protected fun computeDescriptorsFromDeclaredElements(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+    protected fun computeDescriptorsFromDeclaredElements(kindFilterMask: Int,
                                                          nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
-        val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
+        val declarations = declarationProvider.getDeclarations(kindFilterMask, nameFilter)
         val result = ArrayList<DeclarationDescriptor>(declarations.size())
         for (declaration in declarations) {
             if (declaration is JetClassOrObject) {

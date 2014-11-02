@@ -34,9 +34,9 @@ public class SubpackagesScope(private val containingDeclaration: PackageViewDesc
         return if (name.isSpecial()) null else containingDeclaration.getModule().getPackage(containingDeclaration.getFqName().child(name))
     }
 
-    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+    override fun getDescriptors(kindFilterMask: Int,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        if (!kindFilter(JetScope.DescriptorKind.PACKAGE)) return listOf()
+        if (kindFilterMask and JetScope.PACKAGE == 0) return listOf()
 
         val subFqNames = containingDeclaration.getModule().getPackageFragmentProvider().getSubPackagesOf(containingDeclaration.getFqName(), nameFilter)
         val result = ArrayList<DeclarationDescriptor>(subFqNames.size())

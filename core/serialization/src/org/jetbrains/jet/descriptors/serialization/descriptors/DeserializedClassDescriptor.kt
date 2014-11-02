@@ -181,9 +181,9 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
 
     private inner class DeserializedClassMemberScope : DeserializedMemberScope(context, this@DeserializedClassDescriptor.classProto.getMemberList()) {
         private val classDescriptor: DeserializedClassDescriptor = this@DeserializedClassDescriptor
-        private val allDescriptors = context.storageManager.createLazyValue { computeDescriptors({ true }, { true }) }
+        private val allDescriptors = context.storageManager.createLazyValue { computeDescriptors(JetScope.ALL_KINDS_MASK, JetScope.ALL_NAME_FILTER) }
 
-        override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+        override fun getDescriptors(kindFilterMask: Int,
                                     nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = allDescriptors()
 
         override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<FunctionDescriptor>) {

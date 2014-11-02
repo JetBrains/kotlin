@@ -64,7 +64,7 @@ public object TipsManager{
                 if (qualifier != null) {
                     //TODO: filter out extensions!
                     // It's impossible to add extension function for package or class (if it's class object, expression type is not null)
-                    qualifier.scope.getDescriptors(JetScope.DescriptorKind.NON_EXTENSIONS, nameFilter).filterTo(descriptors, ::filterIfInfix)
+                    qualifier.scope.getDescriptors(JetScope.NON_EXTENSIONS_MASK, nameFilter).filterTo(descriptors, ::filterIfInfix)
                 }
 
                 val expressionType = context[BindingContext.EXPRESSION_TYPE, receiverExpression]
@@ -87,7 +87,7 @@ public object TipsManager{
         }
 
         if (parent is JetImportDirective || parent is JetPackageDirective) {
-            return excludeNonPackageDescriptors(resolutionScope.getDescriptors({ it == JetScope.DescriptorKind.PACKAGE }, nameFilter))
+            return excludeNonPackageDescriptors(resolutionScope.getDescriptors(JetScope.PACKAGE, nameFilter))
         }
         else {
             val descriptorsSet = HashSet<DeclarationDescriptor>()
@@ -96,7 +96,7 @@ public object TipsManager{
                 receiverDescriptor.getType().getMemberScope().getDescriptors().filterTo(descriptorsSet) { !it.isExtension }
             }
 
-            descriptorsSet.addAll(resolutionScope.getDescriptors({ true }, nameFilter))
+            descriptorsSet.addAll(resolutionScope.getDescriptors(JetScope.ALL_KINDS_MASK, nameFilter))
 
             descriptorsSet.excludeNotCallableExtensions(resolutionScope, context, context.getDataFlowInfo(expression))
 
@@ -108,7 +108,7 @@ public object TipsManager{
                                            context: BindingContext,
                                            nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
-        return excludeNonPackageDescriptors(resolutionScope.getDescriptors({ it == JetScope.DescriptorKind.PACKAGE }, nameFilter))
+        return excludeNonPackageDescriptors(resolutionScope.getDescriptors(JetScope.PACKAGE, nameFilter))
     }
 
     public fun excludeNotCallableExtensions(descriptors: Collection<DeclarationDescriptor>,

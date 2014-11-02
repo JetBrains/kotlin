@@ -61,7 +61,7 @@ public final class JetScopeUtils {
     public static Collection<CallableDescriptor> getAllExtensions(@NotNull JetScope scope) {
         Set<CallableDescriptor> result = Sets.newHashSet();
 
-        for (DeclarationDescriptor descriptor : scope.getDescriptors(JetScope.DescriptorKind.EXTENSIONS, JetScope.ALL_NAME_FILTER)) {
+        for (DeclarationDescriptor descriptor : scope.getDescriptors(JetScope.EXTENSIONS_MASK, JetScope.ALL_NAME_FILTER)) {
             if (descriptor instanceof CallableDescriptor) {
                 CallableDescriptor callDescriptor = (CallableDescriptor) descriptor;
                 if (callDescriptor.getExtensionReceiverParameter() != null) {

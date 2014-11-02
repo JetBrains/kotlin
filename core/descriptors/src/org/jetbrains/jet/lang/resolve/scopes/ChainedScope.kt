@@ -59,10 +59,10 @@ public class ChainedScope(private val containingDeclaration: DeclarationDescript
 
     override fun getDeclarationsByLabel(labelName: Name) = scopeChain.flatMap { it.getDeclarationsByLabel(labelName) }
 
-    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean,
+    override fun getDescriptors(kindFilterMask: Int,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val result = HashSet<DeclarationDescriptor>()
-        scopeChain.flatMapTo(result) { it.getDescriptors(kindFilter, nameFilter) }
+        scopeChain.flatMapTo(result) { it.getDescriptors(kindFilterMask, nameFilter) }
         return result
     }
 

@@ -29,8 +29,8 @@ public class LazyPackageMemberScope(
         thisPackage: PackageFragmentDescriptor)
 : AbstractLazyMemberScope<PackageFragmentDescriptor, PackageMemberDeclarationProvider>(resolveSession, declarationProvider, thisPackage, resolveSession.getTrace()) {
 
-    override fun getDescriptors(kindFilter: (JetScope.DescriptorKind) -> Boolean, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        return computeDescriptorsFromDeclaredElements(kindFilter, nameFilter)
+    override fun getDescriptors(kindFilterMask: Int, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        return computeDescriptorsFromDeclaredElements(kindFilterMask, nameFilter)
     }
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
