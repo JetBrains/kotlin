@@ -204,12 +204,6 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
-    @TestMetadata("FunctionReference11.kt")
-    public void testFunctionReference11() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/FunctionReference11.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("FunctionReference12.kt")
     public void testFunctionReference12() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/FunctionReference12.kt");
@@ -225,12 +219,6 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("FunctionReference4.kt")
     public void testFunctionReference4() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/FunctionReference4.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("FunctionReference5.kt")
-    public void testFunctionReference5() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/FunctionReference5.kt");
         doTest(fileName);
     }
 

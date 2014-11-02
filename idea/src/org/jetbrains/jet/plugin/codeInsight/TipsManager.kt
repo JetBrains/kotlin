@@ -28,9 +28,9 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 
 import java.util.*
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.jet.lang.resolve.scopes.getDescriptorsFiltered
 
 public object TipsManager{
 
@@ -64,9 +64,8 @@ public object TipsManager{
 
                 val qualifier = context[BindingContext.QUALIFIER, receiverExpression]
                 if (qualifier != null) {
-                    //TODO: filter out extensions!
                     // It's impossible to add extension function for package or class (if it's class object, expression type is not null)
-                    qualifier.scope.getDescriptors(kindFilterMask and JetScope.NON_EXTENSIONS_MASK, nameFilter).filterTo(descriptors, ::filterIfInfix)
+                    qualifier.scope.getDescriptorsFiltered(kindFilterMask and JetScope.NON_EXTENSIONS_MASK, nameFilter).filterTo(descriptors, ::filterIfInfix)
                 }
 
                 val expressionType = context[BindingContext.EXPRESSION_TYPE, receiverExpression]
@@ -74,12 +73,12 @@ public object TipsManager{
                     val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
                     val dataFlowInfo = context.getDataFlowInfo(expression)
 
+                    val mask = kindFilterMask and JetScope.NON_EXTENSIONS_MASK and JetScope.TYPE.inv()
                     for (variant in SmartCastUtils.getSmartCastVariants(receiverValue, context, dataFlowInfo)) {
-                        //TODO: filter out nested classes!
-                        variant.getMemberScope().getDescriptors(kindFilterMask, nameFilter).filterTo(descriptors) { filterIfInfix(it) && !it.isExtension }
+                        variant.getMemberScope().getDescriptorsFiltered(mask, nameFilter).filterTo(descriptors, ::filterIfInfix)
                     }
 
-                    descriptors.addAll(getCallableExtensions(resolutionScope, listOf(receiverValue), context, dataFlowInfo, isInfixCall, kindFilterMask, nameFilter))
+                    descriptors.addCallableExtensions(resolutionScope, receiverValue, context, dataFlowInfo, isInfixCall, kindFilterMask, nameFilter)
                 }
 
                 return descriptors
@@ -87,21 +86,21 @@ public object TipsManager{
         }
 
         if (parent is JetImportDirective || parent is JetPackageDirective) {
-            return excludeNonPackageDescriptors(resolutionScope.getDescriptors(kindFilterMask and JetScope.PACKAGE, nameFilter))
+            if (kindFilterMask and JetScope.PACKAGE == 0) return listOf()
+            return resolutionScope.getDescriptorsFiltered(JetScope.PACKAGE, nameFilter)
         }
         else {
             val descriptorsSet = HashSet<DeclarationDescriptor>()
 
             val receivers = resolutionScope.getImplicitReceiversHierarchy()
-            for (receiver in receivers) {
-                receiver.getType().getMemberScope().getDescriptors(kindFilterMask and JetScope.NON_EXTENSIONS_MASK, nameFilter)
-                        .filterTo(descriptorsSet) { !it.isExtension }
+            receivers.flatMapTo(descriptorsSet) {
+                it.getType().getMemberScope().getDescriptorsFiltered(kindFilterMask and JetScope.NON_EXTENSIONS_MASK, nameFilter)
             }
 
             val dataFlowInfo = context.getDataFlowInfo(expression)
             val receiverValues = receivers.map { it.getValue() }
 
-            resolutionScope.getDescriptors(kindFilterMask, nameFilter).filterTo(descriptorsSet) {
+            resolutionScope.getDescriptorsFiltered(kindFilterMask, nameFilter).filterTo(descriptorsSet) {
                 if (it is CallableDescriptor && it.getExtensionReceiverParameter() != null) {
                     it.isExtensionCallable(receiverValues, context, dataFlowInfo, false)
                 }
@@ -113,23 +112,21 @@ public object TipsManager{
         }
     }
 
-    public fun getCallableExtensions(
+    private fun MutableCollection<DeclarationDescriptor>.addCallableExtensions(
             resolutionScope: JetScope,
-            receivers: Collection<ReceiverValue>,
+            receiver: ReceiverValue,
             context: BindingContext,
             dataFlowInfo: DataFlowInfo,
             isInfixCall: Boolean,
             kindFilterMask: Int,
-            nameFilter: (Name) -> Boolean): Collection<CallableDescriptor> {
+            nameFilter: (Name) -> Boolean) {
         val mask = kindFilterMask and JetScope.EXTENSIONS_MASK
-        if (mask == 0) return listOf()
-        return resolutionScope.getDescriptors(mask, nameFilter)
-                .stream()
-                .filterIsInstance(javaClass<CallableDescriptor>())
-                .filter {
-                    it.getExtensionReceiverParameter() != null && it.isExtensionCallable(receivers, context, dataFlowInfo, isInfixCall)
-                }
-                .toList()
+        if (mask != 0) {
+            resolutionScope.getDescriptorsFiltered(mask, nameFilter)
+                    .stream()
+                    .filterIsInstance(javaClass<CallableDescriptor>())
+                    .filterTo(this) { ExpressionTypingUtils.checkIsExtensionCallable(receiver, it, isInfixCall, context, dataFlowInfo) }
+        }
     }
 
     public fun CallableDescriptor.isExtensionCallable(receivers: Collection<ReceiverValue>,
@@ -145,20 +142,6 @@ public object TipsManager{
                                            context: BindingContext,
                                            nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
-        return excludeNonPackageDescriptors(resolutionScope.getDescriptors(JetScope.PACKAGE, nameFilter))
-    }
-
-    private fun excludeNonPackageDescriptors(descriptors: Collection<DeclarationDescriptor>): Collection<DeclarationDescriptor> {
-        return descriptors.filter{
-                if (it is PackageViewDescriptor) {
-                    // Heuristic: we don't want to complete "System" in "package java.lang.Sys",
-                    // so we find class of the same name as package, we exclude this package
-                    val parent = it.getContainingDeclaration()
-                    parent == null || parent.getMemberScope().getClassifier(it.getName()) == null
-                }
-                else {
-                    false
-                }
-            }
+        return resolutionScope.getDescriptorsFiltered(JetScope.PACKAGE, nameFilter)
     }
 }

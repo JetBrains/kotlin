@@ -34,7 +34,7 @@ import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
-import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptorImpl
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,

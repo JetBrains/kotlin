@@ -141,7 +141,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                         addAllTypes()
                     }
                     else {
-                        addReferenceVariants(JetScope.TYPE or JetScope.PACKAGE) { isPartOfTypeDeclaration(it) }
+                        addReferenceVariants(JetScope.TYPE or JetScope.PACKAGE)
+                        collector.addDescriptorElements(listOf(KotlinBuiltIns.getInstance().getUnit()), false)
                         JavaCompletionContributor.advertiseSecondCompletion(project, resultSet)
                     }
                 }
@@ -175,20 +176,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     private fun isOnlyKeywordCompletion()
             = PsiTreeUtil.getParentOfType(position, javaClass<JetModifierList>()) != null
 
-    private fun isPartOfTypeDeclaration(descriptor: DeclarationDescriptor): Boolean {
-        return when (descriptor) {
-            is PackageViewDescriptor, is TypeParameterDescriptor -> true
-
-            is ClassDescriptor -> {
-                val kind = descriptor.getKind()
-                KotlinBuiltIns.getInstance().isUnit(descriptor.getDefaultType()) ||
-                        kind != ClassKind.OBJECT && kind != ClassKind.CLASS_OBJECT
-            }
-
-            else -> false
-        }
-    }
-
     private fun shouldRunOnlyTypeCompletion(): Boolean {
         // Check that completion in the type annotation context and if there's a qualified
         // expression we are at first of it
@@ -201,8 +188,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         return false
     }
 
-    private fun addReferenceVariants(kindFilterMask: Int, filterCondition: (DeclarationDescriptor) -> Boolean = { true }) {
-        collector.addDescriptorElements(getReferenceVariants(kindFilterMask).filter { filterCondition(it) }, suppressAutoInsertion = false)
+    private fun addReferenceVariants(kindFilterMask: Int) {
+        collector.addDescriptorElements(getReferenceVariants(kindFilterMask), suppressAutoInsertion = false)
     }
 }
 

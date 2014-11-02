@@ -18,10 +18,11 @@ package org.jetbrains.jet.lang.resolve.java.descriptor;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 
-public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl {
-    public SamConstructorDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JavaClassDescriptor samInterface) {
+public class SamConstructorDescriptorImpl extends SimpleFunctionDescriptorImpl implements SamConstructorDescriptor {
+    public SamConstructorDescriptorImpl(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JavaClassDescriptor samInterface) {
         super(containingDeclaration, null, samInterface.getAnnotations(), samInterface.getName(),
               Kind.SYNTHESIZED, samInterface.getSource());
     }

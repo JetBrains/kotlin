@@ -51,7 +51,7 @@ public trait JetScope {
      * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
      */
     public fun getDescriptors(kindFilterMask: Int = ALL_KINDS_MASK,
-                              nameFilter: (Name) -> Boolean = { true }): Collection<DeclarationDescriptor>
+                              nameFilter: (Name) -> Boolean = ALL_NAME_FILTER): Collection<DeclarationDescriptor>
 
     /**
      * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
@@ -100,6 +100,40 @@ public trait JetScope {
         public val VARIABLES_AND_PROPERTIES_MASK: Int = LOCAL_VARIABLE or NON_EXTENSION_PROPERTY or EXTENSION_PROPERTY
 
         public val ALL_NAME_FILTER: (Name) -> Boolean = { true }
+
+        public fun descriptorKind(descriptor: DeclarationDescriptor): Int {
+            return when (descriptor) {
+                is ClassDescriptor -> when (descriptor.getKind()) {
+                    ClassKind.OBJECT, ClassKind.CLASS_OBJECT -> OBJECT
+                    ClassKind.ENUM_ENTRY -> ENUM_ENTRY
+                    else -> TYPE
+                }
+
+                is PackageFragmentDescriptor, is PackageViewDescriptor -> PACKAGE
+
+                is SamConstructorDescriptor -> SAM_CONSTRUCTOR
+
+                is FunctionDescriptor -> if (descriptor.getExtensionReceiverParameter() != null) EXTENSION_FUNCTION else ORDINARY_FUNCTION
+
+                is PropertyDescriptor -> if (descriptor.getExtensionReceiverParameter() != null) EXTENSION_PROPERTY else NON_EXTENSION_PROPERTY
+
+                is VariableDescriptor -> LOCAL_VARIABLE
+
+                else -> 0 /* unknown */
+            }
+        }
     }
 }
+
+/**
+ * The same as getDescriptors(kindFilterMask, nameFilter) but the result is guaranteed to be filtered by kind and name.
+ */
+public fun JetScope.getDescriptorsFiltered(kindFilterMask: Int,
+                                  nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    return getDescriptors(kindFilterMask, nameFilter).filter {
+        (JetScope.descriptorKind(it) and kindFilterMask) != 0 && nameFilter(it.getName())
+    }
+}
+
+
 
