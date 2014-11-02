@@ -32,9 +32,13 @@ public abstract class AbstractStubBuilderTest extends LightCodeInsightFixtureTes
         JetFile file = (JetFile) myFixture.configureByFile(sourcePath);
         JetFileStubBuilder jetStubBuilder = new JetFileStubBuilder();
         StubElement lighterTree = jetStubBuilder.buildStubTree(file);
-        String stubTree = DebugUtil.stubTreeToString(lighterTree)
-                .replace(SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME.asString(), "<no name>");
+        String stubTree = serializeStubToString(lighterTree);
         String expectedFile = sourcePath.replace(".kt", ".expected");
         JetTestUtils.assertEqualsToFile(new File(expectedFile), stubTree);
+    }
+
+    @NotNull
+    public static String serializeStubToString(@NotNull StubElement stubElement) {
+        return DebugUtil.stubTreeToString(stubElement).replace(SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME.asString(), "<no name>");
     }
 }

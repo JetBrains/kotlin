@@ -1,0 +1,148 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE:
+  CLASS:[fqName=Annotations, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=Annotations, superNames=[]]
+    MODIFIER_LIST:[public final]
+      ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+        CONSTRUCTOR_CALLEE:
+          TYPE_REFERENCE:
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=a]
+    VALUE_PARAMETER_LIST:
+      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c1]
+        MODIFIER_LIST:[]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=a]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Int]
+      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c2]
+        MODIFIER_LIST:[]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=a]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Int]
+    CLASS_BODY:
+      CLASS_OBJECT:
+        MODIFIER_LIST:[private]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=b]
+        OBJECT_DECLARATION:[fqName=null, isClassObject=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+          CLASS_BODY:
+      PROPERTY:[fqName=Annotations.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c]
+        MODIFIER_LIST:[private final]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=b]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Int]
+      PROPERTY:[fqName=Annotations.c1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c1]
+        MODIFIER_LIST:[private final]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=a]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Int]
+      PROPERTY:[fqName=Annotations.c2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=c2]
+        MODIFIER_LIST:[internal final]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=a]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Int]
+      PROPERTY:[fqName=Annotations.withCustomAccessors, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=true, name=withCustomAccessors]
+        MODIFIER_LIST:[internal final]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Int]
+      FUN:[fqName=Annotations.annotationWithVararg, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=annotationWithVararg]
+        MODIFIER_LIST:[private final]
+        VALUE_PARAMETER_LIST:
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=i]
+            MODIFIER_LIST:[vararg]
+              ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+                CONSTRUCTOR_CALLEE:
+                  TYPE_REFERENCE:
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=a]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Unit]
+      FUN:[fqName=Annotations.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=f]
+        MODIFIER_LIST:[protected final]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=a]
+        VALUE_PARAMETER_LIST:
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Unit]
+      FUN:[fqName=Annotations.g, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isProbablyNothingType=false, isTopLevel=false, name=g]
+        MODIFIER_LIST:[public final]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=a]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=b]
+        VALUE_PARAMETER_LIST:
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]
+            MODIFIER_LIST:[]
+              ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+                CONSTRUCTOR_CALLEE:
+                  TYPE_REFERENCE:
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=a]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=E]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Unit]

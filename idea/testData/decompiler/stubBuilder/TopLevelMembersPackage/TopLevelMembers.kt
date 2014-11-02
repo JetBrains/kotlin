@@ -1,0 +1,27 @@
+package foo.TopLevelMembers
+
+fun funWithBlockBody() {
+}
+
+private fun funWithExprBody() = 3
+
+private fun funWithParams(c: Int) {
+}
+
+public val immutable: Double = 0.0
+
+public var mutable: Float = 0.0f
+
+public val String.ext: String
+    get() = this
+
+public fun Int.ext(i: Int = 3): Int = this + i
+
+private fun funWithVarargParam(c: Int, vararg v: Int) {
+}
+
+private fun probablyNothing(): Nothing = throw IllegalStateException()
+
+private val certainlyNothing: kotlin.Nothing = throw IllegalStateException()
+
+class Nothing

@@ -35,18 +35,22 @@ import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.lang.resolve.MemberComparator
 import org.jetbrains.jet.lang.resolve.descriptorUtil.module
 import org.jetbrains.jet.context.GlobalContext
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.jet.plugin.decompiler.stubBuilder.KotlinClsStubBuilder
+import com.intellij.util.indexing.FileContentImpl
 
 public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
 
     private val STANDARD_LIBRARY_FQNAME = FqName("kotlin")
 
     public fun testConsistencyWithJavaDescriptorResolver() {
+        val project = getProject()
         val packageClassFqName = PackageClassUtils.getPackageClassFqName(STANDARD_LIBRARY_FQNAME)
-        val kotlinPackageClass = myFixture.getJavaFacade()!!.findClass(packageClassFqName.asString())!!
-        val kotlinPackageFile = kotlinPackageClass.getContainingFile()!!.getVirtualFile()!!
-        val projectBasedText = buildDecompiledText(kotlinPackageFile, ProjectBasedResolverForDecompiler(getProject())).text
-        val deserializerForDecompiler = DeserializerForDecompiler(kotlinPackageFile.getParent()!!, STANDARD_LIBRARY_FQNAME)
-        val deserializedText = buildDecompiledText(kotlinPackageFile, deserializerForDecompiler).text
+        val virtualFileFinder = VirtualFileFinderFactory.SERVICE.getInstance(project).create(GlobalSearchScope.allScope(project))
+        val kotlinPackageFile = virtualFileFinder.findVirtualFileWithHeader(packageClassFqName)!!
+        val projectBasedText = buildDecompiledText(kotlinPackageFile, ProjectBasedResolverForDecompiler(project)).text
+        val deserializedText = buildDecompiledText(kotlinPackageFile).text
         Assert.assertEquals(projectBasedText, deserializedText)
         // sanity checks
         Assert.assertTrue(projectBasedText.contains("linkedListOf"))
