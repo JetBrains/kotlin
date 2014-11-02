@@ -74,20 +74,25 @@ public abstract class BaseJetVariableMacro extends Macro {
         ExpressionTypingComponents components =
                 new InjectorForMacros(project, resolveSession.getModuleDescriptor()).getExpressionTypingComponents();
 
+        DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
+
         List<VariableDescriptor> filteredDescriptors = new ArrayList<VariableDescriptor>();
         for (DeclarationDescriptor declarationDescriptor : scope.getDescriptors(JetScope.VARIABLES_AND_PROPERTIES_MASK, JetScope.ALL_NAME_FILTER)) {
             if (declarationDescriptor instanceof VariableDescriptor) {
                 VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
+
+                if (variableDescriptor.getExtensionReceiverParameter() != null
+                    && !TipsManager.INSTANCE$.isExtensionCallableWithImplicitReceiver(variableDescriptor, scope, bindingContext, dataFlowInfo)) continue;
+
                 if (isSuitable(variableDescriptor, scope, project, components)) {
                     filteredDescriptors.add(variableDescriptor);
                 }
             }
         }
 
-        DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
 
         List<JetNamedDeclaration> declarations = new ArrayList<JetNamedDeclaration>();
-        for (DeclarationDescriptor declarationDescriptor : TipsManager.INSTANCE$.excludeNotCallableExtensions(filteredDescriptors, scope, bindingContext, dataFlowInfo)) {
+        for (DeclarationDescriptor declarationDescriptor : filteredDescriptors) {
             PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor);
             assert declaration == null || declaration instanceof PsiNamedElement;
 

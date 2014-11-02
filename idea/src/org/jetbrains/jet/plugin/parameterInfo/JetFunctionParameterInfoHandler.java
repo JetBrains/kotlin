@@ -407,7 +407,8 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                 return name.equals(refName);
             }
         };
-        Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(callNameExpression, bindingContext, nameFilter, visibilityFilter);
+        Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(
+                callNameExpression, bindingContext, JetScope.FUNCTIONS_MASK | JetScope.TYPE, nameFilter, visibilityFilter);
 
         Collection<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>>();
         for (DeclarationDescriptor variant : variants) {

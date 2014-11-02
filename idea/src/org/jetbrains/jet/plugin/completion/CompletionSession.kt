@@ -32,6 +32,7 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import com.intellij.openapi.project.Project
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -86,8 +87,12 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected abstract fun doComplete()
 
-    protected fun getReferenceVariants(): Collection<DeclarationDescriptor> {
-        return TipsManager.getReferenceVariants(jetReference!!.expression, bindingContext!!, prefixMatcher.asNameFilter(), { isVisibleDescriptor(it) })
+    protected fun getReferenceVariants(kindFilterMask: Int): Collection<DeclarationDescriptor> {
+        return TipsManager.getReferenceVariants(jetReference!!.expression,
+                                                bindingContext!!,
+                                                kindFilterMask,
+                                                prefixMatcher.asNameFilter(),
+                                                { isVisibleDescriptor(it) })
     }
 
     protected fun shouldRunTopLevelCompletion(): Boolean {
@@ -136,12 +141,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                         addAllTypes()
                     }
                     else {
-                        addReferenceVariants { isPartOfTypeDeclaration(it) }
+                        addReferenceVariants(JetScope.TYPE or JetScope.PACKAGE) { isPartOfTypeDeclaration(it) }
                         JavaCompletionContributor.advertiseSecondCompletion(project, resultSet)
                     }
                 }
                 else {
-                    addReferenceVariants()
+                    addReferenceVariants(JetScope.ALL_KINDS_MASK)
                 }
             }
 
@@ -196,13 +201,19 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         return false
     }
 
-    private fun addReferenceVariants(filterCondition: (DeclarationDescriptor) -> Boolean = { true }) {
-        collector.addDescriptorElements(getReferenceVariants().filter { filterCondition(it) }, suppressAutoInsertion = false)
+    private fun addReferenceVariants(kindFilterMask: Int, filterCondition: (DeclarationDescriptor) -> Boolean = { true }) {
+        collector.addDescriptorElements(getReferenceVariants(kindFilterMask).filter { filterCondition(it) }, suppressAutoInsertion = false)
     }
 }
 
 class SmartCompletionSession(configuration: CompletionSessionConfiguration, parameters: CompletionParameters, resultSet: CompletionResultSet)
 : CompletionSessionBase(configuration, parameters, resultSet) {
+
+    // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
+    private val DESCRIPTOR_KIND_MASK = JetScope.ORDINARY_FUNCTION or
+            JetScope.EXTENSION_FUNCTION or
+            JetScope.VARIABLES_AND_PROPERTIES_MASK or
+            JetScope.ENUM_ENTRY
 
     override fun doComplete() {
         if (jetReference != null) {
@@ -213,7 +224,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
                 val filter = result.declarationFilter
                 if (filter != null) {
-                    getReferenceVariants().forEach {
+                    getReferenceVariants(DESCRIPTOR_KIND_MASK).forEach {
                         if (prefixMatcher.prefixMatches(it.getName().asString())) {
                             collector.addElements(filter(it))
                         }
