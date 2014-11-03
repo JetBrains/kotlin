@@ -42,6 +42,8 @@ public class KotlinIndicesHelper(private val project: Project,
                                  private val resolveSession: ResolveSessionForBodies,
                                  private val scope: GlobalSearchScope,
                                  private val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
+    private val moduleDescriptor = resolveSession.getModuleDescriptor()
+
     public fun getTopLevelObjects(nameFilter: (String) -> Boolean): Collection<ClassDescriptor> {
         val allObjectNames = JetTopLevelObjectShortNameIndex.getInstance().getAllKeys(project).stream() +
                 JetFromJavaDescriptorHelper.getPossiblePackageDeclarationsNames(project, scope).stream()
@@ -57,13 +59,13 @@ public class KotlinIndicesHelper(private val project: Project,
         val topObjects = JetTopLevelObjectShortNameIndex.getInstance().get(name, project, scope)
         for (objectDeclaration in topObjects) {
             val fqName = objectDeclaration.getFqName() ?: error("Local object declaration in JetTopLevelShortObjectNameIndex:${objectDeclaration.getText()}")
-            result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession.getModuleDescriptor(), fqName, ResolveSessionUtils.SINGLETON_FILTER))
+            result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(moduleDescriptor, fqName, ResolveSessionUtils.SINGLETON_FILTER))
         }
 
         for (psiClass in JetFromJavaDescriptorHelper.getCompiledClassesForTopLevelObjects(project, scope)) {
             val qualifiedName = psiClass.getQualifiedName()
             if (qualifiedName != null) {
-                result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession.getModuleDescriptor(), FqName(qualifiedName), ResolveSessionUtils.SINGLETON_FILTER))
+                result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(moduleDescriptor, FqName(qualifiedName), ResolveSessionUtils.SINGLETON_FILTER))
             }
         }
 
@@ -99,7 +101,7 @@ public class KotlinIndicesHelper(private val project: Project,
                 .toSet()
 
         for (affectedPackage in affectedPackages) {
-            val packageDescriptor = resolveSession.getModuleDescriptor().getPackage(affectedPackage)
+            val packageDescriptor = moduleDescriptor.getPackage(affectedPackage)
                     ?: error("There's a function in stub index with invalid package: $affectedPackage")
             addAll(packageDescriptor.getMemberScope().getFunctions(identifier))
         }
@@ -115,7 +117,7 @@ public class KotlinIndicesHelper(private val project: Project,
                 .toSet()
 
         for (affectedPackage in affectedPackages) {
-            val packageDescriptor = resolveSession.getModuleDescriptor().getPackage(affectedPackage)
+            val packageDescriptor = moduleDescriptor.getPackage(affectedPackage)
                     ?: error("There's a property in stub index with invalid package: $affectedPackage")
             addAll(packageDescriptor.getMemberScope().getProperties(identifier))
         }
@@ -153,7 +155,7 @@ public class KotlinIndicesHelper(private val project: Project,
             val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
 
             return matchingFqNames.flatMap {
-                findSuitableExtensions(it, receiverValue, dataFlowInfo, isInfixCall, resolutionScope, resolveSession.getModuleDescriptor(), bindingContext)
+                findSuitableExtensions(it, receiverValue, dataFlowInfo, isInfixCall, resolutionScope, moduleDescriptor, bindingContext)
             }
         }
         else {
@@ -162,7 +164,7 @@ public class KotlinIndicesHelper(private val project: Project,
             val result = HashSet<CallableDescriptor>()
             for (receiver in resolutionScope.getImplicitReceiversHierarchy()) {
                 matchingFqNames.flatMapTo(result) {
-                    findSuitableExtensions(it, receiver.getValue(), dataFlowInfo, false, resolutionScope, resolveSession.getModuleDescriptor(), bindingContext)
+                    findSuitableExtensions(it, receiver.getValue(), dataFlowInfo, false, resolutionScope, moduleDescriptor, bindingContext)
                 }
             }
             return result
@@ -190,29 +192,30 @@ public class KotlinIndicesHelper(private val project: Project,
                           ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, it, isInfixCall, bindingContext, dataFlowInfo) }
     }
 
-    public fun getClassDescriptors(nameFilter: (String) -> Boolean): Collection<ClassDescriptor> {
+    public fun getClassDescriptors(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
         return JetFullClassNameIndex.getInstance().getAllKeys(project).stream()
                 .map { FqName(it) }
                 .filter { nameFilter(it.shortName().asString()) }
                 .toList()
-                .flatMap { getClassDescriptorsByFQName(it) }
+                .flatMap { getClassDescriptorsByFQName(it, kindFilter) }
     }
 
-    private fun getClassDescriptorsByFQName(classFQName: FqName): Collection<ClassDescriptor> {
-        val jetClassOrObjects = JetFullClassNameIndex.getInstance().get(classFQName.asString(), project, scope)
+    private fun getClassDescriptorsByFQName(classFQName: FqName, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
+        val declarations = JetFullClassNameIndex.getInstance()[classFQName.asString(), project, scope]
 
-        if (jetClassOrObjects.isEmpty()) {
+        if (declarations.isEmpty()) {
             // This fqn is absent in caches, dead or not in scope
             return listOf()
         }
 
         // Note: Can't search with psi element as analyzer could be built over temp files
-        return ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession.getModuleDescriptor(), classFQName).filter(visibilityFilter)
+        return ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(moduleDescriptor, classFQName) { kindFilter(it.getKind()) }
+                .filter(visibilityFilter)
     }
 
     private fun findTopLevelCallables(fqName: FqName, context: JetExpression, jetScope: JetScope): Collection<CallableDescriptor> {
         val importDirective = JetPsiFactory(context.getProject()).createImportDirective(ImportPath(fqName, false))
-        val allDescriptors = analyzeImportReference(importDirective, jetScope, BindingTraceContext(), resolveSession.getModuleDescriptor())
+        val allDescriptors = analyzeImportReference(importDirective, jetScope, BindingTraceContext(), moduleDescriptor)
         return allDescriptors.filterIsInstance(javaClass<CallableDescriptor>()).filter { it.getExtensionReceiverParameter() == null }
     }
 

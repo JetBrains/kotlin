@@ -110,17 +110,20 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         return configuration.completeNonImportedDeclarations || prefixMatcher.getPrefix().length >= 3
     }
 
-    protected fun getKotlinTopLevelDeclarations(): Collection<DeclarationDescriptor> {
-        val filter = { (name: String) -> prefixMatcher.prefixMatches(name) }
-        return indicesHelper.getTopLevelCallables(filter, jetReference!!.expression) + indicesHelper.getTopLevelObjects(filter)
+    protected fun getKotlinTopLevelCallables(): Collection<DeclarationDescriptor> {
+        return indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
+    }
+
+    protected fun getKotlinTopLevelObjects(): Collection<DeclarationDescriptor> {
+        return indicesHelper.getTopLevelObjects({ prefixMatcher.prefixMatches(it) })
     }
 
     protected fun getKotlinExtensions(): Collection<CallableDescriptor> {
         return indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
     }
 
-    protected fun addAllTypes() {
-        TypesCompletion(parameters, resolveSession, prefixMatcher, { isVisibleDescriptor(it) }).addAllTypes(collector)
+    protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
+        AllClassesCompletion(parameters, resolveSession, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }).collect(collector)
     }
 }
 
@@ -138,7 +141,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             if (completeReference) {
                 if (shouldRunOnlyTypeCompletion()) {
                     if (configuration.completeNonImportedDeclarations) {
-                        addAllTypes()
+                        addAllClasses { !it.isSingleton() }
                     }
                     else {
                         addReferenceVariants(JetScope.TYPE or JetScope.PACKAGE)
@@ -164,8 +167,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private fun addNonImported() {
         if (shouldRunTopLevelCompletion()) {
-            addAllTypes()
-            collector.addDescriptorElements(getKotlinTopLevelDeclarations(), suppressAutoInsertion = true)
+            addAllClasses { it != ClassKind.ENUM_ENTRY }
+            collector.addDescriptorElements(getKotlinTopLevelCallables(), suppressAutoInsertion = true)
         }
 
         if (shouldRunExtensionsCompletion()) {
@@ -223,7 +226,8 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     private fun processNonImported(processor: (DeclarationDescriptor) -> Unit) {
         if (shouldRunTopLevelCompletion()) {
-            getKotlinTopLevelDeclarations().forEach(processor)
+            getKotlinTopLevelCallables().forEach(processor)
+            getKotlinTopLevelObjects().forEach(processor) //TODO: shouldn't it work via inheritors search?
         }
 
         if (shouldRunExtensionsCompletion()) {
