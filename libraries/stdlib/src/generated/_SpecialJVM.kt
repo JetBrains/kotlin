@@ -325,6 +325,27 @@ public fun ShortArray.fill(element: Short): ShortArray {
 }
 
 /**
+ * Returns a list containing all elements that are instances of specified type parameter R
+ */
+public inline fun <reified R> Array<*>.filterIsInstance(): List<R> {
+    return filterIsInstanceTo(ArrayList<R>())
+}
+
+/**
+ * Returns a list containing all elements that are instances of specified type parameter R
+ */
+public inline fun <reified R> Iterable<*>.filterIsInstance(): List<R> {
+    return filterIsInstanceTo(ArrayList<R>())
+}
+
+/**
+ * Returns a stream containing all elements that are instances of specified type parameter R
+ */
+public inline fun <reified R> Stream<*>.filterIsInstance(): Stream<R> {
+    return FilteringStream(this, true, { it is R }) as Stream<R>
+}
+
+/**
  * Returns a list containing all elements that are instances of specified class
  */
 public fun <T, R : T> Array<out T>.filterIsInstance(klass: Class<R>): List<R> {
@@ -343,6 +364,30 @@ public fun <T, R : T> Iterable<T>.filterIsInstance(klass: Class<R>): List<R> {
  */
 public fun <T, R : T> Stream<T>.filterIsInstance(klass: Class<R>): Stream<R> {
     return FilteringStream(this, true, { klass.isInstance(it) }) as Stream<R>
+}
+
+/**
+ * Appends all elements that are instances of specified type parameter R to the given *destination*
+ */
+public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(destination: C): C {
+    for (element in this) if (element is R) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements that are instances of specified type parameter R to the given *destination*
+ */
+public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceTo(destination: C): C {
+    for (element in this) if (element is R) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements that are instances of specified type parameter R to the given *destination*
+ */
+public inline fun <reified R, C : MutableCollection<in R>> Stream<*>.filterIsInstanceTo(destination: C): C {
+    for (element in this) if (element is R) destination.add(element)
+    return destination
 }
 
 /**
