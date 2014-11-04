@@ -73,7 +73,7 @@ public class AnonymousObjectGeneration {
             boolean isStaticOrigin
     ) {
         this(
-                ownerInternalName, isSameModule, needReification,
+                ownerInternalName, needReification, isSameModule,
                 new HashMap<Integer, LambdaInfo>(), false, alreadyRegenerated, null, isStaticOrigin
         );
     }

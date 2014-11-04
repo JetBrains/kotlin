@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxInline")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BlackBoxInlineCodegenTestGenerated.AnonymousObject.class, BlackBoxInlineCodegenTestGenerated.Builders.class, BlackBoxInlineCodegenTestGenerated.Capture.class, BlackBoxInlineCodegenTestGenerated.Complex.class, BlackBoxInlineCodegenTestGenerated.DefaultValues.class, BlackBoxInlineCodegenTestGenerated.LambdaClassClash.class, BlackBoxInlineCodegenTestGenerated.LambdaTransformation.class, BlackBoxInlineCodegenTestGenerated.LocalFunInLambda.class, BlackBoxInlineCodegenTestGenerated.NoInline.class, BlackBoxInlineCodegenTestGenerated.NonLocalReturns.class, BlackBoxInlineCodegenTestGenerated.Simple.class, BlackBoxInlineCodegenTestGenerated.Special.class, BlackBoxInlineCodegenTestGenerated.Trait.class, BlackBoxInlineCodegenTestGenerated.TryCatchFinally.class})
+@InnerTestClasses({BlackBoxInlineCodegenTestGenerated.AnonymousObject.class, BlackBoxInlineCodegenTestGenerated.Builders.class, BlackBoxInlineCodegenTestGenerated.Capture.class, BlackBoxInlineCodegenTestGenerated.Complex.class, BlackBoxInlineCodegenTestGenerated.DefaultValues.class, BlackBoxInlineCodegenTestGenerated.LambdaClassClash.class, BlackBoxInlineCodegenTestGenerated.LambdaTransformation.class, BlackBoxInlineCodegenTestGenerated.LocalFunInLambda.class, BlackBoxInlineCodegenTestGenerated.NoInline.class, BlackBoxInlineCodegenTestGenerated.NonLocalReturns.class, BlackBoxInlineCodegenTestGenerated.Reified.class, BlackBoxInlineCodegenTestGenerated.Simple.class, BlackBoxInlineCodegenTestGenerated.Special.class, BlackBoxInlineCodegenTestGenerated.Trait.class, BlackBoxInlineCodegenTestGenerated.TryCatchFinally.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxInline() throws Exception {
@@ -603,6 +603,21 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
                     doTestMultiFileWithInlineCheck(fileName);
                 }
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxInline/reified")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Reified extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInReified() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        }
+
+        @TestMetadata("packages.1.kt")
+        public void testPackages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/packages.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
         }
     }
 
