@@ -812,8 +812,7 @@ public class FunctionCodegen extends ParentCodegenAware {
     }
 
     public void genDelegate(FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
-        genDelegate(functionDescriptor, overriddenDescriptor.getOriginal(), (ClassDescriptor) overriddenDescriptor.getContainingDeclaration(), field
-        );
+        genDelegate(functionDescriptor, overriddenDescriptor.getOriginal(), (ClassDescriptor) overriddenDescriptor.getContainingDeclaration(), field);
     }
 
     public void genDelegate(
