@@ -34,8 +34,10 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.Flexibility;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.org.objectweb.asm.*;
 
@@ -182,6 +184,14 @@ public abstract class AnnotationCodegen {
             // it would be a shame to put @Nullable on the return type of the function, and force all callers to check for null,
             // so we put no annotations
             return;
+        }
+
+        if (TypesPackage.isFlexible(type)) {
+            // A flexible type whose lower bound in not-null and upper bound is nullable, should not be annotated
+            Flexibility flexibility = TypesPackage.flexibility(type);
+            if (!TypeUtils.isNullableType(flexibility.getLowerBound()) && TypeUtils.isNullableType(flexibility.getUpperBound())) {
+                return;
+            }
         }
 
         boolean isNullableType = TypeUtils.isNullableType(type);

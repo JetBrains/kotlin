@@ -114,6 +114,12 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
             doTest(fileName);
         }
 
+        @TestMetadata("PlatformTypes.kt")
+        public void testPlatformTypes() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations/PlatformTypes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Primitives.kt")
         public void testPrimitives() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations/Primitives.kt");
