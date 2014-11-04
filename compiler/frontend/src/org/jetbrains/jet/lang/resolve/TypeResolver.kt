@@ -131,7 +131,10 @@ public class TypeResolver(
                                             scopeForTypeParameter)
                                     )
 
-                        resolveTypeProjections(c, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments())
+                        val arguments = resolveTypeProjections(c, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments())
+                        if (!arguments.isEmpty()) {
+                            c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.getTypeArgumentList(), 0))
+                        }
 
                         val containing = classifierDescriptor.getContainingDeclaration()
                         if (containing is ClassDescriptor) {

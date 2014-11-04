@@ -4391,6 +4391,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("argumentsForT.kt")
+            public void testArgumentsForT() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/argumentsForT.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ClassObjectBoundsAreNotSupported.kt")
             public void testClassObjectBoundsAreNotSupported() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/ClassObjectBoundsAreNotSupported.kt");
