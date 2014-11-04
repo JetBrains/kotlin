@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
@@ -45,7 +46,11 @@ public class CopyToArray extends IntrinsicMethod {
         v.dup();
         v.invokeinterface("java/util/Collection", "size", "()I");
 
-        v.newarray(returnType.getElementType());
+        assert element instanceof JetExpression;
+        JetType arrayType = codegen.expressionJetType((JetExpression) element);
+        assert arrayType != null;
+
+        codegen.newArrayInstruction(arrayType);
         v.invokeinterface("java/util/Collection", "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;");
 
         return getType(Object[].class);

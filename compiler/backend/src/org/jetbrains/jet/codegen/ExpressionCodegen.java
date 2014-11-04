@@ -373,8 +373,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     public Type expressionType(JetExpression expression) {
-        JetType type = bindingContext.get(EXPRESSION_TYPE, expression);
+        JetType type = expressionJetType(expression);
         return type == null ? Type.VOID_TYPE : asmType(type);
+    }
+
+    @Nullable
+    public JetType expressionJetType(JetExpression expression) {
+        return bindingContext.get(EXPRESSION_TYPE, expression);
     }
 
     @Override
@@ -2525,14 +2530,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 }
                 v.dup();
                 v.invokevirtual(owner, "size", "()I", false);
-                v.newarray(elementType);
+                newArrayInstruction(outType);
                 v.invokevirtual(owner, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", false);
                 v.checkcast(type);
             }
         }
         else {
             v.iconst(arguments.size());
-            v.newarray(elementType);
+            newArrayInstruction(outType);
             for (int i = 0; i != size; ++i) {
                 v.dup();
                 v.iconst(i);
@@ -3460,19 +3465,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             throw new CompilationException("primitive array constructor requires one argument", null, expression);
         }
 
-        if (isArray) {
-            gen(args.get(0), Type.INT_TYPE);
-            putReifierMarkerIfTypeIsReifiedParameter(
-                    arrayType.getArguments().get(0).getType(),
-                    ReifiedTypeInliner.NEW_ARRAY_MARKER_METHOD_NAME
-            );
-            v.newarray(boxType(asmType(arrayType.getArguments().get(0).getType())));
-        }
-        else {
-            Type type = typeMapper.mapType(arrayType);
-            gen(args.get(0), Type.INT_TYPE);
-            v.newarray(correctElementType(type));
-        }
+        gen(args.get(0), Type.INT_TYPE);
+        newArrayInstruction(arrayType);
 
         if (args.size() == 2) {
             int sizeIndex = myFrameMap.enterTemp(Type.INT_TYPE);
@@ -3509,6 +3503,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             myFrameMap.leaveTemp(Type.INT_TYPE);
             myFrameMap.leaveTemp(Type.INT_TYPE);
+        }
+    }
+
+    public void newArrayInstruction(@NotNull JetType arrayType) {
+        if (KotlinBuiltIns.getInstance().isArray(arrayType)) {
+            JetType elementJetType = arrayType.getArguments().get(0).getType();
+            putReifierMarkerIfTypeIsReifiedParameter(
+                    elementJetType,
+                    ReifiedTypeInliner.NEW_ARRAY_MARKER_METHOD_NAME
+            );
+            v.newarray(boxType(asmType(elementJetType)));
+        }
+        else {
+            Type type = typeMapper.mapType(arrayType);
+            v.newarray(correctElementType(type));
         }
     }
 

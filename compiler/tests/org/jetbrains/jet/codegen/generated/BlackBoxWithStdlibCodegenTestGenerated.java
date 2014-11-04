@@ -2471,6 +2471,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("copyToArray.kt")
+        public void testCopyToArray() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/copyToArray.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("defaultJavaClass.kt")
         public void testDefaultJavaClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/defaultJavaClass.kt");
@@ -2540,6 +2546,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("sameIndexRecursive.kt")
         public void testSameIndexRecursive() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/sameIndexRecursive.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("spreads.kt")
+        public void testSpreads() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/spreads.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("varargs.kt")
+        public void testVarargs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/varargs.kt");
             doTestWithStdlib(fileName);
         }
     }
