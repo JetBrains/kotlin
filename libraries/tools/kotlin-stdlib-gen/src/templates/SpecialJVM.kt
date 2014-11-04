@@ -107,5 +107,45 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
+    templates add f("filterIsInstanceTo(destination: C)") {
+        doc { "Appends all elements that are instances of specified type parameter R to the given *destination*" }
+        typeParam("reified R")
+        typeParam("C : MutableCollection<in R>")
+        inline(true)
+        receiverAsterisk(true)
+        returns("C")
+        exclude(ArraysOfPrimitives, Strings)
+        body {
+            """
+            for (element in this) if (element is R) destination.add(element)
+            return destination
+            """
+        }
+    }
+
+    templates add f("filterIsInstance()") {
+        doc { "Returns a list containing all elements that are instances of specified type parameter R" }
+        typeParam("reified R")
+        returns("List<R>")
+        inline(true)
+        receiverAsterisk(true)
+        body {
+            """
+            return filterIsInstanceTo(ArrayList<R>())
+            """
+        }
+        exclude(ArraysOfPrimitives, Strings)
+
+        doc(Streams) { "Returns a stream containing all elements that are instances of specified type parameter R" }
+        returns(Streams) { "Stream<R>" }
+        inline(true)
+        receiverAsterisk(true)
+        body(Streams) {
+            """
+            return FilteringStream(this, true, { it is R }) as Stream<R>
+            """
+        }
+    }
+
     return templates
 }
