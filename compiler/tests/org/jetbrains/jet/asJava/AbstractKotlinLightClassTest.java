@@ -22,30 +22,23 @@ import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
-import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.jet.checkers.KotlinMultiFileTestWithWithJava;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.config.CommonConfigurationKeys;
-import org.jetbrains.jet.config.CompilerConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractKotlinLightClassTest extends KotlinTestWithEnvironmentManagement {
+public abstract class AbstractKotlinLightClassTest extends KotlinMultiFileTestWithWithJava<Void, Void> {
     private static final Pattern SUBJECT_FQ_NAME_PATTERN = Pattern.compile("^//\\s*(.*)$", Pattern.MULTILINE);
 
     @NotNull
-    private JetCoreEnvironment createEnvironment(File kotlinFile) {
-        CompilerConfiguration configuration = new CompilerConfiguration();
-
-        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, kotlinFile.getPath());
-
-        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, JetTestUtils.getAnnotationsJar());
-        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, JetTestUtils.findMockJdkRtJar());
-
-        return JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
+    @Override
+    protected File getKotlinSourceRoot() {
+        return createTmpDir("kotlin-src");
     }
 
     @NotNull
@@ -56,18 +49,16 @@ public abstract class AbstractKotlinLightClassTest extends KotlinTestWithEnviron
         return JavaElementFinder.getInstance(environment.getProject());
     }
 
-    protected void doTest(@NotNull String fileName) throws IOException {
-        File file = new File(fileName);
-
+    @Override
+    protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<Void> files) throws IOException {
         String text = FileUtil.loadFile(file, true);
         Matcher matcher = SUBJECT_FQ_NAME_PATTERN.matcher(text);
         assertTrue("No FqName specified. First line of the form '// f.q.Name' expected", matcher.find());
         String fqName = matcher.group(1);
 
-        JetCoreEnvironment environment = createEnvironment(file);
-        JavaElementFinder finder = createFinder(environment);
+        JavaElementFinder finder = createFinder(getEnvironment());
 
-        PsiClass psiClass = finder.findClass(fqName, GlobalSearchScope.allScope(environment.getProject()));
+        PsiClass psiClass = finder.findClass(fqName, GlobalSearchScope.allScope(getEnvironment().getProject()));
         if (!(psiClass instanceof KotlinLightClass)) {
             throw new IllegalStateException("Not a light class: " + psiClass + " (" + fqName + ")");
         }
@@ -82,5 +73,15 @@ public abstract class AbstractKotlinLightClassTest extends KotlinTestWithEnviron
         String actual = buffer.toString();
 
         JetTestUtils.assertEqualsToFile(JetTestUtils.replaceExtension(file, "java"), actual);
+    }
+
+    @Override
+    protected Void createTestModule(String name) {
+        return null;
+    }
+
+    @Override
+    protected Void createTestFile(Void module, String fileName, String text, Map<String, String> directives) {
+        return null;
     }
 }

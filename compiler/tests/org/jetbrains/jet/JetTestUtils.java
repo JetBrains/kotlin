@@ -426,7 +426,17 @@ public class JetTestUtils {
         if (paths == null) return;
         List<JetFile> jetFiles = Lists.newArrayList();
         for (String path : paths) {
-            jetFiles.add(loadJetFile(environment.getProject(), new File(path)));
+            File file = new File(path);
+            if (file.isFile()) {
+                jetFiles.add(loadJetFile(environment.getProject(), file));
+            }
+            else {
+                for (File childFile : file.listFiles()) {
+                    if (childFile.getName().endsWith(".kt")) {
+                        jetFiles.add(loadJetFile(environment.getProject(), childFile));
+                    }
+                }
+            }
         }
         LazyResolveTestUtil.resolveEagerly(jetFiles, environment);
     }

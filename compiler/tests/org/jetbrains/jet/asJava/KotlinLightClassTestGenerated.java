@@ -45,6 +45,12 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/delegation"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("ExternalAnnotations.kt")
+        public void testExternalAnnotations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/delegation/ExternalAnnotations.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Function.kt")
         public void testFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/delegation/Function.kt");
@@ -54,6 +60,12 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
         @TestMetadata("Property.kt")
         public void testProperty() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/delegation/Property.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WithPlatformTypes.kt")
+        public void testWithPlatformTypes() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/delegation/WithPlatformTypes.kt");
             doTest(fileName);
         }
     }

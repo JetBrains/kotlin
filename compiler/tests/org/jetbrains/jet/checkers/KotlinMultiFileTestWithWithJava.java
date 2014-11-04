@@ -25,6 +25,7 @@ import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.utils.UtilsPackage;
 
@@ -68,11 +69,24 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
                 Arrays.asList(JetTestUtils.getAnnotationsJar()),
                 Arrays.asList(javaFilesDir)
         );
+        File kotlinSourceRoot = getKotlinSourceRoot();
+        if (kotlinSourceRoot != null) {
+            configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, kotlinSourceRoot.getPath());
+        }
         return JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
     }
 
+    @Nullable
+    protected File getKotlinSourceRoot() {
+        return null;
+    }
+
     protected File createJavaFilesDir() {
-        File dir = new File(FileUtil.getTempDirectory(), "java-files");
+        return createTmpDir("java-files");
+    }
+
+    protected static File createTmpDir(String dirName) {
+        File dir = new File(FileUtil.getTempDirectory(), dirName);
         try {
             JetTestUtils.mkdirs(dir);
         }
