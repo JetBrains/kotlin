@@ -8,6 +8,356 @@ package kotlin
 import java.util.*
 
 /**
+ * Returns 1st *element* from the collection.
+ */
+public inline fun <T> Array<out T>.component1(): T {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+public inline fun BooleanArray.component1(): Boolean {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+public inline fun ByteArray.component1(): Byte {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+public inline fun CharArray.component1(): Char {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+public inline fun DoubleArray.component1(): Double {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+public inline fun FloatArray.component1(): Float {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+public inline fun IntArray.component1(): Int {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+public inline fun LongArray.component1(): Long {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+public inline fun ShortArray.component1(): Short {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+public inline fun <T> List<T>.component1(): T {
+    return get(0)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+public inline fun <T> Array<out T>.component2(): T {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+public inline fun BooleanArray.component2(): Boolean {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+public inline fun ByteArray.component2(): Byte {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+public inline fun CharArray.component2(): Char {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+public inline fun DoubleArray.component2(): Double {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+public inline fun FloatArray.component2(): Float {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+public inline fun IntArray.component2(): Int {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+public inline fun LongArray.component2(): Long {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+public inline fun ShortArray.component2(): Short {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+public inline fun <T> List<T>.component2(): T {
+    return get(1)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+public inline fun <T> Array<out T>.component3(): T {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+public inline fun BooleanArray.component3(): Boolean {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+public inline fun ByteArray.component3(): Byte {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+public inline fun CharArray.component3(): Char {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+public inline fun DoubleArray.component3(): Double {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+public inline fun FloatArray.component3(): Float {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+public inline fun IntArray.component3(): Int {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+public inline fun LongArray.component3(): Long {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+public inline fun ShortArray.component3(): Short {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+public inline fun <T> List<T>.component3(): T {
+    return get(2)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+public inline fun <T> Array<out T>.component4(): T {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+public inline fun BooleanArray.component4(): Boolean {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+public inline fun ByteArray.component4(): Byte {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+public inline fun CharArray.component4(): Char {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+public inline fun DoubleArray.component4(): Double {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+public inline fun FloatArray.component4(): Float {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+public inline fun IntArray.component4(): Int {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+public inline fun LongArray.component4(): Long {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+public inline fun ShortArray.component4(): Short {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+public inline fun <T> List<T>.component4(): T {
+    return get(3)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+public inline fun <T> Array<out T>.component5(): T {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+public inline fun BooleanArray.component5(): Boolean {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+public inline fun ByteArray.component5(): Byte {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+public inline fun CharArray.component5(): Char {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+public inline fun DoubleArray.component5(): Double {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+public inline fun FloatArray.component5(): Float {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+public inline fun IntArray.component5(): Int {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+public inline fun LongArray.component5(): Long {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+public inline fun ShortArray.component5(): Short {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+public inline fun <T> List<T>.component5(): T {
+    return get(4)
+}
+
+/**
  * Returns true if *element* is found in the collection
  */
 public fun <T> Array<out T>.contains(element: T): Boolean {

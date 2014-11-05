@@ -471,4 +471,42 @@ class CollectionTest {
         expect(arrayListOf(1, 2, 3)) { list.sort() }
         expect(arrayListOf(2, 3, 1)) { list }
     }
+
+    test fun decomposeFirst() {
+        val (first) = listOf(1, 2)
+        assertEquals(first, 1)
+    }
+
+    test fun decomposeSplit() {
+        val (key, value) = "key = value".split('=').map { it.trim() }
+        assertEquals(key, "key")
+        assertEquals(value, "value")
+    }
+
+    test fun decomposeList() {
+        val (a, b, c, d, e) = listOf(1, 2, 3, 4, 5)
+        assertEquals(a, 1)
+        assertEquals(b, 2)
+        assertEquals(c, 3)
+        assertEquals(d, 4)
+        assertEquals(e, 5)
+    }
+
+    test fun decomposeArray() {
+        val (a, b, c, d, e) = array(1, 2, 3, 4, 5)
+        assertEquals(a, 1)
+        assertEquals(b, 2)
+        assertEquals(c, 3)
+        assertEquals(d, 4)
+        assertEquals(e, 5)
+    }
+
+    test fun decomposeIntArray() {
+        val (a, b, c, d, e) = intArray(1, 2, 3, 4, 5)
+        assertEquals(a, 1)
+        assertEquals(b, 2)
+        assertEquals(c, 3)
+        assertEquals(d, 4)
+        assertEquals(e, 5)
+    }
 }
