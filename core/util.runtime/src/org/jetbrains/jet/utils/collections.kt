@@ -21,6 +21,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
 import java.util.Collections
+import java.util.LinkedHashSet
 
 public fun <K, V> Stream<V>.valuesToMap(key: (V) -> K): Map<K, V> {
     val map = LinkedHashMap<K, V>()
@@ -98,6 +99,3 @@ public fun <E> newHashSetWithExpectedSize(expectedSize: Int): HashSet<E> {
 
 public fun <T> Collection<T>.toReadOnlyList(): List<T> =
         if (isEmpty()) Collections.emptyList() else ArrayList(this)
-
-public fun <T> Collection<T>.toReadOnlySet(): Set<T> =
-        if (isEmpty()) Collections.emptySet() else HashSet(this)
