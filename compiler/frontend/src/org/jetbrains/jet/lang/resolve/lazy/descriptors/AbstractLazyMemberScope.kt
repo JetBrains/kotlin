@@ -77,13 +77,9 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
 
     override fun getContainingDeclaration() = thisDescriptor
 
-    override fun getClassifier(name: Name): ClassDescriptor? {
-        return classDescriptors.invoke(name).firstOrNull()
-    }
+    override fun getClassifier(name: Name): ClassDescriptor? = classDescriptors(name).firstOrNull()
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
-        return functionDescriptors.invoke(name)
-    }
+    override fun getFunctions(name: Name): Set<FunctionDescriptor> = functionDescriptors(name)
 
     private fun doGetFunctions(name: Name): Collection<FunctionDescriptor> {
         val result = Sets.newLinkedHashSet<FunctionDescriptor>()
@@ -110,9 +106,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
 
     protected abstract fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>)
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> {
-        return propertyDescriptors.invoke(name)
-    }
+    override fun getProperties(name: Name): Set<VariableDescriptor> = propertyDescriptors(name)
 
     public fun doGetProperties(name: Name): Collection<VariableDescriptor> {
         val result = Sets.newLinkedHashSet<VariableDescriptor>()
@@ -155,7 +149,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
         val result = ArrayList<DeclarationDescriptor>(declarations.size())
         for (declaration in declarations) {
             if (declaration is JetClassOrObject) {
-                result.addAll(classDescriptors.invoke(declaration.getNameAsSafeName()))
+                result.addAll(classDescriptors(declaration.getNameAsSafeName()))
             }
             else if (declaration is JetFunction) {
                 result.addAll(getFunctions(declaration.getNameAsSafeName()))
@@ -167,7 +161,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
                 result.addAll(getProperties(declaration.getNameAsSafeName()))
             }
             else if (declaration is JetScript) {
-                result.addAll(classDescriptors.invoke(ScriptNameUtil.classNameForScript(declaration).shortName()))
+                result.addAll(classDescriptors(ScriptNameUtil.classNameForScript(declaration).shortName()))
             }
             else if (declaration is JetTypedef || declaration is JetMultiDeclaration) {
                 // Do nothing for typedefs as they are not supported.

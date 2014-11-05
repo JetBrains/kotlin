@@ -51,11 +51,11 @@ public class LazyScriptClassMemberScope protected(
         super.getNonDeclaredProperties(name, result)
 
         if (name.asString() == ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME) {
-            result.add(scriptResultProperty.invoke())
+            result.add(scriptResultProperty())
         }
     }
 
-    public fun getScriptResultProperty(): PropertyDescriptor = scriptResultProperty.invoke()
+    public fun getScriptResultProperty(): PropertyDescriptor = scriptResultProperty()
 
     override fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<VariableDescriptor>) {
         val scriptInfo = declarationProvider.getOwnerInfo() as JetScriptInfo
