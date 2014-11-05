@@ -192,8 +192,8 @@ class ArraysTest {
         assertEquals(listOf("B"), array("A", "B", "C").slice(1..1))
         assertEquals(listOf('E', 'B', 'C'), array('A', 'B', 'C', 'E').slice(iter))
 
-        assertEquals(listOf<Int>(), array<Int>().slice(5..4))
-        assertEquals(listOf<Int>(), array(1, 2, 3).slice(5..1))
+        assertTrue(array<Int>().slice(5..4).none())
+        assertTrue(array(1, 2, 3).slice(5..1).none())
         assertEquals(listOf(2, 3, 9), array(2, 3, 9, 2, 3, 9).slice(iter))
         assertEquals(listOf(2.0, 3.0), array(2.0, 3.0, 9.0).slice(0..1))
         assertEquals(listOf(2f, 3f), array(2f, 3f, 9f).slice(0..1))
@@ -204,7 +204,7 @@ class ArraysTest {
     }
 
     test fun toSortedList() {
-        assertEquals(listOf<Long>(), array<Long>().toSortedList())
+        assertTrue(array<Long>().toSortedList().none())
         assertEquals(listOf(1), array(1).toSortedList())
         assertEquals(listOf("aab", "aba", "ac"), array("ac", "aab", "aba").toSortedList())
     }

@@ -197,7 +197,7 @@ public class StreamTest {
 
     test fun flatMapOnEmpty() {
         val result = streamOf<Int>().flatMap { streamOf(0..it) }
-        assertEquals(listOf<Int>(), result.toList())
+        assertTrue(result.none())
     }
 
     test fun flatMapWithEmptyItems() {

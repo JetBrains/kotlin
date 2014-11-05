@@ -3,11 +3,11 @@ package kotlin
 import java.util.*
 
 private class stdlib_emptyListClass : List<Any> by ArrayList<Any>() {}
-private val stdlib_emptyList : List<Any> = ArrayList<Any>() // TODO: Change to stdlib_emptyListClass() when KT-5192 is fixed
+private val stdlib_emptyList : List<Any> = stdlib_emptyListClass()
 private fun stdlib_emptyList<T>() = stdlib_emptyList as List<T>
 
 private class stdlib_emptyMapClass : Map<Any, Any> by HashMap<Any, Any>() {}
-private val stdlib_emptyMap : Map<Any, Any> = HashMap<Any, Any>() // TODO: Change to stdlib_emptyMapClass() when KT-5192 is fixed
+private val stdlib_emptyMap : Map<Any, Any> = stdlib_emptyMapClass()
 private fun stdlib_emptyMap<K,V>() = stdlib_emptyMap as Map<K,V>
 
 /** Returns a new read-only list of given elements */
