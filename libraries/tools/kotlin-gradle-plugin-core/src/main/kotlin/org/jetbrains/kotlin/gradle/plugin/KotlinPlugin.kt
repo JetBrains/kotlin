@@ -235,11 +235,17 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
 
                 if (variant is ApkVariant) {
                     for (flavourName in AndroidGradleWrapper.getProductFlavorsNames(variant)) {
-                       val flavourSourceSetName = buildTypeSourceSetName + flavourName
-                        val flavourSourceSet : AndroidSourceSet? = sourceSets.findByName(flavourSourceSetName)
+                        val defaultFlavourSourceSetName = flavourName + buildTypeSourceSetName.capitalize()
+                        val defaultFlavourSourceSet = sourceSets.findByName(defaultFlavourSourceSetName)
+                        if (defaultFlavourSourceSet != null) {
+                            javaSourceList.add(AndroidGradleWrapper.getJavaSrcDirs(defaultFlavourSourceSet))
+                            kotlinTask.source(getExtention<KotlinSourceSet>(defaultFlavourSourceSet, "kotlin").getKotlin())
+                        }
+
+                        val flavourSourceSet = sourceSets.findByName(flavourName)
                         if (flavourSourceSet != null) {
                             javaSourceList.add(AndroidGradleWrapper.getJavaSrcDirs(flavourSourceSet))
-                            kotlinTask.source((buildTypeSourceSet as ExtensionAware).getExtensions().getByName("kotlin"))
+                            kotlinTask.source(getExtention<KotlinSourceSet>(flavourSourceSet, "kotlin").getKotlin())
                         }
                     }
                 }
