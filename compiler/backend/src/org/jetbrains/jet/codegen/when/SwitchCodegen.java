@@ -86,7 +86,7 @@ abstract public class SwitchCodegen {
             codegen.putUnitInstanceOntoStackForNonExhaustiveWhen(expression);
         }
 
-        codegen.markLineNumber(expression);
+        codegen.markExpressionLineNumber(expression, isStatement);
         v.mark(endLabel);
     }
 
