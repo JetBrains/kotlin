@@ -161,7 +161,7 @@ fun ordering(): List<GenericFunction> {
         exclude(Strings)
     }
 
-    templates add f("sortBy(comparator: Comparator<T>)") {
+    templates add f("sortBy(comparator: Comparator<in T>)") {
         doc {
             """
             Returns a list of all elements, sorted by the specified *comparator*

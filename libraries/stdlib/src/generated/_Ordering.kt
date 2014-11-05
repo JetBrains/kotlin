@@ -116,7 +116,7 @@ public fun <T : Comparable<T>> Iterable<T>.sort(): List<T> {
 /**
  * Returns a list of all elements, sorted by the specified *comparator*
  */
-public fun <T> Array<out T>.sortBy(comparator: Comparator<T>): List<T> {
+public fun <T> Array<out T>.sortBy(comparator: Comparator<in T>): List<T> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList, comparator)
     return sortedList
@@ -125,7 +125,7 @@ public fun <T> Array<out T>.sortBy(comparator: Comparator<T>): List<T> {
 /**
  * Returns a list of all elements, sorted by the specified *comparator*
  */
-public fun <T> Iterable<T>.sortBy(comparator: Comparator<T>): List<T> {
+public fun <T> Iterable<T>.sortBy(comparator: Comparator<in T>): List<T> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList, comparator)
     return sortedList
