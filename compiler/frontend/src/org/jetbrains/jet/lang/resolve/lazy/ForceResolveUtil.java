@@ -37,9 +37,7 @@ public class ForceResolveUtil {
     private ForceResolveUtil() {}
 
     public static <T extends DeclarationDescriptor> T forceResolveAllContents(@NotNull T descriptor) {
-        LOG.debug("descriptor: " + descriptor);
         doForceResolveAllContents(descriptor);
-        LOG.debug("<<< " + descriptor);
         return descriptor;
     }
 
@@ -60,9 +58,7 @@ public class ForceResolveUtil {
     }
 
     public static void forceResolveAllContents(@NotNull TypeConstructor typeConstructor) {
-        LOG.debug("descriptor: " + typeConstructor);
         doForceResolveAllContents(typeConstructor);
-        LOG.debug("<<< " + typeConstructor);
     }
 
     public static void forceResolveAllContents(@NotNull Annotations annotations) {
