@@ -18,9 +18,7 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
-import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory;
-import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.CreateClassFromTypeReferenceActionFactory;
-import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.CreateClassFromReferenceExpressionActionFactory;
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.*;
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createFunction.*;
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createVariable.*;
 
@@ -277,5 +275,6 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromTypeReferenceActionFactory.INSTANCE$);
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromReferenceExpressionActionFactory.INSTANCE$);
+        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromCallWithConstructorCalleeActionFactory.INSTANCE$);
     }
 }

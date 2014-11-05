@@ -401,13 +401,14 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                     psiFactory.createEnumEntry("$name ${if (hasParameters) ": ${targetParent.getName()}()" else ""}")
                                 }
                                 else -> {
+                                    val openMod = if (open) "open " else ""
                                     val innerMod = if (inner) "inner " else ""
                                     val typeParamList = when (kind) {
                                         ClassKind.PLAIN_CLASS, ClassKind.TRAIT -> "<>"
                                         else -> ""
                                     }
                                     psiFactory.createDeclaration<JetClassOrObject>(
-                                            "$innerMod${kind.keyword} $name$typeParamList$paramList$returnTypeString $classBody"
+                                            "$openMod$innerMod${kind.keyword} $name$typeParamList$paramList$returnTypeString $classBody"
                                     )
                                 }
                             }

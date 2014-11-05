@@ -53,6 +53,7 @@ public class ClassInfo(
         val targetParent: PsiElement,
         val expectedTypeInfo: TypeInfo,
         val inner: Boolean = false,
+        val open: Boolean = false,
         val typeArguments: List<TypeInfo> = Collections.emptyList(),
         val parameterInfos: List<ParameterInfo> = Collections.emptyList()
 )
