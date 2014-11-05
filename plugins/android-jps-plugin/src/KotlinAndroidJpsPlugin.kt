@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.android.AndroidCommandLineProcessor
 import org.jetbrains.jet.utils.PathUtil
 
 public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
+    private val jarFileName = "android-compiler-plugin.jar"
+
     override fun getExtraArguments(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
         val module = moduleBuildTarget.getModule()
         return listOf(
@@ -36,8 +38,16 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     }
 
     override fun getClasspath(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
+        val inJar = PathUtil.getJarPathForClass(javaClass).isFile()
         return listOf(
-                File(PathUtil.getJarPathForClass(javaClass).getParentFile().getParentFile(), "android-compiler-plugin.jar").getAbsolutePath()
+            if (inJar) {
+                val libDirectory = PathUtil.getJarPathForClass(javaClass).getParentFile().getParentFile()
+                File(libDirectory, jarFileName).getAbsolutePath()
+            } else {
+                // We're in tests now (in out/production/android-jps-plugin)
+                val kotlinProjectDirectory = PathUtil.getJarPathForClass(javaClass).getParentFile().getParentFile().getParentFile()
+                File(kotlinProjectDirectory, "dist/kotlinc/lib/$jarFileName").getAbsolutePath()
+            }
         )
     }
 
