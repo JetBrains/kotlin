@@ -1209,8 +1209,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return StackValue.none();
         }
         else {
-            Type type = expressionType(expression);
-            Type targetType = type.equals(UNIT_TYPE) ? type : OBJECT_TYPE;
+            Type targetType = expressionType(ifExpression);
 
             gen(expression, targetType);
 
