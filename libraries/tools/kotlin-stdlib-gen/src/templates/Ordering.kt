@@ -80,7 +80,7 @@ fun ordering(): List<GenericFunction> {
         body {
             """
             val sortedList = toArrayList()
-            val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> -x.compareTo(y) }
+            val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> y.compareTo(x) }
             java.util.Collections.sort(sortedList, sortBy)
             return sortedList
             """
@@ -150,7 +150,7 @@ fun ordering(): List<GenericFunction> {
         body {
             """
             val sortedList = toArrayList()
-            val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> -order(x).compareTo(order(y)) }
+            val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> order(y).compareTo(order(x)) }
             java.util.Collections.sort(sortedList, sortBy)
             return sortedList
             """
