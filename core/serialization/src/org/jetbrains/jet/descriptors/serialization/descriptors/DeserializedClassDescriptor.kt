@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,516 +14,398 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.descriptors.serialization.descriptors;
+package org.jetbrains.jet.descriptors.serialization.descriptors
 
-import kotlin.Function0;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.ClassData;
-import org.jetbrains.jet.descriptors.serialization.Flags;
-import org.jetbrains.jet.descriptors.serialization.NameResolver;
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
-import org.jetbrains.jet.descriptors.serialization.context.ContextPackage;
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationContextWithTypes;
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.impl.AbstractClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorFactory;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
-import org.jetbrains.jet.lang.resolve.name.ClassId;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass;
-import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
-import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.NullableLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.jet.descriptors.serialization.ClassData
+import org.jetbrains.jet.descriptors.serialization.Flags
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf
+import org.jetbrains.jet.descriptors.serialization.context.*
+import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.jet.lang.descriptors.impl.AbstractClassDescriptor
+import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.jet.lang.resolve.DescriptorFactory
+import org.jetbrains.jet.lang.resolve.OverridingUtil
+import org.jetbrains.jet.lang.resolve.name.ClassId
+import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass
+import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
+import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.types.TypeConstructor
+import org.jetbrains.jet.storage.MemoizedFunctionToNullable
+import org.jetbrains.jet.storage.NotNullLazyValue
+import org.jetbrains.jet.storage.NullableLazyValue
 
-import java.util.*;
+import java.util.*
 
-import static org.jetbrains.jet.descriptors.serialization.SerializationPackage.*;
-import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
+import org.jetbrains.jet.descriptors.serialization
+import org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName
+import org.jetbrains.jet.descriptors.serialization.classKind
 
-public class DeserializedClassDescriptor extends AbstractClassDescriptor implements ClassDescriptor {
 
-    private final ClassId classId;
-    private final ProtoBuf.Class classProto;
-    private final DeserializedMemberScope memberScope;
+public fun DeserializedClassDescriptor(globalContext: DeserializationGlobalContext, classData: ClassData): DeserializedClassDescriptor {
+    return DeserializedClassDescriptor(globalContext.withNameResolver(classData.getNameResolver()), classData.getClassProto())
+}
 
-    private final NullableLazyValue<ConstructorDescriptor> primaryConstructor;
+public class DeserializedClassDescriptor(outerContext: DeserializationContext, private val classProto: ProtoBuf.Class) : AbstractClassDescriptor(outerContext.storageManager, outerContext.nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName()), ClassDescriptor {
 
-    private final NotNullLazyValue<Annotations> annotations;
+    private val classId: ClassId
+    private val memberScope: DeserializedMemberScope
 
-    private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
-    private final NestedClassDescriptors nestedClasses;
-    private final JetScope staticScope = new StaticScopeForKotlinClass(this);
+    private val primaryConstructor: NullableLazyValue<ConstructorDescriptor>
 
-    private final NotNullLazyValue<DeclarationDescriptor> containingDeclaration;
-    private final DeserializedClassTypeConstructor typeConstructor;
-    private final Modality modality;
-    private final Visibility visibility;
-    private final ClassKind kind;
-    private final boolean isInner;
-    private final DeserializationContextWithTypes context;
+    private val annotations: NotNullLazyValue<Annotations>
 
-    public DeserializedClassDescriptor(@NotNull DeserializationGlobalContext globalContext, @NotNull ClassData classData) {
-        this(globalContext.withNameResolver(classData.getNameResolver()), classData.getClassProto());
+    private val classObjectDescriptor: NullableLazyValue<ClassDescriptor>
+    private val nestedClasses: NestedClassDescriptors
+    private val staticScope = StaticScopeForKotlinClass(this)
+
+    private val containingDeclaration: NotNullLazyValue<DeclarationDescriptor>
+    private val typeConstructor: DeserializedClassTypeConstructor
+    private val modality: Modality
+    private val visibility: Visibility
+    private val kind: ClassKind
+    private val isInner: Boolean
+    private val context: DeserializationContextWithTypes
+
+    {
+        this.classId = outerContext.nameResolver.getClassId(classProto.getFqName())
+
+        val typeParameters = ArrayList<TypeParameterDescriptor>(classProto.getTypeParameterCount())
+        this.context = outerContext.withTypes(this).childContext(this, classProto.getTypeParameterList(), typeParameters)
+
+        this.containingDeclaration = outerContext.storageManager.createLazyValue<DeclarationDescriptor>(object : Function0<DeclarationDescriptor> {
+            override fun invoke(): DeclarationDescriptor {
+                return computeContainingDeclaration()
+            }
+        })
+
+        this.typeConstructor = DeserializedClassTypeConstructor(typeParameters)
+        this.memberScope = DeserializedClassMemberScope()
+
+        val flags = classProto.getFlags()
+        this.modality = serialization.modality(Flags.MODALITY.get(flags))
+        this.visibility = serialization.visibility(Flags.VISIBILITY.get(flags))
+        this.kind = classKind(Flags.CLASS_KIND.get(flags))
+        this.isInner = Flags.INNER.get(flags)
+
+        this.annotations = context.storageManager.createLazyValue<Annotations> { computeAnnotations() }
+
+        this.primaryConstructor = context.storageManager.createNullableLazyValue<ConstructorDescriptor> { computePrimaryConstructor() }
+
+        this.classObjectDescriptor = context.storageManager.createNullableLazyValue<ClassDescriptor> { computeClassObjectDescriptor() }
+
+        this.nestedClasses = NestedClassDescriptors()
     }
 
-    public DeserializedClassDescriptor(@NotNull DeserializationContext outerContext, @NotNull ProtoBuf.Class classProto) {
-        super(outerContext.getStorageManager(),
-              outerContext.getNameResolver().getClassId(classProto.getFqName()).getRelativeClassName().shortName());
-        this.classProto = classProto;
-        this.classId = outerContext.getNameResolver().getClassId(classProto.getFqName());
-
-        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(classProto.getTypeParameterCount());
-        this.context = outerContext.withTypes(this).childContext(this, classProto.getTypeParameterList(), typeParameters);
-
-        this.containingDeclaration = outerContext.getStorageManager().createLazyValue(new Function0<DeclarationDescriptor>() {
-            @Override
-            public DeclarationDescriptor invoke() {
-                return computeContainingDeclaration();
-            }
-        });
-
-        this.typeConstructor = new DeserializedClassTypeConstructor(typeParameters);
-        this.memberScope = new DeserializedClassMemberScope();
-
-        int flags = classProto.getFlags();
-        this.modality = modality(Flags.MODALITY.get(flags));
-        this.visibility = visibility(Flags.VISIBILITY.get(flags));
-        this.kind = classKind(Flags.CLASS_KIND.get(flags));
-        this.isInner = Flags.INNER.get(flags);
-
-        this.annotations = context.getStorageManager().createLazyValue(new Function0<Annotations>() {
-            @Override
-            public Annotations invoke() {
-                return computeAnnotations();
-            }
-        });
-
-        this.primaryConstructor = context.getStorageManager().createNullableLazyValue(new Function0<ConstructorDescriptor>() {
-            @Override
-            public ConstructorDescriptor invoke() {
-                return computePrimaryConstructor();
-            }
-        });
-
-        this.classObjectDescriptor = context.getStorageManager().createNullableLazyValue(new Function0<ClassDescriptor>() {
-            @Override
-            public ClassDescriptor invoke() {
-                return computeClassObjectDescriptor();
-            }
-        });
-
-        this.nestedClasses = new NestedClassDescriptors();
+    override fun getContainingDeclaration(): DeclarationDescriptor {
+        return containingDeclaration.invoke()
     }
 
-    @NotNull
-    @Override
-    public DeclarationDescriptor getContainingDeclaration() {
-        return containingDeclaration.invoke();
-    }
-
-    @NotNull
-    private DeclarationDescriptor computeContainingDeclaration() {
+    private fun computeContainingDeclaration(): DeclarationDescriptor {
         if (classId.isTopLevelClass()) {
-            List<PackageFragmentDescriptor> fragments =
-                    context.getPackageFragmentProvider().getPackageFragments(classId.getPackageFqName());
-            assert fragments.size() == 1 : "there should be exactly one package: " + fragments + ", class id is " + classId;
-            return fragments.iterator().next();
+            val fragments = context.packageFragmentProvider.getPackageFragments(classId.getPackageFqName())
+            assert(fragments.size() == 1) { "there should be exactly one package: " + fragments + ", class id is " + classId }
+            return fragments.iterator().next()
         }
         else {
-            ClassDescriptor result = ContextPackage.deserializeClass(context, classId.getOuterClassId());
-            return result != null ? result : ErrorUtils.getErrorModule();
+            return context.deserializeClass(classId.getOuterClassId()) ?: ErrorUtils.getErrorModule()
         }
     }
 
-    @NotNull
-    @Override
-    public TypeConstructor getTypeConstructor() {
-        return typeConstructor;
+    override fun getTypeConstructor(): TypeConstructor {
+        return typeConstructor
     }
 
 
-    @NotNull
-    @Override
-    public ClassKind getKind() {
-        return kind;
+    override fun getKind(): ClassKind {
+        return kind
     }
 
-    @NotNull
-    @Override
-    public Modality getModality() {
-        return modality;
+    override fun getModality(): Modality {
+        return modality
     }
 
-    @NotNull
-    @Override
-    public Visibility getVisibility() {
-        return visibility;
+    override fun getVisibility(): Visibility {
+        return visibility
     }
 
-    @Override
-    public boolean isInner() {
-        return isInner;
+    override fun isInner(): Boolean {
+        return isInner
     }
 
-    private Annotations computeAnnotations() {
+    private fun computeAnnotations(): Annotations {
         if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
-            return Annotations.EMPTY;
+            return Annotations.EMPTY
         }
-        return context.getAnnotationLoader().loadClassAnnotations(this, classProto);
+        return context.annotationLoader.loadClassAnnotations(this, classProto)
     }
 
-    @NotNull
-    @Override
-    public Annotations getAnnotations() {
-        return annotations.invoke();
+    override fun getAnnotations(): Annotations {
+        return annotations.invoke()
     }
 
-    @NotNull
-    @Override
-    protected JetScope getScopeForMemberLookup() {
-        return memberScope;
+    override fun getScopeForMemberLookup(): JetScope {
+        return memberScope
     }
 
-    @NotNull
-    @Override
-    public JetScope getStaticScope() {
-        return staticScope;
+    override fun getStaticScope(): JetScope {
+        return staticScope
     }
 
-    @Nullable
-    private ConstructorDescriptor computePrimaryConstructor() {
-        if (!classProto.hasPrimaryConstructor()) return null;
+    private fun computePrimaryConstructor(): ConstructorDescriptor? {
+        if (!classProto.hasPrimaryConstructor()) return null
 
-        ProtoBuf.Class.PrimaryConstructor constructorProto = classProto.getPrimaryConstructor();
+        val constructorProto = classProto.getPrimaryConstructor()
         if (!constructorProto.hasData()) {
-            ConstructorDescriptorImpl descriptor = DescriptorFactory.createPrimaryConstructorForObject(this, SourceElement.NO_SOURCE);
-            descriptor.setReturnType(getDefaultType());
-            return descriptor;
+            val descriptor = DescriptorFactory.createPrimaryConstructorForObject(this, SourceElement.NO_SOURCE)
+            descriptor.setReturnType(getDefaultType())
+            return descriptor
         }
 
-        return (ConstructorDescriptor) context.getDeserializer().loadCallable(constructorProto.getData());
+        return context.deserializer.loadCallable(constructorProto.getData()) as ConstructorDescriptor
     }
 
-    @Nullable
-    @Override
-    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
-        return primaryConstructor.invoke();
+    override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? {
+        return primaryConstructor.invoke()
     }
 
-    @NotNull
-    @Override
-    public Collection<ConstructorDescriptor> getConstructors() {
-        ConstructorDescriptor constructor = getUnsubstitutedPrimaryConstructor();
+    override fun getConstructors(): Collection<ConstructorDescriptor> {
+        val constructor = getUnsubstitutedPrimaryConstructor()
         if (constructor == null) {
-            return Collections.emptyList();
+            return listOf()
         }
         // TODO: other constructors
-        return Collections.singletonList(constructor);
+        return listOf(constructor)
     }
 
-    @Nullable
-    private ClassDescriptor computeClassObjectDescriptor() {
+    private fun computeClassObjectDescriptor(): ClassDescriptor? {
         if (!classProto.hasClassObject()) {
-            return null;
+            return null
         }
 
         if (getKind() == ClassKind.OBJECT) {
-            ProtoBuf.Class.ClassObject classObjectProto = classProto.getClassObject();
+            val classObjectProto = classProto.getClassObject()
             if (!classObjectProto.hasData()) {
-                throw new IllegalStateException("Object should have a serialized class object: " + classId);
+                throw IllegalStateException("Object should have a serialized class object: " + classId)
             }
 
-            return new DeserializedClassDescriptor(context, classObjectProto.getData());
+            return DeserializedClassDescriptor(context, classObjectProto.getData())
         }
 
-        return ContextPackage.deserializeClass(context, classId.createNestedClassId(getClassObjectName(getName())));
+        return context.deserializeClass(classId.createNestedClassId(getClassObjectName(getName())))
     }
 
-    @Nullable
-    @Override
-    public ClassDescriptor getClassObjectDescriptor() {
-        return classObjectDescriptor.invoke();
+    override fun getClassObjectDescriptor(): ClassDescriptor? {
+        return classObjectDescriptor.invoke()
     }
 
-    private Collection<JetType> computeSuperTypes() {
-        List<JetType> supertypes = new ArrayList<JetType>(classProto.getSupertypeCount());
-        for (ProtoBuf.Type supertype : classProto.getSupertypeList()) {
-            supertypes.add(context.getTypeDeserializer().type(supertype));
+    private fun computeSuperTypes(): Collection<JetType> {
+        val supertypes = ArrayList<JetType>(classProto.getSupertypeCount())
+        for (supertype in classProto.getSupertypeList()) {
+            supertypes.add(context.typeDeserializer.`type`(supertype))
         }
-        return supertypes;
+        return supertypes
     }
 
-    @Override
-    public String toString() {
+    override fun toString(): String {
         // not using descriptor render to preserve laziness
-        return "deserialized class " + getName().toString();
+        return "deserialized class " + getName().toString()
     }
 
-    @NotNull
-    @Override
-    public SourceElement getSource() {
-        return SourceElement.NO_SOURCE;
+    override fun getSource(): SourceElement {
+        return SourceElement.NO_SOURCE
     }
 
-    private class DeserializedClassTypeConstructor extends AbstractClassTypeConstructor {
-        private final Collection<JetType> supertypes = computeSuperTypes();
-        private final List<TypeParameterDescriptor> parameters;
+    private inner class DeserializedClassTypeConstructor(private val parameters: List<TypeParameterDescriptor>) : AbstractClassTypeConstructor() {
+        private val supertypes = computeSuperTypes()
 
-        public DeserializedClassTypeConstructor(@NotNull List<TypeParameterDescriptor> typeParameters) {
-            parameters = typeParameters;
+        override fun getParameters(): List<TypeParameterDescriptor> {
+            return parameters
         }
 
-        @NotNull
-        @Override
-        public List<TypeParameterDescriptor> getParameters() {
-            return parameters;
-        }
-
-        @NotNull
-        @Override
-        public Collection<JetType> getSupertypes() {
+        override fun getSupertypes(): Collection<JetType> {
             // We cannot have error supertypes because subclasses inherit error functions from them
             // Filtering right away means copying the list every time, so we check for the rare condition first, and only then filter
-            for (JetType supertype : supertypes) {
+            for (supertype in supertypes) {
                 if (supertype.isError()) {
-                    return KotlinPackage.filter(supertypes, new Function1<JetType, Boolean>() {
-                        @Override
-                        public Boolean invoke(JetType type) {
-                            return !type.isError();
-                        }
-                    });
+                    return supertypes.filter { !it.isError() }
                 }
             }
-            return supertypes;
+            return supertypes
         }
 
-        @Override
-        public boolean isFinal() {
-            return !getModality().isOverridable();
+        override fun isFinal(): Boolean {
+            return !getModality().isOverridable()
         }
 
-        @Override
-        public boolean isDenotable() {
-            return true;
+        override fun isDenotable(): Boolean {
+            return true
         }
 
-        @Nullable
-        @Override
-        public ClassifierDescriptor getDeclarationDescriptor() {
-            return DeserializedClassDescriptor.this;
+        override fun getDeclarationDescriptor(): ClassifierDescriptor? {
+            return this@DeserializedClassDescriptor
         }
 
-        @NotNull
-        @Override
-        public Annotations getAnnotations() {
-            return Annotations.EMPTY; // TODO
+        override fun getAnnotations(): Annotations {
+            return Annotations.EMPTY // TODO
         }
 
-        @Override
-        public String toString() {
-            return getName().toString();
+        override fun toString(): String {
+            return getName().toString()
         }
     }
 
-    private class DeserializedClassMemberScope extends DeserializedMemberScope {
-        private final DeserializedClassDescriptor classDescriptor;
+    private inner class DeserializedClassMemberScope : DeserializedMemberScope(context, this@DeserializedClassDescriptor.classProto.getMemberList()) {
+        private val classDescriptor: DeserializedClassDescriptor
 
-        public DeserializedClassMemberScope() {
-            super(context, DeserializedClassDescriptor.this.classProto.getMemberList());
-            this.classDescriptor = DeserializedClassDescriptor.this;
+        {
+            this.classDescriptor = this@DeserializedClassDescriptor
         }
 
-        @Override
-        protected void computeNonDeclaredFunctions(
-                @NotNull Name name, @NotNull Collection<FunctionDescriptor> functions
-        ) {
-            Collection<FunctionDescriptor> fromSupertypes = new ArrayList<FunctionDescriptor>();
-            for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-                fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name));
+        override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<FunctionDescriptor>) {
+            val fromSupertypes = ArrayList<FunctionDescriptor>()
+            for (supertype in classDescriptor.getTypeConstructor().getSupertypes()) {
+                fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name))
             }
-            generateFakeOverrides(name, fromSupertypes, functions);
+            generateFakeOverrides(name, fromSupertypes, functions)
         }
 
-        @Override
-        protected void computeNonDeclaredProperties(
-                @NotNull Name name, @NotNull Collection<PropertyDescriptor> property
-        ) {
-            Collection<PropertyDescriptor> fromSupertypes = new ArrayList<PropertyDescriptor>();
-            for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-                //noinspection unchecked
-                fromSupertypes.addAll((Collection) supertype.getMemberScope().getProperties(name));
+        override fun computeNonDeclaredProperties(name: Name, property: MutableCollection<PropertyDescriptor>) {
+            val fromSupertypes = ArrayList<PropertyDescriptor>()
+            for (supertype in classDescriptor.getTypeConstructor().getSupertypes()) {
+                [suppress("UNCHECKED_CAST")]
+                fromSupertypes.addAll(supertype.getMemberScope().getProperties(name) as Collection<PropertyDescriptor>)
             }
-            generateFakeOverrides(name, fromSupertypes, property);
+            generateFakeOverrides(name, fromSupertypes, property)
         }
 
-        private <D extends CallableMemberDescriptor> void generateFakeOverrides(
-                @NotNull Name name,
-                @NotNull Collection<D> fromSupertypes,
-                @NotNull final Collection<D> result
-        ) {
-            List<CallableMemberDescriptor> fromCurrent = new ArrayList<CallableMemberDescriptor>(result);
-            OverridingUtil.generateOverridesInFunctionGroup(
-                    name,
-                    fromSupertypes,
-                    fromCurrent,
-                    classDescriptor,
-                    new OverridingUtil.DescriptorSink() {
-                        @Override
-                        public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                            // TODO: report "cannot infer visibility"
-                            OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null);
-                            //noinspection unchecked
-                            result.add((D) fakeOverride);
-                        }
+        private fun <D : CallableMemberDescriptor> generateFakeOverrides(name: Name, fromSupertypes: Collection<D>, result: MutableCollection<D>) {
+            val fromCurrent = ArrayList<CallableMemberDescriptor>(result)
+            OverridingUtil.generateOverridesInFunctionGroup(name, fromSupertypes, fromCurrent, classDescriptor, object : OverridingUtil.DescriptorSink {
+                override fun addToScope(fakeOverride: CallableMemberDescriptor) {
+                    // TODO: report "cannot infer visibility"
+                    OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null)
+                    [suppress("UNCHECKED_CAST")]
+                    result.add(fakeOverride as D)
+                }
 
-                        @Override
-                        public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                            // TODO report conflicts
-                        }
-                    }
-            );
+                override fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor) {
+                    // TODO report conflicts
+                }
+            })
         }
 
-        @Override
-        protected void addNonDeclaredDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
-            for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-                for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
-                    if (descriptor instanceof FunctionDescriptor) {
-                        result.addAll(getFunctions(descriptor.getName()));
+        override fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>) {
+            for (supertype in classDescriptor.getTypeConstructor().getSupertypes()) {
+                for (descriptor in supertype.getMemberScope().getAllDescriptors()) {
+                    if (descriptor is FunctionDescriptor) {
+                        result.addAll(getFunctions(descriptor.getName()))
                     }
-                    else if (descriptor instanceof PropertyDescriptor) {
-                        result.addAll(getProperties(descriptor.getName()));
+                    else if (descriptor is PropertyDescriptor) {
+                        result.addAll(getProperties(descriptor.getName()))
                     }
                     // Nothing else is inherited
                 }
             }
         }
 
-        @Nullable
-        @Override
-        protected ReceiverParameterDescriptor getImplicitReceiver() {
-            return classDescriptor.getThisAsReceiverParameter();
+        override fun getImplicitReceiver(): ReceiverParameterDescriptor? {
+            return classDescriptor.getThisAsReceiverParameter()
         }
 
-        @Nullable
-        @Override
-        protected ClassifierDescriptor getClassDescriptor(@NotNull Name name) {
-            return classDescriptor.nestedClasses.findClass.invoke(name);
+        override fun getClassDescriptor(name: Name): ClassifierDescriptor? {
+            return classDescriptor.nestedClasses.findClass.invoke(name)
         }
 
-        @Override
-        protected void addAllClassDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
-            result.addAll(classDescriptor.nestedClasses.getAllDescriptors());
+        override fun addAllClassDescriptors(result: MutableCollection<DeclarationDescriptor>) {
+            result.addAll(classDescriptor.nestedClasses.getAllDescriptors())
         }
     }
 
-    private class NestedClassDescriptors {
-        private final Set<Name> nestedClassNames;
-        private final MemoizedFunctionToNullable<Name, ClassDescriptor> findClass;
-        private final Set<Name> enumEntryNames;
+    private inner class NestedClassDescriptors {
+        private val nestedClassNames: Set<Name>
+        val findClass: MemoizedFunctionToNullable<Name, ClassDescriptor>
+        private val enumEntryNames: Set<Name>
 
-        public NestedClassDescriptors() {
-            this.nestedClassNames = nestedClassNames();
-            this.enumEntryNames = enumEntryNames();
+        {
+            this.nestedClassNames = nestedClassNames()
+            this.enumEntryNames = enumEntryNames()
 
-            final StorageManager storageManager = context.getStorageManager();
-            final NotNullLazyValue<Collection<Name>> enumMemberNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
-                @Override
-                public Collection<Name> invoke() {
-                    return computeEnumMemberNames();
+            val storageManager = context.storageManager
+            val enumMemberNames = storageManager.createLazyValue<Collection<Name>>(object : Function0<Collection<Name>> {
+                override fun invoke(): Collection<Name> {
+                    return computeEnumMemberNames()
                 }
-            });
+            })
 
-            this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function1<Name, ClassDescriptor>() {
-                @Override
-                public ClassDescriptor invoke(Name name) {
-                    if (enumEntryNames.contains(name)) {
-                        return EnumEntrySyntheticClassDescriptor
-                                .create(storageManager, DeserializedClassDescriptor.this, name, enumMemberNames, SourceElement.NO_SOURCE);
-                    }
-                    if (nestedClassNames.contains(name)) {
-                        return ContextPackage.deserializeClass(context, classId.createNestedClassId(name));
-                    }
-                    return null;
+            this.findClass = storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> { name ->
+                if (enumEntryNames.contains(name)) {
+                    EnumEntrySyntheticClassDescriptor.create(storageManager, this@DeserializedClassDescriptor, name, enumMemberNames, SourceElement.NO_SOURCE)
                 }
-            });
-        }
-
-        @NotNull
-        private Set<Name> nestedClassNames() {
-            Set<Name> result = new HashSet<Name>();
-            NameResolver nameResolver = context.getNameResolver();
-            for (Integer index : classProto.getNestedClassNameList()) {
-                result.add(nameResolver.getName(index));
+                else if (nestedClassNames.contains(name)) {
+                    context.deserializeClass(classId.createNestedClassId(name))
+                }
+                else {
+                    null
+                }
             }
-            return result;
         }
 
-        @NotNull
-        private Set<Name> enumEntryNames() {
+        private fun nestedClassNames(): Set<Name> {
+            val result = HashSet<Name>()
+            val nameResolver = context.nameResolver
+            for (index in classProto.getNestedClassNameList()) {
+                result.add(nameResolver.getName(index!!))
+            }
+            return result
+        }
+
+        private fun enumEntryNames(): Set<Name> {
             if (getKind() != ClassKind.ENUM_CLASS) {
-                return Collections.emptySet();
+                return setOf()
             }
 
-            Set<Name> result = new HashSet<Name>();
-            NameResolver nameResolver = context.getNameResolver();
-            for (Integer index : classProto.getEnumEntryList()) {
-                result.add(nameResolver.getName(index));
+            val result = HashSet<Name>()
+            val nameResolver = context.nameResolver
+            for (index in classProto.getEnumEntryList()) {
+                result.add(nameResolver.getName(index!!))
             }
-            return result;
+            return result
         }
 
-        @NotNull
-        private Collection<Name> computeEnumMemberNames() {
-            Collection<Name> result = new HashSet<Name>();
+        private fun computeEnumMemberNames(): Collection<Name> {
+            val result = HashSet<Name>()
 
-            for (JetType supertype : getTypeConstructor().getSupertypes()) {
-                for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
-                    if (descriptor instanceof SimpleFunctionDescriptor || descriptor instanceof PropertyDescriptor) {
-                        result.add(descriptor.getName());
+            for (supertype in getTypeConstructor().getSupertypes()) {
+                for (descriptor in supertype.getMemberScope().getAllDescriptors()) {
+                    if (descriptor is SimpleFunctionDescriptor || descriptor is PropertyDescriptor) {
+                        result.add(descriptor.getName())
                     }
                 }
             }
 
-            final NameResolver nameResolver = context.getNameResolver();
-            return KotlinPackage.mapTo(classProto.getMemberList(), result, new Function1<ProtoBuf.Callable, Name>() {
-                @Override
-                public Name invoke(@NotNull ProtoBuf.Callable callable) {
-                    return nameResolver.getName(callable.getName());
-                }
-            });
+            val nameResolver = context.nameResolver
+            return classProto.getMemberList().mapTo(result) { nameResolver.getName(it.getName()) }
         }
 
-        @NotNull
-        public Collection<ClassDescriptor> getAllDescriptors() {
-            Collection<ClassDescriptor> result = new ArrayList<ClassDescriptor>(nestedClassNames.size() + enumEntryNames.size());
-            for (Name name : nestedClassNames) {
-                ClassDescriptor descriptor = findClass.invoke(name);
+        public fun getAllDescriptors(): Collection<ClassDescriptor> {
+            val result = ArrayList<ClassDescriptor>(nestedClassNames.size() + enumEntryNames.size())
+            for (name in nestedClassNames) {
+                val descriptor = findClass.invoke(name)
                 if (descriptor != null) {
-                    result.add(descriptor);
+                    result.add(descriptor)
                 }
             }
-            for (Name name : enumEntryNames) {
-                ClassDescriptor descriptor = findClass.invoke(name);
+            for (name in enumEntryNames) {
+                val descriptor = findClass.invoke(name)
                 if (descriptor != null) {
-                    result.add(descriptor);
+                    result.add(descriptor)
                 }
             }
-            return result;
+            return result
         }
     }
 }
