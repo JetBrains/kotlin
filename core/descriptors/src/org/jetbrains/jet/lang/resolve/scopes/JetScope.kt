@@ -65,7 +65,7 @@ public trait JetScope {
      */
     public fun printScopeStructure(p: Printer)
 
-    object Empty : JetScopeImpl() {
+    public object Empty : JetScopeImpl() {
         override fun getContainingDeclaration(): DeclarationDescriptor {
             throw UnsupportedOperationException("Don't take containing declaration of the Empty scope")
         }
