@@ -18,13 +18,13 @@ native public trait DocumentEvent {
 }
 
 native public trait Event {
-    public val type: String
     public val bubbles: Boolean
     public val cancelable: Boolean
     public val currentTarget: EventTarget
     public val eventPhase: Short
     public val target: EventTarget
     public val timeStamp: Long
+    public val type: String
     public fun initEvent(arg1: String?, arg2: Boolean, arg3: Boolean): Unit = noImpl
     public fun preventDefault(): Unit = noImpl
     public fun stopPropagation(): Unit = noImpl
