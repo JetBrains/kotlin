@@ -151,6 +151,7 @@ public interface JetTokens {
     JetModifierKeywordToken OUT_KEYWORD       = JetModifierKeywordToken.softKeywordModifier("out");
     JetModifierKeywordToken VARARG_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("vararg");
     JetModifierKeywordToken REIFIED_KEYWORD   = JetModifierKeywordToken.softKeywordModifier("reified");
+    JetModifierKeywordToken DYNAMIC_KEYWORD   = JetModifierKeywordToken.softKeywordModifier("dynamic");
 
     JetKeywordToken FINALLY_KEYWORD   = JetKeywordToken.softKeyword("finally");
     JetModifierKeywordToken FINAL_KEYWORD     = JetModifierKeywordToken.softKeywordModifier("final");
@@ -167,7 +168,8 @@ public interface JetTokens {
     TokenSet SOFT_KEYWORDS = TokenSet.create(FILE_KEYWORD, IMPORT_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, GET_KEYWORD,
                                              SET_KEYWORD, ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, ANNOTATION_KEYWORD,
                                              OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD,
-                                             CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD
+                                             CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD,
+                                             DYNAMIC_KEYWORD
     );
 
     /*

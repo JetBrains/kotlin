@@ -166,6 +166,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("DynamicSoftKeyword.kt")
+        public void testDynamicSoftKeyword() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DynamicSoftKeyword.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("DynamicTypes.kt")
+        public void testDynamicTypes() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DynamicTypes.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("EOLsInComments.kt")
         public void testEOLsInComments() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EOLsInComments.kt");

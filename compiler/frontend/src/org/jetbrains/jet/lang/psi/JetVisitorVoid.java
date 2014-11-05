@@ -329,6 +329,10 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
         super.visitUserType(type, null);
     }
 
+    public void visitDynamicType(@NotNull JetDynamicType type) {
+        super.visitDynamicType(type, null);
+    }
+
     public void visitFunctionType(@NotNull JetFunctionType type) {
         super.visitFunctionType(type, null);
     }
@@ -869,6 +873,12 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
     @Override
     public final Void visitUserType(@NotNull JetUserType type, Void data) {
         visitUserType(type);
+        return null;
+    }
+
+    @Override
+    public Void visitDynamicType(@NotNull JetDynamicType type, Void data) {
+        visitDynamicType(type);
         return null;
     }
 

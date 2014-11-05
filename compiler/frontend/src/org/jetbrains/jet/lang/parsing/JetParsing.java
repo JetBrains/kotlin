@@ -53,7 +53,7 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet PACKAGE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
     private static final TokenSet IMPORT_RECOVERY_SET = TokenSet.create(AS_KEYWORD, DOT, EOL_OR_SEMICOLON);
-    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, CAPITALIZED_THIS_KEYWORD, HASH);
+    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, CAPITALIZED_THIS_KEYWORD, HASH, DYNAMIC_KEYWORD);
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
     private static final TokenSet VALUE_PARAMETER_FIRST =
             TokenSet.orSet(TokenSet.create(IDENTIFIER, LBRACKET, VAL_KEYWORD, VAR_KEYWORD), MODIFIER_KEYWORDS);
@@ -1501,6 +1501,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : userType
      *   : tupleType
      *   : nullableType
+     *   : "dynamic"
      *   ;
      *
      * nullableType
@@ -1525,7 +1526,13 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker typeRefMarker = mark();
         parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
 
-        if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
+        IElementType lookahead = lookahead(1);
+        if (at(IDENTIFIER) && lookahead(1) != DOT && lookahead != LT && lookahead != LPAR && at(DYNAMIC_KEYWORD)) {
+            PsiBuilder.Marker dynamicType = mark();
+            advance(); // DYNAMIC_KEYWORD
+            dynamicType.done(DYNAMIC_TYPE);
+        }
+        else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
             parseUserType();
         }
         else if (at(HASH)) {

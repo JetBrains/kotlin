@@ -338,6 +338,10 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitTypeElement(type, data);
     }
 
+    public R visitDynamicType(@NotNull JetDynamicType type, D data) {
+        return visitTypeElement(type, data);
+    }
+
     public R visitFunctionType(@NotNull JetFunctionType type, D data) {
         return visitTypeElement(type, data);
     }
