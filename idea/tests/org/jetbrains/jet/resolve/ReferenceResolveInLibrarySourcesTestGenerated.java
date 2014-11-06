@@ -47,4 +47,16 @@ public class ReferenceResolveInLibrarySourcesTestGenerated extends AbstractRefer
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/inLibrarySource.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("toFunParameter.kt")
+    public void testToFunParameter() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/toFunParameter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("toLocalFun.kt")
+    public void testToLocalFun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/toLocalFun.kt");
+        doTest(fileName);
+    }
 }
