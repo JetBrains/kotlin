@@ -3141,7 +3141,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (callable instanceof IntrinsicMethod) {
                 StackValue value = gen(lhs);              // receiver
                 value = StackValue.complexReceiver(value, StackValue.RECEIVER_WRITE, StackValue.RECEIVER_READ);
-                //value.putWriteReadReceiver(v);                     // receiver receiver
+
                 value.put(lhsType, v);                    // receiver lhs
                 Type returnType = typeMapper.mapType(descriptor);
                 StackValue rightSide = ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
@@ -3222,7 +3222,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Override
     public StackValue visitPrefixExpression(@NotNull JetPrefixExpression expression, StackValue receiver) {
         DeclarationDescriptor originalOperation = bindingContext.get(REFERENCE_TARGET, expression.getOperationReference());
-        final ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(expression, bindingContext);
+        ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(expression, bindingContext);
         CallableDescriptor op = resolvedCall.getResultingDescriptor();
 
         assert op instanceof FunctionDescriptor || originalOperation == null : String.valueOf(op);
@@ -3239,24 +3239,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return invokeFunction(resolvedCall, receiver);
         }
 
-        final Type type = expressionType(expression.getBaseExpression());
-        final StackValue value = genLazy(expression.getBaseExpression(), type);
+        Type type = expressionType(expression.getBaseExpression());
+        StackValue value = genLazy(expression.getBaseExpression(), type);
 
-        return new OperationStackValue(type, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                StackValue valueWithReceiversOnStack = StackValue.complexReceiver(value, StackValue.RECEIVER_WRITE, StackValue.RECEIVER_READ);
-                //valueWithReceiversOnStack.putWriteReadReceiver(v);
-                valueWithReceiversOnStack.put(type, v);
-
-                StackValue result = invokeFunction(resolvedCall, StackValue.onStack(type));
-                result.put(type, v);
-
-                valueWithReceiversOnStack.store(result.type, v);
-                StackValue.putNoReceiver(valueWithReceiversOnStack, type, v);
-                return null;
-            }
-        });
+        return StackValue.preIncrement(type, value, -1, callable, resolvedCall, this);
     }
 
     @Override
@@ -3322,7 +3308,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             public Unit invoke(InstructionAdapter adapter) {
                 StackValue value = gen(expression.getBaseExpression());
                 value = StackValue.complexReceiver(value, StackValue.RECEIVER_WRITE, StackValue.RECEIVER_READ);
-                //value.putWriteReadReceiver(v);
 
                 Type type = expressionType(expression.getBaseExpression());
                 value.put(type, v); // old value

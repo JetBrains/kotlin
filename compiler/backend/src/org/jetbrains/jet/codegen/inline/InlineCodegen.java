@@ -367,7 +367,7 @@ public class InlineCodegen implements CallGenerator {
             ParameterInfo info = infos[i];
             if (!info.isSkippedOrRemapped()) {
                 Type type = info.type;
-                StackValue.local(index[i], type).store(StackValue.onStack(type), codegen.v, true);
+                StackValue.local(index[i], type).store(StackValue.onStack(type), codegen.v);
             }
         }
     }

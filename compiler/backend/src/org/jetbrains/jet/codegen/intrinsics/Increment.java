@@ -60,19 +60,13 @@ public class Increment extends IntrinsicMethod {
                 if (index >= 0) {
                     JetType operandType = codegen.getBindingContext().get(EXPRESSION_TYPE, operand);
                     if (operandType != null && KotlinBuiltIns.getInstance().isPrimitiveType(operandType)) {
-                        StackValue.preIncrement(index, myDelta).put(returnType, v);
+                        StackValue.preIncrementForLocalVar(index, myDelta).put(returnType, v);
                         return returnType;
                     }
                 }
             }
-            StackValue value = codegen.genQualified(receiver, operand);
-            value = StackValue.complexReceiver(value, StackValue.RECEIVER_READ, StackValue.RECEIVER_WRITE, StackValue.RECEIVER_READ);
-            //value.putReadWriteReadReceiver(v);
-
+            StackValue value = StackValue.preIncrement(returnType, codegen.genQualified(receiver, operand), myDelta, this, null, codegen);
             value.put(returnType, v);
-            genIncrement(returnType, myDelta, v);
-            value.store(returnType, v);
-            StackValue.putNoReceiver(value, returnType, v);
         }
         else {
             receiver.put(returnType, v);

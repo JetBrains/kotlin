@@ -390,8 +390,19 @@ public abstract class StackValue implements StackValueI {
         return new PostIncrement(index, increment);
     }
 
-    public static StackValue preIncrement(int index, int increment) {
-        return new PreIncrement(index, increment);
+    public static StackValue preIncrementForLocalVar(int index, int increment) {
+        return new PreIncrementForLocalVar(index, increment);
+    }
+
+    public static StackValue preIncrement(
+            @NotNull Type type,
+            @NotNull StackValue stackValue,
+            int delta,
+            @NotNull Callable method,
+            ResolvedCall resolvedCall,
+            @NotNull ExpressionCodegen codegen
+    ) {
+        return new PrefixIncrement(type, stackValue, delta, method, resolvedCall, codegen);
     }
 
     public static StackValue receiver(
@@ -1245,11 +1256,11 @@ public abstract class StackValue implements StackValueI {
         }
     }
 
-    private static class PreIncrement extends StackValueWithoutReceiver {
+    private static class PreIncrementForLocalVar extends StackValueWithoutReceiver {
         private final int index;
         private final int increment;
 
-        public PreIncrement(int index, int increment) {
+        public PreIncrementForLocalVar(int index, int increment) {
             super(Type.INT_TYPE);
             this.index = index;
             this.increment = increment;
@@ -1262,6 +1273,47 @@ public abstract class StackValue implements StackValueI {
                 v.load(index, Type.INT_TYPE);
                 coerceTo(type, v);
             }
+        }
+    }
+
+    private static class PrefixIncrement extends StackValueWithoutReceiver {
+        private final int delta;
+        private Callable callable;
+        private ResolvedCall resolvedCall;
+        private ExpressionCodegen codegen;
+        private StackValue value;
+
+        public PrefixIncrement(
+                @NotNull Type type,
+                @NotNull StackValue value,
+                int delta,
+                @NotNull Callable callable,
+                ResolvedCall resolvedCall,
+                @NotNull ExpressionCodegen codegen
+        ) {
+            super(type);
+            this.value = value;
+            this.delta = delta;
+            this.callable = callable;
+            this.resolvedCall = resolvedCall;
+            this.codegen = codegen;
+        }
+
+        @Override
+        public void put(@NotNull Type type, @NotNull InstructionAdapter v) {
+            value = StackValue.complexReceiver(value, RECEIVER_READ, RECEIVER_WRITE, RECEIVER_READ);
+            value.put(this.type, v);
+
+            if (callable instanceof CallableMethod) {
+                value.store(codegen.invokeFunction(resolvedCall, StackValue.onStack(this.type)), v, true);
+            }
+            else {
+                genIncrement(this.type, delta, v);
+                value.store(this.type, v);
+            }
+
+            StackValue.putNoReceiver(value, this.type, v);
+            coerceTo(type, v);
         }
     }
 
