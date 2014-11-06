@@ -69,7 +69,7 @@ fun lambda(f: () -> Unit) {
 // EXPRESSION: bProp
 // RESULT: 1: I
  frame    = invoke():22, Outer$foo$LocalClass$test$1 {frameExtFunExtFun}
-   this     = this = {frameExtFunExtFun.Outer$foo$LocalClass$test$1@uniqueID}kotlin.Function0<kotlin.Unit>
+   this     = this = {frameExtFunExtFun.Outer$foo$LocalClass$test$1@uniqueID}"kotlin.Function0<kotlin.Unit>"
      field    = this$0: frameExtFunExtFun.Outer$foo$LocalClass = {frameExtFunExtFun.Outer$foo$LocalClass@uniqueID}
        field    = lcProp: int = 1
        field    = this$0: frameExtFunExtFun.Outer = {frameExtFunExtFun.Outer@uniqueID}

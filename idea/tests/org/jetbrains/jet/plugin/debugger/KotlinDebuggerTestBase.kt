@@ -26,7 +26,6 @@ import com.intellij.openapi.roots.libraries.LibraryUtil
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.debugger.SourcePosition
 
 abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
@@ -55,27 +54,23 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             }
 
             val sourcePosition = PositionUtil.getSourcePosition(this)
-            println(renderSourcePosition(sourcePosition), ProcessOutputTypes.SYSTEM)
-        }
-    }
+            if (sourcePosition == null) {
+                return@runReadAction println("SourcePosition is null", ProcessOutputTypes.SYSTEM)
+            }
 
-    protected fun renderSourcePosition(sourcePosition: SourcePosition?): String {
-        if (sourcePosition == null) {
-            return "null"
-        }
+            val virtualFile = sourcePosition.getFile().getVirtualFile()
+            if (virtualFile == null) {
+                return@runReadAction println("VirtualFile for position is null", ProcessOutputTypes.SYSTEM)
+            }
 
-        val virtualFile = sourcePosition.getFile().getVirtualFile()
-        if (virtualFile == null) {
-            return "VirtualFile for position is null"
-        }
+            val libraryEntry = LibraryUtil.findLibraryEntry(virtualFile, getProject())
+            if (libraryEntry != null && (libraryEntry is JdkOrderEntry ||
+                                         libraryEntry.getPresentableName() == JetJdkAndLibraryProjectDescriptor.LIBRARY_NAME)) {
+                return@runReadAction println(FileUtil.getNameWithoutExtension(virtualFile.getName()) + ".!EXT!", ProcessOutputTypes.SYSTEM)
+            }
 
-        val libraryEntry = LibraryUtil.findLibraryEntry(virtualFile, getProject())
-        if (libraryEntry != null && (libraryEntry is JdkOrderEntry ||
-                                     libraryEntry.getPresentableName() == JetJdkAndLibraryProjectDescriptor.LIBRARY_NAME)) {
-            return FileUtil.getNameWithoutExtension(virtualFile.getName()) + ".!EXT!"
+            println(virtualFile.getName() + ":" + sourcePosition.getLine(), ProcessOutputTypes.SYSTEM)
         }
-
-        return virtualFile.getName() + ":" + (sourcePosition.getLine() + 1)
     }
 
     protected fun finish() {
