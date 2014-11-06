@@ -225,6 +225,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("returnVoid.kt")
+        public void testReturnVoid() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/stepInto/returnVoid.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("syntheticMethods.kt")
         public void testSyntheticMethods() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/stepInto/syntheticMethods.kt");

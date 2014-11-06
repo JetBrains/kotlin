@@ -3,6 +3,7 @@ LineBreakpoint created at syntheticMethods.kt:6
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 syntheticMethods.kt:6
 syntheticMethods.kt:18
+syntheticMethods.kt:19
 syntheticMethods.kt:16
 syntheticMethods.kt:7
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'

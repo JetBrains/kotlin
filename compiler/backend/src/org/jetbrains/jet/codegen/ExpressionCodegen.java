@@ -1697,6 +1697,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         // If it does not end with return we should return something
         // because if we don't there can be VerifyError (specific cases with Nothing-typed expressions)
         if (!endsWithReturn(expr)) {
+            markLineNumber(expr, true);
+
             if (isBlockedNamedFunction && !Type.VOID_TYPE.equals(expressionType(expr))) {
                 StackValue.none().put(returnType, v);
             }
