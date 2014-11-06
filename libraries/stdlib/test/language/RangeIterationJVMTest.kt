@@ -12,8 +12,8 @@ import java.lang.Long.MAX_VALUE as MaxL
 import java.lang.Long.MIN_VALUE as MinL
 import java.lang.Character.MAX_VALUE as MaxC
 import java.lang.Character.MIN_VALUE as MinC
-import kotlin.test.assertEquals
 import org.junit.Test as test
+import kotlin.test.*
 
 // Test data for codegen is generated from this class. If you change it, rerun GenerateTests
 public class RangeIterationJVMTest {
@@ -28,7 +28,10 @@ public class RangeIterationJVMTest {
         assertEquals(expectedEnd, sequence.end)
         assertEquals(expectedIncrement, sequence.increment)
 
-        assertEquals(expectedElements, sequence.toList())
+        if (expectedElements.none())
+            assertTrue(sequence.none())
+        else
+            assertEquals(expectedElements, sequence.toList())
     }
 
     test fun infiniteSteps() {

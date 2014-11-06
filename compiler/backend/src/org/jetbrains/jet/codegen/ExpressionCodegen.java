@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
@@ -27,6 +28,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.*;
@@ -228,7 +230,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             throw new IllegalStateException("Inconsistent state: expression saved to a temporary variable is a selector");
         }
         if (!(selector instanceof JetBlockExpression)) {
-            markLineNumber(selector);
+            markStartLineNumber(selector);
         }
         try {
             if (selector instanceof JetExpression) {
@@ -403,7 +405,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         gen(elseExpression, asmType);
 
-        markExpressionLineNumber(expression, isStatement);
+        markLineNumber(expression, isStatement);
 
         v.mark(end);
 
@@ -662,7 +664,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         public void afterBody(@NotNull Label loopExit) {
-            markLineNumber(forExpression);
+            markStartLineNumber(forExpression);
 
             increment(loopExit);
 
@@ -1220,7 +1222,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.mark(elseLabel);
             StackValue.putUnitInstance(v);
 
-            markLineNumber(ifExpression);
+            markStartLineNumber(ifExpression);
             v.mark(end);
             return StackValue.onStack(targetType);
         }
@@ -1547,25 +1549,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         });
     }
 
-    public void markExpressionLineNumber(@NotNull JetElement element, boolean isStatement) {
-        if (!isStatement) {
-            markLineNumber(element);
-        }
+    public void markStartLineNumber(@NotNull JetElement element) {
+        markLineNumber(element, false);
     }
 
-    public void markLineNumber(@NotNull JetElement statement) {
-        Document document = statement.getContainingFile().getViewProvider().getDocument();
-        if (document != null) {
-            int lineNumber = document.getLineNumber(statement.getTextRange().getStartOffset());  // 0-based
-            if (lineNumber == myLastLineNumber) {
-                return;
-            }
-            myLastLineNumber = lineNumber;
-
-            Label label = new Label();
-            v.visitLabel(label);
-            v.visitLineNumber(lineNumber + 1, label);  // 1-based
+    public void markLineNumber(@NotNull JetElement statement, boolean markEndOffset) {
+        Integer lineNumber = CodegenUtil.getLineNumberForElement(statement, markEndOffset);
+        if (lineNumber == null || lineNumber == myLastLineNumber) {
+            return;
         }
+        myLastLineNumber = lineNumber;
+
+        Label label = new Label();
+        v.visitLabel(label);
+        v.visitLineNumber(lineNumber, label);
     }
 
     private void doFinallyOnReturn() {
@@ -3616,7 +3613,7 @@ The "returned" value of try expression with no finally is either the last expres
             generateExceptionTable(defaultCatchStart, defaultCatchRegions, null);
         }
 
-        markExpressionLineNumber(expression, isStatement);
+        markLineNumber(expression, isStatement);
         v.mark(end);
 
         if (!isStatement) {
@@ -3714,6 +3711,7 @@ The "returned" value of try expression with no finally is either the last expres
     private StackValue generateExpressionMatch(StackValue expressionToMatch, JetExpression patternExpression) {
         if (expressionToMatch != null) {
             Type subjectType = expressionToMatch.type;
+            markStartLineNumber(patternExpression);
             expressionToMatch.put(subjectType, v);
             JetType condJetType = bindingContext.get(EXPRESSION_TYPE, patternExpression);
             Type condType;
@@ -3738,6 +3736,7 @@ The "returned" value of try expression with no finally is either the last expres
 
     private StackValue generateIsCheck(StackValue expressionToMatch, JetTypeReference typeReference, boolean negated) {
         JetType jetType = bindingContext.get(TYPE, typeReference);
+        markStartLineNumber(typeReference);
         generateInstanceOf(expressionToMatch, jetType, false);
         StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
         return negated ? StackValue.not(value) : value;
@@ -3829,7 +3828,7 @@ The "returned" value of try expression with no finally is either the last expres
             }
         }
 
-        markExpressionLineNumber(expression, isStatement);
+        markLineNumber(expression, isStatement);
         v.mark(end);
 
         myFrameMap.leaveTemp(subjectType);

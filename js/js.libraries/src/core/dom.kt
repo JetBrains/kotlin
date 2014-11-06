@@ -86,12 +86,12 @@ native public trait DOMConfiguration {
 }
 
 native public trait DOMError {
-    public val type: String
     public val location: DOMLocator
     public val message: String
     public val relatedData: Any
     public val relatedException: Any
     public val severity: Short
+    public val type: String
 
     public class object {
         public val SEVERITY_ERROR: Short = 2

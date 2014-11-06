@@ -401,6 +401,6 @@ public class ExpressionTypingServices {
 
     @NotNull
     public CallResolverExtension createExtension(@NotNull JetScope scope, boolean isAnnotationContext) {
-        return extensionProvider.createExtension(scope == JetScope.EMPTY ? null : scope.getContainingDeclaration(), isAnnotationContext);
+        return extensionProvider.createExtension(scope == JetScope.Empty.INSTANCE$ ? null : scope.getContainingDeclaration(), isAnnotationContext);
     }
 }

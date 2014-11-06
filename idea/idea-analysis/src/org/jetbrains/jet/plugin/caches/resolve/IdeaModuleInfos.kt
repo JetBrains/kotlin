@@ -119,12 +119,18 @@ private data class ModuleProductionSourceScope(override val module: Module) : Mo
     val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
 
     override fun contains(file: VirtualFile) = moduleFileIndex.isInSourceContent(file) && !moduleFileIndex.isInTestSourceContent(file)
+
+    // KT-6206
+    override fun hashCode(): Int = module.hashCode()
 }
 
 private data class ModuleTestSourceScope(override val module: Module) : ModuleSourceScope() {
     val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
 
     override fun contains(file: VirtualFile) = moduleFileIndex.isInTestSourceContent(file)
+
+    // KT-6206
+    override fun hashCode(): Int = module.hashCode()
 }
 
 public data class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo() {

@@ -67,7 +67,7 @@ class QualifierReceiver (
 
     override val scope: JetScope get() {
         val scopes = listOf(classifier?.getClassObjectType()?.getMemberScope(), getNestedClassesAndPackageMembersScope()).filterNotNull().copyToArray()
-        return ChainedScope(descriptor, "Member scope for " + name + " as package or class or object", *scopes as Array<JetScope?>)
+        return ChainedScope(descriptor, "Member scope for " + name + " as package or class or object", *scopes)
     }
 
     fun getClassObjectReceiver(): ReceiverValue =

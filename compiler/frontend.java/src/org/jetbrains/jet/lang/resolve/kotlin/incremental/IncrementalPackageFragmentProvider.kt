@@ -96,12 +96,12 @@ public class IncrementalPackageFragmentProvider(
 
         val _memberScope: NotNullLazyValue<JetScope> = storageManager.createLazyValue {
             if (fqName !in fqNamesToLoad) {
-                JetScope.EMPTY
+                JetScope.Empty
             }
             else {
                 val packageDataBytes = incrementalCache.getPackageData(fqName)
                 if (packageDataBytes == null) {
-                    JetScope.EMPTY
+                    JetScope.Empty
                 }
                 else {
                     IncrementalPackageScope(JavaProtoBufUtil.readPackageDataFrom(packageDataBytes))
@@ -114,8 +114,11 @@ public class IncrementalPackageFragmentProvider(
         }
 
         private inner class IncrementalPackageScope(val packageData: PackageData) : DeserializedPackageMemberScope(
-                this@IncrementalPackageFragment, packageData, deserializationContext, { listOf() }
-        ) {
+                this@IncrementalPackageFragment,
+                packageData.getPackageProto(),
+                deserializationContext.withNameResolver(packageData.getNameResolver()),
+                { listOf() }) {
+
             override fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> {
                 return allMemberProtos
                         .filter {

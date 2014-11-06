@@ -62,7 +62,7 @@ public class ScopeProvider {
     }
 
     private LazyImportScope createExplicitImportScope(@NotNull JetFile file) {
-        return LazyImportScope.createImportScopeForFile(
+        return LazyImportScope.OBJECT$.createImportScopeForFile(
                 resolveSession,
                 getFilePackageDescriptor(file),
                 file,

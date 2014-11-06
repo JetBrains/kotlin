@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.backend.common;
 
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.bridges.BridgesPackage;
@@ -201,5 +204,12 @@ public class CodegenUtil {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
         return DescriptorUtils.ENUM_VALUES.equals(functionDescriptor.getName())
                && methodTypeParameters.isEmpty();
+    }
+
+    @Nullable
+    public static Integer getLineNumberForElement(@NotNull PsiElement statement, boolean markEndOffset) {
+        Document document = statement.getContainingFile().getViewProvider().getDocument();
+        TextRange textRange = statement.getTextRange();
+        return document != null ? document.getLineNumber(markEndOffset ? textRange.getEndOffset() : textRange.getStartOffset()) + 1 : null;
     }
 }

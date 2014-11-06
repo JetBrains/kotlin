@@ -31,7 +31,7 @@ public class MutablePackageFragmentDescriptor extends PackageFragmentDescriptorI
     public MutablePackageFragmentDescriptor(@NotNull ModuleDescriptor module, @NotNull FqName fqName) {
         super(module, fqName);
 
-        scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Members of " + fqName + " in " + module);
+        scope = new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, RedeclarationHandler.DO_NOTHING, "Members of " + fqName + " in " + module);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         builder = new ScopeBasedPackageLikeBuilder(this, scope);
     }

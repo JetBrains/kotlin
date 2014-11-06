@@ -434,5 +434,41 @@ fun elements(): List<GenericFunction> {
         }
     }
 
+    templates add f("component1()") {
+        inline(true)
+        doc { "Returns 1st *element* from the collection." }
+        returns("T")
+        body { "return get(0)" }
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
+    }
+    templates add f("component2()") {
+        inline(true)
+        doc { "Returns 2nd *element* from the collection." }
+        returns("T")
+        body { "return get(1)" }
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
+    }
+    templates add f("component3()") {
+        inline(true)
+        doc { "Returns 3rd *element* from the collection." }
+        returns("T")
+        body { "return get(2)" }
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
+    }
+    templates add f("component4()") {
+        inline(true)
+        doc { "Returns 4th *element* from the collection." }
+        returns("T")
+        body { "return get(3)" }
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
+    }
+    templates add f("component5()") {
+        inline(true)
+        doc { "Returns 5th *element* from the collection." }
+        returns("T")
+        body { "return get(4)" }
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
+    }
+
     return templates
 }
