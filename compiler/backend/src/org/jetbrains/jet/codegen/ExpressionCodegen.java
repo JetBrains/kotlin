@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
@@ -228,7 +229,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             throw new IllegalStateException("Inconsistent state: expression saved to a temporary variable is a selector");
         }
         if (!(selector instanceof JetBlockExpression)) {
-            markLineNumber(selector);
+            markStartLineNumber(selector);
         }
         try {
             if (selector instanceof JetExpression) {
@@ -403,7 +404,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         gen(elseExpression, asmType);
 
-        markExpressionLineNumber(expression, isStatement);
+        markLineNumber(expression, isStatement);
 
         v.mark(end);
 
@@ -662,7 +663,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         public void afterBody(@NotNull Label loopExit) {
-            markLineNumber(forExpression);
+            markStartLineNumber(forExpression);
 
             increment(loopExit);
 
@@ -1220,7 +1221,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.mark(elseLabel);
             StackValue.putUnitInstance(v);
 
-            markLineNumber(ifExpression);
+            markStartLineNumber(ifExpression);
             v.mark(end);
             return StackValue.onStack(targetType);
         }
@@ -1547,16 +1548,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         });
     }
 
-    public void markExpressionLineNumber(@NotNull JetElement element, boolean isStatement) {
-        if (!isStatement) {
-            markLineNumber(element);
-        }
+    public void markStartLineNumber(@NotNull JetElement element) {
+        markLineNumber(element, false);
     }
 
-    public void markLineNumber(@NotNull JetElement statement) {
+    public void markLineNumber(@NotNull JetElement statement, boolean markEndOffset) {
         Document document = statement.getContainingFile().getViewProvider().getDocument();
         if (document != null) {
-            int lineNumber = document.getLineNumber(statement.getTextRange().getStartOffset());  // 0-based
+            TextRange textRange = statement.getTextRange();
+            int lineNumber = document.getLineNumber(markEndOffset ? textRange.getEndOffset() : textRange.getStartOffset());  // 0-based
             if (lineNumber == myLastLineNumber) {
                 return;
             }
@@ -3616,7 +3616,7 @@ The "returned" value of try expression with no finally is either the last expres
             generateExceptionTable(defaultCatchStart, defaultCatchRegions, null);
         }
 
-        markExpressionLineNumber(expression, isStatement);
+        markLineNumber(expression, isStatement);
         v.mark(end);
 
         if (!isStatement) {
@@ -3829,7 +3829,7 @@ The "returned" value of try expression with no finally is either the last expres
             }
         }
 
-        markExpressionLineNumber(expression, isStatement);
+        markLineNumber(expression, isStatement);
         v.mark(end);
 
         myFrameMap.leaveTemp(subjectType);
