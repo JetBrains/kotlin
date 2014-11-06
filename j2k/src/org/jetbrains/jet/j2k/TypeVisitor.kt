@@ -65,11 +65,7 @@ class TypeVisitor(private val converter: Converter,
             val kotlinClassName = (if (mutability.isMutable(converter.settings)) toKotlinMutableTypesMap[javaClassName] else null)
                                   ?: toKotlinTypesMap[javaClassName]
             if (kotlinClassName != null) {
-                val kotlinShortName = getShortName(kotlinClassName)
-                if (kotlinShortName == getShortName(javaClassName!!) && converter.importNames.contains(getPackageName(javaClassName) + ".*")) {
-                    converter.importsToAdd.add(kotlinClassName)
-                }
-                return ReferenceElement(Identifier(kotlinShortName).assignNoPrototype(), typeArgs).assignNoPrototype()
+                return ReferenceElement(Identifier(getShortName(kotlinClassName)).assignNoPrototype(), typeArgs).assignNoPrototype()
             }
         }
 

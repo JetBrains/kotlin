@@ -1,5 +1,4 @@
 import java.util.*
-import kotlin.List
 
 class A {
     private val field1 = ArrayList<String>()

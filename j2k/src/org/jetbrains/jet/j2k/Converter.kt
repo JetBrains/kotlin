@@ -41,7 +41,6 @@ class Converter private(private val elementToConvert: PsiElement,
 
     // state which is shared between all converter's based on this one
     private class CommonState(val usageProcessingsCollector: (UsageProcessing) -> Unit) {
-        val importsToAdd = LinkedHashSet<String>()
         val deferredElements = ArrayList<DeferredElement<*>>()
         val postUnfoldActions = ArrayList<() -> Unit>()
     }
@@ -54,10 +53,6 @@ class Converter private(private val elementToConvert: PsiElement,
     public val annotationConverter: AnnotationConverter = AnnotationConverter(this)
 
     public val specialContext: PsiElement? = personalState.specialContext
-    public val importsToAdd: MutableCollection<String> = commonState.importsToAdd
-
-    private val importList = (elementToConvert as? PsiJavaFile)?.getImportList()?.let { convertImportList(it) }
-    public val importNames: Set<String> = importList?.imports?.mapTo(HashSet<String>()) { it.name } ?: setOf()
 
     class object {
         public fun create(elementToConvert: PsiElement, settings: ConverterSettings, conversionScope: ConversionScope,
@@ -127,23 +122,7 @@ class Converter private(private val elementToConvert: PsiElement,
     }
 
     private fun convertFile(javaFile: PsiJavaFile): File {
-        var convertedChildren = javaFile.getChildren().map {
-            if (it is PsiImportList) {
-                assert(it == javaFile.getImportList())
-                importList
-            }
-            else {
-                convertTopElement(it)
-            }
-        }.filterNotNull()
-
-        addPostUnfoldDeferredElementsAction {
-            assert(importList != null)
-            if (importsToAdd.isNotEmpty()) {
-                importList!!.imports = importList.imports + importsToAdd.map { Import(it).assignNoPrototype() }
-            }
-        }
-
+        var convertedChildren = javaFile.getChildren().map { convertTopElement(it) }.filterNotNull()
         return File(convertedChildren, createMainFunction(javaFile)).assignPrototype(javaFile)
     }
 

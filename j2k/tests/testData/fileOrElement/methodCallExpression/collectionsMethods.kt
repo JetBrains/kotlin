@@ -1,5 +1,4 @@
 import java.util.*
-import kotlin.Map
 
 class A {
     fun foo(): Map<String, String> {

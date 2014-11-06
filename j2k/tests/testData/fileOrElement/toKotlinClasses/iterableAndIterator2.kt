@@ -3,7 +3,6 @@
 package demo
 
 import java.util.*
-import kotlin.Iterator
 
 class Test : Iterable<String> {
     override fun iterator(): Iterator<String> {

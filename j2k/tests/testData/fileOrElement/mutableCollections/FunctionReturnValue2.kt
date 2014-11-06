@@ -1,5 +1,4 @@
 import java.util.*
-import kotlin.Collection
 
 class A {
     private val collection: MutableCollection<String>
