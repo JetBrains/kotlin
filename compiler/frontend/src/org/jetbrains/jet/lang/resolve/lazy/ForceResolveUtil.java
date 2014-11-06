@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -75,6 +77,12 @@ public class ForceResolveUtil {
         }
         else if (object instanceof CallableDescriptor) {
             CallableDescriptor callableDescriptor = (CallableDescriptor) object;
+            for (ValueParameterDescriptor parameterDescriptor : callableDescriptor.getValueParameters()) {
+                forceResolveAllContents(parameterDescriptor);
+            }
+            for (TypeParameterDescriptor typeParameterDescriptor : callableDescriptor.getTypeParameters()) {
+                forceResolveAllContents(typeParameterDescriptor.getUpperBounds());
+            }
             forceResolveAllContents(callableDescriptor.getReturnType());
         }
     }

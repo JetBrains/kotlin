@@ -24,8 +24,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -44,13 +44,17 @@ public class DebugInfoUtil {
     private static final TokenSet EXCLUDED = TokenSet.create(
             COLON, AS_KEYWORD, AS_SAFE, IS_KEYWORD, NOT_IS, OROR, ANDAND, EQ, EQEQEQ, EXCLEQEQEQ, ELVIS, EXCLEXCL, IN_KEYWORD, NOT_IN);
 
-    public interface DebugInfoReporter {
+    public abstract static class DebugInfoReporter {
 
-        void reportElementWithErrorType(@NotNull JetReferenceExpression expression);
+        public void preProcessReference(@NotNull JetReferenceExpression expression) {
+            // do nothing
+        }
 
-        void reportMissingUnresolved(@NotNull JetReferenceExpression expression);
+        public abstract void reportElementWithErrorType(@NotNull JetReferenceExpression expression);
 
-        void reportUnresolvedWithTarget(@NotNull JetReferenceExpression expression, @NotNull String target);
+        public abstract void reportMissingUnresolved(@NotNull JetReferenceExpression expression);
+
+        public abstract void reportUnresolvedWithTarget(@NotNull JetReferenceExpression expression, @NotNull String target);
     }
 
     public static void markDebugAnnotations(
@@ -102,6 +106,8 @@ public class DebugInfoUtil {
                         return;
                     }
                 }
+
+                debugInfoReporter.preProcessReference(expression);
 
                 String target = null;
                 DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, expression);
