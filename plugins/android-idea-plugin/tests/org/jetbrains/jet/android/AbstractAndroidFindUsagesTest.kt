@@ -23,7 +23,7 @@ import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 
 public abstract class AbstractAndroidFindUsagesTest : KotlinAndroidTestCase() {
 
-    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/android/findUsages/" + getTestName(true) + "/"
+    override fun getTestDataPath() = KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/findUsages/" + getTestName(true) + "/"
 
     public fun doTest(path: String) {
         val f = myFixture!!

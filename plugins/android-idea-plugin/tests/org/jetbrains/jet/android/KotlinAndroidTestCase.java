@@ -209,7 +209,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     }
 
     protected void createManifest() throws IOException {
-        myFixture.copyFileToProject("idea/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML);
+        myFixture.copyFileToProject("plugins/android-idea-plugin/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML);
      //   myFixture.copyFileToProject(SdkConstants.FN_ANDROID_MANIFEST_XML, SdkConstants.FN_ANDROID_MANIFEST_XML);
     }
 

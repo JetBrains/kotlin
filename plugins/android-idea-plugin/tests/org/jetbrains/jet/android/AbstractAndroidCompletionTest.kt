@@ -69,7 +69,7 @@ public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
 
 
     override fun getTestDataPath(): String {
-        return PluginTestCaseBase.getTestDataPathBase() + "/android/completion/" + getTestName(true) + "/"
+        return KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/completion/" + getTestName(true) + "/"
     }
 
 }
