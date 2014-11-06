@@ -917,7 +917,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         property.put(property.type, iv);
                     }
                     else {
-                        property.store(property.type, iv);
+                        property.store(StackValue.onStack(property.type), iv, true);
                     }
 
                     iv.areturn(signature.getReturnType());
@@ -1072,7 +1072,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
         FunctionDescriptor constructor = codegen.accessibleFunctionDescriptor(KotlinPackage.single(classObject.getConstructors()));
         generateMethodCallTo(constructor, codegen.v);
-        StackValue.singleton(classObject, typeMapper).store(typeMapper.mapClass(classObject), codegen.v);
+        StackValue.singleton(classObject, typeMapper).store(StackValue.onStack(typeMapper.mapClass(classObject)), codegen.v, true);
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {

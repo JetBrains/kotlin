@@ -656,7 +656,7 @@ public class AsmUtil {
         return new StackValue.StackValueWithoutReceiver(stackValue.type) {
 
             @Override
-            public void put(Type type, InstructionAdapter v) {
+            public void put(@NotNull Type type, @NotNull InstructionAdapter v) {
                 stackValue.put(type, v);
                 if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
                     v.dup();

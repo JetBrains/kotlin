@@ -433,7 +433,7 @@ public abstract class StackValue implements StackValueI {
 
     public static Field singleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
         FieldInfo info = FieldInfo.createForSingleton(classDescriptor, typeMapper);
-        return field(info.getFieldType(), Type.getObjectType(info.getOwnerInternalName()), info.getFieldName(), true, StackValue.none());
+        return field(info.getFieldType(), Type.getObjectType(info.getOwnerInternalName()), info.getFieldName(), true, none());
     }
 
     public static StackValue operation(Type type, Function1<InstructionAdapter, Unit> lambda) {
@@ -552,7 +552,7 @@ public abstract class StackValue implements StackValueI {
         }
 
         @Override
-        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
+        public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
             if (value instanceof Boolean) {
                 boolean boolValue = (Boolean) value;
                 if (boolValue ^ jumpIfFalse) {
@@ -586,7 +586,7 @@ public abstract class StackValue implements StackValueI {
         }
 
         @Override
-        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
+        public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
             left.put(this.operandType, v);
             right.put(this.operandType, v);
             int opcode;
@@ -635,7 +635,7 @@ public abstract class StackValue implements StackValueI {
         }
 
         @Override
-        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
+        public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
             left.put(this.operandType, v);
             right.put(this.operandType, v);
             int opcode;
@@ -670,7 +670,7 @@ public abstract class StackValue implements StackValueI {
         }
 
         @Override
-        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
+        public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
             myOperand.condJump(label, !jumpIfFalse, v);
         }
     }
@@ -1278,9 +1278,9 @@ public abstract class StackValue implements StackValueI {
 
     private static class PrefixIncrement extends StackValueWithoutReceiver {
         private final int delta;
-        private Callable callable;
-        private ResolvedCall resolvedCall;
-        private ExpressionCodegen codegen;
+        private final Callable callable;
+        private final ResolvedCall resolvedCall;
+        private final ExpressionCodegen codegen;
         private StackValue value;
 
         public PrefixIncrement(
@@ -1309,10 +1309,10 @@ public abstract class StackValue implements StackValueI {
             }
             else {
                 genIncrement(this.type, delta, v);
-                value.store(this.type, v);
+                value.store(StackValue.onStack(this.type), v, true);
             }
 
-            StackValue.putNoReceiver(value, this.type, v);
+            putNoReceiver(value, this.type, v);
             coerceTo(type, v);
         }
     }
@@ -1460,6 +1460,7 @@ public abstract class StackValue implements StackValueI {
         @Override
         public abstract void putNoReceiver(@NotNull Type type, @NotNull InstructionAdapter v);
 
+        @Override
         public void putReceiver(@NotNull InstructionAdapter v, boolean isRead) {
             if (hasReceiver(isRead)) {
                 receiver.put(receiver.type, v);
@@ -1498,7 +1499,7 @@ public abstract class StackValue implements StackValueI {
         @Override
         public void dup(@NotNull InstructionAdapter v, boolean withReceiver) {
             if (!withReceiver) {
-                super.dup(v, withReceiver);
+                super.dup(v, false);
             } else {
                 int receiverSize = hasReceiver(false) && hasReceiver(true) ? receiverSize() : 0;
                 switch (receiverSize) {
@@ -1646,7 +1647,11 @@ public abstract class StackValue implements StackValueI {
         }
     }
 
-    public static StackValue complexReceiver(StackValue stackValue, int ... operations) {
+    public static StackValue complexWriteReadReceiver(StackValue stackValue) {
+        return complexReceiver(stackValue, RECEIVER_WRITE, RECEIVER_READ);
+    }
+
+    private static StackValue complexReceiver(StackValue stackValue, int ... operations) {
         if (stackValue instanceof StackValueWithoutReceiver) {
             return stackValue;
         } else {
@@ -1659,7 +1664,7 @@ public abstract class StackValue implements StackValueI {
         }
     }
 
-    public static void putNoReceiver(StackValue value, Type type, InstructionAdapter iv) {
+    private static void putNoReceiver(StackValue value, Type type, InstructionAdapter iv) {
         if (value instanceof StackValueWithSimpleReceiver) {
             ((StackValueWithSimpleReceiver) value).putNoReceiver(type, iv);
         } else {
