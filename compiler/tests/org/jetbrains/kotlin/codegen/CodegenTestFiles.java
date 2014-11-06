@@ -81,10 +81,14 @@ public class CodegenTestFiles {
     }
 
     public static CodegenTestFiles create(Project project, String[] names) {
+        return create(project, names, JetTestUtils.getTestDataPathBase());
+    }
+
+    public static CodegenTestFiles create(Project project, String[] names, String testDataPath) {
         ArrayList<JetFile> files = new ArrayList<JetFile>();
         for (String name : names) {
             try {
-                String content = JetTestUtils.doLoadFile(JetTestUtils.getTestDataPathBase() + "/codegen/", name);
+                String content = JetTestUtils.doLoadFile(testDataPath + "/codegen/", name);
                 int i = name.lastIndexOf('/');
                 //name = name.substring(i+1);
                 JetFile file = JetTestUtils.createFile(name, content, project);
