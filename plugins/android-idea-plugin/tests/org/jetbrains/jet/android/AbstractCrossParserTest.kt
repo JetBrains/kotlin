@@ -27,6 +27,7 @@ import kotlin.test.assertEquals
 import org.jetbrains.jet.plugin.android.TestConst
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.jetbrains.kotlin.android.AndroidConfigurationKeys
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 
 public abstract class AbstractCrossParserTest : KotlinAndroidTestCase() {
     public fun doTest(path: String) {
@@ -46,7 +47,7 @@ public abstract class AbstractCrossParserTest : KotlinAndroidTestCase() {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
                 configuration.put<String>(AndroidConfigurationKeys.ANDROID_RES_PATH, testPath + "/layout")
                 configuration.put<String>(AndroidConfigurationKeys.ANDROID_MANIFEST, testPath + "/AndroidManifest.xml")
-        return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration)
+        return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
     override fun getTestDataPath(): String? {
