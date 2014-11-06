@@ -26,8 +26,8 @@ import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver
 import java.util.HashSet
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import com.intellij.psi.JavaPsiFacade
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.plugin.search.allScope
+import org.jetbrains.jet.utils.addIfNotNull
 
 public object DescriptorToDeclarationUtil {
     public fun getDeclaration(file: JetFile, descriptor: DeclarationDescriptor): PsiElement? {
@@ -53,9 +53,9 @@ public object DescriptorToDeclarationUtil {
 
         if (originalDescriptor is PackageViewDescriptor) {
             val psiFacade = JavaPsiFacade.getInstance(project)
-            val fqName = (originalDescriptor as PackageViewDescriptor).getFqName().asString()
-            ContainerUtil.addIfNotNull(result, psiFacade.findPackage(fqName))
-            ContainerUtil.addIfNotNull(result, psiFacade.findClass(fqName, project.allScope()))
+            val fqName = originalDescriptor.getFqName().asString()
+            result.addIfNotNull(psiFacade.findPackage(fqName))
+            result.addIfNotNull(psiFacade.findClass(fqName, project.allScope()))
         }
         return result
     }
@@ -63,7 +63,7 @@ public object DescriptorToDeclarationUtil {
     private fun findDecompiledAndBuiltInDeclarations(project: Project, descriptor: DeclarationDescriptor): Collection<PsiElement> {
         val libraryReferenceResolver = project.getComponent(javaClass<BuiltInsReferenceResolver>())
         val elements = libraryReferenceResolver!!.resolveBuiltInSymbol(descriptor)
-        if (!elements.isEmpty()) {
+        if (elements.isNotEmpty()) {
             return elements
         }
 
