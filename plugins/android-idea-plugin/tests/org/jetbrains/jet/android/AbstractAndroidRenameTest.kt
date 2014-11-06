@@ -63,7 +63,7 @@ public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
         }.execute().throwException()
     }
 
-    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/android/rename/" + getTestName(true) + "/"
+    override fun getTestDataPath() = KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/rename/" + getTestName(true) + "/"
 }
 
 

@@ -50,6 +50,6 @@ public abstract class AbstractCrossParserTest : KotlinAndroidTestCase() {
     }
 
     override fun getTestDataPath(): String? {
-        return PluginTestCaseBase.getTestDataPathBase() + "/android/crossParser/" + getTestName(true) + "/"
+        return KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/crossParser/" + getTestName(true) + "/"
     }
 }

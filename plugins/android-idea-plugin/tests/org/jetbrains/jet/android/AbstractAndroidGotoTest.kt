@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.JetProperty
 public abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
 
     override fun getTestDataPath(): String {
-        return PluginTestCaseBase.getTestDataPathBase() + "/android/goto/" + getTestName(true) + "/"
+        return KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/goto/" + getTestName(true) + "/"
     }
 
     public fun doTest(path: String) {

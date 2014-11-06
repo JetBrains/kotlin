@@ -43,6 +43,7 @@ import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper;
 import org.jetbrains.android.sdk.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -59,6 +60,8 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
 
     protected Sdk androidSdk;
     protected VirtualFile androidJar;
+
+    private static final String TEST_DATA_PROJECT_RELATIVE = "/plugins/android-idea-plugin/testData/android";
 
     protected KotlinAndroidTestCaseBase() {
         IdeaTestCase.initPlatformPrefix();
@@ -79,8 +82,12 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
         return path;
     }
 
+    public static String getPluginTestDataPathBase() {
+        return JetTestCaseBuilder.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
+    }
+
     public String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase();
+        return getPluginTestDataPathBase();
     }
 
     public static String getAndroidPluginHome() {
