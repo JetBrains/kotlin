@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import java.util.ArrayList
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import java.util.HashSet
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature
 
 /**
  * Generates exception-throwing stubs for methods from mutable collection classes not implemented in Kotlin classes which inherit only from
@@ -51,8 +52,8 @@ class CollectionStubMethodGenerator(
         val superCollectionClasses = findRelevantSuperCollectionClasses()
         if (superCollectionClasses.isEmpty()) return
 
-        val methodStubsToGenerate = LinkedHashSet<String>()
-        val syntheticStubsToGenerate = LinkedHashSet<String>()
+        val methodStubsToGenerate = LinkedHashSet<JvmMethodSignature>()
+        val syntheticStubsToGenerate = LinkedHashSet<JvmMethodSignature>()
 
         for ((readOnlyClass, mutableClass) in superCollectionClasses) {
             // To determine which method stubs we need to generate, we create a synthetic class (named 'child' here) which inherits from
@@ -96,7 +97,7 @@ class CollectionStubMethodGenerator(
                     // declared in the Java Collection interface (can't override generic with erased). So we maintain an additional set of
                     // methods which need to be generated with the ACC_SYNTHETIC flag
                     val originalSignature = method.findOverriddenFromDirectSuperClass(mutableClass)!!.getOriginal().signature()
-                    if (originalSignature != signature) {
+                    if (originalSignature.getAsmMethod() != signature.getAsmMethod()) {
                         syntheticStubsToGenerate.add(originalSignature)
                     }
                 }
@@ -210,19 +211,17 @@ class CollectionStubMethodGenerator(
                            classDescriptor.getMemberScope(typeArguments))
     }
 
-    private fun FunctionDescriptor.signature(): String {
-        val method = typeMapper.mapSignature(this).getAsmMethod()
-        return method.getName() + method.getDescriptor()
-    }
+    private fun FunctionDescriptor.signature(): JvmMethodSignature = typeMapper.mapSignature(this)
 
-    private fun generateMethodStub(signature: String, synthetic: Boolean) {
+    private fun generateMethodStub(signature: JvmMethodSignature, synthetic: Boolean) {
         // TODO: investigate if it makes sense to generate abstract stubs in traits
         var access = ACC_PUBLIC
         if (descriptor.getKind() == ClassKind.TRAIT) access = access or ACC_ABSTRACT
         if (synthetic) access = access or ACC_SYNTHETIC
 
-        val paren = signature.indexOf('(')
-        val mv = v.newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, signature.substring(0, paren), signature.substring(paren), null, null)
+        val asmMethod = signature.getAsmMethod()
+        val genericSignature = if (synthetic) null else signature.getGenericsSignature()
+        val mv = v.newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, asmMethod.getName(), asmMethod.getDescriptor(), genericSignature, null)
         if (descriptor.getKind() != ClassKind.TRAIT) {
             mv.visitCode()
             AsmUtil.genThrow(InstructionAdapter(mv), "java/lang/UnsupportedOperationException", "Mutating immutable collection")
