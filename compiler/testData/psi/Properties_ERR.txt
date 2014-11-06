@@ -43,23 +43,24 @@ JetFile: Properties_ERR.kt
   PROPERTY
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    ANNOTATION
-      PsiElement(LBRACKET)('[')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-      PsiErrorElement:Expecting ']' to close an list of annotation
-        <empty list>
+    PsiErrorElement:Annotations are not allowed in this position
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+        PsiErrorElement:Expecting ']' to close the annotation list
+          <empty list>
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
@@ -84,15 +85,16 @@ JetFile: Properties_ERR.kt
   PROPERTY
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    ANNOTATION
-      PsiElement(LBRACKET)('[')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-      PsiElement(RBRACKET)(']')
+    PsiErrorElement:Annotations are not allowed in this position
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+        PsiElement(RBRACKET)(']')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')

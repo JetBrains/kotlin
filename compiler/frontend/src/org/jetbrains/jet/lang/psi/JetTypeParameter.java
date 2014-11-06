@@ -19,18 +19,18 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinTypeParameterStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetTypeParameter extends JetNamedDeclarationStub<PsiJetTypeParameterStub> {
+public class JetTypeParameter extends JetNamedDeclarationStub<KotlinTypeParameterStub> {
 
     public JetTypeParameter(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetTypeParameter(@NotNull PsiJetTypeParameterStub stub) {
+    public JetTypeParameter(@NotNull KotlinTypeParameterStub stub) {
         super(stub, JetStubElementTypes.TYPE_PARAMETER);
     }
 
@@ -41,7 +41,7 @@ public class JetTypeParameter extends JetNamedDeclarationStub<PsiJetTypeParamete
 
     @NotNull
     public Variance getVariance() {
-        PsiJetTypeParameterStub stub = getStub();
+        KotlinTypeParameterStub stub = getStub();
         if (stub != null) {
             if (stub.isOutVariance()) return Variance.OUT_VARIANCE;
             if (stub.isInVariance()) return Variance.IN_VARIANCE;

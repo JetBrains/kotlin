@@ -25,6 +25,9 @@ import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lexer.JetTokens
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
 
 public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
     override fun getFamilyName(): String = JetBundle.message("convert.to.expression.body.action.family.name")
@@ -48,6 +51,20 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
         val body = declaration.getBodyExpression()!!
         declaration.addBefore(JetPsiFactory(declaration).createEQ(), body)
         body.replace(value)
+
+        if (declaration.hasDeclaredReturnType() && declaration is JetCallableDeclaration && canOmitType(declaration)) {
+            val typeRef = declaration.getTypeReference()!!
+            val colon = declaration.getColon()!!
+            val range = TextRange(colon.getTextRange().getStartOffset(), typeRef.getTextRange().getEndOffset())
+            editor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
+            editor.getCaretModel().moveToOffset(range.getEndOffset())
+        }
+    }
+
+    private fun canOmitType(declaration: JetCallableDeclaration): Boolean {
+        if (declaration.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) ?: false) return true
+        val descriptor = declaration.getLazyResolveSession().resolveToDescriptor(declaration)
+        return !((descriptor as? DeclarationDescriptorWithVisibility)?.getVisibility()?.isPublicAPI() ?: false)
     }
 
     private data class Data(val declaration: JetDeclarationWithBody, val value: JetExpression)

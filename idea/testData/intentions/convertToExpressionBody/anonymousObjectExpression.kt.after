@@ -2,7 +2,7 @@ trait I {
     fun foo(): String
 }
 
-fun bar(): I = object: I {
+fun bar()<selection>: I</selection> = object: I {
     override fun foo(): String {
         return "a"
     }

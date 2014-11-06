@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.addRemoveModifier.AddRemoveModifierPackage;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinClassStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
@@ -38,13 +38,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> implements JetClassOrObject {
+public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> implements JetClassOrObject {
 
     public JetClass(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetClass(@NotNull PsiJetClassStub stub) {
+    public JetClass(@NotNull KotlinClassStub stub) {
         super(stub, JetStubElementTypes.CLASS);
     }
 
@@ -156,7 +156,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
     }
 
     public boolean isTrait() {
-        PsiJetClassStub stub = getStub();
+        KotlinClassStub stub = getStub();
         if (stub != null) {
             return stub.isTrait();
         }
@@ -196,7 +196,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
 
     @Nullable
     private String getQualifiedName() {
-        PsiJetClassStub stub = getStub();
+        KotlinClassStub stub = getStub();
         if (stub != null) {
             FqName fqName = stub.getFqName();
             return fqName == null ? null : fqName.asString();
@@ -230,7 +230,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
 
     @Override
     public boolean isLocal() {
-        PsiJetClassStub stub = getStub();
+        KotlinClassStub stub = getStub();
         if (stub != null) {
             return stub.isLocal();
         }

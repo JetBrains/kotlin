@@ -23,149 +23,61 @@ import org.jetbrains.jet.j2k.JavaToKotlinTranslator
 import org.jetbrains.jet.j2k.ConverterSettings
 import java.util.regex.Pattern
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.jet.JetTestUtils
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.jet.test.util.trimIndent
-import org.jetbrains.jet.j2k.FilesConversionScope
-import org.jetbrains.jet.plugin.j2k.J2kPostProcessor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
-import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.PsiFile
-import org.jetbrains.jet.j2k.ReferenceSearcherImpl
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.jet.lang.diagnostics.Severity
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
+import org.jetbrains.jet.JetTestCaseBuilder
+import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl
+import com.intellij.openapi.util.Computable
 
-public abstract class AbstractJavaToKotlinConverterTest() : LightCodeInsightFixtureTestCase() {
-    val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
-
+public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
 
-        fun addFile(fileName: String, packageName: String) {
-            val code = FileUtil.loadFile(File("j2k/tests/testData/$fileName"), true)
-            val root = LightPlatformTestCase.getSourceRoot()!!
-            val dir = root.findChild(packageName) ?: root.createChildDirectory(null, packageName)
-            val file = dir.createChildData(null, fileName)!!
-            file.getOutputStream(null)!!.writer().use { it.write(code) }
-        }
+        VirtualDirectoryImpl.allowRootAccess(JetTestCaseBuilder.getHomeDirectory())
 
-        ApplicationManager.getApplication()!!.runWriteAction{
-            addFile("KotlinApi.kt", "kotlinApi")
-            addFile("JavaApi.java", "javaApi")
-        }
+        addFile("KotlinApi.kt", "kotlinApi")
+        addFile("JavaApi.java", "javaApi")
     }
 
-    public fun doTest(javaPath: String) {
-        val project = LightPlatformTestCase.getProject()!!
-        val javaFile = File(javaPath)
-        val fileContents = FileUtil.loadFile(javaFile, true)
-        val matcher = testHeaderPattern.matcher(fileContents)
+    override fun tearDown() {
+        VirtualDirectoryImpl.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory())
+        super.tearDown()
+    }
+    
+    private fun addFile(fileName: String, packageName: String) {
+        addFile(File("j2k/tests/testData/$fileName"), packageName)
+    }
 
-        val (prefix, javaCode) = if (matcher.find()) {
-            Pair(matcher.group().trim().substring(2), matcher.replaceFirst(""))
-        }
-        else {
-            Pair("file", fileContents)
-        }
+    protected fun addFile(file: File, dirName: String): VirtualFile {
+        return addFile(FileUtil.loadFile(file, true), file.getName(), dirName)
+    }
 
-        fun parseBoolean(text: String): Boolean = when (text) {
-            "true" -> true
-            "false" -> false
-            else -> throw IllegalArgumentException("Unknown option value: $text")
-        }
-
-        var settings = ConverterSettings.defaultSettings.copy()
-        val directives = JetTestUtils.parseDirectives(javaCode)
-        for ((name, value) in directives) {
-            when (name) {
-                "forceNotNullTypes" -> settings.forceNotNullTypes = parseBoolean(value)
-                "specifyLocalVariableTypeByDefault" -> settings.specifyLocalVariableTypeByDefault = parseBoolean(value)
-                "specifyFieldTypeByDefault" -> settings.specifyFieldTypeByDefault = parseBoolean(value)
-                "openByDefault" -> settings.openByDefault = parseBoolean(value)
-                else -> throw IllegalArgumentException("Unknown option: $name")
+    protected fun addFile(text: String, fileName: String, dirName: String): VirtualFile {
+        return ApplicationManager.getApplication()!!.runWriteAction(object: Computable<VirtualFile> {
+            override fun compute(): VirtualFile? {
+                val root = LightPlatformTestCase.getSourceRoot()!!
+                val virtualDir = root.findChild(dirName) ?: root.createChildDirectory(null, dirName)
+                val virtualFile = virtualDir.createChildData(null, fileName)!!
+                virtualFile.getOutputStream(null)!!.writer().use { it.write(text) }
+                return virtualFile
             }
-        }
-
-        val rawConverted = when (prefix) {
-            "element" -> elementToKotlin(javaCode, settings, project)
-            "expression" -> expressionToKotlin(javaCode, settings, project)
-            "statement" -> statementToKotlin(javaCode, settings, project)
-            "method" -> methodToKotlin(javaCode, settings, project)
-            "class" -> fileToKotlin(javaCode, settings, project)
-            "file" -> fileToKotlin(javaCode, settings, project)
-            else -> throw IllegalStateException("Specify what is it: file, class, method, statement or expression " +
-                                                "using the first line of test data file")
-        }
-
-        val reformatInFun = prefix in setOf("element", "expression", "statement")
-
-        val actual = reformat(rawConverted, project, reformatInFun)
-        val kotlinPath = javaPath.replace(".java", ".kt")
-        val expectedFile = File(kotlinPath)
-        JetTestUtils.assertEqualsToFile(expectedFile, actual)
+        })
     }
 
-    private fun reformat(text: String, project: Project, inFunContext: Boolean): String {
-        val textToFormat = if (inFunContext) "fun convertedTemp() {\n$text\n}" else text
-
-        val convertedFile = JetTestUtils.createFile("converted", textToFormat, project)
-        WriteCommandAction.runWriteCommandAction(project) {
-            CodeStyleManager.getInstance(project)!!.reformat(convertedFile)
-        }
-
-        val reformattedText = convertedFile.getText()!!
-
-        return if (inFunContext)
-            reformattedText.removeFirstLine().removeLastLine().trimIndent()
-        else
-            reformattedText
+    protected fun deleteFile(virtualFile: VirtualFile) {
+        ApplicationManager.getApplication()!!.runWriteAction { virtualFile.delete(this) }
     }
 
-    private fun elementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val fileWithText = createJavaFile(text)
-        val converter = Converter.create(project, settings, FilesConversionScope(listOf(fileWithText)), ReferenceSearcherImpl, J2kPostProcessor(fileWithText))
-        val element = fileWithText.getFirstChild()!!
-        return converter.elementToKotlin(element)
-    }
-
-    private fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val file = createJavaFile(text)
-        val converter = Converter.create(project, settings, FilesConversionScope(listOf(file)), ReferenceSearcherImpl, J2kPostProcessor(file))
-        return converter.elementToKotlin(file)
-    }
-
-    private fun methodToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val result = fileToKotlin("final class C {" + text + "}", settings, project).replaceAll("class C \\{", "")
-        return result.substring(0, (result.lastIndexOf("}"))).trim()
-    }
-
-    private fun statementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val result = methodToKotlin("void main() {" + text + "}", settings, project)
-        return result.substring(0, result.lastIndexOf("}")).replaceFirst("fun main\\(\\) \\{", "").trim()
-    }
-
-    private fun expressionToKotlin(code: String, settings: ConverterSettings, project: Project): String {
-        val result = statementToKotlin("final Object o =" + code + "}", settings, project)
-        return result.replaceFirst("val o:Any\\? = ", "").replaceFirst("val o:Any = ", "").replaceFirst("val o = ", "").trim()
-    }
-
-    override fun getProjectDescriptor()
-            = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-
-    private fun String.removeFirstLine(): String {
-        val lastNewLine = indexOf('\n')
-        return if (lastNewLine == -1) "" else substring(lastNewLine)
-    }
-
-    private fun String.removeLastLine(): String {
-        val lastNewLine = lastIndexOf('\n')
-        return if (lastNewLine == -1) "" else substring(0, lastNewLine)
-    }
-
-    private fun createJavaFile(text: String): PsiJavaFile {
-        return myFixture.configureByText("converterTestFile.java", text) as PsiJavaFile
+    protected fun addErrorsDump(jetFile: JetFile): String {
+        val diagnostics = jetFile.getAnalysisResults().getBindingContext().getDiagnostics()
+        val errors = diagnostics.filter { it.getSeverity() == Severity.ERROR }
+        if (errors.isEmpty()) return jetFile.getText()
+        val header = errors.map { "// ERROR: " + DefaultErrorMessages.RENDERER.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
+        return header + jetFile.getText()
     }
 }

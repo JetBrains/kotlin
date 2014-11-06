@@ -1,0 +1,117 @@
+object O1
+
+object O2
+
+// -----
+
+object O3
+
+fun f1() = 1
+
+// -----
+
+object O4
+
+val p1 = 1
+
+// -----
+
+object O5
+
+class C1
+
+// -----
+
+object O6
+
+trait T1
+
+// -----
+
+enum class E1 {
+    object O7
+
+    ENTRY
+}
+
+// -----
+
+object O8 {}
+
+object O9
+
+// -----
+
+object O10 {}
+
+fun f2() = 1
+
+// -----
+
+object O11 {}
+
+val p2 = 1
+
+// -----
+
+object O12 {}
+
+class C2
+
+// -----
+
+object O13 {}
+
+trait T2
+
+// -----
+
+enum class E2 {
+    object O14 {}
+
+    ENTRY
+}
+
+// -----
+
+object O15 {
+}
+
+object O16
+
+// -----
+
+object O17 {
+}
+
+fun f3() = 1
+
+// -----
+
+object O18 {
+}
+
+val p3 = 1
+
+// -----
+
+object O19 {
+}
+
+class C3
+
+// -----
+
+object O20 {
+}
+
+trait T3
+
+// -----
+
+enum class E3 {
+    object O21 {
+    }
+
+    ENTRY
+}

@@ -348,7 +348,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
         }
 
         private String getExtras() {
-            return "/*extras*/\n" + getImports() + "/*extras*/\n";
+            return "/*extras*/\n" + getImports() + "/*extras*/\n\n";
         }
 
         private String addExtras(String text) {

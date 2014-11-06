@@ -677,7 +677,7 @@
             depends="init,prepareDist,preloader,builtins,compiler_quick"
             description="Builds compiler jar from project out dir"/>
 
-    <target name="zip" depends="dist">
+    <target name="zip-compiler" depends="dist">
         <zip destfile="${output}/${output.name}.zip">
             <zipfileset prefix="kotlinc" dir="${kotlin-home}" excludes="bin/*"/>
             <zipfileset prefix="kotlinc/bin" dir="${kotlin-home}/bin" includes="*.bat" filemode="644"/>
@@ -692,7 +692,7 @@
                 source="${java.target}" target="${java.target}">
             <withKotlin externalannotations="${external.annotations.path}"/>
             <src>
-                <dirset dir="${basedir}/idea/ide-lazy-resolve">
+                <dirset dir="${basedir}/idea/ide-common">
                     <include name="src"/>
                 </dirset>
                 <dirset dir="${basedir}/idea/idea-analysis">
@@ -768,7 +768,7 @@
         <fileset dir="js/js.frontend/src"/>
         <fileset dir="js/js.inliner/src"/>
         <fileset dir="idea/idea-analysis/src"/>
-        <fileset dir="idea/ide-lazy-resolve/src"/>
+        <fileset dir="idea/ide-common/src"/>
 
         <manifest>
           <attribute name="Built-By" value="${manifest.impl.vendor}"/>
@@ -780,5 +780,12 @@
 
     </target>
 
-    <target name="build-artifacts" depends="zip"/>
+    <target name="zip-test-data">
+        <zip destfile="${output}/kotlin-test-data.zip">
+            <zipfileset dir="compiler/testData" prefix="compiler"/>
+            <zipfileset dir="idea/testData" prefix="ide"/>
+        </zip>
+    </target>
+
+    <target name="build-artifacts" depends="zip-compiler,zip-test-data"/>
 </project>

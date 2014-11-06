@@ -22,7 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetModifierListStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinModifierListStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
@@ -31,9 +31,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class JetModifierList extends JetElementImplStub<PsiJetModifierListStub> {
+public abstract class JetModifierList extends JetElementImplStub<KotlinModifierListStub> {
 
-    public JetModifierList(@NotNull PsiJetModifierListStub stub, @NotNull IStubElementType nodeType) {
+    public JetModifierList(@NotNull KotlinModifierListStub stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
 
@@ -63,7 +63,7 @@ public abstract class JetModifierList extends JetElementImplStub<PsiJetModifierL
     }
 
     public boolean hasModifier(@NotNull JetModifierKeywordToken token) {
-        PsiJetModifierListStub stub = getStub();
+        KotlinModifierListStub stub = getStub();
         if (stub != null) {
             return stub.hasModifier(token);
         }

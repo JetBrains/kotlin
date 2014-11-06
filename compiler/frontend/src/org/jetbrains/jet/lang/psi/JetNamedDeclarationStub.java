@@ -21,18 +21,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetStubWithFqName;
+import org.jetbrains.jet.lang.psi.stubs.KotlinStubWithFqName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
-abstract class JetNamedDeclarationStub<T extends PsiJetStubWithFqName> extends JetDeclarationStub<T> implements JetNamedDeclaration {
+abstract class JetNamedDeclarationStub<T extends KotlinStubWithFqName> extends JetDeclarationStub<T> implements JetNamedDeclaration {
     public JetNamedDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
@@ -89,9 +90,12 @@ abstract class JetNamedDeclarationStub<T extends PsiJetStubWithFqName> extends J
     @NotNull
     @Override
     public SearchScope getUseScope() {
-        JetElement enclosingBlock = JetPsiUtil.getEnclosingElementForLocalDeclaration(this);
-        if (enclosingBlock != null) {
-            return new LocalSearchScope(enclosingBlock);
+        JetElement enclosingBlock = JetPsiUtil.getEnclosingElementForLocalDeclaration(this, false);
+        if (enclosingBlock != null) return new LocalSearchScope(enclosingBlock);
+
+        if (hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+            JetElement containingClass = PsiTreeUtil.getParentOfType(this, JetClassOrObject.class);
+            if (containingClass != null) return new LocalSearchScope(containingClass);
         }
 
         return super.getUseScope();

@@ -4,6 +4,8 @@ public open class KotlinClass(public var field: Int) {
     public var property: String = ""
     public var nullableProperty: String? = ""
 
+    public open fun foo(mutableCollection: MutableCollection<String>, nullableCollection: Collection<Int>?): MutableList<Any> = arrayListOf()
+
     class object {
         public fun staticFun(p: Int): Int = p
         public var staticVar: Int = 1

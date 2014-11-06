@@ -1,4 +1,5 @@
 // "Create function 'set' from usage" "true"
+
 import java.util.ArrayList
 
 class Foo<T> {

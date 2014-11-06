@@ -103,7 +103,7 @@ public abstract class LazyJavaMemberScope(
             }
         }
 
-        functions
+        functions.toReadOnlyList()
     }
 
     data class MethodSignatureData(
@@ -240,7 +240,7 @@ public abstract class LazyJavaMemberScope(
 
         computeNonDeclaredProperties(name, properties)
 
-        properties
+        properties.toReadOnlyList()
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
@@ -305,7 +305,7 @@ public abstract class LazyJavaMemberScope(
     override fun getOwnDeclaredDescriptors() = getAllDescriptors()
     override fun getAllDescriptors() = _allDescriptors()
 
-    private fun computeAllDescriptors(): MutableCollection<DeclarationDescriptor> {
+    private fun computeAllDescriptors(): List<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()
 
         for (name in getAllClassNames()) {
@@ -326,7 +326,7 @@ public abstract class LazyJavaMemberScope(
 
         addExtraDescriptors(result)
 
-        return result
+        return result.toReadOnlyList()
     }
 
     protected open fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>) {

@@ -422,6 +422,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/callSite.1.kt");
                     doBoxTestWithInlineCheck(fileName);
                 }
+
+                @TestMetadata("exceptionTableSplit.1.kt")
+                public void testExceptionTableSplit() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/exceptionTableSplit.1.kt");
+                    doBoxTestWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("exceptionTableSplitNoReturn.1.kt")
+                public void testExceptionTableSplitNoReturn() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/exceptionTableSplitNoReturn.1.kt");
+                    doBoxTestWithInlineCheck(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite")
@@ -507,6 +519,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                     doBoxTestWithInlineCheck(fileName);
                 }
 
+                @TestMetadata("exceptionInFinally.1.kt")
+                public void testExceptionInFinally() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/exceptionInFinally.1.kt");
+                    doBoxTestWithInlineCheck(fileName);
+                }
+
                 @TestMetadata("forInFinally.1.kt")
                 public void testForInFinally() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/forInFinally.1.kt");
@@ -578,6 +596,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/throwInFinally.1.kt");
                     doBoxTestWithInlineCheck(fileName);
                 }
+
+                @TestMetadata("tryCatchInFinally.1.kt")
+                public void testTryCatchInFinally() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/tryCatchInFinally.1.kt");
+                    doBoxTestWithInlineCheck(fileName);
+                }
             }
         }
     }
@@ -605,6 +629,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("params.1.kt")
         public void testParams() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/params.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("propertyModifiers.1.kt")
+        public void testPropertyModifiers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/propertyModifiers.1.kt");
             doBoxTestWithInlineCheck(fileName);
         }
 

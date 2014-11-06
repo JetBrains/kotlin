@@ -20,13 +20,13 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetStubWithFqName;
+import org.jetbrains.jet.lang.psi.stubs.KotlinStubWithFqName;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
 
-abstract class JetTypeParameterListOwnerStub<T extends PsiJetStubWithFqName> extends JetNamedDeclarationStub<T> implements JetTypeParameterListOwner {
+abstract class JetTypeParameterListOwnerStub<T extends KotlinStubWithFqName> extends JetNamedDeclarationStub<T> implements JetTypeParameterListOwner {
     public JetTypeParameterListOwnerStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }

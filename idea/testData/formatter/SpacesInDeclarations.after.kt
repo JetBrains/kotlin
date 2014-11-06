@@ -21,6 +21,7 @@ public fun Int.extFun1() {
 public
 fun Int.extFun2() {
 }
+
 //-----------------------
 val fooVal1 = 1
 
@@ -41,8 +42,10 @@ public var Int.extVar1: Int = 122
 public
 var
         Int.extVar: Int = 1
+
 //-----------------------
 annotation class A1
+
 annotation class A2
 
 private [A1 A2 A1] A1 A2 [A1 A2 A2] [A1] val fooProp1 = 1

@@ -18,18 +18,18 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.List;
 
-public class JetImportList extends JetElementImplStub<PsiJetPlaceHolderStub<JetImportList>> {
+public class JetImportList extends JetElementImplStub<KotlinPlaceHolderStub<JetImportList>> {
 
     public JetImportList(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetImportList(@NotNull PsiJetPlaceHolderStub<JetImportList> stub) {
+    public JetImportList(@NotNull KotlinPlaceHolderStub<JetImportList> stub) {
         super(stub, JetStubElementTypes.IMPORT_LIST);
     }
 

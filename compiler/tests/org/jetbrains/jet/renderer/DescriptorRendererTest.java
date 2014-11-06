@@ -82,6 +82,10 @@ public class DescriptorRendererTest extends JetLiteFixture {
         doTest();
     }
 
+    public void testFunctionTypesInSignature() throws IOException {
+        doTest();
+    }
+
     @Override
     protected String getTestDataPath() {
         return JetTestCaseBuilder.getTestDataPathBase() + "/renderer";

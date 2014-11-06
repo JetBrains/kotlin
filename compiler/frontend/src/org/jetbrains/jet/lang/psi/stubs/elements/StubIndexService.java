@@ -26,34 +26,34 @@ public interface StubIndexService {
      */
     StubIndexService NO_INDEX_SERVICE = new StubIndexService() {
         @Override
-        public void indexFile(PsiJetFileStub stub, IndexSink sink) {
+        public void indexFile(KotlinFileStub stub, IndexSink sink) {
         }
 
         @Override
-        public void indexClass(PsiJetClassStub stub, IndexSink sink) {
+        public void indexClass(KotlinClassStub stub, IndexSink sink) {
         }
 
         @Override
-        public void indexFunction(PsiJetFunctionStub stub, IndexSink sink) {
+        public void indexFunction(KotlinFunctionStub stub, IndexSink sink) {
         }
 
         @Override
-        public void indexObject(PsiJetObjectStub stub, IndexSink sink) {
+        public void indexObject(KotlinObjectStub stub, IndexSink sink) {
         }
 
         @Override
-        public void indexProperty(PsiJetPropertyStub stub, IndexSink sink) {
+        public void indexProperty(KotlinPropertyStub stub, IndexSink sink) {
         }
 
         @Override
-        public void indexAnnotation(PsiJetAnnotationEntryStub stub, IndexSink sink) {
+        public void indexAnnotation(KotlinAnnotationEntryStub stub, IndexSink sink) {
         }
     };
 
-    void indexFile(PsiJetFileStub stub, IndexSink sink);
-    void indexClass(PsiJetClassStub stub, IndexSink sink);
-    void indexFunction(PsiJetFunctionStub stub, IndexSink sink);
-    void indexObject(PsiJetObjectStub stub, IndexSink sink);
-    void indexProperty(PsiJetPropertyStub stub, IndexSink sink);
-    void indexAnnotation(PsiJetAnnotationEntryStub stub, IndexSink sink);
+    void indexFile(KotlinFileStub stub, IndexSink sink);
+    void indexClass(KotlinClassStub stub, IndexSink sink);
+    void indexFunction(KotlinFunctionStub stub, IndexSink sink);
+    void indexObject(KotlinObjectStub stub, IndexSink sink);
+    void indexProperty(KotlinPropertyStub stub, IndexSink sink);
+    void indexAnnotation(KotlinAnnotationEntryStub stub, IndexSink sink);
 }

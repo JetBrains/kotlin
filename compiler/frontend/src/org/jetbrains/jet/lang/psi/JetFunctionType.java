@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class JetFunctionType extends JetElementImplStub<PsiJetPlaceHolderStub<JetFunctionType>> implements JetTypeElement {
+public class JetFunctionType extends JetElementImplStub<KotlinPlaceHolderStub<JetFunctionType>> implements JetTypeElement {
 
     public static final JetToken RETURN_TYPE_SEPARATOR = JetTokens.ARROW;
 
@@ -37,7 +37,7 @@ public class JetFunctionType extends JetElementImplStub<PsiJetPlaceHolderStub<Je
         super(node);
     }
 
-    public JetFunctionType(@NotNull PsiJetPlaceHolderStub<JetFunctionType> stub) {
+    public JetFunctionType(@NotNull KotlinPlaceHolderStub<JetFunctionType> stub) {
         super(stub, JetStubElementTypes.FUNCTION_TYPE);
     }
 

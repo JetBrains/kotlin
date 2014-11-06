@@ -364,23 +364,6 @@ public class AnnotationResolver {
         return constants;
     }
 
-    @SuppressWarnings("MethodMayBeStatic")
-    @NotNull
-    public Annotations getResolvedAnnotations(@NotNull List<JetAnnotationEntry> annotations, @NotNull BindingTrace trace) {
-        List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>(annotations.size());
-        for (JetAnnotationEntry annotation : annotations) {
-            AnnotationDescriptor annotationDescriptor = trace.get(BindingContext.ANNOTATION, annotation);
-            if (annotationDescriptor == null) {
-                throw new IllegalStateException("Annotation for annotation should have been resolved: \n" +
-                                                JetPsiUtil.getElementTextWithContext(annotation));
-            }
-
-            result.add(annotationDescriptor);
-        }
-
-        return new AnnotationsImpl(result);
-    }
-
     public static void reportUnsupportedAnnotationForTypeParameter(@NotNull JetTypeParameter jetTypeParameter, @NotNull BindingTrace trace) {
         JetModifierList modifierList = jetTypeParameter.getModifierList();
         if (modifierList == null) return;

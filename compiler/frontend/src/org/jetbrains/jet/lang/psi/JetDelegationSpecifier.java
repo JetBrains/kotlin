@@ -21,10 +21,10 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-public class JetDelegationSpecifier extends JetElementImplStub<PsiJetPlaceHolderStub<? extends JetDelegationSpecifier>> {
+public class JetDelegationSpecifier extends JetElementImplStub<KotlinPlaceHolderStub<? extends JetDelegationSpecifier>> {
 
     private static final JetDelegationSpecifier[] EMPTY_ARRAY = new JetDelegationSpecifier[0];
 
@@ -41,7 +41,7 @@ public class JetDelegationSpecifier extends JetElementImplStub<PsiJetPlaceHolder
     }
 
     public JetDelegationSpecifier(
-            @NotNull PsiJetPlaceHolderStub<? extends JetDelegationSpecifier> stub,
+            @NotNull KotlinPlaceHolderStub<? extends JetDelegationSpecifier> stub,
             @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }

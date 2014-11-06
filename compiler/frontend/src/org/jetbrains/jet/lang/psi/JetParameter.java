@@ -19,9 +19,10 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinParameterStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.psi.typeRefHelpers.TypeRefHelpersPackage;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -29,13 +30,13 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> implements JetCallableDeclaration {
+public class JetParameter extends JetNamedDeclarationStub<KotlinParameterStub> implements JetCallableDeclaration {
 
     public JetParameter(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetParameter(@NotNull PsiJetParameterStub stub) {
+    public JetParameter(@NotNull KotlinParameterStub stub) {
         super(stub, JetStubElementTypes.VALUE_PARAMETER);
     }
 
@@ -56,8 +57,14 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> i
         return TypeRefHelpersPackage.setTypeReference(this, getNameIdentifier(), typeRef);
     }
 
+    @Nullable
+    @Override
+    public PsiElement getColon() {
+        return findChildByType(JetTokens.COLON);
+    }
+
     public boolean hasDefaultValue() {
-        PsiJetParameterStub stub = getStub();
+        KotlinParameterStub stub = getStub();
         if (stub != null) {
             return stub.hasDefaultValue();
         }
@@ -66,7 +73,7 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> i
 
     @Nullable
     public JetExpression getDefaultValue() {
-        PsiJetParameterStub stub = getStub();
+        KotlinParameterStub stub = getStub();
         if (stub != null && !stub.hasDefaultValue()) {
             return null;
         }
@@ -84,7 +91,7 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> i
     }
 
     public boolean isMutable() {
-        PsiJetParameterStub stub = getStub();
+        KotlinParameterStub stub = getStub();
         if (stub != null) {
             return stub.isMutable();
         }
@@ -98,7 +105,7 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> i
     }
 
     public boolean hasValOrVarNode() {
-        PsiJetParameterStub stub = getStub();
+        KotlinParameterStub stub = getStub();
         if (stub != null) {
             return stub.hasValOrValNode();
         }
@@ -107,7 +114,7 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> i
 
     @Nullable
     public ASTNode getValOrVarNode() {
-        PsiJetParameterStub stub = getStub();
+        KotlinParameterStub stub = getStub();
         if (stub != null && !stub.hasValOrValNode()) {
             return null;
         }

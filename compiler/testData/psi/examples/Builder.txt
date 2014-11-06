@@ -291,7 +291,7 @@ JetFile: Builder.kt
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('ClassPathEntry')
-              PsiComment(BLOCK_COMMENT)('/*...*/')
+                PsiComment(BLOCK_COMMENT)('/*...*/')
               PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             BLOCK
@@ -371,7 +371,7 @@ JetFile: Builder.kt
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('ClassPathEntry')
-              PsiComment(BLOCK_COMMENT)('/*...*/')
+                PsiComment(BLOCK_COMMENT)('/*...*/')
               PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             BLOCK

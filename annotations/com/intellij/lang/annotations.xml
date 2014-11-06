@@ -9,4 +9,16 @@
       name='com.intellij.lang.SmartEnterProcessorWithFixers.FixEnterProcessor boolean doEnter(com.intellij.psi.PsiElement, com.intellij.psi.PsiFile, com.intellij.openapi.editor.Editor, boolean) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+    <item
+        name='com.intellij.lang.WhitespacesAndCommentsBinder int getEdgePosition(java.util.List&lt;com.intellij.psi.tree.IElementType&gt;, boolean, com.intellij.lang.WhitespacesAndCommentsBinder.TokenTextGetter) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.annotations.ReadOnly'/>
+    </item>
+    <item
+        name='com.intellij.lang.WhitespacesAndCommentsBinder int getEdgePosition(java.util.List&lt;com.intellij.psi.tree.IElementType&gt;, boolean, com.intellij.lang.WhitespacesAndCommentsBinder.TokenTextGetter) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.intellij.lang.WhitespacesAndCommentsBinder.TokenTextGetter java.lang.CharSequence get(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
 </root>

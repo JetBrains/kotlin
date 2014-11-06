@@ -60,6 +60,12 @@ public class LazyResolveDescriptorRendererTestGenerated extends AbstractLazyReso
         doTest(fileName);
     }
 
+    @TestMetadata("FunctionTypesInSignature.kt")
+    public void testFunctionTypesInSignature() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/FunctionTypesInSignature.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("GlobalFunctions.kt")
     public void testGlobalFunctions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/GlobalFunctions.kt");

@@ -50,14 +50,13 @@ class TypeParameterList(val parameters: List<TypeParameter>) : Element() {
         return builder
     }
 
-
     override val isEmpty: Boolean
         get() = parameters.isEmpty()
 
     private fun hasWhere(): Boolean = parameters.any { it.hasWhere() }
 
     class object {
-        val Empty = TypeParameterList(ArrayList())
+        val Empty = TypeParameterList(listOf())
     }
 }
 

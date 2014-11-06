@@ -43,7 +43,7 @@ class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotProcess:
     override val endLabel: LabelNode
             get() = node.end
     override val handler: LabelNode
-            get() = node.handler!!
+            get() = node.handler
     override val type: String?
             get() = node.type
 }

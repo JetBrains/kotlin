@@ -1,0 +1,3 @@
+open class A {
+    protected fun <caret>foo(): String = "abc"
+}

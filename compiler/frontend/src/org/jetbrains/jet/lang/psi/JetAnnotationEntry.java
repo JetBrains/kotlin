@@ -20,18 +20,18 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationEntryStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinAnnotationEntryStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
 
-public class JetAnnotationEntry extends JetElementImplStub<PsiJetAnnotationEntryStub> implements JetCallElement {
+public class JetAnnotationEntry extends JetElementImplStub<KotlinAnnotationEntryStub> implements JetCallElement {
     public JetAnnotationEntry(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetAnnotationEntry(@NotNull PsiJetAnnotationEntryStub stub) {
+    public JetAnnotationEntry(@NotNull KotlinAnnotationEntryStub stub) {
         super(stub, JetStubElementTypes.ANNOTATION_ENTRY);
     }
 
@@ -57,7 +57,7 @@ public class JetAnnotationEntry extends JetElementImplStub<PsiJetAnnotationEntry
 
     @Override
     public JetValueArgumentList getValueArgumentList() {
-        PsiJetAnnotationEntryStub stub = getStub();
+        KotlinAnnotationEntryStub stub = getStub();
         if (stub != null && !stub.hasValueArguments()) {
             return null;
         }

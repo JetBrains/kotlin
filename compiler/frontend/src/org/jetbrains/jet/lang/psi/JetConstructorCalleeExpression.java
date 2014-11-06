@@ -19,15 +19,15 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-public class JetConstructorCalleeExpression extends JetExpressionImplStub<PsiJetPlaceHolderStub<JetConstructorCalleeExpression>> {
+public class JetConstructorCalleeExpression extends JetExpressionImplStub<KotlinPlaceHolderStub<JetConstructorCalleeExpression>> {
     public JetConstructorCalleeExpression(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetConstructorCalleeExpression(@NotNull PsiJetPlaceHolderStub<JetConstructorCalleeExpression> stub) {
+    public JetConstructorCalleeExpression(@NotNull KotlinPlaceHolderStub<JetConstructorCalleeExpression> stub) {
         super(stub, JetStubElementTypes.CONSTRUCTOR_CALLEE);
     }
 

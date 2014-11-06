@@ -22,9 +22,7 @@ import org.jetbrains.jet.j2k.*
 abstract class Statement() : Element() {
     object Empty : Statement() {
         override fun generateCode(builder: CodeBuilder) { }
-
-        override val isEmpty: Boolean
-            get() = true
+        override val isEmpty: Boolean get() = true
     }
 }
 

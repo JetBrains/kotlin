@@ -1,13 +1,11 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.jetbrains.kotlin.gradle.plugin.KSpec
 import java.io.File
 import org.gradle.api.GradleException
 import org.jetbrains.jet.cli.common.ExitCode
 import org.gradle.api.tasks.SourceTask
 import org.jetbrains.kotlin.doc.KDocArguments
-import java.util.HashMap
 import java.util.HashSet
 import org.jetbrains.kotlin.doc.KDocCompiler
 import org.gradle.api.tasks.TaskAction
@@ -22,11 +20,8 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.apache.commons.lang.StringUtils
-import org.gradle.api.initialization.dsl.ScriptHandler
 import org.apache.commons.io.FileUtils
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.doc.KDocConfig
-import java.util.concurrent.Callable
 import org.gradle.api.Project
 import org.jetbrains.jet.config.Services
 
@@ -100,6 +95,10 @@ public open class KotlinCompile(): AbstractCompile() {
             getLogger().warn("No Kotlin files found, skipping Kotlin compiler task")
             return
         }
+
+        args.suppressWarnings = kotlinOptions.suppressWarnings
+        args.version = kotlinOptions.version
+        args.verbose = logger.isDebugEnabled()
 
         args.freeArgs = sources.map { it.getAbsolutePath() }
 

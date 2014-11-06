@@ -29,13 +29,13 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.parsing.JetParser;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetFileStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinFileStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinFileStubImpl;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.io.IOException;
 
-public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
+public class JetFileElementType extends IStubFileElementType<KotlinFileStub> {
     public static final int STUB_VERSION = 30;
 
     public JetFileElementType() {
@@ -63,7 +63,7 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
     }
 
     @Override
-    public void serialize(@NotNull PsiJetFileStub stub, @NotNull StubOutputStream dataStream)
+    public void serialize(@NotNull KotlinFileStub stub, @NotNull StubOutputStream dataStream)
             throws IOException {
         dataStream.writeName(stub.getPackageFqName().asString());
         dataStream.writeBoolean(stub.isScript());
@@ -71,10 +71,10 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
 
     @NotNull
     @Override
-    public PsiJetFileStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinFileStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef packageFqNameAsString = dataStream.readName();
         boolean isScript = dataStream.readBoolean();
-        return new PsiJetFileStubImpl(null, packageFqNameAsString, isScript);
+        return new KotlinFileStubImpl(null, packageFqNameAsString, isScript);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
     }
 
     @Override
-    public void indexStub(@NotNull PsiJetFileStub stub, @NotNull IndexSink sink) {
+    public void indexStub(@NotNull KotlinFileStub stub, @NotNull IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexFile(stub, sink);
     }
 }

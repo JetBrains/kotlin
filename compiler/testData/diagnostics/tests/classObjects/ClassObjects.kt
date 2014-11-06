@@ -1,13 +1,12 @@
-
 package Jet86
 
 class A {
   class object {
     val x = 1
   }
-  <!MANY_CLASS_OBJECTS!>class object { // error
+  <!MANY_CLASS_OBJECTS!>class object<!> { // error
     val x = 1
-  }<!>
+  }
 }
 
 class B() {
@@ -15,9 +14,9 @@ class B() {
 }
 
 object b {
-  <!CLASS_OBJECT_NOT_ALLOWED!>class object {
+  <!CLASS_OBJECT_NOT_ALLOWED!>class object<!> {
     val x = 1
-  }<!> // error
+  } // error
 }
 
 val a = A.x

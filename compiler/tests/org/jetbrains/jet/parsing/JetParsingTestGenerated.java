@@ -118,6 +118,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("CommentsBinding.kt")
+        public void testCommentsBinding() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/CommentsBinding.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("Constructors.kt")
         public void testConstructors() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Constructors.kt");
@@ -127,6 +133,30 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestMetadata("ControlStructures.kt")
         public void testControlStructures() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/ControlStructures.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("DocCommentAfterFileAnnotations.kt")
+        public void testDocCommentAfterFileAnnotations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DocCommentAfterFileAnnotations.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("DocCommentForFirstDeclaration.kt")
+        public void testDocCommentForFirstDeclaration() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DocCommentForFirstDeclaration.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("DocCommentOnPackageDirectiveLine.kt")
+        public void testDocCommentOnPackageDirectiveLine() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DocCommentOnPackageDirectiveLine.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("DocCommentsBinding.kt")
+        public void testDocCommentsBinding() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DocCommentsBinding.kt");
             doParsingTest(fileName);
         }
 
@@ -283,6 +313,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestMetadata("Labels.kt")
         public void testLabels() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Labels.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("LineCommentAfterFileAnnotations.kt")
+        public void testLineCommentAfterFileAnnotations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/LineCommentAfterFileAnnotations.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("LineCommentForFirstDeclaration.kt")
+        public void testLineCommentForFirstDeclaration() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/LineCommentForFirstDeclaration.kt");
             doParsingTest(fileName);
         }
 
@@ -905,9 +947,33 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("FunctionsWithFunctionReceiversAnnotations.kt")
+            public void testFunctionsWithFunctionReceiversAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/functionReceivers/FunctionsWithFunctionReceiversAnnotations.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("FunctionsWithFunctionReceiversRecovery.kt")
+            public void testFunctionsWithFunctionReceiversRecovery() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/functionReceivers/FunctionsWithFunctionReceiversRecovery.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("PropertiesWithFunctionReceivers.kt")
             public void testPropertiesWithFunctionReceivers() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/functionReceivers/PropertiesWithFunctionReceivers.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("PropertiesWithFunctionReceiversAnnotations.kt")
+            public void testPropertiesWithFunctionReceiversAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/functionReceivers/PropertiesWithFunctionReceiversAnnotations.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("PropertiesWithFunctionReceiversRecovery.kt")
+            public void testPropertiesWithFunctionReceiversRecovery() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/functionReceivers/PropertiesWithFunctionReceiversRecovery.kt");
                 doParsingTest(fileName);
             }
         }
@@ -1266,6 +1332,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             @TestMetadata("ImportRecovery.kt")
             public void testImportRecovery() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/ImportRecovery.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("InvalidCharInSingleLineLambda.kt")
+            public void testInvalidCharInSingleLineLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/InvalidCharInSingleLineLambda.kt");
                 doParsingTest(fileName);
             }
 

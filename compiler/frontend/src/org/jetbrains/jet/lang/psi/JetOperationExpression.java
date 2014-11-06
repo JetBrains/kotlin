@@ -16,10 +16,9 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public interface JetOperationExpression extends PsiElement {
+public interface JetOperationExpression extends JetExpression {
     @NotNull
     JetSimpleNameExpression getOperationReference();
 }

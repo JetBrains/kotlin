@@ -730,6 +730,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/call")
             @TestDataPath("$PROJECT_ROOT")
+            @InnerTestClasses({Call.TypeArguments.class})
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Call extends AbstractQuickFixTest {
                 public void testAllFilesPresentInCall() throws Exception {
@@ -932,6 +933,75 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 public void testUnresolvedSupertype() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/beforeUnresolvedSupertype.kt");
                     doTest(fileName);
+                }
+
+                @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class TypeArguments extends AbstractQuickFixTest {
+                    public void testAllFilesPresentInTypeArguments() throws Exception {
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("beforeClassMember.kt")
+                    public void testClassMember() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/beforeClassMember.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("beforeClassMemberPartialSubstitution.kt")
+                    public void testClassMemberPartialSubstitution() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/beforeClassMemberPartialSubstitution.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("beforeClassMemberWithReceiverArg.kt")
+                    public void testClassMemberWithReceiverArg() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/beforeClassMemberWithReceiverArg.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("beforeExtension.kt")
+                    public void testExtension() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/beforeExtension.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("beforeExtensionPartialSubstitution.kt")
+                    public void testExtensionPartialSubstitution() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/beforeExtensionPartialSubstitution.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("beforeExtensionWithReceiverArg.kt")
+                    public void testExtensionWithReceiverArg() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/beforeExtensionWithReceiverArg.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("beforeNoReceiver.kt")
+                    public void testNoReceiver() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/beforeNoReceiver.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("beforeNoReceiverExtraArgs.kt")
+                    public void testNoReceiverExtraArgs() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/beforeNoReceiverExtraArgs.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("beforeNoReceiverLongName.kt")
+                    public void testNoReceiverLongName() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/beforeNoReceiverLongName.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("beforeNoReceiverPartialSubstitution.kt")
+                    public void testNoReceiverPartialSubstitution() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/beforeNoReceiverPartialSubstitution.kt");
+                        doTest(fileName);
+                    }
                 }
             }
 

@@ -20,7 +20,9 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.kdoc.psi.api.KDoc;
 import org.jetbrains.jet.lang.psi.addRemoveModifier.AddRemoveModifierPackage;
+import org.jetbrains.jet.lang.psi.findDocComment.FindDocCommentPackage;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -68,5 +70,11 @@ abstract class JetDeclarationImpl extends JetExpressionImpl implements JetDeclar
         JetModifierList modifierList = getModifierList();
         if (modifierList == null) return Collections.emptyList();
         return modifierList.getAnnotations();
+    }
+
+    @Nullable
+    @Override
+    public KDoc getDocComment() {
+        return FindDocCommentPackage.findDocComment(this);
     }
 }

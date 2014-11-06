@@ -670,8 +670,15 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
     @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({BuiltinStubMethods.ExtendJavaCollections.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class BuiltinStubMethods extends AbstractBlackBoxCodegenTest {
+        @TestMetadata("abstractMember.kt")
+        public void testAbstractMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/abstractMember.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInBuiltinStubMethods() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -682,9 +689,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("delegationToArrayList.kt")
+        public void testDelegationToArrayList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/delegationToArrayList.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("dontGenerateBodyInTrait.kt")
         public void testDontGenerateBodyInTrait() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/dontGenerateBodyInTrait.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implementationInTrait.kt")
+        public void testImplementationInTrait() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/implementationInTrait.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inheritedImplementations.kt")
+        public void testInheritedImplementations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/inheritedImplementations.kt");
             doTest(fileName);
         }
 
@@ -706,6 +731,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ListIterator.kt")
+        public void testListIterator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/ListIterator.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ListWithAllImplementations.kt")
         public void testListWithAllImplementations() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/ListWithAllImplementations.kt");
@@ -715,6 +746,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("ListWithAllInheritedImplementations.kt")
         public void testListWithAllInheritedImplementations() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/ListWithAllInheritedImplementations.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("manyTypeParametersWithUpperBounds.kt")
+        public void testManyTypeParametersWithUpperBounds() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/manyTypeParametersWithUpperBounds.kt");
             doTest(fileName);
         }
 
@@ -742,9 +779,15 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("noMethodsForClassExtendingMutableCollection.kt")
-        public void testNoMethodsForClassExtendingMutableCollection() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/noMethodsForClassExtendingMutableCollection.kt");
+        @TestMetadata("nonTrivialSubstitution.kt")
+        public void testNonTrivialSubstitution() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/nonTrivialSubstitution.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonTrivialUpperBound.kt")
+        public void testNonTrivialUpperBound() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/nonTrivialUpperBound.kt");
             doTest(fileName);
         }
 
@@ -752,6 +795,57 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testSubstitutedList() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/SubstitutedList.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("twoListsInSupertypes.kt")
+        public void testTwoListsInSupertypes() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/twoListsInSupertypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ExtendJavaCollections extends AbstractBlackBoxCodegenTest {
+            @TestMetadata("abstractList.kt")
+            public void testAbstractList() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/abstractList.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("abstractMap.kt")
+            public void testAbstractMap() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/abstractMap.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("abstractSet.kt")
+            public void testAbstractSet() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/abstractSet.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInExtendJavaCollections() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("arrayList.kt")
+            public void testArrayList() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/arrayList.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hashMap.kt")
+            public void testHashMap() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/hashMap.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("hashSet.kt")
+            public void testHashSet() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/hashSet.kt");
+                doTest(fileName);
+            }
         }
     }
 
@@ -6740,6 +6834,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("closureReturnsNullableUnit.kt")
         public void testClosureReturnsNullableUnit() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/unit/closureReturnsNullableUnit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifElse.kt")
+        public void testIfElse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/unit/ifElse.kt");
             doTest(fileName);
         }
 

@@ -1,8 +1,8 @@
 package foo
 
 // CHECK_NOT_CALLED: testLabelInline
-// CHECK_LABELS_COUNT: function=testLabel name=loop$ count=1
-// CHECK_LABELS_COUNT: function=testLabel name=loop$_0 count=2
+// CHECK_LABELS_COUNT: function=testLabel name=loop count=1
+// CHECK_LABELS_COUNT: function=testLabel name=loop_0 count=2
 
 inline fun testLabelInline(): Int {
     var a = 0

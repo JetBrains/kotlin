@@ -49,14 +49,30 @@ public class JsFunctionScope(parent: JsScope, description: String) : JsScope(par
             topLabelScope?.findName(label)
 
     private inner class LabelScope(parent: LabelScope?, val ident: String) : JsScope(parent, "Label scope for $ident", null) {
-        val labelName = JsName(this@JsFunctionScope, parent?.getFreshIdent(ident) ?: ident)
+        val labelName: JsName
+
+        {
+            val freshIdent = when {
+                ident in RESERVED_WORDS -> getFreshIdent(ident)
+                parent != null -> parent.getFreshIdent(ident)
+                else -> ident
+            }
+
+            labelName = JsName(this@JsFunctionScope, freshIdent)
+        }
 
         override fun findOwnName(name: String): JsName? =
                 if (name == ident) labelName else null
 
+        /**
+         * Safe call is necessary, because hasOwnName can be called
+         * in constructor before labelName is initialized (see KT-4394)
+         */
+        [suppress("UNNECESSARY_SAFE_CALL")]
         override fun hasOwnName(name: String): Boolean =
-                name == ident
-                || name == labelName.getIdent()
+                name in RESERVED_WORDS
+                || name == ident
+                || name == labelName?.getIdent()
                 || getParent()?.hasOwnName(name) ?: false
     }
 

@@ -24,25 +24,25 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetPropertyStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPropertyStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinPropertyStubImpl;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
 
-public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStub, JetProperty> {
+public class JetPropertyElementType extends JetStubElementType<KotlinPropertyStub, JetProperty> {
     public JetPropertyElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetProperty.class, PsiJetPropertyStub.class);
+        super(debugName, JetProperty.class, KotlinPropertyStub.class);
     }
 
     @Override
-    public PsiJetPropertyStub createStub(@NotNull JetProperty psi, StubElement parentStub) {
+    public KotlinPropertyStub createStub(@NotNull JetProperty psi, StubElement parentStub) {
         assert !psi.isLocal() :
                 String.format("Should not store local property: %s, parent %s",
                               psi.getText(), psi.getParent() != null ? psi.getParent().getText() : "<no parent>");
 
-        return new PsiJetPropertyStubImpl(
+        return new KotlinPropertyStubImpl(
                 parentStub, StringRef.fromString(psi.getName()),
                 psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
                 psi.hasDelegateExpression(), psi.hasInitializer(),
@@ -52,7 +52,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
     }
 
     @Override
-    public void serialize(@NotNull PsiJetPropertyStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinPropertyStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isVar());
         dataStream.writeBoolean(stub.isTopLevel());
@@ -68,7 +68,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
 
     @NotNull
     @Override
-    public PsiJetPropertyStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinPropertyStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         boolean isVar = dataStream.readBoolean();
         boolean isTopLevel = dataStream.readBoolean();
@@ -81,12 +81,12 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
         StringRef fqNameAsString = dataStream.readName();
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
-        return new PsiJetPropertyStubImpl(parentStub, name, isVar, isTopLevel, hasDelegate,
+        return new KotlinPropertyStubImpl(parentStub, name, isVar, isTopLevel, hasDelegate,
                                           hasDelegateExpression, hasInitializer, hasReceiverTypeRef, hasReturnTypeRef, fqName);
     }
 
     @Override
-    public void indexStub(@NotNull PsiJetPropertyStub stub, @NotNull IndexSink sink) {
+    public void indexStub(@NotNull KotlinPropertyStub stub, @NotNull IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexProperty(stub, sink);
     }
 }

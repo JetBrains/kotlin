@@ -516,6 +516,7 @@ fun ExtractableCodeDescriptor.generateDeclaration(options: ExtractionGeneratorOp
             anchorCandidates.maxBy { it.getTextRange().getStartOffset() }!!
         }
 
+        // Ascend to the level of targetSibling
         val targetParent = targetSibling.getParent()
         marginalCandidate.parents().first { it.getParent() == targetParent }
     }

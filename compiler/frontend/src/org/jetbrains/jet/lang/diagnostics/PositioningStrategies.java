@@ -51,7 +51,15 @@ public class PositioningStrategies {
                 }
                 return markRange(objectKeyword, delegationSpecifierList);
             }
-            return super.mark(element);
+            else if (element instanceof JetClassObject) {
+                JetClassObject classObject = (JetClassObject) element;
+                PsiElement classKeyword = classObject.getClassKeyword();
+                PsiElement objectKeyword = classObject.getObjectDeclaration().getObjectKeyword();
+                return markRange(classKeyword, objectKeyword);
+            }
+            else {
+                return super.mark(element);
+            }
         }
     };
 
@@ -130,7 +138,7 @@ public class PositioningStrategies {
                 PsiElement objectKeyword = ((JetObjectDeclaration) element).getObjectKeyword();
                 PsiElement parent = element.getParent();
                 if (parent instanceof JetClassObject) {
-                    PsiElement classKeyword = ((JetClassObject) parent).getClassKeywordNode();
+                    PsiElement classKeyword = ((JetClassObject) parent).getClassKeyword();
                     PsiElement start = classKeyword == null ? objectKeyword : classKeyword;
                     return markRange(start, objectKeyword);
                 }

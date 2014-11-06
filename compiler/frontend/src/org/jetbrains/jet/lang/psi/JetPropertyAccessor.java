@@ -21,20 +21,20 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyAccessorStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPropertyAccessorStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
 
-public class JetPropertyAccessor extends JetDeclarationStub<PsiJetPropertyAccessorStub>
+public class JetPropertyAccessor extends JetDeclarationStub<KotlinPropertyAccessorStub>
         implements JetDeclarationWithBody, JetModifierListOwner, JetWithExpressionInitializer {
     public JetPropertyAccessor(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetPropertyAccessor(@NotNull PsiJetPropertyAccessorStub stub) {
+    public JetPropertyAccessor(@NotNull KotlinPropertyAccessorStub stub) {
         super(stub, JetStubElementTypes.PROPERTY_ACCESSOR);
     }
 
@@ -44,7 +44,7 @@ public class JetPropertyAccessor extends JetDeclarationStub<PsiJetPropertyAccess
     }
 
     public boolean isSetter() {
-        PsiJetPropertyAccessorStub stub = getStub();
+        KotlinPropertyAccessorStub stub = getStub();
         if (stub != null) {
             return !stub.isGetter();
         }
@@ -52,7 +52,7 @@ public class JetPropertyAccessor extends JetDeclarationStub<PsiJetPropertyAccess
     }
 
     public boolean isGetter() {
-        PsiJetPropertyAccessorStub stub = getStub();
+        KotlinPropertyAccessorStub stub = getStub();
         if (stub != null) {
             return stub.isGetter();
         }
@@ -91,7 +91,7 @@ public class JetPropertyAccessor extends JetDeclarationStub<PsiJetPropertyAccess
 
     @Override
     public boolean hasBody() {
-        PsiJetPropertyAccessorStub stub = getStub();
+        KotlinPropertyAccessorStub stub = getStub();
         if (stub != null) {
             return stub.hasBody();
         }

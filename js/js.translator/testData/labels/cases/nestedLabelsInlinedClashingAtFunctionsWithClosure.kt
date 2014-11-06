@@ -1,8 +1,8 @@
 package foo
 
-// CHECK_LABELS_COUNT: function=test name=loop$ count=1
-// CHECK_LABELS_COUNT: function=test name=loop$_0 count=1
-// CHECK_LABELS_COUNT: function=test name=loop$_1 count=1
+// CHECK_LABELS_COUNT: function=test name=loop count=1
+// CHECK_LABELS_COUNT: function=test name=loop_0 count=1
+// CHECK_LABELS_COUNT: function=test name=loop_1 count=1
 
 class State() {
     public var value: Int = 0

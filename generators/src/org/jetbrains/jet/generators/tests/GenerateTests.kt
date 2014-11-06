@@ -95,7 +95,6 @@ import org.jetbrains.jet.plugin.navigation.AbstractKotlinGotoTest
 import org.jetbrains.jet.plugin.AbstractExpressionSelectionTest
 import org.jetbrains.jet.plugin.refactoring.move.AbstractJetMoveTest
 import org.jetbrains.jet.cfg.AbstractDataFlowTest
-import org.jetbrains.jet.plugin.libraries.AbstractDecompiledTextTest
 import org.jetbrains.jet.plugin.imports.AbstractOptimizeImportsTest
 import org.jetbrains.jet.plugin.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.jet.plugin.stubs.AbstractStubBuilderTest
@@ -113,7 +112,7 @@ import org.jetbrains.jet.plugin.stubs.AbstractLazyResolveByStubTest
 import org.jetbrains.jet.plugin.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.jet.cfg.AbstractPseudoValueTest
 import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest
-import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterTest
+import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.jet.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.jet.asJava.AbstractKotlinLightClassTest
 import org.jetbrains.jet.lang.resolve.java.AbstractJavaTypeSubstitutorTest
@@ -127,6 +126,8 @@ import org.jetbrains.jet.generators.tests.reservedWords.generateTestDataForReser
 import org.jetbrains.k2js.test.semantics.AbstractReservedWordTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveInJavaTest
 import org.jetbrains.k2js.test.semantics.AbstractBridgeTest
+import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterMultiFileTest
+import org.jetbrains.jet.plugin.decompiler.textBuilder.AbstractDecompiledTextTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -571,7 +572,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractDecompiledTextTest>()) {
-            model("libraries/decompiledText", pattern = """^([^\.]+)$""")
+            model("decompiler/decompiledText", pattern = """^([^\.]+)$""")
         }
 
         testClass(javaClass<AbstractOptimizeImportsTest>()) {
@@ -588,8 +589,9 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractKotlinSteppingTest>()) {
-            model("debugger/tinyApp/src/stepInto", testMethod = "doStepIntoTest", testClassName = "StepInto")
-            model("debugger/tinyApp/src/stepInto", testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
+            model("debugger/tinyApp/src/stepInto/stepIntoAndSmartStepInto", testMethod = "doStepIntoTest", testClassName = "StepInto")
+            model("debugger/tinyApp/src/stepInto/stepIntoAndSmartStepInto", testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
+            model("debugger/tinyApp/src/stepInto/stepInto", testMethod = "doStepIntoTest", testClassName = "StepIntoOnly")
             model("debugger/tinyApp/src/filters", testMethod = "doStepIntoTest")
         }
 
@@ -627,8 +629,13 @@ fun main(args: Array<String>) {
     }
 
     testGroup("j2k/tests/test", "j2k/tests/testData") {
-        testClass(javaClass<AbstractJavaToKotlinConverterTest>()) {
-            model("ast", extension = "java")
+        testClass(javaClass<AbstractJavaToKotlinConverterSingleFileTest>()) {
+            model("fileOrElement", extension = "java")
+        }
+    }
+    testGroup("j2k/tests/test", "j2k/tests/testData") {
+        testClass(javaClass<AbstractJavaToKotlinConverterMultiFileTest>()) {
+            model("multiFile", extension = null)
         }
     }
 

@@ -18,6 +18,8 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.kdoc.psi.api.KDoc;
 
 public interface JetDeclaration extends JetExpression, JetModifierListOwner {
     JetDeclaration[] EMPTY_ARRAY = new JetDeclaration[0];
@@ -29,4 +31,7 @@ public interface JetDeclaration extends JetExpression, JetModifierListOwner {
             return count == 0 ? EMPTY_ARRAY : new JetDeclaration[count];
         }
     };
+
+    @Nullable
+    public KDoc getDocComment();
 }

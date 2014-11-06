@@ -1,12 +1,11 @@
-fun {[a] T<T>.(A<B>) : ()}.foo()
-fun {[a] T<T>.(A<B>) : ()}.foo();
-fun {[a] T<T>.(A<B>) : ()}.foo() {}
-fun [a] {[a] T<T>.(A<B>) : ()}.foo() {}
-fun <A, B> [a] {() : Unit}.foo()
+fun ([a] T<T>.(A<B>) -> Unit).foo()
+fun ([a] T<T>.(A<B>) ->  C<D, E>).foo();
+fun [a] ([a] T<T>.(A<B>) -> R).foo() {}
+fun <A, B> [a] ((B.(A ->B)) -> Unit).foo()
+fun <A, B> [a] ((A, B) -> Unit).foo()
+fun ((T) -> G)?.foo()
+fun ((T) -> G)??.foo()
 
-// And tuples, too
-fun (A, B).foo() : Unit {}
-
-
-// Recovery
-fun fun [a] T<T>.(A<B>) : ().-()
+//--------------
+fun f<T>()
+a.b class C

@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
+import org.jetbrains.jet.plugin.decompiler.navigation.JetSourceNavigationHelper;
 import org.jetbrains.jet.plugin.stubindex.JetClassShortNameIndex;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 

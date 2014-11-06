@@ -39,6 +39,7 @@ import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -50,8 +51,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
     private final MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> classDescriptors;
 
-    private final MemoizedFunctionToNotNull<Name, Set<FunctionDescriptor>> functionDescriptors;
-    private final MemoizedFunctionToNotNull<Name, Set<VariableDescriptor>> propertyDescriptors;
+    private final MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>> functionDescriptors;
+    private final MemoizedFunctionToNotNull<Name, Collection<VariableDescriptor>> propertyDescriptors;
 
     private final NotNullLazyValue<Collection<DeclarationDescriptor>> descriptorsFromDeclaredElements;
     private final NotNullLazyValue<Collection<DeclarationDescriptor>> extraDescriptors;
@@ -75,15 +76,15 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             }
         });
 
-        this.functionDescriptors = storageManager.createMemoizedFunction(new Function1<Name, Set<FunctionDescriptor>>() {
+        this.functionDescriptors = storageManager.createMemoizedFunction(new Function1<Name, Collection<FunctionDescriptor>>() {
             @Override
-            public Set<FunctionDescriptor> invoke(Name name) {
+            public Collection<FunctionDescriptor> invoke(Name name) {
                 return doGetFunctions(name);
             }
         });
-        this.propertyDescriptors = storageManager.createMemoizedFunction(new Function1<Name, Set<VariableDescriptor>>() {
+        this.propertyDescriptors = storageManager.createMemoizedFunction(new Function1<Name, Collection<VariableDescriptor>>() {
             @Override
-            public Set<VariableDescriptor> invoke(Name name) {
+            public Collection<VariableDescriptor> invoke(Name name) {
                 return doGetProperties(name);
             }
         });
@@ -106,7 +107,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     private List<ClassDescriptor> resolveClassDescriptor(@NotNull final Name name) {
         Collection<JetClassLikeInfo> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
 
-        return ContainerUtil.mapNotNull(classOrObjectDeclarations, new Function<JetClassLikeInfo, ClassDescriptor>() {
+        return UtilsPackage.toReadOnlyList(ContainerUtil.mapNotNull(classOrObjectDeclarations, new Function<JetClassLikeInfo, ClassDescriptor>() {
             @Override
             public ClassDescriptor fun(JetClassLikeInfo classLikeInfo) {
                 // SCRIPT: Creating a script class
@@ -115,7 +116,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                 }
                 return new LazyClassDescriptor(resolveSession, thisDescriptor, name, classLikeInfo);
             }
-        });
+        }));
     }
 
     @Override
@@ -130,12 +131,12 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
+    public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
         return functionDescriptors.invoke(name);
     }
 
     @NotNull
-    private Set<FunctionDescriptor> doGetFunctions(@NotNull Name name) {
+    private Collection<FunctionDescriptor> doGetFunctions(@NotNull Name name) {
         Set<FunctionDescriptor> result = Sets.newLinkedHashSet();
 
         Collection<JetNamedFunction> declarations = declarationProvider.getFunctionDeclarations(name);
@@ -153,7 +154,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         getNonDeclaredFunctions(name, result);
 
-        return result;
+        return UtilsPackage.toReadOnlyList(result);
     }
 
     @NotNull
@@ -163,12 +164,12 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
     @NotNull
     @Override
-    public Set<VariableDescriptor> getProperties(@NotNull Name name) {
+    public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
         return propertyDescriptors.invoke(name);
     }
 
     @NotNull
-    public Set<VariableDescriptor> doGetProperties(@NotNull Name name) {
+    public Collection<VariableDescriptor> doGetProperties(@NotNull Name name) {
         Set<VariableDescriptor> result = Sets.newLinkedHashSet();
 
         Collection<JetProperty> declarations = declarationProvider.getPropertyDeclarations(name);
@@ -189,7 +190,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         getNonDeclaredProperties(name, result);
 
-        return result;
+        return UtilsPackage.toReadOnlyList(result);
     }
 
     protected abstract void getNonDeclaredProperties(@NotNull Name name, @NotNull Set<VariableDescriptor> result);
@@ -252,8 +253,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                 throw new IllegalArgumentException("Unsupported declaration kind: " + declaration);
             }
         }
-        result.trimToSize();
-        return result;
+
+        return UtilsPackage.toReadOnlyList(result);
     }
 
     @NotNull

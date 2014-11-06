@@ -30,7 +30,7 @@ class Import(val name: String) : Element() {
     }
 }
 
-class ImportList(public val imports: List<Import>) : Element() {
+class ImportList(public var imports: List<Import>) : Element() {
     override val isEmpty: Boolean
         get() = imports.isEmpty()
 

@@ -39,7 +39,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
+import org.jetbrains.jet.plugin.decompiler.navigation.JetSourceNavigationHelper;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;

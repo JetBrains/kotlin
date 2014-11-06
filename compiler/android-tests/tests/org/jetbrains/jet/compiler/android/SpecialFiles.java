@@ -74,6 +74,7 @@ public class SpecialFiles {
         excludedFiles.add("invokeOnImportedEnum1.kt"); // Cannot change package name
         excludedFiles.add("invokeOnImportedEnum2.kt"); // Cannot change package name
         excludedFiles.add("sortEnumEntries.kt"); // Cannot change package name
+        excludedFiles.add("assertionStackTrace.kt"); // Cannot change package name
 
         excludedFiles.add("kt326.kt"); // Commented
         excludedFiles.add("kt1213.kt"); // Commented

@@ -491,8 +491,6 @@ JetFile: FunctionLiterals.kt
               PsiElement(ARROW)('->')
               PsiWhiteSpace(' ')
               PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RBRACE)('}')
-          PsiWhiteSpace('\n')
           PsiElement(RBRACE)('}')
-      PsiErrorElement:Expecting '}
-        <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

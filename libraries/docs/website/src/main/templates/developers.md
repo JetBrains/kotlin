@@ -11,7 +11,7 @@
 
 ## Kommitter links
 
-* [TeamCity CI build](http://teamcity.jetbrains.com/project.html?projectId=project67&tab=projectOverview)
+* [TeamCity CI build](https://teamcity.jetbrains.com/project.html?projectId=project67&tab=projectOverview)
 
 ## Regenerating the website
 

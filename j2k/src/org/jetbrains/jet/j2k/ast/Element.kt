@@ -58,14 +58,17 @@ fun Element.canonicalCode(): String {
 
 abstract class Element {
     public var prototypes: List<PrototypeInfo>? = null
-      set(value) {
-          // no prototypes assigned to empty elements because they can be singleton instances (and they are not needed anyway)
-          if (isEmpty) {
-              $prototypes = listOf()
-              return
-          }
-          $prototypes = value
-      }
+        set(value) {
+            // do not assign prototypes to singleton instances
+            if (canBeSingleton) {
+                $prototypes = listOf()
+                return
+            }
+            $prototypes = value
+        }
+
+    protected open val canBeSingleton: Boolean
+        get() = isEmpty
 
     public var createdAt: String?
             = if (saveCreationStacktraces)
@@ -89,3 +92,48 @@ abstract class Element {
         var saveCreationStacktraces = false
     }
 }
+
+// this class should never be created directly - Converter.deferredElement() should be used!
+class DeferredElement<TResult : Element>(
+        private var generator: (CodeConverter) -> TResult,
+        public val converterState: Converter.PersonalState
+) : Element() {
+
+    private var result: TResult? = null
+
+    {
+        assignNoPrototype()
+    }
+
+    // need to override it to not use isEmpty
+    override val canBeSingleton: Boolean
+        get() = false
+
+    public fun unfold(codeConverter: CodeConverter) {
+        assert(result == null)
+        result = generator(codeConverter)
+    }
+
+    override fun generateCode(builder: CodeBuilder) {
+        resultNotNull.generateCode(builder)
+    }
+
+    override val isEmpty: Boolean
+        get() = resultNotNull.isEmpty
+
+    private val resultNotNull: TResult
+        get() {
+            assert(result != null) { "No code generated for deferred element $this. Possible reason is that it has been created directly instead of Converter.lazyElement() call." }
+            return result!!
+        }
+
+    public fun updateGenerator(generatorUpdater: (codeConverter: CodeConverter, prevResult: TResult) -> TResult) {
+        assert(result == null, "Cannot update generator when code has been generated")
+        val prevGenerator = generator
+        generator = { codeConverter ->
+            val prevResult = prevGenerator(codeConverter)
+            generatorUpdater(codeConverter, prevResult)
+        }
+    }
+}
+

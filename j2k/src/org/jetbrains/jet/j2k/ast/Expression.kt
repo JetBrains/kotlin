@@ -17,14 +17,13 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.CodeBuilder
-
+import org.jetbrains.jet.j2k.CodeConverter
 
 abstract class Expression() : Statement() {
     open val isNullable: Boolean get() = false
 
     object Empty : Expression() {
         override fun generateCode(builder: CodeBuilder) {}
-
         override val isEmpty: Boolean get() = true
     }
 }

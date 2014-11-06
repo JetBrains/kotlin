@@ -98,7 +98,8 @@ public class Intrinsics {
     }
 
     private static final Set<String> METHOD_NAMES_TO_SKIP = new HashSet<String>(Arrays.asList(
-            "throwNpe", "checkReturnedValueIsNotNull", "checkFieldIsNotNull", "checkParameterIsNotNull", "throwParameterIsNullException"
+            "throwNpe", "checkExpressionValueIsNotNull", "checkReturnedValueIsNotNull", "checkFieldIsNotNull", "checkParameterIsNotNull",
+            "throwParameterIsNullException"
     ));
 
     public static <T extends Throwable> T sanitizeStackTrace(T throwable) {

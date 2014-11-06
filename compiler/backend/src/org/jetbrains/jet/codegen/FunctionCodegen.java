@@ -485,7 +485,7 @@ public class FunctionCodegen extends ParentCodegenAware {
     }
 
     @NotNull
-    private static String[] getThrownExceptions(@NotNull FunctionDescriptor function, @NotNull final JetTypeMapper mapper) {
+    public static String[] getThrownExceptions(@NotNull FunctionDescriptor function, @NotNull final JetTypeMapper mapper) {
         AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.throws"));
         if (annotation == null) return ArrayUtil.EMPTY_STRING_ARRAY;
 

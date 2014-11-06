@@ -4,7 +4,6 @@ import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import kotlin.jvm.internal.unsafe.*
 import kotlin.jvm.internal.Intrinsic
-import kotlin.InlineOption.ONLY_LOCAL_RETURN
 
 /**
  * This annotation indicates what exceptions should be declared by a function when compiled to a JVM method
@@ -26,7 +25,7 @@ public annotation class throws(public vararg val exceptionClasses: Class<out Thr
 
 [Intrinsic("kotlin.javaClass.function")] public fun <reified T: Any> javaClass(): Class<T> = null as Class<T>
 
-public inline fun <R> synchronized(lock: Any, [inlineOptions(ONLY_LOCAL_RETURN)] block: () -> R): R {
+public inline fun <R> synchronized(lock: Any, block: () -> R): R {
     monitorEnter(lock)
     try {
         return block()

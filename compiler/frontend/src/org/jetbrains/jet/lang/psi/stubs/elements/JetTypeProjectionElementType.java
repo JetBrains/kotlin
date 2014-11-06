@@ -22,30 +22,30 @@ import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetTypeProjection;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeProjectionStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetTypeProjectionStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinTypeProjectionStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinTypeProjectionStubImpl;
 
 import java.io.IOException;
 
-public class JetTypeProjectionElementType extends JetStubElementType<PsiJetTypeProjectionStub, JetTypeProjection> {
+public class JetTypeProjectionElementType extends JetStubElementType<KotlinTypeProjectionStub, JetTypeProjection> {
     public JetTypeProjectionElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetTypeProjection.class, PsiJetTypeProjectionStub.class);
+        super(debugName, JetTypeProjection.class, KotlinTypeProjectionStub.class);
     }
 
     @Override
-    public PsiJetTypeProjectionStub createStub(@NotNull JetTypeProjection psi, StubElement parentStub) {
-        return new PsiJetTypeProjectionStubImpl(parentStub, psi.getProjectionKind().ordinal());
+    public KotlinTypeProjectionStub createStub(@NotNull JetTypeProjection psi, StubElement parentStub) {
+        return new KotlinTypeProjectionStubImpl(parentStub, psi.getProjectionKind().ordinal());
     }
 
     @Override
-    public void serialize(@NotNull PsiJetTypeProjectionStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinTypeProjectionStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeVarInt(stub.getProjectionKind().ordinal());
     }
 
     @NotNull
     @Override
-    public PsiJetTypeProjectionStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinTypeProjectionStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         int projectionKindOrdinal = dataStream.readVarInt();
-        return new PsiJetTypeProjectionStubImpl(parentStub, projectionKindOrdinal);
+        return new KotlinTypeProjectionStubImpl(parentStub, projectionKindOrdinal);
     }
 }

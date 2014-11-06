@@ -25,12 +25,13 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightMethod;
 import org.jetbrains.jet.kdoc.lexer.KDocTokens;
 import org.jetbrains.jet.kdoc.psi.api.KDoc;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetPackageDirective;
+import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -91,7 +92,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
             renderedDecl = "<pre>" + DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor) + "</pre>";
         }
 
-        KDoc comment = findElementKDoc(declaration);
+        KDoc comment = declaration.getDocComment();
         if (comment != null) {
             renderedDecl = renderedDecl + "<br/>" + kDocToHtml(comment);
         }
@@ -137,12 +138,6 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         }
 
         return builder.toString();
-    }
-
-    @Nullable
-    private static KDoc findElementKDoc(@NotNull JetElement element) {
-        PsiElement comment = JetPsiUtil.skipSiblingsBackwardByPredicate(element, SKIP_WHITESPACE_AND_EMPTY_PACKAGE);
-        return comment instanceof KDoc ? (KDoc) comment : null;
     }
 
     private static String kDocToHtml(@NotNull KDoc comment) {

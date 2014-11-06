@@ -18,18 +18,18 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.List;
 
-public class JetAnnotation extends JetElementImplStub<PsiJetPlaceHolderStub<JetAnnotation>> {
+public class JetAnnotation extends JetElementImplStub<KotlinPlaceHolderStub<JetAnnotation>> {
 
     public JetAnnotation(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetAnnotation(PsiJetPlaceHolderStub<JetAnnotation> stub) {
+    public JetAnnotation(KotlinPlaceHolderStub<JetAnnotation> stub) {
         super(stub, JetStubElementTypes.ANNOTATION);
     }
 

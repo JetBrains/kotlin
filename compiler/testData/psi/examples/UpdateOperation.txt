@@ -119,9 +119,9 @@ JetFile: UpdateOperation.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  PsiComment(EOL_COMMENT)('// One can say:')
-  PsiWhiteSpace('\n')
   PROPERTY
+    PsiComment(EOL_COMMENT)('// One can say:')
+    PsiWhiteSpace('\n')
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('p')

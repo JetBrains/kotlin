@@ -28,14 +28,14 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 public class StubIndexServiceImpl implements StubIndexService {
 
     @Override
-    public void indexFile(PsiJetFileStub stub, IndexSink sink) {
+    public void indexFile(KotlinFileStub stub, IndexSink sink) {
         FqName packageFqName = stub.getPackageFqName();
 
         sink.occurrence(JetExactPackagesIndex.getInstance().getKey(), packageFqName.asString());
     }
 
     @Override
-    public void indexClass(PsiJetClassStub stub, IndexSink sink) {
+    public void indexClass(KotlinClassStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {
             sink.occurrence(JetClassShortNameIndex.getInstance().getKey(), name);
@@ -51,18 +51,18 @@ public class StubIndexServiceImpl implements StubIndexService {
     }
 
     @Override
-    public void indexObject(PsiJetObjectStub stub, IndexSink sink) {
+    public void indexObject(KotlinObjectStub stub, IndexSink sink) {
         String name = stub.getName();
         FqName fqName = stub.getFqName();
 
         if (stub.isClassObject()) {
             StubElement parentClassStub = stub.getParentStub().getParentStub().getParentStub();
-            assert parentClassStub instanceof PsiJetStubWithFqName<?>
+            assert parentClassStub instanceof KotlinStubWithFqName<?>
                     : "Something but a class/object is a parent to class object stub: " + parentClassStub;
 
             name = JvmAbi.CLASS_OBJECT_CLASS_NAME;
 
-            FqName parentFqName = ((PsiJetStubWithFqName<?>) parentClassStub).getFqName();
+            FqName parentFqName = ((KotlinStubWithFqName<?>) parentClassStub).getFqName();
             if (parentFqName != null) {
                 fqName = parentFqName.child(Name.identifier(name));
             }
@@ -84,7 +84,7 @@ public class StubIndexServiceImpl implements StubIndexService {
         recordClassOrObjectByPackage(stub, sink);
     }
 
-    private static void indexSuperNames(PsiJetClassOrObjectStub<? extends JetClassOrObject> stub, IndexSink sink) {
+    private static void indexSuperNames(KotlinClassOrObjectStub<? extends JetClassOrObject> stub, IndexSink sink) {
         for (String superName : stub.getSuperNames()) {
             sink.occurrence(JetSuperClassIndex.getInstance().getKey(), superName);
         }
@@ -92,15 +92,15 @@ public class StubIndexServiceImpl implements StubIndexService {
 
     private static void recordClassOrObjectByPackage(StubElement<? extends JetClassOrObject> stub, IndexSink sink) {
         StubElement parentStub = stub.getParentStub();
-        if (parentStub instanceof PsiJetFileStub) {
-            PsiJetFileStub jetFileStub = (PsiJetFileStub) parentStub;
+        if (parentStub instanceof KotlinFileStub) {
+            KotlinFileStub jetFileStub = (KotlinFileStub) parentStub;
             FqName packageFqName = jetFileStub.getPackageFqName();
             sink.occurrence(JetClassByPackageIndex.getInstance().getKey(), packageFqName.asString());
         }
     }
 
     @Override
-    public void indexFunction(PsiJetFunctionStub stub, IndexSink sink) {
+    public void indexFunction(KotlinFunctionStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {
             if (stub.isTopLevel()) {
@@ -122,7 +122,7 @@ public class StubIndexServiceImpl implements StubIndexService {
     }
 
     @Override
-    public void indexProperty(PsiJetPropertyStub stub, IndexSink sink) {
+    public void indexProperty(KotlinPropertyStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {
             if (stub.isTopLevel()) {
@@ -147,7 +147,7 @@ public class StubIndexServiceImpl implements StubIndexService {
     }
 
     @Override
-    public void indexAnnotation(PsiJetAnnotationEntryStub stub, IndexSink sink) {
+    public void indexAnnotation(KotlinAnnotationEntryStub stub, IndexSink sink) {
         sink.occurrence(JetAnnotationsIndex.getInstance().getKey(), stub.getShortName());
     }
 }

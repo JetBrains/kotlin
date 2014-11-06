@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.storage.NullableLazyValue;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -134,9 +135,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
+    public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
         // TODO: this should be handled by lazy function descriptors
-        Set<FunctionDescriptor> functions = super.getFunctions(name);
+        Collection<FunctionDescriptor> functions = super.getFunctions(name);
         resolveUnknownVisibilitiesForMembers(functions);
         return functions;
     }
@@ -169,7 +170,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 if (parameter.getType().isError()) continue;
                 if (!primaryConstructorParameters.get(parameter.getIndex()).hasValOrVarNode()) continue;
 
-                Set<VariableDescriptor> properties = getProperties(parameter.getName());
+                Collection<VariableDescriptor> properties = getProperties(parameter.getName());
                 if (properties.isEmpty()) continue;
 
                 assert properties.size() == 1 :
@@ -204,14 +205,14 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public Set<VariableDescriptor> getProperties(@NotNull Name name) {
+    public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
         // TODO: this should be handled by lazy property descriptors
-        Set<VariableDescriptor> properties = super.getProperties(name);
-        resolveUnknownVisibilitiesForMembers((Set) properties);
+        Collection<VariableDescriptor> properties = super.getProperties(name);
+        resolveUnknownVisibilitiesForMembers((Collection) properties);
         return properties;
     }
 
-    private void resolveUnknownVisibilitiesForMembers(@NotNull Set<? extends CallableMemberDescriptor> descriptors) {
+    private void resolveUnknownVisibilitiesForMembers(@NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
         for (CallableMemberDescriptor descriptor : descriptors) {
             if (descriptor.getKind() != FAKE_OVERRIDE && descriptor.getKind() != DELEGATION) {
                 OverridingUtil.resolveUnknownVisibilityForMember(descriptor, OverrideResolver.createCannotInferVisibilityReporter(trace));
@@ -299,7 +300,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @Override
     @NotNull
     protected Collection<DeclarationDescriptor> computeExtraDescriptors() {
-        ArrayList<DeclarationDescriptor> result = new ArrayList<DeclarationDescriptor>();
+        List<DeclarationDescriptor> result = new ArrayList<DeclarationDescriptor>();
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
             for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
                 if (descriptor instanceof FunctionDescriptor) {
@@ -314,8 +315,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
         addDataClassMethods(result);
 
-        result.trimToSize();
-        return result;
+        return UtilsPackage.toReadOnlyList(result);
     }
 
     private void addDataClassMethods(@NotNull Collection<DeclarationDescriptor> result) {
@@ -328,7 +328,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         int n = 1;
         while (true) {
             Name componentName = DataClassUtilsPackage.createComponentName(n);
-            Set<FunctionDescriptor> functions = getFunctions(componentName);
+            Collection<FunctionDescriptor> functions = getFunctions(componentName);
             if (functions.isEmpty()) break;
 
             result.addAll(functions);

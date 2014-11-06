@@ -22,7 +22,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -31,13 +31,13 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes.*;
 
-public class JetClassBody extends JetElementImplStub<PsiJetPlaceHolderStub<JetClassBody>> implements JetDeclarationContainer {
+public class JetClassBody extends JetElementImplStub<KotlinPlaceHolderStub<JetClassBody>> implements JetDeclarationContainer {
 
     public JetClassBody(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetClassBody(@NotNull PsiJetPlaceHolderStub<JetClassBody> stub) {
+    public JetClassBody(@NotNull KotlinPlaceHolderStub<JetClassBody> stub) {
         super(stub, CLASS_BODY);
     }
 

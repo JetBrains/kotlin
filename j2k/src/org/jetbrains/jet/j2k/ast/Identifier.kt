@@ -18,6 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.CodeBuilder
 import com.intellij.psi.PsiNameIdentifierOwner
+import org.jetbrains.jet.j2k.CodeConverter
 
 fun PsiNameIdentifierOwner.declarationIdentifier(): Identifier {
     val name = getName()

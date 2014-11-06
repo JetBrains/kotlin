@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.Collections;
@@ -32,7 +32,7 @@ public class JetDelegatorToThisCall extends JetDelegationSpecifier implements Je
         super(node);
     }
 
-    public JetDelegatorToThisCall(@NotNull PsiJetPlaceHolderStub<? extends JetDelegationSpecifier> stub) {
+    public JetDelegatorToThisCall(@NotNull KotlinPlaceHolderStub<? extends JetDelegationSpecifier> stub) {
         super(stub, JetStubElementTypes.THIS_CALL);
     }
 

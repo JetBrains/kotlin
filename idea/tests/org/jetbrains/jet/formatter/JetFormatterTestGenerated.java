@@ -136,6 +136,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DocComments.after.kt")
+        public void testDocComments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/DocComments.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ElseOnNewLine.after.kt")
         public void testElseOnNewLine() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ElseOnNewLine.after.kt");
@@ -145,6 +151,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("Elvis.after.kt")
         public void testElvis() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/Elvis.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("EmptyLineAfterObjectDeclaration.after.kt")
+        public void testEmptyLineAfterObjectDeclaration() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineAfterObjectDeclaration.after.kt");
             doTest(fileName);
         }
 
@@ -169,6 +181,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("EmptyLineBetweenClasses.after.kt")
         public void testEmptyLineBetweenClasses() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenClasses.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("EmptyLineBetweenEnumEntries.after.kt")
+        public void testEmptyLineBetweenEnumEntries() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenEnumEntries.after.kt");
             doTest(fileName);
         }
 
@@ -313,6 +331,18 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("MultilineFunctionLiteralWithParams.after.kt")
         public void testMultilineFunctionLiteralWithParams() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/MultilineFunctionLiteralWithParams.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NewLineForRBrace.after.kt")
+        public void testNewLineForRBrace() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/NewLineForRBrace.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ParameterDocComments.after.kt")
+        public void testParameterDocComments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ParameterDocComments.after.kt");
             doTest(fileName);
         }
 

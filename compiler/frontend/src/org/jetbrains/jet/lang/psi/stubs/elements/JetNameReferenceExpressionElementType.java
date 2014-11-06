@@ -23,30 +23,30 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNameReferenceExpression;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetNameReferenceExpressionStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetNameReferenceExpressionStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinNameReferenceExpressionStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl;
 
 import java.io.IOException;
 
-public class JetNameReferenceExpressionElementType extends JetStubElementType<PsiJetNameReferenceExpressionStub, JetNameReferenceExpression> {
+public class JetNameReferenceExpressionElementType extends JetStubElementType<KotlinNameReferenceExpressionStub, JetNameReferenceExpression> {
     public JetNameReferenceExpressionElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetNameReferenceExpression.class, PsiJetNameReferenceExpressionStub.class);
+        super(debugName, JetNameReferenceExpression.class, KotlinNameReferenceExpressionStub.class);
     }
 
     @Override
-    public PsiJetNameReferenceExpressionStub createStub(@NotNull JetNameReferenceExpression psi, StubElement parentStub) {
-        return new PsiJetNameReferenceExpressionStubImpl(parentStub, StringRef.fromString(psi.getReferencedName()));
+    public KotlinNameReferenceExpressionStub createStub(@NotNull JetNameReferenceExpression psi, StubElement parentStub) {
+        return new KotlinNameReferenceExpressionStubImpl(parentStub, StringRef.fromString(psi.getReferencedName()));
     }
 
     @Override
-    public void serialize(@NotNull PsiJetNameReferenceExpressionStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinNameReferenceExpressionStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getReferencedName());
     }
 
     @NotNull
     @Override
-    public PsiJetNameReferenceExpressionStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinNameReferenceExpressionStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef referencedName = dataStream.readName();
-        return new PsiJetNameReferenceExpressionStubImpl(parentStub, referencedName);
+        return new KotlinNameReferenceExpressionStubImpl(parentStub, referencedName);
     }
 }

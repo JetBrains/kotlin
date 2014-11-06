@@ -1,4 +1,4 @@
 JetFile: BlockCommentAtBeginningOfFile1.kt
-  PsiComment(BLOCK_COMMENT)('/*')
   PACKAGE_DIRECTIVE
     <empty list>
+  PsiComment(BLOCK_COMMENT)('/*')

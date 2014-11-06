@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.junit.Test
-import org.junit.Ignore
 import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
+import org.gradle.api.logging.LogLevel
 
 class BasicKotlinGradleIT : BaseGradleIT() {
 
@@ -18,6 +18,38 @@ class BasicKotlinGradleIT : BaseGradleIT() {
         project.build("compileDeployKotlin", "build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
             assertContains(":compileKotlin UP-TO-DATE", ":compileTestKotlin UP-TO-DATE", ":compileDeployKotlin UP-TO-DATE", ":compileJava UP-TO-DATE")
+        }
+    }
+
+    Test fun testSuppressWarningsAndVersionInVerboseMode() {
+        val project = Project("suppressWarningsAndVersion", "1.6")
+
+        project.build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+            assertSuccessful()
+            assertContains(":compileKotlin", "i: Kotlin Compiler version", "v: Using Kotlin home directory")
+            assertNotContains("w:")
+        }
+
+        project.build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+            assertSuccessful()
+            assertContains(":compileKotlin UP-TO-DATE")
+            assertNotContains("w:")
+        }
+    }
+
+    Test fun testSuppressWarningsAndVersionInNonVerboseMode() {
+        val project = Project("suppressWarningsAndVersion", "1.6", minLogLevel = LogLevel.INFO)
+
+        project.build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+            assertSuccessful()
+            assertContains(":compileKotlin", "i: Kotlin Compiler version")
+            assertNotContains("w:", "v:")
+        }
+
+        project.build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+            assertSuccessful()
+            assertContains(":compileKotlin UP-TO-DATE")
+            assertNotContains("w:", "v:")
         }
     }
 

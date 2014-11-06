@@ -116,13 +116,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
         errStream.print(messageRenderer.renderPreamble());
 
-        printVersionIfNeeded(errStream, arguments, messageRenderer);
-
         MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
-
-        if (arguments.suppressWarnings) {
-            collector = new FilteringMessageCollector(collector, Predicates.equalTo(CompilerMessageSeverity.WARNING));
-        }
 
         try {
             return exec(collector, services, arguments);
@@ -134,6 +128,12 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     @NotNull
     public ExitCode exec(@NotNull MessageCollector messageCollector, @NotNull Services services, @NotNull A arguments) {
+        printVersionIfNeeded(messageCollector, arguments);
+
+        if (arguments.suppressWarnings) {
+            messageCollector = new FilteringMessageCollector(messageCollector, Predicates.equalTo(CompilerMessageSeverity.WARNING));
+        }
+
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
         try {
             Disposable rootDisposable = Disposer.newDisposable();
@@ -164,17 +164,12 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             @NotNull Disposable rootDisposable
     );
 
-    protected void printVersionIfNeeded(
-            @NotNull PrintStream errStream,
-            @NotNull A arguments,
-            @NotNull MessageRenderer messageRenderer
-    ) {
-        if (arguments.version) {
-            String versionMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
-                                                           "Kotlin Compiler version " + KotlinVersion.VERSION,
-                                                           CompilerMessageLocation.NO_LOCATION);
-            errStream.println(versionMessage);
-        }
+    protected void printVersionIfNeeded(@NotNull MessageCollector messageCollector, @NotNull A arguments) {
+        if (!arguments.version) return;
+
+        messageCollector.report(CompilerMessageSeverity.INFO,
+                                "Kotlin Compiler version " + KotlinVersion.VERSION,
+                                CompilerMessageLocation.NO_LOCATION);
     }
 
     /**

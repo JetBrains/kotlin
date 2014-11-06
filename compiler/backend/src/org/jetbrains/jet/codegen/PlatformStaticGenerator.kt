@@ -39,7 +39,8 @@ class PlatformStaticGenerator(
                 Opcodes.ACC_STATIC or AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION),
                 asmMethod.getName()!!,
                 asmMethod.getDescriptor()!!,
-                null, null)
+                typeMapper.mapSignature(descriptor).getGenericsSignature(),
+                FunctionCodegen.getThrownExceptions(descriptor, typeMapper))
 
         AnnotationCodegen.forMethod(methodVisitor, typeMapper)!!.genAnnotations(descriptor, asmMethod.getReturnType())
 

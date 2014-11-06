@@ -788,11 +788,11 @@ JetFile: functionTypes.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('B')
       PsiWhiteSpace('\n')
-      PsiComment(EOL_COMMENT)('//val a9 : (A, B)')
-      PsiWhiteSpace('\n')
-      PsiComment(EOL_COMMENT)('//val a10 : (B)? -> B')
-      PsiWhiteSpace('\n    ')
       PROPERTY
+        PsiComment(EOL_COMMENT)('//val a9 : (A, B)')
+        PsiWhiteSpace('\n')
+        PsiComment(EOL_COMMENT)('//val a10 : (B)? -> B')
+        PsiWhiteSpace('\n    ')
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('a11')

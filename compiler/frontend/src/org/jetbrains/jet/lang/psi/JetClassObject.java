@@ -20,16 +20,16 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetClassObject extends JetDeclarationStub<PsiJetPlaceHolderStub<JetClassObject>> implements JetStatementExpression {
+public class JetClassObject extends JetDeclarationStub<KotlinPlaceHolderStub<JetClassObject>> implements JetStatementExpression {
     public JetClassObject(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetClassObject(@NotNull PsiJetPlaceHolderStub<JetClassObject> stub) {
+    public JetClassObject(@NotNull KotlinPlaceHolderStub<JetClassObject> stub) {
         super(stub, JetStubElementTypes.CLASS_OBJECT);
     }
 
@@ -43,9 +43,8 @@ public class JetClassObject extends JetDeclarationStub<PsiJetPlaceHolderStub<Jet
         return getRequiredStubOrPsiChild(JetStubElementTypes.OBJECT_DECLARATION);
     }
 
-    @Nullable @IfNotParsed
-    public PsiElement getClassKeywordNode() {
-        ASTNode keywordNode = getNode().findChildByType(JetTokens.CLASS_KEYWORD);
-        return keywordNode != null ? keywordNode.getPsi() : null;
+    @NotNull
+    public PsiElement getClassKeyword() {
+        return findChildByType(JetTokens.CLASS_KEYWORD);
     }
 }

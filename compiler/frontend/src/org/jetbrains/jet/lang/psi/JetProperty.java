@@ -28,7 +28,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPropertyStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.psi.typeRefHelpers.TypeRefHelpersPackage;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -38,7 +38,7 @@ import java.util.List;
 import static org.jetbrains.jet.JetNodeTypes.PROPERTY_DELEGATE;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStub>
+public class JetProperty extends JetTypeParameterListOwnerStub<KotlinPropertyStub>
         implements JetVariableDeclaration, PsiModifiableCodeBlock {
 
     private static final Logger LOG = Logger.getInstance(JetProperty.class);
@@ -47,7 +47,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         super(node);
     }
 
-    public JetProperty(@NotNull PsiJetPropertyStub stub) {
+    public JetProperty(@NotNull KotlinPropertyStub stub) {
         super(stub, JetStubElementTypes.PROPERTY);
     }
 
@@ -58,7 +58,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
 
     @Override
     public boolean isVar() {
-        PsiJetPropertyStub stub = getStub();
+        KotlinPropertyStub stub = getStub();
         if (stub != null) {
             return stub.isVar();
         }
@@ -72,7 +72,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
     }
 
     public boolean isTopLevel() {
-        PsiJetPropertyStub stub = getStub();
+        KotlinPropertyStub stub = getStub();
         if (stub != null) {
             return stub.isTopLevel();
         }
@@ -89,7 +89,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
     @Override
     @Nullable
     public JetTypeReference getReceiverTypeReference() {
-        PsiJetPropertyStub stub = getStub();
+        KotlinPropertyStub stub = getStub();
         if (stub != null) {
             if (!stub.hasReceiverTypeRef()) {
                 return null;
@@ -120,7 +120,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
     @Override
     @Nullable
     public JetTypeReference getTypeReference() {
-        PsiJetPropertyStub stub = getStub();
+        KotlinPropertyStub stub = getStub();
         if (stub != null) {
             if (!stub.hasReturnTypeRef()) {
                 return null;
@@ -142,6 +142,12 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
     @Nullable
     public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
         return TypeRefHelpersPackage.setTypeReference(this, getNameIdentifier(), typeRef);
+    }
+
+    @Nullable
+    @Override
+    public PsiElement getColon() {
+        return findChildByType(JetTokens.COLON);
     }
 
     @NotNull
@@ -168,7 +174,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
     }
 
     public boolean hasDelegate() {
-        PsiJetPropertyStub stub = getStub();
+        KotlinPropertyStub stub = getStub();
         if (stub != null) {
             return stub.hasDelegate();
         }
@@ -181,7 +187,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
     }
 
     public boolean hasDelegateExpression() {
-        PsiJetPropertyStub stub = getStub();
+        KotlinPropertyStub stub = getStub();
         if (stub != null) {
             return stub.hasDelegateExpression();
         }
@@ -199,7 +205,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
 
     @Override
     public boolean hasInitializer() {
-        PsiJetPropertyStub stub = getStub();
+        KotlinPropertyStub stub = getStub();
         if (stub != null) {
             return stub.hasInitializer();
         }

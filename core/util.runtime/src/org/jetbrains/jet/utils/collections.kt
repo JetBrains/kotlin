@@ -20,6 +20,8 @@ import java.util.LinkedHashMap
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
+import java.util.Collections
+import java.util.LinkedHashSet
 
 public fun <K, V> Stream<V>.valuesToMap(key: (V) -> K): Map<K, V> {
     val map = LinkedHashMap<K, V>()
@@ -94,3 +96,6 @@ public fun <K, V> newHashMapWithExpectedSize(expectedSize: Int): HashMap<K, V> {
 public fun <E> newHashSetWithExpectedSize(expectedSize: Int): HashSet<E> {
     return HashSet(if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1)
 }
+
+public fun <T> Collection<T>.toReadOnlyList(): List<T> =
+        if (isEmpty()) Collections.emptyList() else ArrayList(this)

@@ -1,7 +1,7 @@
 package foo
 
 // CHECK_NOT_CALLED: testInline
-// CHECK_LABELS_COUNT: function=testNoinline name=loop$ count=2
+// CHECK_LABELS_COUNT: function=testNoinline name=loop count=2
 
 inline fun testInline(): Int {
     var c = 0

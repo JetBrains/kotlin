@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_LABELS_COUNT: function=test name=loop$ count=2
+// CHECK_LABELS_COUNT: function=test name=loop count=2
 
 fun test() {
     var i = 0

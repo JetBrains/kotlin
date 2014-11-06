@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.psi.JetTypeReference
 
 /**
  * Represents a concrete type or a set of types yet to be inferred from an expression.
@@ -32,6 +33,11 @@ abstract class TypeInfo(val variance: Variance) {
                 expression.guessTypes(builder.currentFileContext, builder.currentFileModule).flatMap { it.getPossibleSupertypes(variance) }
     }
 
+    class ByTypeReference(val typeReference: JetTypeReference, variance: Variance): TypeInfo(variance) {
+        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
+                builder.currentFileContext[BindingContext.TYPE, typeReference].getPossibleSupertypes(variance)
+    }
+
     class ByType(val theType: JetType, variance: Variance, val keepUnsubstituted: Boolean = false): TypeInfo(variance) {
         override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
                 theType.getPossibleSupertypes(variance)
@@ -45,8 +51,8 @@ abstract class TypeInfo(val variance: Variance) {
     open val possibleNamesFromExpression: Array<String> get() = ArrayUtil.EMPTY_STRING_ARRAY
     abstract fun getPossibleTypes(builder: CallableBuilder): List<JetType>
 
-    protected fun JetType.getPossibleSupertypes(variance: Variance): List<JetType> {
-        if (ErrorUtils.containsErrorType(this)) return Collections.singletonList(KotlinBuiltIns.getInstance().getAnyType())
+    protected fun JetType?.getPossibleSupertypes(variance: Variance): List<JetType> {
+        if (this == null || ErrorUtils.containsErrorType(this)) return Collections.singletonList(KotlinBuiltIns.getInstance().getAnyType())
         val single = Collections.singletonList(this)
         return when (variance) {
             Variance.IN_VARIANCE -> single + supertypes()
@@ -56,6 +62,7 @@ abstract class TypeInfo(val variance: Variance) {
 }
 
 fun TypeInfo(expressionOfType: JetExpression, variance: Variance): TypeInfo = TypeInfo.ByExpression(expressionOfType, variance)
+fun TypeInfo(typeReference: JetTypeReference, variance: Variance): TypeInfo = TypeInfo.ByTypeReference(typeReference, variance)
 fun TypeInfo(theType: JetType, variance: Variance): TypeInfo = TypeInfo.ByType(theType, variance)
 
 /**
@@ -75,7 +82,8 @@ abstract class CallableInfo (
         val name: String,
         val receiverTypeInfo: TypeInfo,
         val returnTypeInfo: TypeInfo,
-        val possibleContainers: List<JetElement>
+        val possibleContainers: List<JetElement>,
+        val typeParameterInfos: List<TypeInfo>
 ) {
     abstract val kind: CallableKind
     abstract val parameterInfos: List<ParameterInfo>
@@ -85,8 +93,9 @@ class FunctionInfo(name: String,
                    receiverTypeInfo: TypeInfo,
                    returnTypeInfo: TypeInfo,
                    possibleContainers: List<JetElement> = Collections.emptyList(),
-                   override val parameterInfos: List<ParameterInfo> = Collections.emptyList()
-) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers) {
+                   override val parameterInfos: List<ParameterInfo> = Collections.emptyList(),
+                   typeParameterInfos: List<TypeInfo> = Collections.emptyList()
+) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos) {
     override val kind: CallableKind get() = CallableKind.FUNCTION
 }
 
@@ -94,8 +103,9 @@ class PropertyInfo(name: String,
                    receiverTypeInfo: TypeInfo,
                    returnTypeInfo: TypeInfo,
                    val writable: Boolean,
-                   possibleContainers: List<JetElement> = Collections.emptyList() 
-) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers) {
+                   possibleContainers: List<JetElement> = Collections.emptyList(),
+                   typeParameterInfos: List<TypeInfo> = Collections.emptyList()
+) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos) {
     override val kind: CallableKind get() = CallableKind.PROPERTY
     override val parameterInfos: List<ParameterInfo> get() = Collections.emptyList()
 }

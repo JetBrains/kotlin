@@ -24,11 +24,10 @@ class Enum(
         modifiers: Modifiers,
         typeParameterList: TypeParameterList,
         extendsTypes: List<Type>,
-        baseClassParams: List<Expression>,
+        baseClassParams: List<DeferredElement<Expression>>,
         implementsTypes: List<Type>,
         body: ClassBody
-) : Class(name, annotations, modifiers, typeParameterList,
-          extendsTypes, baseClassParams, implementsTypes, body) {
+) : Class(name, annotations, modifiers, typeParameterList, extendsTypes, baseClassParams, implementsTypes, body) {
 
     override fun generateCode(builder: CodeBuilder) {
         builder.append(body.factoryFunctions, "\n", "", "\n\n")

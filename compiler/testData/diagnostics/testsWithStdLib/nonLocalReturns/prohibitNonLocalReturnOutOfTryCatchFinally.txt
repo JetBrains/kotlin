@@ -1,7 +1,0 @@
-package
-
-internal fun testRead(/*0*/ l: java.util.concurrent.locks.ReentrantReadWriteLock): kotlin.Int
-internal fun testSynchronized(): kotlin.Int
-internal fun testUse(/*0*/ f: java.io.Closeable): kotlin.Int
-internal fun testWithLock(/*0*/ l: java.util.concurrent.locks.Lock): kotlin.Int
-internal fun testWrite(/*0*/ l: java.util.concurrent.locks.ReentrantReadWriteLock): kotlin.Int

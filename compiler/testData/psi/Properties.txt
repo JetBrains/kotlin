@@ -27,15 +27,16 @@ JetFile: Properties.kt
   PROPERTY
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    ANNOTATION
-      PsiElement(LBRACKET)('[')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-      PsiElement(RBRACKET)(']')
+    PsiErrorElement:Annotations are not allowed in this position
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+        PsiElement(RBRACKET)(']')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
   PsiWhiteSpace('\n')
@@ -64,15 +65,16 @@ JetFile: Properties.kt
   PROPERTY
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    ANNOTATION
-      PsiElement(LBRACKET)('[')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-      PsiElement(RBRACKET)(']')
+    PsiErrorElement:Annotations are not allowed in this position
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+        PsiElement(RBRACKET)(']')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')

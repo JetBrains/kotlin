@@ -199,6 +199,8 @@ public class JetParsing extends AbstractJetParsing {
             firstEntry.drop();
 
             consumeIf(SEMICOLON);
+
+            packageDirective.done(PACKAGE_DIRECTIVE);
         }
         else {
             // When package directive is omitted we should not report error on non-file annotations at the beginning of the file.
@@ -207,8 +209,10 @@ public class JetParsing extends AbstractJetParsing {
 
             parseFileAnnotationList(FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED);
             packageDirective = mark();
+            packageDirective.done(PACKAGE_DIRECTIVE);
+            // this is necessary to allow comments at the start of the file to be bound to the first declaration:
+            packageDirective.setCustomEdgeTokenBinders(PrecedingCommentsBinder.INSTANCE$, null);
         }
-        packageDirective.done(PACKAGE_DIRECTIVE);
 
         parseImportDirectives();
     }
@@ -314,6 +318,7 @@ public class JetParsing extends AbstractJetParsing {
         }
         consumeIf(SEMICOLON);
         importDirective.done(IMPORT_DIRECTIVE);
+        importDirective.setCustomEdgeTokenBinders(null, TrailingCommentsBinder.INSTANCE$);
     }
 
     private boolean closeImportWithErrorIfNewline(PsiBuilder.Marker importDirective, String errorMessage) {
@@ -380,7 +385,7 @@ public class JetParsing extends AbstractJetParsing {
             decl.drop();
         }
         else {
-            decl.done(declType);
+            closeDeclarationWithCommentBinders(decl, declType, true);
         }
     }
 
@@ -508,7 +513,7 @@ public class JetParsing extends AbstractJetParsing {
                 }
             }
 
-            expect(RBRACKET, "Expecting ']' to close an list of annotation");
+            expect(RBRACKET, "Expecting ']' to close the annotation list");
             myBuilder.restoreNewlinesState();
 
             annotation.done(ANNOTATION);
@@ -680,7 +685,7 @@ public class JetParsing extends AbstractJetParsing {
                 entryOrMember.drop();
             }
             else {
-                entryOrMember.done(type);
+                closeDeclarationWithCommentBinders(entryOrMember, type, true);
             }
         }
 
@@ -770,7 +775,7 @@ public class JetParsing extends AbstractJetParsing {
             decl.drop();
         }
         else {
-            decl.done(declType);
+            closeDeclarationWithCommentBinders(decl, declType, true);
         }
     }
 
@@ -868,8 +873,7 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker objectDeclaration = mark();
         parseObject(false, true);
-        objectDeclaration.done(OBJECT_DECLARATION);
-
+        closeDeclarationWithCommentBinders(objectDeclaration, OBJECT_DECLARATION, true);
         return CLASS_OBJECT;
     }
 
@@ -930,26 +934,10 @@ public class JetParsing extends AbstractJetParsing {
 
         myBuilder.disableJoiningComplexTokens();
 
-        // TODO: extract constant
-        int lastDot = matchTokenStreamPredicate(new LastBefore(
-                new AtSet(DOT, SAFE_ACCESS),
-                new AbstractTokenStreamPredicate() {
-                    @Override
-                    public boolean matching(boolean topLevel) {
-                        if (topLevel && (at(EQ) || at(COLON))) return true;
-                        if (topLevel && at(IDENTIFIER)) {
-                            IElementType lookahead = lookahead(1);
-                            return lookahead != LT && lookahead != DOT && lookahead != SAFE_ACCESS && lookahead != QUEST;
-                        }
-                        return false;
-                    }
-                }));
-
         PsiBuilder.Marker receiver = mark();
-        parseReceiverType("property", propertyNameFollow, lastDot);
+        boolean receiverTypeDeclared = parseReceiverType("property", propertyNameFollow);
 
         boolean multiDeclaration = at(LPAR);
-        boolean receiverTypeDeclared = lastDot != -1;
 
         errorIf(receiver, multiDeclaration && receiverTypeDeclared, "Receiver type is not allowed on a multi-declaration");
 
@@ -1090,7 +1078,7 @@ public class JetParsing extends AbstractJetParsing {
                 errorUntil("Accessor body expected", TokenSet.orSet(ACCESSOR_FIRST_OR_PROPERTY_END, TokenSet.create(LBRACE, LPAR, EQ)));
             }
             else {
-                getterOrSetter.done(PROPERTY_ACCESSOR);
+                closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, false);
                 return true;
             }
         }
@@ -1122,7 +1110,7 @@ public class JetParsing extends AbstractJetParsing {
 
         parseFunctionBody();
 
-        getterOrSetter.done(PROPERTY_ACCESSOR);
+        closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, false);
 
         return true;
     }
@@ -1155,12 +1143,11 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         myBuilder.disableJoiningComplexTokens();
-        int lastDot = findLastBefore(RECEIVER_TYPE_TERMINATORS, TokenSet.create(LPAR), true);
 
         TokenSet functionNameFollow = TokenSet.create(LT, LPAR, COLON, EQ);
-        parseReceiverType("function", functionNameFollow, lastDot);
+        boolean receiverFound = parseReceiverType("function", functionNameFollow);
 
-        parseFunctionOrPropertyName(lastDot != -1, "function", functionNameFollow);
+        parseFunctionOrPropertyName(receiverFound, "function", functionNameFollow);
 
         myBuilder.restoreJoiningComplexTokensState();
 
@@ -1201,20 +1188,72 @@ public class JetParsing extends AbstractJetParsing {
     /*
      *   (type "." | annotations)?
      */
-    private void parseReceiverType(String title, TokenSet nameFollow, int lastDot) {
-        if (lastDot == -1) { // There's no explicit receiver type specified
-            parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
-        }
-        else {
-            createTruncatedBuilder(lastDot).parseTypeRef();
-
-            if (atSet(RECEIVER_TYPE_TERMINATORS)) {
-                advance(); // expectation
+    private boolean parseReceiverType(String title, TokenSet nameFollow) {
+        PsiBuilder.Marker annotations = mark();
+        boolean annotationsPresent = parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+        int lastDot = lastDotAfterReceiver();
+        boolean receiverPresent = lastDot != -1;
+        if (annotationsPresent) {
+            if (receiverPresent) {
+                annotations.rollbackTo();
             }
             else {
-                errorWithRecovery("Expecting '.' before a " + title + " name", nameFollow);
+                annotations.error("Annotations are not allowed in this position");
             }
         }
+        else {
+            annotations.drop();
+        }
+
+        if (!receiverPresent) return false;
+
+        createTruncatedBuilder(lastDot).parseTypeRef();
+
+        if (atSet(RECEIVER_TYPE_TERMINATORS)) {
+            advance(); // expectation
+        }
+        else {
+            errorWithRecovery("Expecting '.' before a " + title + " name", nameFollow);
+        }
+        return true;
+    }
+
+    private int lastDotAfterReceiver() {
+        if (at(LPAR)) {
+            return matchTokenStreamPredicate(
+                    new FirstBefore(
+                            new AtSet(RECEIVER_TYPE_TERMINATORS),
+                            new AbstractTokenStreamPredicate() {
+                                @Override
+                                public boolean matching(boolean topLevel) {
+                                    if (topLevel && definitelyOutOfReceiver()) {
+                                        return true;
+                                    }
+                                    return topLevel && !at(QUEST) && !at(LPAR) && !at(RPAR);
+                                }
+                            }
+                    ));
+        }
+        else {
+            return matchTokenStreamPredicate(
+                    new LastBefore(
+                            new AtSet(RECEIVER_TYPE_TERMINATORS),
+                            new AbstractTokenStreamPredicate() {
+                                @Override
+                                public boolean matching(boolean topLevel) {
+                                    if (topLevel && (definitelyOutOfReceiver() || at(LPAR))) return true;
+                                    if (topLevel && at(IDENTIFIER)) {
+                                        IElementType lookahead = lookahead(1);
+                                        return lookahead != LT && lookahead != DOT && lookahead != SAFE_ACCESS && lookahead != QUEST;
+                                    }
+                                    return false;
+                                }
+                            }));
+        }
+    }
+
+    private boolean definitelyOutOfReceiver() {
+        return atSet(EQ, COLON, LBRACE, BY_KEYWORD) || atSet(TOPLEVEL_OBJECT_FIRST);
     }
 
     /*
@@ -1262,7 +1301,7 @@ public class JetParsing extends AbstractJetParsing {
 
         myExpressionParsing.parseStatements();
 
-        expect(RBRACE, "Expecting '}");
+        expect(RBRACE, "Expecting '}'");
         myBuilder.restoreNewlinesState();
 
         block.done(BLOCK);
@@ -1852,7 +1891,7 @@ public class JetParsing extends AbstractJetParsing {
                         PsiBuilder.Marker valueParameter = mark();
                         parseModifierList(MODIFIER_LIST, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS); // lazy, out, ref
                         parseTypeRef();
-                        valueParameter.done(VALUE_PARAMETER);
+                        closeDeclarationWithCommentBinders(valueParameter, VALUE_PARAMETER, false);
                     }
                 }
                 else {
@@ -1902,7 +1941,7 @@ public class JetParsing extends AbstractJetParsing {
             return false;
         }
 
-        parameter.done(VALUE_PARAMETER);
+        closeDeclarationWithCommentBinders(parameter, VALUE_PARAMETER, false);
         return true;
     }
 

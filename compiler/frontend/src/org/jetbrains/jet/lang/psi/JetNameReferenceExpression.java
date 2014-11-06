@@ -22,14 +22,14 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetNameReferenceExpressionStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinNameReferenceExpressionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-public class JetNameReferenceExpression extends JetExpressionImplStub<PsiJetNameReferenceExpressionStub> implements JetSimpleNameExpression {
+public class JetNameReferenceExpression extends JetExpressionImplStub<KotlinNameReferenceExpressionStub> implements JetSimpleNameExpression {
 
     private static final TokenSet NAME_REFERENCE_EXPRESSIONS = TokenSet.create(IDENTIFIER, FIELD_IDENTIFIER, THIS_KEYWORD, SUPER_KEYWORD);
 
@@ -37,14 +37,14 @@ public class JetNameReferenceExpression extends JetExpressionImplStub<PsiJetName
         super(node);
     }
 
-    public JetNameReferenceExpression(@NotNull PsiJetNameReferenceExpressionStub stub) {
+    public JetNameReferenceExpression(@NotNull KotlinNameReferenceExpressionStub stub) {
         super(stub, JetStubElementTypes.REFERENCE_EXPRESSION);
     }
 
     @Override
     @NotNull
     public String getReferencedName() {
-        PsiJetNameReferenceExpressionStub stub = getStub();
+        KotlinNameReferenceExpressionStub stub = getStub();
         if (stub != null) {
             return stub.getReferencedName();
         }

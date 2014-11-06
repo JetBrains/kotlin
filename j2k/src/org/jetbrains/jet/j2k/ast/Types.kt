@@ -32,6 +32,18 @@ fun Nullability.isNullable(settings: ConverterSettings) = when(this) {
     Nullability.Default -> !settings.forceNotNullTypes
 }
 
+enum class Mutability {
+    Mutable
+    NonMutable
+    Default
+}
+
+fun Mutability.isMutable(settings: ConverterSettings) = when(this) {
+    Mutability.Mutable -> true
+    Mutability.NonMutable -> false
+    Mutability.Default -> false //TODO: setting?
+}
+
 abstract class MayBeNullableType(nullability: Nullability, val settings: ConverterSettings) : Type() {
     override val isNullable: Boolean = nullability.isNullable(settings)
 

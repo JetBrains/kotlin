@@ -135,8 +135,8 @@ JetFile: Graph.kt
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiComment(EOL_COMMENT)('// type is ArrayList, but I want IMutableList')
+        PsiWhiteSpace(' ')
+        PsiComment(EOL_COMMENT)('// type is ArrayList, but I want IMutableList')
       PsiWhiteSpace('\n')
       PsiComment(BLOCK_COMMENT)('/* options:\n    private val edges : IMutableList<Edge<V, E>> = ArrayList<Edge<V, E>>()\n    private val edges : IMutableList<Edge<V, E>> = ArrayList() // not an erasure, but a request to infer parameters\n*/')
       PsiWhiteSpace('\n\n  ')
@@ -457,8 +457,8 @@ JetFile: Graph.kt
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('to')
                   PsiElement(RBRACE)('}')
-      PsiWhiteSpace(' ')
-      PsiComment(EOL_COMMENT)('// type is IIterable<Vertex<V>>')
+        PsiWhiteSpace(' ')
+        PsiComment(EOL_COMMENT)('// type is IIterable<Vertex<V>>')
       PsiWhiteSpace('\n\n  ')
       FUN
         PsiElement(fun)('fun')

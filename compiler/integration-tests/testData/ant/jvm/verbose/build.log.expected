@@ -1,0 +1,12 @@
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+  [kotlinc] Compiling [[TestData]/hello.kt] => [[Temp]/hello.jar]
+  [kotlinc] LOGGING: Using Kotlin home directory [KotlinProjectHome]/dist/kotlinc
+  [kotlinc] LOGGING: Configuring the compilation environment
+
+BUILD SUCCESSFUL
+Total time: [time]
+
+Return code: 0

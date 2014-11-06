@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinObjectStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -33,18 +33,18 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectStub> implements JetClassOrObject  {
+public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectStub> implements JetClassOrObject  {
     public JetObjectDeclaration(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetObjectDeclaration(@NotNull PsiJetObjectStub stub) {
+    public JetObjectDeclaration(@NotNull KotlinObjectStub stub) {
         super(stub, JetStubElementTypes.OBJECT_DECLARATION);
     }
 
     @Override
     public String getName() {
-        PsiJetObjectStub stub = getStub();
+        KotlinObjectStub stub = getStub();
         if (stub != null) {
             return stub.getName();
         }
@@ -55,7 +55,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
 
     @Override
     public boolean isTopLevel() {
-        PsiJetObjectStub stub = getStub();
+        KotlinObjectStub stub = getStub();
         if (stub != null) {
             return stub.isTopLevel();
         }
@@ -93,7 +93,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
     }
 
     public boolean isClassObject() {
-        PsiJetObjectStub stub = getStub();
+        KotlinObjectStub stub = getStub();
         if (stub != null) {
             return stub.isClassObject();
         }
@@ -149,7 +149,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
 
     @Override
     public boolean isLocal() {
-        PsiJetObjectStub stub = getStub();
+        KotlinObjectStub stub = getStub();
         if (stub != null) {
             return stub.isLocal();
         }
@@ -171,7 +171,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
     }
 
     public boolean isObjectLiteral() {
-        PsiJetObjectStub stub = getStub();
+        KotlinObjectStub stub = getStub();
         if (stub != null) {
             return stub.isObjectLiteral();
         }

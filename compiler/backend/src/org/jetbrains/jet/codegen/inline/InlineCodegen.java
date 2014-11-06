@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen.inline;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.*;
@@ -41,17 +42,18 @@ import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.LabelNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
@@ -239,7 +241,7 @@ public class InlineCodegen implements CallGenerator {
                 }
             }
         };
-        List<MethodInliner.ExternalFinallyBlockInfo> infos = MethodInliner.processReturns(adapter, labelOwner, true, null);
+        List<MethodInliner.PointForExternalFinallyBlocks> infos = MethodInliner.processReturns(adapter, labelOwner, true, null);
         generateAndInsertFinallyBlocks(adapter, infos);
 
         adapter.accept(new InliningInstructionAdapter(codegen.v));
@@ -481,19 +483,62 @@ public class InlineCodegen implements CallGenerator {
     }
 
 
-    public void generateAndInsertFinallyBlocks(MethodNode intoNode, List<MethodInliner.ExternalFinallyBlockInfo> insertPoints) {
+    public void generateAndInsertFinallyBlocks(MethodNode intoNode, List<MethodInliner.PointForExternalFinallyBlocks> insertPoints) {
         if (!codegen.hasFinallyBlocks()) return;
 
-        for (MethodInliner.ExternalFinallyBlockInfo insertPoint : insertPoints) {
-            MethodNode finallyNode = InlineCodegenUtil.createEmptyMethodNode();
-            ExpressionCodegen finallyCodegen =
-                    new ExpressionCodegen(finallyNode, codegen.getFrameMap(), codegen.getReturnType(),
-                                          codegen.getContext(), codegen.getState(), codegen.getParentCodegen());
-            finallyCodegen.addBlockStackElementsForNonLocalReturns(codegen.getBlockStackElements());
+        Map<AbstractInsnNode, MethodInliner.PointForExternalFinallyBlocks> extensionPoints =
+                new HashMap<AbstractInsnNode, MethodInliner.PointForExternalFinallyBlocks>();
+        for (MethodInliner.PointForExternalFinallyBlocks insertPoint : insertPoints) {
+            extensionPoints.put(insertPoint.beforeIns, insertPoint);
+        }
 
-            finallyCodegen.generateFinallyBlocksIfNeeded(insertPoint.returnType);
+        DefaultProcessor processor = new DefaultProcessor(intoNode);
 
-            InlineCodegenUtil.insertNodeBefore(finallyNode, intoNode, insertPoint.beforeIns);
+        AbstractInsnNode curInstr = intoNode.instructions.getFirst();
+        while (curInstr != null) {
+            processor.updateCoveringTryBlocks(curInstr, true);
+
+            MethodInliner.PointForExternalFinallyBlocks extension = extensionPoints.get(curInstr);
+            if (extension != null) {
+                Label start = new Label();
+                Label end = new Label();
+
+                MethodNode finallyNode = InlineCodegenUtil.createEmptyMethodNode();
+                finallyNode.visitLabel(start);
+
+                ExpressionCodegen finallyCodegen =
+                        new ExpressionCodegen(finallyNode, codegen.getFrameMap(), codegen.getReturnType(),
+                                              codegen.getContext(), codegen.getState(), codegen.getParentCodegen());
+                finallyCodegen.addBlockStackElementsForNonLocalReturns(codegen.getBlockStackElements());
+
+                finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType);
+                finallyNode.visitLabel(end);
+
+                //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
+                InlineCodegenUtil.insertNodeBefore(finallyNode, intoNode, curInstr);
+
+                List<TryCatchBlockNodeWrapper> blocks = processor.getCoveringFromInnermost();
+                ListIterator<TryCatchBlockNodeWrapper> iterator = blocks.listIterator(blocks.size());
+                while (iterator.hasPrevious()) {
+                    TryCatchBlockNodeWrapper previous = iterator.previous();
+                    LabelNode oldStart = previous.getStartLabel();
+                    TryCatchBlockNode node = previous.getNode();
+                    node.start = (LabelNode) end.info;
+                    processor.remapStartLabel(oldStart, previous);
+
+                    TryCatchBlockNode additionalNode = new TryCatchBlockNode(oldStart, (LabelNode) start.info, node.handler, node.type);
+                    processor.addNode(additionalNode);
+                }
+            }
+
+            curInstr = curInstr.getNext();
+        }
+
+        processor.sortTryCatchBlocks();
+        Iterable<TryCatchBlockNodeWrapper> nodes = processor.getNonEmptyNodes();
+        intoNode.tryCatchBlocks.clear();
+        for (TryCatchBlockNodeWrapper node : nodes) {
+            intoNode.tryCatchBlocks.add(node.getNode());
         }
     }
 

@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
@@ -25,27 +23,27 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetParameterStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinParameterStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinParameterStubImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
 
-public class JetParameterElementType extends JetStubElementType<PsiJetParameterStub, JetParameter> {
+public class JetParameterElementType extends JetStubElementType<KotlinParameterStub, JetParameter> {
     public JetParameterElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetParameter.class, PsiJetParameterStub.class);
+        super(debugName, JetParameter.class, KotlinParameterStub.class);
     }
 
     @Override
-    public PsiJetParameterStub createStub(@NotNull JetParameter psi, StubElement parentStub) {
+    public KotlinParameterStub createStub(@NotNull JetParameter psi, StubElement parentStub) {
         FqName fqName = psi.getFqName();
         StringRef fqNameRef = StringRef.fromString(fqName != null ? fqName.asString() : null);
-        return new PsiJetParameterStubImpl(parentStub, fqNameRef, StringRef.fromString(psi.getName()),
+        return new KotlinParameterStubImpl(parentStub, fqNameRef, StringRef.fromString(psi.getName()),
                                            psi.isMutable(), psi.hasValOrVarNode(), psi.hasDefaultValue());
     }
 
     @Override
-    public void serialize(@NotNull PsiJetParameterStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinParameterStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isMutable());
         dataStream.writeBoolean(stub.hasValOrValNode());
@@ -56,13 +54,13 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
 
     @NotNull
     @Override
-    public PsiJetParameterStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinParameterStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         boolean isMutable = dataStream.readBoolean();
         boolean hasValOrValNode = dataStream.readBoolean();
         boolean hasDefaultValue = dataStream.readBoolean();
         StringRef fqName = dataStream.readName();
 
-         return new PsiJetParameterStubImpl(parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue);
+         return new KotlinParameterStubImpl(parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue);
     }
 }

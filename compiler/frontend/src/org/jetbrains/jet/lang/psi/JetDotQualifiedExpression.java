@@ -20,13 +20,13 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetToken;
 
 import static org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes.INSIDE_DIRECTIVE_EXPRESSIONS;
 
-public class JetDotQualifiedExpression extends JetExpressionImplStub<PsiJetPlaceHolderStub<JetDotQualifiedExpression>>
+public class JetDotQualifiedExpression extends JetExpressionImplStub<KotlinPlaceHolderStub<JetDotQualifiedExpression>>
         implements JetQualifiedExpression {
 
     private static final Logger LOG = Logger.getInstance(JetDotQualifiedExpression.class);
@@ -35,7 +35,7 @@ public class JetDotQualifiedExpression extends JetExpressionImplStub<PsiJetPlace
         super(node);
     }
 
-    public JetDotQualifiedExpression(@NotNull PsiJetPlaceHolderStub<JetDotQualifiedExpression> stub) {
+    public JetDotQualifiedExpression(@NotNull KotlinPlaceHolderStub<JetDotQualifiedExpression> stub) {
         super(stub, JetStubElementTypes.DOT_QUALIFIED_EXPRESSION);
     }
 
@@ -47,7 +47,7 @@ public class JetDotQualifiedExpression extends JetExpressionImplStub<PsiJetPlace
     @NotNull
     @Override
     public JetExpression getReceiverExpression() {
-        PsiJetPlaceHolderStub<JetDotQualifiedExpression> stub = getStub();
+        KotlinPlaceHolderStub<JetDotQualifiedExpression> stub = getStub();
         if (stub != null) {
             JetExpression[] childExpressionsByStub = getChildExpressionsByStub(stub);
             if (childExpressionsByStub != null) {
@@ -60,7 +60,7 @@ public class JetDotQualifiedExpression extends JetExpressionImplStub<PsiJetPlace
     @Nullable
     @Override
     public JetExpression getSelectorExpression() {
-        PsiJetPlaceHolderStub<JetDotQualifiedExpression> stub = getStub();
+        KotlinPlaceHolderStub<JetDotQualifiedExpression> stub = getStub();
         if (stub != null) {
             JetExpression[] childExpressionsByStub = getChildExpressionsByStub(stub);
             if (childExpressionsByStub != null && childExpressionsByStub.length == 2) {
@@ -72,7 +72,7 @@ public class JetDotQualifiedExpression extends JetExpressionImplStub<PsiJetPlace
 
 
     @Nullable
-    private JetExpression[] getChildExpressionsByStub(@NotNull PsiJetPlaceHolderStub<JetDotQualifiedExpression> stub) {
+    private JetExpression[] getChildExpressionsByStub(@NotNull KotlinPlaceHolderStub<JetDotQualifiedExpression> stub) {
         if (stub.getParentStubOfType(JetImportDirective.class) == null && stub.getParentStubOfType(JetPackageDirective.class) == null) {
             LOG.error("JetDotQualifiedExpression should only have stubs inside import or package directives.\n " +
                       "Stubs were created for:\n " + getText() +

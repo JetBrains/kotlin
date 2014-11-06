@@ -4,7 +4,7 @@ fun foobar(x: Boolean, y: String, z: String) = x.toString() + y + z
 
 inline fun foo() = "-"
 
-fun box() {
+fun test() {
     val result = foobar(if (1 == 1) true else bar(), foo(), "OK")
 }
 

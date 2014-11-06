@@ -23,7 +23,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch
 import com.intellij.util.Processor
 import org.jetbrains.jet.lang.psi.JetClassOrObject
-import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper
+import org.jetbrains.jet.plugin.decompiler.navigation.JetSourceNavigationHelper
 import org.jetbrains.jet.plugin.stubindex.JetSuperClassIndex
 import org.jetbrains.jet.lang.resolve.*
 import java.util.Collections

@@ -18,8 +18,10 @@ package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -42,12 +44,12 @@ public class PositioningStrategy<E extends PsiElement> {
 
     @NotNull
     protected static List<TextRange> markElement(@NotNull PsiElement element) {
-        return Collections.singletonList(element.getTextRange());
+        return Collections.singletonList(new TextRange(getStartOffset(element), getEndOffset(element)));
     }
 
     @NotNull
     protected static List<TextRange> markNode(@NotNull ASTNode node) {
-        return Collections.singletonList(node.getTextRange());
+        return markElement(node.getPsi());
     }
 
     @NotNull
@@ -57,7 +59,33 @@ public class PositioningStrategy<E extends PsiElement> {
 
     @NotNull
     protected static List<TextRange> markRange(@NotNull PsiElement from, @NotNull PsiElement to) {
-        return markRange(new TextRange(from.getTextRange().getStartOffset(), to.getTextRange().getEndOffset()));
+        return markRange(new TextRange(getStartOffset(from), getEndOffset(to)));
+    }
+
+    private static int getStartOffset(@NotNull PsiElement element) {
+        PsiElement child = element.getFirstChild();
+        if (child != null) {
+            while (child instanceof PsiComment || child instanceof PsiWhiteSpace) {
+                child = child.getNextSibling();
+            }
+            if (child != null) {
+                return getStartOffset(child);
+            }
+        }
+        return element.getTextRange().getStartOffset();
+    }
+
+    private static int getEndOffset(@NotNull PsiElement element) {
+        PsiElement child = element.getLastChild();
+        if (child != null) {
+            while (child instanceof PsiComment || child instanceof PsiWhiteSpace) {
+                child = child.getPrevSibling();
+            }
+            if (child != null) {
+                return getEndOffset(child);
+            }
+        }
+        return element.getTextRange().getEndOffset();
     }
 
     protected static boolean hasSyntaxErrors(@NotNull PsiElement psiElement) {

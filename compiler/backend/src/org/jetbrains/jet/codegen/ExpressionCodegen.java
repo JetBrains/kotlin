@@ -403,7 +403,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         gen(elseExpression, asmType);
 
-        markLineNumber(expression);
+        markExpressionLineNumber(expression, isStatement);
+
         v.mark(end);
 
         return StackValue.onStack(asmType);
@@ -661,6 +662,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         public void afterBody(@NotNull Label loopExit) {
+            markLineNumber(forExpression);
+
             increment(loopExit);
 
             v.mark(bodyEnd);
@@ -1207,18 +1210,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return StackValue.none();
         }
         else {
-            Type type = expressionType(expression);
-            Type targetType = type.equals(UNIT_TYPE) ? type : OBJECT_TYPE;
+            Type targetType = expressionType(ifExpression);
 
             gen(expression, targetType);
 
             Label end = new Label();
             v.goTo(end);
 
-            markLineNumber(ifExpression);
             v.mark(elseLabel);
             StackValue.putUnitInstance(v);
 
+            markLineNumber(ifExpression);
             v.mark(end);
             return StackValue.onStack(targetType);
         }
@@ -1543,6 +1545,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return null;
             }
         });
+    }
+
+    public void markExpressionLineNumber(@NotNull JetElement element, boolean isStatement) {
+        if (!isStatement) {
+            markLineNumber(element);
+        }
     }
 
     public void markLineNumber(@NotNull JetElement statement) {
@@ -3608,7 +3616,7 @@ The "returned" value of try expression with no finally is either the last expres
             generateExceptionTable(defaultCatchStart, defaultCatchRegions, null);
         }
 
-        markLineNumber(expression);
+        markExpressionLineNumber(expression, isStatement);
         v.mark(end);
 
         if (!isStatement) {
@@ -3821,7 +3829,7 @@ The "returned" value of try expression with no finally is either the last expres
             }
         }
 
-        markLineNumber(expression);
+        markExpressionLineNumber(expression, isStatement);
         v.mark(end);
 
         myFrameMap.leaveTemp(subjectType);

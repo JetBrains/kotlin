@@ -555,8 +555,8 @@ JetFile: IOSamples.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('File')
-      PsiWhiteSpace(' ')
-      PsiComment(EOL_COMMENT)('//= ...')
+        PsiWhiteSpace(' ')
+        PsiComment(EOL_COMMENT)('//= ...')
       PsiWhiteSpace('\n  ')
       PROPERTY
         PsiElement(val)('val')
@@ -569,8 +569,8 @@ JetFile: IOSamples.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('File')
-      PsiWhiteSpace(' ')
-      PsiComment(EOL_COMMENT)('//= ...')
+        PsiWhiteSpace(' ')
+        PsiComment(EOL_COMMENT)('//= ...')
       PsiWhiteSpace('\n\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION

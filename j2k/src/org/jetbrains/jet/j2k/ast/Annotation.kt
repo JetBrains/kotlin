@@ -18,7 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.*
 
-class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Expression>>, val brackets: Boolean, val newLineAfter: Boolean) : Element() {
+class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, DeferredElement<Expression>>>, val brackets: Boolean, val newLineAfter: Boolean) : Element() {
     private fun CodeBuilder.surroundWithBrackets(action: () -> Unit) {
         if (brackets) append("[")
         action()
@@ -59,9 +59,10 @@ class Annotations(val annotations: List<Annotation>) : Element() {
         builder.append(annotations, "")
     }
 
-    override val isEmpty: Boolean = annotations.isEmpty()
+    override val isEmpty: Boolean
+        get() = annotations.isEmpty()
 
-    fun plus(other: Annotations) = Annotations(annotations + other.annotations)
+    fun plus(other: Annotations) = Annotations(annotations + other.annotations).assignNoPrototype()
 
     class object {
         val Empty = Annotations(listOf())

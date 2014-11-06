@@ -73,8 +73,9 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.codegen.StackValue
 import org.jetbrains.jet.lang.types.Flexibility
 import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.plugin.util.attachment.attachmentsByPsiFile
+import org.jetbrains.jet.plugin.util.attachment.attachmentByPsiFile
 import com.intellij.openapi.diagnostic.Attachment
+import org.jetbrains.jet.plugin.util.attachment.mergeAttachments
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -91,11 +92,11 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
         }
 
         if (codeFragment.getContext() !is JetElement) {
-            val attachments = (attachmentsByPsiFile(position.getFile()) +
-                               attachmentsByPsiFile(codeFragment) +
-                               listOf(Attachment("breakpoint.info", "line: ${position.getLine()}"))
-                              ).copyToArray()
-            logger.error("Trying to evaluate ${codeFragment.javaClass} with context ${codeFragment.getContext()?.javaClass}", *attachments)
+            val attachments = array(attachmentByPsiFile(position.getFile()),
+                                    attachmentByPsiFile(codeFragment),
+                                    Attachment("breakpoint.info", "line: ${position.getLine()}"))
+
+            logger.error("Trying to evaluate ${codeFragment.javaClass} with context ${codeFragment.getContext()?.javaClass}", mergeAttachments(*attachments))
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in this context")
         }
 

@@ -26,7 +26,7 @@ See this presentation for the introduction:
 h3. Source Code
 Check out the sources on [GitHub|http://github.com/jetbrains/kotlin].
 Sources are distributed under *Apache 2* license.
-Nightly builds can be downloaded from our [build server|http://teamcity.jetbrains.com/viewType.html?buildTypeId=bt345&tab=buildTypeStatusDiv&guest=1]. 
+Nightly builds can be downloaded from our [build server|https://teamcity.jetbrains.com/viewType.html?buildTypeId=bt345&tab=buildTypeStatusDiv&guest=1].
 You can also use [http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml] to set up a *plugin repository* in IntelliJ IDEA.
 {info}
 The IDE plugin requires the latest EAP build of [IntelliJ IDEA 11.1|http://eap.jetbrains.com/idea].

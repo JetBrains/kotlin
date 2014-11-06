@@ -112,7 +112,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             LOG.error(LogMessageEx.createEvent(
                     "Exception while collecting KotlinSignature markers",
                     ExceptionUtil.getThrowableText(error),
-                    AttachmentPackage.attachmentsByPsiFile(psiFile)
+                    AttachmentPackage.attachmentByPsiFileAsArray(psiFile)
             ));
         }
     }

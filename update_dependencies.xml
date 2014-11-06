@@ -29,7 +29,7 @@
 
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
         <execute_update
-            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
+            base.url="https://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
             build.zip="${idea.archive.name}"/>
     </target>
 
@@ -105,13 +105,13 @@
         <mkdir dir="dependencies/download"/>
 
         <!-- ProGuard -->
-        <get src="http://heanet.dl.sourceforge.net/project/proguard/proguard%20beta/4.8beta/proguard4.8beta1.zip"
-             dest="dependencies/download/proguard4.8beta1.zip" usetimestamp="true"/>
+        <get src="http://downloads.sourceforge.net/project/proguard/proguard/5.1/proguard5.1.zip"
+             dest="dependencies/download/proguard5.1.zip" usetimestamp="true"/>
 
         <delete file="dependencies/proguard.jar" failonerror="false"/>
-        <unzip src="dependencies/download/proguard4.8beta1.zip" dest="dependencies">
+        <unzip src="dependencies/download/proguard5.1.zip" dest="dependencies">
             <patternset>
-                <include name="proguard4.8beta1/lib/proguard.jar"/>
+                <include name="proguard5.1/lib/proguard.jar"/>
             </patternset>
             <mapper type="flatten"/>
         </unzip>
@@ -196,7 +196,7 @@
         </unzip>
 
         <!-- Bootstrap compiler -->
-        <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
+        <get src="https://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
              dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>
         <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
         <unzip src="dependencies/download/bootstrap-compiler.zip" dest="dependencies/bootstrap-compiler"/>
@@ -358,10 +358,10 @@
     <target name="fetch-annotations">
         <mkdir dir="dependencies/annotations"/>
         <get
-            src="http://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-jdk-annotations.jar"
+            src="https://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-jdk-annotations.jar"
             dest="dependencies/annotations/kotlin-jdk-annotations.jar" usetimestamp="true"/>
         <get
-            src="http://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-android-sdk-annotations.jar"
+            src="https://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-android-sdk-annotations.jar"
             dest="dependencies/annotations/kotlin-android-sdk-annotations.jar" usetimestamp="true"/>
     </target>
 

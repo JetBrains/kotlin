@@ -29,11 +29,7 @@ import com.intellij.formatting.ASTBlock
 import org.jetbrains.jet.plugin.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
 import com.intellij.formatting.SpacingBuilder
 import com.intellij.formatting.SpacingBuilder.RuleBuilder
-import com.intellij.formatting.DependentSpacingRule
-import com.intellij.formatting.DependentSpacingRule.Trigger
-import com.intellij.formatting.DependentSpacingRule.Anchor
-import com.intellij.openapi.util.TextRange
-import com.intellij.formatting.DependantSpacingImpl
+import org.jetbrains.jet.lexer.JetTokens
 
 val MODIFIERS_LIST_ENTRIES = TokenSet.orSet(TokenSet.create(ANNOTATION_ENTRY, ANNOTATION), MODIFIER_KEYWORDS)
 
@@ -50,27 +46,30 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
     val jetCommonSettings = settings.getCommonSettings(JetLanguage.INSTANCE)!!
 
     return rules(settings) {
+        val DECLARATIONS = TokenSet.create(PROPERTY, FUN, CLASS, OBJECT_DECLARATION, ENUM_ENTRY)
+
         custom {
-            val emptyLineIfLeftMultiline = { (parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
-                val multilineLF = 2
-                val singleLineLF = 1
-
-                val dependentSpacingRule = DependentSpacingRule(Trigger.HAS_LINE_FEEDS).registerData(Anchor.MIN_LINE_FEEDS, multilineLF)
-                LineFeedDependantSpacing(
-                        0, 0,
-                        minimumLineFeeds = singleLineLF,
-                        keepLineBreaks = settings.KEEP_LINE_BREAKS,
-                        keepBlankLines = settings.KEEP_BLANK_LINES_IN_DECLARATIONS,
-                        dependency = left.getTextRange(), rule = dependentSpacingRule)
-            }
-
-            inPosition(left = CLASS, right = CLASS).customRule(emptyLineIfLeftMultiline)
-            inPosition(left = FUN, right = FUN).customRule(emptyLineIfLeftMultiline)
-            inPosition(left = PROPERTY, right = FUN).customRule(emptyLineIfLeftMultiline)
-            inPosition(left = FUN, right = PROPERTY).customRule(emptyLineIfLeftMultiline)
+            inPosition(left = CLASS, right = CLASS).emptyLinesIfLineBreakInLeft(1)
+            inPosition(left = FUN, right = FUN).emptyLinesIfLineBreakInLeft(1)
+            inPosition(left = PROPERTY, right = FUN).emptyLinesIfLineBreakInLeft(1)
+            inPosition(left = FUN, right = PROPERTY).emptyLinesIfLineBreakInLeft(1)
 
             // Case left for alternative constructors
-            inPosition(left = FUN, right = CLASS).customRule(emptyLineIfLeftMultiline)
+            inPosition(left = FUN, right = CLASS).emptyLinesIfLineBreakInLeft(1)
+
+            inPosition(left = ENUM_ENTRY, right = ENUM_ENTRY).emptyLinesIfLineBreakInLeft(
+                    emptyLines = 0, numSpacesOtherwise = 1, numberOfLineFeedsOtherwise = 0)
+
+            val parameterWithDocCommentRule = {
+                (parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
+                if (right.getNode().getFirstChildNode().getElementType() == JetTokens.DOC_COMMENT) {
+                    Spacing.createSpacing(0, 0, 1, true, settings.KEEP_BLANK_LINES_IN_DECLARATIONS)
+                }
+                else {
+                    null
+                }
+            }
+            inPosition(parent = VALUE_PARAMETER_LIST, right = VALUE_PARAMETER).customRule(parameterWithDocCommentRule)
         }
 
         simple {
@@ -82,13 +81,25 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             before(DOC_COMMENT).lineBreakInCode()
             between(PROPERTY, PROPERTY).lineBreakInCode()
 
-            between(CLASS, FUN).blankLines(1)
-            between(CLASS, PROPERTY).blankLines(1)
-            between(PROPERTY, CLASS).blankLines(1)
+            // CLASS - CLASS is exception
+            between(CLASS, DECLARATIONS).blankLines(1)
+
+            // FUN - FUN, FUN - PROPERTY, FUN - CLASS are exceptions
+            between(FUN, DECLARATIONS).blankLines(1)
+
+            // PROPERTY - PROPERTY, PROPERTY - FUN are exceptions
+            between(PROPERTY, DECLARATIONS).blankLines(1)
+
+            between(OBJECT_DECLARATION, DECLARATIONS).blankLines(1)
+
+            // ENUM_ENTRY - ENUM_ENTRY is exception
+            between(ENUM_ENTRY, DECLARATIONS).blankLines(1)
 
             before(FUN).lineBreakInCode()
             before(PROPERTY).lineBreakInCode()
 
+
+            after(DOC_COMMENT).lineBreakInCode()
 
             // =============== Spacing ================
             betweenInside(LBRACE, RBRACE, CLASS_BODY).spaces(0)
@@ -289,11 +300,12 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
                 Spacing.createSpacing(numSpaces, numSpaces, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE)
             }
+
+            inPosition(parent = CLASS_BODY, right = RBRACE).lineBreakIfLineBreakInParent(numSpacesOtherwise = 1)
         }
 
         simple {
             afterInside(LBRACE, BLOCK).lineBreakInCode()
-            beforeInside(RBRACE, CLASS_BODY).lineBreakInCode()
             beforeInside(RBRACE, BLOCK).lineBreakInCode()
             beforeInside(RBRACE, WHEN).lineBreakInCode()
             between(RPAR, BODY).spaces(1)
@@ -301,19 +313,5 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             // if when entry has block, spacing after arrow should be set by lbrace rule
             aroundInside(ARROW, WHEN_ENTRY).spaceIf(jetSettings.SPACE_AROUND_WHEN_ARROW)
         }
-    }
-}
-
-public class LineFeedDependantSpacing(
-        minSpaces: Int,
-        maxSpaces: Int,
-        val minimumLineFeeds: Int,
-        keepLineBreaks: Boolean,
-        keepBlankLines: Int,
-        dependency: TextRange,
-        rule: DependentSpacingRule) : DependantSpacingImpl(minSpaces, maxSpaces, dependency, keepLineBreaks, keepBlankLines, rule) {
-    override fun getMinLineFeeds(): Int {
-        val superMin = super.getMinLineFeeds()
-        return if (superMin == 0) minimumLineFeeds else superMin
     }
 }

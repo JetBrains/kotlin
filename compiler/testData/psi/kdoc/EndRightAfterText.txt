@@ -1,7 +1,7 @@
 JetFile: EndRightAfterText.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiElement(KDOC_TEXT)('text')
     PsiElement(KDOC_END)('*/')
-  PACKAGE_DIRECTIVE
-    <empty list>

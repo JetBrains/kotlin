@@ -27,8 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetEnumEntry;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetClassStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinClassStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinClassStubImpl;
 import org.jetbrains.jet.lang.psi.stubs.impl.Utils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -36,14 +36,14 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.io.IOException;
 import java.util.List;
 
-public class JetClassElementType extends JetStubElementType<PsiJetClassStub, JetClass> {
+public class JetClassElementType extends JetStubElementType<KotlinClassStub, JetClass> {
     public JetClassElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetClass.class, PsiJetClassStub.class);
+        super(debugName, JetClass.class, KotlinClassStub.class);
     }
 
     @NotNull
     @Override
-    public JetClass createPsi(@NotNull PsiJetClassStub stub) {
+    public JetClass createPsi(@NotNull KotlinClassStub stub) {
         return !stub.isEnumEntry() ? new JetClass(stub) : new JetEnumEntry(stub);
     }
 
@@ -54,18 +54,18 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
     }
 
     @Override
-    public PsiJetClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
+    public KotlinClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         boolean isEnumEntry = psi instanceof JetEnumEntry;
         List<String> superNames = PsiUtilPackage.getSuperNames(psi);
-        return new PsiJetClassStubImpl(
+        return new KotlinClassStubImpl(
                 getStubType(isEnumEntry), parentStub, StringRef.fromString(fqName != null ? fqName.asString() : null),
                 StringRef.fromString(psi.getName()), Utils.INSTANCE$.wrapStrings(superNames), psi.isTrait(), isEnumEntry,
                 psi.isLocal(), psi.isTopLevel());
     }
 
     @Override
-    public void serialize(@NotNull PsiJetClassStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinClassStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName == null ? null : fqName.asString());
@@ -83,7 +83,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
 
     @NotNull
     @Override
-    public PsiJetClassStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinClassStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         StringRef qualifiedName = dataStream.readName();
         boolean isTrait = dataStream.readBoolean();
@@ -97,12 +97,12 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
             superNames[i] = dataStream.readName();
         }
 
-        return new PsiJetClassStubImpl(getStubType(isEnumEntry), parentStub, qualifiedName, name, superNames,
+        return new KotlinClassStubImpl(getStubType(isEnumEntry), parentStub, qualifiedName, name, superNames,
                                        isTrait, isEnumEntry, isLocal, isTopLevel);
     }
 
     @Override
-    public void indexStub(@NotNull PsiJetClassStub stub, @NotNull IndexSink sink) {
+    public void indexStub(@NotNull KotlinClassStub stub, @NotNull IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexClass(stub, sink);
     }
 

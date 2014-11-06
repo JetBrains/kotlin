@@ -22,30 +22,30 @@ import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetTypeConstraint;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeConstraintStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetTypeConstraintImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinTypeConstraintStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinTypeConstraintImpl;
 
 import java.io.IOException;
 
-public class JetTypeConstraintElementType extends JetStubElementType<PsiJetTypeConstraintStub, JetTypeConstraint> {
+public class JetTypeConstraintElementType extends JetStubElementType<KotlinTypeConstraintStub, JetTypeConstraint> {
     public JetTypeConstraintElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetTypeConstraint.class, PsiJetTypeConstraintStub.class);
+        super(debugName, JetTypeConstraint.class, KotlinTypeConstraintStub.class);
     }
 
     @Override
-    public PsiJetTypeConstraintStub createStub(@NotNull JetTypeConstraint psi, StubElement parentStub) {
-        return new PsiJetTypeConstraintImpl(parentStub, psi.isClassObjectConstraint());
+    public KotlinTypeConstraintStub createStub(@NotNull JetTypeConstraint psi, StubElement parentStub) {
+        return new KotlinTypeConstraintImpl(parentStub, psi.isClassObjectConstraint());
     }
 
     @Override
-    public void serialize(@NotNull PsiJetTypeConstraintStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinTypeConstraintStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeBoolean(stub.isClassObjectConstraint());
     }
 
     @NotNull
     @Override
-    public PsiJetTypeConstraintStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinTypeConstraintStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         boolean isClassObjectConstraint = dataStream.readBoolean();
-        return new PsiJetTypeConstraintImpl(parentStub, isClassObjectConstraint);
+        return new KotlinTypeConstraintImpl(parentStub, isClassObjectConstraint);
     }
 }

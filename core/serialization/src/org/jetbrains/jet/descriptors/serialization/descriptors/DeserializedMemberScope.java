@@ -31,6 +31,7 @@ import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.utils.Printer;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -135,7 +136,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     private Collection<FunctionDescriptor> computeFunctions(@NotNull Name name) {
         Collection<FunctionDescriptor> descriptors = computeMembersByName(name, FUNCTION);
         computeNonDeclaredFunctions(name, descriptors);
-        return descriptors;
+        return UtilsPackage.toReadOnlyList(descriptors);
     }
 
     protected void computeNonDeclaredFunctions(@NotNull Name name, @NotNull Collection<FunctionDescriptor> functions) {
@@ -152,7 +153,7 @@ public abstract class DeserializedMemberScope implements JetScope {
         Collection<PropertyDescriptor> descriptors = computeMembersByName(name, PROPERTY);
         computeNonDeclaredProperties(name, descriptors);
         //noinspection unchecked
-        return (Collection) descriptors;
+        return UtilsPackage.<VariableDescriptor>toReadOnlyList(descriptors);
     }
 
     protected void computeNonDeclaredProperties(@NotNull Name name, @NotNull Collection<PropertyDescriptor> descriptors) {
@@ -211,7 +212,7 @@ public abstract class DeserializedMemberScope implements JetScope {
 
         addAllClassDescriptors(result);
 
-        return result;
+        return UtilsPackage.toReadOnlyList(result);
     }
 
     protected abstract void addNonDeclaredDescriptors(@NotNull Collection<DeclarationDescriptor> result);

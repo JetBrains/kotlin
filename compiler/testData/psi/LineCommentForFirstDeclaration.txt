@@ -1,0 +1,16 @@
+JetFile: LineCommentForFirstDeclaration.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiComment(EOL_COMMENT)('// This is foo')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')

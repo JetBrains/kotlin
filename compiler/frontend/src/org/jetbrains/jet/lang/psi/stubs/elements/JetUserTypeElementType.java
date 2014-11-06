@@ -22,30 +22,30 @@ import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetUserType;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetUserTypeStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetUserTypeStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinUserTypeStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinUserTypeStubImpl;
 
 import java.io.IOException;
 
-public class JetUserTypeElementType extends JetStubElementType<PsiJetUserTypeStub, JetUserType> {
+public class JetUserTypeElementType extends JetStubElementType<KotlinUserTypeStub, JetUserType> {
     public JetUserTypeElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetUserType.class, PsiJetUserTypeStub.class);
+        super(debugName, JetUserType.class, KotlinUserTypeStub.class);
     }
 
     @Override
-    public PsiJetUserTypeStub createStub(@NotNull JetUserType psi, StubElement parentStub) {
-        return new PsiJetUserTypeStubImpl(parentStub, psi.isAbsoluteInRootPackage());
+    public KotlinUserTypeStub createStub(@NotNull JetUserType psi, StubElement parentStub) {
+        return new KotlinUserTypeStubImpl(parentStub, psi.isAbsoluteInRootPackage());
     }
 
     @Override
-    public void serialize(@NotNull PsiJetUserTypeStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinUserTypeStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeBoolean(stub.isAbsoluteInRootPackage());
     }
 
     @NotNull
     @Override
-    public PsiJetUserTypeStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinUserTypeStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         boolean isAbsoluteInRootPackage = dataStream.readBoolean();
-        return new PsiJetUserTypeStubImpl(parentStub, isAbsoluteInRootPackage);
+        return new KotlinUserTypeStubImpl(parentStub, isAbsoluteInRootPackage);
     }
 }

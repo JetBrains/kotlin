@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinClassStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 
@@ -40,7 +40,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
         PsiFile psiFile = myFixture.configureByText("foo.kt", "import java.util.ArrayList as alist\nclass C(): alist() { }");
         List<JetDeclaration> declarations = ((JetFile) psiFile).getDeclarations();
         JetClass jetClass = (JetClass) declarations.get(0);
-        PsiJetClassStub stub = JetStubElementTypes.CLASS.createStub(jetClass, null);
+        KotlinClassStub stub = JetStubElementTypes.CLASS.createStub(jetClass, null);
         List<String> names = stub.getSuperNames();
         assertSameElements(names, "ArrayList", "alist");
     }
@@ -49,7 +49,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
         PsiFile psiFile = myFixture.configureByText("foo.kt", "trait Test { }");
         List<JetDeclaration> declarations = ((JetFile) psiFile).getDeclarations();
         JetClass jetClass = (JetClass) declarations.get(0);
-        PsiJetClassStub stub = JetStubElementTypes.CLASS.createStub(jetClass, null);
+        KotlinClassStub stub = JetStubElementTypes.CLASS.createStub(jetClass, null);
         assertEquals(true, stub.isTrait());
     }
 }

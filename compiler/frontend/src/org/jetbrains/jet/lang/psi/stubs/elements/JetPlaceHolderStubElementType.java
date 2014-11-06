@@ -22,30 +22,30 @@ import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetElementImplStub;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetPlaceHolderStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.KotlinPlaceHolderStubImpl;
 
 import java.io.IOException;
 
-public class JetPlaceHolderStubElementType<T extends JetElementImplStub<? extends StubElement<?>>> extends JetStubElementType<PsiJetPlaceHolderStub<T>, T> {
+public class JetPlaceHolderStubElementType<T extends JetElementImplStub<? extends StubElement<?>>> extends JetStubElementType<KotlinPlaceHolderStub<T>, T> {
 
     public JetPlaceHolderStubElementType(@NotNull @NonNls String debugName, @NotNull Class<T> psiClass) {
-        super(debugName, psiClass, PsiJetPlaceHolderStub.class);
+        super(debugName, psiClass, KotlinPlaceHolderStub.class);
     }
 
     @Override
-    public PsiJetPlaceHolderStub<T> createStub(@NotNull T psi, StubElement parentStub) {
-        return new PsiJetPlaceHolderStubImpl<T>(parentStub, this);
+    public KotlinPlaceHolderStub<T> createStub(@NotNull T psi, StubElement parentStub) {
+        return new KotlinPlaceHolderStubImpl<T>(parentStub, this);
     }
 
     @Override
-    public void serialize(@NotNull PsiJetPlaceHolderStub<T> stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinPlaceHolderStub<T> stub, @NotNull StubOutputStream dataStream) throws IOException {
         //do nothing
     }
 
     @NotNull
     @Override
-    public PsiJetPlaceHolderStub<T> deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new PsiJetPlaceHolderStubImpl<T>(parentStub, this);
+    public KotlinPlaceHolderStub<T> deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+        return new KotlinPlaceHolderStubImpl<T>(parentStub, this);
     }
 }

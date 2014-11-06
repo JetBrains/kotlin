@@ -768,8 +768,8 @@ public class JetPsiUtil {
     }
 
     @NotNull
-    public static String getElementTextWithContext(@NotNull JetElement element) {
-        if (element instanceof JetFile) {
+    public static String getElementTextWithContext(@NotNull PsiElement element) {
+        if (element instanceof PsiFile) {
             return element.getContainingFile().getText();
         }
 
@@ -777,7 +777,7 @@ public class JetPsiUtil {
         PsiElement inFileParent = PsiTreeUtil.findFirstParent(element, new Condition<PsiElement>() {
             @Override
             public boolean value(PsiElement parentCandidate) {
-                return parentCandidate != null && parentCandidate.getParent() instanceof JetFile;
+                return parentCandidate != null && parentCandidate.getParent() instanceof PsiFile;
             }
         });
 
@@ -819,12 +819,19 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetElement getEnclosingElementForLocalDeclaration(@NotNull JetDeclaration declaration) {
-        if (declaration instanceof JetTypeParameter) {
+        return getEnclosingElementForLocalDeclaration(declaration, true);
+    }
+
+    @Nullable
+    public static JetElement getEnclosingElementForLocalDeclaration(@NotNull JetDeclaration declaration, boolean skipParameters) {
+        if (declaration instanceof JetTypeParameter && skipParameters) {
             declaration = PsiTreeUtil.getParentOfType(declaration, JetNamedDeclaration.class);
         }
         else if (declaration instanceof JetParameter) {
+            if (((JetParameter) declaration).getValOrVarNode() != null) return null;
+
             PsiElement parent = declaration.getParent();
-            if (parent != null && parent.getParent() instanceof JetNamedFunction) {
+            if (skipParameters && parent != null && parent.getParent() instanceof JetNamedFunction) {
                 declaration = (JetNamedFunction) parent.getParent();
             }
         }

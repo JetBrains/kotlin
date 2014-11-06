@@ -22,7 +22,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -31,14 +31,14 @@ import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import java.util.Collections;
 import java.util.List;
 
-public class JetPackageDirective extends JetModifierListOwnerStub<PsiJetPlaceHolderStub<JetPackageDirective>> implements JetReferenceExpression {
+public class JetPackageDirective extends JetModifierListOwnerStub<KotlinPlaceHolderStub<JetPackageDirective>> implements JetReferenceExpression {
     private String qualifiedNameCache = null;
 
     public JetPackageDirective(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetPackageDirective(@NotNull PsiJetPlaceHolderStub<JetPackageDirective> stub) {
+    public JetPackageDirective(@NotNull KotlinPlaceHolderStub<JetPackageDirective> stub) {
         super(stub, JetStubElementTypes.PACKAGE_DIRECTIVE);
     }
 

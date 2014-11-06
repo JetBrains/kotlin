@@ -121,11 +121,39 @@ public class OverrideResolver {
     }
 
     private void generateOverridesInAClass(@NotNull final MutableClassDescriptor classDescriptor) {
+        generateOverridesInAClass(classDescriptor, classDescriptor.getDeclaredCallableMembers(), new OverridingUtil.DescriptorSink() {
+            @Override
+            public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                if (fakeOverride instanceof PropertyDescriptor) {
+                    classDescriptor.getBuilder().addPropertyDescriptor((PropertyDescriptor) fakeOverride);
+                }
+                else if (fakeOverride instanceof SimpleFunctionDescriptor) {
+                    classDescriptor.getBuilder().addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
+                }
+                else {
+                    throw new IllegalStateException(fakeOverride.getClass().getName());
+                }
+            }
+
+            @Override
+            public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
+                JetDeclaration declaration = (JetDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(fromCurrent);
+                //noinspection ConstantConditions
+                trace.report(CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().asString()));
+            }
+        });
+
+        resolveUnknownVisibilities(classDescriptor.getAllCallableMembers(), trace);
+    }
+
+    public static void generateOverridesInAClass(
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull Collection<CallableMemberDescriptor> membersFromCurrent,
+            @NotNull OverridingUtil.DescriptorSink sink
+    ) {
         List<CallableMemberDescriptor> membersFromSupertypes = getCallableMembersFromSupertypes(classDescriptor);
-
+        MultiMap<Name, CallableMemberDescriptor> membersFromCurrentByName = groupDescriptorsByName(membersFromCurrent);
         MultiMap<Name, CallableMemberDescriptor> membersFromSupertypesByName = groupDescriptorsByName(membersFromSupertypes);
-
-        MultiMap<Name, CallableMemberDescriptor> membersFromCurrentByName = groupDescriptorsByName(classDescriptor.getDeclaredCallableMembers());
 
         Set<Name> memberNames = new LinkedHashSet<Name>();
         memberNames.addAll(membersFromSupertypesByName.keySet());
@@ -135,34 +163,8 @@ public class OverrideResolver {
             Collection<CallableMemberDescriptor> fromSupertypes = membersFromSupertypesByName.get(memberName);
             Collection<CallableMemberDescriptor> fromCurrent = membersFromCurrentByName.get(memberName);
 
-            OverridingUtil.generateOverridesInFunctionGroup(
-                    memberName,
-                    fromSupertypes,
-                    fromCurrent,
-                    classDescriptor,
-                    new OverridingUtil.DescriptorSink() {
-                        @Override
-                        public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                            if (fakeOverride instanceof PropertyDescriptor) {
-                                classDescriptor.getBuilder().addPropertyDescriptor((PropertyDescriptor) fakeOverride);
-                            }
-                            else if (fakeOverride instanceof SimpleFunctionDescriptor) {
-                                classDescriptor.getBuilder().addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
-                            }
-                            else {
-                                throw new IllegalStateException(fakeOverride.getClass().getName());
-                            }
-                        }
-
-                        @Override
-                        public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                            JetDeclaration declaration = (JetDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(fromCurrent);
-                            //noinspection ConstantConditions
-                            trace.report(CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().asString()));
-                        }
-                    });
+            OverridingUtil.generateOverridesInFunctionGroup(memberName, fromSupertypes, fromCurrent, classDescriptor, sink);
         }
-        resolveUnknownVisibilities(classDescriptor.getAllCallableMembers(), trace);
     }
 
     public static void resolveUnknownVisibilities(

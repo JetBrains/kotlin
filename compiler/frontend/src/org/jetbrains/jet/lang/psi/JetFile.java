@@ -29,7 +29,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
+import org.jetbrains.jet.lang.psi.stubs.KotlinFileStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetPlaceHolderStubElementType;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -72,7 +72,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
     @NotNull
     @Override
     public List<JetDeclaration> getDeclarations() {
-        PsiJetFileStub stub = getStub();
+        KotlinFileStub stub = getStub();
         if (stub != null) {
             return Arrays.asList(stub.getChildrenByType(JetStubElementTypes.DECLARATION_TYPES, JetDeclaration.ARRAY_FACTORY));
         }
@@ -94,7 +94,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
             @NotNull JetPlaceHolderStubElementType<T> elementType,
             @NotNull Class<T> elementClass
     ) {
-        PsiJetFileStub stub = getStub();
+        KotlinFileStub stub = getStub();
         if (stub != null) {
             StubElement<T> importListStub = stub.findChildStubByType(elementType);
             return importListStub != null ? importListStub.getPsi() : null;
@@ -121,7 +121,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
     // scripts have no package directive, all other files must have package directives
     @Nullable
     public JetPackageDirective getPackageDirective() {
-        PsiJetFileStub stub = getStub();
+        KotlinFileStub stub = getStub();
         if (stub != null) {
             StubElement<JetPackageDirective> packageDirectiveStub = stub.findChildStubByType(JetStubElementTypes.PACKAGE_DIRECTIVE);
             return packageDirectiveStub != null ? packageDirectiveStub.getPsi() : null;
@@ -139,7 +139,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
 
     @NotNull
     public FqName getPackageFqName() {
-        PsiJetFileStub stub = getStub();
+        KotlinFileStub stub = getStub();
         if (stub != null) {
             return stub.getPackageFqName();
         }
@@ -157,8 +157,8 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
 
     @Override
     @Nullable
-    public PsiJetFileStub getStub() {
-        return (PsiJetFileStub) super.getStub();
+    public KotlinFileStub getStub() {
+        return (KotlinFileStub) super.getStub();
     }
 
     @NotNull
@@ -177,7 +177,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
     }
 
     public boolean isScript() {
-        PsiJetFileStub stub = getStub();
+        KotlinFileStub stub = getStub();
         if (stub != null) {
             return stub.isScript();
         }

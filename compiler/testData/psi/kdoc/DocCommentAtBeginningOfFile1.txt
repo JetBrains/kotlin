@@ -1,5 +1,5 @@
 JetFile: DocCommentAtBeginningOfFile1.kt
-  KDoc
-    PsiElement(KDOC_START)('/**')
   PACKAGE_DIRECTIVE
     <empty list>
+  KDoc
+    PsiElement(KDOC_START)('/**')
