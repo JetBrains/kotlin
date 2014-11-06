@@ -478,7 +478,7 @@ class CollectionTest {
     }
 
     test fun decomposeSplit() {
-        val (key, value) = "key = value".split('=').map { it.trim() }
+        val (key, value) = "key = value".split("=").map { it.trim() }
         assertEquals(key, "key")
         assertEquals(value, "value")
     }
