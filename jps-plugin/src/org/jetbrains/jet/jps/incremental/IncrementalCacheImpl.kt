@@ -42,6 +42,8 @@ import org.jetbrains.jps.builders.storage.StorageProvider
 import java.io.IOException
 import java.util.Scanner
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
+import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
@@ -106,11 +108,11 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         val annotationDataEncoded = header.annotationData
         if (annotationDataEncoded != null) {
             val data = BitEncoding.decodeBytes(annotationDataEncoded)
-            when (header.kind) {
-                KotlinClassHeader.Kind.PACKAGE_FACADE -> {
+            when {
+                header.isCompatiblePackageFacadeKind() -> {
                     return if (protoMap.put(className, data)) COMPILE_OTHERS else DO_NOTHING
                 }
-                KotlinClassHeader.Kind.CLASS -> {
+                header.isCompatibleClassKind() -> {
                     val inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
                     val protoChanged = protoMap.put(className, data)
                     val constantsChanged = constantsMap.process(className, fileBytes)
@@ -118,7 +120,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
                     return if (inlinesChanged) RECOMPILE_ALL else if (protoChanged || constantsChanged) COMPILE_OTHERS else DO_NOTHING
                 }
                 else -> {
-                    throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}")
+                    throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}, isCompatible: ${header.isCompatibleAbiVersion}")
                 }
             }
         }

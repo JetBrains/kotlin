@@ -89,14 +89,14 @@ private fun LazyJavaResolverContext.resolveBinaryClass(kotlinClass: KotlinJvmBin
     if (kotlinClass == null) return null
 
     val header = kotlinClass.getClassHeader()
-    if (header.kind == KotlinClassHeader.Kind.CLASS) {
+    if (!header.isCompatibleAbiVersion) {
+        errorReporter.reportIncompatibleAbiVersion(kotlinClass, header.version)
+    }
+    else if (header.kind == KotlinClassHeader.Kind.CLASS) {
         val descriptor = packageFragmentProvider.resolveKotlinBinaryClass(kotlinClass)
         if (descriptor != null) {
             return JavaClassLookupResult(kClass = descriptor)
         }
-    }
-    else if (header.kind == KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION) {
-        errorReporter.reportIncompatibleAbiVersion(kotlinClass, header.version)
     }
     else {
         // This is a package or trait-impl or something like that

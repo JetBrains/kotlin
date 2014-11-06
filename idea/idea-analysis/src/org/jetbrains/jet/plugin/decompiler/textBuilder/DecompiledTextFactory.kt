@@ -40,8 +40,13 @@ public fun buildDecompiledText(
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
     assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
     val classId = kotlinClass!!.getClassId()
+    val classHeader = kotlinClass.getClassHeader()
     val kind = kotlinClass.getClassHeader().kind
     val packageFqName = classId.getPackageFqName()
+    
+    if (!classHeader.isCompatibleAbiVersion) {
+        throw UnsupportedOperationException("Illegal operation for incompatibel header")
+    }
 
     return if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
         buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInPackage(packageFqName)))
@@ -83,7 +88,7 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
     }
 
     fun sortDeclarations(input: Collection<DeclarationDescriptor>): List<DeclarationDescriptor> {
-        val r = ArrayList<DeclarationDescriptor>(input)
+        val r = ArrayList(input)
         Collections.sort(r, MemberComparator.INSTANCE)
         return r
     }
