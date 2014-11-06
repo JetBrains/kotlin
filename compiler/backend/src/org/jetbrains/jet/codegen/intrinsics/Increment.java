@@ -54,19 +54,15 @@ public class Increment extends IntrinsicMethod {
         assert isPrimitive(returnType) : "Return type of Increment intrinsic should be of primitive type : " + returnType;
 
         if (arguments.size() > 0) {
-            JetExpression operand = JetPsiUtil.deparenthesize(arguments.get(0));
-            if (operand instanceof JetReferenceExpression && returnType == Type.INT_TYPE) {
-                int index = codegen.indexOfLocal((JetReferenceExpression) operand);
-                if (index >= 0) {
-                    JetType operandType = codegen.getBindingContext().get(EXPRESSION_TYPE, operand);
-                    if (operandType != null && KotlinBuiltIns.getInstance().isPrimitiveType(operandType)) {
-                        StackValue.preIncrementForLocalVar(index, myDelta).put(returnType, v);
-                        return returnType;
-                    }
-                }
+            JetExpression operand = arguments.get(0);
+            StackValue stackValue = codegen.genQualified(receiver, operand);
+            StackValue result;
+            if (stackValue instanceof StackValue.Local && Type.INT_TYPE.equals(stackValue.type)) {
+                result = StackValue.preIncrementForLocalVar(((StackValue.Local) stackValue).index, myDelta);
+            } else {
+                result = StackValue.preIncrement(returnType, stackValue, myDelta, this, null, codegen);
             }
-            StackValue value = StackValue.preIncrement(returnType, codegen.genQualified(receiver, operand), myDelta, this, null, codegen);
-            value.put(returnType, v);
+            result.put(returnType, v);
         }
         else {
             receiver.put(returnType, v);

@@ -163,6 +163,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("prefixIntVarIncrement.kt")
+    public void testPrefixIntVarIncrement() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/prefixIntVarIncrement.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("privateDefaultArgs.kt")
     public void testPrivateDefaultArgs() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/privateDefaultArgs.kt");
