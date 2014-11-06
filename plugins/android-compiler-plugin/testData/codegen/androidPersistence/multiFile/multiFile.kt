@@ -10,4 +10,4 @@ class MyActivity: Activity() {
 
 // 2 GETSTATIC
 // 2 INVOKEVIRTUAL
-// 2 CHECKCAST
+// 4 CHECKCAST
