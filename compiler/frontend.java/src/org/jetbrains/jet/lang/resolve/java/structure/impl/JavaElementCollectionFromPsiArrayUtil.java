@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -43,14 +44,6 @@ public class JavaElementCollectionFromPsiArrayUtil {
             @Override
             public JavaClass create(@NotNull PsiClass psiClass) {
                 return new JavaClassImpl(psiClass);
-            }
-        };
-
-        private static final Factory<PsiPackage, JavaPackage> PACKAGES = new Factory<PsiPackage, JavaPackage>() {
-            @NotNull
-            @Override
-            public JavaPackage create(@NotNull PsiPackage psiPackage) {
-                return new JavaPackageImpl(psiPackage);
             }
         };
 
@@ -164,8 +157,14 @@ public class JavaElementCollectionFromPsiArrayUtil {
     }
 
     @NotNull
-    public static Collection<JavaPackage> packages(@NotNull PsiPackage[] packages) {
-        return convert(packages, Factories.PACKAGES);
+    public static Collection<JavaPackage> packages(@NotNull PsiPackage[] packages, @NotNull final GlobalSearchScope scope) {
+        return convert(packages, new Factory<PsiPackage, JavaPackage>() {
+            @NotNull
+            @Override
+            public JavaPackage create(@NotNull PsiPackage aPackage) {
+                return new JavaPackageImpl(aPackage, scope);
+            }
+        });
     }
 
     @NotNull

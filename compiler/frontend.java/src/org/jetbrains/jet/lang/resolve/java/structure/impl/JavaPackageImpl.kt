@@ -24,18 +24,19 @@ import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionF
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.packages
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.name.Name
+import com.intellij.psi.search.GlobalSearchScope
 
-public class JavaPackageImpl(psiPackage: PsiPackage) : JavaElementImpl<PsiPackage>(psiPackage), JavaPackage {
+public class JavaPackageImpl(psiPackage: PsiPackage, private val scope: GlobalSearchScope) : JavaElementImpl<PsiPackage>(psiPackage), JavaPackage {
 
     override fun getClasses(nameFilter: (Name) -> Boolean): MutableCollection<JavaClass> {
-        val psiClasses = getPsi().getClasses().filter {
+        val psiClasses = getPsi().getClasses(scope).filter {
             val name = it.getName()
             name != null && nameFilter(Name.identifier(name))
         }
         return classes(psiClasses)
     }
 
-    override fun getSubPackages() = packages(getPsi().getSubPackages())
+    override fun getSubPackages() = packages(getPsi().getSubPackages(scope), scope)
 
     override fun getFqName() = FqName(getPsi().getQualifiedName())
 }
