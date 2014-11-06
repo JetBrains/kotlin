@@ -1,7 +1,7 @@
 package language
 
-import kotlin.test.assertEquals
 import org.junit.Test as test
+import kotlin.test.*
 
 // Test data for codegen is generated from this class. If you change it, rerun GenerateTests
 public class RangeIterationTest {
@@ -16,7 +16,10 @@ public class RangeIterationTest {
         assertEquals(expectedEnd, sequence.end)
         assertEquals(expectedIncrement, sequence.increment)
 
-        assertEquals(expectedElements, sequence.toList())
+        if (expectedElements.none())
+            assertTrue(sequence.none())
+        else
+            assertEquals(expectedElements, sequence.toList())
     }
 
     test fun emptyConstant() {

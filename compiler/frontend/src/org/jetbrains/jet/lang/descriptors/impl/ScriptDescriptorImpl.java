@@ -70,7 +70,7 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
         classDescriptor.setVisibility(Visibilities.PUBLIC);
         classDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
 
-        classScope = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, RedeclarationHandler.DO_NOTHING, "script members");
+        classScope = new WritableScopeImpl(JetScope.Empty.INSTANCE$, classDescriptor, RedeclarationHandler.DO_NOTHING, "script members");
         classScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         classDescriptor.setScopeForMemberLookup(classScope);
         classDescriptor.createTypeConstructor();

@@ -414,7 +414,7 @@
                         <tokenfilter>
                             <filetokenizer/>
                             <replaceregex
-                                pattern="^(.*)http://dl\.google\.com/dl/android/studio/ide-zips/([\d\.]+)/android-studio-ide(.*)$"
+                                pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/([\d\.]+)/android-studio-ide(.*)$"
                                 replace="\2" flags="s"/>
                         </tokenfilter>
                     </filterchain>
@@ -425,7 +425,7 @@
                         <tokenfilter>
                             <filetokenizer/>
                             <replaceregex
-                                pattern="^(.*)http://dl\.google\.com/dl/android/studio/ide-zips/[\d\.]+/android-studio-ide-([\d\.]+)-(.*)$"
+                                pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/[\d\.]+/android-studio-ide-([\d\.]+)-(.*)$"
                                 replace="\2" flags="s"/>
                         </tokenfilter>
                     </filterchain>

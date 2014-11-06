@@ -224,7 +224,7 @@ public class CommonSupertypes {
         }
 
         // TODO : attributes?
-        JetScope newScope = JetScope.EMPTY;
+        JetScope newScope = JetScope.Empty.INSTANCE$;
         DeclarationDescriptor declarationDescriptor = constructor.getDeclarationDescriptor();
         if (declarationDescriptor instanceof ClassDescriptor) {
             newScope = ((ClassDescriptor) declarationDescriptor).getMemberScope(newProjections);

@@ -87,7 +87,7 @@ private fun <Function : FunctionHandle> findAllReachableDeclarations(function: F
  * The implementation is guaranteed to exist because if it wouldn't, the given function would've been abstract
  */
 private fun <Function : FunctionHandle> findConcreteSuperDeclaration(function: Function): Function {
-    require(!function.isAbstract, "Only concrete functions have implementations: $function")
+    require(!function.isAbstract, { "Only concrete functions have implementations: $function" })
 
     if (function.isDeclaration) return function
 

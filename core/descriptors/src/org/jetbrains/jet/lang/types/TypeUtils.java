@@ -207,7 +207,7 @@ public class TypeUtils {
             }
             resultingTypes.add(type);
         }
-        
+
         if (resultingTypes.size() == 1) {
             return makeNullableAsSpecified(resultingTypes.get(0), allNullable);
         }

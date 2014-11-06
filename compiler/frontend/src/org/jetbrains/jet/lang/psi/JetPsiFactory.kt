@@ -212,6 +212,10 @@ public class JetPsiFactory(private val project: Project) {
         return createFunction("fun foo() {}").getBodyExpression()!!
     }
 
+    public fun createAnonymousInitializer(): JetClassInitializer {
+        return createClass("class A { {} }").getAnonymousInitializers().first!!
+    }
+
     public fun createEmptyClassBody(): JetClassBody {
         return createClass("class A(){}").getBody()!!
     }
