@@ -218,12 +218,18 @@
     </target>
 
     <target name="jslib">
+        <property name="compiled.builtins.js" value="builtins.js" />
         <property name="compiled.stdlib.js" value="stdlib.js" />
         <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData" />
 
-        <kotlin2js output="${output}/${compiled.stdlib.js}" noStdlib="true" main="noCall">
+        <kotlin2js output="${output}/${compiled.builtins.js}" noStdlib="true" main="noCall">
             <src>
                 <fileset refid="kotlin.builtin.files" />
+            </src>
+        </kotlin2js>
+
+        <kotlin2js output="${output}/${compiled.stdlib.js}" noStdlib="true" main="noCall">
+            <src>
                 <resources refid="js.lib.files" />
             </src>
         </kotlin2js>
@@ -262,6 +268,10 @@
                 <file name="kotlin_lib.js"/>
                 <file name="maps.js"/>
                 <file name="long.js"/>
+            </sources>
+
+            <sources dir="${output}">
+                <file name="${compiled.builtins.js}"/>
             </sources>
 
             <sources dir="${output}">

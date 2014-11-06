@@ -236,7 +236,7 @@
      */
     lazyInitClasses.ArrayIterator = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['stdlib'].kotlin.MutableIterator];
+            return [Kotlin.modules['builtins'].kotlin.MutableIterator];
         },
         /** @constructs */
         function (array) {
@@ -268,7 +268,7 @@
      */
     lazyInitClasses.ListIterator = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['stdlib'].kotlin.Iterator];
+            return [Kotlin.modules['builtins'].kotlin.Iterator];
         },
         /** @constructs */
         function (list) {
@@ -315,7 +315,7 @@
 
     lazyInitClasses.AbstractCollection = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['stdlib'].kotlin.MutableCollection];
+            return [Kotlin.modules['builtins'].kotlin.MutableCollection];
         }, null, {
         addAll_4fm7v2$: function (collection) {
             var modified = false;
@@ -404,7 +404,7 @@
      */
     lazyInitClasses.AbstractList = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['stdlib'].kotlin.MutableList, Kotlin.AbstractCollection];
+            return [Kotlin.modules['builtins'].kotlin.MutableList, Kotlin.AbstractCollection];
         }, null, {
         iterator: function () {
             return new Kotlin.ListIterator(this);
@@ -623,7 +623,7 @@
 
     lazyInitClasses.RangeIterator = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['stdlib'].kotlin.Iterator];
+            return [Kotlin.modules['builtins'].kotlin.Iterator];
         },
         function (start, end, increment) {
             this.start = start;
@@ -698,7 +698,7 @@
 
     lazyInitClasses.LongRangeIterator = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['stdlib'].kotlin.Iterator];
+            return [Kotlin.modules['builtins'].kotlin.Iterator];
         },
          function (start, end, increment) {
              this.start = start;
