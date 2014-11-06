@@ -190,8 +190,7 @@ public abstract class ElementResolver {
 
         TypeConstructor constructor = ((ClassDescriptor) descriptor).getTypeConstructor();
         for (TypeParameterDescriptor parameterDescriptor : constructor.getParameters()) {
-            LazyEntity lazyEntity = (LazyEntity) parameterDescriptor;
-            lazyEntity.forceResolveAllContents();
+            ForceResolveUtil.forceResolveAllContents(parameterDescriptor);
         }
     }
 
@@ -268,10 +267,7 @@ public abstract class ElementResolver {
 
     private static void typeParameterAdditionalResolve(KotlinCodeAnalyzer analyzer, JetTypeParameter typeParameter) {
         DeclarationDescriptor descriptor = analyzer.resolveToDescriptor(typeParameter);
-        assert descriptor instanceof LazyEntity;
-
-        LazyEntity parameterDescriptor = (LazyEntity) descriptor;
-        parameterDescriptor.forceResolveAllContents();
+        ForceResolveUtil.forceResolveAllContents(descriptor);
     }
 
     private void delegationSpecifierAdditionalResolve(
@@ -282,7 +278,7 @@ public abstract class ElementResolver {
         LazyClassDescriptor descriptor = (LazyClassDescriptor) resolveSession.resolveToDescriptor(classOrObject);
 
         // Activate resolving of supertypes
-        descriptor.getTypeConstructor().getSupertypes();
+        ForceResolveUtil.forceResolveAllContents(descriptor.getTypeConstructor().getSupertypes());
 
         BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file);
         bodyResolver.resolveDelegationSpecifierList(createEmptyContext(resolveSession), classOrObject, descriptor,
@@ -306,6 +302,7 @@ public abstract class ElementResolver {
                 });
         BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file);
         PropertyDescriptor descriptor = (PropertyDescriptor) resolveSession.resolveToDescriptor(jetProperty);
+        ForceResolveUtil.forceResolveAllContents(descriptor);
 
         JetExpression propertyInitializer = jetProperty.getInitializer();
         if (propertyInitializer != null) {
@@ -332,6 +329,7 @@ public abstract class ElementResolver {
     ) {
         JetScope scope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(namedFunction);
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSession.resolveToDescriptor(namedFunction);
+        ForceResolveUtil.forceResolveAllContents(functionDescriptor);
 
         BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file);
         bodyResolver.resolveFunctionBody(createEmptyContext(resolveSession), trace, namedFunction, functionDescriptor, scope);

@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.io.File;
 import java.util.List;
@@ -109,6 +110,11 @@ public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsigh
             }
         }
         DebugInfoUtil.markDebugAnnotations(file, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
+            @Override
+            public void preProcessReference(@NotNull JetReferenceExpression expression) {
+                AnalyzerFacadeWithCache.getContextForElement(expression);
+            }
+
             @Override
             public void reportElementWithErrorType(@NotNull JetReferenceExpression expression) {
                 //do nothing
