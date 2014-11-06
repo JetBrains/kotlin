@@ -138,14 +138,19 @@ public class LibrarySourcesConfig extends Config {
         return result;
     }
 
-    private static JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
+    protected JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
         PsiFile psiFile = psiManager.findFile(file);
         assert psiFile != null;
-        psiFile.putUserData(EXTERNAL_MODULE_NAME, moduleName);
+
+        setupPsiFile(psiFile, moduleName);
         return (JetFile) psiFile;
     }
 
-    private static class JetFileCollector extends VirtualFileVisitor {
+    protected static void setupPsiFile(PsiFile psiFile, String moduleName) {
+        psiFile.putUserData(EXTERNAL_MODULE_NAME, moduleName);
+    }
+
+    private class JetFileCollector extends VirtualFileVisitor {
         private final List<JetFile> jetFiles;
         private final String moduleName;
         private final PsiManager psiManager;
