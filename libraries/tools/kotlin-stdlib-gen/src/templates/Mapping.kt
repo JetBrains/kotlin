@@ -6,6 +6,7 @@ fun mapping(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("withIndices()") {
+        deprecate { "Use withIndex() instead." }
         doc { "Returns a list containing pairs of each element of the original collection and their index" }
         returns("List<Pair<Int, T>>")
         body {
@@ -21,6 +22,24 @@ fun mapping(): List<GenericFunction> {
             """
             var index = 0
             return TransformingStream(this, { index++ to it })
+            """
+        }
+    }
+
+    templates add f("withIndex()") {
+        doc { "Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection" }
+        returns("Iterable<IndexedValue<T>>")
+        body {
+            """
+            return IndexingIterable { iterator() }
+            """
+        }
+
+        returns(Streams) { "Stream<IndexedValue<T>>" }
+        doc(Streams) { "Returns a stream of [IndexedValue] for each element of the original stream" }
+        body(Streams) {
+            """
+            return IndexingStream(this)
             """
         }
     }

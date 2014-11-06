@@ -870,6 +870,102 @@ public inline fun String.forEach(operation: (Char) -> Unit): Unit {
 }
 
 /**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun <T> Array<out T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun BooleanArray.forEachIndexed(operation: (Int, Boolean) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun ByteArray.forEachIndexed(operation: (Int, Byte) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun CharArray.forEachIndexed(operation: (Int, Char) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun DoubleArray.forEachIndexed(operation: (Int, Double) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun FloatArray.forEachIndexed(operation: (Int, Float) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun IntArray.forEachIndexed(operation: (Int, Int) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun LongArray.forEachIndexed(operation: (Int, Long) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun ShortArray.forEachIndexed(operation: (Int, Short) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun <T> Iterable<T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun <T> Stream<T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
+ * Performs the given *operation* on each element, providing sequential index with the element
+ */
+public inline fun String.forEachIndexed(operation: (Int, Char) -> Unit): Unit {
+    var index = 0
+    for (item in this) operation(index++, item)
+}
+
+/**
  * Returns the largest element or null if there are no elements
  */
 public fun <T : Comparable<T>> Array<out T>.max(): T? {

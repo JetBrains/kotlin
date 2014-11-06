@@ -164,6 +164,20 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     }
 
     Test
+    fun mapIndexed() {
+        val shortened = data.mapIndexed { (index, value)-> value.substring(0..index) }
+        assertEquals(2, shortened.size())
+        assertEquals(arrayListOf("f", "ba"), shortened)
+    }
+
+    Test
+    fun withIndex() {
+        val indexed = data.withIndex().map { it.value.substring(0..it.index) }
+        assertEquals(2, indexed.size())
+        assertEquals(arrayListOf("f", "ba"), indexed)
+    }
+
+    Test
     fun max() {
         expect("foo") { data.max() }
         expect("bar") { data.maxBy { it.last() } }

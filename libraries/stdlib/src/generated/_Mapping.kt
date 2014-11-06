@@ -751,8 +751,93 @@ public inline fun <R, C : MutableCollection<in R>> String.mapTo(destination: C, 
 }
 
 /**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun <T> Array<out T>.withIndex(): Iterable<IndexedValue<T>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun BooleanArray.withIndex(): Iterable<IndexedValue<Boolean>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun ByteArray.withIndex(): Iterable<IndexedValue<Byte>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun CharArray.withIndex(): Iterable<IndexedValue<Char>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun DoubleArray.withIndex(): Iterable<IndexedValue<Double>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun FloatArray.withIndex(): Iterable<IndexedValue<Float>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun IntArray.withIndex(): Iterable<IndexedValue<Int>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun LongArray.withIndex(): Iterable<IndexedValue<Long>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun ShortArray.withIndex(): Iterable<IndexedValue<Short>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
+ * Returns a stream of [IndexedValue] for each element of the original stream
+ */
+public fun <T> Stream<T>.withIndex(): Stream<IndexedValue<T>> {
+    return IndexingStream(this)
+}
+
+/**
+ * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection
+ */
+public fun String.withIndex(): Iterable<IndexedValue<Char>> {
+    return IndexingIterable { iterator() }
+}
+
+/**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun <T> Array<out T>.withIndices(): List<Pair<Int, T>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, T>>(), { index++ to it })
@@ -761,6 +846,7 @@ public fun <T> Array<out T>.withIndices(): List<Pair<Int, T>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun BooleanArray.withIndices(): List<Pair<Int, Boolean>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Boolean>>(), { index++ to it })
@@ -769,6 +855,7 @@ public fun BooleanArray.withIndices(): List<Pair<Int, Boolean>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun ByteArray.withIndices(): List<Pair<Int, Byte>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Byte>>(), { index++ to it })
@@ -777,6 +864,7 @@ public fun ByteArray.withIndices(): List<Pair<Int, Byte>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun CharArray.withIndices(): List<Pair<Int, Char>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Char>>(), { index++ to it })
@@ -785,6 +873,7 @@ public fun CharArray.withIndices(): List<Pair<Int, Char>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun DoubleArray.withIndices(): List<Pair<Int, Double>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Double>>(), { index++ to it })
@@ -793,6 +882,7 @@ public fun DoubleArray.withIndices(): List<Pair<Int, Double>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun FloatArray.withIndices(): List<Pair<Int, Float>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Float>>(), { index++ to it })
@@ -801,6 +891,7 @@ public fun FloatArray.withIndices(): List<Pair<Int, Float>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun IntArray.withIndices(): List<Pair<Int, Int>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Int>>(), { index++ to it })
@@ -809,6 +900,7 @@ public fun IntArray.withIndices(): List<Pair<Int, Int>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun LongArray.withIndices(): List<Pair<Int, Long>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Long>>(), { index++ to it })
@@ -817,6 +909,7 @@ public fun LongArray.withIndices(): List<Pair<Int, Long>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun ShortArray.withIndices(): List<Pair<Int, Short>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Short>>(), { index++ to it })
@@ -825,6 +918,7 @@ public fun ShortArray.withIndices(): List<Pair<Int, Short>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun <T> Iterable<T>.withIndices(): List<Pair<Int, T>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, T>>(), { index++ to it })
@@ -833,6 +927,7 @@ public fun <T> Iterable<T>.withIndices(): List<Pair<Int, T>> {
 /**
  * Returns a stream containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun <T> Stream<T>.withIndices(): Stream<Pair<Int, T>> {
     var index = 0
     return TransformingStream(this, { index++ to it })
@@ -841,6 +936,7 @@ public fun <T> Stream<T>.withIndices(): Stream<Pair<Int, T>> {
 /**
  * Returns a list containing pairs of each element of the original collection and their index
  */
+deprecated("Use withIndex() instead.")
 public fun String.withIndices(): List<Pair<Int, Char>> {
     var index = 0
     return mapTo(ArrayList<Pair<Int, Char>>(), { index++ to it })

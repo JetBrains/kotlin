@@ -395,5 +395,17 @@ fun aggregates(): List<GenericFunction> {
         include(Maps)
     }
 
+    templates add f("forEachIndexed(operation: (Int, T) -> Unit)") {
+        inline(true)
+        doc { "Performs the given *operation* on each element, providing sequential index with the element" }
+        returns("Unit")
+        body {
+            """
+            var index = 0
+            for (item in this) operation(index++, item)
+            """
+        }
+    }
+
     return templates
 }
