@@ -32,6 +32,12 @@ import org.jetbrains.jet.codegen.CodegenTestFiles
 import java.util.regex.Pattern
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.kotlin.android.AndroidConfigurationKeys
+import org.jetbrains.jet.JetTestCaseBuilder
+import com.intellij.openapi.application.PathManager
+import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
+import org.jetbrains.kotlin.android.AndroidExpressionCodegen
+import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 
 public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
 
@@ -44,9 +50,14 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
     }
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
-        configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, path + "layout/");
-        configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, path + "AndroidManifest.xml");
-        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration);
+        val resPath = path + "layout/"
+        val manifestPath = path + "AndroidManifest.xml"
+        configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, resPath)
+        configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, manifestPath)
+        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val project = myEnvironment.getProject()
+        ExternalDeclarationsProvider.registerExtension(project, AndroidTestDeclarationsProvider(project, resPath, manifestPath))
+        ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())
     }
 
     public fun doCompileAgainstAndroidSdkTest(path: String) {
@@ -69,6 +80,13 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
         return !FileUtil.findFilesByMask(Pattern.compile("^0.kt$"), File(path)).empty
     }
 
+    override fun relativePath(file: File): String {
+        val stringToCut = "plugins/android-compiler-plugin/testData/codegen/"
+        val systemIndependentPath = file.getPath().replace(File.separatorChar, '/')
+        assert(systemIndependentPath.startsWith(stringToCut), "File path is not absolute: $file ")
+        return systemIndependentPath.substring(stringToCut.length())
+    }
+
     private fun doMultiFileTest(path: String, additionalFiles: Collection<String>? = null) {
         val files = ArrayList<String>(2)
         FileUtil.processFilesRecursively(File(path), object : Processor<File> {
@@ -85,7 +103,11 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
         if (additionalFiles != null) {
             files.addAll(additionalFiles)
         }
-        myFiles = CodegenTestFiles.create(myEnvironment!!.getProject(), ArrayUtil.toStringArray(files))
+        myFiles = CodegenTestFiles.create(
+                myEnvironment!!.getProject(),
+                ArrayUtil.toStringArray(files),
+                JetTestCaseBuilder.getHomeDirectory() + "/plugins/android-compiler-plugin/testData"
+        )
         blackBox();
     }
 }

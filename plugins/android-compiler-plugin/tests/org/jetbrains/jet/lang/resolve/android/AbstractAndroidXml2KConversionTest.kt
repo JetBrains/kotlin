@@ -29,6 +29,7 @@ import org.jetbrains.jet.TestJdkKind
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
 import org.junit.Assert
 import kotlin.test.fail
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 
 public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 
@@ -54,6 +55,6 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
 //        configuration.put<String>(JVMConfigurationKeys.ANDROID_RES_PATH, testPath + "/layout")
 //        configuration.put<String>(JVMConfigurationKeys.ANDROID_MANIFEST, testPath + "/AndroidManifest.xml")
-        return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration)
+        return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 }

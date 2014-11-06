@@ -24,6 +24,10 @@ import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.kotlin.android.AndroidConfigurationKeys
+import org.jetbrains.jet.extensions.ExternalDeclarationsProvider
+import org.jetbrains.jet.codegen.extensions.ExpressionCodegenExtension
+import org.jetbrains.kotlin.android.AndroidExpressionCodegen
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 
 public abstract class AbstractAndroidBytecodePersistenceTest : AbstractBytecodeTextTest() {
 
@@ -36,10 +40,16 @@ public abstract class AbstractAndroidBytecodePersistenceTest : AbstractBytecodeT
     }
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
-        configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, path + "res/layout/");
-        configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, path + "../AndroidManifest.xml");
-        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration);
+        val resPath = path + "res/layout/"
+        val manifestPath = path + "../AndroidManifest.xml"
+        configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, resPath)
+        configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, manifestPath)
+        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val project = myEnvironment.getProject()
+        ExternalDeclarationsProvider.registerExtension(project, AndroidTestDeclarationsProvider(project, resPath, manifestPath))
+        ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegen())
     }
+
     public override fun doTest(path: String) {
         val fileName = path + getTestName(true) + ".kt"
         createAndroidAPIEnvironment(path)
