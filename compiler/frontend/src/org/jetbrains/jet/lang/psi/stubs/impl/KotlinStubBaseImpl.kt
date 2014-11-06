@@ -30,7 +30,7 @@ import java.util.ArrayList
 public open class KotlinStubBaseImpl<T : JetElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) : StubBase<T>(parent, elementType) {
 
     override fun toString(): String {
-        val stubInterface = this.javaClass.getInterfaces().first()
+        val stubInterface = this.javaClass.getInterfaces().filter { it.getName().endsWith("Stub") }.single()
         val propertiesValues = renderPropertyValues(stubInterface)
         if (propertiesValues.isEmpty()) {
             return ""

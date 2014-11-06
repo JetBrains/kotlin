@@ -17,32 +17,13 @@
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
 import com.intellij.psi.stubs.StubElement;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.stubs.KotlinModifierListStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetModifierListElementType;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 
-import static org.jetbrains.jet.lexer.JetTokens.MODIFIER_KEYWORDS_ARRAY;
-
 public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<JetModifierList> implements KotlinModifierListStub {
-
-    static {
-        assert MODIFIER_KEYWORDS_ARRAY.length <= 32 : "Current implementation depends on the ability to represent modifier list as bit mask";
-    }
-
-    public static int computeMaskFromPsi(@NotNull JetModifierList modifierList) {
-        int mask = 0;
-        JetModifierKeywordToken[] orderedKeywords = MODIFIER_KEYWORDS_ARRAY;
-        for (int i = 0; i < orderedKeywords.length; i++) {
-            JetModifierKeywordToken modifierKeywordToken = orderedKeywords[i];
-            if (modifierList.hasModifier(modifierKeywordToken)) {
-                mask |= 1 << i;
-            }
-        }
-        return mask;
-    }
 
     private final int mask;
 
@@ -51,33 +32,18 @@ public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<JetModifierLi
         this.mask = mask;
     }
 
-    @Override
-    public boolean hasModifier(@NotNull JetModifierKeywordToken modifierToken) {
-        int index = ArrayUtil.indexOf(MODIFIER_KEYWORDS_ARRAY, modifierToken);
-        assert index >= 0 : "All JetModifierKeywordTokens should present in MODIFIER_KEYWORDS_ARRAY";
-        return (mask & (1 << index)) != 0;
-    }
-
     public int getMask() {
         return mask;
     }
 
     @Override
+    public boolean hasModifier(@NotNull JetModifierKeywordToken modifierToken) {
+        return ModifierMaskUtils.maskHasModifier(mask, modifierToken);
+    }
+
+    @NotNull
+    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.toString());
-        sb.append("[");
-        boolean first = true;
-        for (JetModifierKeywordToken modifierKeyword : MODIFIER_KEYWORDS_ARRAY) {
-            if (hasModifier(modifierKeyword)) {
-                if (!first) {
-                    sb.append(" ");
-                }
-                sb.append(modifierKeyword.getValue());
-                first = false;
-            }
-        }
-        sb.append("]");
-        return sb.toString();
+        return super.toString() + ModifierMaskUtils.maskToString(mask);
     }
 }

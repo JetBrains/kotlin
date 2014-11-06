@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.stubs.impl.KotlinModifierListStubImpl;
 
 import java.io.IOException;
 
-import static org.jetbrains.jet.lang.psi.stubs.impl.KotlinModifierListStubImpl.computeMaskFromPsi;
+import static org.jetbrains.jet.lang.psi.stubs.impl.ModifierMaskUtils.computeMaskFromModifierList;
 
 public class JetModifierListElementType<T extends JetModifierList> extends JetStubElementType<KotlinModifierListStub, T> {
     public JetModifierListElementType(@NotNull @NonNls String debugName, @NotNull Class<T> psiClass) {
@@ -36,7 +36,7 @@ public class JetModifierListElementType<T extends JetModifierList> extends JetSt
 
     @Override
     public KotlinModifierListStub createStub(@NotNull T psi, StubElement parentStub) {
-        return new KotlinModifierListStubImpl(parentStub, computeMaskFromPsi(psi), this);
+        return new KotlinModifierListStubImpl(parentStub, computeMaskFromModifierList(psi), this);
     }
 
     @Override

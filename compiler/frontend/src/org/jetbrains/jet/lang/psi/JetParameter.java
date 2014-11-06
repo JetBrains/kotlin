@@ -107,7 +107,7 @@ public class JetParameter extends JetNamedDeclarationStub<KotlinParameterStub> i
     public boolean hasValOrVarNode() {
         KotlinParameterStub stub = getStub();
         if (stub != null) {
-            return stub.hasValOrValNode();
+            return stub.hasValOrVarNode();
         }
         return getValOrVarNode() != null;
     }
@@ -115,7 +115,7 @@ public class JetParameter extends JetNamedDeclarationStub<KotlinParameterStub> i
     @Nullable
     public ASTNode getValOrVarNode() {
         KotlinParameterStub stub = getStub();
-        if (stub != null && !stub.hasValOrValNode()) {
+        if (stub != null && !stub.hasValOrVarNode()) {
             return null;
         }
         ASTNode val = getNode().findChildByType(JetTokens.VAL_KEYWORD);

@@ -20,6 +20,6 @@ import com.intellij.util.io.StringRef
 
 object Utils {
     fun wrapStrings(names : List<String>) : Array<StringRef> {
-        return Array<StringRef>(names.size()) { i -> StringRef.fromString(names.get(i))!! }
+        return Array(names.size()) { i -> StringRef.fromString(names.get(i))!! }
     }
 }

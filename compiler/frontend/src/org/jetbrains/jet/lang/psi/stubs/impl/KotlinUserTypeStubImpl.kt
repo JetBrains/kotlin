@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.psi.stubs;
+package org.jetbrains.jet.lang.psi.stubs.impl
 
-import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.resolve.name.Name;
+import com.intellij.psi.stubs.StubElement
+import org.jetbrains.jet.lang.psi.JetUserType
+import org.jetbrains.jet.lang.psi.stubs.KotlinUserTypeStub
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes
+import com.intellij.psi.PsiElement
 
-public interface KotlinImportDirectiveStub extends StubElement<JetImportDirective> {
-    boolean isAbsoluteInRootPackage();
-    boolean isAllUnder();
-    @Nullable
-    String getAliasName();
-    boolean isValid();
+public class KotlinUserTypeStubImpl(
+        parent: StubElement<out PsiElement>?,
+        private val isAbsoluteInRootPackage: Boolean
+) : KotlinStubBaseImpl<JetUserType>(parent, JetStubElementTypes.USER_TYPE), KotlinUserTypeStub {
+    override fun isAbsoluteInRootPackage() = isAbsoluteInRootPackage
 }
