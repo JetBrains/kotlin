@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.resolve.calls.util.FakeCallableDescriptorForObject;
+import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -122,8 +123,12 @@ public class CandidateResolver {
                 if (projection.getProjectionKind() != JetProjectionKind.NONE) {
                     context.trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection));
                 }
-                typeArguments.add(argumentTypeResolver.resolveTypeRefWithDefault(
-                        projection.getTypeReference(), context.scope, context.trace, ErrorUtils.createErrorType("Star projection in a call")));
+                JetType type = argumentTypeResolver.resolveTypeRefWithDefault(
+                        projection.getTypeReference(), context.scope, context.trace,
+                        ErrorUtils.createErrorType("Star projection in a call")
+                );
+                ForceResolveUtil.forceResolveAllContents(type);
+                typeArguments.add(type);
             }
             int expectedTypeArgumentCount = candidate.getTypeParameters().size();
             for (int index = jetTypeArguments.size(); index < expectedTypeArgumentCount; index++) {
@@ -644,7 +649,7 @@ public class CandidateResolver {
             @NotNull BindingTrace trace
     ) {
         List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
-        for (int i = 0; i < typeParameters.size(); i++) {
+        for (int i = 0; i < Math.min(typeParameters.size(), jetTypeArguments.size()); i++) {
             TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
             JetType typeArgument = typeArguments.get(i);
             JetTypeReference typeReference = jetTypeArguments.get(i).getTypeReference();
