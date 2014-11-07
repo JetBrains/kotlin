@@ -19,10 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -77,6 +74,10 @@ public class ForceResolveUtil {
         }
         else if (object instanceof CallableDescriptor) {
             CallableDescriptor callableDescriptor = (CallableDescriptor) object;
+            ReceiverParameterDescriptor parameter = callableDescriptor.getExtensionReceiverParameter();
+            if (parameter != null) {
+                forceResolveAllContents(parameter.getType());
+            }
             for (ValueParameterDescriptor parameterDescriptor : callableDescriptor.getValueParameters()) {
                 forceResolveAllContents(parameterDescriptor);
             }

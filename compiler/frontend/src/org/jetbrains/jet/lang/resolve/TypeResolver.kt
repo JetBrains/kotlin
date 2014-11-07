@@ -33,6 +33,8 @@ import kotlin.platform.platformStatic
 import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.context.LazinessToken
 import javax.inject.Inject
+import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
+import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -65,9 +67,14 @@ public class TypeResolver(
 
         if (!c.allowBareTypes && lazinessToken.isLazy()) {
             // Bare types can be allowed only inside expressions; lazy type resolution is only relevant for declarations
-            class LazyKotlinType : DelegatingType() {
+            class LazyKotlinType : DelegatingType(), LazyEntity {
                 private val _delegate = storageManager.createLazyValue { doResolvePossiblyBareType(c, typeReference).getActualType() }
                 override fun getDelegate() = _delegate()
+
+                override fun forceResolveAllContents() {
+                    ForceResolveUtil.forceResolveAllContents(getConstructor())
+                    getArguments().forEach { ForceResolveUtil.forceResolveAllContents(it.getType()) }
+                }
             }
 
             val lazyKotlinType = LazyKotlinType()
