@@ -221,26 +221,12 @@
         <property name="compiled.stdlib.js" value="stdlib.js" />
         <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData" />
 
-        <!-- TODO drop workaround for bootstrapping -->
-        <if>
-            <istrue value="${bootstrap.build.no.tests}"/>
-            <then>
-                <kotlin2js output="${output}/${compiled.stdlib.js}" main="noCall">
-                    <src>
-                        <fileset refid="kotlin.builtin.files" />
-                        <resources refid="js.lib.files" />
-                    </src>
-                </kotlin2js>
-            </then>
-            <else>
-                <kotlin2js output="${output}/${compiled.stdlib.js}" noStdlib="true" main="noCall">
-                    <src>
-                        <fileset refid="kotlin.builtin.files" />
-                        <resources refid="js.lib.files" />
-                    </src>
-                </kotlin2js>
-            </else>
-        </if>
+        <kotlin2js output="${output}/${compiled.stdlib.js}" noStdlib="true" main="noCall">
+            <src>
+                <fileset refid="kotlin.builtin.files" />
+                <resources refid="js.lib.files" />
+            </src>
+        </kotlin2js>
 
         <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar">
             <resources refid="js.lib.files" />
