@@ -242,7 +242,6 @@
 
     <macrodef name="execute_update">
         <attribute name="base.url" default="http://teamcity.example.com/guestAuth/repository/download/btXXX/XXXX:id"/>
-        <attribute name="base.url.for.core" default="@{base.url}"/>
         <attribute name="build.zip" default="ideaIC-XXX.SNAPSHOT.win.zip"/>
 
         <sequential>
@@ -265,8 +264,8 @@
                     <mkdir dir="${core-analysis}"/>
                     <mkdir dir="${jps}"/>
                     <mkdir dir="${jps-test}"/>
-                    <get src="@{base.url.for.core}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
-                    <get src="@{base.url.for.core}/core/intellij-core-analysis.jar" dest="${core-analysis}/intellij-core-analysis.jar"
+                    <get src="@{base.url}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/intellij-core-analysis.jar" dest="${core-analysis}/intellij-core-analysis.jar"
                          usetimestamp="true"/>
                     <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/guava-17.0.jar" dest="${core}/guava-17.0.jar" usetimestamp="true"/>
