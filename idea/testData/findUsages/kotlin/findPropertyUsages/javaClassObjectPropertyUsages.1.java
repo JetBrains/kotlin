@@ -1,12 +1,12 @@
 package client;
 
-import server.*
+import server.*;
 
 class Client {
-    fun fooBar() {
+    void fooBar() {
         A.OBJECT$.setFoo("a");
         A.foo = "a";
-        println("a.foo = " + A.OBJECT$.getFoo());
-        println("a.foo = " + A.foo);
+        System.out.println("a.foo = " + A.OBJECT$.getFoo());
+        System.out.println("a.foo = " + A.foo);
     }
 }
