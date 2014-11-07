@@ -1,7 +1,7 @@
 LineBreakpoint created at delegatedPropertyInClass.kt:8
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! delegatedPropertyInClass.DelegatedPropertyInClassPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-delegatedPropertyInClass.kt:7
+delegatedPropertyInClass.kt:8
 package delegatedPropertyInClass
 
 import kotlin.properties.Delegates

@@ -69,7 +69,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                 return@runReadAction println(FileUtil.getNameWithoutExtension(virtualFile.getName()) + ".!EXT!", ProcessOutputTypes.SYSTEM)
             }
 
-            println(virtualFile.getName() + ":" + sourcePosition.getLine(), ProcessOutputTypes.SYSTEM)
+            println(virtualFile.getName() + ":" + (sourcePosition.getLine() + 1), ProcessOutputTypes.SYSTEM)
         }
     }
 
