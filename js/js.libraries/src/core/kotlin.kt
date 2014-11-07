@@ -2,9 +2,6 @@ package kotlin
 
 import java.util.*
 
-library("comparator")
-public fun comparator<T>(f : (T, T) -> Int): Comparator<T> = noImpl
-
 library
 public fun <T> array(vararg value : T): Array<T> = noImpl
 
