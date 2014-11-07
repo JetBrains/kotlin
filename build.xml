@@ -625,13 +625,14 @@
             </sequential>
         </macrodef>
 
-        <new_kotlinc src="${basedir}/core/builtins/src ${basedir}/core/runtime.jvm/src ${basedir}/core/reflection/src"
+        <new_kotlinc src="${basedir}/core/builtins/src ${basedir}/core/runtime.jvm/src ${basedir}/core/reflection/src ${basedir}/core/reflection.jvm/src"
                      output="${output}/classes/runtime"
-                     classpath="${basedir}/core/runtime.jvm/src"/>
+                     classpath="${basedir}/core/runtime.jvm/src${path.separator}${basedir}/core/reflection.jvm/src"/>
 
         <javac2 destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
             <src path="${basedir}/core/runtime.jvm/src"/>
+            <src path="${basedir}/core/reflection.jvm/src"/>
             <classpath location="${output}/classes/runtime"/>
         </javac2>
 
@@ -660,6 +661,7 @@
             <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
             <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
             <fileset dir="${basedir}/core/reflection/src" includes="**/*"/>
+            <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
             <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
