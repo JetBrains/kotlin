@@ -44,28 +44,25 @@ public abstract class DeclarationProviderFactoryService {
                 filesScope: GlobalSearchScope
         ): DeclarationProviderFactory {
             return ServiceManager.getService(project, javaClass<DeclarationProviderFactoryService>())!!
-                    .create(project, storageManager, syntheticFiles, SyntheticFilesFilteringScope.filter(syntheticFiles, filesScope))
+                    .create(project, storageManager, syntheticFiles, filteringScope(syntheticFiles, filesScope))
         }
 
+        private fun filteringScope(syntheticFiles: Collection<JetFile>, baseScope: GlobalSearchScope): GlobalSearchScope {
+            if (syntheticFiles.isEmpty()) {
+                return baseScope
+            }
+            return SyntheticFilesFilteringScope(syntheticFiles, baseScope)
+        }
     }
 
-    class SyntheticFilesFilteringScope(syntheticFiles: Collection<JetFile>, baseScope: GlobalSearchScope) :
-            DelegatingGlobalSearchScope(baseScope) {
-        val originals = syntheticFiles.map {
-            it.getOriginalFile().getVirtualFile()
-        }.filterNotNullTo(HashSet<VirtualFile>())
 
-        override fun contains(file: VirtualFile): Boolean {
-            return super.contains(file) && file !in originals
-        }
+    private class SyntheticFilesFilteringScope(syntheticFiles: Collection<JetFile>, baseScope: GlobalSearchScope)
+        : DelegatingGlobalSearchScope(baseScope) {
 
-        class object {
-            fun filter(syntheticFiles: Collection<JetFile>, baseScope: GlobalSearchScope): GlobalSearchScope {
-                if (syntheticFiles.isEmpty()) {
-                    return baseScope
-                }
-                return SyntheticFilesFilteringScope(syntheticFiles, baseScope)
-            }
-        }
+        private val originals = syntheticFiles
+                .map { it.getOriginalFile().getVirtualFile() }
+                .filterNotNullTo(HashSet<VirtualFile>())
+
+        override fun contains(file: VirtualFile) = super.contains(file) && file !in originals
     }
 }
