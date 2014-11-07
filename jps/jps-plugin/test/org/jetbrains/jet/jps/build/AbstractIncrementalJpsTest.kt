@@ -70,6 +70,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
                                 .getMessages(BuildMessage.Kind.ERROR)
                                 .joinToString("\n")
                                 .replace(workDir.getAbsolutePath(), "\$PROJECT")
+                                .replace(File.separatorChar, '/')
                 return logger.log + "$COMPILATION_FAILED\n" + errorMessages + "\n"
             }
             else {
