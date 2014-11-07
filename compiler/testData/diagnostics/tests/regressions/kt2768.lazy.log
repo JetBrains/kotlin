@@ -1,170 +1,170 @@
-DescriptorResolver@22 {
-    <name not found> = ByteValue@23
-    <name not found> = IntValue@24
-    <name not found> = IntValue@26
-    <name not found> = ShortValue@25
+DescriptorResolver@0 {
+    <name not found> = ByteValue@1
+    <name not found> = IntValue@2
+    <name not found> = IntValue@3
+    <name not found> = ShortValue@4
 }
 
-LazyJavaClassDescriptor@7['AssertionError'] {
-    _constructors = ArrayList@53[10] { JavaConstructorDescriptor@54['<init>'], JavaConstructorDescriptor@55['<init>'], JavaConstructorDescriptor@56['<init>'], ... } // through LazyJavaClassMemberScope@57
+LazyJavaClassDescriptor@5['AssertionError'] {
+    _constructors = ArrayList@6[10] { JavaConstructorDescriptor@7['<init>'], JavaConstructorDescriptor@8['<init>'], JavaConstructorDescriptor@9['<init>'], ... } // through LazyJavaClassMemberScope@10
     _functionTypeForSamInterface = null
-    _typeConstructor = LazyJavaClassTypeConstructor@39['AssertionError']
-    defaultType = JetTypeImpl@52
+    _typeConstructor = LazyJavaClassTypeConstructor@11['AssertionError']
+    defaultType = JetTypeImpl@12['AssertionError']
 }
 
-LazyJavaClassDescriptor@60['Error'] {
-    _typeConstructor = LazyJavaClassTypeConstructor@34['Error']
+LazyJavaClassDescriptor@13['Error'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@14['Error']
 }
 
-LazyJavaClassTypeConstructor@39['AssertionError'] {
-    _parameters = ArrayList@40[empty]
-    _supertypes = ArrayList@41[1] { LazyJavaClassifierType@32['Error'] }
+LazyJavaClassTypeConstructor@11['AssertionError'] {
+    _parameters = ArrayList@15[empty]
+    _supertypes = ArrayList@16[1] { LazyJavaClassifierType@17['Error'] }
 }
 
-LazyJavaClassTypeConstructor@34['Error'] {
-    _parameters = ArrayList@51[empty]
-    _supertypes = ArrayList@50[1] { LazyJavaClassifierType@13['Throwable'] }
+LazyJavaClassTypeConstructor@14['Error'] {
+    _parameters = ArrayList@18[empty]
+    _supertypes = ArrayList@19[1] { LazyJavaClassifierType@20['Throwable'] }
 }
 
-LazyJavaClassifierType@32['Error'] {
-    _arguments = ArrayList@35[empty]
-    _typeConstructor = LazyJavaClassTypeConstructor@34['Error']
-    classifier = JavaClassImpl@33['Error']
-}
-
-LazyJavaClassifierType@27['Object'] {
-    _arguments = ArrayList@31[empty]
-    _nullable = Boolean@28
-    _typeConstructor = DeserializedClassTypeConstructor@30
-    classifier = JavaClassImpl@29['Object']
-}
-
-LazyJavaClassifierType@91['Object'] {
-    _arguments = ArrayList@92[empty]
-    _nullable = Boolean@18
-    _typeConstructor = DeserializedClassTypeConstructor@30
-    classifier = JavaClassImpl@29['Object']
-}
-
-LazyJavaClassifierType@17['String'] {
+LazyJavaClassifierType@17['Error'] {
     _arguments = ArrayList@21[empty]
-    _nullable = Boolean@18
-    _typeConstructor = DeserializedClassTypeConstructor@20
-    classifier = JavaClassImpl@19['String']
+    _typeConstructor = LazyJavaClassTypeConstructor@14['Error']
+    classifier = JavaClassImpl@22['Error']
 }
 
-LazyJavaClassifierType@47['String'] {
-    _arguments = ArrayList@49[empty]
-    _nullable = Boolean@18
-    _typeConstructor = DeserializedClassTypeConstructor@20
-    classifier = JavaClassImpl@48['String']
+LazyJavaClassifierType@23['Object'] {
+    _arguments = ArrayList@24[empty]
+    _nullable = 'false': Boolean@25
+    _typeConstructor = DeserializedClassTypeConstructor@26
+    classifier = JavaClassImpl@27['Object']
 }
 
-LazyJavaClassifierType@93['String'] {
-    _arguments = ArrayList@94[empty]
-    _nullable = Boolean@28
-    _typeConstructor = DeserializedClassTypeConstructor@20
-    classifier = JavaClassImpl@48['String']
+LazyJavaClassifierType@28['Object'] {
+    _arguments = ArrayList@29[empty]
+    _nullable = 'true': Boolean@30
+    _typeConstructor = DeserializedClassTypeConstructor@26
+    classifier = JavaClassImpl@27['Object']
 }
 
-LazyJavaClassifierType@95['String'] {
-    _arguments = ArrayList@96[empty]
-    _nullable = Boolean@28
-    _typeConstructor = DeserializedClassTypeConstructor@20
-    classifier = JavaClassImpl@19['String']
+LazyJavaClassifierType@31['String'] {
+    _arguments = ArrayList@32[empty]
+    _nullable = 'false': Boolean@25
+    _typeConstructor = DeserializedClassTypeConstructor@33
+    classifier = JavaClassImpl@34['String']
 }
 
-LazyJavaClassifierType@36['Throwable'] {
-    _arguments = ArrayList@38[empty]
-    _nullable = Boolean@18
-    _typeConstructor = DeserializedClassTypeConstructor@15
-    classifier = JavaClassImpl@37['Throwable']
+LazyJavaClassifierType@35['String'] {
+    _arguments = ArrayList@36[empty]
+    _nullable = 'false': Boolean@25
+    _typeConstructor = DeserializedClassTypeConstructor@33
+    classifier = JavaClassImpl@37['String']
 }
 
-LazyJavaClassifierType@58['Throwable'] {
-    _arguments = ArrayList@59[empty]
-    _nullable = Boolean@28
-    _typeConstructor = DeserializedClassTypeConstructor@15
-    classifier = JavaClassImpl@37['Throwable']
+LazyJavaClassifierType@38['String'] {
+    _arguments = ArrayList@39[empty]
+    _nullable = 'true': Boolean@30
+    _typeConstructor = DeserializedClassTypeConstructor@33
+    classifier = JavaClassImpl@37['String']
 }
 
-LazyJavaClassifierType@13['Throwable'] {
-    _arguments = ArrayList@16[empty]
-    _typeConstructor = DeserializedClassTypeConstructor@15
-    classifier = JavaClassImpl@14['Throwable']
+LazyJavaClassifierType@40['String'] {
+    _arguments = ArrayList@41[empty]
+    _nullable = 'true': Boolean@30
+    _typeConstructor = DeserializedClassTypeConstructor@33
+    classifier = JavaClassImpl@34['String']
 }
 
-LazyJavaPackageFragmentProvider@61 {
-    _packageFragments('<root>': FqName@62) = LazyJavaPackageFragment@63['<root>']
-    _packageFragments('Array': FqName@72) = null
-    _packageFragments('Byte': FqName@79) = null
-    _packageFragments('Short': FqName@82) = null
-    _packageFragments('String': FqName@75) = null
-    _packageFragments('T': FqName@69) = null
-    _packageFragments('java': FqName@64) = LazyJavaPackageFragment@42['java']
-    _packageFragments('java.lang': FqName@65) = LazyJavaPackageFragment@0['lang']
-    _packageFragments('java.lang.Array': FqName@74) = null
-    _packageFragments('java.lang.Byte': FqName@81) = null
-    _packageFragments('java.lang.Short': FqName@84) = null
-    _packageFragments('java.lang.String': FqName@77) = null
-    _packageFragments('java.lang.T': FqName@71) = null
-    _packageFragments('kotlin': FqName@66) = null
-    _packageFragments('kotlin.Array': FqName@73) = null
-    _packageFragments('kotlin.Byte': FqName@80) = null
-    _packageFragments('kotlin.Short': FqName@83) = null
-    _packageFragments('kotlin.String': FqName@76) = null
-    _packageFragments('kotlin.T': FqName@70) = null
-    _packageFragments('kotlin.io': FqName@68) = null
-    _packageFragments('kotlin.jvm': FqName@67) = null
-    topLevelClasses(JavaClassImpl@78['AssertionError']) = LazyJavaClassDescriptor@7['AssertionError']
-    topLevelClasses(JavaClassImpl@33['Error']) = LazyJavaClassDescriptor@60['Error']
+LazyJavaClassifierType@42['Throwable'] {
+    _arguments = ArrayList@43[empty]
+    _nullable = 'false': Boolean@25
+    _typeConstructor = DeserializedClassTypeConstructor@44
+    classifier = JavaClassImpl@45['Throwable']
 }
 
-LazyJavaPackageFragment@63['<root>'] {
-    _functions('AssertionError': Name@6) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@86
-    _functions('assertEquals': Name@9) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@86
-    _functions('equals': Name@4) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@86
-    _functions('minus': Name@10) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@86
-    _functions('toByte': Name@8) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@86
-    _functions('toInt': Name@11) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@86
-    _functions('toShort': Name@12) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@86
-    classes('Array': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@86
-    classes('AssertionError': Name@6) = null // through LazyPackageFragmentScopeForJavaPackage@86
-    classes('Byte': Name@89) = null // through LazyPackageFragmentScopeForJavaPackage@86
-    classes('Short': Name@90) = null // through LazyPackageFragmentScopeForJavaPackage@86
-    classes('String': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@86
-    classes('assertEquals': Name@9) = null // through LazyPackageFragmentScopeForJavaPackage@86
-    classes('equals': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@86
-    classes('minus': Name@10) = null // through LazyPackageFragmentScopeForJavaPackage@86
-    classes('toByte': Name@8) = null // through LazyPackageFragmentScopeForJavaPackage@86
-    classes('toInt': Name@11) = null // through LazyPackageFragmentScopeForJavaPackage@86
-    classes('toShort': Name@12) = null // through LazyPackageFragmentScopeForJavaPackage@86
-    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@86
-    memberIndex = computeMemberIndex$1@88 // through LazyPackageFragmentScopeForJavaPackage@86
+LazyJavaClassifierType@46['Throwable'] {
+    _arguments = ArrayList@47[empty]
+    _nullable = 'true': Boolean@30
+    _typeConstructor = DeserializedClassTypeConstructor@44
+    classifier = JavaClassImpl@45['Throwable']
 }
 
-LazyJavaPackageFragment@42['java'] {
-    _functions('lang': Name@46) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@44
-    classes('lang': Name@43) = null // through LazyPackageFragmentScopeForJavaPackage@44
-    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@44
-    memberIndex = computeMemberIndex$1@45 // through LazyPackageFragmentScopeForJavaPackage@44
+LazyJavaClassifierType@20['Throwable'] {
+    _arguments = ArrayList@48[empty]
+    _typeConstructor = DeserializedClassTypeConstructor@44
+    classifier = JavaClassImpl@49['Throwable']
 }
 
-LazyJavaPackageFragment@0['lang'] {
-    _functions('AssertionError': Name@6) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
-    _functions('assertEquals': Name@9) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
-    _functions('equals': Name@4) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
-    _functions('minus': Name@10) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
-    _functions('toByte': Name@8) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
-    _functions('toInt': Name@11) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
-    _functions('toShort': Name@12) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
-    classes('AssertionError': Name@6) = LazyJavaClassDescriptor@7['AssertionError'] // through LazyPackageFragmentScopeForJavaPackage@2
-    classes('assertEquals': Name@9) = null // through LazyPackageFragmentScopeForJavaPackage@2
-    classes('equals': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@2
-    classes('minus': Name@10) = null // through LazyPackageFragmentScopeForJavaPackage@2
-    classes('toByte': Name@8) = null // through LazyPackageFragmentScopeForJavaPackage@2
-    classes('toInt': Name@11) = null // through LazyPackageFragmentScopeForJavaPackage@2
-    classes('toShort': Name@12) = null // through LazyPackageFragmentScopeForJavaPackage@2
-    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@2
-    memberIndex = computeMemberIndex$1@3 // through LazyPackageFragmentScopeForJavaPackage@2
+LazyJavaPackageFragmentProvider@50 {
+    _packageFragments('<root>': FqName@51) = LazyJavaPackageFragment@52['<root>']
+    _packageFragments('Array': FqName@53) = null
+    _packageFragments('Byte': FqName@54) = null
+    _packageFragments('Short': FqName@55) = null
+    _packageFragments('String': FqName@56) = null
+    _packageFragments('T': FqName@57) = null
+    _packageFragments('java': FqName@58) = LazyJavaPackageFragment@59['java']
+    _packageFragments('java.lang': FqName@60) = LazyJavaPackageFragment@61['lang']
+    _packageFragments('java.lang.Array': FqName@62) = null
+    _packageFragments('java.lang.Byte': FqName@63) = null
+    _packageFragments('java.lang.Short': FqName@64) = null
+    _packageFragments('java.lang.String': FqName@65) = null
+    _packageFragments('java.lang.T': FqName@66) = null
+    _packageFragments('kotlin': FqName@67) = null
+    _packageFragments('kotlin.Array': FqName@68) = null
+    _packageFragments('kotlin.Byte': FqName@69) = null
+    _packageFragments('kotlin.Short': FqName@70) = null
+    _packageFragments('kotlin.String': FqName@71) = null
+    _packageFragments('kotlin.T': FqName@72) = null
+    _packageFragments('kotlin.io': FqName@73) = null
+    _packageFragments('kotlin.jvm': FqName@74) = null
+    topLevelClasses(JavaClassImpl@75['AssertionError']) = LazyJavaClassDescriptor@5['AssertionError']
+    topLevelClasses(JavaClassImpl@22['Error']) = LazyJavaClassDescriptor@13['Error']
+}
+
+LazyJavaPackageFragment@52['<root>'] {
+    _functions('AssertionError': Name@76) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@78
+    _functions('assertEquals': Name@79) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@78
+    _functions('equals': Name@80) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@78
+    _functions('minus': Name@81) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@78
+    _functions('toByte': Name@82) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@78
+    _functions('toInt': Name@83) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@78
+    _functions('toShort': Name@84) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@78
+    classes('Array': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@78
+    classes('AssertionError': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@78
+    classes('Byte': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@78
+    classes('Short': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@78
+    classes('String': Name@88) = null // through LazyPackageFragmentScopeForJavaPackage@78
+    classes('assertEquals': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@78
+    classes('equals': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@78
+    classes('minus': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@78
+    classes('toByte': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@78
+    classes('toInt': Name@83) = null // through LazyPackageFragmentScopeForJavaPackage@78
+    classes('toShort': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@78
+    deserializedPackageScope = Empty@89 // through LazyPackageFragmentScopeForJavaPackage@78
+    memberIndex = computeMemberIndex$1@90 // through LazyPackageFragmentScopeForJavaPackage@78
+}
+
+LazyJavaPackageFragment@59['java'] {
+    _functions('lang': Name@91) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@92
+    classes('lang': Name@93) = null // through LazyPackageFragmentScopeForJavaPackage@92
+    deserializedPackageScope = Empty@89 // through LazyPackageFragmentScopeForJavaPackage@92
+    memberIndex = computeMemberIndex$1@94 // through LazyPackageFragmentScopeForJavaPackage@92
+}
+
+LazyJavaPackageFragment@61['lang'] {
+    _functions('AssertionError': Name@76) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@95
+    _functions('assertEquals': Name@79) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@95
+    _functions('equals': Name@80) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@95
+    _functions('minus': Name@81) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@95
+    _functions('toByte': Name@82) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@95
+    _functions('toInt': Name@83) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@95
+    _functions('toShort': Name@84) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@95
+    classes('AssertionError': Name@76) = LazyJavaClassDescriptor@5['AssertionError'] // through LazyPackageFragmentScopeForJavaPackage@95
+    classes('assertEquals': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@95
+    classes('equals': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@95
+    classes('minus': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@95
+    classes('toByte': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@95
+    classes('toInt': Name@83) = null // through LazyPackageFragmentScopeForJavaPackage@95
+    classes('toShort': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@95
+    deserializedPackageScope = Empty@89 // through LazyPackageFragmentScopeForJavaPackage@95
+    memberIndex = computeMemberIndex$1@96 // through LazyPackageFragmentScopeForJavaPackage@95
 }

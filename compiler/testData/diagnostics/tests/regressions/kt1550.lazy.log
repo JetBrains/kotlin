@@ -1,723 +1,723 @@
-LazyJavaClassDescriptor@149['AbstractCollection'] {
-    _functions('add': Name@364) = ArrayList@365[1] { JavaMethodDescriptor@366['add'] } // through LazyJavaClassMemberScope@361
-    _functions('get': Name@367) = EmptyList@74[empty] // through LazyJavaClassMemberScope@361
-    _properties('add': Name@75) = EmptyList@74[empty] // through LazyJavaClassMemberScope@361
-    _properties('get': Name@79) = EmptyList@74[empty] // through LazyJavaClassMemberScope@361
-    _typeConstructor = LazyJavaClassTypeConstructor@42['AbstractCollection']
-    defaultType = JetTypeImpl@363
-    memberIndex = computeMemberIndex$1@360 // through LazyJavaClassMemberScope@361
-    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@362['<this>']
+LazyJavaClassDescriptor@0['AbstractCollection'] {
+    _functions('add': Name@1) = ArrayList@2[1] { JavaMethodDescriptor@3['add'] } // through LazyJavaClassMemberScope@4
+    _functions('get': Name@5) = EmptyList@6[empty] // through LazyJavaClassMemberScope@4
+    _properties('add': Name@7) = EmptyList@6[empty] // through LazyJavaClassMemberScope@4
+    _properties('get': Name@8) = EmptyList@6[empty] // through LazyJavaClassMemberScope@4
+    _typeConstructor = LazyJavaClassTypeConstructor@9['AbstractCollection']
+    defaultType = JetTypeImpl@10['AbstractCollection<1>']
+    memberIndex = computeMemberIndex$1@11 // through LazyJavaClassMemberScope@4
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@12['<this>']
 }
 
-LazyJavaClassDescriptor@142['AbstractList'] {
-    _functions('add': Name@256) = ArrayList@257[2] { JavaMethodDescriptor@258['add'], JavaMethodDescriptor@259['add'] } // through LazyJavaClassMemberScope@253
-    _functions('get': Name@260) = ArrayList@261[1] { JavaMethodDescriptor@262['get'] } // through LazyJavaClassMemberScope@253
-    _properties('add': Name@75) = EmptyList@74[empty] // through LazyJavaClassMemberScope@253
-    _properties('get': Name@79) = EmptyList@74[empty] // through LazyJavaClassMemberScope@253
-    _typeConstructor = LazyJavaClassTypeConstructor@83['AbstractList']
-    defaultType = JetTypeImpl@255
-    memberIndex = computeMemberIndex$1@252 // through LazyJavaClassMemberScope@253
-    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@254['<this>']
+LazyJavaClassDescriptor@13['AbstractList'] {
+    _functions('add': Name@14) = ArrayList@15[2] { JavaMethodDescriptor@16['add'], JavaMethodDescriptor@17['add'] } // through LazyJavaClassMemberScope@18
+    _functions('get': Name@19) = ArrayList@20[1] { JavaMethodDescriptor@21['get'] } // through LazyJavaClassMemberScope@18
+    _properties('add': Name@7) = EmptyList@6[empty] // through LazyJavaClassMemberScope@18
+    _properties('get': Name@8) = EmptyList@6[empty] // through LazyJavaClassMemberScope@18
+    _typeConstructor = LazyJavaClassTypeConstructor@22['AbstractList']
+    defaultType = JetTypeImpl@23['AbstractList<1>']
+    memberIndex = computeMemberIndex$1@24 // through LazyJavaClassMemberScope@18
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@25['<this>']
 }
 
-LazyJavaClassDescriptor@160['Appendable'] {
-    _functions('println': Name@95) = EmptyList@74[empty] // through LazyJavaClassMemberScope@326
-    _properties('println': Name@78) = EmptyList@74[empty] // through LazyJavaClassMemberScope@326
-    _typeConstructor = LazyJavaClassTypeConstructor@57['Appendable']
-    memberIndex = computeMemberIndex$1@336 // through LazyJavaClassMemberScope@326
+LazyJavaClassDescriptor@26['Appendable'] {
+    _functions('println': Name@27) = EmptyList@6[empty] // through LazyJavaClassMemberScope@28
+    _properties('println': Name@29) = EmptyList@6[empty] // through LazyJavaClassMemberScope@28
+    _typeConstructor = LazyJavaClassTypeConstructor@30['Appendable']
+    memberIndex = computeMemberIndex$1@31 // through LazyJavaClassMemberScope@28
 }
 
-LazyJavaClassDescriptor@135['ArrayList'] {
-    _constructors = ArrayList@269[3] { JavaConstructorDescriptor@270['<init>'], JavaConstructorDescriptor@271['<init>'], JavaConstructorDescriptor@272['<init>'] } // through LazyJavaClassMemberScope@273
+LazyJavaClassDescriptor@32['ArrayList'] {
+    _constructors = ArrayList@33[3] { JavaConstructorDescriptor@34['<init>'], JavaConstructorDescriptor@35['<init>'], JavaConstructorDescriptor@36['<init>'] } // through LazyJavaClassMemberScope@37
     _functionTypeForSamInterface = null
-    _functions('add': Name@75) = ArrayList@276[2] { JavaMethodDescriptor@277['add'], JavaMethodDescriptor@278['add'] } // through LazyJavaClassMemberScope@273
-    _functions('get': Name@79) = ArrayList@281[1] { JavaMethodDescriptor@282['get'] } // through LazyJavaClassMemberScope@273
-    _properties('add': Name@75) = EmptyList@74[empty] // through LazyJavaClassMemberScope@273
-    _properties('get': Name@79) = EmptyList@74[empty] // through LazyJavaClassMemberScope@273
-    _typeConstructor = LazyJavaClassTypeConstructor@47['ArrayList']
-    defaultType = JetTypeImpl@268
-    enumEntryIndex = LinkedHashMap@280 // through LazyJavaClassMemberScope@273
-    memberIndex = computeMemberIndex$1@274 // through LazyJavaClassMemberScope@273
-    nestedClassIndex = LinkedHashMap@279 // through LazyJavaClassMemberScope@273
-    nestedClasses('add': Name@75) = null // through LazyJavaClassMemberScope@273
-    nestedClasses('get': Name@79) = null // through LazyJavaClassMemberScope@273
-    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@275['<this>']
+    _functions('add': Name@7) = ArrayList@38[2] { JavaMethodDescriptor@39['add'], JavaMethodDescriptor@40['add'] } // through LazyJavaClassMemberScope@37
+    _functions('get': Name@8) = ArrayList@41[1] { JavaMethodDescriptor@42['get'] } // through LazyJavaClassMemberScope@37
+    _properties('add': Name@7) = EmptyList@6[empty] // through LazyJavaClassMemberScope@37
+    _properties('get': Name@8) = EmptyList@6[empty] // through LazyJavaClassMemberScope@37
+    _typeConstructor = LazyJavaClassTypeConstructor@43['ArrayList']
+    defaultType = JetTypeImpl@44['ArrayList<1>']
+    enumEntryIndex = LinkedHashMap@45 // through LazyJavaClassMemberScope@37
+    memberIndex = computeMemberIndex$1@46 // through LazyJavaClassMemberScope@37
+    nestedClassIndex = LinkedHashMap@47 // through LazyJavaClassMemberScope@37
+    nestedClasses('add': Name@7) = null // through LazyJavaClassMemberScope@37
+    nestedClasses('get': Name@8) = null // through LazyJavaClassMemberScope@37
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@48['<this>']
 }
 
-LazyJavaClassDescriptor@166['AutoCloseable'] {
-    _functions('println': Name@95) = EmptyList@74[empty] // through LazyJavaClassMemberScope@305
-    _properties('println': Name@78) = EmptyList@74[empty] // through LazyJavaClassMemberScope@305
-    _typeConstructor = LazyJavaClassTypeConstructor@289['AutoCloseable']
-    memberIndex = computeMemberIndex$1@374 // through LazyJavaClassMemberScope@305
+LazyJavaClassDescriptor@49['AutoCloseable'] {
+    _functions('println': Name@27) = EmptyList@6[empty] // through LazyJavaClassMemberScope@50
+    _properties('println': Name@29) = EmptyList@6[empty] // through LazyJavaClassMemberScope@50
+    _typeConstructor = LazyJavaClassTypeConstructor@51['AutoCloseable']
+    memberIndex = computeMemberIndex$1@52 // through LazyJavaClassMemberScope@50
 }
 
-LazyJavaClassDescriptor@162['Closeable'] {
-    _functions('println': Name@95) = EmptyList@74[empty] // through LazyJavaClassMemberScope@177
-    _properties('println': Name@78) = EmptyList@74[empty] // through LazyJavaClassMemberScope@177
-    _typeConstructor = LazyJavaClassTypeConstructor@175['Closeable']
-    memberIndex = computeMemberIndex$1@251 // through LazyJavaClassMemberScope@177
+LazyJavaClassDescriptor@53['Closeable'] {
+    _functions('println': Name@27) = EmptyList@6[empty] // through LazyJavaClassMemberScope@54
+    _properties('println': Name@29) = EmptyList@6[empty] // through LazyJavaClassMemberScope@54
+    _typeConstructor = LazyJavaClassTypeConstructor@55['Closeable']
+    memberIndex = computeMemberIndex$1@56 // through LazyJavaClassMemberScope@54
 }
 
-LazyJavaClassDescriptor@91['FilterOutputStream'] {
-    _functions('println': Name@95) = EmptyList@74[empty] // through LazyJavaClassMemberScope@94
-    _properties('println': Name@78) = EmptyList@74[empty] // through LazyJavaClassMemberScope@94
-    _typeConstructor = LazyJavaClassTypeConstructor@92['FilterOutputStream']
-    memberIndex = computeMemberIndex$1@93 // through LazyJavaClassMemberScope@94
+LazyJavaClassDescriptor@57['FilterOutputStream'] {
+    _functions('println': Name@27) = EmptyList@6[empty] // through LazyJavaClassMemberScope@58
+    _properties('println': Name@29) = EmptyList@6[empty] // through LazyJavaClassMemberScope@58
+    _typeConstructor = LazyJavaClassTypeConstructor@59['FilterOutputStream']
+    memberIndex = computeMemberIndex$1@60 // through LazyJavaClassMemberScope@58
 }
 
-LazyJavaClassDescriptor@164['OutputStream'] {
-    _functions('println': Name@95) = EmptyList@74[empty] // through LazyJavaClassMemberScope@203
-    _properties('println': Name@78) = EmptyList@74[empty] // through LazyJavaClassMemberScope@203
-    _typeConstructor = LazyJavaClassTypeConstructor@13['OutputStream']
-    memberIndex = computeMemberIndex$1@202 // through LazyJavaClassMemberScope@203
+LazyJavaClassDescriptor@61['OutputStream'] {
+    _functions('println': Name@27) = EmptyList@6[empty] // through LazyJavaClassMemberScope@62
+    _properties('println': Name@29) = EmptyList@6[empty] // through LazyJavaClassMemberScope@62
+    _typeConstructor = LazyJavaClassTypeConstructor@63['OutputStream']
+    memberIndex = computeMemberIndex$1@64 // through LazyJavaClassMemberScope@62
 }
 
-LazyJavaClassDescriptor@157['PrintStream'] {
-    _functions('println': Name@78) = ArrayList@341[10] { JavaMethodDescriptor@342['println'], JavaMethodDescriptor@343['println'], JavaMethodDescriptor@344['println'], ... } // through LazyJavaClassMemberScope@196
-    _properties('println': Name@78) = EmptyList@74[empty] // through LazyJavaClassMemberScope@196
-    _typeConstructor = LazyJavaClassTypeConstructor@61['PrintStream']
-    defaultType = JetTypeImpl@347
-    enumEntryIndex = LinkedHashMap@346 // through LazyJavaClassMemberScope@196
-    memberIndex = computeMemberIndex$1@339 // through LazyJavaClassMemberScope@196
-    nestedClassIndex = LinkedHashMap@345 // through LazyJavaClassMemberScope@196
-    nestedClasses('println': Name@78) = null // through LazyJavaClassMemberScope@196
-    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@340['<this>']
+LazyJavaClassDescriptor@65['PrintStream'] {
+    _functions('println': Name@29) = ArrayList@66[10] { JavaMethodDescriptor@67['println'], JavaMethodDescriptor@68['println'], JavaMethodDescriptor@69['println'], ... } // through LazyJavaClassMemberScope@70
+    _properties('println': Name@29) = EmptyList@6[empty] // through LazyJavaClassMemberScope@70
+    _typeConstructor = LazyJavaClassTypeConstructor@71['PrintStream']
+    defaultType = JetTypeImpl@72['PrintStream']
+    enumEntryIndex = LinkedHashMap@73 // through LazyJavaClassMemberScope@70
+    memberIndex = computeMemberIndex$1@74 // through LazyJavaClassMemberScope@70
+    nestedClassIndex = LinkedHashMap@75 // through LazyJavaClassMemberScope@70
+    nestedClasses('println': Name@29) = null // through LazyJavaClassMemberScope@70
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@76['<this>']
 }
 
-LazyJavaClassDescriptor@143['RandomAccess'] {
-    _functions('add': Name@256) = EmptyList@74[empty] // through LazyJavaClassMemberScope@56
-    _functions('get': Name@260) = EmptyList@74[empty] // through LazyJavaClassMemberScope@56
-    _properties('add': Name@75) = EmptyList@74[empty] // through LazyJavaClassMemberScope@56
-    _properties('get': Name@79) = EmptyList@74[empty] // through LazyJavaClassMemberScope@56
-    _typeConstructor = LazyJavaClassTypeConstructor@54['RandomAccess']
-    memberIndex = computeMemberIndex$1@331 // through LazyJavaClassMemberScope@56
+LazyJavaClassDescriptor@77['RandomAccess'] {
+    _functions('add': Name@14) = EmptyList@6[empty] // through LazyJavaClassMemberScope@78
+    _functions('get': Name@19) = EmptyList@6[empty] // through LazyJavaClassMemberScope@78
+    _properties('add': Name@7) = EmptyList@6[empty] // through LazyJavaClassMemberScope@78
+    _properties('get': Name@8) = EmptyList@6[empty] // through LazyJavaClassMemberScope@78
+    _typeConstructor = LazyJavaClassTypeConstructor@79['RandomAccess']
+    memberIndex = computeMemberIndex$1@80 // through LazyJavaClassMemberScope@78
 }
 
-LazyJavaClassDescriptor@147['Serializable'] {
-    _functions('add': Name@256) = EmptyList@74[empty] // through LazyJavaClassMemberScope@322
-    _functions('get': Name@260) = EmptyList@74[empty] // through LazyJavaClassMemberScope@322
-    _properties('add': Name@75) = EmptyList@74[empty] // through LazyJavaClassMemberScope@322
-    _properties('get': Name@79) = EmptyList@74[empty] // through LazyJavaClassMemberScope@322
-    _typeConstructor = LazyJavaClassTypeConstructor@320['Serializable']
-    memberIndex = computeMemberIndex$1@321 // through LazyJavaClassMemberScope@322
+LazyJavaClassDescriptor@81['Serializable'] {
+    _functions('add': Name@14) = EmptyList@6[empty] // through LazyJavaClassMemberScope@82
+    _functions('get': Name@19) = EmptyList@6[empty] // through LazyJavaClassMemberScope@82
+    _properties('add': Name@7) = EmptyList@6[empty] // through LazyJavaClassMemberScope@82
+    _properties('get': Name@8) = EmptyList@6[empty] // through LazyJavaClassMemberScope@82
+    _typeConstructor = LazyJavaClassTypeConstructor@83['Serializable']
+    memberIndex = computeMemberIndex$1@84 // through LazyJavaClassMemberScope@82
 }
 
-LazyJavaClassDescriptor@77['System'] {
-    _properties('out': Name@229) = ArrayList@230[1] { JavaPropertyDescriptor@231['out'] } // through LazyJavaStaticClassScope@228
-    _properties('out': Name@229) = EmptyList@74[empty] // through LazyJavaClassMemberScope@233
-    _typeConstructor = LazyJavaClassTypeConstructor@200['System']
-    enumEntryIndex = LinkedHashMap@235 // through LazyJavaClassMemberScope@233
-    memberIndex = computeMemberIndex$1@232 // through LazyJavaClassMemberScope@233
-    memberIndex = computeMemberIndex$1@227 // through LazyJavaStaticClassScope@228
-    nestedClassIndex = LinkedHashMap@234 // through LazyJavaClassMemberScope@233
-    nestedClasses('out': Name@229) = null // through LazyJavaClassMemberScope@233
+LazyJavaClassDescriptor@85['System'] {
+    _properties('out': Name@86) = ArrayList@87[1] { JavaPropertyDescriptor@88['out'] } // through LazyJavaStaticClassScope@89
+    _properties('out': Name@86) = EmptyList@6[empty] // through LazyJavaClassMemberScope@90
+    _typeConstructor = LazyJavaClassTypeConstructor@91['System']
+    enumEntryIndex = LinkedHashMap@92 // through LazyJavaClassMemberScope@90
+    memberIndex = computeMemberIndex$1@93 // through LazyJavaClassMemberScope@90
+    memberIndex = computeMemberIndex$1@94 // through LazyJavaStaticClassScope@89
+    nestedClassIndex = LinkedHashMap@95 // through LazyJavaClassMemberScope@90
+    nestedClasses('out': Name@86) = null // through LazyJavaClassMemberScope@90
 }
 
-LazyJavaClassTypeConstructor@42['AbstractCollection'] {
-    _parameters = ArrayList@45[1] { LazyJavaTypeParameterDescriptor@46['E'] }
-    _supertypes = ArrayList@43[1] { LazyJavaClassifierType@44['Collection<E>'] }
+LazyJavaClassTypeConstructor@9['AbstractCollection'] {
+    _parameters = ArrayList@96[1] { LazyJavaTypeParameterDescriptor@97['E'] }
+    _supertypes = ArrayList@98[1] { LazyJavaClassifierType@99['Collection<E>'] }
 }
 
-LazyJavaClassTypeConstructor@83['AbstractList'] {
-    _parameters = ArrayList@87[1] { LazyJavaTypeParameterDescriptor@17['E'] }
-    _supertypes = ArrayList@84[2] { LazyJavaClassifierType@85['AbstractCollection<E>'], LazyJavaClassifierType@86['List<E>'] }
+LazyJavaClassTypeConstructor@22['AbstractList'] {
+    _parameters = ArrayList@100[1] { LazyJavaTypeParameterDescriptor@101['E'] }
+    _supertypes = ArrayList@102[2] { LazyJavaClassifierType@103['AbstractCollection<E>'], LazyJavaClassifierType@104['List<E>'] }
 }
 
-LazyJavaClassTypeConstructor@57['Appendable'] {
-    _parameters = ArrayList@60[empty]
-    _supertypes = ArrayList@58[1] { JetTypeImpl@59 }
+LazyJavaClassTypeConstructor@30['Appendable'] {
+    _parameters = ArrayList@105[empty]
+    _supertypes = ArrayList@106[1] { JetTypeImpl@107['Any'] }
 }
 
-LazyJavaClassTypeConstructor@47['ArrayList'] {
-    _parameters = ArrayList@48[1] { LazyJavaTypeParameterDescriptor@49['E'] }
-    _supertypes = ArrayList@50[5] { LazyJavaClassifierType@51['AbstractList<E>'], LazyJavaClassifierType@21['List<E>'], LazyJavaClassifierType@52['RandomAccess'], ... }
+LazyJavaClassTypeConstructor@43['ArrayList'] {
+    _parameters = ArrayList@108[1] { LazyJavaTypeParameterDescriptor@109['E'] }
+    _supertypes = ArrayList@110[5] { LazyJavaClassifierType@111['AbstractList<E>'], LazyJavaClassifierType@112['List<E>'], LazyJavaClassifierType@113['RandomAccess'], ... }
 }
 
-LazyJavaClassTypeConstructor@289['AutoCloseable'] {
-    _parameters = ArrayList@291[empty]
-    _supertypes = ArrayList@290[1] { JetTypeImpl@59 }
+LazyJavaClassTypeConstructor@51['AutoCloseable'] {
+    _parameters = ArrayList@114[empty]
+    _supertypes = ArrayList@115[1] { JetTypeImpl@107['Any'] }
 }
 
-LazyJavaClassTypeConstructor@175['Closeable'] {
-    _parameters = ArrayList@310[empty]
-    _supertypes = ArrayList@309[1] { LazyJavaClassifierType@303['AutoCloseable'] }
+LazyJavaClassTypeConstructor@55['Closeable'] {
+    _parameters = ArrayList@116[empty]
+    _supertypes = ArrayList@117[1] { LazyJavaClassifierType@118['AutoCloseable'] }
 }
 
-LazyJavaClassTypeConstructor@92['FilterOutputStream'] {
-    _parameters = ArrayList@106[empty]
-    _supertypes = ArrayList@104[1] { LazyJavaClassifierType@105['OutputStream'] }
+LazyJavaClassTypeConstructor@59['FilterOutputStream'] {
+    _parameters = ArrayList@119[empty]
+    _supertypes = ArrayList@120[1] { LazyJavaClassifierType@121['OutputStream'] }
 }
 
-LazyJavaClassTypeConstructor@13['OutputStream'] {
-    _parameters = ArrayList@16[empty]
-    _supertypes = ArrayList@14[1] { LazyJavaClassifierType@15['Closeable'] }
+LazyJavaClassTypeConstructor@63['OutputStream'] {
+    _parameters = ArrayList@122[empty]
+    _supertypes = ArrayList@123[1] { LazyJavaClassifierType@124['Closeable'] }
 }
 
-LazyJavaClassTypeConstructor@61['PrintStream'] {
-    _parameters = ArrayList@62[empty]
-    _supertypes = ArrayList@63[3] { LazyJavaClassifierType@64['FilterOutputStream'], LazyJavaClassifierType@65['Appendable'], LazyJavaClassifierType@66['Closeable'] }
+LazyJavaClassTypeConstructor@71['PrintStream'] {
+    _parameters = ArrayList@125[empty]
+    _supertypes = ArrayList@126[3] { LazyJavaClassifierType@127['FilterOutputStream'], LazyJavaClassifierType@128['Appendable'], LazyJavaClassifierType@129['Closeable'] }
 }
 
-LazyJavaClassTypeConstructor@54['RandomAccess'] {
-    _parameters = ArrayList@68[empty]
-    _supertypes = ArrayList@67[1] { JetTypeImpl@59 }
+LazyJavaClassTypeConstructor@79['RandomAccess'] {
+    _parameters = ArrayList@130[empty]
+    _supertypes = ArrayList@131[1] { JetTypeImpl@107['Any'] }
 }
 
-LazyJavaClassTypeConstructor@320['Serializable'] {
-    _parameters = ArrayList@354[empty]
-    _supertypes = ArrayList@353[1] { JetTypeImpl@59 }
+LazyJavaClassTypeConstructor@83['Serializable'] {
+    _parameters = ArrayList@132[empty]
+    _supertypes = ArrayList@133[1] { JetTypeImpl@107['Any'] }
 }
 
-LazyJavaClassTypeConstructor@200['System'] {
-    _supertypes = ArrayList@201[1] { JetTypeImpl@59 }
+LazyJavaClassTypeConstructor@91['System'] {
+    _supertypes = ArrayList@134[1] { JetTypeImpl@107['Any'] }
 }
 
-LazyJavaClassifierType@85['AbstractCollection<E>'] {
-    _arguments = ArrayList@332[1] { TypeProjectionImpl@333 }
-    _memberScope = SubstitutingScope@334
-    _typeConstructor = LazyJavaClassTypeConstructor@42['AbstractCollection']
-    classifier = JavaClassImpl@148['AbstractCollection']
+LazyJavaClassifierType@103['AbstractCollection<E>'] {
+    _arguments = ArrayList@135[1] { TypeProjectionImpl@136 }
+    _memberScope = SubstitutingScope@137
+    _typeConstructor = LazyJavaClassTypeConstructor@9['AbstractCollection']
+    classifier = JavaClassImpl@138['AbstractCollection']
 }
 
-LazyJavaClassifierType@51['AbstractList<E>'] {
-    _arguments = ArrayList@355[1] { TypeProjectionImpl@356 }
-    _memberScope = SubstitutingScope@357
-    _typeConstructor = LazyJavaClassTypeConstructor@83['AbstractList']
-    classifier = JavaClassImpl@141['AbstractList']
+LazyJavaClassifierType@111['AbstractList<E>'] {
+    _arguments = ArrayList@139[1] { TypeProjectionImpl@140 }
+    _memberScope = SubstitutingScope@141
+    _typeConstructor = LazyJavaClassTypeConstructor@22['AbstractList']
+    classifier = JavaClassImpl@142['AbstractList']
 }
 
-LazyJavaClassifierType@65['Appendable'] {
-    _arguments = ArrayList@325[empty]
-    _memberScope = LazyJavaClassMemberScope@326
-    _typeConstructor = LazyJavaClassTypeConstructor@57['Appendable']
-    classifier = JavaClassImpl@159['Appendable']
+LazyJavaClassifierType@128['Appendable'] {
+    _arguments = ArrayList@143[empty]
+    _memberScope = LazyJavaClassMemberScope@28
+    _typeConstructor = LazyJavaClassTypeConstructor@30['Appendable']
+    classifier = JavaClassImpl@144['Appendable']
 }
 
-LazyJavaClassifierType@303['AutoCloseable'] {
-    _arguments = ArrayList@304[empty]
-    _memberScope = LazyJavaClassMemberScope@305
-    _typeConstructor = LazyJavaClassTypeConstructor@289['AutoCloseable']
-    classifier = JavaClassImpl@165['AutoCloseable']
+LazyJavaClassifierType@118['AutoCloseable'] {
+    _arguments = ArrayList@145[empty]
+    _memberScope = LazyJavaClassMemberScope@50
+    _typeConstructor = LazyJavaClassTypeConstructor@51['AutoCloseable']
+    classifier = JavaClassImpl@146['AutoCloseable']
 }
 
-LazyJavaClassifierType@222['Cloneable'] {
-    _arguments = ArrayList@225[empty]
-    _memberScope = DeserializedClassMemberScope@226
-    _typeConstructor = DeserializedClassTypeConstructor@224
-    classifier = JavaClassImpl@223['Cloneable']
+LazyJavaClassifierType@147['Cloneable'] {
+    _arguments = ArrayList@148[empty]
+    _memberScope = DeserializedClassMemberScope@149
+    _typeConstructor = DeserializedClassTypeConstructor@150
+    classifier = JavaClassImpl@151['Cloneable']
 }
 
-LazyJavaClassifierType@66['Closeable'] {
-    _arguments = ArrayList@176[empty]
-    _memberScope = LazyJavaClassMemberScope@177
-    _typeConstructor = LazyJavaClassTypeConstructor@175['Closeable']
-    classifier = JavaClassImpl@161['Closeable']
+LazyJavaClassifierType@124['Closeable'] {
+    _arguments = ArrayList@152[empty]
+    _memberScope = LazyJavaClassMemberScope@54
+    _typeConstructor = LazyJavaClassTypeConstructor@55['Closeable']
+    classifier = JavaClassImpl@153['Closeable']
 }
 
-LazyJavaClassifierType@15['Closeable'] {
-    _arguments = ArrayList@373[empty]
-    _memberScope = LazyJavaClassMemberScope@177
-    _typeConstructor = LazyJavaClassTypeConstructor@175['Closeable']
-    classifier = JavaClassImpl@372['Closeable']
+LazyJavaClassifierType@129['Closeable'] {
+    _arguments = ArrayList@154[empty]
+    _memberScope = LazyJavaClassMemberScope@54
+    _typeConstructor = LazyJavaClassTypeConstructor@55['Closeable']
+    classifier = JavaClassImpl@155['Closeable']
 }
 
-LazyJavaClassifierType@30['Collection<? extends E>'] {
-    _arguments = ArrayList@33[1] { TypeProjectionImpl@34 }
-    _memberScope = SubstitutingScope@35
-    _nullable = Boolean@1
-    _typeConstructor = DeserializedClassTypeConstructor@32
-    classifier = JavaClassImpl@31['Collection']
+LazyJavaClassifierType@156['Collection<? extends E>'] {
+    _arguments = ArrayList@157[1] { TypeProjectionImpl@158 }
+    _memberScope = SubstitutingScope@159
+    _nullable = 'false': Boolean@160
+    _typeConstructor = DeserializedClassTypeConstructor@161
+    classifier = JavaClassImpl@162['Collection']
 }
 
-LazyJavaClassifierType@213['Collection<? extends E>'] {
-    _arguments = ArrayList@215[1] { TypeProjectionImpl@216 }
-    _memberScope = SubstitutingScope@217
-    _nullable = Boolean@6
-    _typeConstructor = DeserializedClassTypeConstructor@214
-    classifier = JavaClassImpl@31['Collection']
+LazyJavaClassifierType@163['Collection<? extends E>'] {
+    _arguments = ArrayList@164[1] { TypeProjectionImpl@165 }
+    _memberScope = SubstitutingScope@166
+    _nullable = 'true': Boolean@167
+    _typeConstructor = DeserializedClassTypeConstructor@168
+    classifier = JavaClassImpl@162['Collection']
 }
 
-LazyJavaClassifierType@44['Collection<E>'] {
-    _arguments = ArrayList@284[1] { TypeProjectionImpl@285 }
-    _memberScope = SubstitutingScope@286
-    _typeConstructor = DeserializedClassTypeConstructor@32
-    classifier = JavaClassImpl@283['Collection']
+LazyJavaClassifierType@99['Collection<E>'] {
+    _arguments = ArrayList@169[1] { TypeProjectionImpl@170 }
+    _memberScope = SubstitutingScope@171
+    _typeConstructor = DeserializedClassTypeConstructor@161
+    classifier = JavaClassImpl@172['Collection']
 }
 
-LazyJavaClassifierType@0['E'] {
-    _arguments = ArrayList@4[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@3
-    classifier = JavaTypeParameterImpl@2['E']
+LazyJavaClassifierType@173['E'] {
+    _arguments = ArrayList@174[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@176['E']
 }
 
-LazyJavaClassifierType@5['E'] {
-    _arguments = ArrayList@9[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
-    classifier = JavaTypeParameterImpl@7['E']
-}
-
-LazyJavaClassifierType@10['E'] {
-    _arguments = ArrayList@12[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@3
-    classifier = JavaTypeParameterImpl@11['E']
-}
-
-LazyJavaClassifierType@38['E'] {
-    _arguments = ArrayList@41[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@40
-    classifier = JavaTypeParameterImpl@39['E']
-}
-
-LazyJavaClassifierType@88['E'] {
-    _arguments = ArrayList@90[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@40
-    classifier = JavaTypeParameterImpl@89['E']
-}
-
-LazyJavaClassifierType@100['E'] {
-    _arguments = ArrayList@102[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
-    classifier = JavaTypeParameterImpl@101['E']
-}
-
-LazyJavaClassifierType@109['E'] {
-    _arguments = ArrayList@111[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@3
-    classifier = JavaTypeParameterImpl@110['E']
-}
-
-LazyJavaClassifierType@171['E'] {
-    _arguments = ArrayList@172[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
-    classifier = JavaTypeParameterImpl@7['E']
-}
-
-LazyJavaClassifierType@179['E'] {
-    _arguments = ArrayList@181[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
+LazyJavaClassifierType@177['E'] {
+    _arguments = ArrayList@178[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@179
     classifier = JavaTypeParameterImpl@180['E']
 }
 
-LazyJavaClassifierType@182['E'] {
-    _arguments = ArrayList@184[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
+LazyJavaClassifierType@181['E'] {
+    _arguments = ArrayList@182[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@179
     classifier = JavaTypeParameterImpl@183['E']
 }
 
-LazyJavaClassifierType@185['E'] {
-    _arguments = ArrayList@186[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
-    classifier = JavaTypeParameterImpl@183['E']
+LazyJavaClassifierType@184['E'] {
+    _arguments = ArrayList@185[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@179
+    classifier = JavaTypeParameterImpl@186['E']
 }
 
-LazyJavaClassifierType@192['E'] {
-    _arguments = ArrayList@193[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@3
-    classifier = JavaTypeParameterImpl@2['E']
+LazyJavaClassifierType@187['E'] {
+    _arguments = ArrayList@188[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@189['E']
 }
 
-LazyJavaClassifierType@197['E'] {
-    _arguments = ArrayList@199[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
-    classifier = JavaTypeParameterImpl@198['E']
+LazyJavaClassifierType@190['E'] {
+    _arguments = ArrayList@191[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@192['E']
 }
 
-LazyJavaClassifierType@204['E'] {
-    _arguments = ArrayList@205[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
-    classifier = JavaTypeParameterImpl@101['E']
+LazyJavaClassifierType@193['E'] {
+    _arguments = ArrayList@194[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@179
+    classifier = JavaTypeParameterImpl@195['E']
+}
+
+LazyJavaClassifierType@196['E'] {
+    _arguments = ArrayList@197[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@198
+    classifier = JavaTypeParameterImpl@199['E']
+}
+
+LazyJavaClassifierType@200['E'] {
+    _arguments = ArrayList@201[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@179
+    classifier = JavaTypeParameterImpl@202['E']
+}
+
+LazyJavaClassifierType@203['E'] {
+    _arguments = ArrayList@204[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@198
+    classifier = JavaTypeParameterImpl@205['E']
 }
 
 LazyJavaClassifierType@206['E'] {
-    _arguments = ArrayList@208[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@3
-    classifier = JavaTypeParameterImpl@207['E']
+    _arguments = ArrayList@207[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@208['E']
 }
 
-LazyJavaClassifierType@211['E'] {
-    _arguments = ArrayList@212[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@3
-    classifier = JavaTypeParameterImpl@110['E']
+LazyJavaClassifierType@209['E'] {
+    _arguments = ArrayList@210[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@211['E']
 }
 
-LazyJavaClassifierType@241['E'] {
-    _arguments = ArrayList@242[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@40
-    classifier = JavaTypeParameterImpl@39['E']
+LazyJavaClassifierType@212['E'] {
+    _arguments = ArrayList@213[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@214['E']
 }
 
-LazyJavaClassifierType@243['E'] {
-    _arguments = ArrayList@245[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
-    classifier = JavaTypeParameterImpl@244['E']
+LazyJavaClassifierType@215['E'] {
+    _arguments = ArrayList@216[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@217['E']
 }
 
-LazyJavaClassifierType@246['E'] {
-    _arguments = ArrayList@247[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@3
-    classifier = JavaTypeParameterImpl@207['E']
+LazyJavaClassifierType@218['E'] {
+    _arguments = ArrayList@219[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@217['E']
 }
 
-LazyJavaClassifierType@248['E'] {
-    _arguments = ArrayList@250[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
-    classifier = JavaTypeParameterImpl@249['E']
+LazyJavaClassifierType@220['E'] {
+    _arguments = ArrayList@221[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@179
+    classifier = JavaTypeParameterImpl@186['E']
 }
 
-LazyJavaClassifierType@287['E'] {
-    _arguments = ArrayList@288[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@3
-    classifier = JavaTypeParameterImpl@11['E']
+LazyJavaClassifierType@222['E'] {
+    _arguments = ArrayList@223[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@198
+    classifier = JavaTypeParameterImpl@199['E']
 }
 
-LazyJavaClassifierType@313['E'] {
-    _arguments = ArrayList@314[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
-    classifier = JavaTypeParameterImpl@198['E']
+LazyJavaClassifierType@224['E'] {
+    _arguments = ArrayList@225[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@189['E']
 }
 
-LazyJavaClassifierType@327['E'] {
-    _arguments = ArrayList@328[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@3
-    classifier = JavaTypeParameterImpl@240['E']
+LazyJavaClassifierType@226['E'] {
+    _arguments = ArrayList@227[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@198
+    classifier = JavaTypeParameterImpl@205['E']
 }
 
-LazyJavaClassifierType@329['E'] {
-    _arguments = ArrayList@330[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
-    classifier = JavaTypeParameterImpl@244['E']
+LazyJavaClassifierType@228['E'] {
+    _arguments = ArrayList@229[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@214['E']
 }
 
-LazyJavaClassifierType@337['E'] {
-    _arguments = ArrayList@338[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
-    classifier = JavaTypeParameterImpl@249['E']
+LazyJavaClassifierType@230['E'] {
+    _arguments = ArrayList@231[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@179
+    classifier = JavaTypeParameterImpl@195['E']
 }
 
-LazyJavaClassifierType@349['E'] {
-    _arguments = ArrayList@350[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@40
-    classifier = JavaTypeParameterImpl@89['E']
-}
-
-LazyJavaClassifierType@351['E'] {
-    _arguments = ArrayList@352[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
+LazyJavaClassifierType@232['E'] {
+    _arguments = ArrayList@233[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@179
     classifier = JavaTypeParameterImpl@180['E']
 }
 
-LazyJavaClassifierType@368['E'] {
-    _arguments = ArrayList@369[empty]
-    _nullable = Boolean@6
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@3
-    classifier = JavaTypeParameterImpl@240['E']
+LazyJavaClassifierType@234['E'] {
+    _arguments = ArrayList@235[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@179
+    classifier = JavaTypeParameterImpl@202['E']
 }
 
-LazyJavaClassifierType@64['FilterOutputStream'] {
-    _arguments = ArrayList@335[empty]
-    _memberScope = LazyJavaClassMemberScope@94
-    _typeConstructor = LazyJavaClassTypeConstructor@92['FilterOutputStream']
-    classifier = JavaClassImpl@158['FilterOutputStream']
+LazyJavaClassifierType@236['E'] {
+    _arguments = ArrayList@237[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@179
+    classifier = JavaTypeParameterImpl@183['E']
 }
 
-LazyJavaClassifierType@169['Flushable'] {
-    _typeConstructor = TypeConstructorImpl$1@170
+LazyJavaClassifierType@238['E'] {
+    _arguments = ArrayList@239[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@176['E']
+}
+
+LazyJavaClassifierType@240['E'] {
+    _arguments = ArrayList@241[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@192['E']
+}
+
+LazyJavaClassifierType@242['E'] {
+    _arguments = ArrayList@243[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@208['E']
+}
+
+LazyJavaClassifierType@244['E'] {
+    _arguments = ArrayList@245[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    classifier = JavaTypeParameterImpl@211['E']
+}
+
+LazyJavaClassifierType@127['FilterOutputStream'] {
+    _arguments = ArrayList@246[empty]
+    _memberScope = LazyJavaClassMemberScope@58
+    _typeConstructor = LazyJavaClassTypeConstructor@59['FilterOutputStream']
+    classifier = JavaClassImpl@247['FilterOutputStream']
+}
+
+LazyJavaClassifierType@248['Flushable'] {
+    _typeConstructor = TypeConstructorImpl$1@249
     classifier = null
 }
 
-LazyJavaClassifierType@21['List<E>'] {
-    _arguments = ArrayList@24[1] { TypeProjectionImpl@25 }
-    _memberScope = SubstitutingScope@26
-    _typeConstructor = DeserializedClassTypeConstructor@23
-    classifier = JavaClassImpl@22['List']
+LazyJavaClassifierType@112['List<E>'] {
+    _arguments = ArrayList@250[1] { TypeProjectionImpl@251 }
+    _memberScope = SubstitutingScope@252
+    _typeConstructor = DeserializedClassTypeConstructor@253
+    classifier = JavaClassImpl@254['List']
 }
 
-LazyJavaClassifierType@86['List<E>'] {
-    _arguments = ArrayList@97[1] { TypeProjectionImpl@98 }
-    _memberScope = SubstitutingScope@99
-    _typeConstructor = DeserializedClassTypeConstructor@23
-    classifier = JavaClassImpl@96['List']
+LazyJavaClassifierType@104['List<E>'] {
+    _arguments = ArrayList@255[1] { TypeProjectionImpl@256 }
+    _memberScope = SubstitutingScope@257
+    _typeConstructor = DeserializedClassTypeConstructor@253
+    classifier = JavaClassImpl@258['List']
 }
 
-LazyJavaClassifierType@236['Object'] {
-    _arguments = ArrayList@238[empty]
-    _nullable = Boolean@6
-    _typeConstructor = DeserializedClassTypeConstructor@29
-    classifier = JavaClassImpl@237['Object']
+LazyJavaClassifierType@259['Object'] {
+    _arguments = ArrayList@260[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = DeserializedClassTypeConstructor@261
+    classifier = JavaClassImpl@262['Object']
 }
 
-LazyJavaClassifierType@311['Object'] {
-    _arguments = ArrayList@312[empty]
-    _nullable = Boolean@1
-    _typeConstructor = DeserializedClassTypeConstructor@29
-    classifier = JavaClassImpl@237['Object']
+LazyJavaClassifierType@263['Object'] {
+    _arguments = ArrayList@264[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = DeserializedClassTypeConstructor@261
+    classifier = JavaClassImpl@262['Object']
 }
 
-LazyJavaClassifierType@27['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@29
-    classifier = JavaClassImpl@28['Object']
+LazyJavaClassifierType@265['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@261
+    classifier = JavaClassImpl@266['Object']
 }
 
-LazyJavaClassifierType@107['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@29
-    classifier = JavaClassImpl@108['Object']
+LazyJavaClassifierType@267['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@261
+    classifier = JavaClassImpl@268['Object']
 }
 
-LazyJavaClassifierType@188['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@29
-    classifier = JavaClassImpl@189['Object']
+LazyJavaClassifierType@269['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@261
+    classifier = JavaClassImpl@270['Object']
 }
 
-LazyJavaClassifierType@190['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@29
-    classifier = JavaClassImpl@191['Object']
+LazyJavaClassifierType@271['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@261
+    classifier = JavaClassImpl@272['Object']
 }
 
-LazyJavaClassifierType@292['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@29
-    classifier = JavaClassImpl@293['Object']
+LazyJavaClassifierType@273['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@261
+    classifier = JavaClassImpl@274['Object']
 }
 
-LazyJavaClassifierType@317['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@29
-    classifier = JavaClassImpl@318['Object']
+LazyJavaClassifierType@275['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@261
+    classifier = JavaClassImpl@276['Object']
 }
 
-LazyJavaClassifierType@323['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@29
-    classifier = JavaClassImpl@324['Object']
+LazyJavaClassifierType@277['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@261
+    classifier = JavaClassImpl@278['Object']
 }
 
-LazyJavaClassifierType@105['OutputStream'] {
-    _arguments = ArrayList@319[empty]
-    _memberScope = LazyJavaClassMemberScope@203
-    _typeConstructor = LazyJavaClassTypeConstructor@13['OutputStream']
-    classifier = JavaClassImpl@163['OutputStream']
+LazyJavaClassifierType@121['OutputStream'] {
+    _arguments = ArrayList@279[empty]
+    _memberScope = LazyJavaClassMemberScope@62
+    _typeConstructor = LazyJavaClassTypeConstructor@63['OutputStream']
+    classifier = JavaClassImpl@280['OutputStream']
 }
 
-LazyJavaClassifierType@194['PrintStream'] {
-    _arguments = ArrayList@195[empty]
-    _memberScope = LazyJavaClassMemberScope@196
-    _nullable = Boolean@1
-    _typeConstructor = LazyJavaClassTypeConstructor@61['PrintStream']
-    classifier = JavaClassImpl@156['PrintStream']
+LazyJavaClassifierType@281['PrintStream'] {
+    _arguments = ArrayList@282[empty]
+    _memberScope = LazyJavaClassMemberScope@70
+    _nullable = 'false': Boolean@160
+    _typeConstructor = LazyJavaClassTypeConstructor@71['PrintStream']
+    classifier = JavaClassImpl@283['PrintStream']
 }
 
-LazyJavaClassifierType@167['PrintStream'] {
-    _arguments = ArrayList@168[empty]
-    _nullable = Boolean@6
-    _typeConstructor = LazyJavaClassTypeConstructor@61['PrintStream']
-    classifier = JavaClassImpl@156['PrintStream']
+LazyJavaClassifierType@284['PrintStream'] {
+    _arguments = ArrayList@285[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = LazyJavaClassTypeConstructor@71['PrintStream']
+    classifier = JavaClassImpl@283['PrintStream']
 }
 
-LazyJavaClassifierType@52['RandomAccess'] {
-    _arguments = ArrayList@55[empty]
-    _memberScope = LazyJavaClassMemberScope@56
-    _typeConstructor = LazyJavaClassTypeConstructor@54['RandomAccess']
-    classifier = JavaClassImpl@53['RandomAccess']
+LazyJavaClassifierType@113['RandomAccess'] {
+    _arguments = ArrayList@286[empty]
+    _memberScope = LazyJavaClassMemberScope@78
+    _typeConstructor = LazyJavaClassTypeConstructor@79['RandomAccess']
+    classifier = JavaClassImpl@287['RandomAccess']
 }
 
-LazyJavaClassifierType@358['Serializable'] {
-    _arguments = ArrayList@359[empty]
-    _memberScope = LazyJavaClassMemberScope@322
-    _typeConstructor = LazyJavaClassTypeConstructor@320['Serializable']
-    classifier = JavaClassImpl@146['Serializable']
+LazyJavaClassifierType@288['Serializable'] {
+    _arguments = ArrayList@289[empty]
+    _memberScope = LazyJavaClassMemberScope@82
+    _typeConstructor = LazyJavaClassTypeConstructor@83['Serializable']
+    classifier = JavaClassImpl@290['Serializable']
 }
 
-LazyJavaClassifierType@218['String'] {
-    _arguments = ArrayList@221[empty]
-    _nullable = Boolean@1
-    _typeConstructor = DeserializedClassTypeConstructor@220
-    classifier = JavaClassImpl@219['String']
+LazyJavaClassifierType@291['String'] {
+    _arguments = ArrayList@292[empty]
+    _nullable = 'false': Boolean@160
+    _typeConstructor = DeserializedClassTypeConstructor@293
+    classifier = JavaClassImpl@294['String']
 }
 
-LazyJavaClassifierType@315['String'] {
-    _arguments = ArrayList@316[empty]
-    _nullable = Boolean@6
-    _typeConstructor = DeserializedClassTypeConstructor@220
-    classifier = JavaClassImpl@219['String']
+LazyJavaClassifierType@295['String'] {
+    _arguments = ArrayList@296[empty]
+    _nullable = 'true': Boolean@167
+    _typeConstructor = DeserializedClassTypeConstructor@293
+    classifier = JavaClassImpl@294['String']
 }
 
-LazyJavaPackageFragmentProvider@112 {
-    _packageFragments('<root>': FqName@113) = LazyJavaPackageFragment@114['<root>']
-    _packageFragments('Array': FqName@125) = null
-    _packageFragments('Int': FqName@137) = null
-    _packageFragments('String': FqName@130) = null
-    _packageFragments('System': FqName@152) = null
-    _packageFragments('foo': FqName@115) = null
-    _packageFragments('foo.Array': FqName@124) = null
-    _packageFragments('foo.Int': FqName@136) = null
-    _packageFragments('foo.String': FqName@129) = null
-    _packageFragments('foo.System': FqName@151) = null
-    _packageFragments('java': FqName@116) = LazyJavaPackageFragment@117['java']
-    _packageFragments('java.io': FqName@144) = LazyJavaPackageFragment@145['io']
-    _packageFragments('java.lang': FqName@118) = LazyJavaPackageFragment@69['lang']
-    _packageFragments('java.lang.Array': FqName@128) = null
-    _packageFragments('java.lang.Int': FqName@140) = null
-    _packageFragments('java.lang.String': FqName@133) = null
-    _packageFragments('java.lang.System': FqName@155) = null
-    _packageFragments('java.util': FqName@122) = LazyJavaPackageFragment@123['util']
-    _packageFragments('java.util.Array': FqName@126) = null
-    _packageFragments('java.util.Int': FqName@138) = null
-    _packageFragments('java.util.String': FqName@131) = null
-    _packageFragments('java.util.System': FqName@153) = null
-    _packageFragments('kotlin': FqName@119) = null
-    _packageFragments('kotlin.Array': FqName@127) = null
-    _packageFragments('kotlin.Int': FqName@139) = null
-    _packageFragments('kotlin.String': FqName@132) = null
-    _packageFragments('kotlin.System': FqName@154) = null
-    _packageFragments('kotlin.io': FqName@121) = null
-    _packageFragments('kotlin.jvm': FqName@120) = null
-    topLevelClasses(JavaClassImpl@148['AbstractCollection']) = LazyJavaClassDescriptor@149['AbstractCollection']
-    topLevelClasses(JavaClassImpl@141['AbstractList']) = LazyJavaClassDescriptor@142['AbstractList']
-    topLevelClasses(JavaClassImpl@159['Appendable']) = LazyJavaClassDescriptor@160['Appendable']
-    topLevelClasses(JavaClassImpl@134['ArrayList']) = LazyJavaClassDescriptor@135['ArrayList']
-    topLevelClasses(JavaClassImpl@165['AutoCloseable']) = LazyJavaClassDescriptor@166['AutoCloseable']
-    topLevelClasses(JavaClassImpl@161['Closeable']) = LazyJavaClassDescriptor@162['Closeable']
-    topLevelClasses(JavaClassImpl@158['FilterOutputStream']) = LazyJavaClassDescriptor@91['FilterOutputStream']
-    topLevelClasses(JavaClassImpl@163['OutputStream']) = LazyJavaClassDescriptor@164['OutputStream']
-    topLevelClasses(JavaClassImpl@156['PrintStream']) = LazyJavaClassDescriptor@157['PrintStream']
-    topLevelClasses(JavaClassImpl@53['RandomAccess']) = LazyJavaClassDescriptor@143['RandomAccess']
-    topLevelClasses(JavaClassImpl@146['Serializable']) = LazyJavaClassDescriptor@147['Serializable']
-    topLevelClasses(JavaClassImpl@150['System']) = LazyJavaClassDescriptor@77['System']
+LazyJavaPackageFragmentProvider@297 {
+    _packageFragments('<root>': FqName@298) = LazyJavaPackageFragment@299['<root>']
+    _packageFragments('Array': FqName@300) = null
+    _packageFragments('Int': FqName@301) = null
+    _packageFragments('String': FqName@302) = null
+    _packageFragments('System': FqName@303) = null
+    _packageFragments('foo': FqName@304) = null
+    _packageFragments('foo.Array': FqName@305) = null
+    _packageFragments('foo.Int': FqName@306) = null
+    _packageFragments('foo.String': FqName@307) = null
+    _packageFragments('foo.System': FqName@308) = null
+    _packageFragments('java': FqName@309) = LazyJavaPackageFragment@310['java']
+    _packageFragments('java.io': FqName@311) = LazyJavaPackageFragment@312['io']
+    _packageFragments('java.lang': FqName@313) = LazyJavaPackageFragment@314['lang']
+    _packageFragments('java.lang.Array': FqName@315) = null
+    _packageFragments('java.lang.Int': FqName@316) = null
+    _packageFragments('java.lang.String': FqName@317) = null
+    _packageFragments('java.lang.System': FqName@318) = null
+    _packageFragments('java.util': FqName@319) = LazyJavaPackageFragment@320['util']
+    _packageFragments('java.util.Array': FqName@321) = null
+    _packageFragments('java.util.Int': FqName@322) = null
+    _packageFragments('java.util.String': FqName@323) = null
+    _packageFragments('java.util.System': FqName@324) = null
+    _packageFragments('kotlin': FqName@325) = null
+    _packageFragments('kotlin.Array': FqName@326) = null
+    _packageFragments('kotlin.Int': FqName@327) = null
+    _packageFragments('kotlin.String': FqName@328) = null
+    _packageFragments('kotlin.System': FqName@329) = null
+    _packageFragments('kotlin.io': FqName@330) = null
+    _packageFragments('kotlin.jvm': FqName@331) = null
+    topLevelClasses(JavaClassImpl@138['AbstractCollection']) = LazyJavaClassDescriptor@0['AbstractCollection']
+    topLevelClasses(JavaClassImpl@142['AbstractList']) = LazyJavaClassDescriptor@13['AbstractList']
+    topLevelClasses(JavaClassImpl@144['Appendable']) = LazyJavaClassDescriptor@26['Appendable']
+    topLevelClasses(JavaClassImpl@332['ArrayList']) = LazyJavaClassDescriptor@32['ArrayList']
+    topLevelClasses(JavaClassImpl@146['AutoCloseable']) = LazyJavaClassDescriptor@49['AutoCloseable']
+    topLevelClasses(JavaClassImpl@155['Closeable']) = LazyJavaClassDescriptor@53['Closeable']
+    topLevelClasses(JavaClassImpl@247['FilterOutputStream']) = LazyJavaClassDescriptor@57['FilterOutputStream']
+    topLevelClasses(JavaClassImpl@280['OutputStream']) = LazyJavaClassDescriptor@61['OutputStream']
+    topLevelClasses(JavaClassImpl@283['PrintStream']) = LazyJavaClassDescriptor@65['PrintStream']
+    topLevelClasses(JavaClassImpl@287['RandomAccess']) = LazyJavaClassDescriptor@77['RandomAccess']
+    topLevelClasses(JavaClassImpl@290['Serializable']) = LazyJavaClassDescriptor@81['Serializable']
+    topLevelClasses(JavaClassImpl@333['System']) = LazyJavaClassDescriptor@85['System']
 }
 
-LazyJavaPackageFragment@117['java'] {
-    _functions('lang': Name@301) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@298
-    _functions('util': Name@302) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@298
-    classes('lang': Name@297) = null // through LazyPackageFragmentScopeForJavaPackage@298
-    classes('util': Name@299) = null // through LazyPackageFragmentScopeForJavaPackage@298
-    deserializedPackageScope = JetScope$1@70 // through LazyPackageFragmentScopeForJavaPackage@298
-    memberIndex = computeMemberIndex$1@300 // through LazyPackageFragmentScopeForJavaPackage@298
+LazyJavaPackageFragment@310['java'] {
+    _functions('lang': Name@334) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@335
+    _functions('util': Name@336) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@335
+    classes('lang': Name@337) = null // through LazyPackageFragmentScopeForJavaPackage@335
+    classes('util': Name@338) = null // through LazyPackageFragmentScopeForJavaPackage@335
+    deserializedPackageScope = Empty@339 // through LazyPackageFragmentScopeForJavaPackage@335
+    memberIndex = computeMemberIndex$1@340 // through LazyPackageFragmentScopeForJavaPackage@335
 }
 
-LazyJavaPackageFragment@69['lang'] {
-    _functions('ArrayList': Name@73) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@71
-    _functions('add': Name@75) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@71
-    _functions('dec': Name@81) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@71
-    _functions('get': Name@79) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@71
-    _functions('inc': Name@80) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@71
-    _functions('minus': Name@82) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@71
-    _functions('println': Name@78) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@71
-    classes('ArrayList': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@71
-    classes('System': Name@76) = LazyJavaClassDescriptor@77['System'] // through LazyPackageFragmentScopeForJavaPackage@71
-    classes('add': Name@75) = null // through LazyPackageFragmentScopeForJavaPackage@71
-    classes('dec': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@71
-    classes('get': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@71
-    classes('inc': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@71
-    classes('minus': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@71
-    classes('println': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@71
-    deserializedPackageScope = JetScope$1@70 // through LazyPackageFragmentScopeForJavaPackage@71
-    memberIndex = computeMemberIndex$1@72 // through LazyPackageFragmentScopeForJavaPackage@71
+LazyJavaPackageFragment@314['lang'] {
+    _functions('ArrayList': Name@341) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@342
+    _functions('add': Name@7) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@342
+    _functions('dec': Name@343) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@342
+    _functions('get': Name@8) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@342
+    _functions('inc': Name@344) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@342
+    _functions('minus': Name@345) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@342
+    _functions('println': Name@29) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@342
+    classes('ArrayList': Name@341) = null // through LazyPackageFragmentScopeForJavaPackage@342
+    classes('System': Name@346) = LazyJavaClassDescriptor@85['System'] // through LazyPackageFragmentScopeForJavaPackage@342
+    classes('add': Name@7) = null // through LazyPackageFragmentScopeForJavaPackage@342
+    classes('dec': Name@343) = null // through LazyPackageFragmentScopeForJavaPackage@342
+    classes('get': Name@8) = null // through LazyPackageFragmentScopeForJavaPackage@342
+    classes('inc': Name@344) = null // through LazyPackageFragmentScopeForJavaPackage@342
+    classes('minus': Name@345) = null // through LazyPackageFragmentScopeForJavaPackage@342
+    classes('println': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@342
+    deserializedPackageScope = Empty@339 // through LazyPackageFragmentScopeForJavaPackage@342
+    memberIndex = computeMemberIndex$1@347 // through LazyPackageFragmentScopeForJavaPackage@342
 }
 
-LazyJavaPackageFragment@123['util'] {
-    _functions('ArrayList': Name@73) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@264
-    _functions('add': Name@75) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@264
-    _functions('dec': Name@81) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@264
-    _functions('get': Name@79) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@264
-    _functions('inc': Name@80) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@264
-    _functions('minus': Name@82) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@264
-    _functions('println': Name@78) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@264
-    classes('Array': Name@263) = null // through LazyPackageFragmentScopeForJavaPackage@264
-    classes('ArrayList': Name@73) = LazyJavaClassDescriptor@135['ArrayList'] // through LazyPackageFragmentScopeForJavaPackage@264
-    classes('Int': Name@267) = null // through LazyPackageFragmentScopeForJavaPackage@264
-    classes('String': Name@265) = null // through LazyPackageFragmentScopeForJavaPackage@264
-    classes('System': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@264
-    classes('add': Name@75) = null // through LazyPackageFragmentScopeForJavaPackage@264
-    classes('dec': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@264
-    classes('get': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@264
-    classes('inc': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@264
-    classes('minus': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@264
-    classes('println': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@264
-    deserializedPackageScope = JetScope$1@70 // through LazyPackageFragmentScopeForJavaPackage@264
-    memberIndex = computeMemberIndex$1@266 // through LazyPackageFragmentScopeForJavaPackage@264
+LazyJavaPackageFragment@320['util'] {
+    _functions('ArrayList': Name@341) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@348
+    _functions('add': Name@7) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@348
+    _functions('dec': Name@343) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@348
+    _functions('get': Name@8) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@348
+    _functions('inc': Name@344) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@348
+    _functions('minus': Name@345) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@348
+    _functions('println': Name@29) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@348
+    classes('Array': Name@349) = null // through LazyPackageFragmentScopeForJavaPackage@348
+    classes('ArrayList': Name@341) = LazyJavaClassDescriptor@32['ArrayList'] // through LazyPackageFragmentScopeForJavaPackage@348
+    classes('Int': Name@350) = null // through LazyPackageFragmentScopeForJavaPackage@348
+    classes('String': Name@351) = null // through LazyPackageFragmentScopeForJavaPackage@348
+    classes('System': Name@346) = null // through LazyPackageFragmentScopeForJavaPackage@348
+    classes('add': Name@7) = null // through LazyPackageFragmentScopeForJavaPackage@348
+    classes('dec': Name@343) = null // through LazyPackageFragmentScopeForJavaPackage@348
+    classes('get': Name@8) = null // through LazyPackageFragmentScopeForJavaPackage@348
+    classes('inc': Name@344) = null // through LazyPackageFragmentScopeForJavaPackage@348
+    classes('minus': Name@345) = null // through LazyPackageFragmentScopeForJavaPackage@348
+    classes('println': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@348
+    deserializedPackageScope = Empty@339 // through LazyPackageFragmentScopeForJavaPackage@348
+    memberIndex = computeMemberIndex$1@352 // through LazyPackageFragmentScopeForJavaPackage@348
 }
 
-LazyJavaTypeParameterDescriptor@17['E'] {
-    defaultType = JetTypeImpl@20
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@3
-    upperBounds = LinkedHashSet@18[1] { NullableType@19 }
-    upperBoundsAsType = NullableType@19
+LazyJavaTypeParameterDescriptor@97['E'] {
+    defaultType = JetTypeImpl@353['E']
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@198
+    upperBounds = LinkedHashSet@354[1] { NullableType@355 }
+    upperBoundsAsType = NullableType@355
 }
 
-LazyJavaTypeParameterDescriptor@46['E'] {
-    defaultType = JetTypeImpl@296
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@40
-    upperBounds = LinkedHashSet@294[1] { NullableType@295 }
-    upperBoundsAsType = NullableType@295
+LazyJavaTypeParameterDescriptor@109['E'] {
+    defaultType = JetTypeImpl@356['E']
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@175
+    upperBounds = LinkedHashSet@357[1] { NullableType@358 }
+    upperBoundsAsType = NullableType@358
 }
 
-LazyJavaTypeParameterDescriptor@49['E'] {
-    defaultType = JetTypeImpl@306
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@8
-    upperBounds = LinkedHashSet@307[1] { NullableType@308 }
-    upperBoundsAsType = NullableType@308
+LazyJavaTypeParameterDescriptor@101['E'] {
+    defaultType = JetTypeImpl@359['E']
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@179
+    upperBounds = LinkedHashSet@360[1] { NullableType@361 }
+    upperBoundsAsType = NullableType@361
 }
 
-LazyJavaTypeParameterResolver@36 {
-    resolve(JavaTypeParameterImpl@37['E']) = LazyJavaTypeParameterDescriptor@17['E']
+LazyJavaTypeParameterResolver@362 {
+    resolve(JavaTypeParameterImpl@363['E']) = LazyJavaTypeParameterDescriptor@109['E']
 }
 
-LazyJavaTypeParameterResolver@173 {
-    resolve(JavaTypeParameterImpl@174['E']) = LazyJavaTypeParameterDescriptor@46['E']
+LazyJavaTypeParameterResolver@364 {
+    resolve(JavaTypeParameterImpl@365['E']) = LazyJavaTypeParameterDescriptor@97['E']
 }
 
-LazyJavaTypeParameterResolver@209 {
-    resolve(JavaTypeParameterImpl@210['E']) = LazyJavaTypeParameterDescriptor@49['E']
+LazyJavaTypeParameterResolver@366 {
+    resolve(JavaTypeParameterImpl@367['E']) = LazyJavaTypeParameterDescriptor@101['E']
 }
 
-LazyJavaTypeParameterResolver@103 {
-    resolve(JavaTypeParameterImpl@101['E']) = null
+LazyJavaTypeParameterResolver@368 {
+    resolve(JavaTypeParameterImpl@211['E']) = null
 }
 
-LazyJavaTypeParameterResolver@178 {
-    resolve(JavaTypeParameterImpl@11['E']) = null
-}
-
-LazyJavaTypeParameterResolver@187 {
-    resolve(JavaTypeParameterImpl@183['E']) = null
-}
-
-LazyJavaTypeParameterResolver@239 {
-    resolve(JavaTypeParameterImpl@240['E']) = null
-}
-
-LazyJavaTypeParameterResolver@348 {
-    resolve(JavaTypeParameterImpl@39['E']) = null
+LazyJavaTypeParameterResolver@369 {
+    resolve(JavaTypeParameterImpl@205['E']) = null
 }
 
 LazyJavaTypeParameterResolver@370 {
-    resolve(JavaTypeParameterImpl@207['E']) = null
+    resolve(JavaTypeParameterImpl@186['E']) = null
 }
 
 LazyJavaTypeParameterResolver@371 {
-    resolve(JavaTypeParameterImpl@244['E']) = null
+    resolve(JavaTypeParameterImpl@202['E']) = null
+}
+
+LazyJavaTypeParameterResolver@372 {
+    resolve(JavaTypeParameterImpl@192['E']) = null
+}
+
+LazyJavaTypeParameterResolver@373 {
+    resolve(JavaTypeParameterImpl@195['E']) = null
+}
+
+LazyJavaTypeParameterResolver@374 {
+    resolve(JavaTypeParameterImpl@214['E']) = null
 }

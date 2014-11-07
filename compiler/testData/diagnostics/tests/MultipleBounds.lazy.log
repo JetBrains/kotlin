@@ -1,87 +1,87 @@
-DescriptorResolver@7 {
-    <name not found> = IntValue@11
-    <name not found> = JetTypeImpl@8
-    <name not found> = JetTypeImpl@9
-    <name not found> = JetTypeImpl@10
+DescriptorResolver@0 {
+    <name not found> = IntValue@1
+    <name not found> = JetTypeImpl@2['Unit']
+    <name not found> = JetTypeImpl@3['Unit']
+    <name not found> = JetTypeImpl@4['Unit']
 }
 
-LazyJavaPackageFragmentProvider@12 {
-    _packageFragments('<root>': FqName@13) = LazyJavaPackageFragment@14['<root>']
-    _packageFragments('A': FqName@23) = null
-    _packageFragments('B': FqName@27) = null
-    _packageFragments('Bar': FqName@39) = null
-    _packageFragments('C': FqName@65) = null
-    _packageFragments('Double': FqName@51) = null
-    _packageFragments('Foo': FqName@35) = null
-    _packageFragments('Int': FqName@43) = null
+LazyJavaPackageFragmentProvider@5 {
+    _packageFragments('<root>': FqName@6) = LazyJavaPackageFragment@7['<root>']
+    _packageFragments('A': FqName@8) = null
+    _packageFragments('B': FqName@9) = null
+    _packageFragments('Bar': FqName@10) = null
+    _packageFragments('C': FqName@11) = null
+    _packageFragments('Double': FqName@12) = null
+    _packageFragments('Foo': FqName@13) = null
+    _packageFragments('Int': FqName@14) = null
     _packageFragments('Jet87': FqName@15) = null
-    _packageFragments('Jet87.A': FqName@22) = null
-    _packageFragments('Jet87.B': FqName@26) = null
-    _packageFragments('Jet87.Bar': FqName@38) = null
-    _packageFragments('Jet87.Buzz': FqName@60) = null
-    _packageFragments('Jet87.C': FqName@55) = null
-    _packageFragments('Jet87.D': FqName@56) = null
-    _packageFragments('Jet87.Double': FqName@50) = null
-    _packageFragments('Jet87.Foo': FqName@34) = null
-    _packageFragments('Jet87.Int': FqName@42) = null
-    _packageFragments('Jet87.T': FqName@30) = null
-    _packageFragments('Jet87.Test': FqName@54) = null
-    _packageFragments('Jet87.Test1': FqName@61) = null
-    _packageFragments('Jet87.X': FqName@59) = null
-    _packageFragments('Jet87.Y': FqName@64) = null
-    _packageFragments('Jet87.nioho': FqName@46) = null
-    _packageFragments('Jet87.t1': FqName@63) = null
-    _packageFragments('Jet87.t2': FqName@58) = null
-    _packageFragments('Jet87.t3': FqName@57) = null
-    _packageFragments('Jet87.x': FqName@62) = null
-    _packageFragments('T': FqName@31) = null
-    _packageFragments('java': FqName@16) = LazyJavaPackageFragment@0['java']
-    _packageFragments('java.lang': FqName@17) = LazyJavaPackageFragment@18['lang']
-    _packageFragments('java.lang.A': FqName@25) = null
-    _packageFragments('java.lang.B': FqName@29) = null
-    _packageFragments('java.lang.Bar': FqName@41) = null
-    _packageFragments('java.lang.C': FqName@67) = null
-    _packageFragments('java.lang.Double': FqName@53) = null
-    _packageFragments('java.lang.Foo': FqName@37) = null
-    _packageFragments('java.lang.Int': FqName@45) = null
-    _packageFragments('java.lang.T': FqName@33) = null
-    _packageFragments('java.lang.nioho': FqName@49) = null
-    _packageFragments('kotlin': FqName@19) = null
-    _packageFragments('kotlin.A': FqName@24) = null
-    _packageFragments('kotlin.B': FqName@28) = null
-    _packageFragments('kotlin.Bar': FqName@40) = null
-    _packageFragments('kotlin.C': FqName@66) = null
-    _packageFragments('kotlin.Double': FqName@52) = null
-    _packageFragments('kotlin.Foo': FqName@36) = null
-    _packageFragments('kotlin.Int': FqName@44) = null
-    _packageFragments('kotlin.T': FqName@32) = null
-    _packageFragments('kotlin.io': FqName@21) = null
-    _packageFragments('kotlin.jvm': FqName@20) = null
-    _packageFragments('kotlin.nioho': FqName@48) = null
-    _packageFragments('nioho': FqName@47) = null
+    _packageFragments('Jet87.A': FqName@16) = null
+    _packageFragments('Jet87.B': FqName@17) = null
+    _packageFragments('Jet87.Bar': FqName@18) = null
+    _packageFragments('Jet87.Buzz': FqName@19) = null
+    _packageFragments('Jet87.C': FqName@20) = null
+    _packageFragments('Jet87.D': FqName@21) = null
+    _packageFragments('Jet87.Double': FqName@22) = null
+    _packageFragments('Jet87.Foo': FqName@23) = null
+    _packageFragments('Jet87.Int': FqName@24) = null
+    _packageFragments('Jet87.T': FqName@25) = null
+    _packageFragments('Jet87.Test': FqName@26) = null
+    _packageFragments('Jet87.Test1': FqName@27) = null
+    _packageFragments('Jet87.X': FqName@28) = null
+    _packageFragments('Jet87.Y': FqName@29) = null
+    _packageFragments('Jet87.nioho': FqName@30) = null
+    _packageFragments('Jet87.t1': FqName@31) = null
+    _packageFragments('Jet87.t2': FqName@32) = null
+    _packageFragments('Jet87.t3': FqName@33) = null
+    _packageFragments('Jet87.x': FqName@34) = null
+    _packageFragments('T': FqName@35) = null
+    _packageFragments('java': FqName@36) = LazyJavaPackageFragment@37['java']
+    _packageFragments('java.lang': FqName@38) = LazyJavaPackageFragment@39['lang']
+    _packageFragments('java.lang.A': FqName@40) = null
+    _packageFragments('java.lang.B': FqName@41) = null
+    _packageFragments('java.lang.Bar': FqName@42) = null
+    _packageFragments('java.lang.C': FqName@43) = null
+    _packageFragments('java.lang.Double': FqName@44) = null
+    _packageFragments('java.lang.Foo': FqName@45) = null
+    _packageFragments('java.lang.Int': FqName@46) = null
+    _packageFragments('java.lang.T': FqName@47) = null
+    _packageFragments('java.lang.nioho': FqName@48) = null
+    _packageFragments('kotlin': FqName@49) = null
+    _packageFragments('kotlin.A': FqName@50) = null
+    _packageFragments('kotlin.B': FqName@51) = null
+    _packageFragments('kotlin.Bar': FqName@52) = null
+    _packageFragments('kotlin.C': FqName@53) = null
+    _packageFragments('kotlin.Double': FqName@54) = null
+    _packageFragments('kotlin.Foo': FqName@55) = null
+    _packageFragments('kotlin.Int': FqName@56) = null
+    _packageFragments('kotlin.T': FqName@57) = null
+    _packageFragments('kotlin.io': FqName@58) = null
+    _packageFragments('kotlin.jvm': FqName@59) = null
+    _packageFragments('kotlin.nioho': FqName@60) = null
+    _packageFragments('nioho': FqName@61) = null
 }
 
-LazyJavaPackageFragment@0['java'] {
-    _functions('lang': Name@5) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@2
-    classes('lang': Name@1) = null // through LazyPackageFragmentScopeForJavaPackage@2
-    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@2
-    memberIndex = computeMemberIndex$1@4 // through LazyPackageFragmentScopeForJavaPackage@2
+LazyJavaPackageFragment@37['java'] {
+    _functions('lang': Name@62) = EmptyList@63[empty] // through LazyPackageFragmentScopeForJavaPackage@64
+    classes('lang': Name@65) = null // through LazyPackageFragmentScopeForJavaPackage@64
+    deserializedPackageScope = Empty@66 // through LazyPackageFragmentScopeForJavaPackage@64
+    memberIndex = computeMemberIndex$1@67 // through LazyPackageFragmentScopeForJavaPackage@64
 }
 
-LazyJavaPackageFragment@18['lang'] {
-    _functions('A': Name@72) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@69
-    _functions('C': Name@73) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@69
-    _functions('Test1': Name@74) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@69
-    _functions('bar': Name@76) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@69
-    _functions('foo': Name@75) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@69
-    _functions('test2': Name@71) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@69
-    classes('A': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@69
-    classes('C': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@69
-    classes('Test1': Name@74) = null // through LazyPackageFragmentScopeForJavaPackage@69
-    classes('bar': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@69
-    classes('foo': Name@75) = null // through LazyPackageFragmentScopeForJavaPackage@69
-    classes('nioho': Name@68) = null // through LazyPackageFragmentScopeForJavaPackage@69
-    classes('test2': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@69
-    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@69
-    memberIndex = computeMemberIndex$1@70 // through LazyPackageFragmentScopeForJavaPackage@69
+LazyJavaPackageFragment@39['lang'] {
+    _functions('A': Name@68) = EmptyList@63[empty] // through LazyPackageFragmentScopeForJavaPackage@69
+    _functions('C': Name@70) = EmptyList@63[empty] // through LazyPackageFragmentScopeForJavaPackage@69
+    _functions('Test1': Name@71) = EmptyList@63[empty] // through LazyPackageFragmentScopeForJavaPackage@69
+    _functions('bar': Name@72) = EmptyList@63[empty] // through LazyPackageFragmentScopeForJavaPackage@69
+    _functions('foo': Name@73) = EmptyList@63[empty] // through LazyPackageFragmentScopeForJavaPackage@69
+    _functions('test2': Name@74) = EmptyList@63[empty] // through LazyPackageFragmentScopeForJavaPackage@69
+    classes('A': Name@68) = null // through LazyPackageFragmentScopeForJavaPackage@69
+    classes('C': Name@70) = null // through LazyPackageFragmentScopeForJavaPackage@69
+    classes('Test1': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@69
+    classes('bar': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@69
+    classes('foo': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@69
+    classes('nioho': Name@75) = null // through LazyPackageFragmentScopeForJavaPackage@69
+    classes('test2': Name@74) = null // through LazyPackageFragmentScopeForJavaPackage@69
+    deserializedPackageScope = Empty@66 // through LazyPackageFragmentScopeForJavaPackage@69
+    memberIndex = computeMemberIndex$1@76 // through LazyPackageFragmentScopeForJavaPackage@69
 }

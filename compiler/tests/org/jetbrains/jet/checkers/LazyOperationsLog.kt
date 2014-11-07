@@ -31,6 +31,8 @@ import org.jetbrains.jet.descriptors.serialization.TypeDeserializer
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import java.util.HashMap
+import java.util.regex.Pattern
 
 class LazyOperationsLog(
         val stringSanitizer: (String) -> String
@@ -59,7 +61,28 @@ class LazyOperationsLog(
         return groupedByOwner.map {
             val (owner, records) = it
             renderOwner(owner, records)
-        }.sortBy(stringSanitizer).join("\n")
+        }.sortBy(stringSanitizer).join("\n").renumberObjects()
+    }
+
+    /**
+     * Replaces ids in the given string so that they increase
+     * Example:
+     *   input = "A@21 B@6"
+     *   output = "A@0 B@1"
+     */
+    private fun String.renumberObjects(): String {
+        val ids = HashMap<String, String>()
+        fun newId(objectId: String): String {
+            return ids.getOrPut(objectId, { "@" + ids.size() })
+        }
+
+        val m = Pattern.compile("@\\d+").matcher(this)
+        val sb = StringBuffer()
+        while (m.find()) {
+            m.appendReplacement(sb, newId(m.group(0)))
+        }
+        m.appendTail(sb)
+        return sb.toString()
     }
 
     private fun renderOwner(owner: Any?, records: List<Record>): String {

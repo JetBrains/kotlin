@@ -1,154 +1,154 @@
 ClosureExpressionsTypingVisitor$1@0 {
-    <name not found> = JetTypeImpl@1
+    <name not found> = JetTypeImpl@1['<no name provided>']
 }
 
-ClosureExpressionsTypingVisitor$1@58 {
-    <name not found> = JetTypeImpl@59
+ClosureExpressionsTypingVisitor$1@2 {
+    <name not found> = JetTypeImpl@3['<no name provided>']
 }
 
-ClosureExpressionsTypingVisitor$1@113 {
-    <name not found> = JetTypeImpl@114
+ClosureExpressionsTypingVisitor$1@4 {
+    <name not found> = JetTypeImpl@5['<no name provided>']
 }
 
-DescriptorResolver@102 {
-    <name not found> = ErrorTypeImpl@106
-    <name not found> = IntValue@107
-    <name not found> = IntValue@108
-    <name not found> = IntValue@109
-    <name not found> = IntValue@110
-    <name not found> = IntValue@111
-    <name not found> = IntValue@112
-    <name not found> = JetTypeImpl@103
-    <name not found> = JetTypeImpl@103
-    <name not found> = JetTypeImpl@56
-    <name not found> = JetTypeImpl@104
-    <name not found> = JetTypeImpl@105
-    <name not found> = JetTypeImpl@56
-    <name not found> = JetTypeImpl@56
-    <name not found> = JetTypeImpl@56
-    <name not found> = JetTypeImpl@56
-    <name not found> = JetTypeImpl@56
-    <name not found> = JetTypeImpl@56
-    <name not found> = JetTypeImpl@56
+DescriptorResolver@6 {
+    <name not found> = ErrorTypeImpl@7
+    <name not found> = IntValue@8
+    <name not found> = IntValue@9
+    <name not found> = IntValue@10
+    <name not found> = IntValue@11
+    <name not found> = IntValue@12
+    <name not found> = IntValue@13
+    <name not found> = JetTypeImpl@14['Int']
+    <name not found> = JetTypeImpl@15['Int']
+    <name not found> = JetTypeImpl@16['Int']
+    <name not found> = JetTypeImpl@14['Int']
+    <name not found> = JetTypeImpl@14['Int']
+    <name not found> = JetTypeImpl@14['Int']
+    <name not found> = JetTypeImpl@14['Int']
+    <name not found> = JetTypeImpl@14['Int']
+    <name not found> = JetTypeImpl@14['Int']
+    <name not found> = JetTypeImpl@14['Int']
+    <name not found> = JetTypeImpl@17['ProtocolState']
+    <name not found> = JetTypeImpl@17['ProtocolState']
     <name not found> = null
 }
 
-DescriptorResolver@55 {
-    <name not found> = IntValue@57
-    <name not found> = JetTypeImpl@56
+DescriptorResolver@18 {
+    <name not found> = IntValue@19
+    <name not found> = JetTypeImpl@14['Int']
 }
 
-LazyJavaPackageFragmentProvider@2 {
-    _packageFragments('$b': FqName@52) = null
-    _packageFragments('<root>': FqName@3) = LazyJavaPackageFragment@4['<root>']
-    _packageFragments('A': FqName@30) = null
-    _packageFragments('Boolean': FqName@26) = null
-    _packageFragments('Int': FqName@22) = null
-    _packageFragments('M': FqName@34) = null
-    _packageFragments('Open': FqName@14) = null
-    _packageFragments('ProtocolState': FqName@38) = null
-    _packageFragments('String': FqName@18) = null
-    _packageFragments('java': FqName@6) = LazyJavaPackageFragment@7['java']
-    _packageFragments('java.lang': FqName@8) = LazyJavaPackageFragment@9['lang']
-    _packageFragments('java.lang.$b': FqName@54) = null
-    _packageFragments('java.lang.A': FqName@32) = null
-    _packageFragments('java.lang.Boolean': FqName@28) = null
-    _packageFragments('java.lang.Int': FqName@24) = null
-    _packageFragments('java.lang.M': FqName@36) = null
-    _packageFragments('java.lang.Open': FqName@16) = null
-    _packageFragments('java.lang.ProtocolState': FqName@40) = null
-    _packageFragments('java.lang.String': FqName@20) = null
-    _packageFragments('kotlin': FqName@10) = null
-    _packageFragments('kotlin.$b': FqName@53) = null
-    _packageFragments('kotlin.A': FqName@31) = null
-    _packageFragments('kotlin.Boolean': FqName@27) = null
-    _packageFragments('kotlin.Int': FqName@23) = null
-    _packageFragments('kotlin.M': FqName@35) = null
-    _packageFragments('kotlin.Open': FqName@15) = null
-    _packageFragments('kotlin.ProtocolState': FqName@39) = null
-    _packageFragments('kotlin.String': FqName@19) = null
-    _packageFragments('kotlin.io': FqName@12) = null
-    _packageFragments('kotlin.jvm': FqName@11) = null
-    _packageFragments('uninitialized_reassigned_variables': FqName@5) = null
-    _packageFragments('uninitialized_reassigned_variables.$b': FqName@51) = null
-    _packageFragments('uninitialized_reassigned_variables.A': FqName@29) = null
-    _packageFragments('uninitialized_reassigned_variables.AnonymousInitializers': FqName@45) = null
-    _packageFragments('uninitialized_reassigned_variables.Boolean': FqName@25) = null
-    _packageFragments('uninitialized_reassigned_variables.ClassObject': FqName@48) = null
-    _packageFragments('uninitialized_reassigned_variables.ForwardAccessToBackingField': FqName@41) = null
-    _packageFragments('uninitialized_reassigned_variables.Int': FqName@21) = null
-    _packageFragments('uninitialized_reassigned_variables.LocalValsVsProperties': FqName@43) = null
-    _packageFragments('uninitialized_reassigned_variables.M': FqName@33) = null
-    _packageFragments('uninitialized_reassigned_variables.Open': FqName@13) = null
-    _packageFragments('uninitialized_reassigned_variables.Outer': FqName@44) = null
-    _packageFragments('uninitialized_reassigned_variables.ProtocolState': FqName@37) = null
-    _packageFragments('uninitialized_reassigned_variables.String': FqName@17) = null
-    _packageFragments('uninitialized_reassigned_variables.TestObjectDeclaration': FqName@42) = null
-    _packageFragments('uninitialized_reassigned_variables.TestObjectExpression': FqName@50) = null
-    _packageFragments('uninitialized_reassigned_variables.x': FqName@49) = null
-    _packageFragments('uninitialized_reassigned_variables.y': FqName@46) = null
-    _packageFragments('uninitialized_reassigned_variables.z': FqName@47) = null
+LazyJavaPackageFragmentProvider@20 {
+    _packageFragments('$b': FqName@21) = null
+    _packageFragments('<root>': FqName@22) = LazyJavaPackageFragment@23['<root>']
+    _packageFragments('A': FqName@24) = null
+    _packageFragments('Boolean': FqName@25) = null
+    _packageFragments('Int': FqName@26) = null
+    _packageFragments('M': FqName@27) = null
+    _packageFragments('Open': FqName@28) = null
+    _packageFragments('ProtocolState': FqName@29) = null
+    _packageFragments('String': FqName@30) = null
+    _packageFragments('java': FqName@31) = LazyJavaPackageFragment@32['java']
+    _packageFragments('java.lang': FqName@33) = LazyJavaPackageFragment@34['lang']
+    _packageFragments('java.lang.$b': FqName@35) = null
+    _packageFragments('java.lang.A': FqName@36) = null
+    _packageFragments('java.lang.Boolean': FqName@37) = null
+    _packageFragments('java.lang.Int': FqName@38) = null
+    _packageFragments('java.lang.M': FqName@39) = null
+    _packageFragments('java.lang.Open': FqName@40) = null
+    _packageFragments('java.lang.ProtocolState': FqName@41) = null
+    _packageFragments('java.lang.String': FqName@42) = null
+    _packageFragments('kotlin': FqName@43) = null
+    _packageFragments('kotlin.$b': FqName@44) = null
+    _packageFragments('kotlin.A': FqName@45) = null
+    _packageFragments('kotlin.Boolean': FqName@46) = null
+    _packageFragments('kotlin.Int': FqName@47) = null
+    _packageFragments('kotlin.M': FqName@48) = null
+    _packageFragments('kotlin.Open': FqName@49) = null
+    _packageFragments('kotlin.ProtocolState': FqName@50) = null
+    _packageFragments('kotlin.String': FqName@51) = null
+    _packageFragments('kotlin.io': FqName@52) = null
+    _packageFragments('kotlin.jvm': FqName@53) = null
+    _packageFragments('uninitialized_reassigned_variables': FqName@54) = null
+    _packageFragments('uninitialized_reassigned_variables.$b': FqName@55) = null
+    _packageFragments('uninitialized_reassigned_variables.A': FqName@56) = null
+    _packageFragments('uninitialized_reassigned_variables.AnonymousInitializers': FqName@57) = null
+    _packageFragments('uninitialized_reassigned_variables.Boolean': FqName@58) = null
+    _packageFragments('uninitialized_reassigned_variables.ClassObject': FqName@59) = null
+    _packageFragments('uninitialized_reassigned_variables.ForwardAccessToBackingField': FqName@60) = null
+    _packageFragments('uninitialized_reassigned_variables.Int': FqName@61) = null
+    _packageFragments('uninitialized_reassigned_variables.LocalValsVsProperties': FqName@62) = null
+    _packageFragments('uninitialized_reassigned_variables.M': FqName@63) = null
+    _packageFragments('uninitialized_reassigned_variables.Open': FqName@64) = null
+    _packageFragments('uninitialized_reassigned_variables.Outer': FqName@65) = null
+    _packageFragments('uninitialized_reassigned_variables.ProtocolState': FqName@66) = null
+    _packageFragments('uninitialized_reassigned_variables.String': FqName@67) = null
+    _packageFragments('uninitialized_reassigned_variables.TestObjectDeclaration': FqName@68) = null
+    _packageFragments('uninitialized_reassigned_variables.TestObjectExpression': FqName@69) = null
+    _packageFragments('uninitialized_reassigned_variables.x': FqName@70) = null
+    _packageFragments('uninitialized_reassigned_variables.y': FqName@71) = null
+    _packageFragments('uninitialized_reassigned_variables.z': FqName@72) = null
 }
 
-LazyJavaPackageFragment@7['java'] {
-    _functions('lang': Name@64) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@61
-    classes('lang': Name@60) = null // through LazyPackageFragmentScopeForJavaPackage@61
-    deserializedPackageScope = JetScope$1@62 // through LazyPackageFragmentScopeForJavaPackage@61
-    memberIndex = computeMemberIndex$1@63 // through LazyPackageFragmentScopeForJavaPackage@61
+LazyJavaPackageFragment@32['java'] {
+    _functions('lang': Name@73) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@75
+    classes('lang': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@75
+    deserializedPackageScope = Empty@77 // through LazyPackageFragmentScopeForJavaPackage@75
+    memberIndex = computeMemberIndex$1@78 // through LazyPackageFragmentScopeForJavaPackage@75
 }
 
-LazyJavaPackageFragment@9['lang'] {
-    _functions('$b': Name@100) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('A': Name@92) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('compareTo': Name@75) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('dec': Name@101) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('doSmth': Name@87) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('equals': Name@81) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('hasNext': Name@90) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('inc': Name@83) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('iterator': Name@89) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('minus': Name@97) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('minusAssign': Name@96) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('next': Name@91) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('plus': Name@85) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('plusAssign': Name@84) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('rangeTo': Name@88) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('signal': Name@93) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('times': Name@95) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    _functions('timesAssign': Name@94) = EmptyList@65[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('$b': Name@99) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('A': Name@92) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('a': Name@67) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('b': Name@69) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('c': Name@68) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('compareTo': Name@75) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('dec': Name@101) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('doSmth': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('equals': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('hasNext': Name@90) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('i': Name@70) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('inc': Name@83) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('iterator': Name@89) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('j': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('k': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('l': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('m': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('minus': Name@97) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('minusAssign': Name@96) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('n': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('next': Name@91) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('o': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('p': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('plus': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('plusAssign': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('rangeTo': Name@88) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('signal': Name@93) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('times': Name@95) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('timesAssign': Name@94) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('x': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('y': Name@98) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('yy': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    classes('z': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    deserializedPackageScope = JetScope$1@62 // through LazyPackageFragmentScopeForJavaPackage@66
-    memberIndex = computeMemberIndex$1@74 // through LazyPackageFragmentScopeForJavaPackage@66
+LazyJavaPackageFragment@34['lang'] {
+    _functions('$b': Name@79) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('A': Name@81) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('compareTo': Name@82) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('dec': Name@83) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('doSmth': Name@84) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('equals': Name@85) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('hasNext': Name@86) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('inc': Name@87) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('iterator': Name@88) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('minus': Name@89) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('minusAssign': Name@90) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('next': Name@91) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('plus': Name@92) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('plusAssign': Name@93) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('rangeTo': Name@94) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('signal': Name@95) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('times': Name@96) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('timesAssign': Name@97) = EmptyList@74[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('$b': Name@98) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('A': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('a': Name@99) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('b': Name@100) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('c': Name@101) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('compareTo': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('dec': Name@83) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('doSmth': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('equals': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('hasNext': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('i': Name@102) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('inc': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('iterator': Name@88) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('j': Name@103) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('k': Name@104) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('l': Name@105) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('m': Name@106) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('minus': Name@89) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('minusAssign': Name@90) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('n': Name@107) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('next': Name@91) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('o': Name@108) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('p': Name@109) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('plus': Name@92) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('plusAssign': Name@93) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('rangeTo': Name@94) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('signal': Name@95) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('times': Name@96) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('timesAssign': Name@97) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('x': Name@110) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('y': Name@111) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('yy': Name@112) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('z': Name@113) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    deserializedPackageScope = Empty@77 // through LazyPackageFragmentScopeForJavaPackage@80
+    memberIndex = computeMemberIndex$1@114 // through LazyPackageFragmentScopeForJavaPackage@80
 }

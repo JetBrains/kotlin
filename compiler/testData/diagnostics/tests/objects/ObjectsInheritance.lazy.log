@@ -1,21 +1,21 @@
 LazyJavaPackageFragmentProvider@0 {
     _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
-    _packageFragments('CObj': FqName@12) = null
+    _packageFragments('CObj': FqName@3) = null
     _packageFragments('java': FqName@4) = LazyJavaPackageFragment@5['java']
     _packageFragments('java.lang': FqName@6) = LazyJavaPackageFragment@7['lang']
-    _packageFragments('java.lang.CObj': FqName@14) = null
-    _packageFragments('kotlin': FqName@8) = null
-    _packageFragments('kotlin.CObj': FqName@13) = null
-    _packageFragments('kotlin.io': FqName@10) = null
-    _packageFragments('kotlin.jvm': FqName@9) = null
-    _packageFragments('toplevelObjectDeclarations': FqName@3) = null
-    _packageFragments('toplevelObjectDeclarations.CObj': FqName@11) = null
+    _packageFragments('java.lang.CObj': FqName@8) = null
+    _packageFragments('kotlin': FqName@9) = null
+    _packageFragments('kotlin.CObj': FqName@10) = null
+    _packageFragments('kotlin.io': FqName@11) = null
+    _packageFragments('kotlin.jvm': FqName@12) = null
+    _packageFragments('toplevelObjectDeclarations': FqName@13) = null
+    _packageFragments('toplevelObjectDeclarations.CObj': FqName@14) = null
     _packageFragments('toplevelObjectDeclarations.DOjb': FqName@15) = null
 }
 
 LazyJavaPackageFragment@5['java'] {
-    _functions('lang': Name@20) = EmptyList@21[empty] // through LazyPackageFragmentScopeForJavaPackage@17
-    classes('lang': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@17
-    deserializedPackageScope = JetScope$1@18 // through LazyPackageFragmentScopeForJavaPackage@17
-    memberIndex = computeMemberIndex$1@19 // through LazyPackageFragmentScopeForJavaPackage@17
+    _functions('lang': Name@16) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('lang': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@18
+    memberIndex = computeMemberIndex$1@21 // through LazyPackageFragmentScopeForJavaPackage@18
 }

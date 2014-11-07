@@ -1,51 +1,51 @@
-DescriptorResolver@9 {
-    <name not found> = IntValue@10
+DescriptorResolver@0 {
+    <name not found> = IntValue@1
 }
 
-LazyJavaPackageFragmentProvider@11 {
-    _packageFragments('<root>': FqName@12) = LazyJavaPackageFragment@13['<root>']
-    _packageFragments('Int': FqName@38) = null
-    _packageFragments('MyAbstractClass': FqName@26) = null
-    _packageFragments('MyClass': FqName@30) = null
-    _packageFragments('MyTrait': FqName@22) = null
-    _packageFragments('Unit': FqName@34) = null
-    _packageFragments('java': FqName@16) = LazyJavaPackageFragment@3['java']
-    _packageFragments('java.lang': FqName@17) = LazyJavaPackageFragment@0['lang']
-    _packageFragments('java.lang.Int': FqName@40) = null
-    _packageFragments('java.lang.MyAbstractClass': FqName@28) = null
-    _packageFragments('java.lang.MyClass': FqName@32) = null
-    _packageFragments('java.lang.MyTrait': FqName@24) = null
-    _packageFragments('java.lang.Unit': FqName@36) = null
-    _packageFragments('kotlin': FqName@18) = null
-    _packageFragments('kotlin.Int': FqName@39) = null
-    _packageFragments('kotlin.MyAbstractClass': FqName@27) = null
-    _packageFragments('kotlin.MyClass': FqName@31) = null
+LazyJavaPackageFragmentProvider@2 {
+    _packageFragments('<root>': FqName@3) = LazyJavaPackageFragment@4['<root>']
+    _packageFragments('Int': FqName@5) = null
+    _packageFragments('MyAbstractClass': FqName@6) = null
+    _packageFragments('MyClass': FqName@7) = null
+    _packageFragments('MyTrait': FqName@8) = null
+    _packageFragments('Unit': FqName@9) = null
+    _packageFragments('java': FqName@10) = LazyJavaPackageFragment@11['java']
+    _packageFragments('java.lang': FqName@12) = LazyJavaPackageFragment@13['lang']
+    _packageFragments('java.lang.Int': FqName@14) = null
+    _packageFragments('java.lang.MyAbstractClass': FqName@15) = null
+    _packageFragments('java.lang.MyClass': FqName@16) = null
+    _packageFragments('java.lang.MyTrait': FqName@17) = null
+    _packageFragments('java.lang.Unit': FqName@18) = null
+    _packageFragments('kotlin': FqName@19) = null
+    _packageFragments('kotlin.Int': FqName@20) = null
+    _packageFragments('kotlin.MyAbstractClass': FqName@21) = null
+    _packageFragments('kotlin.MyClass': FqName@22) = null
     _packageFragments('kotlin.MyTrait': FqName@23) = null
-    _packageFragments('kotlin.Unit': FqName@35) = null
-    _packageFragments('kotlin.io': FqName@20) = null
-    _packageFragments('kotlin.jvm': FqName@19) = null
-    _packageFragments('override': FqName@14) = null
-    _packageFragments('override.normal': FqName@15) = null
-    _packageFragments('override.normal.Int': FqName@37) = null
-    _packageFragments('override.normal.MyAbstractClass': FqName@25) = null
-    _packageFragments('override.normal.MyChildClass': FqName@46) = null
-    _packageFragments('override.normal.MyChildClass1': FqName@41) = null
-    _packageFragments('override.normal.MyClass': FqName@29) = null
-    _packageFragments('override.normal.MyIllegalClass': FqName@43) = null
-    _packageFragments('override.normal.MyIllegalClass2': FqName@44) = null
-    _packageFragments('override.normal.MyIllegalClass3': FqName@45) = null
-    _packageFragments('override.normal.MyIllegalClass4': FqName@42) = null
-    _packageFragments('override.normal.MyTrait': FqName@21) = null
-    _packageFragments('override.normal.Unit': FqName@33) = null
+    _packageFragments('kotlin.Unit': FqName@24) = null
+    _packageFragments('kotlin.io': FqName@25) = null
+    _packageFragments('kotlin.jvm': FqName@26) = null
+    _packageFragments('override': FqName@27) = null
+    _packageFragments('override.normal': FqName@28) = null
+    _packageFragments('override.normal.Int': FqName@29) = null
+    _packageFragments('override.normal.MyAbstractClass': FqName@30) = null
+    _packageFragments('override.normal.MyChildClass': FqName@31) = null
+    _packageFragments('override.normal.MyChildClass1': FqName@32) = null
+    _packageFragments('override.normal.MyClass': FqName@33) = null
+    _packageFragments('override.normal.MyIllegalClass': FqName@34) = null
+    _packageFragments('override.normal.MyIllegalClass2': FqName@35) = null
+    _packageFragments('override.normal.MyIllegalClass3': FqName@36) = null
+    _packageFragments('override.normal.MyIllegalClass4': FqName@37) = null
+    _packageFragments('override.normal.MyTrait': FqName@38) = null
+    _packageFragments('override.normal.Unit': FqName@39) = null
 }
 
-LazyJavaPackageFragment@3['java'] {
-    _functions('lang': Name@7) = EmptyList@8[empty] // through LazyPackageFragmentScopeForJavaPackage@5
-    classes('lang': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@5
-    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@5
-    memberIndex = computeMemberIndex$1@6 // through LazyPackageFragmentScopeForJavaPackage@5
+LazyJavaPackageFragment@11['java'] {
+    _functions('lang': Name@40) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@42
+    classes('lang': Name@43) = null // through LazyPackageFragmentScopeForJavaPackage@42
+    deserializedPackageScope = Empty@44 // through LazyPackageFragmentScopeForJavaPackage@42
+    memberIndex = computeMemberIndex$1@45 // through LazyPackageFragmentScopeForJavaPackage@42
 }
 
-LazyJavaPackageFragment@0['lang'] {
-    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@2
+LazyJavaPackageFragment@13['lang'] {
+    deserializedPackageScope = Empty@44 // through LazyPackageFragmentScopeForJavaPackage@46
 }

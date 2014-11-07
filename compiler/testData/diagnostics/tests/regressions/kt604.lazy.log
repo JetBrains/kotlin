@@ -1,49 +1,49 @@
 LazyJavaPackageFragmentProvider@0 {
     _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
-    _packageFragments('ChannelPipeline': FqName@10) = null
-    _packageFragments('ChannelPipelineFactory': FqName@13) = null
-    _packageFragments('DefaultChannelPipeline': FqName@20) = null
-    _packageFragments('StandardPipelineFactory': FqName@19) = null
-    _packageFragments('Unit': FqName@16) = null
-    _packageFragments('java': FqName@3) = LazyJavaPackageFragment@4['java']
-    _packageFragments('java.lang': FqName@5) = LazyJavaPackageFragment@6['lang']
+    _packageFragments('ChannelPipeline': FqName@3) = null
+    _packageFragments('ChannelPipelineFactory': FqName@4) = null
+    _packageFragments('DefaultChannelPipeline': FqName@5) = null
+    _packageFragments('StandardPipelineFactory': FqName@6) = null
+    _packageFragments('Unit': FqName@7) = null
+    _packageFragments('java': FqName@8) = LazyJavaPackageFragment@9['java']
+    _packageFragments('java.lang': FqName@10) = LazyJavaPackageFragment@11['lang']
     _packageFragments('java.lang.ChannelPipeline': FqName@12) = null
-    _packageFragments('java.lang.ChannelPipelineFactory': FqName@15) = null
-    _packageFragments('java.lang.Unit': FqName@18) = null
-    _packageFragments('kotlin': FqName@7) = null
-    _packageFragments('kotlin.ChannelPipeline': FqName@11) = null
-    _packageFragments('kotlin.ChannelPipelineFactory': FqName@14) = null
-    _packageFragments('kotlin.Unit': FqName@17) = null
-    _packageFragments('kotlin.io': FqName@9) = null
-    _packageFragments('kotlin.jvm': FqName@8) = null
+    _packageFragments('java.lang.ChannelPipelineFactory': FqName@13) = null
+    _packageFragments('java.lang.Unit': FqName@14) = null
+    _packageFragments('kotlin': FqName@15) = null
+    _packageFragments('kotlin.ChannelPipeline': FqName@16) = null
+    _packageFragments('kotlin.ChannelPipelineFactory': FqName@17) = null
+    _packageFragments('kotlin.Unit': FqName@18) = null
+    _packageFragments('kotlin.io': FqName@19) = null
+    _packageFragments('kotlin.jvm': FqName@20) = null
 }
 
 LazyJavaPackageFragment@2['<root>'] {
-    _functions('DefaultChannelPipeline': Name@25) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@22
-    _functions('config': Name@27) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@22
-    _functions('invoke': Name@28) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@22
-    classes('DefaultChannelPipeline': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@22
-    classes('Unit': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@22
-    classes('config': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@22
-    classes('invoke': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@22
-    deserializedPackageScope = JetScope$1@23 // through LazyPackageFragmentScopeForJavaPackage@22
-    memberIndex = computeMemberIndex$1@24 // through LazyPackageFragmentScopeForJavaPackage@22
+    _functions('DefaultChannelPipeline': Name@21) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@23
+    _functions('config': Name@24) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@23
+    _functions('invoke': Name@25) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('DefaultChannelPipeline': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('Unit': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('config': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('invoke': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    deserializedPackageScope = Empty@27 // through LazyPackageFragmentScopeForJavaPackage@23
+    memberIndex = computeMemberIndex$1@28 // through LazyPackageFragmentScopeForJavaPackage@23
 }
 
-LazyJavaPackageFragment@4['java'] {
-    _functions('lang': Name@34) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@32
-    classes('lang': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@32
-    deserializedPackageScope = JetScope$1@23 // through LazyPackageFragmentScopeForJavaPackage@32
-    memberIndex = computeMemberIndex$1@33 // through LazyPackageFragmentScopeForJavaPackage@32
+LazyJavaPackageFragment@9['java'] {
+    _functions('lang': Name@29) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@30
+    classes('lang': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@30
+    deserializedPackageScope = Empty@27 // through LazyPackageFragmentScopeForJavaPackage@30
+    memberIndex = computeMemberIndex$1@32 // through LazyPackageFragmentScopeForJavaPackage@30
 }
 
-LazyJavaPackageFragment@6['lang'] {
-    _functions('DefaultChannelPipeline': Name@25) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@29
-    _functions('config': Name@27) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@29
-    _functions('invoke': Name@28) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@29
-    classes('DefaultChannelPipeline': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@29
-    classes('config': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@29
-    classes('invoke': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@29
-    deserializedPackageScope = JetScope$1@23 // through LazyPackageFragmentScopeForJavaPackage@29
-    memberIndex = computeMemberIndex$1@30 // through LazyPackageFragmentScopeForJavaPackage@29
+LazyJavaPackageFragment@11['lang'] {
+    _functions('DefaultChannelPipeline': Name@21) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@33
+    _functions('config': Name@24) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@33
+    _functions('invoke': Name@25) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('DefaultChannelPipeline': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('config': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('invoke': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    deserializedPackageScope = Empty@27 // through LazyPackageFragmentScopeForJavaPackage@33
+    memberIndex = computeMemberIndex$1@34 // through LazyPackageFragmentScopeForJavaPackage@33
 }

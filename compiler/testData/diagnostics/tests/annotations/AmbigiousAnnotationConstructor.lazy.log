@@ -1,155 +1,155 @@
 LazyAnnotationDescriptor@0 {
-    _resolutionResults = OverloadResolutionResultsImpl@2
-    _type = ErrorTypeImpl@1
+    _resolutionResults = OverloadResolutionResultsImpl@1
+    _type = ErrorTypeImpl@2
 }
 
-LazyAnnotationDescriptor@26 {
-    _resolutionResults = OverloadResolutionResultsImpl@28
-    _type = JetTypeImpl@27
+LazyAnnotationDescriptor@3 {
+    _resolutionResults = OverloadResolutionResultsImpl@4
+    _type = JetTypeImpl@5['ArrayList<1>']
 }
 
-LazyAnnotationDescriptor@46 {
-    _resolutionResults = OverloadResolutionResultsImpl@48
-    _type = JetTypeImpl@47
+LazyAnnotationDescriptor@6 {
+    _resolutionResults = OverloadResolutionResultsImpl@7
+    _type = JetTypeImpl@8['Deprecated']
 }
 
-LazyJavaClassDescriptor@29['ArrayList'] {
-    _constructors = ArrayList@32[3] { JavaConstructorDescriptor@33['<init>'], JavaConstructorDescriptor@34['<init>'], JavaConstructorDescriptor@35['<init>'] } // through LazyJavaClassMemberScope@36
+LazyJavaClassDescriptor@9['ArrayList'] {
+    _constructors = ArrayList@10[3] { JavaConstructorDescriptor@11['<init>'], JavaConstructorDescriptor@12['<init>'], JavaConstructorDescriptor@13['<init>'] } // through LazyJavaClassMemberScope@14
     _functionTypeForSamInterface = null
-    _typeConstructor = LazyJavaClassTypeConstructor@30['ArrayList']
-    defaultType = JetTypeImpl@31
+    _typeConstructor = LazyJavaClassTypeConstructor@15['ArrayList']
+    defaultType = JetTypeImpl@16['ArrayList<1>']
 }
 
-LazyJavaClassDescriptor@3['Deprecated'] {
-    _constructors = ArrayList@6[1] { JavaConstructorDescriptor@7['<init>'] } // through LazyJavaClassMemberScope@8
-    _typeConstructor = LazyJavaClassTypeConstructor@4['Deprecated']
-    defaultType = JetTypeImpl@5
+LazyJavaClassDescriptor@17['Deprecated'] {
+    _constructors = ArrayList@18[1] { JavaConstructorDescriptor@19['<init>'] } // through LazyJavaClassMemberScope@20
+    _typeConstructor = LazyJavaClassTypeConstructor@21['Deprecated']
+    defaultType = JetTypeImpl@22['Deprecated']
 }
 
-LazyJavaClassTypeConstructor@30['ArrayList'] {
-    _parameters = ArrayList@40[1] { LazyJavaTypeParameterDescriptor@39['E'] }
+LazyJavaClassTypeConstructor@15['ArrayList'] {
+    _parameters = ArrayList@23[1] { LazyJavaTypeParameterDescriptor@24['E'] }
 }
 
-LazyJavaClassTypeConstructor@4['Deprecated'] {
-    _parameters = ArrayList@9[empty]
+LazyJavaClassTypeConstructor@21['Deprecated'] {
+    _parameters = ArrayList@25[empty]
 }
 
-LazyJavaClassifierType@10['Collection<? extends E>'] {
-    _arguments = ArrayList@14[1] { TypeProjectionImpl@15 }
-    _memberScope = SubstitutingScope@16
-    _nullable = Boolean@11
-    _typeConstructor = DeserializedClassTypeConstructor@13
-    classifier = JavaClassImpl@12['Collection']
+LazyJavaClassifierType@26['Collection<? extends E>'] {
+    _arguments = ArrayList@27[1] { TypeProjectionImpl@28 }
+    _memberScope = SubstitutingScope@29
+    _nullable = 'false': Boolean@30
+    _typeConstructor = DeserializedClassTypeConstructor@31
+    classifier = JavaClassImpl@32['Collection']
 }
 
-LazyJavaClassifierType@102['Collection<? extends E>'] {
-    _arguments = ArrayList@104[1] { TypeProjectionImpl@105 }
-    _memberScope = SubstitutingScope@106
-    _nullable = Boolean@50
-    _typeConstructor = DeserializedClassTypeConstructor@103
-    classifier = JavaClassImpl@12['Collection']
+LazyJavaClassifierType@33['Collection<? extends E>'] {
+    _arguments = ArrayList@34[1] { TypeProjectionImpl@35 }
+    _memberScope = SubstitutingScope@36
+    _nullable = 'true': Boolean@37
+    _typeConstructor = DeserializedClassTypeConstructor@38
+    classifier = JavaClassImpl@32['Collection']
 }
 
-LazyJavaClassifierType@49['E'] {
-    _arguments = ArrayList@53[empty]
-    _nullable = Boolean@50
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@52
-    classifier = JavaTypeParameterImpl@51['E']
+LazyJavaClassifierType@39['E'] {
+    _arguments = ArrayList@40[empty]
+    _nullable = 'false': Boolean@30
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@41
+    classifier = JavaTypeParameterImpl@42['E']
 }
 
-LazyJavaClassifierType@54['E'] {
-    _arguments = ArrayList@56[empty]
-    _nullable = Boolean@11
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@52
-    classifier = JavaTypeParameterImpl@55['E']
+LazyJavaClassifierType@43['E'] {
+    _arguments = ArrayList@44[empty]
+    _nullable = 'false': Boolean@30
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@41
+    classifier = JavaTypeParameterImpl@45['E']
 }
 
-LazyJavaClassifierType@57['E'] {
-    _arguments = ArrayList@58[empty]
-    _nullable = Boolean@50
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@52
-    classifier = JavaTypeParameterImpl@55['E']
+LazyJavaClassifierType@46['E'] {
+    _arguments = ArrayList@47[empty]
+    _nullable = 'true': Boolean@37
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@41
+    classifier = JavaTypeParameterImpl@45['E']
 }
 
-LazyJavaClassifierType@107['E'] {
-    _arguments = ArrayList@108[empty]
-    _nullable = Boolean@11
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@52
-    classifier = JavaTypeParameterImpl@51['E']
+LazyJavaClassifierType@48['E'] {
+    _arguments = ArrayList@49[empty]
+    _nullable = 'true': Boolean@37
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@41
+    classifier = JavaTypeParameterImpl@42['E']
 }
 
-LazyJavaPackageFragmentProvider@66 {
-    _packageFragments('<root>': FqName@67) = LazyJavaPackageFragment@68['<root>']
-    _packageFragments('ArrayList': FqName@77) = null
-    _packageFragments('Deprecated': FqName@86) = null
-    _packageFragments('Int': FqName@80) = null
-    _packageFragments('Xoo': FqName@83) = null
-    _packageFragments('java': FqName@69) = LazyJavaPackageFragment@17['java']
-    _packageFragments('java.lang': FqName@70) = LazyJavaPackageFragment@59['lang']
-    _packageFragments('java.lang.ArrayList': FqName@79) = null
-    _packageFragments('java.lang.Deprecated': FqName@88) = null
-    _packageFragments('java.lang.Int': FqName@82) = null
-    _packageFragments('java.lang.Xoo': FqName@85) = null
-    _packageFragments('java.lang.x': FqName@92) = null
-    _packageFragments('java.util': FqName@74) = LazyJavaPackageFragment@41['util']
-    _packageFragments('java.util.ArrayList': FqName@75) = null
-    _packageFragments('kotlin': FqName@71) = null
-    _packageFragments('kotlin.ArrayList': FqName@78) = null
-    _packageFragments('kotlin.Deprecated': FqName@87) = null
-    _packageFragments('kotlin.Int': FqName@81) = null
-    _packageFragments('kotlin.Xoo': FqName@84) = null
-    _packageFragments('kotlin.io': FqName@73) = null
-    _packageFragments('kotlin.jvm': FqName@72) = null
-    _packageFragments('kotlin.x': FqName@91) = null
-    _packageFragments('x': FqName@90) = null
-    topLevelClasses(JavaClassImpl@76['ArrayList']) = LazyJavaClassDescriptor@29['ArrayList']
-    topLevelClasses(JavaClassImpl@89['Deprecated']) = LazyJavaClassDescriptor@3['Deprecated']
+LazyJavaPackageFragmentProvider@50 {
+    _packageFragments('<root>': FqName@51) = LazyJavaPackageFragment@52['<root>']
+    _packageFragments('ArrayList': FqName@53) = null
+    _packageFragments('Deprecated': FqName@54) = null
+    _packageFragments('Int': FqName@55) = null
+    _packageFragments('Xoo': FqName@56) = null
+    _packageFragments('java': FqName@57) = LazyJavaPackageFragment@58['java']
+    _packageFragments('java.lang': FqName@59) = LazyJavaPackageFragment@60['lang']
+    _packageFragments('java.lang.ArrayList': FqName@61) = null
+    _packageFragments('java.lang.Deprecated': FqName@62) = null
+    _packageFragments('java.lang.Int': FqName@63) = null
+    _packageFragments('java.lang.Xoo': FqName@64) = null
+    _packageFragments('java.lang.x': FqName@65) = null
+    _packageFragments('java.util': FqName@66) = LazyJavaPackageFragment@67['util']
+    _packageFragments('java.util.ArrayList': FqName@68) = null
+    _packageFragments('kotlin': FqName@69) = null
+    _packageFragments('kotlin.ArrayList': FqName@70) = null
+    _packageFragments('kotlin.Deprecated': FqName@71) = null
+    _packageFragments('kotlin.Int': FqName@72) = null
+    _packageFragments('kotlin.Xoo': FqName@73) = null
+    _packageFragments('kotlin.io': FqName@74) = null
+    _packageFragments('kotlin.jvm': FqName@75) = null
+    _packageFragments('kotlin.x': FqName@76) = null
+    _packageFragments('x': FqName@77) = null
+    topLevelClasses(JavaClassImpl@78['ArrayList']) = LazyJavaClassDescriptor@9['ArrayList']
+    topLevelClasses(JavaClassImpl@79['Deprecated']) = LazyJavaClassDescriptor@17['Deprecated']
 }
 
-LazyJavaPackageFragment@68['<root>'] {
-    _functions('java': Name@101) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@97
-    _functions('x': Name@65) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@97
-    classes('ArrayList': Name@98) = null // through LazyPackageFragmentScopeForJavaPackage@97
-    classes('Deprecated': Name@62) = null // through LazyPackageFragmentScopeForJavaPackage@97
-    classes('Int': Name@99) = null // through LazyPackageFragmentScopeForJavaPackage@97
-    classes('Xoo': Name@60) = null // through LazyPackageFragmentScopeForJavaPackage@97
-    classes('java': Name@96) = null // through LazyPackageFragmentScopeForJavaPackage@97
-    classes('x': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@97
-    deserializedPackageScope = JetScope$1@21 // through LazyPackageFragmentScopeForJavaPackage@97
-    memberIndex = computeMemberIndex$1@100 // through LazyPackageFragmentScopeForJavaPackage@97
+LazyJavaPackageFragment@52['<root>'] {
+    _functions('java': Name@80) = EmptyList@81[empty] // through LazyPackageFragmentScopeForJavaPackage@82
+    _functions('x': Name@83) = EmptyList@81[empty] // through LazyPackageFragmentScopeForJavaPackage@82
+    classes('ArrayList': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@82
+    classes('Deprecated': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@82
+    classes('Int': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@82
+    classes('Xoo': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@82
+    classes('java': Name@88) = null // through LazyPackageFragmentScopeForJavaPackage@82
+    classes('x': Name@89) = null // through LazyPackageFragmentScopeForJavaPackage@82
+    deserializedPackageScope = Empty@90 // through LazyPackageFragmentScopeForJavaPackage@82
+    memberIndex = computeMemberIndex$1@91 // through LazyPackageFragmentScopeForJavaPackage@82
 }
 
-LazyJavaPackageFragment@17['java'] {
-    _functions('lang': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@19
-    _functions('util': Name@25) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@19
-    classes('lang': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@19
-    classes('util': Name@20) = null // through LazyPackageFragmentScopeForJavaPackage@19
-    deserializedPackageScope = JetScope$1@21 // through LazyPackageFragmentScopeForJavaPackage@19
-    memberIndex = computeMemberIndex$1@22 // through LazyPackageFragmentScopeForJavaPackage@19
+LazyJavaPackageFragment@58['java'] {
+    _functions('lang': Name@92) = EmptyList@81[empty] // through LazyPackageFragmentScopeForJavaPackage@93
+    _functions('util': Name@94) = EmptyList@81[empty] // through LazyPackageFragmentScopeForJavaPackage@93
+    classes('lang': Name@95) = null // through LazyPackageFragmentScopeForJavaPackage@93
+    classes('util': Name@96) = null // through LazyPackageFragmentScopeForJavaPackage@93
+    deserializedPackageScope = Empty@90 // through LazyPackageFragmentScopeForJavaPackage@93
+    memberIndex = computeMemberIndex$1@97 // through LazyPackageFragmentScopeForJavaPackage@93
 }
 
-LazyJavaPackageFragment@59['lang'] {
-    _functions('x': Name@65) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@61
-    classes('Deprecated': Name@62) = LazyJavaClassDescriptor@3['Deprecated'] // through LazyPackageFragmentScopeForJavaPackage@61
-    classes('Xoo': Name@60) = null // through LazyPackageFragmentScopeForJavaPackage@61
-    classes('x': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@61
-    deserializedPackageScope = JetScope$1@21 // through LazyPackageFragmentScopeForJavaPackage@61
-    memberIndex = computeMemberIndex$1@64 // through LazyPackageFragmentScopeForJavaPackage@61
+LazyJavaPackageFragment@60['lang'] {
+    _functions('x': Name@83) = EmptyList@81[empty] // through LazyPackageFragmentScopeForJavaPackage@98
+    classes('Deprecated': Name@85) = LazyJavaClassDescriptor@17['Deprecated'] // through LazyPackageFragmentScopeForJavaPackage@98
+    classes('Xoo': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@98
+    classes('x': Name@89) = null // through LazyPackageFragmentScopeForJavaPackage@98
+    deserializedPackageScope = Empty@90 // through LazyPackageFragmentScopeForJavaPackage@98
+    memberIndex = computeMemberIndex$1@99 // through LazyPackageFragmentScopeForJavaPackage@98
 }
 
-LazyJavaPackageFragment@41['util'] {
-    _functions('ArrayList': Name@45) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('ArrayList': Name@42) = LazyJavaClassDescriptor@29['ArrayList'] // through LazyPackageFragmentScopeForJavaPackage@43
-    deserializedPackageScope = JetScope$1@21 // through LazyPackageFragmentScopeForJavaPackage@43
-    memberIndex = computeMemberIndex$1@44 // through LazyPackageFragmentScopeForJavaPackage@43
+LazyJavaPackageFragment@67['util'] {
+    _functions('ArrayList': Name@100) = EmptyList@81[empty] // through LazyPackageFragmentScopeForJavaPackage@101
+    classes('ArrayList': Name@102) = LazyJavaClassDescriptor@9['ArrayList'] // through LazyPackageFragmentScopeForJavaPackage@101
+    deserializedPackageScope = Empty@90 // through LazyPackageFragmentScopeForJavaPackage@101
+    memberIndex = computeMemberIndex$1@103 // through LazyPackageFragmentScopeForJavaPackage@101
 }
 
-LazyJavaTypeParameterDescriptor@39['E'] {
-    defaultType = JetTypeImpl@95
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@52
-    upperBounds = LinkedHashSet@93[1] { NullableType@94 }
+LazyJavaTypeParameterDescriptor@24['E'] {
+    defaultType = JetTypeImpl@104['E']
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@41
+    upperBounds = LinkedHashSet@105[1] { NullableType@106 }
 }
 
-LazyJavaTypeParameterResolver@37 {
-    resolve(JavaTypeParameterImpl@38['E']) = LazyJavaTypeParameterDescriptor@39['E']
+LazyJavaTypeParameterResolver@107 {
+    resolve(JavaTypeParameterImpl@108['E']) = LazyJavaTypeParameterDescriptor@24['E']
 }
