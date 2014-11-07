@@ -52,6 +52,14 @@ public open class KotlinObjectRenderer : ClassRenderer() {
     override fun isApplicable(jdiType: Type?): Boolean {
         if (!super.isApplicable(jdiType)) return false
 
+        var isCustomRendererApplicable = false
+        NodeRendererSettings.getInstance().getCustomRenderers().iterateRenderers {
+            isCustomRendererApplicable = it.isApplicable(jdiType)
+            !isCustomRendererApplicable
+        }
+
+        if (isCustomRendererApplicable) return false
+
         return jdiType.isKotlinClass()
     }
 
