@@ -158,7 +158,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             typeInfo: TypeInfo,
             substitutions: List<JetTypeSubstitution>,
             scope: JetScope): List<TypeCandidate> {
-        if (typeInfo is TypeInfo.ByType && typeInfo.keepUnsubstituted) return computeTypeCandidates(typeInfo)
+        if (!typeInfo.substitutionsAllowed) return computeTypeCandidates(typeInfo)
         return typeCandidates.getOrPut(typeInfo) {
             val types = typeInfo.getPossibleTypes(this).reverse()
 

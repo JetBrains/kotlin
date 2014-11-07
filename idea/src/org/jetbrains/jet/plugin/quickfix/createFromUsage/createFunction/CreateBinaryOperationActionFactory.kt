@@ -33,8 +33,8 @@ public object CreateBinaryOperationActionFactory: JetSingleIntentionActionFactor
 
         val receiverType = TypeInfo(receiverExpr, Variance.IN_VARIANCE)
         val returnType = when {
-            inOperation -> TypeInfo.ByType(builtIns.getBooleanType(), Variance.INVARIANT, true)
-            comparisonOperation -> TypeInfo.ByType(builtIns.getIntType(), Variance.INVARIANT, true)
+            inOperation -> TypeInfo.ByType(builtIns.getBooleanType(), Variance.INVARIANT).noSubstitutions()
+            comparisonOperation -> TypeInfo.ByType(builtIns.getIntType(), Variance.INVARIANT).noSubstitutions()
             else -> TypeInfo(callExpr, Variance.OUT_VARIANCE)
         }
         val parameters = Collections.singletonList(ParameterInfo(TypeInfo(argumentExpr, Variance.IN_VARIANCE)))
