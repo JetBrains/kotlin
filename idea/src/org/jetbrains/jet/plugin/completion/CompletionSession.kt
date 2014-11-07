@@ -32,6 +32,9 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.DelegatingGlobalSearchScope
+import java.util.HashSet
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 class CompletionSessionConfiguration(
@@ -62,7 +65,12 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession)
 
     protected val project: Project = position.getProject()
-    protected val searchScope: GlobalSearchScope = parameters.getOriginalFile().getResolveScope()
+
+    // we need to exclude the original file from scope because our resolve session is built with this file replaced by synthetic one
+    protected val searchScope: GlobalSearchScope = object : DelegatingGlobalSearchScope(parameters.getOriginalFile().getResolveScope()) {
+        override fun contains(file: VirtualFile) = super.contains(file) && file != parameters.getOriginalFile().getVirtualFile()
+    }
+
     protected val indicesHelper: KotlinIndicesHelper = KotlinIndicesHelper(project, resolveSession, searchScope) { isVisibleDescriptor(it) }
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
@@ -123,7 +131,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
-        AllClassesCompletion(parameters, resolveSession, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }).collect(collector)
+        AllClassesCompletion(parameters, resolveSession, searchScope, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }).collect(collector)
     }
 }
 

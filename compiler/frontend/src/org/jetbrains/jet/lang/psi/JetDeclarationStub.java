@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
@@ -37,5 +38,14 @@ abstract class JetDeclarationStub<T extends StubElement> extends JetModifierList
     @Override
     public KDoc getDocComment() {
         return FindDocCommentPackage.findDocComment(this);
+    }
+
+    @Override
+    public PsiElement getParent() {
+        T stub = getStub();
+        if (stub != null) {
+            return stub.getParentStub().getPsi();
+        }
+        return super.getParent();
     }
 }

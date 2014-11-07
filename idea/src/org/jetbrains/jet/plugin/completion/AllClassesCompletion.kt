@@ -30,9 +30,11 @@ import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import com.intellij.psi.search.GlobalSearchScope
 
 class AllClassesCompletion(val parameters: CompletionParameters,
                            val resolveSession: ResolveSessionForBodies,
+                           val scope: GlobalSearchScope,
                            val prefixMatcher: PrefixMatcher,
                            val kindFilter: (ClassKind) -> Boolean,
                            val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
@@ -40,14 +42,11 @@ class AllClassesCompletion(val parameters: CompletionParameters,
         val builtIns = KotlinBuiltIns.getInstance().getNonPhysicalClasses().filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) }
         result.addDescriptorElements(builtIns, suppressAutoInsertion = true)
 
-        val file = parameters.getOriginalFile()
-        val project = file.getProject()
-        val searchScope = file.getResolveScope()
-        val helper = KotlinIndicesHelper(project, resolveSession, searchScope, visibilityFilter)
+        val helper = KotlinIndicesHelper(scope.getProject(), resolveSession, scope, visibilityFilter)
         result.addDescriptorElements(helper.getClassDescriptors({ prefixMatcher.prefixMatches(it) }, kindFilter),
                                      suppressAutoInsertion = true)
 
-        if (!ProjectStructureUtil.isJsKotlinModule(file as JetFile)) {
+        if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
             addAdaptedJavaCompletion(result)
         }
     }
