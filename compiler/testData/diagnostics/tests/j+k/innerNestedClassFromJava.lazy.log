@@ -2,67 +2,67 @@ LazyJavaClassDescriptor@0['Inner'] {
     _typeConstructor = LazyJavaClassTypeConstructor@1['Inner']
 }
 
-LazyJavaClassDescriptor@4['M'] {
-    nestedClassIndex = LinkedHashMap@10 // through LazyJavaClassMemberScope@11
-    nestedClasses('Inner': Name@12) = LazyJavaClassDescriptor@0['Inner'] // through LazyJavaClassMemberScope@11
-    nestedClasses('Nested': Name@13) = LazyJavaClassDescriptor@14['Nested'] // through LazyJavaClassMemberScope@11
-    nestedClasses('PrInner': Name@15) = LazyJavaClassDescriptor@16['PrInner'] // through LazyJavaClassMemberScope@11
-    nestedClasses('PrNested': Name@17) = LazyJavaClassDescriptor@6['PrNested'] // through LazyJavaClassMemberScope@11
+LazyJavaClassDescriptor@2['M'] {
+    nestedClassIndex = LinkedHashMap@3 // through LazyJavaClassMemberScope@4
+    nestedClasses('Inner': Name@5) = LazyJavaClassDescriptor@0['Inner'] // through LazyJavaClassMemberScope@4
+    nestedClasses('Nested': Name@6) = LazyJavaClassDescriptor@7['Nested'] // through LazyJavaClassMemberScope@4
+    nestedClasses('PrInner': Name@8) = LazyJavaClassDescriptor@9['PrInner'] // through LazyJavaClassMemberScope@4
+    nestedClasses('PrNested': Name@10) = LazyJavaClassDescriptor@11['PrNested'] // through LazyJavaClassMemberScope@4
 }
 
-LazyJavaClassDescriptor@14['Nested'] {
-    _typeConstructor = LazyJavaClassTypeConstructor@8['Nested']
+LazyJavaClassDescriptor@7['Nested'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@12['Nested']
 }
 
-LazyJavaClassDescriptor@16['PrInner'] {
-    _typeConstructor = LazyJavaClassTypeConstructor@42['PrInner']
+LazyJavaClassDescriptor@9['PrInner'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@13['PrInner']
 }
 
-LazyJavaClassDescriptor@6['PrNested'] {
-    _typeConstructor = LazyJavaClassTypeConstructor@7['PrNested']
+LazyJavaClassDescriptor@11['PrNested'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@14['PrNested']
 }
 
 LazyJavaClassTypeConstructor@1['Inner'] {
-    _parameters = ArrayList@39[empty]
+    _parameters = ArrayList@15[empty]
 }
 
-LazyJavaClassTypeConstructor@8['Nested'] {
-    _parameters = ArrayList@9[empty]
+LazyJavaClassTypeConstructor@12['Nested'] {
+    _parameters = ArrayList@16[empty]
 }
 
-LazyJavaClassTypeConstructor@42['PrInner'] {
-    _parameters = ArrayList@44[empty]
+LazyJavaClassTypeConstructor@13['PrInner'] {
+    _parameters = ArrayList@17[empty]
 }
 
-LazyJavaClassTypeConstructor@7['PrNested'] {
-    _parameters = ArrayList@43[empty]
+LazyJavaClassTypeConstructor@14['PrNested'] {
+    _parameters = ArrayList@18[empty]
 }
 
-LazyJavaPackageFragmentProvider@25 {
-    _packageFragments('<root>': FqName@26) = LazyJavaPackageFragment@27['<root>']
-    _packageFragments('a': FqName@36) = LazyJavaPackageFragment@2['a']
-    _packageFragments('a.M': FqName@37) = null
-    _packageFragments('b': FqName@28) = null
-    _packageFragments('b.a': FqName@35) = null
-    _packageFragments('java': FqName@29) = LazyJavaPackageFragment@18['java']
-    _packageFragments('java.lang': FqName@30) = LazyJavaPackageFragment@31['lang']
-    _packageFragments('kotlin': FqName@32) = null
-    _packageFragments('kotlin.io': FqName@34) = null
+LazyJavaPackageFragmentProvider@19 {
+    _packageFragments('<root>': FqName@20) = LazyJavaPackageFragment@21['<root>']
+    _packageFragments('a': FqName@22) = LazyJavaPackageFragment@23['a']
+    _packageFragments('a.M': FqName@24) = null
+    _packageFragments('b': FqName@25) = null
+    _packageFragments('b.a': FqName@26) = null
+    _packageFragments('java': FqName@27) = LazyJavaPackageFragment@28['java']
+    _packageFragments('java.lang': FqName@29) = LazyJavaPackageFragment@30['lang']
+    _packageFragments('kotlin': FqName@31) = null
+    _packageFragments('kotlin.io': FqName@32) = null
     _packageFragments('kotlin.jvm': FqName@33) = null
-    topLevelClasses(JavaClassImpl@38['M']) = LazyJavaClassDescriptor@4['M']
+    topLevelClasses(JavaClassImpl@34['M']) = LazyJavaClassDescriptor@2['M']
 }
 
-LazyJavaPackageFragment@2['a'] {
-    classes('M': Name@3) = LazyJavaClassDescriptor@4['M'] // through LazyPackageFragmentScopeForJavaPackage@5
+LazyJavaPackageFragment@23['a'] {
+    classes('M': Name@35) = LazyJavaClassDescriptor@2['M'] // through LazyPackageFragmentScopeForJavaPackage@36
 }
 
-LazyJavaPackageFragment@18['java'] {
-    _functions('lang': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@20
-    classes('lang': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@20
-    deserializedPackageScope = JetScope$1@21 // through LazyPackageFragmentScopeForJavaPackage@20
-    memberIndex = computeMemberIndex$1@22 // through LazyPackageFragmentScopeForJavaPackage@20
+LazyJavaPackageFragment@28['java'] {
+    _functions('lang': Name@37) = EmptyList@38[empty] // through LazyPackageFragmentScopeForJavaPackage@39
+    classes('lang': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@39
+    deserializedPackageScope = Empty@41 // through LazyPackageFragmentScopeForJavaPackage@39
+    memberIndex = computeMemberIndex$1@42 // through LazyPackageFragmentScopeForJavaPackage@39
 }
 
-LazyJavaPackageFragment@31['lang'] {
-    classes('a': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@41
+LazyJavaPackageFragment@30['lang'] {
+    classes('a': Name@43) = null // through LazyPackageFragmentScopeForJavaPackage@44
 }

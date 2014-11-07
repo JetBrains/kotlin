@@ -1,16 +1,16 @@
-DescriptorResolver@46 {
-    <name not found> = JetTypeImpl@47
-    <name not found> = JetTypeImpl@48
-    <name not found> = JetTypeImpl@48
-    <name not found> = JetTypeImpl@49
-    <name not found> = JetTypeImpl@47
-    <name not found> = JetTypeImpl@48
-    <name not found> = JetTypeImpl@48
-    <name not found> = JetTypeImpl@49
-    <name not found> = JetTypeImpl@47
-    <name not found> = JetTypeImpl@48
-    <name not found> = JetTypeImpl@48
-    <name not found> = JetTypeImpl@49
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1['Int']
+    <name not found> = JetTypeImpl@1['Int']
+    <name not found> = JetTypeImpl@1['Int']
+    <name not found> = JetTypeImpl@1['Int']
+    <name not found> = JetTypeImpl@1['Int']
+    <name not found> = JetTypeImpl@1['Int']
+    <name not found> = JetTypeImpl@2['MyJavaClass']
+    <name not found> = JetTypeImpl@2['MyJavaClass']
+    <name not found> = JetTypeImpl@2['MyJavaClass']
+    <name not found> = JetTypeImpl@3['NestedClass']
+    <name not found> = JetTypeImpl@3['NestedClass']
+    <name not found> = JetTypeImpl@3['NestedClass']
     <name not found> = null
     <name not found> = null
     <name not found> = null
@@ -19,111 +19,111 @@ DescriptorResolver@46 {
     <name not found> = null
 }
 
-LazyJavaClassDescriptor@24['MyJavaClass'] {
-    _constructors = ArrayList@63[1] { JavaConstructorDescriptor@64['<init>'] } // through LazyJavaClassMemberScope@65
+LazyJavaClassDescriptor@4['MyJavaClass'] {
+    _constructors = ArrayList@5[1] { JavaConstructorDescriptor@6['<init>'] } // through LazyJavaClassMemberScope@7
     _functionTypeForSamInterface = null
-    _functions('NestedClass': Name@76) = EmptyList@5[empty] // through LazyJavaClassMemberScope@65
-    _functions('NestedClass': Name@76) = EmptyList@5[empty] // through LazyJavaStaticClassScope@67
-    _functions('staticMethod': Name@70) = ArrayList@71[1] { JavaMethodDescriptor@72['staticMethod'] } // through LazyJavaStaticClassScope@67
-    _functions('staticMethod': Name@70) = EmptyList@5[empty] // through LazyJavaClassMemberScope@65
-    _properties('NestedClass': Name@74) = EmptyList@5[empty] // through LazyJavaClassMemberScope@65
-    _properties('NestedClass': Name@74) = EmptyList@5[empty] // through LazyJavaStaticClassScope@67
-    _properties('staticMethod': Name@70) = EmptyList@5[empty] // through LazyJavaClassMemberScope@65
-    _properties('staticMethod': Name@70) = EmptyList@5[empty] // through LazyJavaStaticClassScope@67
-    _typeConstructor = LazyJavaClassTypeConstructor@54['MyJavaClass']
-    defaultType = JetTypeImpl@47
-    enumEntryIndex = LinkedHashMap@69 // through LazyJavaClassMemberScope@65
-    memberIndex = computeMemberIndex$1@73 // through LazyJavaClassMemberScope@65
-    memberIndex = computeMemberIndex$1@66 // through LazyJavaStaticClassScope@67
-    nestedClassIndex = LinkedHashMap@68 // through LazyJavaClassMemberScope@65
-    nestedClasses('NestedClass': Name@74) = LazyJavaClassDescriptor@75['NestedClass'] // through LazyJavaClassMemberScope@65
-    nestedClasses('staticMethod': Name@70) = null // through LazyJavaClassMemberScope@65
+    _functions('NestedClass': Name@8) = EmptyList@9[empty] // through LazyJavaClassMemberScope@7
+    _functions('NestedClass': Name@8) = EmptyList@9[empty] // through LazyJavaStaticClassScope@10
+    _functions('staticMethod': Name@11) = ArrayList@12[1] { JavaMethodDescriptor@13['staticMethod'] } // through LazyJavaStaticClassScope@10
+    _functions('staticMethod': Name@11) = EmptyList@9[empty] // through LazyJavaClassMemberScope@7
+    _properties('NestedClass': Name@14) = EmptyList@9[empty] // through LazyJavaClassMemberScope@7
+    _properties('NestedClass': Name@14) = EmptyList@9[empty] // through LazyJavaStaticClassScope@10
+    _properties('staticMethod': Name@11) = EmptyList@9[empty] // through LazyJavaClassMemberScope@7
+    _properties('staticMethod': Name@11) = EmptyList@9[empty] // through LazyJavaStaticClassScope@10
+    _typeConstructor = LazyJavaClassTypeConstructor@15['MyJavaClass']
+    defaultType = JetTypeImpl@2['MyJavaClass']
+    enumEntryIndex = LinkedHashMap@16 // through LazyJavaClassMemberScope@7
+    memberIndex = computeMemberIndex$1@17 // through LazyJavaClassMemberScope@7
+    memberIndex = computeMemberIndex$1@18 // through LazyJavaStaticClassScope@10
+    nestedClassIndex = LinkedHashMap@19 // through LazyJavaClassMemberScope@7
+    nestedClasses('NestedClass': Name@14) = LazyJavaClassDescriptor@20['NestedClass'] // through LazyJavaClassMemberScope@7
+    nestedClasses('staticMethod': Name@11) = null // through LazyJavaClassMemberScope@7
 }
 
-LazyJavaClassDescriptor@75['NestedClass'] {
-    _constructors = ArrayList@86[1] { JavaConstructorDescriptor@87['<init>'] } // through LazyJavaClassMemberScope@80
+LazyJavaClassDescriptor@20['NestedClass'] {
+    _constructors = ArrayList@21[1] { JavaConstructorDescriptor@22['<init>'] } // through LazyJavaClassMemberScope@23
     _functionTypeForSamInterface = null
-    _functions('staticMethodOfNested': Name@82) = ArrayList@83[1] { JavaMethodDescriptor@84['staticMethodOfNested'] } // through LazyJavaStaticClassScope@78
-    _functions('staticMethodOfNested': Name@82) = EmptyList@5[empty] // through LazyJavaClassMemberScope@80
-    _properties('staticMethodOfNested': Name@82) = EmptyList@5[empty] // through LazyJavaClassMemberScope@80
-    _properties('staticMethodOfNested': Name@82) = EmptyList@5[empty] // through LazyJavaStaticClassScope@78
-    _typeConstructor = LazyJavaClassTypeConstructor@42['NestedClass']
-    defaultType = JetTypeImpl@49
-    enumEntryIndex = LinkedHashMap@81 // through LazyJavaClassMemberScope@80
-    memberIndex = computeMemberIndex$1@85 // through LazyJavaClassMemberScope@80
-    memberIndex = computeMemberIndex$1@77 // through LazyJavaStaticClassScope@78
-    nestedClassIndex = LinkedHashMap@79 // through LazyJavaClassMemberScope@80
-    nestedClasses('staticMethodOfNested': Name@82) = null // through LazyJavaClassMemberScope@80
+    _functions('staticMethodOfNested': Name@24) = ArrayList@25[1] { JavaMethodDescriptor@26['staticMethodOfNested'] } // through LazyJavaStaticClassScope@27
+    _functions('staticMethodOfNested': Name@24) = EmptyList@9[empty] // through LazyJavaClassMemberScope@23
+    _properties('staticMethodOfNested': Name@24) = EmptyList@9[empty] // through LazyJavaClassMemberScope@23
+    _properties('staticMethodOfNested': Name@24) = EmptyList@9[empty] // through LazyJavaStaticClassScope@27
+    _typeConstructor = LazyJavaClassTypeConstructor@28['NestedClass']
+    defaultType = JetTypeImpl@3['NestedClass']
+    enumEntryIndex = LinkedHashMap@29 // through LazyJavaClassMemberScope@23
+    memberIndex = computeMemberIndex$1@30 // through LazyJavaClassMemberScope@23
+    memberIndex = computeMemberIndex$1@31 // through LazyJavaStaticClassScope@27
+    nestedClassIndex = LinkedHashMap@32 // through LazyJavaClassMemberScope@23
+    nestedClasses('staticMethodOfNested': Name@24) = null // through LazyJavaClassMemberScope@23
 }
 
-LazyJavaClassTypeConstructor@54['MyJavaClass'] {
-    _parameters = ArrayList@55[empty]
-    _supertypes = ArrayList@56[1] { JetTypeImpl@44 }
+LazyJavaClassTypeConstructor@15['MyJavaClass'] {
+    _parameters = ArrayList@33[empty]
+    _supertypes = ArrayList@34[1] { JetTypeImpl@35['Any'] }
 }
 
-LazyJavaClassTypeConstructor@42['NestedClass'] {
-    _parameters = ArrayList@45[empty]
-    _supertypes = ArrayList@43[1] { JetTypeImpl@44 }
+LazyJavaClassTypeConstructor@28['NestedClass'] {
+    _parameters = ArrayList@36[empty]
+    _supertypes = ArrayList@37[1] { JetTypeImpl@35['Any'] }
 }
 
-LazyJavaClassifierType@6['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@8
-    classifier = JavaClassImpl@7['Object']
+LazyJavaClassifierType@38['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@39
+    classifier = JavaClassImpl@40['Object']
 }
 
-LazyJavaClassifierType@57['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@8
-    classifier = JavaClassImpl@58['Object']
+LazyJavaClassifierType@41['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@39
+    classifier = JavaClassImpl@42['Object']
 }
 
-LazyJavaPackageFragmentProvider@9 {
-    _packageFragments('<root>': FqName@10) = LazyJavaPackageFragment@11['<root>']
-    _packageFragments('MyJavaClass': FqName@38) = null
-    _packageFragments('a': FqName@12) = LazyJavaPackageFragment@13['a']
-    _packageFragments('a.MyJavaClass': FqName@22) = null
-    _packageFragments('a.c': FqName@15) = null
-    _packageFragments('a.c.MyJavaClass': FqName@37) = null
-    _packageFragments('a.c.mc1': FqName@28) = null
-    _packageFragments('a.c.x': FqName@27) = null
-    _packageFragments('a.c.y': FqName@25) = null
-    _packageFragments('a.c.z': FqName@26) = null
-    _packageFragments('a.mc': FqName@35) = null
-    _packageFragments('a.x': FqName@36) = null
-    _packageFragments('a.y': FqName@33) = null
-    _packageFragments('a.z': FqName@34) = null
-    _packageFragments('b': FqName@14) = null
-    _packageFragments('b.MyJavaClass': FqName@41) = null
-    _packageFragments('b.mc1': FqName@32) = null
-    _packageFragments('b.x': FqName@31) = null
-    _packageFragments('b.y': FqName@29) = null
-    _packageFragments('b.z': FqName@30) = null
-    _packageFragments('java': FqName@16) = LazyJavaPackageFragment@17['java']
-    _packageFragments('java.lang': FqName@18) = LazyJavaPackageFragment@0['lang']
-    _packageFragments('java.lang.MyJavaClass': FqName@40) = null
-    _packageFragments('kotlin': FqName@19) = null
-    _packageFragments('kotlin.MyJavaClass': FqName@39) = null
-    _packageFragments('kotlin.io': FqName@21) = null
-    _packageFragments('kotlin.jvm': FqName@20) = null
-    topLevelClasses(JavaClassImpl@23['MyJavaClass']) = LazyJavaClassDescriptor@24['MyJavaClass']
+LazyJavaPackageFragmentProvider@43 {
+    _packageFragments('<root>': FqName@44) = LazyJavaPackageFragment@45['<root>']
+    _packageFragments('MyJavaClass': FqName@46) = null
+    _packageFragments('a': FqName@47) = LazyJavaPackageFragment@48['a']
+    _packageFragments('a.MyJavaClass': FqName@49) = null
+    _packageFragments('a.c': FqName@50) = null
+    _packageFragments('a.c.MyJavaClass': FqName@51) = null
+    _packageFragments('a.c.mc1': FqName@52) = null
+    _packageFragments('a.c.x': FqName@53) = null
+    _packageFragments('a.c.y': FqName@54) = null
+    _packageFragments('a.c.z': FqName@55) = null
+    _packageFragments('a.mc': FqName@56) = null
+    _packageFragments('a.x': FqName@57) = null
+    _packageFragments('a.y': FqName@58) = null
+    _packageFragments('a.z': FqName@59) = null
+    _packageFragments('b': FqName@60) = null
+    _packageFragments('b.MyJavaClass': FqName@61) = null
+    _packageFragments('b.mc1': FqName@62) = null
+    _packageFragments('b.x': FqName@63) = null
+    _packageFragments('b.y': FqName@64) = null
+    _packageFragments('b.z': FqName@65) = null
+    _packageFragments('java': FqName@66) = LazyJavaPackageFragment@67['java']
+    _packageFragments('java.lang': FqName@68) = LazyJavaPackageFragment@69['lang']
+    _packageFragments('java.lang.MyJavaClass': FqName@70) = null
+    _packageFragments('kotlin': FqName@71) = null
+    _packageFragments('kotlin.MyJavaClass': FqName@72) = null
+    _packageFragments('kotlin.io': FqName@73) = null
+    _packageFragments('kotlin.jvm': FqName@74) = null
+    topLevelClasses(JavaClassImpl@75['MyJavaClass']) = LazyJavaClassDescriptor@4['MyJavaClass']
 }
 
-LazyJavaPackageFragment@13['a'] {
-    _functions('MyJavaClass': Name@53) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@51
-    classes('MyJavaClass': Name@50) = LazyJavaClassDescriptor@24['MyJavaClass'] // through LazyPackageFragmentScopeForJavaPackage@51
-    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@51
-    memberIndex = computeMemberIndex$1@52 // through LazyPackageFragmentScopeForJavaPackage@51
+LazyJavaPackageFragment@48['a'] {
+    _functions('MyJavaClass': Name@76) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@77
+    classes('MyJavaClass': Name@78) = LazyJavaClassDescriptor@4['MyJavaClass'] // through LazyPackageFragmentScopeForJavaPackage@77
+    deserializedPackageScope = Empty@79 // through LazyPackageFragmentScopeForJavaPackage@77
+    memberIndex = computeMemberIndex$1@80 // through LazyPackageFragmentScopeForJavaPackage@77
 }
 
-LazyJavaPackageFragment@17['java'] {
-    _functions('lang': Name@62) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@60
-    classes('lang': Name@59) = null // through LazyPackageFragmentScopeForJavaPackage@60
-    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@60
-    memberIndex = computeMemberIndex$1@61 // through LazyPackageFragmentScopeForJavaPackage@60
+LazyJavaPackageFragment@67['java'] {
+    _functions('lang': Name@81) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@82
+    classes('lang': Name@83) = null // through LazyPackageFragmentScopeForJavaPackage@82
+    deserializedPackageScope = Empty@79 // through LazyPackageFragmentScopeForJavaPackage@82
+    memberIndex = computeMemberIndex$1@84 // through LazyPackageFragmentScopeForJavaPackage@82
 }
 
-LazyJavaPackageFragment@0['lang'] {
-    _functions('MyJavaClass': Name@4) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
-    classes('MyJavaClass': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@2
-    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@2
-    memberIndex = computeMemberIndex$1@3 // through LazyPackageFragmentScopeForJavaPackage@2
+LazyJavaPackageFragment@69['lang'] {
+    _functions('MyJavaClass': Name@85) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@86
+    classes('MyJavaClass': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@86
+    deserializedPackageScope = Empty@79 // through LazyPackageFragmentScopeForJavaPackage@86
+    memberIndex = computeMemberIndex$1@87 // through LazyPackageFragmentScopeForJavaPackage@86
 }

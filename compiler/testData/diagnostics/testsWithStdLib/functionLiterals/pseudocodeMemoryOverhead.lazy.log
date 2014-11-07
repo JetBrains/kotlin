@@ -1,1230 +1,1230 @@
-ClassDeserializer@94 {
-    classes(ClassKey@95) = DeserializedClassDescriptor@96['Function1']
-    classes(ClassKey@97) = DeserializedClassDescriptor@98['Function2']
-    classes(ClassKey@108) = DeserializedClassDescriptor@109['InlineOption']
-    classes(ClassKey@99) = DeserializedClassDescriptor@3['Pair']
-    classes(ClassKey@100) = DeserializedClassDescriptor@101['data']
-    classes(ClassKey@102) = DeserializedClassDescriptor@103['deprecated']
-    classes(ClassKey@104) = DeserializedClassDescriptor@105['inline']
-    classes(ClassKey@106) = DeserializedClassDescriptor@107['inlineOptions']
+ClassDeserializer@0 {
+    classes(ClassKey@1) = DeserializedClassDescriptor@2['Function1']
+    classes(ClassKey@3) = DeserializedClassDescriptor@4['Function2']
+    classes(ClassKey@5) = DeserializedClassDescriptor@6['InlineOption']
+    classes(ClassKey@7) = DeserializedClassDescriptor@8['Pair']
+    classes(ClassKey@9) = DeserializedClassDescriptor@10['data']
+    classes(ClassKey@11) = DeserializedClassDescriptor@12['deprecated']
+    classes(ClassKey@13) = DeserializedClassDescriptor@14['inline']
+    classes(ClassKey@15) = DeserializedClassDescriptor@16['inlineOptions']
 }
 
-DescriptorLoadersStorage@439 {
-    storage(VirtualFileKotlinClass@440) = Storage@441
-    storage(VirtualFileKotlinClass@442) = Storage@443
+DescriptorLoadersStorage@17 {
+    storage(VirtualFileKotlinClass@18) = Storage@19
+    storage(VirtualFileKotlinClass@20) = Storage@21
 }
 
-DescriptorResolver@270 {
-    <name not found> = JetTypeImpl@271
-    <name not found> = JetTypeImpl@272
-    <name not found> = JetTypeImpl@273
-    <name not found> = JetTypeImpl@274
-    <name not found> = JetTypeImpl@275
-    <name not found> = JetTypeImpl@276
-    <name not found> = JetTypeImpl@277
-    <name not found> = JetTypeImpl@278
-    <name not found> = JetTypeImpl@279
-    <name not found> = JetTypeImpl@280
-    <name not found> = JetTypeImpl@281
-    <name not found> = JetTypeImpl@282
+DescriptorResolver@22 {
+    <name not found> = JetTypeImpl@23['CompileTimeType<1>']
+    <name not found> = JetTypeImpl@24['CompileTimeType<1>']
+    <name not found> = JetTypeImpl@25['CompileTimeType<1>']
+    <name not found> = JetTypeImpl@26['CompileTimeType<1>']
+    <name not found> = JetTypeImpl@27['CompileTimeType<1>']
+    <name not found> = JetTypeImpl@28['CompileTimeType<1>']
+    <name not found> = JetTypeImpl@29['CompileTimeType<1>']
+    <name not found> = JetTypeImpl@30['CompileTimeType<1>']
+    <name not found> = JetTypeImpl@31['CompileTimeType<1>']
+    <name not found> = JetTypeImpl@32['CompileTimeType<1>']
+    <name not found> = JetTypeImpl@33['Pair<2>']
+    <name not found> = JetTypeImpl@34['Pair<2>']
 }
 
-DeserializedClassDescriptor@96['Function1'] {
-    containingDeclaration = LazyJavaPackageFragment@4['kotlin']
+DeserializedClassDescriptor@2['Function1'] {
+    containingDeclaration = LazyJavaPackageFragment@35['kotlin']
 }
 
-DeserializedClassDescriptor@98['Function2'] {
-    containingDeclaration = LazyJavaPackageFragment@4['kotlin']
+DeserializedClassDescriptor@4['Function2'] {
+    containingDeclaration = LazyJavaPackageFragment@35['kotlin']
 }
 
-DeserializedClassDescriptor@109['InlineOption'] {
-    containingDeclaration = LazyJavaPackageFragment@4['kotlin']
-    defaultType = JetTypeImpl@429
-    unsubstitutedInnerClassesScope = InnerClassesScopeWrapper@428
+DeserializedClassDescriptor@6['InlineOption'] {
+    containingDeclaration = LazyJavaPackageFragment@35['kotlin']
+    defaultType = JetTypeImpl@36['InlineOption']
+    unsubstitutedInnerClassesScope = InnerClassesScopeWrapper@37
 }
 
-DeserializedClassDescriptor@3['Pair'] {
+DeserializedClassDescriptor@8['Pair'] {
     classObjectDescriptor = null
-    containingDeclaration = LazyJavaPackageFragment@4['kotlin']
-    defaultType = JetTypeImpl@6
-    primaryConstructor = ConstructorDescriptorImpl@5['<init>']
+    containingDeclaration = LazyJavaPackageFragment@35['kotlin']
+    defaultType = JetTypeImpl@38['Pair<2>']
+    primaryConstructor = ConstructorDescriptorImpl@39['<init>']
 }
 
-DeserializedClassDescriptor@101['data'] {
-    containingDeclaration = LazyJavaPackageFragment@4['kotlin']
-    primaryConstructor = ConstructorDescriptorImpl@444['<init>']
+DeserializedClassDescriptor@10['data'] {
+    containingDeclaration = LazyJavaPackageFragment@35['kotlin']
+    primaryConstructor = ConstructorDescriptorImpl@40['<init>']
 }
 
-DeserializedClassDescriptor@103['deprecated'] {
-    containingDeclaration = LazyJavaPackageFragment@4['kotlin']
-    defaultType = JetTypeImpl@436
-    primaryConstructor = ConstructorDescriptorImpl@435['<init>']
+DeserializedClassDescriptor@12['deprecated'] {
+    containingDeclaration = LazyJavaPackageFragment@35['kotlin']
+    defaultType = JetTypeImpl@41['deprecated']
+    primaryConstructor = ConstructorDescriptorImpl@42['<init>']
 }
 
-DeserializedClassDescriptor@105['inline'] {
-    containingDeclaration = LazyJavaPackageFragment@4['kotlin']
-    defaultType = JetTypeImpl@395
+DeserializedClassDescriptor@14['inline'] {
+    containingDeclaration = LazyJavaPackageFragment@35['kotlin']
+    defaultType = JetTypeImpl@43['inline']
 }
 
-DeserializedClassDescriptor@107['inlineOptions'] {
-    containingDeclaration = LazyJavaPackageFragment@4['kotlin']
-    defaultType = JetTypeImpl@263
-    primaryConstructor = ConstructorDescriptorImpl@262['<init>']
+DeserializedClassDescriptor@16['inlineOptions'] {
+    containingDeclaration = LazyJavaPackageFragment@35['kotlin']
+    defaultType = JetTypeImpl@44['inlineOptions']
+    primaryConstructor = ConstructorDescriptorImpl@45['<init>']
 }
 
-DeserializedTypeParameterDescriptor@424['A'] {
-    defaultType = JetTypeImpl@426
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@314
-    upperBounds = LinkedHashSet@425[1] { DeserializedType@110['kotlin.Any'] }
+DeserializedTypeParameterDescriptor@46['A'] {
+    defaultType = JetTypeImpl@47['A']
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@48
+    upperBounds = LinkedHashSet@49[1] { DeserializedType@50['kotlin.Any'] }
 }
 
-DeserializedTypeParameterDescriptor@285['A'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@112
-    upperBounds = LinkedHashSet@286[1] { DeserializedType@287['kotlin.Any'] }
-    upperBoundsAsType = DeserializedType@287['kotlin.Any']
+DeserializedTypeParameterDescriptor@51['A'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@52
+    upperBounds = LinkedHashSet@53[1] { DeserializedType@54['kotlin.Any'] }
+    upperBoundsAsType = DeserializedType@54['kotlin.Any']
 }
 
-DeserializedTypeParameterDescriptor@315['B'] {
-    defaultType = JetTypeImpl@318
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@316
-    upperBounds = LinkedHashSet@317[1] { DeserializedType@7['kotlin.Any'] }
+DeserializedTypeParameterDescriptor@55['B'] {
+    defaultType = JetTypeImpl@56['B']
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@57
+    upperBounds = LinkedHashSet@58[1] { DeserializedType@59['kotlin.Any'] }
 }
 
-DeserializedTypeParameterDescriptor@267['B'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@114
-    upperBounds = LinkedHashSet@268[1] { DeserializedType@269['kotlin.Any'] }
+DeserializedTypeParameterDescriptor@60['B'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@61
+    upperBounds = LinkedHashSet@62[1] { DeserializedType@63['kotlin.Any'] }
 }
 
-DeserializedTypeParameterDescriptor@264['K'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@265
-    upperBounds = LinkedHashSet@266[1] { DeserializedType@22['kotlin.Any'] }
+DeserializedTypeParameterDescriptor@64['K'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@65
+    upperBounds = LinkedHashSet@66[1] { DeserializedType@67['kotlin.Any'] }
 }
 
-DeserializedTypeParameterDescriptor@387['P1'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@388
-    upperBounds = LinkedHashSet@389[1] { DeserializedType@390['kotlin.Any'] }
-    upperBoundsAsType = DeserializedType@390['kotlin.Any']
+DeserializedTypeParameterDescriptor@68['P1'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@69
+    upperBounds = LinkedHashSet@70[1] { DeserializedType@71['kotlin.Any'] }
+    upperBoundsAsType = DeserializedType@71['kotlin.Any']
 }
 
-DeserializedTypeParameterDescriptor@419['P1'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@420
-    upperBounds = LinkedHashSet@421[1] { DeserializedType@422['kotlin.Any'] }
-    upperBoundsAsType = DeserializedType@422['kotlin.Any']
+DeserializedTypeParameterDescriptor@72['P1'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@73
+    upperBounds = LinkedHashSet@74[1] { DeserializedType@75['kotlin.Any'] }
+    upperBoundsAsType = DeserializedType@75['kotlin.Any']
 }
 
-DeserializedTypeParameterDescriptor@258['P2'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@259
-    upperBounds = LinkedHashSet@260[1] { DeserializedType@261['kotlin.Any'] }
-    upperBoundsAsType = DeserializedType@261['kotlin.Any']
+DeserializedTypeParameterDescriptor@76['P2'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@77
+    upperBounds = LinkedHashSet@78[1] { DeserializedType@79['kotlin.Any'] }
+    upperBoundsAsType = DeserializedType@79['kotlin.Any']
 }
 
-DeserializedTypeParameterDescriptor@33['R'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@34
-    upperBounds = LinkedHashSet@35[1] { DeserializedType@31['kotlin.Any'] }
+DeserializedTypeParameterDescriptor@80['R'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@81
+    upperBounds = LinkedHashSet@82[1] { DeserializedType@83['kotlin.Any'] }
 }
 
-DeserializedTypeParameterDescriptor@36['R'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@37
-    upperBounds = LinkedHashSet@38[1] { DeserializedType@32['kotlin.Any'] }
+DeserializedTypeParameterDescriptor@84['R'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@85
+    upperBounds = LinkedHashSet@86[1] { DeserializedType@87['kotlin.Any'] }
 }
 
-DeserializedTypeParameterDescriptor@27['V'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@28
-    upperBounds = LinkedHashSet@29[1] { DeserializedType@30['kotlin.Any'] }
+DeserializedTypeParameterDescriptor@88['V'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@89
+    upperBounds = LinkedHashSet@90[1] { DeserializedType@91['kotlin.Any'] }
 }
 
-DeserializedType@111['A in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@112
+DeserializedType@92['A in kotlin'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@52
 }
 
-DeserializedType@284['A in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@112
+DeserializedType@93['A in kotlin'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@52
 }
 
-DeserializedType@313['A in kotlin.Pair'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@314
+DeserializedType@94['A in kotlin.Pair'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@48
 }
 
-DeserializedType@432['A in kotlin.Pair'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@314
+DeserializedType@95['A in kotlin.Pair'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@48
 }
 
-DeserializedType@113['B in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@114
+DeserializedType@96['B in kotlin'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@61
 }
 
-DeserializedType@372['B in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@114
+DeserializedType@97['B in kotlin'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@61
 }
 
-DeserializedType@413['B in kotlin.Pair'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@316
+DeserializedType@98['B in kotlin.Pair'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@57
 }
 
-DeserializedType@434['B in kotlin.Pair'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@316
+DeserializedType@99['B in kotlin.Pair'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@57
 }
 
-DeserializedType@321['K in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@265
+DeserializedType@100['K in kotlin'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@65
 }
 
-DeserializedType@367['K in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@265
+DeserializedType@101['K in kotlin'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@65
 }
 
-DeserializedType@408['K in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@265
+DeserializedType@102['K in kotlin'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@65
 }
 
-DeserializedType@312['V in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@28
+DeserializedType@103['V in kotlin'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@89
 }
 
-DeserializedType@322['V in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@28
+DeserializedType@104['V in kotlin'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@89
 }
 
-DeserializedType@423['V in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@28
+DeserializedType@105['V in kotlin'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@89
 }
 
-DeserializedType@379['java.io.Serializable'] {
-    constructor = LazyJavaClassTypeConstructor@373['Serializable']
+DeserializedType@106['java.io.Serializable'] {
+    constructor = LazyJavaClassTypeConstructor@107['Serializable']
 }
 
-DeserializedType@406['java.util.HashMap'] {
-    constructor = LazyJavaClassTypeConstructor@23['HashMap']
-    memberScope = SubstitutingScope@407
+DeserializedType@108['java.util.HashMap'] {
+    constructor = LazyJavaClassTypeConstructor@109['HashMap']
+    memberScope = SubstitutingScope@110
 }
 
-DeserializedType@7['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@54['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@22['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@113['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@31['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@114['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@32['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@59['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@110['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@71['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@283['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@75['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@287['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@91['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@261['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@87['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@30['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@63['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@390['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@50['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@269['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@83['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@427['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@67['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@422['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@2
-    memberScope = DeserializedClassMemberScope@8
+DeserializedType@79['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@309['kotlin.Array'] {
-    constructor = DeserializedClassTypeConstructor@310
-    memberScope = SubstitutingScope@311
+DeserializedType@115['kotlin.Array'] {
+    constructor = DeserializedClassTypeConstructor@116
+    memberScope = SubstitutingScope@117
 }
 
-DeserializedType@255['kotlin.Pair'] {
-    constructor = DeserializedClassTypeConstructor@256
-    memberScope = SubstitutingScope@257
+DeserializedType@118['kotlin.Pair'] {
+    constructor = DeserializedClassTypeConstructor@119
+    memberScope = SubstitutingScope@120
 }
 
-DeserializedType@380['kotlin.Pair'] {
-    constructor = DeserializedClassTypeConstructor@256
-    memberScope = SubstitutingScope@381
+DeserializedType@121['kotlin.Pair'] {
+    constructor = DeserializedClassTypeConstructor@119
+    memberScope = SubstitutingScope@122
 }
 
-DeserializedType@430['kotlin.Pair'] {
-    constructor = DeserializedClassTypeConstructor@256
-    memberScope = SubstitutingScope@431
+DeserializedType@123['kotlin.Pair'] {
+    constructor = DeserializedClassTypeConstructor@119
+    memberScope = SubstitutingScope@124
 }
 
-DeserializedType@437['kotlin.Pair'] {
-    constructor = DeserializedClassTypeConstructor@256
-    memberScope = SubstitutingScope@438
+DeserializedType@125['kotlin.Pair'] {
+    constructor = DeserializedClassTypeConstructor@119
+    memberScope = SubstitutingScope@126
 }
 
-EnumEntrySyntheticClassDescriptor@307['<class-object-for-ONLY_LOCAL_RETURN>'] {
-    defaultType = JetTypeImpl@308
+EnumEntrySyntheticClassDescriptor@127['<class-object-for-ONLY_LOCAL_RETURN>'] {
+    defaultType = JetTypeImpl@128['enum entry']
 }
 
-EnumEntrySyntheticClassDescriptor@319['ONLY_LOCAL_RETURN'] {
-    defaultType = JetTypeImpl@320
+EnumEntrySyntheticClassDescriptor@129['ONLY_LOCAL_RETURN'] {
+    defaultType = JetTypeImpl@130['enum entry']
 }
 
-LazyAnnotationDescriptor@39 {
-    _resolutionResults = OverloadResolutionResultsImpl@41
-    _type = JetTypeImpl@40
+LazyAnnotationDescriptor@131 {
+    _resolutionResults = OverloadResolutionResultsImpl@132
+    _type = JetTypeImpl@133['data']
 }
 
-LazyAnnotationDescriptor@403 {
-    _resolutionResults = OverloadResolutionResultsImpl@405
-    _type = JetTypeImpl@404
+LazyAnnotationDescriptor@134 {
+    _resolutionResults = OverloadResolutionResultsImpl@135
+    _type = JetTypeImpl@136['data']
 }
 
-LazyJavaClassDescriptor@133['HashMap'] {
+LazyJavaClassDescriptor@137['HashMap'] {
     _functionTypeForSamInterface = null
-    _typeConstructor = LazyJavaClassTypeConstructor@23['HashMap']
+    _typeConstructor = LazyJavaClassTypeConstructor@109['HashMap']
 }
 
-LazyJavaClassDescriptor@117['Serializable'] {
-    _typeConstructor = LazyJavaClassTypeConstructor@373['Serializable']
+LazyJavaClassDescriptor@138['Serializable'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@107['Serializable']
 }
 
-LazyJavaClassTypeConstructor@23['HashMap'] {
-    _parameters = ArrayList@24[2] { LazyJavaTypeParameterDescriptor@25['K'], LazyJavaTypeParameterDescriptor@26['V'] }
+LazyJavaClassTypeConstructor@109['HashMap'] {
+    _parameters = ArrayList@139[2] { LazyJavaTypeParameterDescriptor@140['K'], LazyJavaTypeParameterDescriptor@141['V'] }
 }
 
-LazyJavaClassTypeConstructor@373['Serializable'] {
-    _parameters = ArrayList@376[empty]
-    _supertypes = ArrayList@374[1] { JetTypeImpl@375 }
+LazyJavaClassTypeConstructor@107['Serializable'] {
+    _parameters = ArrayList@142[empty]
+    _supertypes = ArrayList@143[1] { JetTypeImpl@144['Any'] }
 }
 
-LazyJavaClassifierType@0['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@2
-    classifier = JavaClassImpl@1['Object']
+LazyJavaClassifierType@145['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@111
+    classifier = JavaClassImpl@146['Object']
 }
 
-LazyJavaPackageFragmentProvider@119 {
-    _packageFragments('<root>': FqName@120) = LazyJavaPackageFragment@121['<root>']
-    _packageFragments('A': FqName@139) = null
-    _packageFragments('ANY': FqName@214) = null
-    _packageFragments('Any': FqName@159) = null
-    _packageFragments('B': FqName@149) = null
-    _packageFragments('BOOLEAN': FqName@209) = null
-    _packageFragments('BYTE': FqName@216) = null
-    _packageFragments('BigInteger': FqName@174) = null
-    _packageFragments('BinaryOperationKey': FqName@196) = null
-    _packageFragments('Boolean': FqName@230) = null
-    _packageFragments('Byte': FqName@220) = null
-    _packageFragments('CHAR': FqName@211) = null
-    _packageFragments('Char': FqName@225) = null
-    _packageFragments('CompileTimeType': FqName@134) = null
-    _packageFragments('DOUBLE': FqName@218) = null
-    _packageFragments('Double': FqName@235) = null
-    _packageFragments('FLOAT': FqName@212) = null
-    _packageFragments('Float': FqName@240) = null
-    _packageFragments('Function1': FqName@154) = null
-    _packageFragments('Function2': FqName@169) = null
-    _packageFragments('HashMap': FqName@179) = null
-    _packageFragments('INT': FqName@213) = null
-    _packageFragments('Int': FqName@245) = null
-    _packageFragments('LONG': FqName@210) = null
-    _packageFragments('Long': FqName@164) = null
-    _packageFragments('Pair': FqName@189) = null
-    _packageFragments('SHORT': FqName@208) = null
-    _packageFragments('STRING': FqName@207) = null
-    _packageFragments('Short': FqName@250) = null
-    _packageFragments('String': FqName@144) = null
-    _packageFragments('UnaryOperationKey': FqName@184) = null
-    _packageFragments('binaryOperations': FqName@215) = null
-    _packageFragments('data': FqName@201) = null
-    _packageFragments('emptyBinaryFun': FqName@206) = null
-    _packageFragments('emptyUnaryFun': FqName@219) = null
-    _packageFragments('java': FqName@122) = LazyJavaPackageFragment@13['java']
-    _packageFragments('java.io': FqName@194) = LazyJavaPackageFragment@115['io']
-    _packageFragments('java.lang': FqName@123) = LazyJavaPackageFragment@42['lang']
-    _packageFragments('java.lang.A': FqName@143) = null
-    _packageFragments('java.lang.Any': FqName@163) = null
-    _packageFragments('java.lang.B': FqName@153) = null
-    _packageFragments('java.lang.BigInteger': FqName@178) = null
-    _packageFragments('java.lang.BinaryOperationKey': FqName@200) = null
-    _packageFragments('java.lang.Boolean': FqName@234) = null
-    _packageFragments('java.lang.Byte': FqName@224) = null
-    _packageFragments('java.lang.Char': FqName@229) = null
-    _packageFragments('java.lang.CompileTimeType': FqName@138) = null
-    _packageFragments('java.lang.Double': FqName@239) = null
-    _packageFragments('java.lang.Float': FqName@244) = null
-    _packageFragments('java.lang.Function1': FqName@158) = null
-    _packageFragments('java.lang.Function2': FqName@173) = null
-    _packageFragments('java.lang.HashMap': FqName@183) = null
-    _packageFragments('java.lang.Int': FqName@249) = null
-    _packageFragments('java.lang.Long': FqName@168) = null
-    _packageFragments('java.lang.Pair': FqName@193) = null
-    _packageFragments('java.lang.Short': FqName@254) = null
-    _packageFragments('java.lang.String': FqName@148) = null
-    _packageFragments('java.lang.UnaryOperationKey': FqName@188) = null
-    _packageFragments('java.lang.data': FqName@205) = null
-    _packageFragments('java.util': FqName@129) = LazyJavaPackageFragment@130['util']
-    _packageFragments('java.util.HashMap': FqName@131) = null
-    _packageFragments('kotlin': FqName@124) = LazyJavaPackageFragment@4['kotlin']
-    _packageFragments('kotlin.A': FqName@142) = null
-    _packageFragments('kotlin.Any': FqName@162) = null
-    _packageFragments('kotlin.B': FqName@152) = null
-    _packageFragments('kotlin.BigInteger': FqName@177) = null
-    _packageFragments('kotlin.BinaryOperationKey': FqName@199) = null
-    _packageFragments('kotlin.Boolean': FqName@233) = null
-    _packageFragments('kotlin.Byte': FqName@223) = null
-    _packageFragments('kotlin.Char': FqName@228) = null
-    _packageFragments('kotlin.CompileTimeType': FqName@137) = null
-    _packageFragments('kotlin.Double': FqName@238) = null
-    _packageFragments('kotlin.Float': FqName@243) = null
-    _packageFragments('kotlin.Function1': FqName@157) = null
-    _packageFragments('kotlin.Function2': FqName@172) = null
-    _packageFragments('kotlin.HashMap': FqName@182) = null
-    _packageFragments('kotlin.Int': FqName@248) = null
-    _packageFragments('kotlin.Long': FqName@167) = null
-    _packageFragments('kotlin.Pair': FqName@192) = null
-    _packageFragments('kotlin.Short': FqName@253) = null
-    _packageFragments('kotlin.String': FqName@147) = null
-    _packageFragments('kotlin.UnaryOperationKey': FqName@187) = null
-    _packageFragments('kotlin.data': FqName@204) = null
-    _packageFragments('kotlin.io': FqName@127) = LazyJavaPackageFragment@128['io']
-    _packageFragments('kotlin.io.A': FqName@140) = null
-    _packageFragments('kotlin.io.Any': FqName@160) = null
-    _packageFragments('kotlin.io.B': FqName@150) = null
-    _packageFragments('kotlin.io.BigInteger': FqName@175) = null
-    _packageFragments('kotlin.io.BinaryOperationKey': FqName@197) = null
-    _packageFragments('kotlin.io.Boolean': FqName@231) = null
-    _packageFragments('kotlin.io.Byte': FqName@221) = null
-    _packageFragments('kotlin.io.Char': FqName@226) = null
-    _packageFragments('kotlin.io.CompileTimeType': FqName@135) = null
-    _packageFragments('kotlin.io.Double': FqName@236) = null
-    _packageFragments('kotlin.io.Float': FqName@241) = null
-    _packageFragments('kotlin.io.Function1': FqName@155) = null
-    _packageFragments('kotlin.io.Function2': FqName@170) = null
-    _packageFragments('kotlin.io.HashMap': FqName@180) = null
-    _packageFragments('kotlin.io.Int': FqName@246) = null
-    _packageFragments('kotlin.io.Long': FqName@165) = null
-    _packageFragments('kotlin.io.Pair': FqName@190) = null
-    _packageFragments('kotlin.io.Short': FqName@251) = null
-    _packageFragments('kotlin.io.String': FqName@145) = null
-    _packageFragments('kotlin.io.UnaryOperationKey': FqName@185) = null
-    _packageFragments('kotlin.io.data': FqName@202) = null
-    _packageFragments('kotlin.jvm': FqName@125) = LazyJavaPackageFragment@126['jvm']
-    _packageFragments('kotlin.jvm.A': FqName@141) = null
-    _packageFragments('kotlin.jvm.Any': FqName@161) = null
-    _packageFragments('kotlin.jvm.B': FqName@151) = null
-    _packageFragments('kotlin.jvm.BigInteger': FqName@176) = null
-    _packageFragments('kotlin.jvm.BinaryOperationKey': FqName@198) = null
-    _packageFragments('kotlin.jvm.Boolean': FqName@232) = null
-    _packageFragments('kotlin.jvm.Byte': FqName@222) = null
-    _packageFragments('kotlin.jvm.Char': FqName@227) = null
-    _packageFragments('kotlin.jvm.CompileTimeType': FqName@136) = null
-    _packageFragments('kotlin.jvm.Double': FqName@237) = null
-    _packageFragments('kotlin.jvm.Float': FqName@242) = null
-    _packageFragments('kotlin.jvm.Function1': FqName@156) = null
-    _packageFragments('kotlin.jvm.Function2': FqName@171) = null
-    _packageFragments('kotlin.jvm.HashMap': FqName@181) = null
-    _packageFragments('kotlin.jvm.Int': FqName@247) = null
-    _packageFragments('kotlin.jvm.Long': FqName@166) = null
-    _packageFragments('kotlin.jvm.Pair': FqName@191) = null
-    _packageFragments('kotlin.jvm.Short': FqName@252) = null
-    _packageFragments('kotlin.jvm.String': FqName@146) = null
-    _packageFragments('kotlin.jvm.UnaryOperationKey': FqName@186) = null
-    _packageFragments('kotlin.jvm.data': FqName@203) = null
-    _packageFragments('unaryOperations': FqName@217) = null
-    topLevelClasses(JavaClassImpl@132['HashMap']) = LazyJavaClassDescriptor@133['HashMap']
-    topLevelClasses(JavaClassImpl@195['Serializable']) = LazyJavaClassDescriptor@117['Serializable']
+LazyJavaPackageFragmentProvider@147 {
+    _packageFragments('<root>': FqName@148) = LazyJavaPackageFragment@149['<root>']
+    _packageFragments('A': FqName@150) = null
+    _packageFragments('ANY': FqName@151) = null
+    _packageFragments('Any': FqName@152) = null
+    _packageFragments('B': FqName@153) = null
+    _packageFragments('BOOLEAN': FqName@154) = null
+    _packageFragments('BYTE': FqName@155) = null
+    _packageFragments('BigInteger': FqName@156) = null
+    _packageFragments('BinaryOperationKey': FqName@157) = null
+    _packageFragments('Boolean': FqName@158) = null
+    _packageFragments('Byte': FqName@159) = null
+    _packageFragments('CHAR': FqName@160) = null
+    _packageFragments('Char': FqName@161) = null
+    _packageFragments('CompileTimeType': FqName@162) = null
+    _packageFragments('DOUBLE': FqName@163) = null
+    _packageFragments('Double': FqName@164) = null
+    _packageFragments('FLOAT': FqName@165) = null
+    _packageFragments('Float': FqName@166) = null
+    _packageFragments('Function1': FqName@167) = null
+    _packageFragments('Function2': FqName@168) = null
+    _packageFragments('HashMap': FqName@169) = null
+    _packageFragments('INT': FqName@170) = null
+    _packageFragments('Int': FqName@171) = null
+    _packageFragments('LONG': FqName@172) = null
+    _packageFragments('Long': FqName@173) = null
+    _packageFragments('Pair': FqName@174) = null
+    _packageFragments('SHORT': FqName@175) = null
+    _packageFragments('STRING': FqName@176) = null
+    _packageFragments('Short': FqName@177) = null
+    _packageFragments('String': FqName@178) = null
+    _packageFragments('UnaryOperationKey': FqName@179) = null
+    _packageFragments('binaryOperations': FqName@180) = null
+    _packageFragments('data': FqName@181) = null
+    _packageFragments('emptyBinaryFun': FqName@182) = null
+    _packageFragments('emptyUnaryFun': FqName@183) = null
+    _packageFragments('java': FqName@184) = LazyJavaPackageFragment@185['java']
+    _packageFragments('java.io': FqName@186) = LazyJavaPackageFragment@187['io']
+    _packageFragments('java.lang': FqName@188) = LazyJavaPackageFragment@189['lang']
+    _packageFragments('java.lang.A': FqName@190) = null
+    _packageFragments('java.lang.Any': FqName@191) = null
+    _packageFragments('java.lang.B': FqName@192) = null
+    _packageFragments('java.lang.BigInteger': FqName@193) = null
+    _packageFragments('java.lang.BinaryOperationKey': FqName@194) = null
+    _packageFragments('java.lang.Boolean': FqName@195) = null
+    _packageFragments('java.lang.Byte': FqName@196) = null
+    _packageFragments('java.lang.Char': FqName@197) = null
+    _packageFragments('java.lang.CompileTimeType': FqName@198) = null
+    _packageFragments('java.lang.Double': FqName@199) = null
+    _packageFragments('java.lang.Float': FqName@200) = null
+    _packageFragments('java.lang.Function1': FqName@201) = null
+    _packageFragments('java.lang.Function2': FqName@202) = null
+    _packageFragments('java.lang.HashMap': FqName@203) = null
+    _packageFragments('java.lang.Int': FqName@204) = null
+    _packageFragments('java.lang.Long': FqName@205) = null
+    _packageFragments('java.lang.Pair': FqName@206) = null
+    _packageFragments('java.lang.Short': FqName@207) = null
+    _packageFragments('java.lang.String': FqName@208) = null
+    _packageFragments('java.lang.UnaryOperationKey': FqName@209) = null
+    _packageFragments('java.lang.data': FqName@210) = null
+    _packageFragments('java.util': FqName@211) = LazyJavaPackageFragment@212['util']
+    _packageFragments('java.util.HashMap': FqName@213) = null
+    _packageFragments('kotlin': FqName@214) = LazyJavaPackageFragment@35['kotlin']
+    _packageFragments('kotlin.A': FqName@215) = null
+    _packageFragments('kotlin.Any': FqName@216) = null
+    _packageFragments('kotlin.B': FqName@217) = null
+    _packageFragments('kotlin.BigInteger': FqName@218) = null
+    _packageFragments('kotlin.BinaryOperationKey': FqName@219) = null
+    _packageFragments('kotlin.Boolean': FqName@220) = null
+    _packageFragments('kotlin.Byte': FqName@221) = null
+    _packageFragments('kotlin.Char': FqName@222) = null
+    _packageFragments('kotlin.CompileTimeType': FqName@223) = null
+    _packageFragments('kotlin.Double': FqName@224) = null
+    _packageFragments('kotlin.Float': FqName@225) = null
+    _packageFragments('kotlin.Function1': FqName@226) = null
+    _packageFragments('kotlin.Function2': FqName@227) = null
+    _packageFragments('kotlin.HashMap': FqName@228) = null
+    _packageFragments('kotlin.Int': FqName@229) = null
+    _packageFragments('kotlin.Long': FqName@230) = null
+    _packageFragments('kotlin.Pair': FqName@231) = null
+    _packageFragments('kotlin.Short': FqName@232) = null
+    _packageFragments('kotlin.String': FqName@233) = null
+    _packageFragments('kotlin.UnaryOperationKey': FqName@234) = null
+    _packageFragments('kotlin.data': FqName@235) = null
+    _packageFragments('kotlin.io': FqName@236) = LazyJavaPackageFragment@237['io']
+    _packageFragments('kotlin.io.A': FqName@238) = null
+    _packageFragments('kotlin.io.Any': FqName@239) = null
+    _packageFragments('kotlin.io.B': FqName@240) = null
+    _packageFragments('kotlin.io.BigInteger': FqName@241) = null
+    _packageFragments('kotlin.io.BinaryOperationKey': FqName@242) = null
+    _packageFragments('kotlin.io.Boolean': FqName@243) = null
+    _packageFragments('kotlin.io.Byte': FqName@244) = null
+    _packageFragments('kotlin.io.Char': FqName@245) = null
+    _packageFragments('kotlin.io.CompileTimeType': FqName@246) = null
+    _packageFragments('kotlin.io.Double': FqName@247) = null
+    _packageFragments('kotlin.io.Float': FqName@248) = null
+    _packageFragments('kotlin.io.Function1': FqName@249) = null
+    _packageFragments('kotlin.io.Function2': FqName@250) = null
+    _packageFragments('kotlin.io.HashMap': FqName@251) = null
+    _packageFragments('kotlin.io.Int': FqName@252) = null
+    _packageFragments('kotlin.io.Long': FqName@253) = null
+    _packageFragments('kotlin.io.Pair': FqName@254) = null
+    _packageFragments('kotlin.io.Short': FqName@255) = null
+    _packageFragments('kotlin.io.String': FqName@256) = null
+    _packageFragments('kotlin.io.UnaryOperationKey': FqName@257) = null
+    _packageFragments('kotlin.io.data': FqName@258) = null
+    _packageFragments('kotlin.jvm': FqName@259) = LazyJavaPackageFragment@260['jvm']
+    _packageFragments('kotlin.jvm.A': FqName@261) = null
+    _packageFragments('kotlin.jvm.Any': FqName@262) = null
+    _packageFragments('kotlin.jvm.B': FqName@263) = null
+    _packageFragments('kotlin.jvm.BigInteger': FqName@264) = null
+    _packageFragments('kotlin.jvm.BinaryOperationKey': FqName@265) = null
+    _packageFragments('kotlin.jvm.Boolean': FqName@266) = null
+    _packageFragments('kotlin.jvm.Byte': FqName@267) = null
+    _packageFragments('kotlin.jvm.Char': FqName@268) = null
+    _packageFragments('kotlin.jvm.CompileTimeType': FqName@269) = null
+    _packageFragments('kotlin.jvm.Double': FqName@270) = null
+    _packageFragments('kotlin.jvm.Float': FqName@271) = null
+    _packageFragments('kotlin.jvm.Function1': FqName@272) = null
+    _packageFragments('kotlin.jvm.Function2': FqName@273) = null
+    _packageFragments('kotlin.jvm.HashMap': FqName@274) = null
+    _packageFragments('kotlin.jvm.Int': FqName@275) = null
+    _packageFragments('kotlin.jvm.Long': FqName@276) = null
+    _packageFragments('kotlin.jvm.Pair': FqName@277) = null
+    _packageFragments('kotlin.jvm.Short': FqName@278) = null
+    _packageFragments('kotlin.jvm.String': FqName@279) = null
+    _packageFragments('kotlin.jvm.UnaryOperationKey': FqName@280) = null
+    _packageFragments('kotlin.jvm.data': FqName@281) = null
+    _packageFragments('unaryOperations': FqName@282) = null
+    topLevelClasses(JavaClassImpl@283['HashMap']) = LazyJavaClassDescriptor@137['HashMap']
+    topLevelClasses(JavaClassImpl@284['Serializable']) = LazyJavaClassDescriptor@138['Serializable']
 }
 
-LazyJavaPackageFragment@121['<root>'] {
-    _functions('BigInteger': Name@46) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('BinaryOperationKey': Name@76) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('CompileTimeType': Name@45) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('Pair': Name@54) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('UnaryOperationKey': Name@52) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('add': Name@84) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('and': Name@81) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('binaryOperation': Name@74) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('compareTo': Name@82) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('div': Name@85) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('divide': Name@86) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('equals': Name@80) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('get': Name@93) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('hashMapOf': Name@48) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('inv': Name@69) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('java': Name@386) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('minus': Name@58) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('mod': Name@87) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('multiply': Name@89) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('not': Name@55) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('or': Name@78) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('plus': Name@60) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('shl': Name@90) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('shr': Name@92) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('subtract': Name@83) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('times': Name@88) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('to': Name@53) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('toByte': Name@64) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('toChar': Name@59) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('toDouble': Name@62) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('toFloat': Name@61) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('toInt': Name@57) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('toLong': Name@47) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('toShort': Name@63) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('toString': Name@73) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('unaryOperation': Name@49) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('ushr': Name@91) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    _functions('xor': Name@77) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('ANY': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('Any': Name@291) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('BOOLEAN': Name@50) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('BYTE': Name@56) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('BigInteger': Name@46) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('BinaryOperationKey': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('Boolean': Name@301) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('Byte': Name@299) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('CHAR': Name@65) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('Char': Name@300) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('CompileTimeType': Name@45) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('DOUBLE': Name@66) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('Double': Name@302) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('FLOAT': Name@67) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('Float': Name@303) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('Function1': Name@290) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('Function2': Name@293) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('HashMap': Name@384) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('INT': Name@68) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('Int': Name@304) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('LONG': Name@70) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('Long': Name@292) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('Pair': Name@294) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('SHORT': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('STRING': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('Short': Name@305) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('String': Name@288) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('UnaryOperationKey': Name@52) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('add': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('and': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('binaryOperation': Name@74) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('compareTo': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('data': Name@295) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('div': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('divide': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('emptyBinaryFun': Name@75) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('emptyUnaryFun': Name@51) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('equals': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('get': Name@93) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('hashMapOf': Name@48) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('inv': Name@69) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('java': Name@382) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('minus': Name@58) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('mod': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('multiply': Name@89) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('not': Name@55) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('or': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('plus': Name@60) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('shl': Name@90) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('shr': Name@92) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('subtract': Name@83) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('times': Name@88) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('to': Name@53) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('toByte': Name@64) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('toChar': Name@59) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('toDouble': Name@62) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('toFloat': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('toInt': Name@57) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('toLong': Name@47) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('toShort': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('toString': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('unaryOperation': Name@49) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('ushr': Name@91) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    classes('xor': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@383
-    deserializedPackageScope = JetScope$1@17 // through LazyPackageFragmentScopeForJavaPackage@383
-    memberIndex = computeMemberIndex$1@385 // through LazyPackageFragmentScopeForJavaPackage@383
+LazyJavaPackageFragment@149['<root>'] {
+    _functions('BigInteger': Name@285) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('BinaryOperationKey': Name@288) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('CompileTimeType': Name@289) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('Pair': Name@290) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('UnaryOperationKey': Name@291) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('add': Name@292) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('and': Name@293) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('binaryOperation': Name@294) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('compareTo': Name@295) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('div': Name@296) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('divide': Name@297) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('equals': Name@298) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('get': Name@299) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('hashMapOf': Name@300) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('inv': Name@301) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('java': Name@302) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('minus': Name@303) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('mod': Name@304) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('multiply': Name@305) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('not': Name@306) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('or': Name@307) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('plus': Name@308) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('shl': Name@309) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('shr': Name@310) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('subtract': Name@311) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('times': Name@312) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('to': Name@313) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('toByte': Name@314) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('toChar': Name@315) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('toDouble': Name@316) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('toFloat': Name@317) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('toInt': Name@318) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('toLong': Name@319) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('toShort': Name@320) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('toString': Name@321) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('unaryOperation': Name@322) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('ushr': Name@323) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    _functions('xor': Name@324) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('ANY': Name@325) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Any': Name@326) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('BOOLEAN': Name@327) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('BYTE': Name@328) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('BigInteger': Name@285) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('BinaryOperationKey': Name@288) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Boolean': Name@329) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Byte': Name@330) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('CHAR': Name@331) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Char': Name@332) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('CompileTimeType': Name@289) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('DOUBLE': Name@333) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Double': Name@334) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('FLOAT': Name@335) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Float': Name@336) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Function1': Name@337) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Function2': Name@338) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('HashMap': Name@339) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('INT': Name@340) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Int': Name@341) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('LONG': Name@342) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Long': Name@343) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Pair': Name@344) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('SHORT': Name@345) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('STRING': Name@346) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Short': Name@347) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('String': Name@348) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('UnaryOperationKey': Name@291) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('add': Name@292) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('and': Name@293) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('binaryOperation': Name@294) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('compareTo': Name@295) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('data': Name@349) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('div': Name@296) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('divide': Name@297) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('emptyBinaryFun': Name@350) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('emptyUnaryFun': Name@351) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('equals': Name@298) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('get': Name@299) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('hashMapOf': Name@300) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('inv': Name@301) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('java': Name@352) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('minus': Name@303) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('mod': Name@304) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('multiply': Name@305) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('not': Name@306) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('or': Name@307) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('plus': Name@308) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('shl': Name@309) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('shr': Name@310) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('subtract': Name@311) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('times': Name@312) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('to': Name@313) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('toByte': Name@314) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('toChar': Name@315) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('toDouble': Name@316) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('toFloat': Name@317) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('toInt': Name@318) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('toLong': Name@319) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('toShort': Name@320) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('toString': Name@321) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('unaryOperation': Name@322) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('ushr': Name@323) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('xor': Name@324) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    deserializedPackageScope = Empty@353 // through LazyPackageFragmentScopeForJavaPackage@287
+    memberIndex = computeMemberIndex$1@354 // through LazyPackageFragmentScopeForJavaPackage@287
 }
 
-LazyJavaPackageFragment@128['io'] {
-    _functions('BigInteger': Name@46) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('BinaryOperationKey': Name@76) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('CompileTimeType': Name@45) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('Pair': Name@54) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('UnaryOperationKey': Name@52) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('add': Name@84) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('and': Name@81) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('binaryOperation': Name@74) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('compareTo': Name@82) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('div': Name@85) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('divide': Name@86) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('equals': Name@80) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('get': Name@93) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('hashMapOf': Name@48) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('inv': Name@69) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('minus': Name@58) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('mod': Name@87) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('multiply': Name@89) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('not': Name@55) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('or': Name@78) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('plus': Name@60) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('shl': Name@90) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('shr': Name@92) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('subtract': Name@83) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('times': Name@88) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('to': Name@53) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('toByte': Name@64) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('toChar': Name@59) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('toDouble': Name@62) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('toFloat': Name@61) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('toInt': Name@57) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('toLong': Name@47) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('toShort': Name@63) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('toString': Name@73) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('unaryOperation': Name@49) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('ushr': Name@91) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    _functions('xor': Name@77) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('ANY': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('Any': Name@291) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('BOOLEAN': Name@50) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('BYTE': Name@56) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('BigInteger': Name@46) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('BinaryOperationKey': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('Boolean': Name@301) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('Byte': Name@299) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('CHAR': Name@65) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('Char': Name@300) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('CompileTimeType': Name@45) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('DOUBLE': Name@66) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('Double': Name@302) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('FLOAT': Name@67) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('Float': Name@303) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('Function1': Name@290) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('Function2': Name@293) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('INT': Name@68) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('Int': Name@304) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('LONG': Name@70) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('Long': Name@292) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('Pair': Name@294) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('SHORT': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('STRING': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('Short': Name@305) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('String': Name@288) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('UnaryOperationKey': Name@52) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('add': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('and': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('binaryOperation': Name@74) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('compareTo': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('data': Name@295) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('div': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('divide': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('emptyBinaryFun': Name@75) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('emptyUnaryFun': Name@51) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('equals': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('get': Name@93) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('hashMapOf': Name@48) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('inv': Name@69) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('minus': Name@58) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('mod': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('multiply': Name@89) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('not': Name@55) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('or': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('plus': Name@60) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('shl': Name@90) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('shr': Name@92) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('subtract': Name@83) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('times': Name@88) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('to': Name@53) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('toByte': Name@64) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('toChar': Name@59) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('toDouble': Name@62) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('toFloat': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('toInt': Name@57) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('toLong': Name@47) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('toShort': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('toString': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('unaryOperation': Name@49) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('ushr': Name@91) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    classes('xor': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@289
-    deserializedPackageScope = DeserializedPackageMemberScope@296 // through LazyPackageFragmentScopeForJavaPackage@289
-    functions('BigInteger': Name@46) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('BinaryOperationKey': Name@76) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('CompileTimeType': Name@45) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('Pair': Name@54) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('UnaryOperationKey': Name@52) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('add': Name@84) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('and': Name@81) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('binaryOperation': Name@74) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('compareTo': Name@82) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('div': Name@85) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('divide': Name@86) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('equals': Name@80) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('get': Name@93) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('hashMapOf': Name@48) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('inv': Name@69) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('minus': Name@58) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('mod': Name@87) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('multiply': Name@89) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('not': Name@55) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('or': Name@78) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('plus': Name@60) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('shl': Name@90) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('shr': Name@92) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('subtract': Name@83) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('times': Name@88) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('to': Name@53) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('toByte': Name@64) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('toChar': Name@59) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('toDouble': Name@62) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('toFloat': Name@61) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('toInt': Name@57) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('toLong': Name@47) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('toShort': Name@63) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('toString': Name@73) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('unaryOperation': Name@49) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('ushr': Name@91) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    functions('xor': Name@77) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    memberIndex = computeMemberIndex$1@298 // through LazyPackageFragmentScopeForJavaPackage@289
-    membersProtos = HashMap@297 // through DeserializedPackageMemberScope@296
-    properties('ANY': Name@79) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('BOOLEAN': Name@50) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('BYTE': Name@56) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('BigInteger': Name@46) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('BinaryOperationKey': Name@76) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('CHAR': Name@65) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('CompileTimeType': Name@45) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('DOUBLE': Name@66) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('FLOAT': Name@67) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('INT': Name@68) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('LONG': Name@70) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('Pair': Name@54) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('SHORT': Name@71) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('STRING': Name@72) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('UnaryOperationKey': Name@52) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('add': Name@84) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('and': Name@81) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('binaryOperation': Name@74) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('compareTo': Name@82) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('div': Name@85) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('divide': Name@86) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('emptyBinaryFun': Name@75) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('emptyUnaryFun': Name@51) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('equals': Name@80) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('get': Name@93) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('hashMapOf': Name@48) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('inv': Name@69) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('minus': Name@58) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('mod': Name@87) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('multiply': Name@89) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('not': Name@55) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('o': Name@306) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('or': Name@78) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('plus': Name@60) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('shl': Name@90) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('shr': Name@92) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('subtract': Name@83) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('times': Name@88) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('to': Name@53) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('toByte': Name@64) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('toChar': Name@59) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('toDouble': Name@62) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('toFloat': Name@61) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('toInt': Name@57) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('toLong': Name@47) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('toShort': Name@63) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('toString': Name@73) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('unaryOperation': Name@49) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('ushr': Name@91) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
-    properties('xor': Name@77) = EmptyList@20[empty] // through DeserializedPackageMemberScope@296
+LazyJavaPackageFragment@237['io'] {
+    _functions('BigInteger': Name@285) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('BinaryOperationKey': Name@288) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('CompileTimeType': Name@289) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('Pair': Name@290) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('UnaryOperationKey': Name@291) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('add': Name@292) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('and': Name@293) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('binaryOperation': Name@294) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('compareTo': Name@295) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('div': Name@296) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('divide': Name@297) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('equals': Name@298) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('get': Name@299) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('hashMapOf': Name@300) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('inv': Name@301) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('minus': Name@303) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('mod': Name@304) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('multiply': Name@305) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('not': Name@306) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('or': Name@307) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('plus': Name@308) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('shl': Name@309) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('shr': Name@310) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('subtract': Name@311) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('times': Name@312) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('to': Name@313) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('toByte': Name@314) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('toChar': Name@315) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('toDouble': Name@316) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('toFloat': Name@317) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('toInt': Name@318) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('toLong': Name@319) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('toShort': Name@320) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('toString': Name@321) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('unaryOperation': Name@322) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('ushr': Name@323) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    _functions('xor': Name@324) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('ANY': Name@325) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('Any': Name@326) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('BOOLEAN': Name@327) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('BYTE': Name@328) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('BigInteger': Name@285) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('BinaryOperationKey': Name@288) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('Boolean': Name@329) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('Byte': Name@330) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('CHAR': Name@331) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('Char': Name@332) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('CompileTimeType': Name@289) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('DOUBLE': Name@333) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('Double': Name@334) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('FLOAT': Name@335) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('Float': Name@336) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('Function1': Name@337) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('Function2': Name@338) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('INT': Name@340) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('Int': Name@341) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('LONG': Name@342) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('Long': Name@343) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('Pair': Name@344) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('SHORT': Name@345) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('STRING': Name@346) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('Short': Name@347) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('String': Name@348) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('UnaryOperationKey': Name@291) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('add': Name@292) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('and': Name@293) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('binaryOperation': Name@294) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('compareTo': Name@295) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('data': Name@349) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('div': Name@296) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('divide': Name@297) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('emptyBinaryFun': Name@350) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('emptyUnaryFun': Name@351) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('equals': Name@298) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('get': Name@299) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('hashMapOf': Name@300) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('inv': Name@301) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('minus': Name@303) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('mod': Name@304) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('multiply': Name@305) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('not': Name@306) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('or': Name@307) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('plus': Name@308) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('shl': Name@309) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('shr': Name@310) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('subtract': Name@311) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('times': Name@312) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('to': Name@313) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('toByte': Name@314) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('toChar': Name@315) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('toDouble': Name@316) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('toFloat': Name@317) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('toInt': Name@318) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('toLong': Name@319) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('toShort': Name@320) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('toString': Name@321) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('unaryOperation': Name@322) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('ushr': Name@323) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    classes('xor': Name@324) = null // through LazyPackageFragmentScopeForJavaPackage@355
+    deserializedPackageScope = DeserializedPackageMemberScope@356 // through LazyPackageFragmentScopeForJavaPackage@355
+    functions('BigInteger': Name@285) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('BinaryOperationKey': Name@288) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('CompileTimeType': Name@289) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('Pair': Name@290) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('UnaryOperationKey': Name@291) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('add': Name@292) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('and': Name@293) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('binaryOperation': Name@294) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('compareTo': Name@295) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('div': Name@296) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('divide': Name@297) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('equals': Name@298) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('get': Name@299) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('hashMapOf': Name@300) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('inv': Name@301) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('minus': Name@303) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('mod': Name@304) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('multiply': Name@305) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('not': Name@306) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('or': Name@307) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('plus': Name@308) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('shl': Name@309) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('shr': Name@310) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('subtract': Name@311) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('times': Name@312) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('to': Name@313) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('toByte': Name@314) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('toChar': Name@315) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('toDouble': Name@316) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('toFloat': Name@317) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('toInt': Name@318) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('toLong': Name@319) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('toShort': Name@320) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('toString': Name@321) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('unaryOperation': Name@322) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('ushr': Name@323) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    functions('xor': Name@324) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    memberIndex = computeMemberIndex$1@357 // through LazyPackageFragmentScopeForJavaPackage@355
+    membersProtos = HashMap@358 // through DeserializedPackageMemberScope@356
+    properties('ANY': Name@325) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('BOOLEAN': Name@327) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('BYTE': Name@328) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('BigInteger': Name@285) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('BinaryOperationKey': Name@288) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('CHAR': Name@331) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('CompileTimeType': Name@289) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('DOUBLE': Name@333) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('FLOAT': Name@335) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('INT': Name@340) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('LONG': Name@342) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('Pair': Name@290) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('SHORT': Name@345) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('STRING': Name@346) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('UnaryOperationKey': Name@291) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('add': Name@292) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('and': Name@293) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('binaryOperation': Name@294) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('compareTo': Name@295) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('div': Name@296) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('divide': Name@297) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('emptyBinaryFun': Name@350) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('emptyUnaryFun': Name@351) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('equals': Name@298) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('get': Name@299) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('hashMapOf': Name@300) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('inv': Name@301) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('minus': Name@303) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('mod': Name@304) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('multiply': Name@305) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('not': Name@306) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('o': Name@359) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('or': Name@307) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('plus': Name@308) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('shl': Name@309) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('shr': Name@310) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('subtract': Name@311) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('times': Name@312) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('to': Name@313) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('toByte': Name@314) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('toChar': Name@315) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('toDouble': Name@316) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('toFloat': Name@317) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('toInt': Name@318) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('toLong': Name@319) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('toShort': Name@320) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('toString': Name@321) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('unaryOperation': Name@322) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('ushr': Name@323) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
+    properties('xor': Name@324) = EmptyList@286[empty] // through DeserializedPackageMemberScope@356
 }
 
-LazyJavaPackageFragment@115['io'] {
-    classes('Serializable': Name@116) = LazyJavaClassDescriptor@117['Serializable'] // through LazyPackageFragmentScopeForJavaPackage@118
+LazyJavaPackageFragment@187['io'] {
+    classes('Serializable': Name@360) = LazyJavaClassDescriptor@138['Serializable'] // through LazyPackageFragmentScopeForJavaPackage@361
 }
 
-LazyJavaPackageFragment@13['java'] {
-    _functions('lang': Name@19) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@15
-    _functions('util': Name@21) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@15
-    classes('lang': Name@14) = null // through LazyPackageFragmentScopeForJavaPackage@15
-    classes('util': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@15
-    deserializedPackageScope = JetScope$1@17 // through LazyPackageFragmentScopeForJavaPackage@15
-    memberIndex = computeMemberIndex$1@18 // through LazyPackageFragmentScopeForJavaPackage@15
+LazyJavaPackageFragment@185['java'] {
+    _functions('lang': Name@362) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@363
+    _functions('util': Name@364) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@363
+    classes('lang': Name@365) = null // through LazyPackageFragmentScopeForJavaPackage@363
+    classes('util': Name@366) = null // through LazyPackageFragmentScopeForJavaPackage@363
+    deserializedPackageScope = Empty@353 // through LazyPackageFragmentScopeForJavaPackage@363
+    memberIndex = computeMemberIndex$1@367 // through LazyPackageFragmentScopeForJavaPackage@363
 }
 
-LazyJavaPackageFragment@126['jvm'] {
-    _functions('BigInteger': Name@46) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('BinaryOperationKey': Name@76) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('CompileTimeType': Name@45) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('Pair': Name@54) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('UnaryOperationKey': Name@52) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('add': Name@84) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('and': Name@81) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('binaryOperation': Name@74) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('compareTo': Name@82) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('div': Name@85) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('divide': Name@86) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('equals': Name@80) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('get': Name@93) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('hashMapOf': Name@48) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('inv': Name@69) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('minus': Name@58) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('mod': Name@87) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('multiply': Name@89) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('not': Name@55) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('or': Name@78) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('plus': Name@60) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('shl': Name@90) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('shr': Name@92) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('subtract': Name@83) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('times': Name@88) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('to': Name@53) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('toByte': Name@64) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('toChar': Name@59) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('toDouble': Name@62) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('toFloat': Name@61) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('toInt': Name@57) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('toLong': Name@47) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('toShort': Name@63) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('toString': Name@73) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('unaryOperation': Name@49) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('ushr': Name@91) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    _functions('xor': Name@77) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('ANY': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('Any': Name@291) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('BOOLEAN': Name@50) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('BYTE': Name@56) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('BigInteger': Name@46) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('BinaryOperationKey': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('Boolean': Name@301) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('Byte': Name@299) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('CHAR': Name@65) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('Char': Name@300) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('CompileTimeType': Name@45) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('DOUBLE': Name@66) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('Double': Name@302) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('FLOAT': Name@67) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('Float': Name@303) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('Function1': Name@290) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('Function2': Name@293) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('INT': Name@68) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('Int': Name@304) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('LONG': Name@70) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('Long': Name@292) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('Pair': Name@294) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('SHORT': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('STRING': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('Short': Name@305) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('String': Name@288) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('UnaryOperationKey': Name@52) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('add': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('and': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('binaryOperation': Name@74) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('compareTo': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('data': Name@295) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('div': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('divide': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('emptyBinaryFun': Name@75) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('emptyUnaryFun': Name@51) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('equals': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('get': Name@93) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('hashMapOf': Name@48) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('inv': Name@69) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('minus': Name@58) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('mod': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('multiply': Name@89) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('not': Name@55) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('or': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('plus': Name@60) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('shl': Name@90) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('shr': Name@92) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('subtract': Name@83) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('times': Name@88) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('to': Name@53) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('toByte': Name@64) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('toChar': Name@59) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('toDouble': Name@62) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('toFloat': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('toInt': Name@57) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('toLong': Name@47) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('toShort': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('toString': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('unaryOperation': Name@49) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('ushr': Name@91) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    classes('xor': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@377
-    deserializedPackageScope = JetScope$1@17 // through LazyPackageFragmentScopeForJavaPackage@377
-    memberIndex = computeMemberIndex$1@378 // through LazyPackageFragmentScopeForJavaPackage@377
+LazyJavaPackageFragment@260['jvm'] {
+    _functions('BigInteger': Name@285) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('BinaryOperationKey': Name@288) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('CompileTimeType': Name@289) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('Pair': Name@290) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('UnaryOperationKey': Name@291) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('add': Name@292) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('and': Name@293) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('binaryOperation': Name@294) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('compareTo': Name@295) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('div': Name@296) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('divide': Name@297) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('equals': Name@298) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('get': Name@299) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('hashMapOf': Name@300) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('inv': Name@301) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('minus': Name@303) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('mod': Name@304) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('multiply': Name@305) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('not': Name@306) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('or': Name@307) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('plus': Name@308) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('shl': Name@309) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('shr': Name@310) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('subtract': Name@311) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('times': Name@312) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('to': Name@313) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('toByte': Name@314) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('toChar': Name@315) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('toDouble': Name@316) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('toFloat': Name@317) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('toInt': Name@318) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('toLong': Name@319) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('toShort': Name@320) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('toString': Name@321) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('unaryOperation': Name@322) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('ushr': Name@323) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    _functions('xor': Name@324) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('ANY': Name@325) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('Any': Name@326) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('BOOLEAN': Name@327) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('BYTE': Name@328) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('BigInteger': Name@285) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('BinaryOperationKey': Name@288) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('Boolean': Name@329) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('Byte': Name@330) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('CHAR': Name@331) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('Char': Name@332) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('CompileTimeType': Name@289) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('DOUBLE': Name@333) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('Double': Name@334) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('FLOAT': Name@335) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('Float': Name@336) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('Function1': Name@337) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('Function2': Name@338) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('INT': Name@340) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('Int': Name@341) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('LONG': Name@342) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('Long': Name@343) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('Pair': Name@344) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('SHORT': Name@345) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('STRING': Name@346) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('Short': Name@347) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('String': Name@348) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('UnaryOperationKey': Name@291) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('add': Name@292) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('and': Name@293) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('binaryOperation': Name@294) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('compareTo': Name@295) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('data': Name@349) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('div': Name@296) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('divide': Name@297) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('emptyBinaryFun': Name@350) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('emptyUnaryFun': Name@351) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('equals': Name@298) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('get': Name@299) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('hashMapOf': Name@300) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('inv': Name@301) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('minus': Name@303) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('mod': Name@304) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('multiply': Name@305) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('not': Name@306) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('or': Name@307) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('plus': Name@308) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('shl': Name@309) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('shr': Name@310) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('subtract': Name@311) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('times': Name@312) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('to': Name@313) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('toByte': Name@314) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('toChar': Name@315) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('toDouble': Name@316) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('toFloat': Name@317) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('toInt': Name@318) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('toLong': Name@319) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('toShort': Name@320) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('toString': Name@321) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('unaryOperation': Name@322) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('ushr': Name@323) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    classes('xor': Name@324) = null // through LazyPackageFragmentScopeForJavaPackage@368
+    deserializedPackageScope = Empty@353 // through LazyPackageFragmentScopeForJavaPackage@368
+    memberIndex = computeMemberIndex$1@369 // through LazyPackageFragmentScopeForJavaPackage@368
 }
 
-LazyJavaPackageFragment@4['kotlin'] {
-    _functions('BigInteger': Name@46) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('BinaryOperationKey': Name@76) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('CompileTimeType': Name@45) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('Pair': Name@54) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('UnaryOperationKey': Name@52) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('add': Name@84) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('and': Name@81) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('binaryOperation': Name@74) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('compareTo': Name@82) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('div': Name@85) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('divide': Name@86) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('equals': Name@80) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('get': Name@93) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('hashMapOf': Name@48) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('inv': Name@69) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('io': Name@330) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('jvm': Name@328) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('minus': Name@58) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('mod': Name@87) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('multiply': Name@89) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('not': Name@55) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('or': Name@78) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('plus': Name@60) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('shl': Name@90) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('shr': Name@92) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('subtract': Name@83) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('times': Name@88) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('to': Name@53) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('toByte': Name@64) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('toChar': Name@59) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('toDouble': Name@62) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('toFloat': Name@61) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('toInt': Name@57) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('toLong': Name@47) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('toShort': Name@63) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('toString': Name@73) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('unaryOperation': Name@49) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('ushr': Name@91) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    _functions('xor': Name@77) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('ANY': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Any': Name@291) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Array': Name@357) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('BOOLEAN': Name@50) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('BYTE': Name@56) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('BigInteger': Name@46) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('BinaryOperationKey': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Boolean': Name@301) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Byte': Name@299) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('CHAR': Name@65) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Char': Name@300) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('CompileTimeType': Name@45) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('DOUBLE': Name@66) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Double': Name@302) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('FLOAT': Name@67) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Float': Name@303) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Function1': Name@290) = DeserializedClassDescriptor@96['Function1'] // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Function2': Name@293) = DeserializedClassDescriptor@98['Function2'] // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('INT': Name@68) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('InlineOption': Name@342) = DeserializedClassDescriptor@109['InlineOption'] // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Int': Name@304) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('LONG': Name@70) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Long': Name@292) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Pair': Name@294) = DeserializedClassDescriptor@3['Pair'] // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('SHORT': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('STRING': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('Short': Name@305) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('String': Name@288) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('UnaryOperationKey': Name@52) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('add': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('and': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('binaryOperation': Name@74) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('compareTo': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('data': Name@295) = DeserializedClassDescriptor@101['data'] // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('deprecated': Name@339) = DeserializedClassDescriptor@103['deprecated'] // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('div': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('divide': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('emptyBinaryFun': Name@75) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('emptyUnaryFun': Name@51) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('equals': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('get': Name@93) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('hashMapOf': Name@48) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('inline': Name@340) = DeserializedClassDescriptor@105['inline'] // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('inlineOptions': Name@341) = DeserializedClassDescriptor@107['inlineOptions'] // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('inv': Name@69) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('io': Name@325) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('jvm': Name@323) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('minus': Name@58) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('mod': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('multiply': Name@89) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('not': Name@55) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('or': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('plus': Name@60) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('shl': Name@90) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('shr': Name@92) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('subtract': Name@83) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('times': Name@88) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('to': Name@53) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('toByte': Name@64) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('toChar': Name@59) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('toDouble': Name@62) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('toFloat': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('toInt': Name@57) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('toLong': Name@47) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('toShort': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('toString': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('unaryOperation': Name@49) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('ushr': Name@91) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    classes('xor': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@324
-    deserializedPackageScope = DeserializedPackageMemberScope@326 // through LazyPackageFragmentScopeForJavaPackage@324
-    functions('BigInteger': Name@46) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('BinaryOperationKey': Name@76) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('CompileTimeType': Name@45) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('Pair': Name@54) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('UnaryOperationKey': Name@52) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('add': Name@84) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('and': Name@81) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('binaryOperation': Name@74) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('compareTo': Name@82) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('div': Name@85) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('divide': Name@86) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('equals': Name@80) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('get': Name@93) = ArrayList@364[2] { DeserializedSimpleFunctionDescriptor@365['get'], DeserializedSimpleFunctionDescriptor@366['get'] } // through DeserializedPackageMemberScope@326
-    functions('hashMapOf': Name@48) = ArrayList@333[1] { DeserializedSimpleFunctionDescriptor@334['hashMapOf'] } // through DeserializedPackageMemberScope@326
-    functions('inv': Name@69) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('io': Name@330) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('jvm': Name@328) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('minus': Name@58) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('mod': Name@87) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('multiply': Name@89) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('not': Name@55) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('or': Name@78) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('plus': Name@60) = ArrayList@343[37] { DeserializedSimpleFunctionDescriptor@344['plus'], DeserializedSimpleFunctionDescriptor@345['plus'], DeserializedSimpleFunctionDescriptor@346['plus'], ... } // through DeserializedPackageMemberScope@326
-    functions('shl': Name@90) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('shr': Name@92) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('subtract': Name@83) = ArrayList@358[10] { DeserializedSimpleFunctionDescriptor@359['subtract'], DeserializedSimpleFunctionDescriptor@360['subtract'], DeserializedSimpleFunctionDescriptor@361['subtract'], ... } // through DeserializedPackageMemberScope@326
-    functions('times': Name@88) = ArrayList@362[1] { DeserializedSimpleFunctionDescriptor@363['times'] } // through DeserializedPackageMemberScope@326
-    functions('to': Name@53) = ArrayList@335[1] { DeserializedSimpleFunctionDescriptor@336['to'] } // through DeserializedPackageMemberScope@326
-    functions('toByte': Name@64) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('toChar': Name@59) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('toDouble': Name@62) = ArrayList@349[1] { DeserializedSimpleFunctionDescriptor@350['toDouble'] } // through DeserializedPackageMemberScope@326
-    functions('toFloat': Name@61) = ArrayList@347[1] { DeserializedSimpleFunctionDescriptor@348['toFloat'] } // through DeserializedPackageMemberScope@326
-    functions('toInt': Name@57) = ArrayList@337[1] { DeserializedSimpleFunctionDescriptor@338['toInt'] } // through DeserializedPackageMemberScope@326
-    functions('toLong': Name@47) = ArrayList@331[1] { DeserializedSimpleFunctionDescriptor@332['toLong'] } // through DeserializedPackageMemberScope@326
-    functions('toShort': Name@63) = ArrayList@351[1] { DeserializedSimpleFunctionDescriptor@352['toShort'] } // through DeserializedPackageMemberScope@326
-    functions('toString': Name@73) = ArrayList@353[3] { DeserializedSimpleFunctionDescriptor@354['toString'], DeserializedSimpleFunctionDescriptor@355['toString'], DeserializedSimpleFunctionDescriptor@356['toString'] } // through DeserializedPackageMemberScope@326
-    functions('unaryOperation': Name@49) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('ushr': Name@91) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    functions('xor': Name@77) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    memberIndex = computeMemberIndex$1@329 // through LazyPackageFragmentScopeForJavaPackage@324
-    membersProtos = HashMap@327 // through DeserializedPackageMemberScope@326
-    properties('ANY': Name@79) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('BOOLEAN': Name@50) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('BYTE': Name@56) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('BigInteger': Name@46) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('BinaryOperationKey': Name@76) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('CHAR': Name@65) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('CompileTimeType': Name@45) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('DOUBLE': Name@66) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('FLOAT': Name@67) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('INT': Name@68) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('LONG': Name@70) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('Pair': Name@54) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('SHORT': Name@71) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('STRING': Name@72) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('UnaryOperationKey': Name@52) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('add': Name@84) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('and': Name@81) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('binaryOperation': Name@74) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('compareTo': Name@82) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('div': Name@85) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('divide': Name@86) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('emptyBinaryFun': Name@75) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('emptyUnaryFun': Name@51) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('equals': Name@80) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('get': Name@93) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('hashMapOf': Name@48) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('inv': Name@69) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('io': Name@330) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('jvm': Name@328) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('minus': Name@58) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('mod': Name@87) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('multiply': Name@89) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('not': Name@55) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('o': Name@306) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('or': Name@78) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('plus': Name@60) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('shl': Name@90) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('shr': Name@92) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('subtract': Name@83) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('times': Name@88) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('to': Name@53) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('toByte': Name@64) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('toChar': Name@59) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('toDouble': Name@62) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('toFloat': Name@61) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('toInt': Name@57) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('toLong': Name@47) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('toShort': Name@63) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('toString': Name@73) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('unaryOperation': Name@49) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('ushr': Name@91) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
-    properties('xor': Name@77) = EmptyList@20[empty] // through DeserializedPackageMemberScope@326
+LazyJavaPackageFragment@35['kotlin'] {
+    _functions('BigInteger': Name@285) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('BinaryOperationKey': Name@288) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('CompileTimeType': Name@289) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('Pair': Name@290) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('UnaryOperationKey': Name@291) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('add': Name@292) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('and': Name@293) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('binaryOperation': Name@294) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('compareTo': Name@295) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('div': Name@296) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('divide': Name@297) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('equals': Name@298) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('get': Name@299) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('hashMapOf': Name@300) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('inv': Name@301) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('io': Name@371) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('jvm': Name@372) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('minus': Name@303) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('mod': Name@304) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('multiply': Name@305) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('not': Name@306) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('or': Name@307) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('plus': Name@308) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('shl': Name@309) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('shr': Name@310) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('subtract': Name@311) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('times': Name@312) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('to': Name@313) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('toByte': Name@314) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('toChar': Name@315) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('toDouble': Name@316) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('toFloat': Name@317) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('toInt': Name@318) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('toLong': Name@319) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('toShort': Name@320) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('toString': Name@321) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('unaryOperation': Name@322) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('ushr': Name@323) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    _functions('xor': Name@324) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('ANY': Name@325) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Any': Name@326) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Array': Name@373) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('BOOLEAN': Name@327) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('BYTE': Name@328) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('BigInteger': Name@285) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('BinaryOperationKey': Name@288) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Boolean': Name@329) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Byte': Name@330) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('CHAR': Name@331) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Char': Name@332) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('CompileTimeType': Name@289) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('DOUBLE': Name@333) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Double': Name@334) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('FLOAT': Name@335) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Float': Name@336) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Function1': Name@337) = DeserializedClassDescriptor@2['Function1'] // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Function2': Name@338) = DeserializedClassDescriptor@4['Function2'] // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('INT': Name@340) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('InlineOption': Name@374) = DeserializedClassDescriptor@6['InlineOption'] // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Int': Name@341) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('LONG': Name@342) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Long': Name@343) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Pair': Name@344) = DeserializedClassDescriptor@8['Pair'] // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('SHORT': Name@345) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('STRING': Name@346) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('Short': Name@347) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('String': Name@348) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('UnaryOperationKey': Name@291) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('add': Name@292) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('and': Name@293) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('binaryOperation': Name@294) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('compareTo': Name@295) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('data': Name@349) = DeserializedClassDescriptor@10['data'] // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('deprecated': Name@375) = DeserializedClassDescriptor@12['deprecated'] // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('div': Name@296) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('divide': Name@297) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('emptyBinaryFun': Name@350) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('emptyUnaryFun': Name@351) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('equals': Name@298) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('get': Name@299) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('hashMapOf': Name@300) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('inline': Name@376) = DeserializedClassDescriptor@14['inline'] // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('inlineOptions': Name@377) = DeserializedClassDescriptor@16['inlineOptions'] // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('inv': Name@301) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('io': Name@378) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('jvm': Name@379) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('minus': Name@303) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('mod': Name@304) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('multiply': Name@305) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('not': Name@306) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('or': Name@307) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('plus': Name@308) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('shl': Name@309) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('shr': Name@310) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('subtract': Name@311) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('times': Name@312) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('to': Name@313) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('toByte': Name@314) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('toChar': Name@315) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('toDouble': Name@316) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('toFloat': Name@317) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('toInt': Name@318) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('toLong': Name@319) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('toShort': Name@320) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('toString': Name@321) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('unaryOperation': Name@322) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('ushr': Name@323) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    classes('xor': Name@324) = null // through LazyPackageFragmentScopeForJavaPackage@370
+    deserializedPackageScope = DeserializedPackageMemberScope@380 // through LazyPackageFragmentScopeForJavaPackage@370
+    functions('BigInteger': Name@285) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('BinaryOperationKey': Name@288) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('CompileTimeType': Name@289) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('Pair': Name@290) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('UnaryOperationKey': Name@291) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('add': Name@292) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('and': Name@293) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('binaryOperation': Name@294) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('compareTo': Name@295) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('div': Name@296) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('divide': Name@297) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('equals': Name@298) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('get': Name@299) = ArrayList@381[2] { DeserializedSimpleFunctionDescriptor@382['get'], DeserializedSimpleFunctionDescriptor@383['get'] } // through DeserializedPackageMemberScope@380
+    functions('hashMapOf': Name@300) = ArrayList@384[1] { DeserializedSimpleFunctionDescriptor@385['hashMapOf'] } // through DeserializedPackageMemberScope@380
+    functions('inv': Name@301) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('io': Name@371) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('jvm': Name@372) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('minus': Name@303) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('mod': Name@304) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('multiply': Name@305) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('not': Name@306) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('or': Name@307) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('plus': Name@308) = ArrayList@386[37] { DeserializedSimpleFunctionDescriptor@387['plus'], DeserializedSimpleFunctionDescriptor@388['plus'], DeserializedSimpleFunctionDescriptor@389['plus'], ... } // through DeserializedPackageMemberScope@380
+    functions('shl': Name@309) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('shr': Name@310) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('subtract': Name@311) = ArrayList@390[10] { DeserializedSimpleFunctionDescriptor@391['subtract'], DeserializedSimpleFunctionDescriptor@392['subtract'], DeserializedSimpleFunctionDescriptor@393['subtract'], ... } // through DeserializedPackageMemberScope@380
+    functions('times': Name@312) = ArrayList@394[1] { DeserializedSimpleFunctionDescriptor@395['times'] } // through DeserializedPackageMemberScope@380
+    functions('to': Name@313) = ArrayList@396[1] { DeserializedSimpleFunctionDescriptor@397['to'] } // through DeserializedPackageMemberScope@380
+    functions('toByte': Name@314) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('toChar': Name@315) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('toDouble': Name@316) = ArrayList@398[1] { DeserializedSimpleFunctionDescriptor@399['toDouble'] } // through DeserializedPackageMemberScope@380
+    functions('toFloat': Name@317) = ArrayList@400[1] { DeserializedSimpleFunctionDescriptor@401['toFloat'] } // through DeserializedPackageMemberScope@380
+    functions('toInt': Name@318) = ArrayList@402[1] { DeserializedSimpleFunctionDescriptor@403['toInt'] } // through DeserializedPackageMemberScope@380
+    functions('toLong': Name@319) = ArrayList@404[1] { DeserializedSimpleFunctionDescriptor@405['toLong'] } // through DeserializedPackageMemberScope@380
+    functions('toShort': Name@320) = ArrayList@406[1] { DeserializedSimpleFunctionDescriptor@407['toShort'] } // through DeserializedPackageMemberScope@380
+    functions('toString': Name@321) = ArrayList@408[3] { DeserializedSimpleFunctionDescriptor@409['toString'], DeserializedSimpleFunctionDescriptor@410['toString'], DeserializedSimpleFunctionDescriptor@411['toString'] } // through DeserializedPackageMemberScope@380
+    functions('unaryOperation': Name@322) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('ushr': Name@323) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    functions('xor': Name@324) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    memberIndex = computeMemberIndex$1@412 // through LazyPackageFragmentScopeForJavaPackage@370
+    membersProtos = HashMap@413 // through DeserializedPackageMemberScope@380
+    properties('ANY': Name@325) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('BOOLEAN': Name@327) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('BYTE': Name@328) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('BigInteger': Name@285) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('BinaryOperationKey': Name@288) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('CHAR': Name@331) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('CompileTimeType': Name@289) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('DOUBLE': Name@333) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('FLOAT': Name@335) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('INT': Name@340) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('LONG': Name@342) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('Pair': Name@290) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('SHORT': Name@345) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('STRING': Name@346) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('UnaryOperationKey': Name@291) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('add': Name@292) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('and': Name@293) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('binaryOperation': Name@294) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('compareTo': Name@295) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('div': Name@296) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('divide': Name@297) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('emptyBinaryFun': Name@350) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('emptyUnaryFun': Name@351) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('equals': Name@298) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('get': Name@299) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('hashMapOf': Name@300) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('inv': Name@301) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('io': Name@371) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('jvm': Name@372) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('minus': Name@303) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('mod': Name@304) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('multiply': Name@305) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('not': Name@306) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('o': Name@359) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('or': Name@307) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('plus': Name@308) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('shl': Name@309) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('shr': Name@310) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('subtract': Name@311) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('times': Name@312) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('to': Name@313) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('toByte': Name@314) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('toChar': Name@315) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('toDouble': Name@316) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('toFloat': Name@317) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('toInt': Name@318) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('toLong': Name@319) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('toShort': Name@320) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('toString': Name@321) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('unaryOperation': Name@322) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('ushr': Name@323) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
+    properties('xor': Name@324) = EmptyList@286[empty] // through DeserializedPackageMemberScope@380
 }
 
-LazyJavaPackageFragment@42['lang'] {
-    _functions('BigInteger': Name@46) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('BinaryOperationKey': Name@76) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('CompileTimeType': Name@45) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('Pair': Name@54) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('UnaryOperationKey': Name@52) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('add': Name@84) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('and': Name@81) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('binaryOperation': Name@74) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('compareTo': Name@82) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('div': Name@85) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('divide': Name@86) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('equals': Name@80) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('get': Name@93) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('hashMapOf': Name@48) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('inv': Name@69) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('minus': Name@58) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('mod': Name@87) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('multiply': Name@89) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('not': Name@55) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('or': Name@78) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('plus': Name@60) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('shl': Name@90) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('shr': Name@92) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('subtract': Name@83) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('times': Name@88) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('to': Name@53) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('toByte': Name@64) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('toChar': Name@59) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('toDouble': Name@62) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('toFloat': Name@61) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('toInt': Name@57) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('toLong': Name@47) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('toShort': Name@63) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('toString': Name@73) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('unaryOperation': Name@49) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('ushr': Name@91) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    _functions('xor': Name@77) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('ANY': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('BOOLEAN': Name@50) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('BYTE': Name@56) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('BigInteger': Name@46) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('BinaryOperationKey': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('CHAR': Name@65) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('CompileTimeType': Name@45) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('DOUBLE': Name@66) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('FLOAT': Name@67) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('INT': Name@68) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('LONG': Name@70) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('Pair': Name@54) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('SHORT': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('STRING': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('UnaryOperationKey': Name@52) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('add': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('and': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('binaryOperation': Name@74) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('compareTo': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('div': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('divide': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('emptyBinaryFun': Name@75) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('emptyUnaryFun': Name@51) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('equals': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('get': Name@93) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('hashMapOf': Name@48) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('inv': Name@69) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('minus': Name@58) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('mod': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('multiply': Name@89) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('not': Name@55) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('or': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('plus': Name@60) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('shl': Name@90) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('shr': Name@92) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('subtract': Name@83) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('times': Name@88) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('to': Name@53) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('toByte': Name@64) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('toChar': Name@59) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('toDouble': Name@62) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('toFloat': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('toInt': Name@57) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('toLong': Name@47) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('toShort': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('toString': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('unaryOperation': Name@49) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('ushr': Name@91) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('xor': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    deserializedPackageScope = JetScope$1@17 // through LazyPackageFragmentScopeForJavaPackage@43
-    memberIndex = computeMemberIndex$1@44 // through LazyPackageFragmentScopeForJavaPackage@43
+LazyJavaPackageFragment@189['lang'] {
+    _functions('BigInteger': Name@285) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('BinaryOperationKey': Name@288) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('CompileTimeType': Name@289) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('Pair': Name@290) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('UnaryOperationKey': Name@291) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('add': Name@292) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('and': Name@293) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('binaryOperation': Name@294) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('compareTo': Name@295) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('div': Name@296) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('divide': Name@297) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('equals': Name@298) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('get': Name@299) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('hashMapOf': Name@300) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('inv': Name@301) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('minus': Name@303) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('mod': Name@304) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('multiply': Name@305) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('not': Name@306) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('or': Name@307) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('plus': Name@308) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('shl': Name@309) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('shr': Name@310) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('subtract': Name@311) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('times': Name@312) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('to': Name@313) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('toByte': Name@314) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('toChar': Name@315) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('toDouble': Name@316) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('toFloat': Name@317) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('toInt': Name@318) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('toLong': Name@319) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('toShort': Name@320) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('toString': Name@321) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('unaryOperation': Name@322) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('ushr': Name@323) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    _functions('xor': Name@324) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('ANY': Name@325) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('BOOLEAN': Name@327) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('BYTE': Name@328) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('BigInteger': Name@285) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('BinaryOperationKey': Name@288) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('CHAR': Name@331) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('CompileTimeType': Name@289) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('DOUBLE': Name@333) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('FLOAT': Name@335) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('INT': Name@340) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('LONG': Name@342) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('Pair': Name@290) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('SHORT': Name@345) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('STRING': Name@346) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('UnaryOperationKey': Name@291) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('add': Name@292) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('and': Name@293) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('binaryOperation': Name@294) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('compareTo': Name@295) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('div': Name@296) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('divide': Name@297) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('emptyBinaryFun': Name@350) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('emptyUnaryFun': Name@351) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('equals': Name@298) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('get': Name@299) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('hashMapOf': Name@300) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('inv': Name@301) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('minus': Name@303) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('mod': Name@304) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('multiply': Name@305) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('not': Name@306) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('or': Name@307) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('plus': Name@308) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('shl': Name@309) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('shr': Name@310) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('subtract': Name@311) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('times': Name@312) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('to': Name@313) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('toByte': Name@314) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('toChar': Name@315) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('toDouble': Name@316) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('toFloat': Name@317) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('toInt': Name@318) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('toLong': Name@319) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('toShort': Name@320) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('toString': Name@321) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('unaryOperation': Name@322) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('ushr': Name@323) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    classes('xor': Name@324) = null // through LazyPackageFragmentScopeForJavaPackage@414
+    deserializedPackageScope = Empty@353 // through LazyPackageFragmentScopeForJavaPackage@414
+    memberIndex = computeMemberIndex$1@415 // through LazyPackageFragmentScopeForJavaPackage@414
 }
 
-LazyJavaPackageFragment@130['util'] {
-    _functions('HashMap': Name@402) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@400
-    classes('HashMap': Name@399) = LazyJavaClassDescriptor@133['HashMap'] // through LazyPackageFragmentScopeForJavaPackage@400
-    deserializedPackageScope = JetScope$1@17 // through LazyPackageFragmentScopeForJavaPackage@400
-    memberIndex = computeMemberIndex$1@401 // through LazyPackageFragmentScopeForJavaPackage@400
+LazyJavaPackageFragment@212['util'] {
+    _functions('HashMap': Name@416) = EmptyList@286[empty] // through LazyPackageFragmentScopeForJavaPackage@417
+    classes('HashMap': Name@418) = LazyJavaClassDescriptor@137['HashMap'] // through LazyPackageFragmentScopeForJavaPackage@417
+    deserializedPackageScope = Empty@353 // through LazyPackageFragmentScopeForJavaPackage@417
+    memberIndex = computeMemberIndex$1@419 // through LazyPackageFragmentScopeForJavaPackage@417
 }
 
-LazyJavaTypeParameterDescriptor@25['K'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@416
-    upperBounds = LinkedHashSet@417[1] { NullableType@418 }
+LazyJavaTypeParameterDescriptor@140['K'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@420
+    upperBounds = LinkedHashSet@421[1] { NullableType@422 }
 }
 
-LazyJavaTypeParameterDescriptor@26['V'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@392
-    upperBounds = LinkedHashSet@393[1] { NullableType@394 }
+LazyJavaTypeParameterDescriptor@141['V'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@423
+    upperBounds = LinkedHashSet@424[1] { NullableType@425 }
 }
 
-LazyJavaTypeParameterResolver@396 {
-    resolve(JavaTypeParameterImpl@397['K']) = LazyJavaTypeParameterDescriptor@25['K']
-    resolve(JavaTypeParameterImpl@398['V']) = LazyJavaTypeParameterDescriptor@26['V']
+LazyJavaTypeParameterResolver@426 {
+    resolve(JavaTypeParameterImpl@427['K']) = LazyJavaTypeParameterDescriptor@140['K']
+    resolve(JavaTypeParameterImpl@428['V']) = LazyJavaTypeParameterDescriptor@141['V']
 }
 
-NestedClassDescriptors@411 {
-    findClass('ONLY_LOCAL_RETURN': Name@412) = EnumEntrySyntheticClassDescriptor@319['ONLY_LOCAL_RETURN']
+NestedClassDescriptors@429 {
+    findClass('ONLY_LOCAL_RETURN': Name@430) = EnumEntrySyntheticClassDescriptor@129['ONLY_LOCAL_RETURN']
 }
 
-TypeDeserializer@368 {
-    classDescriptors(Integer@10) = DeserializedClassDescriptor@11['Any']
-    classDescriptors(Integer@369) = DeserializedClassDescriptor@370['Array']
-    classDescriptors(Integer@12) = DeserializedClassDescriptor@3['Pair']
-    classDescriptors(Integer@371) = LazyJavaClassDescriptor@133['HashMap']
-}
-
-TypeDeserializer@9 {
-    classDescriptors(Integer@10) = DeserializedClassDescriptor@11['Any']
-    classDescriptors(Integer@12) = DeserializedClassDescriptor@3['Pair']
-}
-
-TypeDeserializer@414 {
-    classDescriptors(Integer@10) = DeserializedClassDescriptor@11['Any']
-    classDescriptors(Integer@415) = LazyJavaClassDescriptor@117['Serializable']
-}
-
-TypeDeserializer@391 {
-    classDescriptors(Integer@10) = DeserializedClassDescriptor@11['Any']
+TypeDeserializer@431 {
+    classDescriptors('1': Integer@432) = DeserializedClassDescriptor@8['Pair']
 }
 
 TypeDeserializer@433 {
-    classDescriptors(Integer@10) = DeserializedClassDescriptor@11['Any']
+    classDescriptors('117': Integer@434) = DeserializedClassDescriptor@8['Pair']
+    classDescriptors('118': Integer@435) = LazyJavaClassDescriptor@137['HashMap']
+    classDescriptors('2': Integer@436) = DeserializedClassDescriptor@437['Any']
+    classDescriptors('3': Integer@438) = DeserializedClassDescriptor@439['Array']
 }
 
-TypeDeserializer@409 {
-    classDescriptors(Integer@410) = DeserializedClassDescriptor@3['Pair']
+TypeDeserializer@440 {
+    classDescriptors('117': Integer@434) = DeserializedClassDescriptor@8['Pair']
+    classDescriptors('2': Integer@436) = DeserializedClassDescriptor@437['Any']
+}
+
+TypeDeserializer@441 {
+    classDescriptors('2': Integer@436) = DeserializedClassDescriptor@437['Any']
+    classDescriptors('5': Integer@442) = LazyJavaClassDescriptor@138['Serializable']
+}
+
+TypeDeserializer@443 {
+    classDescriptors('2': Integer@436) = DeserializedClassDescriptor@437['Any']
+}
+
+TypeDeserializer@444 {
+    classDescriptors('2': Integer@436) = DeserializedClassDescriptor@437['Any']
 }

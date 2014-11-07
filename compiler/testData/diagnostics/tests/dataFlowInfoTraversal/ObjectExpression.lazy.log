@@ -1,53 +1,53 @@
-ClosureExpressionsTypingVisitor$1@28 {
-    <name not found> = JetTypeImpl@29
+ClosureExpressionsTypingVisitor$1@0 {
+    <name not found> = JetTypeImpl@1['<no name provided>']
 }
 
-DescriptorResolver@13 {
-    <name not found> = JetTypeImpl@14
+DescriptorResolver@2 {
+    <name not found> = JetTypeImpl@3['Int']
 }
 
-DescriptorResolver@26 {
-    <name not found> = NullValue@27
+DescriptorResolver@4 {
+    <name not found> = NullValue@5
 }
 
-LazyJavaPackageFragmentProvider@15 {
-    _packageFragments('<root>': FqName@16) = LazyJavaPackageFragment@17['<root>']
-    _packageFragments('Int': FqName@23) = null
-    _packageFragments('java': FqName@18) = LazyJavaPackageFragment@0['java']
-    _packageFragments('java.lang': FqName@19) = LazyJavaPackageFragment@7['lang']
-    _packageFragments('java.lang.Int': FqName@25) = null
-    _packageFragments('kotlin': FqName@20) = null
-    _packageFragments('kotlin.Int': FqName@24) = null
-    _packageFragments('kotlin.io': FqName@22) = null
-    _packageFragments('kotlin.jvm': FqName@21) = null
+LazyJavaPackageFragmentProvider@6 {
+    _packageFragments('<root>': FqName@7) = LazyJavaPackageFragment@8['<root>']
+    _packageFragments('Int': FqName@9) = null
+    _packageFragments('java': FqName@10) = LazyJavaPackageFragment@11['java']
+    _packageFragments('java.lang': FqName@12) = LazyJavaPackageFragment@13['lang']
+    _packageFragments('java.lang.Int': FqName@14) = null
+    _packageFragments('kotlin': FqName@15) = null
+    _packageFragments('kotlin.Int': FqName@16) = null
+    _packageFragments('kotlin.io': FqName@17) = null
+    _packageFragments('kotlin.jvm': FqName@18) = null
 }
 
-LazyJavaPackageFragment@17['<root>'] {
-    _functions('bar': Name@11) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@31
-    _functions('equals': Name@12) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@31
-    _functions('plus': Name@10) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@31
-    classes('Int': Name@30) = null // through LazyPackageFragmentScopeForJavaPackage@31
-    classes('bar': Name@11) = null // through LazyPackageFragmentScopeForJavaPackage@31
-    classes('equals': Name@12) = null // through LazyPackageFragmentScopeForJavaPackage@31
-    classes('plus': Name@10) = null // through LazyPackageFragmentScopeForJavaPackage@31
-    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@31
+LazyJavaPackageFragment@8['<root>'] {
+    _functions('bar': Name@19) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@21
+    _functions('equals': Name@22) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@21
+    _functions('plus': Name@23) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('Int': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('bar': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('equals': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('plus': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    deserializedPackageScope = Empty@25 // through LazyPackageFragmentScopeForJavaPackage@21
+    memberIndex = computeMemberIndex$1@26 // through LazyPackageFragmentScopeForJavaPackage@21
+}
+
+LazyJavaPackageFragment@11['java'] {
+    _functions('lang': Name@27) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@28
+    classes('lang': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@28
+    deserializedPackageScope = Empty@25 // through LazyPackageFragmentScopeForJavaPackage@28
+    memberIndex = computeMemberIndex$1@30 // through LazyPackageFragmentScopeForJavaPackage@28
+}
+
+LazyJavaPackageFragment@13['lang'] {
+    _functions('bar': Name@19) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@31
+    _functions('equals': Name@22) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@31
+    _functions('plus': Name@23) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@31
+    classes('bar': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@31
+    classes('equals': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@31
+    classes('plus': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@31
+    deserializedPackageScope = Empty@25 // through LazyPackageFragmentScopeForJavaPackage@31
     memberIndex = computeMemberIndex$1@32 // through LazyPackageFragmentScopeForJavaPackage@31
-}
-
-LazyJavaPackageFragment@0['java'] {
-    _functions('lang': Name@5) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@2
-    classes('lang': Name@1) = null // through LazyPackageFragmentScopeForJavaPackage@2
-    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@2
-    memberIndex = computeMemberIndex$1@4 // through LazyPackageFragmentScopeForJavaPackage@2
-}
-
-LazyJavaPackageFragment@7['lang'] {
-    _functions('bar': Name@11) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@8
-    _functions('equals': Name@12) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@8
-    _functions('plus': Name@10) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@8
-    classes('bar': Name@11) = null // through LazyPackageFragmentScopeForJavaPackage@8
-    classes('equals': Name@12) = null // through LazyPackageFragmentScopeForJavaPackage@8
-    classes('plus': Name@10) = null // through LazyPackageFragmentScopeForJavaPackage@8
-    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@8
-    memberIndex = computeMemberIndex$1@9 // through LazyPackageFragmentScopeForJavaPackage@8
 }

@@ -1,145 +1,145 @@
-LazyJavaClassDescriptor@6['Bug'] {
-    _functions('save': Name@9) = ArrayList@10[1] { JavaMethodDescriptor@11['save'] } // through LazyJavaClassMemberScope@5
-    _properties('save': Name@12) = EmptyList@13[empty] // through LazyJavaClassMemberScope@5
-    _typeConstructor = LazyJavaClassTypeConstructor@3['Bug']
-    defaultType = JetTypeImpl@17
-    enumEntryIndex = LinkedHashMap@15 // through LazyJavaClassMemberScope@5
-    memberIndex = computeMemberIndex$1@7 // through LazyJavaClassMemberScope@5
-    nestedClassIndex = LinkedHashMap@14 // through LazyJavaClassMemberScope@5
-    nestedClasses('save': Name@16) = null // through LazyJavaClassMemberScope@5
-    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@8['<this>']
+LazyJavaClassDescriptor@0['Bug'] {
+    _functions('save': Name@1) = ArrayList@2[1] { JavaMethodDescriptor@3['save'] } // through LazyJavaClassMemberScope@4
+    _properties('save': Name@5) = EmptyList@6[empty] // through LazyJavaClassMemberScope@4
+    _typeConstructor = LazyJavaClassTypeConstructor@7['Bug']
+    defaultType = JetTypeImpl@8['Bug']
+    enumEntryIndex = LinkedHashMap@9 // through LazyJavaClassMemberScope@4
+    memberIndex = computeMemberIndex$1@10 // through LazyJavaClassMemberScope@4
+    nestedClassIndex = LinkedHashMap@11 // through LazyJavaClassMemberScope@4
+    nestedClasses('save': Name@12) = null // through LazyJavaClassMemberScope@4
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@13['<this>']
 }
 
-LazyJavaClassDescriptor@22['SubBug'] {
-    _constructors = ArrayList@24[1] { JavaConstructorDescriptor@25['<init>'] } // through LazyJavaClassMemberScope@26
+LazyJavaClassDescriptor@14['SubBug'] {
+    _constructors = ArrayList@15[1] { JavaConstructorDescriptor@16['<init>'] } // through LazyJavaClassMemberScope@17
     _functionTypeForSamInterface = null
-    _functions('save': Name@12) = ArrayList@29[1] { JavaMethodDescriptor@30['save'] } // through LazyJavaClassMemberScope@26
-    _properties('save': Name@12) = EmptyList@13[empty] // through LazyJavaClassMemberScope@26
+    _functions('save': Name@5) = ArrayList@18[1] { JavaMethodDescriptor@19['save'] } // through LazyJavaClassMemberScope@17
+    _properties('save': Name@5) = EmptyList@6[empty] // through LazyJavaClassMemberScope@17
     _typeConstructor = LazyJavaClassTypeConstructor@20['SubBug']
-    defaultType = JetTypeImpl@23
-    enumEntryIndex = LinkedHashMap@32 // through LazyJavaClassMemberScope@26
-    memberIndex = computeMemberIndex$1@27 // through LazyJavaClassMemberScope@26
-    nestedClassIndex = LinkedHashMap@31 // through LazyJavaClassMemberScope@26
-    nestedClasses('save': Name@12) = null // through LazyJavaClassMemberScope@26
-    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@28['<this>']
+    defaultType = JetTypeImpl@21['SubBug']
+    enumEntryIndex = LinkedHashMap@22 // through LazyJavaClassMemberScope@17
+    memberIndex = computeMemberIndex$1@23 // through LazyJavaClassMemberScope@17
+    nestedClassIndex = LinkedHashMap@24 // through LazyJavaClassMemberScope@17
+    nestedClasses('save': Name@5) = null // through LazyJavaClassMemberScope@17
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@25['<this>']
 }
 
-LazyJavaClassTypeConstructor@3['Bug'] {
-    _parameters = ArrayList@65[empty]
-    _supertypes = ArrayList@63[1] { JetTypeImpl@64 }
+LazyJavaClassTypeConstructor@7['Bug'] {
+    _parameters = ArrayList@26[empty]
+    _supertypes = ArrayList@27[1] { JetTypeImpl@28['Any'] }
 }
 
 LazyJavaClassTypeConstructor@20['SubBug'] {
-    _parameters = ArrayList@39[empty]
-    _supertypes = ArrayList@40[1] { LazyJavaClassifierType@41['Bug'] }
+    _parameters = ArrayList@29[empty]
+    _supertypes = ArrayList@30[1] { LazyJavaClassifierType@31['Bug'] }
 }
 
-LazyJavaClassifierType@0['Bug'] {
-    _arguments = ArrayList@4[empty]
-    _memberScope = LazyJavaClassMemberScope@5
-    _nullable = Boolean@1
-    _typeConstructor = LazyJavaClassTypeConstructor@3['Bug']
-    classifier = JavaClassImpl@2['Bug']
+LazyJavaClassifierType@32['Bug'] {
+    _arguments = ArrayList@33[empty]
+    _memberScope = LazyJavaClassMemberScope@4
+    _nullable = 'false': Boolean@34
+    _typeConstructor = LazyJavaClassTypeConstructor@7['Bug']
+    classifier = JavaClassImpl@35['Bug']
 }
 
-LazyJavaClassifierType@55['Bug'] {
+LazyJavaClassifierType@36['Bug'] {
+    _arguments = ArrayList@37[empty]
+    _memberScope = LazyJavaClassMemberScope@4
+    _nullable = 'true': Boolean@38
+    _typeConstructor = LazyJavaClassTypeConstructor@7['Bug']
+    classifier = JavaClassImpl@35['Bug']
+}
+
+LazyJavaClassifierType@31['Bug'] {
+    _arguments = ArrayList@39[empty]
+    _memberScope = LazyJavaClassMemberScope@4
+    _typeConstructor = LazyJavaClassTypeConstructor@7['Bug']
+    classifier = JavaClassImpl@40['Bug']
+}
+
+LazyJavaClassifierType@41['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@42
+    classifier = JavaClassImpl@43['Object']
+}
+
+LazyJavaClassifierType@44['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@42
+    classifier = JavaClassImpl@45['Object']
+}
+
+LazyJavaClassifierType@46['RET'] {
+    _arguments = ArrayList@47[empty]
+    _nullable = 'false': Boolean@34
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@48
+    classifier = JavaTypeParameterImpl@49['RET']
+}
+
+LazyJavaClassifierType@50['RET'] {
+    _arguments = ArrayList@51[empty]
+    _nullable = 'true': Boolean@38
+    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@48
+    classifier = JavaTypeParameterImpl@49['RET']
+}
+
+LazyJavaClassifierType@52['SubBug'] {
+    _arguments = ArrayList@53[empty]
+    _nullable = 'false': Boolean@34
+    _typeConstructor = LazyJavaClassTypeConstructor@20['SubBug']
+    classifier = JavaClassImpl@54['SubBug']
+}
+
+LazyJavaClassifierType@55['SubBug'] {
     _arguments = ArrayList@56[empty]
-    _memberScope = LazyJavaClassMemberScope@5
-    _nullable = Boolean@34
-    _typeConstructor = LazyJavaClassTypeConstructor@3['Bug']
-    classifier = JavaClassImpl@2['Bug']
-}
-
-LazyJavaClassifierType@41['Bug'] {
-    _arguments = ArrayList@84[empty]
-    _memberScope = LazyJavaClassMemberScope@5
-    _typeConstructor = LazyJavaClassTypeConstructor@3['Bug']
-    classifier = JavaClassImpl@78['Bug']
-}
-
-LazyJavaClassifierType@57['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@59
-    classifier = JavaClassImpl@58['Object']
-}
-
-LazyJavaClassifierType@82['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@59
-    classifier = JavaClassImpl@83['Object']
-}
-
-LazyJavaClassifierType@60['RET'] {
-    _arguments = ArrayList@62[empty]
-    _nullable = Boolean@34
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@52
-    classifier = JavaTypeParameterImpl@61['RET']
-}
-
-LazyJavaClassifierType@85['RET'] {
-    _arguments = ArrayList@86[empty]
-    _nullable = Boolean@1
-    _typeConstructor = AbstractLazyTypeParameterDescriptor$1@52
-    classifier = JavaTypeParameterImpl@61['RET']
-}
-
-LazyJavaClassifierType@18['SubBug'] {
-    _arguments = ArrayList@21[empty]
-    _nullable = Boolean@1
+    _nullable = 'true': Boolean@38
     _typeConstructor = LazyJavaClassTypeConstructor@20['SubBug']
-    classifier = JavaClassImpl@19['SubBug']
+    classifier = JavaClassImpl@54['SubBug']
 }
 
-LazyJavaClassifierType@33['SubBug'] {
-    _arguments = ArrayList@35[empty]
-    _nullable = Boolean@34
-    _typeConstructor = LazyJavaClassTypeConstructor@20['SubBug']
-    classifier = JavaClassImpl@19['SubBug']
+LazyJavaPackageFragmentProvider@57 {
+    _packageFragments('<root>': FqName@58) = LazyJavaPackageFragment@59['<root>']
+    _packageFragments('Bug': FqName@60) = null
+    _packageFragments('java': FqName@61) = LazyJavaPackageFragment@62['java']
+    _packageFragments('java.lang': FqName@63) = LazyJavaPackageFragment@64['lang']
+    _packageFragments('java.lang.Bug': FqName@65) = null
+    _packageFragments('kotlin': FqName@66) = null
+    _packageFragments('kotlin.Bug': FqName@67) = null
+    _packageFragments('kotlin.io': FqName@68) = null
+    _packageFragments('kotlin.jvm': FqName@69) = null
+    topLevelClasses(JavaClassImpl@40['Bug']) = LazyJavaClassDescriptor@0['Bug']
+    topLevelClasses(JavaClassImpl@70['SubBug']) = LazyJavaClassDescriptor@14['SubBug']
 }
 
-LazyJavaPackageFragmentProvider@70 {
-    _packageFragments('<root>': FqName@71) = LazyJavaPackageFragment@66['<root>']
-    _packageFragments('Bug': FqName@79) = null
-    _packageFragments('java': FqName@72) = LazyJavaPackageFragment@42['java']
-    _packageFragments('java.lang': FqName@73) = LazyJavaPackageFragment@48['lang']
-    _packageFragments('java.lang.Bug': FqName@81) = null
-    _packageFragments('kotlin': FqName@74) = null
-    _packageFragments('kotlin.Bug': FqName@80) = null
-    _packageFragments('kotlin.io': FqName@76) = null
-    _packageFragments('kotlin.jvm': FqName@75) = null
-    topLevelClasses(JavaClassImpl@78['Bug']) = LazyJavaClassDescriptor@6['Bug']
-    topLevelClasses(JavaClassImpl@77['SubBug']) = LazyJavaClassDescriptor@22['SubBug']
+LazyJavaPackageFragment@59['<root>'] {
+    _functions('SubBug': Name@71) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@72
+    _functions('save': Name@5) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@72
+    classes('Bug': Name@73) = LazyJavaClassDescriptor@0['Bug'] // through LazyPackageFragmentScopeForJavaPackage@72
+    classes('SubBug': Name@71) = LazyJavaClassDescriptor@14['SubBug'] // through LazyPackageFragmentScopeForJavaPackage@72
+    classes('save': Name@5) = null // through LazyPackageFragmentScopeForJavaPackage@72
+    deserializedPackageScope = Empty@74 // through LazyPackageFragmentScopeForJavaPackage@72
+    memberIndex = computeMemberIndex$1@75 // through LazyPackageFragmentScopeForJavaPackage@72
 }
 
-LazyJavaPackageFragment@66['<root>'] {
-    _functions('SubBug': Name@51) = EmptyList@13[empty] // through LazyPackageFragmentScopeForJavaPackage@67
-    _functions('save': Name@12) = EmptyList@13[empty] // through LazyPackageFragmentScopeForJavaPackage@67
-    classes('Bug': Name@69) = LazyJavaClassDescriptor@6['Bug'] // through LazyPackageFragmentScopeForJavaPackage@67
-    classes('SubBug': Name@51) = LazyJavaClassDescriptor@22['SubBug'] // through LazyPackageFragmentScopeForJavaPackage@67
-    classes('save': Name@12) = null // through LazyPackageFragmentScopeForJavaPackage@67
-    deserializedPackageScope = JetScope$1@45 // through LazyPackageFragmentScopeForJavaPackage@67
-    memberIndex = computeMemberIndex$1@68 // through LazyPackageFragmentScopeForJavaPackage@67
+LazyJavaPackageFragment@62['java'] {
+    _functions('lang': Name@76) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@77
+    classes('lang': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@77
+    deserializedPackageScope = Empty@74 // through LazyPackageFragmentScopeForJavaPackage@77
+    memberIndex = computeMemberIndex$1@79 // through LazyPackageFragmentScopeForJavaPackage@77
 }
 
-LazyJavaPackageFragment@42['java'] {
-    _functions('lang': Name@47) = EmptyList@13[empty] // through LazyPackageFragmentScopeForJavaPackage@44
-    classes('lang': Name@43) = null // through LazyPackageFragmentScopeForJavaPackage@44
-    deserializedPackageScope = JetScope$1@45 // through LazyPackageFragmentScopeForJavaPackage@44
-    memberIndex = computeMemberIndex$1@46 // through LazyPackageFragmentScopeForJavaPackage@44
+LazyJavaPackageFragment@64['lang'] {
+    _functions('SubBug': Name@71) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    _functions('save': Name@5) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('SubBug': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('save': Name@5) = null // through LazyPackageFragmentScopeForJavaPackage@80
+    deserializedPackageScope = Empty@74 // through LazyPackageFragmentScopeForJavaPackage@80
+    memberIndex = computeMemberIndex$1@81 // through LazyPackageFragmentScopeForJavaPackage@80
 }
 
-LazyJavaPackageFragment@48['lang'] {
-    _functions('SubBug': Name@51) = EmptyList@13[empty] // through LazyPackageFragmentScopeForJavaPackage@49
-    _functions('save': Name@12) = EmptyList@13[empty] // through LazyPackageFragmentScopeForJavaPackage@49
-    classes('SubBug': Name@51) = null // through LazyPackageFragmentScopeForJavaPackage@49
-    classes('save': Name@12) = null // through LazyPackageFragmentScopeForJavaPackage@49
-    deserializedPackageScope = JetScope$1@45 // through LazyPackageFragmentScopeForJavaPackage@49
-    memberIndex = computeMemberIndex$1@50 // through LazyPackageFragmentScopeForJavaPackage@49
+LazyJavaTypeParameterDescriptor@82['RET'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@48
+    upperBounds = LinkedHashSet@83[1] { DelegatingFlexibleType@84 }
 }
 
-LazyJavaTypeParameterDescriptor@38['RET'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@52
-    upperBounds = LinkedHashSet@53[1] { DelegatingFlexibleType@54 }
-}
-
-LazyJavaTypeParameterResolver@36 {
-    resolve(JavaTypeParameterImpl@37['RET']) = LazyJavaTypeParameterDescriptor@38['RET']
+LazyJavaTypeParameterResolver@85 {
+    resolve(JavaTypeParameterImpl@86['RET']) = LazyJavaTypeParameterDescriptor@82['RET']
 }

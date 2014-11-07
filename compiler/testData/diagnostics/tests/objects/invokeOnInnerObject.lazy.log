@@ -1,44 +1,44 @@
-DescriptorResolver@16 {
-    <name not found> = JetTypeImpl@17
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1['Int']
 }
 
-LazyJavaPackageFragmentProvider@0 {
-    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
-    _packageFragments('A': FqName@13) = null
-    _packageFragments('Int': FqName@10) = null
-    _packageFragments('java': FqName@3) = LazyJavaPackageFragment@4['java']
-    _packageFragments('java.lang': FqName@5) = LazyJavaPackageFragment@6['lang']
-    _packageFragments('java.lang.A': FqName@15) = null
+LazyJavaPackageFragmentProvider@2 {
+    _packageFragments('<root>': FqName@3) = LazyJavaPackageFragment@4['<root>']
+    _packageFragments('A': FqName@5) = null
+    _packageFragments('Int': FqName@6) = null
+    _packageFragments('java': FqName@7) = LazyJavaPackageFragment@8['java']
+    _packageFragments('java.lang': FqName@9) = LazyJavaPackageFragment@10['lang']
+    _packageFragments('java.lang.A': FqName@11) = null
     _packageFragments('java.lang.Int': FqName@12) = null
-    _packageFragments('kotlin': FqName@7) = null
+    _packageFragments('kotlin': FqName@13) = null
     _packageFragments('kotlin.A': FqName@14) = null
-    _packageFragments('kotlin.Int': FqName@11) = null
-    _packageFragments('kotlin.io': FqName@9) = null
-    _packageFragments('kotlin.jvm': FqName@8) = null
+    _packageFragments('kotlin.Int': FqName@15) = null
+    _packageFragments('kotlin.io': FqName@16) = null
+    _packageFragments('kotlin.jvm': FqName@17) = null
 }
 
-LazyJavaPackageFragment@2['<root>'] {
-    _functions('f': Name@27) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@25
-    _functions('invoke': Name@28) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@25
-    classes('Int': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@25
-    classes('f': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@25
-    classes('invoke': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@25
-    deserializedPackageScope = JetScope$1@20 // through LazyPackageFragmentScopeForJavaPackage@25
-    memberIndex = computeMemberIndex$1@26 // through LazyPackageFragmentScopeForJavaPackage@25
+LazyJavaPackageFragment@4['<root>'] {
+    _functions('f': Name@18) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@20
+    _functions('invoke': Name@21) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@20
+    classes('Int': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@20
+    classes('f': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@20
+    classes('invoke': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@20
+    deserializedPackageScope = Empty@23 // through LazyPackageFragmentScopeForJavaPackage@20
+    memberIndex = computeMemberIndex$1@24 // through LazyPackageFragmentScopeForJavaPackage@20
 }
 
-LazyJavaPackageFragment@4['java'] {
-    _functions('lang': Name@22) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@19
-    classes('lang': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@19
-    deserializedPackageScope = JetScope$1@20 // through LazyPackageFragmentScopeForJavaPackage@19
-    memberIndex = computeMemberIndex$1@21 // through LazyPackageFragmentScopeForJavaPackage@19
+LazyJavaPackageFragment@8['java'] {
+    _functions('lang': Name@25) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@26
+    classes('lang': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@26
+    deserializedPackageScope = Empty@23 // through LazyPackageFragmentScopeForJavaPackage@26
+    memberIndex = computeMemberIndex$1@28 // through LazyPackageFragmentScopeForJavaPackage@26
 }
 
-LazyJavaPackageFragment@6['lang'] {
-    _functions('f': Name@27) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@29
-    _functions('invoke': Name@28) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@29
-    classes('f': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@29
-    classes('invoke': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@29
-    deserializedPackageScope = JetScope$1@20 // through LazyPackageFragmentScopeForJavaPackage@29
+LazyJavaPackageFragment@10['lang'] {
+    _functions('f': Name@18) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('invoke': Name@21) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('f': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('invoke': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    deserializedPackageScope = Empty@23 // through LazyPackageFragmentScopeForJavaPackage@29
     memberIndex = computeMemberIndex$1@30 // through LazyPackageFragmentScopeForJavaPackage@29
 }
