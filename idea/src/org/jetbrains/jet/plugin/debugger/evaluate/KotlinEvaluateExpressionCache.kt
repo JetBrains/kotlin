@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.apache.log4j.Logger
+import org.jetbrains.jet.plugin.util.application.runReadAction
 
 class KotlinEvaluateExpressionCache(val project: Project) {
 
@@ -79,7 +80,7 @@ class KotlinEvaluateExpressionCache(val project: Project) {
 
             val thisDescriptor = value.asmType.getClassDescriptor(project)
             val superClassDescriptor = jetType.getConstructor().getDeclarationDescriptor() as? ClassDescriptor
-            return@all thisDescriptor != null && superClassDescriptor != null && DescriptorUtils.isSubclass(thisDescriptor, superClassDescriptor)
+            return@all thisDescriptor != null && superClassDescriptor != null && runReadAction { DescriptorUtils.isSubclass(thisDescriptor, superClassDescriptor) }!!
         }
     }
 
