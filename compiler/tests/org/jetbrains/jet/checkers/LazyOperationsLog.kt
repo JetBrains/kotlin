@@ -32,6 +32,7 @@ import org.jetbrains.jet.descriptors.serialization.context.DeserializationContex
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import java.util.HashMap
+import org.jetbrains.jet.lang.types.JetTypeImpl
 import java.util.regex.Pattern
 
 class LazyOperationsLog(
@@ -122,11 +123,8 @@ class LazyOperationsLog(
         if (o == null) return "null"
 
         val sb = StringBuilder()
-        if (o is FqName || o is Name) {
-            sb.append("'$o'")
-        }
-        if (sb.length() != 0) {
-            sb.append(": ")
+        if (o is FqName || o is Name || o is String || o is Number || o is Boolean) {
+            sb.append("'$o': ")
         }
 
         val id = objectId(o)
@@ -173,6 +171,13 @@ class LazyOperationsLog(
                     if (o.size() > 3) sb.append(", ...")
                     sb.append(" }")
                 }
+            }
+            o is JetTypeImpl -> {
+                sb.append("['").append(o.getConstructor())
+                if (!o.getArguments().isEmpty()) {
+                    sb.append("<${o.getArguments().size()}>")
+                }
+                sb.append("']")
             }
         }
         return sb.toString()
