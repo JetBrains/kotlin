@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
+            <artifactId>kotlin-js-library</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -31,13 +31,6 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${project.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-js-library</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <id>js</id>
