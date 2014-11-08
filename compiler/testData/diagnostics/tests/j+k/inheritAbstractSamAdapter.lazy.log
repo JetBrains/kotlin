@@ -18,7 +18,7 @@ LazyJavaClassDescriptor@0['A'] {
 
 LazyJavaClassDescriptor@27['B'] {
     _allDescriptors = ArrayList@28[7] { DeserializedSimpleFunctionDescriptor@29['hashCode'], JavaMethodDescriptor@30['foo'], JavaMethodDescriptor@31['foo'], ... } // through LazyJavaClassMemberScope@32
-    _constructors = ArrayList@33[empty] // through LazyJavaClassMemberScope@32
+    _constructors = stdlib_emptyListClass@33[empty] // through LazyJavaClassMemberScope@32
     _functions('bar': Name@34) = ArrayList@35[2] { JavaMethodDescriptor@36['bar'], SamAdapterFunctionDescriptor@37['bar'] } // through LazyJavaClassMemberScope@32
     _functions('clone': Name@4) = EmptyList@2[empty] // through LazyJavaClassMemberScope@32
     _functions('equals': Name@5) = ArrayList@38[1] { DeserializedSimpleFunctionDescriptor@39['equals'] } // through LazyJavaClassMemberScope@32

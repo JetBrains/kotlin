@@ -29,7 +29,7 @@ LazyJavaClassDescriptor@23['Closeable'] {
 LazyJavaClassDescriptor@28['Runnable'] {
     _allDescriptors = ArrayList@29[4] { DeserializedSimpleFunctionDescriptor@30['hashCode'], DeserializedSimpleFunctionDescriptor@31['toString'], JavaMethodDescriptor@32['run'], ... } // through LazyJavaClassMemberScope@33
     _annotations = LazyJavaAnnotations@34
-    _constructors = ArrayList@35[empty] // through LazyJavaClassMemberScope@33
+    _constructors = stdlib_emptyListClass@35[empty] // through LazyJavaClassMemberScope@33
     _functionTypeForSamInterface = JetTypeImpl@36['Function0<1>']
     _functions('clone': Name@37) = EmptyList@7[empty] // through LazyJavaClassMemberScope@33
     _functions('equals': Name@38) = ArrayList@39[1] { DeserializedSimpleFunctionDescriptor@40['equals'] } // through LazyJavaClassMemberScope@33

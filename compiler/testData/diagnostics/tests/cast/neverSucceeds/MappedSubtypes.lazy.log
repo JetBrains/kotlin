@@ -1,6 +1,6 @@
 LazyJavaClassDescriptor@0['CharSequence'] {
     _allDescriptors = ArrayList@1[6] { JavaMethodDescriptor@2['length'], DeserializedSimpleFunctionDescriptor@3['hashCode'], JavaMethodDescriptor@4['subSequence'], ... } // through LazyJavaClassMemberScope@5
-    _constructors = ArrayList@6[empty] // through LazyJavaClassMemberScope@5
+    _constructors = stdlib_emptyListClass@6[empty] // through LazyJavaClassMemberScope@5
     _functionTypeForSamInterface = null
     _functions('charAt': Name@7) = ArrayList@8[1] { JavaMethodDescriptor@9['charAt'] } // through LazyJavaClassMemberScope@5
     _functions('clone': Name@10) = EmptyList@11[empty] // through LazyJavaClassMemberScope@5

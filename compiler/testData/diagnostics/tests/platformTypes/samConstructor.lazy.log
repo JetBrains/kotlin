@@ -1,7 +1,7 @@
 LazyJavaClassDescriptor@0['Comparator'] {
     _allDescriptors = ArrayList@1[4] { JavaMethodDescriptor@2['compare'], DeserializedSimpleFunctionDescriptor@3['hashCode'], DeserializedSimpleFunctionDescriptor@4['toString'], ... } // through LazyJavaClassMemberScope@5
     _annotations = LazyJavaAnnotations@6
-    _constructors = ArrayList@7[empty] // through LazyJavaClassMemberScope@5
+    _constructors = stdlib_emptyListClass@7[empty] // through LazyJavaClassMemberScope@5
     _functionTypeForSamInterface = JetTypeImpl@8['Function2<3>']
     _functions('clone': Name@9) = EmptyList@10[empty] // through LazyJavaClassMemberScope@5
     _functions('compare': Name@11) = ArrayList@12[1] { JavaMethodDescriptor@2['compare'] } // through LazyJavaClassMemberScope@5

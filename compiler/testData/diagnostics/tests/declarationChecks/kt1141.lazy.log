@@ -8,7 +8,7 @@ ClosureExpressionsTypingVisitor$1@2 {
 
 LazyJavaClassDescriptor@4['Runnable'] {
     _allDescriptors = ArrayList@5[4] { DeserializedSimpleFunctionDescriptor@6['hashCode'], DeserializedSimpleFunctionDescriptor@7['toString'], JavaMethodDescriptor@8['run'], ... } // through LazyJavaClassMemberScope@9
-    _constructors = ArrayList@10[empty] // through LazyJavaClassMemberScope@9
+    _constructors = stdlib_emptyListClass@10[empty] // through LazyJavaClassMemberScope@9
     _functions('clone': Name@11) = EmptyList@12[empty] // through LazyJavaClassMemberScope@9
     _functions('equals': Name@13) = ArrayList@14[1] { DeserializedSimpleFunctionDescriptor@15['equals'] } // through LazyJavaClassMemberScope@9
     _functions('finalize': Name@16) = EmptyList@12[empty] // through LazyJavaClassMemberScope@9

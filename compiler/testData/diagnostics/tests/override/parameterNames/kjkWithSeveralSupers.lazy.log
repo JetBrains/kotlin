@@ -34,7 +34,7 @@ LazyJavaClassDescriptor@25['JSuper2'] {
 
 LazyJavaClassDescriptor@39['Sub1'] {
     _allDescriptors = ArrayList@40[4] { DeserializedSimpleFunctionDescriptor@41['hashCode'], JavaMethodDescriptor@42['foo'], DeserializedSimpleFunctionDescriptor@43['toString'], ... } // through LazyJavaClassMemberScope@44
-    _constructors = ArrayList@45[empty] // through LazyJavaClassMemberScope@44
+    _constructors = stdlib_emptyListClass@45[empty] // through LazyJavaClassMemberScope@44
     _functions('clone': Name@1) = EmptyList@2[empty] // through LazyJavaClassMemberScope@44
     _functions('equals': Name@4) = ArrayList@46[1] { DeserializedSimpleFunctionDescriptor@47['equals'] } // through LazyJavaClassMemberScope@44
     _functions('finalize': Name@7) = EmptyList@2[empty] // through LazyJavaClassMemberScope@44
@@ -55,7 +55,7 @@ LazyJavaClassDescriptor@39['Sub1'] {
 
 LazyJavaClassDescriptor@58['Sub2'] {
     _allDescriptors = ArrayList@59[4] { DeserializedSimpleFunctionDescriptor@60['hashCode'], JavaMethodDescriptor@61['foo'], DeserializedSimpleFunctionDescriptor@62['toString'], ... } // through LazyJavaClassMemberScope@63
-    _constructors = ArrayList@45[empty] // through LazyJavaClassMemberScope@63
+    _constructors = stdlib_emptyListClass@45[empty] // through LazyJavaClassMemberScope@63
     _functions('clone': Name@64) = EmptyList@2[empty] // through LazyJavaClassMemberScope@63
     _functions('equals': Name@65) = ArrayList@66[1] { DeserializedSimpleFunctionDescriptor@67['equals'] } // through LazyJavaClassMemberScope@63
     _functions('finalize': Name@68) = EmptyList@2[empty] // through LazyJavaClassMemberScope@63
@@ -76,7 +76,7 @@ LazyJavaClassDescriptor@58['Sub2'] {
 
 LazyJavaClassDescriptor@85['Sub3'] {
     _allDescriptors = ArrayList@86[4] { DeserializedSimpleFunctionDescriptor@87['hashCode'], JavaMethodDescriptor@88['foo'], DeserializedSimpleFunctionDescriptor@89['toString'], ... } // through LazyJavaClassMemberScope@90
-    _constructors = ArrayList@45[empty] // through LazyJavaClassMemberScope@90
+    _constructors = stdlib_emptyListClass@45[empty] // through LazyJavaClassMemberScope@90
     _functions('clone': Name@91) = EmptyList@2[empty] // through LazyJavaClassMemberScope@90
     _functions('equals': Name@92) = ArrayList@93[1] { DeserializedSimpleFunctionDescriptor@94['equals'] } // through LazyJavaClassMemberScope@90
     _functions('finalize': Name@95) = EmptyList@2[empty] // through LazyJavaClassMemberScope@90

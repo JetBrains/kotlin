@@ -9,7 +9,7 @@ DescriptorResolver@2 {
 LazyJavaClassDescriptor@4['Runnable'] {
     _allDescriptors = ArrayList@5[4] { DeserializedSimpleFunctionDescriptor@6['hashCode'], DeserializedSimpleFunctionDescriptor@7['toString'], JavaMethodDescriptor@8['run'], ... } // through LazyJavaClassMemberScope@9
     _annotations = LazyJavaAnnotations@10
-    _constructors = ArrayList@11[empty] // through LazyJavaClassMemberScope@9
+    _constructors = stdlib_emptyListClass@11[empty] // through LazyJavaClassMemberScope@9
     _functionTypeForSamInterface = JetTypeImpl@12['Function0<1>']
     _functions('clone': Name@13) = EmptyList@14[empty] // through LazyJavaClassMemberScope@9
     _functions('equals': Name@15) = ArrayList@16[1] { DeserializedSimpleFunctionDescriptor@17['equals'] } // through LazyJavaClassMemberScope@9
