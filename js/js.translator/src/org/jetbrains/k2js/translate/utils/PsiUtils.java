@@ -115,7 +115,7 @@ public final class PsiUtils {
 
     @Nullable
     public static JetParameter getLoopParameter(@NotNull JetForExpression expression) {
-        JetForClause clause = expression.getClause();
+        JetForClause clause = expression.getLeadingClause();
         return clause != null ? clause.getLoopParameter() : null;
     }
 
@@ -129,7 +129,7 @@ public final class PsiUtils {
 
     @NotNull
     public static JetExpression getLoopRange(@NotNull JetForExpression expression) {
-        JetForClause clause = expression.getClause();
+        JetForClause clause = expression.getLeadingClause();
         JetExpression rangeExpression = clause != null ? clause.getLoopRange() : null;
         assert rangeExpression != null;
         return rangeExpression;

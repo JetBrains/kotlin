@@ -17,9 +17,12 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+
+import java.util.List;
 
 public class JetForExpression extends JetLoopExpression {
     public JetForExpression(@NotNull ASTNode node) {
@@ -31,9 +34,14 @@ public class JetForExpression extends JetLoopExpression {
         return visitor.visitForExpression(this, data);
     }
 
-    @Nullable @IfNotParsed
-    public JetForClause getClause() {
-        return (JetForClause) findChildByType(JetNodeTypes.FOR_CLAUSE);
+    @NotNull
+    public List<JetForClause> getClauses() {
+        return findChildrenByType(JetNodeTypes.FOR_CLAUSE);
+    }
+
+    @Nullable
+    public JetForClause getLeadingClause() {
+        return KotlinPackage.firstOrNull(getClauses());
     }
 
     public boolean isComprehension() {

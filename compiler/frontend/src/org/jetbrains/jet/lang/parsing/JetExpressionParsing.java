@@ -1364,7 +1364,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * for
-     *   : "for" "(" annotations ("val" | "var")? (multipleVariableDeclarations | variableDeclarationEntry) "in" expression ")" expression
+     *   : "for" forClauses expression
      *   ;
      *
      *   TODO: empty loop body (at the end of the block)?
@@ -1376,43 +1376,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // FOR_KEYWORD
 
-        if (expect(LPAR, "Expecting '(' to open a loop range", EXPRESSION_FIRST)) {
-            myBuilder.disableNewlines();
-
-            if (!at(RPAR)) {
-                PsiBuilder.Marker clause = mark();
-                
-                PsiBuilder.Marker parameter = mark();
-                if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
-                if (at(LPAR)) {
-                    myJetParsing.parseMultiDeclarationName(TokenSet.create(IN_KEYWORD, LBRACE));
-                    parameter.done(MULTI_VARIABLE_DECLARATION);
-                }
-                else {
-                    expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON, IN_KEYWORD));
-
-                    if (at(COLON)) {
-                        advance(); // COLON
-                        myJetParsing.parseTypeRef(TokenSet.create(IN_KEYWORD));
-                    }
-                    parameter.done(VALUE_PARAMETER);
-                }
-
-                if (expect(IN_KEYWORD, "Expecting 'in'", TokenSet.create(LPAR, LBRACE, RPAR))) {
-                    PsiBuilder.Marker range = mark();
-                    parseExpression();
-                    range.done(LOOP_RANGE);
-                }
-
-                clause.done(FOR_CLAUSE);
-            }
-            else {
-                error("Expecting a variable name");
-            }
-
-            expectNoAdvance(RPAR, "Expecting ')'");
-            myBuilder.restoreNewlinesState();
-        }
+        parseForClauses();
 
         PsiBuilder.Marker body = mark();
         if (at(YIELD_KEYWORD)) {
@@ -1423,6 +1387,72 @@ public class JetExpressionParsing extends AbstractJetParsing {
         body.done(BODY);
 
         loop.done(FOR);
+    }
+
+    /*
+     *
+     * forClauses
+     *   : "(" forClause{","} ")"
+     *   ;
+     */
+    public void parseForClauses() {
+        myBuilder.disableNewlines();
+
+        if (expect(LPAR, "Expecting '(' to open a loop range", EXPRESSION_FIRST)) {
+            if (!at(RPAR)) {
+                while (true) {
+                    while (at(COMMA)) errorAndAdvance("Expecting a for-clause");
+                    parseForClause();
+                    if (!at(COMMA)) break;
+                    advance(); // COMMA
+                    if (at(RPAR)) {
+                        error("Expecting a for-clause");
+                        break;
+                    }
+                }
+            }
+            else {
+                error("Expecting a variable name");
+            }
+
+            expectNoAdvance(RPAR, "Expecting ')'");
+        }
+
+        myBuilder.restoreNewlinesState();
+    }
+
+    /*
+     *
+     * forClause
+     *   : annotations ("val" | "var")? (multipleVariableDeclarations | variableDeclarationEntry) "in" expression
+     *   ;
+     */
+    private void parseForClause() {
+        PsiBuilder.Marker clause = mark();
+
+        PsiBuilder.Marker parameter = mark();
+        if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
+        if (at(LPAR)) {
+            myJetParsing.parseMultiDeclarationName(TokenSet.create(IN_KEYWORD, LBRACE));
+            parameter.done(MULTI_VARIABLE_DECLARATION);
+        }
+        else {
+            expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON, IN_KEYWORD));
+
+            if (at(COLON)) {
+                advance(); // COLON
+                myJetParsing.parseTypeRef(TokenSet.create(IN_KEYWORD));
+            }
+            parameter.done(VALUE_PARAMETER);
+        }
+
+        if (expect(IN_KEYWORD, "Expecting 'in'", TokenSet.create(LPAR, LBRACE, RPAR))) {
+            PsiBuilder.Marker range = mark();
+            parseExpression();
+            range.done(LOOP_RANGE);
+        }
+
+        clause.done(FOR_CLAUSE);
     }
 
     /**

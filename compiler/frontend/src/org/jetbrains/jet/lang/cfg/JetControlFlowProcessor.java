@@ -864,14 +864,14 @@ public class JetControlFlowProcessor {
         @Override
         public void visitForExpression(@NotNull JetForExpression expression) {
             if (expression.isComprehension()) {
-                ResolvedCall<?> mapResolvedCall = trace.get(BindingContext.FOR_COMPREHENSION_RESOLVED_CALL, expression.getClause());
+                ResolvedCall<?> mapResolvedCall = trace.get(BindingContext.FOR_COMPREHENSION_RESOLVED_CALL, expression.getLeadingClause());
                 checkAndGenerateCall(mapResolvedCall);
                 return;
             }
 
             builder.enterLexicalScope(expression);
 
-            JetForClause clause = expression.getClause();
+            JetForClause clause = expression.getLeadingClause();
             JetExpression loopRange = clause != null ? clause.getLoopRange() : null;
             if (loopRange != null) {
                 generateInstructions(loopRange);
@@ -908,7 +908,7 @@ public class JetControlFlowProcessor {
         }
 
         private void declareLoopParameter(JetForExpression expression) {
-            JetForClause clause = expression.getClause();
+            JetForClause clause = expression.getLeadingClause();
             JetParameter loopParameter = clause != null ? clause.getLoopParameter() : null;
             JetMultiDeclaration multiDeclaration = clause != null ? clause.getMultiParameter() : null;
             if (loopParameter != null) {
@@ -920,7 +920,7 @@ public class JetControlFlowProcessor {
         }
 
         private void writeLoopParameterAssignment(JetForExpression expression) {
-            JetForClause clause = expression.getClause();
+            JetForClause clause = expression.getLeadingClause();
             JetParameter loopParameter = clause != null ? clause.getLoopParameter() : null;
             JetMultiDeclaration multiDeclaration = clause != null ? clause.getMultiParameter() : null;
             JetExpression loopRange = clause != null ? clause.getLoopRange() : null;

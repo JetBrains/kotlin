@@ -107,7 +107,7 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
                getClassDescriptorForType(rangeType).getName().asString() == "IntArray"
     }
 
-    val multiParameter: JetMultiDeclaration? = expression?.getClause()?.getMultiParameter();
+    val multiParameter: JetMultiDeclaration? = expression?.getLeadingClause()?.getMultiParameter();
 
     fun declareParameter(): JsName {
         val loopParameter = getLoopParameter(expression)
@@ -228,7 +228,7 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
 
     fun translateForComprehension(): JsExpression {
         val range = Translation.translateAsExpression(loopRange, context)
-        val resolvedCall = getForComprehensionCall(context.bindingContext(), expression.getClause())
+        val resolvedCall = getForComprehensionCall(context.bindingContext(), expression.getLeadingClause())
         return CallTranslator.translate(context, resolvedCall, range)
     }
 

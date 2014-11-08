@@ -302,7 +302,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         ExpressionTypingContext context =
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
 
-        JetForClause clause = expression.getClause();
+        JetForClause clause = expression.getLeadingClause();
         JetExpression loopRange = clause != null ? clause.getLoopRange() : null;
         JetType expectedParameterType = null;
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;

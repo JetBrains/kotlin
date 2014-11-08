@@ -66,7 +66,7 @@ public class RangeCodegenUtil {
         // We are looking for rangeTo() calls
         // Other binary operations will succeed too, but will be filtered out later (by examining a resolvedCall)
 
-        JetForClause clause = forExpression.getClause();
+        JetForClause clause = forExpression.getLeadingClause();
         assert clause != null;
 
         JetExpression rangeExpression = clause.getLoopRange();

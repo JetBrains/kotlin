@@ -226,6 +226,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("ForWithMultipleClauses.kt")
+        public void testForWithMultipleClauses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/ForWithMultipleClauses.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("FunctionCalls.kt")
         public void testFunctionCalls() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/FunctionCalls.kt");

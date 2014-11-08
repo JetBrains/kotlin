@@ -298,7 +298,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     @Override
     public void visitForExpression(@NotNull JetForExpression expression) {
         if (expression.isComprehension()) {
-            JetFunctionLiteralExpression functionLiteral = bindingContext.get(FOR_COMPREHENSION_SYNTHETIC_LAMBDA, expression.getClause());
+            JetFunctionLiteralExpression functionLiteral = bindingContext.get(FOR_COMPREHENSION_SYNTHETIC_LAMBDA, expression.getLeadingClause());
 
             if (functionLiteral != null) {
                 visitFunctionLiteralExpression(functionLiteral);

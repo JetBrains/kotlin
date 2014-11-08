@@ -150,11 +150,11 @@ public class ForLoopConventionsChecker {
                         forExpression
                 );
 
-        mapResolveTrace.record(FOR_COMPREHENSION_SYNTHETIC_LAMBDA, forExpression.getClause(), lambda);
+        mapResolveTrace.record(FOR_COMPREHENSION_SYNTHETIC_LAMBDA, forExpression.getLeadingClause(), lambda);
 
         if (mapResolutionResults.isSingleResult()) {
             ResolvedCall<FunctionDescriptor> mapResolvedCall = mapResolutionResults.getResultingCall();
-            mapResolveTrace.record(FOR_COMPREHENSION_RESOLVED_CALL, forExpression.getClause(), mapResolvedCall);
+            mapResolveTrace.record(FOR_COMPREHENSION_RESOLVED_CALL, forExpression.getLeadingClause(), mapResolvedCall);
         }
 
         if (!mapResolutionResults.isSuccess()) {

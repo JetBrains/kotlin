@@ -657,7 +657,7 @@ public class JetPsiFactory(private val project: Project) {
     public fun wrapInALambda(expressionToWrap: JetForExpression, scope: JetScope?): JetFunctionLiteralExpression {
         val lambda =
                 ForComprehensionAsFunctionLiteral(
-                        if (expressionToWrap.getClause()?.getMultiParameter() != null) {
+                        if (expressionToWrap.getLeadingClause()?.getMultiParameter() != null) {
                             MultiParameterForComprehensionWrappingStrategy(expressionToWrap, scope!!)
                         }
                         else {
@@ -722,7 +722,7 @@ public class JetPsiFactory(private val project: Project) {
             forExpression: JetForExpression
     ): ForComprehensionWrappingStrategy(forExpression) {
         override val parameterListWrapper: JetParameterList by Delegates.lazy {
-            val parameter = forExpression.getClause().getLoopParameter()
+            val parameter = forExpression.getLeadingClause().getLoopParameter()
             object : JetParameterList(createParameterList("(${parameter.getText() ?: ""})").getNode()) {
                 override fun getParameters(): List<JetParameter> = parameter.singletonOrEmptyList()
 
@@ -749,7 +749,7 @@ public class JetPsiFactory(private val project: Project) {
         override val parameterListWrapper: JetParameterList = createParameterList("($syntheticParamName)")
 
         override val bodyWrapper: JetBlockExpression by Delegates.lazy {
-            val multiParameter = forExpression.getClause().getMultiParameter()
+            val multiParameter = forExpression.getLeadingClause().getMultiParameter()
             val multiVarInitializer = createSimpleName(syntheticParamName)
             val multiVar = object: JetMultiDeclaration(multiParameter.getNode()) {
                 override fun getInitializer(): JetExpression? = multiVarInitializer
