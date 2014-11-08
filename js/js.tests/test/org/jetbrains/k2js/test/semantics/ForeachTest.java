@@ -57,4 +57,32 @@ public final class ForeachTest extends AbstractExpressionTest {
     public void testLabeledForWithWhile() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testForComprehensionWithMember() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testForComprehensionWithExtension() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testForComprehensionNested() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testForComprehensionDataClass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testForComprehensionOnIntRange() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testForComprehensionOnIntRangeNested() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testForComprehensionOnIntRangePairs() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
