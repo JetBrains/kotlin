@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.JetOperationExpression
 public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<JetForExpression>("convert.to.for.each.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetForExpression): Boolean {
         val clause = element.getClause()
-        return clause?.getLoopRange() != null && clause?.getLoopParameter() != null && element.getBody() != null
+        return clause?.getLoopRange() != null && clause?.getLoopParameter() != null && element.getBody() != null && !element.isComprehension()
     }
 
     override fun applyTo(element: JetForExpression, editor: Editor) {
