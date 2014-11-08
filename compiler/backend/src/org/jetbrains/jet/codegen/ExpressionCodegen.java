@@ -489,7 +489,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        JetExpression loopRange = forExpression.getLoopRange();
+        JetForClause clause = forExpression.getClause();
+        assert clause != null;
+
+        JetExpression loopRange = clause.getLoopRange();
         JetType loopRangeType = bindingContext.get(EXPRESSION_TYPE, loopRange);
         assert loopRangeType != null;
         Type asmLoopRangeType = asmType(loopRangeType);
@@ -561,8 +564,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @NotNull
         private JetType getElementType(JetForExpression forExpression) {
-            JetExpression loopRange = forExpression.getLoopRange();
+            JetForClause clause = forExpression.getClause();
+            assert clause != null;
+
+            JetExpression loopRange = clause.getLoopRange();
             assert loopRange != null;
+
             ResolvedCall<FunctionDescriptor> nextCall = getNotNull(bindingContext,
                                                                    LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange,
                                                                    "No next() function " + DiagnosticUtils.atLocation(loopRange));
@@ -571,7 +578,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         public void beforeLoop() {
-            JetParameter loopParameter = forExpression.getLoopParameter();
+            JetForClause clause = forExpression.getClause();
+            assert clause != null;
+
+            JetParameter loopParameter = clause.getLoopParameter();
             if (loopParameter != null) {
                 // E e = tmp<iterator>.next()
                 final VariableDescriptor parameterDescriptor = bindingContext.get(VALUE_PARAMETER, loopParameter);
@@ -589,7 +599,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 });
             }
             else {
-                JetMultiDeclaration multiParameter = forExpression.getMultiParameter();
+                JetMultiDeclaration multiParameter = clause.getMultiParameter();
                 assert multiParameter != null;
 
                 // E tmp<e> = tmp<iterator>.next()
@@ -606,8 +616,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             assignToLoopParameter();
 
-            if (forExpression.getLoopParameter() == null) {
-                JetMultiDeclaration multiParameter = forExpression.getMultiParameter();
+            JetForClause clause = forExpression.getClause();
+            assert clause != null;
+
+            if (clause.getLoopParameter() == null) {
+                JetMultiDeclaration multiParameter = clause.getMultiParameter();
                 assert multiParameter != null;
 
                 generateMultiVariables(multiParameter.getEntries());
@@ -703,7 +716,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         private IteratorForLoopGenerator(@NotNull JetForExpression forExpression) {
             super(forExpression);
 
-            JetExpression loopRange = forExpression.getLoopRange();
+            JetForClause clause = forExpression.getClause();
+            assert clause != null;
+
+            JetExpression loopRange = clause.getLoopRange();
             assert loopRange != null;
             this.iteratorCall = getNotNull(bindingContext,
                                            LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange,
@@ -738,7 +754,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         public void checkPreCondition(@NotNull Label loopExit) {
             // tmp<iterator>.hasNext()
 
-            JetExpression loopRange = forExpression.getLoopRange();
+            JetForClause clause = forExpression.getClause();
+            assert clause != null;
+
+            JetExpression loopRange = clause.getLoopRange();
             @SuppressWarnings("ConstantConditions") ResolvedCall<FunctionDescriptor> hasNextCall = getNotNull(bindingContext,
                                                                       LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, loopRange,
                                                                       "No hasNext() function " + DiagnosticUtils.atLocation(loopRange));
@@ -774,16 +793,23 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         private ForInArrayLoopGenerator(@NotNull JetForExpression forExpression) {
             super(forExpression);
-            loopRangeType = bindingContext.get(EXPRESSION_TYPE, forExpression.getLoopRange());
+
+            JetForClause clause = forExpression.getClause();
+            assert clause != null;
+            
+            loopRangeType = bindingContext.get(EXPRESSION_TYPE, clause.getLoopRange());
         }
 
         @Override
         public void beforeLoop() {
             super.beforeLoop();
 
+            JetForClause clause = forExpression.getClause();
+            assert clause != null;
+
             indexVar = createLoopTempVariable(Type.INT_TYPE);
 
-            JetExpression loopRange = forExpression.getLoopRange();
+            JetExpression loopRange = clause.getLoopRange();
             StackValue value = gen(loopRange);
             Type asmLoopRangeType = asmType(loopRangeType);
             if (value instanceof StackValue.Local && value.type.equals(asmLoopRangeType)) {
@@ -985,10 +1011,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @Override
         protected void storeRangeStartAndEnd() {
-            JetType loopRangeType = bindingContext.get(EXPRESSION_TYPE, forExpression.getLoopRange());
+            JetForClause clause = forExpression.getClause();
+            assert clause != null;
+
+            JetType loopRangeType = bindingContext.get(EXPRESSION_TYPE, clause.getLoopRange());
             assert loopRangeType != null;
             Type asmLoopRangeType = asmType(loopRangeType);
-            gen(forExpression.getLoopRange(), asmLoopRangeType);
+            gen(clause.getLoopRange(), asmLoopRangeType);
             v.dup();
 
             generateRangeOrProgressionProperty(asmLoopRangeType, "getStart", asmElementType, loopParameterVar);
@@ -1015,9 +1044,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         public void beforeLoop() {
             super.beforeLoop();
 
+            JetForClause clause = forExpression.getClause();
+            assert clause != null;
+
             incrementVar = createLoopTempVariable(asmElementType);
 
-            JetType loopRangeType = bindingContext.get(EXPRESSION_TYPE, forExpression.getLoopRange());
+            JetType loopRangeType = bindingContext.get(EXPRESSION_TYPE, clause.getLoopRange());
             assert loopRangeType != null;
             Type asmLoopRangeType = asmType(loopRangeType);
 
@@ -1025,7 +1057,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             assert incrementProp.size() == 1 : loopRangeType + " " + incrementProp.size();
             incrementType = asmType(incrementProp.iterator().next().getType());
 
-            gen(forExpression.getLoopRange(), asmLoopRangeType);
+            gen(clause.getLoopRange(), asmLoopRangeType);
             v.dup();
             v.dup();
 

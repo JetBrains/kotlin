@@ -17,7 +17,8 @@ object CreateNextFunctionActionFactory : JetSingleIntentionActionFactory() {
         val ownerType = TypeInfo(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
 
         val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
-        val variableExpr: JetExpression = ((forExpr.getLoopParameter() ?: forExpr.getMultiParameter()) ?: return null) as JetExpression
+        val forClause = forExpr.getClause()
+        val variableExpr: JetExpression = ((forClause?.getLoopParameter() ?: forClause?.getMultiParameter()) ?: return null) as JetExpression
         val returnType = TypeInfo(variableExpr, Variance.OUT_VARIANCE)
         return CreateCallableFromUsageFix(forExpr, FunctionInfo("next", ownerType, returnType))
     }

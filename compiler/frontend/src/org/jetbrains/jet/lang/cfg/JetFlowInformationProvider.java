@@ -633,13 +633,14 @@ public class JetFlowInformationProvider {
                                     report(Errors.UNUSED_VARIABLE.on((JetNamedDeclaration) element, variableDescriptor), ctxt);
                                 }
                                 else if (element instanceof JetParameter) {
-                                    PsiElement psiElement = element.getParent().getParent();
-                                    if (psiElement instanceof JetFunction) {
+                                    PsiElement parent = element.getParent();
+                                    PsiElement parentParent = parent.getParent();
+                                    if (parent instanceof JetParameterList && parentParent instanceof JetFunction) {
                                         MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(trace.getBindingContext());
-                                        boolean isMain = (psiElement instanceof JetNamedFunction) && mainFunctionDetector.isMain((JetNamedFunction) psiElement);
-                                        if (psiElement instanceof JetFunctionLiteral) return;
-                                        DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement);
-                                        assert descriptor instanceof FunctionDescriptor : psiElement.getText();
+                                        boolean isMain = (parentParent instanceof JetNamedFunction) && mainFunctionDetector.isMain((JetNamedFunction) parentParent);
+                                        if (parentParent instanceof JetFunctionLiteral) return;
+                                        DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, parentParent);
+                                        assert descriptor instanceof FunctionDescriptor : parentParent.getText();
                                         FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
                                         if (!isMain && !functionDescriptor.getModality().isOverridable()
                                                 && functionDescriptor.getOverriddenDescriptors().isEmpty()) {

@@ -63,11 +63,12 @@ import com.intellij.psi.PsiPackage
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.plugin.findUsages.UsageTypeEnum.*
+import org.jetbrains.jet.lang.psi.JetForClause
 
 public object UsageTypeUtils {
     public fun getUsageType(element: PsiElement?): UsageTypeEnum? {
         when (element) {
-            is JetForExpression -> return IMPLICIT_ITERATION
+            is JetForClause -> return IMPLICIT_ITERATION
             is JetMultiDeclaration -> return READ
         }
 

@@ -75,26 +75,27 @@ JetFile: SameLineStatementRecovery.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          CALL_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('array')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('12')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('13')
-              PsiElement(RPAR)(')')
+        FOR_CLAUSE
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          LOOP_RANGE
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('array')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('12')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                VALUE_ARGUMENT
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('13')
+                PsiElement(RPAR)(')')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BODY

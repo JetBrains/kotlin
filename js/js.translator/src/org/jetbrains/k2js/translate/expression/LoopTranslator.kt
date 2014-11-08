@@ -106,7 +106,7 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
                getClassDescriptorForType(rangeType).getName().asString() == "IntArray"
     }
 
-    val multiParameter: JetMultiDeclaration? = expression.getMultiParameter();
+    val multiParameter: JetMultiDeclaration? = expression?.getClause()?.getMultiParameter();
 
     fun declareParameter(): JsName {
         val loopParameter = getLoopParameter(expression)

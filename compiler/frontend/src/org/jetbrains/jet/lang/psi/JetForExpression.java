@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetForExpression extends JetLoopExpression {
     public JetForExpression(@NotNull ASTNode node) {
@@ -32,23 +31,8 @@ public class JetForExpression extends JetLoopExpression {
         return visitor.visitForExpression(this, data);
     }
 
-    @Nullable
-    public JetParameter getLoopParameter() {
-        return (JetParameter) findChildByType(JetNodeTypes.VALUE_PARAMETER);
-    }
-
-    @Nullable
-    public JetMultiDeclaration getMultiParameter() {
-        return (JetMultiDeclaration) findChildByType(JetNodeTypes.MULTI_VARIABLE_DECLARATION);
-    }
-
     @Nullable @IfNotParsed
-    public JetExpression getLoopRange() {
-        return findExpressionUnder(JetNodeTypes.LOOP_RANGE);
-    }
-
-    @Nullable @IfNotParsed
-    public ASTNode getInKeywordNode() {
-        return getNode().findChildByType(JetTokens.IN_KEYWORD);
+    public JetForClause getClause() {
+        return (JetForClause) findChildByType(JetNodeTypes.FOR_CLAUSE);
     }
 }

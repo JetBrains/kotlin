@@ -724,24 +724,25 @@ JetFile: ArrayList.kt
                       PsiElement(for)('for')
                       PsiWhiteSpace(' ')
                       PsiElement(LPAR)('(')
-                      VALUE_PARAMETER
-                        PsiElement(IDENTIFIER)('i')
-                      PsiWhiteSpace(' ')
-                      PsiElement(in)('in')
-                      PsiWhiteSpace(' ')
-                      LOOP_RANGE
-                        BINARY_EXPRESSION
+                      FOR_CLAUSE
+                        VALUE_PARAMETER
+                          PsiElement(IDENTIFIER)('i')
+                        PsiWhiteSpace(' ')
+                        PsiElement(in)('in')
+                        PsiWhiteSpace(' ')
+                        LOOP_RANGE
                           BINARY_EXPRESSION
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('used')
+                            BINARY_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('used')
+                              OPERATION_REFERENCE
+                                PsiElement(MINUS)('-')
+                              INTEGER_CONSTANT
+                                PsiElement(INTEGER_LITERAL)('1')
                             OPERATION_REFERENCE
-                              PsiElement(MINUS)('-')
-                            INTEGER_CONSTANT
-                              PsiElement(INTEGER_LITERAL)('1')
-                          OPERATION_REFERENCE
-                            PsiElement(RANGE)('..')
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('index')
+                              PsiElement(RANGE)('..')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('index')
                       PsiElement(RPAR)(')')
                       PsiWhiteSpace(' ')
                       PsiComment(EOL_COMMENT)('// backwards, special operator...  Need to optimize this to be a real indexed loop')
@@ -845,24 +846,25 @@ JetFile: ArrayList.kt
             PsiElement(for)('for')
             PsiWhiteSpace(' ')
             PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('i')
-            PsiWhiteSpace(' ')
-            PsiElement(in)('in')
-            PsiWhiteSpace(' ')
-            LOOP_RANGE
-              BINARY_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('index')
-                OPERATION_REFERENCE
-                  PsiElement(RANGE)('..')
+            FOR_CLAUSE
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('i')
+              PsiWhiteSpace(' ')
+              PsiElement(in)('in')
+              PsiWhiteSpace(' ')
+              LOOP_RANGE
                 BINARY_EXPRESSION
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('used')
+                    PsiElement(IDENTIFIER)('index')
                   OPERATION_REFERENCE
-                    PsiElement(MINUS)('-')
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('1')
+                    PsiElement(RANGE)('..')
+                  BINARY_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('used')
+                    OPERATION_REFERENCE
+                      PsiElement(MINUS)('-')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
             PsiElement(RPAR)(')')
             PsiWhiteSpace('\n     ')
             BODY

@@ -19,8 +19,9 @@ object CreateIteratorFunctionActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val file = diagnostic.getPsiFile() as? JetFile ?: return null
         val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
-        val iterableExpr = forExpr.getLoopRange() ?: return null
-        val variableExpr: JetExpression = ((forExpr.getLoopParameter() ?: forExpr.getMultiParameter()) ?: return null) as JetExpression
+        val forClause = forExpr.getClause()
+        val iterableExpr = forClause?.getLoopRange() ?: return null
+        val variableExpr: JetExpression = ((forClause?.getLoopParameter() ?: forClause?.getMultiParameter()) ?: return null) as JetExpression
         val iterableType = TypeInfo(iterableExpr, Variance.IN_VARIANCE)
         val returnJetType = KotlinBuiltIns.getInstance().getIterator().getDefaultType()
 

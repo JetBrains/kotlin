@@ -61,10 +61,9 @@ public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
             if (function.isLocal()) return true;
         }
         else if (element instanceof JetParameter) {
+            if (((JetParameter) element).isLoopParameter()) return true;
+
             PsiElement parent = element.getParent();
-            if (parent instanceof JetForExpression) {
-                return true;
-            }
             if (parent instanceof JetParameterList) {
                 PsiElement grandparent = parent.getParent();
                 return grandparent instanceof JetCatchClause || grandparent instanceof JetFunctionLiteral;

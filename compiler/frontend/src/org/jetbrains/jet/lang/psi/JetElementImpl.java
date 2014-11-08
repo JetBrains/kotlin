@@ -25,6 +25,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 public class JetElementImpl extends ASTWrapperPsiElement implements JetElement {
@@ -82,5 +83,12 @@ public class JetElementImpl extends ASTWrapperPsiElement implements JetElement {
     @Override
     public PsiReference[] getReferences() {
         return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
+    }
+
+    protected JetExpression findExpressionUnder(JetNodeType type) {
+        JetContainerNode containerNode = (JetContainerNode) findChildByType(type);
+        if (containerNode == null) return null;
+
+        return containerNode.findChildByClass(JetExpression.class);
     }
 }

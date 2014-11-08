@@ -481,17 +481,11 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
     }
 
     private static boolean isBadContainerNode(JetContainerNode parent, PsiElement place) {
-        if (parent.getParent() instanceof JetIfExpression &&
-            ((JetIfExpression)parent.getParent()).getCondition() == place) {
-            return true;
-        }
-        else if (parent.getParent() instanceof JetLoopExpression &&
-                 ((JetLoopExpression)parent.getParent()).getBody() != place) {
-            return true;
-        }
-        else if (parent.getParent() instanceof JetArrayAccessExpression) {
-            return true;
-        }
+        PsiElement parentParent = parent.getParent();
+        if (parentParent instanceof JetIfExpression && ((JetIfExpression) parentParent).getCondition() == place) return true;
+        if (parentParent instanceof JetLoopExpression && ((JetLoopExpression) parentParent).getBody() != place) return true;
+        if (parentParent instanceof JetForClause) return true;
+        if (parentParent instanceof JetArrayAccessExpression) return true;
         return false;
     }
 

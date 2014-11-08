@@ -300,7 +300,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         ExpressionTypingContext context =
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
-        JetExpression loopRange = expression.getLoopRange();
+
+        JetForClause clause = expression.getClause();
+        JetExpression loopRange = clause != null ? clause.getLoopRange() : null;
         JetType expectedParameterType = null;
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         if (loopRange != null) {
@@ -313,14 +315,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         WritableScope loopScope = newWritableScopeImpl(context, "Scope with for-loop index");
 
-        JetParameter loopParameter = expression.getLoopParameter();
+        JetParameter loopParameter = clause != null ? clause.getLoopParameter(): null;
         if (loopParameter != null) {
             VariableDescriptor variableDescriptor = createLoopParameterDescriptor(loopParameter, expectedParameterType, context);
 
             loopScope.addVariableDescriptor(variableDescriptor);
         }
         else {
-            JetMultiDeclaration multiParameter = expression.getMultiParameter();
+            JetMultiDeclaration multiParameter = clause != null ? clause.getMultiParameter(): null;
             if (multiParameter != null && loopRange != null) {
                 JetType elementType = expectedParameterType == null ? ErrorUtils.createErrorType("Loop range has no type") : expectedParameterType;
                 TransientReceiver iteratorNextAsReceiver = new TransientReceiver(elementType);

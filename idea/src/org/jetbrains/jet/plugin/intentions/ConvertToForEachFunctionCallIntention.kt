@@ -26,7 +26,8 @@ import org.jetbrains.jet.lang.psi.JetOperationExpression
 
 public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<JetForExpression>("convert.to.for.each.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetForExpression): Boolean {
-        return element.getLoopRange() != null && element.getLoopParameter() != null && element.getBody() != null
+        val clause = element.getClause()
+        return clause?.getLoopRange() != null && clause?.getLoopParameter() != null && element.getBody() != null
     }
 
     override fun applyTo(element: JetForExpression, editor: Editor) {
@@ -46,7 +47,7 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
         }
 
         fun buildReceiverText(element: JetForExpression): String {
-            val loopRange = element.getLoopRange()!!
+            val loopRange = element.getClause()!!.getLoopRange()!!
 
             return when (loopRange) {
                 is JetOperationExpression -> "(${loopRange.getText()})"
@@ -55,7 +56,7 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
         }
 
         val body = element.getBody()!!
-        val loopParameter = element.getLoopParameter()!!
+        val loopParameter = element.getClause()!!.getLoopParameter()!!
 
         val bodyText = buildReplacementBodyText(loopParameter, when (body) {
             is JetBlockExpression -> buildStatements(body.getStatements())

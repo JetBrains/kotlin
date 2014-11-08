@@ -363,7 +363,7 @@ public class JetPsiUtil {
         if (declaration instanceof JetProperty) return true;
         assert declaration instanceof JetMultiDeclarationEntry;
         JetMultiDeclarationEntry multiDeclarationEntry = (JetMultiDeclarationEntry) declaration;
-        return !(multiDeclarationEntry.getParent().getParent() instanceof JetForExpression);
+        return !(multiDeclarationEntry.getParent().getParent() instanceof JetForClause);
     }
 
     @Nullable

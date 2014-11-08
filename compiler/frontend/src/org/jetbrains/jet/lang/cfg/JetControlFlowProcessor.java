@@ -864,7 +864,8 @@ public class JetControlFlowProcessor {
         public void visitForExpression(@NotNull JetForExpression expression) {
             builder.enterLexicalScope(expression);
 
-            JetExpression loopRange = expression.getLoopRange();
+            JetForClause clause = expression.getClause();
+            JetExpression loopRange = clause != null ? clause.getLoopRange() : null;
             if (loopRange != null) {
                 generateInstructions(loopRange);
             }
@@ -894,8 +895,9 @@ public class JetControlFlowProcessor {
         }
 
         private void declareLoopParameter(JetForExpression expression) {
-            JetParameter loopParameter = expression.getLoopParameter();
-            JetMultiDeclaration multiDeclaration = expression.getMultiParameter();
+            JetForClause clause = expression.getClause();
+            JetParameter loopParameter = clause != null ? clause.getLoopParameter() : null;
+            JetMultiDeclaration multiDeclaration = clause != null ? clause.getMultiParameter() : null;
             if (loopParameter != null) {
                 builder.declareParameter(loopParameter);
             }
@@ -905,9 +907,10 @@ public class JetControlFlowProcessor {
         }
 
         private void writeLoopParameterAssignment(JetForExpression expression) {
-            JetParameter loopParameter = expression.getLoopParameter();
-            JetMultiDeclaration multiDeclaration = expression.getMultiParameter();
-            JetExpression loopRange = expression.getLoopRange();
+            JetForClause clause = expression.getClause();
+            JetParameter loopParameter = clause != null ? clause.getLoopParameter() : null;
+            JetMultiDeclaration multiDeclaration = clause != null ? clause.getMultiParameter() : null;
+            JetExpression loopRange = clause != null ? clause.getLoopRange() : null;
 
             TypePredicate loopRangeTypePredicate =
                     getTypePredicateByReceiverValue(trace.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange));

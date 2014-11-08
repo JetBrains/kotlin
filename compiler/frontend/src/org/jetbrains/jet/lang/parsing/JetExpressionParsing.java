@@ -1379,6 +1379,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             myBuilder.disableNewlines();
 
             if (!at(RPAR)) {
+                PsiBuilder.Marker clause = mark();
+                
                 PsiBuilder.Marker parameter = mark();
                 if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
                 if (at(LPAR)) {
@@ -1400,6 +1402,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     parseExpression();
                     range.done(LOOP_RANGE);
                 }
+
+                clause.done(FOR_CLAUSE);
             }
             else {
                 error("Expecting a variable name");

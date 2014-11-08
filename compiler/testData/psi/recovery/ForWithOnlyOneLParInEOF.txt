@@ -15,11 +15,12 @@ JetFile: ForWithOnlyOneLParInEOF.kt
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       PsiElement(LPAR)('(')
-      VALUE_PARAMETER
-        PsiErrorElement:Expecting a variable name
+      FOR_CLAUSE
+        VALUE_PARAMETER
+          PsiErrorElement:Expecting a variable name
+            <empty list>
+        PsiErrorElement:Expecting 'in'
           <empty list>
-      PsiErrorElement:Expecting 'in'
-        <empty list>
       PsiErrorElement:Expecting ')'
         <empty list>
       BODY

@@ -107,6 +107,7 @@ public interface JetNodeTypes {
     JetNodeType CATCH                     = new JetNodeType("CATCH", JetCatchClause.class);
     JetNodeType FINALLY                   = new JetNodeType("FINALLY", JetFinallySection.class);
     JetNodeType FOR                       = new JetNodeType("FOR", JetForExpression.class);
+    JetNodeType FOR_CLAUSE                = new JetNodeType("FOR_CLAUSE", JetForClause.class);
     JetNodeType WHILE                     = new JetNodeType("WHILE", JetWhileExpression.class);
     JetNodeType DO_WHILE                  = new JetNodeType("DO_WHILE", JetDoWhileExpression.class);
     JetNodeType LOOP_RANGE                = new JetNodeType("LOOP_RANGE", JetContainerNode.class);

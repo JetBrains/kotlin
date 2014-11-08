@@ -130,7 +130,7 @@ public class JetParameter extends JetNamedDeclarationStub<KotlinParameterStub> i
     }
 
     public boolean isLoopParameter() {
-        return getParent() instanceof JetForExpression;
+        return getParent() instanceof JetForClause;
     }
 
     @Nullable
