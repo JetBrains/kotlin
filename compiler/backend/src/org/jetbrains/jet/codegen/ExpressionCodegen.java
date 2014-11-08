@@ -477,6 +477,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitForExpression(@NotNull JetForExpression forExpression, StackValue receiver) {
+        if (forExpression.isComprehension()) {
+            ResolvedCall<?> resolvedCall = bindingContext.get(FOR_COMPREHENSION_RESOLVED_CALL, forExpression.getClause());
+            assert resolvedCall != null : "No comprehension resolved call: " + forExpression.getText();
+
+            return generateCall(forExpression, resolvedCall, receiver);
+        }
+
         // Is it a "1..2" or so
         RangeCodegenUtil.BinaryCall binaryCall = RangeCodegenUtil.getRangeAsBinaryCall(forExpression);
         if (binaryCall != null) {
@@ -2026,7 +2033,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitCallExpression(@NotNull JetCallExpression expression, StackValue receiver) {
-        ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(expression, bindingContext);
+        return generateCall(expression, getResolvedCallWithAssert(expression, bindingContext), receiver);
+    }
+
+    private StackValue generateCall(@NotNull JetExpression expression, @NotNull ResolvedCall resolvedCall, StackValue receiver) {
         CallableDescriptor funDescriptor = resolvedCall.getResultingDescriptor();
 
         if (!(funDescriptor instanceof FunctionDescriptor)) {
@@ -2051,7 +2061,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     private StackValue invokeSamConstructor(
-            @NotNull JetCallExpression expression,
+            @NotNull JetExpression expression,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull SamType samType
     ) {
@@ -3352,10 +3362,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private StackValue generateNewCall(@NotNull JetCallExpression expression, @NotNull ResolvedCall<?> resolvedCall) {
+    private StackValue generateNewCall(@NotNull JetExpression expression, @NotNull ResolvedCall<?> resolvedCall) {
         Type type = expressionType(expression);
         if (type.getSort() == Type.ARRAY) {
-            generateNewArray(expression);
+            generateNewArray((JetCallExpression) expression);
             return StackValue.onStack(type);
         }
 

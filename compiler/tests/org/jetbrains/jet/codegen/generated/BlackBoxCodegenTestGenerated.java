@@ -1890,6 +1890,30 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forComprehensionDataClass.kt")
+        public void testForComprehensionDataClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forComprehensionDataClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forComprehensionNested.kt")
+        public void testForComprehensionNested() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forComprehensionNested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forComprehensionWithExtension.kt")
+        public void testForComprehensionWithExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forComprehensionWithExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forComprehensionWithMember.kt")
+        public void testForComprehensionWithMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forComprehensionWithMember.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("forInSmartCastToArray.kt")
         public void testForInSmartCastToArray() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forInSmartCastToArray.kt");
