@@ -505,7 +505,7 @@ public class CallResolver {
 
                 @NotNull
                 @Override
-                public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
+                public List<? extends FunctionLiteralArgument> getFunctionLiteralArguments() {
                     return Collections.emptyList();
                 }
             };

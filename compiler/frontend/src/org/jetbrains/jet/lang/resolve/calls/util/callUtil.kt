@@ -46,9 +46,9 @@ import org.jetbrains.kotlin.util.sure
 import org.jetbrains.jet.lang.psi.psiUtil.getTextWithLocation
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import org.jetbrains.jet.lang.psi.FunctionLiteralArgument
 
 // resolved call
 
@@ -96,7 +96,7 @@ public fun Call.getValueArgumentsInParentheses(): List<ValueArgument> = getValue
 public fun JetCallExpression.getValueArgumentsInParentheses(): List<ValueArgument> = getValueArguments().filterArgsInParentheses()
 
 [suppress("UNCHECKED_CAST")]
-private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is JetFunctionLiteralArgument } as List<ValueArgument>
+private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is FunctionLiteralArgument } as List<ValueArgument>
 
 public fun Call.getValueArgumentForExpression(expression: JetExpression): ValueArgument? {
     fun JetElement.deparenthesizeStructurally(): JetElement? {

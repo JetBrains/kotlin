@@ -213,9 +213,9 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             D candidate = candidateCall.getCandidateDescriptor();
             List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
 
-            List<JetFunctionLiteralArgument> functionLiteralArguments = call.getFunctionLiteralArguments();
+            List<? extends FunctionLiteralArgument> functionLiteralArguments = call.getFunctionLiteralArguments();
             if (!functionLiteralArguments.isEmpty()) {
-                JetFunctionLiteralArgument functionLiteralArgument = functionLiteralArguments.get(0);
+                FunctionLiteralArgument functionLiteralArgument = functionLiteralArguments.get(0);
                 JetExpression possiblyLabeledFunctionLiteral = functionLiteralArgument.getArgumentExpression();
 
                 if (valueParameters.isEmpty()) {

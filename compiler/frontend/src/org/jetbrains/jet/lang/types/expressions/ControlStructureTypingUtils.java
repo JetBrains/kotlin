@@ -210,7 +210,7 @@ public class ControlStructureTypingUtils {
 
             @NotNull
             @Override
-            public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
+            public List<? extends FunctionLiteralArgument> getFunctionLiteralArguments() {
                 return Collections.emptyList();
             }
 
@@ -483,7 +483,8 @@ public class ControlStructureTypingUtils {
 
         @Override
         public void danglingFunctionLiteralArgumentSuspected(
-                @NotNull BindingTrace trace, @NotNull List<JetFunctionLiteralArgument> functionLiteralArguments
+                @NotNull BindingTrace trace,
+                @NotNull List<? extends FunctionLiteralArgument> functionLiteralArguments
         ) {
             logError();
         }
