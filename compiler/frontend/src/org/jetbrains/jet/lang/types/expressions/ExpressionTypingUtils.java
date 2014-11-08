@@ -403,6 +403,8 @@ public class ExpressionTypingUtils {
 
     public static void checkVariableShadowing(@NotNull ExpressionTypingContext context, @NotNull VariableDescriptor variableDescriptor, VariableDescriptor oldDescriptor) {
         if (oldDescriptor != null && isLocal(variableDescriptor.getContainingDeclaration(), oldDescriptor)) {
+            if (DescriptorToSourceUtils.descriptorToDeclaration(oldDescriptor) instanceof JetPsiUtil.JetSyntheticElement) return;
+
             PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
             if (declaration != null) {
                 context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));

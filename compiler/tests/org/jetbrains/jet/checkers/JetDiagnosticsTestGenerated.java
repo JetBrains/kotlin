@@ -1896,6 +1896,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("forComprehensionNoSyntheticParameterShadowing.kt")
+            public void testForComprehensionNoSyntheticParameterShadowing() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forComprehensionNoSyntheticParameterShadowing.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forLoopWithNullableRange.kt")
             public void testForLoopWithNullableRange() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forLoopWithNullableRange.kt");

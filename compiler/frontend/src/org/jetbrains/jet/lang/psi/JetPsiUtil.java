@@ -59,6 +59,10 @@ public class JetPsiUtil {
         JetExpression getBaseExpression();
     }
 
+    public interface JetSyntheticElement {
+
+    }
+
     public static <D> void visitChildren(@NotNull JetElement element, @NotNull JetTreeVisitor<D> visitor, D data) {
         PsiElement child = element.getFirstChild();
         while (child != null) {

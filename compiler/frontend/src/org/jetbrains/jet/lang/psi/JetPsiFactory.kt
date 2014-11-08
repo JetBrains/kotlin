@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.stripLeadingClause
 import com.intellij.psi.PsiElementVisitor
 import kotlin.properties.Delegates
 import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.jet.lang.resolve.name.Name
 
 public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
 public fun JetPsiFactory(contextElement: JetElement): JetPsiFactory = JetPsiFactory(contextElement.getProject())
@@ -756,7 +757,20 @@ public class JetPsiFactory(private val project: Project) {
     ): ForComprehensionWrappingStrategy(forExpression) {
         private val syntheticParamName = JetScopeUtils.pickNonConflictingVarName(scope, "_p_").asString()
 
-        override val parameterListWrapper: JetParameterList = createParameterList("($syntheticParamName)")
+        override val parameterListWrapper: JetParameterList by Delegates.lazy {
+            val fakeParameterList = createParameterList("($syntheticParamName)")
+            object : JetParameterList(fakeParameterList.getNode()) {
+                val parameter = object: JetParameter(fakeParameterList.getParameters().first().getNode()), JetPsiUtil.JetSyntheticElement {
+
+                }
+
+                override fun getParameters(): List<JetParameter> = Collections.singletonList(parameter)
+
+                override fun acceptChildren(visitor: PsiElementVisitor) {
+                    parameter.accept(visitor)
+                }
+            }
+        }
 
         override val bodyWrapper: JetBlockExpression by Delegates.lazy {
             val multiParameter = forExpression.getLeadingClause().getMultiParameter()
