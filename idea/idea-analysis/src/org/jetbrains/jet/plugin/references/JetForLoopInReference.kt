@@ -21,6 +21,8 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.Collections
 import org.jetbrains.jet.lang.psi.JetForClause
+import org.jetbrains.jet.lang.psi.JetForExpression
+import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 
 public class JetForLoopInReference(element: JetForClause) : JetMultiReference<JetForClause>(element) {
 
@@ -34,6 +36,10 @@ public class JetForLoopInReference(element: JetForClause) : JetMultiReference<Je
     }
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
+        if ((expression.getParent() as JetForExpression).isComprehension()) {
+            return context[BindingContext.FOR_COMPREHENSION_RESOLVED_CALL, expression]?.getCandidateDescriptor().singletonOrEmptyList()
+        }
+
         val loopRange = expression.getLoopRange()
         if (loopRange == null) {
             return Collections.emptyList()
