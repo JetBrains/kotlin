@@ -1896,9 +1896,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("forComprehensionMulti.kt")
+        public void testForComprehensionMulti() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forComprehensionMulti.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("forComprehensionNested.kt")
         public void testForComprehensionNested() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forComprehensionNested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forComprehensionNestedMulti.kt")
+        public void testForComprehensionNestedMulti() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forComprehensionNestedMulti.kt");
             doTest(fileName);
         }
 
@@ -1923,6 +1935,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("forIntArray.kt")
         public void testForIntArray() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forIntArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forIntArrayMulti.kt")
+        public void testForIntArrayMulti() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forIntArrayMulti.kt");
             doTest(fileName);
         }
 
@@ -1965,6 +1983,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("forUserType.kt")
         public void testForUserType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forUserType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forUserTypeMulti.kt")
+        public void testForUserTypeMulti() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forUserTypeMulti.kt");
             doTest(fileName);
         }
 

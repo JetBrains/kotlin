@@ -1246,15 +1246,33 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("onIntRangeMulti.kt")
+        public void testOnIntRangeMulti() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/forComprehension/onIntRangeMulti.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("onIntRangeNested.kt")
         public void testOnIntRangeNested() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/forComprehension/onIntRangeNested.kt");
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("onIntRangeNestedMulti.kt")
+        public void testOnIntRangeNestedMulti() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/forComprehension/onIntRangeNestedMulti.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("onIntRangePairs.kt")
         public void testOnIntRangePairs() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/forComprehension/onIntRangePairs.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("onIntRangePairsMulti.kt")
+        public void testOnIntRangePairsMulti() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/forComprehension/onIntRangePairsMulti.kt");
             doTestWithStdlib(fileName);
         }
     }

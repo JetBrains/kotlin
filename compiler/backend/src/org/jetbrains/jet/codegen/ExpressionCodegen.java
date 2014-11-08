@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
@@ -665,7 +666,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         protected abstract void increment(@NotNull Label loopExit);
 
         public void body() {
-            generateLoopBody(forExpression.getBody());
+            generateLoopBody(PsiUtilPackage.stripLeadingClause(forExpression));
         }
 
         private void scheduleLeaveVariable(Runnable runnable) {
