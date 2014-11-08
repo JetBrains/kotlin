@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithVa
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.MagicKind;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -862,6 +863,12 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitForExpression(@NotNull JetForExpression expression) {
+            if (expression.isComprehension()) {
+                ResolvedCall<?> mapResolvedCall = trace.get(BindingContext.FOR_COMPREHENSION_RESOLVED_CALL, expression.getClause());
+                checkAndGenerateCall(mapResolvedCall);
+                return;
+            }
+
             builder.enterLexicalScope(expression);
 
             JetForClause clause = expression.getClause();
@@ -892,6 +899,12 @@ public class JetControlFlowProcessor {
             builder.bindLabel(loopInfo.getExitPoint());
             builder.loadUnit(expression);
             builder.exitLexicalScope(expression);
+        }
+
+        @Override
+        public void visitYieldExpression(@NotNull JetYieldExpression expression) {
+            trace.report(Errors.YIELD_OUTSIDE_A_FOR_COMPREHENSION.on(expression));
+            generateInstructions(expression.getBaseExpression());
         }
 
         private void declareLoopParameter(JetForExpression expression) {

@@ -199,6 +199,11 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     }
 
     @Override
+    public JetTypeInfo visitYieldExpression(@NotNull JetYieldExpression expression, ExpressionTypingContext data) {
+        return expression.accept(controlStructures, data);
+    }
+
+    @Override
     public JetTypeInfo visitWhileExpression(@NotNull JetWhileExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }

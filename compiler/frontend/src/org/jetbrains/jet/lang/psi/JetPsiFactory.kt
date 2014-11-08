@@ -25,11 +25,18 @@ import com.intellij.util.LocalTimeCounter
 import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.lexer.JetKeywordToken
 import org.jetbrains.jet.plugin.JetFileType
-import org.jetbrains.jet.lang.psi.JetPsiFactory.CallableBuilder.Target
 import com.intellij.openapi.util.Key
 import java.io.PrintWriter
 import java.io.StringWriter
+import org.jetbrains.jet.lang.psi.JetPsiFactory.CallableBuilder.Target
 import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils
+import java.util.Collections
+import org.jetbrains.jet.lang.psi.JetPsiUtil.JetExpressionWrapper
+import com.intellij.psi.PsiElementVisitor
+import kotlin.properties.Delegates
+import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 
 public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
 public fun JetPsiFactory(contextElement: JetElement): JetPsiFactory = JetPsiFactory(contextElement.getProject())
@@ -458,7 +465,7 @@ public class JetPsiFactory(private val project: Project) {
         return WhenBuilder(subject?.getText())
     }
 
-    public class CallableBuilder(private val target: Target) {
+    public class CallableBuilder(private val target: CallableBuilder.Target) {
         public enum class Target {
             FUNCTION
             READ_ONLY_PROPERTY
@@ -627,23 +634,136 @@ public class JetPsiFactory(private val project: Project) {
         if (expression is JetBlockExpression) {
             return expression as JetBlockExpression
         }
-        return BlockWrapper(expression)
+        return BlockWrapper(createBlockToDelegateTo(expression, false), expression)
     }
 
-    public fun BlockWrapper(expressionToWrap: JetExpression): BlockWrapper {
-        val function = createFunction("fun f() { ${expressionToWrap.getText()} }")
-        val block = function.getBodyExpression() as JetBlockExpression
-        return BlockWrapper(block, expressionToWrap)
+    private fun createBlockToDelegateTo(expression: JetExpression, lambdaBody: Boolean): JetBlockExpression {
+        val function: JetFunction = if (lambdaBody) {
+            val bodyText = if (expression is JetBlockExpression) {
+                expression.getStatements().map { it.getText() }.joinToString("\n")
+            }
+            else {
+                expression.getText()
+            }
+            (createExpression("{ p -> $bodyText }") as JetFunctionLiteralExpression).getFunctionLiteral()
+        }
+        else {
+            val bodyText = expression.getText().let { s -> if (expression is JetBlockExpression) s else "{$s}" }
+            createFunction("fun f() $bodyText")
+        }
+        return function.getBodyExpression() as JetBlockExpression
     }
 
-    private inner class BlockWrapper(fakeBlockExpression: JetBlockExpression, private val expression: JetExpression) : JetBlockExpression(fakeBlockExpression.getNode()), JetPsiUtil.JetExpressionWrapper {
+    public fun wrapInALambda(expressionToWrap: JetForExpression, scope: JetScope?): JetFunctionLiteralExpression {
+        val lambda =
+                ForComprehensionAsFunctionLiteral(
+                        if (expressionToWrap.getClause()?.getMultiParameter() != null) {
+                            MultiParameterForComprehensionWrappingStrategy(expressionToWrap, scope!!)
+                        }
+                        else {
+                            SingleParameterForComprehensionWrappingStrategy(expressionToWrap)
+                        }
+                )
+        return lambda.parentExpression
+    }
 
-        override fun getStatements(): List<JetElement> {
-            return listOf(expression)
+    private open inner class BlockWrapper(
+            fakeBlockExpression: JetBlockExpression,
+            private val expression: JetExpression
+    ) : JetBlockExpression(fakeBlockExpression.getNode()), JetPsiUtil.JetExpressionWrapper {
+        override fun getStatements(): List<JetElement> = (expression as? JetBlockExpression)?.getStatements() ?: listOf(expression)
+
+        override fun getBaseExpression(): JetExpression = expression
+
+        override fun acceptChildren(visitor: PsiElementVisitor) {
+            getStatements().forEach { it.accept(visitor) }
+        }
+    }
+
+    private inner class ForComprehensionAsFunctionLiteral(
+            private val wrappingStrategy: ForComprehensionWrappingStrategy
+    ): JetFunctionLiteral(wrappingStrategy.functionLiteralToDelegateTo.getNode()) {
+        {
+            wrappingStrategy.wrappingFunctionLiteral = this
         }
 
-        override fun getBaseExpression(): JetExpression {
-            return expression
+        val parentExpression = object: JetFunctionLiteralExpression(super.getParent().getNode()) {
+            override fun getFunctionLiteral(): JetFunctionLiteral = this@ForComprehensionAsFunctionLiteral
+
+            override fun acceptChildren(visitor: PsiElementVisitor) {
+                getFunctionLiteral().accept(visitor)
+            }
+        }
+
+        override fun getParent(): PsiElement? = parentExpression
+
+        override fun getValueParameterList(): JetParameterList? = wrappingStrategy.parameterListWrapper
+        override fun getBodyExpression(): JetBlockExpression? = wrappingStrategy.bodyWrapper
+
+        override fun acceptChildren(visitor: PsiElementVisitor) {
+            wrappingStrategy.parameterListWrapper.accept(visitor)
+            wrappingStrategy.bodyWrapper.accept(visitor)
+        }
+    }
+
+    private inner abstract class ForComprehensionWrappingStrategy(val forExpression: JetForExpression) {
+        abstract val parameterListWrapper: JetParameterList
+        abstract val bodyWrapper: JetBlockExpression
+
+        var wrappingFunctionLiteral: ForComprehensionAsFunctionLiteral by Delegates.notNull()
+
+        val functionLiteralToDelegateTo: JetFunctionLiteral by Delegates.lazy {
+            val lambdaText = "{ ${parameterListWrapper.getText()} -> ${bodyWrapper.getText()} }"
+            (createExpression(lambdaText) as JetFunctionLiteralExpression).getFunctionLiteral()
+        }
+    }
+
+    inner class SingleParameterForComprehensionWrappingStrategy(
+            forExpression: JetForExpression
+    ): ForComprehensionWrappingStrategy(forExpression) {
+        override val parameterListWrapper: JetParameterList by Delegates.lazy {
+            val parameter = forExpression.getClause().getLoopParameter()
+            object : JetParameterList(createParameterList("(${parameter.getText() ?: ""})").getNode()) {
+                override fun getParameters(): List<JetParameter> = parameter.singletonOrEmptyList()
+
+                override fun acceptChildren(visitor: PsiElementVisitor) {
+                    parameter?.accept(visitor)
+                }
+            }
+        }
+
+        override val bodyWrapper: JetBlockExpression by Delegates.lazy {
+            val body = forExpression.getComprehensionBody() ?: createEmptyBody()
+            object : BlockWrapper(createBlockToDelegateTo(body, true), body) {
+                override fun getParent(): PsiElement? = wrappingFunctionLiteral
+            }
+        }
+    }
+
+    inner class MultiParameterForComprehensionWrappingStrategy(
+            forExpression: JetForExpression,
+            scope: JetScope
+    ): ForComprehensionWrappingStrategy(forExpression) {
+        private val syntheticParamName = JetScopeUtils.pickNonConflictingVarName(scope, "_p_").asString()
+
+        override val parameterListWrapper: JetParameterList = createParameterList("($syntheticParamName)")
+
+        override val bodyWrapper: JetBlockExpression by Delegates.lazy {
+            val multiParameter = forExpression.getClause().getMultiParameter()
+            val multiVarInitializer = createSimpleName(syntheticParamName)
+            val multiVar = object: JetMultiDeclaration(multiParameter.getNode()) {
+                override fun getInitializer(): JetExpression? = multiVarInitializer
+                override fun acceptChildren(visitor: PsiElementVisitor) {
+                    super.acceptChildren(visitor)
+                    multiVarInitializer.accept(visitor)
+                }
+
+            }
+            val body = forExpression.getComprehensionBody() ?: createEmptyBody()
+            object : BlockWrapper(createBlockToDelegateTo(body, true), body) {
+                override fun getStatements(): List<JetElement> = Collections.singletonList(multiVar) + super.getStatements()
+                override fun getParent(): PsiElement? = wrappingFunctionLiteral
+            }
         }
     }
 }

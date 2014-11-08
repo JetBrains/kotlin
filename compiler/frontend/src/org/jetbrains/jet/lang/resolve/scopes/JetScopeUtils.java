@@ -26,6 +26,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.utils.Printer;
 
@@ -146,5 +147,15 @@ public final class JetScopeUtils {
             scope.printScopeStructure(p);
         }
         return out.toString();
+    }
+
+    @NotNull
+    public static Name pickNonConflictingVarName(@NotNull JetScope scope, @NotNull String base) {
+        int i = 0;
+        while (true) {
+            Name name = Name.identifier(i > 0 ? base + i : base);
+            if (scope.getLocalVariable(name) == null && scope.getProperties(name).isEmpty()) return name;
+            i++;
+        }
     }
 }

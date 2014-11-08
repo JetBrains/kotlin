@@ -186,6 +186,12 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ForComprehensions.kt")
+        public void testForComprehensions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/ForComprehensions.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("If.kt")
         public void testIf() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/If.kt");

@@ -296,7 +296,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetTypeInfo visitForExpression(JetForExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
-        if (!isStatement) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
+        boolean isComprehension = expression.isComprehension();
+        if (!(isStatement || isComprehension)) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
 
         ExpressionTypingContext context =
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
@@ -308,36 +309,49 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (loopRange != null) {
             ExpressionReceiver loopRangeReceiver = getExpressionReceiver(facade, loopRange, context.replaceScope(context.scope));
             dataFlowInfo = facade.getTypeInfo(loopRange, context).getDataFlowInfo();
-            if (loopRangeReceiver != null) {
-                expectedParameterType = components.forLoopConventionsChecker.checkIterableConvention(loopRangeReceiver, context);
+            if (loopRangeReceiver == null) {
+                loopRangeReceiver = new ExpressionReceiver(loopRange, ErrorUtils.createErrorType("Type for " + loopRange.getText()));
+            }
+            expectedParameterType =
+                    isComprehension
+                    ? components.forLoopConventionsChecker
+                            .checkComprehensionConvention(expression, loopRangeReceiver, context)
+                    : components.forLoopConventionsChecker.checkIterableConvention(loopRangeReceiver, context);
+        }
+
+        if (!isComprehension) {
+            WritableScope loopScope = newWritableScopeImpl(context, "Scope with for-loop index");
+
+            JetParameter loopParameter = clause != null ? clause.getLoopParameter(): null;
+            if (loopParameter != null) {
+                VariableDescriptor variableDescriptor = createLoopParameterDescriptor(loopParameter, expectedParameterType, context);
+
+                loopScope.addVariableDescriptor(variableDescriptor);
+            }
+            else {
+                JetMultiDeclaration multiParameter = clause != null ? clause.getMultiParameter(): null;
+                if (multiParameter != null && loopRange != null) {
+                    JetType elementType = expectedParameterType == null ? ErrorUtils.createErrorType("Loop range has no type") : expectedParameterType;
+                    TransientReceiver iteratorNextAsReceiver = new TransientReceiver(elementType);
+                    components.expressionTypingUtils.defineLocalVariablesFromMultiDeclaration(loopScope, multiParameter, iteratorNextAsReceiver,
+                                                                                              loopRange, context);
+                }
+            }
+
+            JetExpression body = expression.getBody();
+            if (body != null) {
+                components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(loopScope, Collections.singletonList(body),
+                        CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(dataFlowInfo), context.trace);
             }
         }
 
-        WritableScope loopScope = newWritableScopeImpl(context, "Scope with for-loop index");
-
-        JetParameter loopParameter = clause != null ? clause.getLoopParameter(): null;
-        if (loopParameter != null) {
-            VariableDescriptor variableDescriptor = createLoopParameterDescriptor(loopParameter, expectedParameterType, context);
-
-            loopScope.addVariableDescriptor(variableDescriptor);
-        }
-        else {
-            JetMultiDeclaration multiParameter = clause != null ? clause.getMultiParameter(): null;
-            if (multiParameter != null && loopRange != null) {
-                JetType elementType = expectedParameterType == null ? ErrorUtils.createErrorType("Loop range has no type") : expectedParameterType;
-                TransientReceiver iteratorNextAsReceiver = new TransientReceiver(elementType);
-                components.expressionTypingUtils.defineLocalVariablesFromMultiDeclaration(loopScope, multiParameter, iteratorNextAsReceiver,
-                                                                                          loopRange, context);
-            }
+        JetType resultingType = KotlinBuiltIns.getInstance().getUnitType();
+        if (isComprehension) {
+            ResolvedCall<? extends CallableDescriptor> forResolvedCall = context.trace.get(FOR_COMPREHENSION_RESOLVED_CALL, clause);
+            resultingType = forResolvedCall != null ? forResolvedCall.getResultingDescriptor().getReturnType() : null;
         }
 
-        JetExpression body = expression.getBody();
-        if (body != null) {
-            components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(loopScope, Collections.singletonList(body),
-                    CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(dataFlowInfo), context.trace);
-        }
-
-        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), expression, contextWithExpectedType, dataFlowInfo);
+        return DataFlowUtils.checkType(resultingType, expression, contextWithExpectedType, dataFlowInfo);
     }
 
     private VariableDescriptor createLoopParameterDescriptor(
@@ -432,6 +446,18 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     .replaceExpectedType(throwableType).replaceScope(context.scope).replaceContextDependency(INDEPENDENT));
         }
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getNothingType(), expression, context, context.dataFlowInfo);
+    }
+
+    @Override
+    public JetTypeInfo visitYieldExpression(@NotNull JetYieldExpression expression, ExpressionTypingContext context) {
+        JetExpression baseExpression = expression.getBaseExpression();
+        if (baseExpression != null) {
+            facade.getTypeInfo(
+                    baseExpression,
+                    context.replaceExpectedType(NO_EXPECTED_TYPE).replaceScope(context.scope).replaceContextDependency(INDEPENDENT)
+            );
+        }
+        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), expression, context, context.dataFlowInfo);
     }
 
     @Override
