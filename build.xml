@@ -307,37 +307,6 @@
         </jar>
     </target>
 
-    <target name="jslib-example">
-        <property name="jslib-example-name" value="jslib-example" />
-        <property name="jslib-example-dir" value="${basedir}/compiler/testData/cli/js" />
-
-        <kotlin2js output="${output}/${jslib-example-name}.js" main="noCall">
-            <src>
-                <fileset dir="${jslib-example-dir}">
-                    <include name="LibraryExample.kt" />
-                </fileset>
-            </src>
-        </kotlin2js>
-
-        <jar jarfile="${output}/jslib-example.jar">
-            <fileset dir="${jslib-example-dir}">
-                <include name="LibraryExample.kt" />
-            </fileset>
-            <zipfileset file="${output}/${jslib-example-name}.js" prefix=""/>
-
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-                <attribute name="Specification-Title" value="${manifest.spec.title.kotlin.javascript.lib}"/>
-                <attribute name="Kotlin-JS-Module-Name" value="${jslib-example-name}"/>
-            </manifest>
-        </jar>
-
-        <unzip src="${output}/jslib-example.jar" dest="${output}/jslib-example" />
-    </target>
-
     <target name="preloader">
         <cleandir dir="${output}/classes/preloader"/>
         <javac2 destdir="${output}/classes/preloader" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
