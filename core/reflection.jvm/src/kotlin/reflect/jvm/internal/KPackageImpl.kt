@@ -19,7 +19,7 @@ package kotlin.reflect.jvm.internal
 import kotlin.reflect.KPackage
 import kotlin.jvm.internal.KotlinPackage
 
-private val KOTLIN_PACKAGE_ANNOTATION_CLASS = javaClass<KotlinPackage>()
+private val KOTLIN_PACKAGE_ANNOTATION_CLASS = javaClassOf<KotlinPackage>()
 
 class KPackageImpl(val jClass: Class<*>) : KPackage {
     override fun equals(other: Any?): Boolean =

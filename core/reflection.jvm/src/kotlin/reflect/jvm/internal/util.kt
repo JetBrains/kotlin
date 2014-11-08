@@ -37,7 +37,7 @@ private fun setterName(propertyName: String): String = "set" + propertyName.capi
 
 // A local copy of javaClass() from stdlib is needed because there's no dependency on stdlib in runtime.jvm
 [Intrinsic("kotlin.javaClass.function")]
-fun <reified T> javaClass(): Class<T> = throw UnsupportedOperationException()
+fun <reified T> javaClassOf(): Class<T> = throw UnsupportedOperationException()
 
 
 private fun Class<*>.getMaybeDeclaredMethod(name: String, vararg parameterTypes: Class<*>): Method {
