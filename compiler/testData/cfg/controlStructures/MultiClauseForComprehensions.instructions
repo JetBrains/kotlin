@@ -1,0 +1,138 @@
+== flatMap ==
+fun IntRange.flatMap<T>(f: (Int) -> List<T>): List<T> = throw AssertionError("")
+---------------------
+L0:
+  1 <START>
+    v(f: (Int) -> List<T>)
+    magic[FAKE_INITIALIZER](f: (Int) -> List<T>) -> <v0>
+    w(f|<v0>)
+    mark(throw AssertionError(""))
+    mark("")
+    r("") -> <v1>
+    mark(AssertionError(""))
+    call(AssertionError(""), <init>|<v1>) -> <v2>
+    throw (throw AssertionError("")|<v2>)                   NEXT:[<ERROR>]
+L1:
+    <END>                                                   NEXT:[<SINK>]                                                  PREV:[]
+error:
+    <ERROR>                                                 PREV:[throw (throw AssertionError("")|<v2>)]
+sink:
+    <SINK>                                                  PREV:[<ERROR>, <END>]
+=====================
+== map ==
+fun IntRange.map<T>(f: (Int) -> T): List<T> = throw AssertionError("")
+---------------------
+L0:
+  1 <START>
+    v(f: (Int) -> T)
+    magic[FAKE_INITIALIZER](f: (Int) -> T) -> <v0>
+    w(f|<v0>)
+    mark(throw AssertionError(""))
+    mark("")
+    r("") -> <v1>
+    mark(AssertionError(""))
+    call(AssertionError(""), <init>|<v1>) -> <v2>
+    throw (throw AssertionError("")|<v2>)             NEXT:[<ERROR>]
+L1:
+    <END>                                             NEXT:[<SINK>]                                            PREV:[]
+error:
+    <ERROR>                                           PREV:[throw (throw AssertionError("")|<v2>)]
+sink:
+    <SINK>                                            PREV:[<ERROR>, <END>]
+=====================
+== main ==
+fun main() {
+    foo(for (i in 1..3, j in 1..i) yield i*j)
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ foo(for (i in 1..3, j in 1..i) yield i*j) })
+    r(1) -> <v0>
+    r(3) -> <v1>
+    mark(1..3)
+    call(1..3, rangeTo|<v0>, <v1>) -> <v2>
+    mark({ (i) -> for (j in 1..i) yield i*j })
+    jmp?(L2)                                                                  NEXT:[r({ (i) -> for (j in 1..i) yield i*j }) -> <v3>, d({ (i) -> for (j in 1..i) yield i*j })]
+    d({ (i) -> for (j in 1..i) yield i*j })                                   NEXT:[<SINK>]
+L2 [after local declaration]:
+    r({ (i) -> for (j in 1..i) yield i*j }) -> <v3>                           PREV:[jmp?(L2)]
+    mark(for (i in 1..3, j in 1..i) yield i*j)
+    call(for (i in 1..3, j in 1..i) yield i*j, flatMap|<v2>, <v3>) -> <v4>
+    mark(foo(for (i in 1..3, j in 1..i) yield i*j))
+    call(foo(for (i in 1..3, j in 1..i) yield i*j), foo|<v4>) -> <v5>
+L1:
+  1 <END>                                                                     NEXT:[<SINK>]
+error:
+    <ERROR>                                                                   PREV:[]
+sink:
+    <SINK>                                                                    PREV:[<ERROR>, <END>, d({ (i) -> for (j in 1..i) yield i*j })]
+=====================
+== anonymous_0 ==
+{ (i) -> for (j in 1..i) yield i*j }
+---------------------
+L3:
+  3 <START>
+    v(i)
+    magic[FAKE_INITIALIZER](i) -> <v0>
+    w(i|<v0>)
+  4 mark(for (j in 1..i) yield i*j)
+    r(1) -> <v1>
+    r(i) -> <v2>
+    mark(1..i)
+    call(1..i, rangeTo|<v1>, <v2>) -> <v3>
+    mark({ (j) -> i*j })
+    jmp?(L5)                                                   NEXT:[r({ (j) -> i*j }) -> <v4>, d({ (j) -> i*j })]
+    d({ (j) -> i*j })                                          NEXT:[<SINK>]
+L5 [after local declaration]:
+    r({ (j) -> i*j }) -> <v4>                                  PREV:[jmp?(L5)]
+    mark(for (j in 1..i) yield i*j)
+    call(for (j in 1..i) yield i*j, map|<v3>, <v4>) -> <v5>
+  3 ret(*|<v5>) L4
+L4:
+    <END>                                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                                    PREV:[]
+sink:
+    <SINK>                                                     PREV:[<ERROR>, <END>, d({ (j) -> i*j })]
+=====================
+== anonymous_1 ==
+{ (j) -> i*j }
+---------------------
+L6:
+  5 <START>
+    v(j)
+    magic[FAKE_INITIALIZER](j) -> <v0>
+    w(j|<v0>)
+  6 mark(i*j)
+    r(i) -> <v1>
+    r(j) -> <v2>
+    mark(i*j)
+    call(i*j, times|<v1>, <v2>) -> <v3>
+  5 ret(*|<v3>) L7
+L7:
+    <END>                                  NEXT:[<SINK>]
+error:
+    <ERROR>                                PREV:[]
+sink:
+    <SINK>                                 PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo(list: List<Int>) {
+
+}
+---------------------
+L0:
+  1 <START>
+    v(list: List<Int>)
+    magic[FAKE_INITIALIZER](list: List<Int>) -> <v0>
+    w(list|<v0>)
+  2 mark({ })
+    read (Unit)
+L1:
+  1 <END>                                               NEXT:[<SINK>]
+error:
+    <ERROR>                                             PREV:[]
+sink:
+    <SINK>                                              PREV:[<ERROR>, <END>]
+=====================

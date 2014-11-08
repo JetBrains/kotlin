@@ -284,6 +284,9 @@ public class DefaultErrorMessages {
         MAP.put(COMPREHENSION_MAP_MISSING, "For-comprehension range must have a map() method");
         MAP.put(COMPREHENSION_MAP_AMBIGUITY, "Method ''map()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
 
+        MAP.put(COMPREHENSION_FLAT_MAP_MISSING, "For-comprehension range must have a flatMap() method");
+        MAP.put(COMPREHENSION_FLAT_MAP_AMBIGUITY, "Method ''flatMap()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
+
         MAP.put(DELEGATE_SPECIAL_FUNCTION_MISSING, "Missing ''{0}'' method on delegate of type ''{1}''", STRING, RENDER_TYPE);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, "Overload resolution ambiguity on method ''{0}'': {1}",  STRING, AMBIGUOUS_CALLS);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, "Property delegate must have a ''{0}'' method. None of the following functions is suitable: {1}",

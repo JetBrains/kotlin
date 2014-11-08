@@ -889,7 +889,7 @@ public class JetControlFlowProcessor {
 
             mark(expression);
             builder.enterLoopBody(expression);
-            JetExpression body = expression.getBody();
+            JetExpression body = PsiUtilPackage.stripLeadingClause(expression);
             if (body != null) {
                 generateInstructions(body);
             }

@@ -1,0 +1,28 @@
+== t1 ==
+fun t1() {
+    for (i in 1..2, j in 1..i) {
+        doSmth(i + j)
+    }
+}
+---------------------
+                                                   <v3>: Int                  NEW: magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>
+                                                   <v7>: Int                  NEW: magic[LOOP_RANGE_ITERATION](1..i|<v6>) -> <v7>
+1                                                  <v0>: Int                  NEW: r(1) -> <v0>
+2                                                  <v1>: Int                  NEW: r(2) -> <v1>
+1..2                                               <v2>: {<: Iterable<Int>}   NEW: call(1..2, rangeTo|<v0>, <v1>) -> <v2>
+1                                                  <v4>: Int                  NEW: r(1) -> <v4>
+i                                                  <v5>: Int                  NEW: r(i) -> <v5>
+1..i                                               <v6>: {<: Iterable<Int>}   NEW: call(1..i, rangeTo|<v4>, <v5>) -> <v6>
+i                                                  <v8>: Int                  NEW: r(i) -> <v8>
+j                                                  <v9>: Int                  NEW: r(j) -> <v9>
+i + j                                              <v10>: Int                 NEW: call(i + j, plus|<v8>, <v9>) -> <v10>
+doSmth(i + j)                                      <v11>: *                   NEW: call(doSmth(i + j), doSmth|<v10>) -> <v11>
+{ doSmth(i + j) }                                  <v11>: *                   COPY
+for (i in 1..2, j in 1..i) { doSmth(i + j) }       !<v12>: *
+{ for (i in 1..2, j in 1..i) { doSmth(i + j) } }   !<v12>: *                  COPY
+=====================
+== doSmth ==
+fun doSmth(i: Int) {}
+---------------------
+    <v0>: Int   NEW: magic[FAKE_INITIALIZER](i: Int) -> <v0>
+=====================

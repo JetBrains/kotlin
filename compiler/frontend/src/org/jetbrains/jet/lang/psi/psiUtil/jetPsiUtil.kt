@@ -37,6 +37,8 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElementVisitor
+import kotlin.properties.Delegates
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     val calleeExpression = getCalleeExpression()
@@ -376,3 +378,31 @@ public fun PsiElement.nextLeafSkipWhitespacesAndComments(): PsiElement? {
     return leaf
 }
 
+
+public fun JetForExpression.stripLeadingClause(): JetExpression? {
+    class Wrapper (
+            val originalExpression: JetForExpression,
+            val startFromClause: Int): JetForExpression(originalExpression.getNode()!!) {
+        private val clauses = with(originalExpression.getClauses()) { subList(startFromClause, size) }
+
+        override fun getClauses(): List<JetForClause> = clauses
+
+        override fun acceptChildren(visitor: PsiElementVisitor) {
+            clauses.forEach { it.accept(visitor) }
+            originalExpression.getBody()?.accept(visitor)
+        }
+
+        private val _text: String by Delegates.lazy {
+            "for (${clauses.map { it.getText() }.joinToString()}) ${originalExpression.getBody()?.getText() ?: "{}"}"
+        }
+
+        override fun getText(): String? = _text
+    }
+
+    val (forToWrap, startFromClause) = when (this) {
+        is Wrapper -> originalExpression to startFromClause + 1
+        else -> this to 1
+    }
+
+    return if (startFromClause > forToWrap.getClauses().lastIndex) forToWrap.getBody() else Wrapper(forToWrap, startFromClause)
+}

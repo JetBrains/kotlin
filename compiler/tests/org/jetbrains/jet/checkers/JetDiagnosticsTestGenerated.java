@@ -1866,6 +1866,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("forComprehensionAmbiguousFlatMap.kt")
+            public void testForComprehensionAmbiguousFlatMap() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forComprehensionAmbiguousFlatMap.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forComprehensionAmbiguousMap.kt")
             public void testForComprehensionAmbiguousMap() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forComprehensionAmbiguousMap.kt");
@@ -1875,6 +1881,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("forComprehensionAmbiguousMapWithDefault.kt")
             public void testForComprehensionAmbiguousMapWithDefault() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forComprehensionAmbiguousMapWithDefault.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forComprehensionMissingFlatMap.kt")
+            public void testForComprehensionMissingFlatMap() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forComprehensionMissingFlatMap.kt");
                 doTest(fileName);
             }
 

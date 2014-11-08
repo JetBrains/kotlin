@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory0;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -42,6 +43,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Collections;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -138,15 +140,18 @@ public class ForLoopConventionsChecker {
         // Make a fake call range.map{ parameter -> body}, and try to resolve it
         JetFunctionLiteralExpression lambda = JetPsiFactory(project).wrapInALambda(forExpression, context.scope);
 
+        boolean flatMapExpected = forExpression.getClauses().size() > 1;
+        Name name = Name.identifier(flatMapExpected ? "flatMap" : "map");
+
         TemporaryBindingTrace mapResolveTrace =
-                TemporaryBindingTrace.create(context.trace, "trace to resolve for-comprehension map call", loopRangeExpression);
+                TemporaryBindingTrace.create(context.trace, "trace to resolve for-comprehension " + name.asString() + "() call", loopRangeExpression);
 
         OverloadResolutionResults<FunctionDescriptor> mapResolutionResults =
                 expressionTypingUtils.makeFunctionCallWithLambdaArgumentAndResolve(
                         loopRange,
                         context.replaceBindingTrace(mapResolveTrace),
                         lambda,
-                        Name.identifier("map"),
+                        name,
                         forExpression
                 );
 
@@ -158,9 +163,13 @@ public class ForLoopConventionsChecker {
         }
 
         if (!mapResolutionResults.isSuccess()) {
+            DiagnosticFactory1<JetExpression, Collection<? extends ResolvedCall<?>>> ambiguityDiagnostic =
+                    flatMapExpected ? COMPREHENSION_FLAT_MAP_AMBIGUITY : COMPREHENSION_MAP_AMBIGUITY;
+            DiagnosticFactory0<JetExpression> missingDiagnostic =
+                    flatMapExpected ? COMPREHENSION_FLAT_MAP_MISSING : COMPREHENSION_MAP_MISSING;
             Diagnostic error = mapResolutionResults.getResultingCalls().size() > 1
-                               ? COMPREHENSION_MAP_AMBIGUITY.on(loopRangeExpression, mapResolutionResults.getResultingCalls())
-                               : COMPREHENSION_MAP_MISSING.on(loopRangeExpression);
+                               ? ambiguityDiagnostic.on(loopRangeExpression, mapResolutionResults.getResultingCalls())
+                               : missingDiagnostic.on(loopRangeExpression);
             mapResolveTrace.report(error);
         }
 

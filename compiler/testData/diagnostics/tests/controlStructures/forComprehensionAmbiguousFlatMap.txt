@@ -1,0 +1,5 @@
+package
+
+internal fun foo(): kotlin.List<kotlin.Int>
+internal fun </*0*/ T> kotlin.IntRange.flatMap(/*0*/ f: (kotlin.Int) -> kotlin.List<T>): kotlin.List<T>
+internal fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.flatMap(/*0*/ f: (T) -> kotlin.List<R>): kotlin.List<R>

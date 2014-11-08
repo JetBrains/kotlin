@@ -1,0 +1,73 @@
+== t1 ==
+fun t1() {
+    for (i in 1..2, j in 1..i) {
+        doSmth(i + j)
+    }
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ for (i in 1..2, j in 1..i) { doSmth(i + j) } })
+  3 r(1) -> <v0>
+    r(2) -> <v1>
+    mark(1..2)
+    call(1..2, rangeTo|<v0>, <v1>) -> <v2>
+    v(i)
+L2 [loop entry point]:
+L6 [condition entry point]:
+    jmp?(L3)                                                  NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>]    PREV:[v(i), jmp(L2)]
+    magic[LOOP_RANGE_ITERATION](1..2|<v2>) -> <v3>
+    w(i|<v3>)
+    mark(for (i in 1..2, j in 1..i) { doSmth(i + j) })
+L4 [body entry point]:
+  4 r(1) -> <v4>
+    r(i) -> <v5>
+    mark(1..i)
+    call(1..i, rangeTo|<v4>, <v5>) -> <v6>
+    v(j)
+L7 [loop entry point]:
+L11 [condition entry point]:
+    jmp?(L8)                                                  NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..i|<v6>) -> <v7>]    PREV:[v(j), jmp(L7)]
+    magic[LOOP_RANGE_ITERATION](1..i|<v6>) -> <v7>
+    w(j|<v7>)
+    mark(for (j in 1..i) { doSmth(i + j) })
+L9 [body entry point]:
+  5 mark({ doSmth(i + j) })
+    r(i) -> <v8>
+    r(j) -> <v9>
+    mark(i + j)
+    call(i + j, plus|<v8>, <v9>) -> <v10>
+    mark(doSmth(i + j))
+    call(doSmth(i + j), doSmth|<v10>) -> <v11>
+  4 jmp(L7)                                                   NEXT:[jmp?(L8)]
+L8 [loop exit point]:
+L10 [body exit point]:
+    read (Unit)                                               PREV:[jmp?(L8)]
+  3 jmp(L2)                                                   NEXT:[jmp?(L3)]
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                               PREV:[jmp?(L3)]
+L1:
+  1 <END>                                                     NEXT:[<SINK>]
+error:
+    <ERROR>                                                   PREV:[]
+sink:
+    <SINK>                                                    PREV:[<ERROR>, <END>]
+=====================
+== doSmth ==
+fun doSmth(i: Int) {}
+---------------------
+L0:
+  1 <START>
+    v(i: Int)
+    magic[FAKE_INITIALIZER](i: Int) -> <v0>
+    w(i|<v0>)
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================

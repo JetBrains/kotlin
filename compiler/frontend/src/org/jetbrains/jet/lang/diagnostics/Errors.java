@@ -447,6 +447,9 @@ public interface Errors {
     DiagnosticFactory0<JetExpression> COMPREHENSION_MAP_MISSING = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetExpression, Collection<? extends ResolvedCall<?>>> COMPREHENSION_MAP_AMBIGUITY = DiagnosticFactory1.create(ERROR);
 
+    DiagnosticFactory0<JetExpression> COMPREHENSION_FLAT_MAP_MISSING = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<JetExpression, Collection<? extends ResolvedCall<?>>> COMPREHENSION_FLAT_MAP_AMBIGUITY = DiagnosticFactory1.create(ERROR);
+
     DiagnosticFactory2<JetExpression, String, JetType> DELEGATE_SPECIAL_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<JetExpression, String, Collection<? extends ResolvedCall<?>>> DELEGATE_SPECIAL_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<JetExpression, String, Collection<? extends ResolvedCall<?>>> DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE = DiagnosticFactory2.create(ERROR);

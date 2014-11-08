@@ -1,0 +1,52 @@
+== flatMap ==
+fun IntRange.flatMap<T>(f: (Int) -> List<T>): List<T> = throw AssertionError("")
+---------------------
+                     <v0>: {<: (Int) -> List<T>}   NEW: magic[FAKE_INITIALIZER](f: (Int) -> List<T>) -> <v0>
+""                   <v1>: {<: Any!}               NEW: r("") -> <v1>
+AssertionError("")   <v2>: {<: Throwable}          NEW: call(AssertionError(""), <init>|<v1>) -> <v2>
+=====================
+== map ==
+fun IntRange.map<T>(f: (Int) -> T): List<T> = throw AssertionError("")
+---------------------
+                     <v0>: {<: (Int) -> T}   NEW: magic[FAKE_INITIALIZER](f: (Int) -> T) -> <v0>
+""                   <v1>: {<: Any!}         NEW: r("") -> <v1>
+AssertionError("")   <v2>: {<: Throwable}    NEW: call(AssertionError(""), <init>|<v1>) -> <v2>
+=====================
+== main ==
+fun main() {
+    foo(for (i in 1..3, j in 1..i) yield i*j)
+}
+---------------------
+1                                               <v0>: Int              NEW: r(1) -> <v0>
+3                                               <v1>: Int              NEW: r(3) -> <v1>
+1..3                                            <v2>: IntRange         NEW: call(1..3, rangeTo|<v0>, <v1>) -> <v2>
+for (i in 1..3, j in 1..i) yield i*j            <v4>: {<: List<Int>}   NEW: call(for (i in 1..3, j in 1..i) yield i*j, flatMap|<v2>, <v3>) -> <v4>
+foo(for (i in 1..3, j in 1..i) yield i*j)       <v5>: *                NEW: call(foo(for (i in 1..3, j in 1..i) yield i*j), foo|<v4>) -> <v5>
+{ foo(for (i in 1..3, j in 1..i) yield i*j) }   <v5>: *                COPY
+=====================
+== anonymous_0 ==
+{ (i) -> for (j in 1..i) yield i*j }
+---------------------
+                            <v0>: Int              NEW: magic[FAKE_INITIALIZER](i) -> <v0>
+1                           <v1>: Int              NEW: r(1) -> <v1>
+i                           <v2>: Int              NEW: r(i) -> <v2>
+1..i                        <v3>: IntRange         NEW: call(1..i, rangeTo|<v1>, <v2>) -> <v3>
+for (j in 1..i) yield i*j   <v5>: {<: List<Int>}   NEW: call(for (j in 1..i) yield i*j, map|<v3>, <v4>) -> <v5>
+for (j in 1..i) yield i*j   <v5>: {<: List<Int>}   COPY
+=====================
+== anonymous_1 ==
+{ (j) -> i*j }
+---------------------
+      <v0>: Int   NEW: magic[FAKE_INITIALIZER](j) -> <v0>
+i     <v1>: Int   NEW: r(i) -> <v1>
+j     <v2>: Int   NEW: r(j) -> <v2>
+i*j   <v3>: Int   NEW: call(i*j, times|<v1>, <v2>) -> <v3>
+i*j   <v3>: Int   COPY
+=====================
+== foo ==
+fun foo(list: List<Int>) {
+
+}
+---------------------
+    <v0>: {<: List<Int>}   NEW: magic[FAKE_INITIALIZER](list: List<Int>) -> <v0>
+=====================

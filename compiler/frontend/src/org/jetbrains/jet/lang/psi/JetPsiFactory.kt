@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils
 import java.util.Collections
 import org.jetbrains.jet.lang.psi.JetPsiUtil.JetExpressionWrapper
+import org.jetbrains.jet.lang.psi.psiUtil.stripLeadingClause
 import com.intellij.psi.PsiElementVisitor
 import kotlin.properties.Delegates
 import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
@@ -667,6 +668,15 @@ public class JetPsiFactory(private val project: Project) {
         return lambda.parentExpression
     }
 
+    private fun JetForExpression.stripLeadingClauseAndUnwrapYield(): JetExpression {
+        return stripLeadingClause()?.let {
+            when (it) {
+                is JetYieldExpression -> it.getBaseExpression()
+                else -> it
+            }
+        } ?: createEmptyBody()
+    }
+
     private open inner class BlockWrapper(
             fakeBlockExpression: JetBlockExpression,
             private val expression: JetExpression
@@ -733,7 +743,7 @@ public class JetPsiFactory(private val project: Project) {
         }
 
         override val bodyWrapper: JetBlockExpression by Delegates.lazy {
-            val body = forExpression.getComprehensionBody() ?: createEmptyBody()
+            val body = forExpression.stripLeadingClauseAndUnwrapYield()
             object : BlockWrapper(createBlockToDelegateTo(body, true), body) {
                 override fun getParent(): PsiElement? = wrappingFunctionLiteral
             }
@@ -759,7 +769,7 @@ public class JetPsiFactory(private val project: Project) {
                 }
 
             }
-            val body = forExpression.getComprehensionBody() ?: createEmptyBody()
+            val body = forExpression.stripLeadingClauseAndUnwrapYield()
             object : BlockWrapper(createBlockToDelegateTo(body, true), body) {
                 override fun getStatements(): List<JetElement> = Collections.singletonList(multiVar) + super.getStatements()
                 override fun getParent(): PsiElement? = wrappingFunctionLiteral

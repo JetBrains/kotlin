@@ -201,6 +201,18 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("MultiClauseFor.kt")
+            public void testMultiClauseFor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/MultiClauseFor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MultiClauseForComprehensions.kt")
+            public void testMultiClauseForComprehensions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/MultiClauseForComprehensions.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("OnlyWhileInFunctionBody.kt")
             public void testOnlyWhileInFunctionBody() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/OnlyWhileInFunctionBody.kt");

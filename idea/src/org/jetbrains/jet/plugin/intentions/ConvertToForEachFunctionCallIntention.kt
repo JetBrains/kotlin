@@ -23,6 +23,8 @@ import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetOperationExpression
+import org.jetbrains.jet.lang.psi.psiUtil.stripLeadingClause
+import org.jetbrains.jet.lang.psi.JetExpression
 
 public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<JetForExpression>("convert.to.for.each.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetForExpression): Boolean {
@@ -55,14 +57,21 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
             }
         }
 
-        val body = element.getBody()!!
-        val loopParameter = element.getLeadingClause()!!.getLoopParameter()!!
+        val originalBody = element.getBody()
 
-        val bodyText = buildReplacementBodyText(loopParameter, when (body) {
-            is JetBlockExpression -> buildStatements(body.getStatements())
-            else -> body.getText() ?: throw AssertionError("Body of ForExpression shouldn't be empty: expressionText = ${element.getText()}")
-        })
+        fun JetForExpression.transformAndRender(): String {
+            val body = stripLeadingClause()
+            val loopParameter = getLeadingClause()!!.getLoopParameter()!!
 
-        element.replace(JetPsiFactory(element).createExpression("${buildReceiverText(element)}.forEach { $bodyText }"))
+            val bodyText = buildReplacementBodyText(loopParameter, when {
+                body is JetBlockExpression -> buildStatements(body.getStatements())
+                body is JetForExpression && body != originalBody -> body.transformAndRender()
+                else -> body?.getText() ?: throw AssertionError("Body of ForExpression shouldn't be empty: expressionText = ${getText()}")
+            })
+
+            return "${buildReceiverText(element)}.forEach { $bodyText }"
+        }
+
+        element.replace(JetPsiFactory(element).createExpression(element.transformAndRender()))
     }
 }
