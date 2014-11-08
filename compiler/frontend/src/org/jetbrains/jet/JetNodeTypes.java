@@ -96,6 +96,7 @@ public interface JetNodeTypes {
 
     JetNodeType PARENTHESIZED             = new JetNodeType("PARENTHESIZED", JetParenthesizedExpression.class);
     JetNodeType RETURN                    = new JetNodeType("RETURN", JetReturnExpression.class);
+    JetNodeType YIELD                     = new JetNodeType("YIELD", JetYieldExpression.class);
     JetNodeType THROW                     = new JetNodeType("THROW", JetThrowExpression.class);
     JetNodeType CONTINUE                  = new JetNodeType("CONTINUE", JetContinueExpression.class);
     JetNodeType BREAK                     = new JetNodeType("BREAK", JetBreakExpression.class);

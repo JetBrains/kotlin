@@ -104,6 +104,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             // loop
             FOR_KEYWORD,
+            YIELD_KEYWORD,
             WHILE_KEYWORD,
             DO_KEYWORD,
 
@@ -1413,7 +1414,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
             myBuilder.restoreNewlinesState();
         }
 
-        parseControlStructureBody();
+        PsiBuilder.Marker body = mark();
+        if (at(YIELD_KEYWORD)) {
+            parseYield();
+        } else if (!at(SEMICOLON)) {
+            parseExpressionPreferringBlocks();
+        }
+        body.done(BODY);
 
         loop.done(FOR);
     }
@@ -1604,6 +1611,21 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (atSet(EXPRESSION_FIRST) && !at(EOL_OR_SEMICOLON)) parseExpression();
 
         returnExpression.done(RETURN);
+    }
+
+    /*
+     * "yield" element
+     */
+    private void parseYield() {
+        assert _at(YIELD_KEYWORD);
+
+        PsiBuilder.Marker yieldExpression = mark();
+
+        advance(); // YIELD_KEYWORD
+
+        parseExpressionPreferringBlocks();
+
+        yieldExpression.done(YIELD);
     }
 
     /*

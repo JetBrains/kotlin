@@ -234,6 +234,10 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
         super.visitForClause(clause, data);
     }
 
+    public void visitYieldExpressionVoid(@NotNull JetYieldExpression expression, P data) {
+        super.visitYieldExpression(expression, data);
+    }
+
     public void visitWhileExpressionVoid(@NotNull JetWhileExpression expression, P data) {
         super.visitWhileExpression(expression, data);
     }
@@ -726,6 +730,12 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
     @Override
     public final Void visitForClause(@NotNull JetForClause forClause, P data) {
         visitForClauseVoid(forClause, data);
+        return null;
+    }
+
+    @Override
+    public final Void visitYieldExpression(@NotNull JetYieldExpression expression, P data) {
+        visitYieldExpressionVoid(expression, data);
         return null;
     }
 

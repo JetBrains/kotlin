@@ -144,6 +144,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("InForBody.kt")
+    public void testInForBody() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InForBody.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InFunctionExpressionBody.kt")
     public void testInFunctionExpressionBody() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/keywords/InFunctionExpressionBody.kt");

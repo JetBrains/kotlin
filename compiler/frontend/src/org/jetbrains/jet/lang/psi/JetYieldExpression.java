@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,31 +19,19 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 
-public class JetForExpression extends JetLoopExpression {
-    public JetForExpression(@NotNull ASTNode node) {
+public class JetYieldExpression extends JetExpressionImpl implements JetStatementExpression {
+    public JetYieldExpression(@NotNull ASTNode node) {
         super(node);
     }
 
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitForExpression(this, data);
-    }
-
-    @Nullable @IfNotParsed
-    public JetForClause getClause() {
-        return (JetForClause) findChildByType(JetNodeTypes.FOR_CLAUSE);
-    }
-
-    public boolean isComprehension() {
-        return getBody() instanceof JetYieldExpression;
+        return visitor.visitYieldExpression(this, data);
     }
 
     @Nullable
-    public JetExpression getComprehensionBody() {
-        if (!isComprehension()) return null;
-        //noinspection ConstantConditions
-        return ((JetYieldExpression) getBody()).getBaseExpression();
+    public JetExpression getBaseExpression() {
+        return findChildByClass(JetExpression.class);
     }
 }

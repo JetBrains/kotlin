@@ -265,6 +265,7 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 "var"        { return JetTokens.VAR_KEYWORD ;}
 "fun"        { return JetTokens.FUN_KEYWORD ;}
 "for"        { return JetTokens.FOR_KEYWORD ;}
+"yield"      { return JetTokens.YIELD_KEYWORD ;}
 //"new"        { return JetTokens.NEW_KEYWORD ;}
 "is"         { return JetTokens.IS_KEYWORD ;}
 "in"         { return JetTokens.IN_KEYWORD ;}
