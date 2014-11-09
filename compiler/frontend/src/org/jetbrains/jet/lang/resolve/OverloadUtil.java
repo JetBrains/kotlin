@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.List;
@@ -70,8 +71,8 @@ public class OverloadUtil {
         for (int i = 0; i < superValueParameters.size(); ++i) {
             JetType superValueParameterType = OverridingUtil.getUpperBound(superValueParameters.get(i));
             JetType subValueParameterType = OverridingUtil.getUpperBound(subValueParameters.get(i));
-            // TODO: compare erasure
-            if (!JetTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType)) {
+            if (!JetTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType)
+                || TypesPackage.oneMoreSpecificThanAnother(subValueParameterType, superValueParameterType)) {
                 return OverridingUtil.OverrideCompatibilityInfo
                         .valueParameterTypeMismatch(superValueParameterType, subValueParameterType, INCOMPATIBLE);
             }
