@@ -199,8 +199,9 @@ public class TypeResolver(
             }
 
             override fun visitNullableType(nullableType: JetNullableType) {
-                val baseType = resolveTypeElement(c, annotations, nullableType.getInnerType())
-                if (baseType.isNullable()) {
+                val innerType = nullableType.getInnerType()
+                val baseType = resolveTypeElement(c, annotations, innerType)
+                if (baseType.isNullable() || innerType is JetNullableType || innerType is JetDynamicType) {
                     c.trace.report(REDUNDANT_NULLABLE.on(nullableType))
                 }
                 else if (!baseType.isBare() && TypeUtils.hasNullableSuperType(baseType.getActualType())) {

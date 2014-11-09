@@ -389,7 +389,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
         // can be equal for the recursive invocations:
         // fun <T> foo(i: Int) : T { ... return foo(i); } => T <: T
-        if (JetTypeChecker.DEFAULT.equalTypes(subType, superType)) return;
+        if (isMyTypeVariable(subType) && isMyTypeVariable(superType) && JetTypeChecker.DEFAULT.equalTypes(subType, superType)) return;
 
         assert !isMyTypeVariable(subType) || !isMyTypeVariable(superType) :
                 "The constraint shouldn't contain different type variables on both sides: " + subType + " <: " + superType;

@@ -3722,6 +3722,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("nullable.kt")
+            public void testNullable() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/nullable.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("overloading.kt")
             public void testOverloading() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/overloading.kt");

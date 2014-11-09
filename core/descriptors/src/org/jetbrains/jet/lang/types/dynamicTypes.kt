@@ -37,6 +37,8 @@ object DynamicType : DelegatingFlexibleType(
         DynamicTypeCapabilities
 ) {
     override fun getDelegate() = upperBound
+
+    override fun isNullable() = false
 }
 
 fun JetType.isDynamic(): Boolean = this.getCapability(javaClass<Dynamicity>()) != null
@@ -47,18 +49,20 @@ public object DynamicTypeCapabilities : FlexibleTypeCapabilities {
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T? {
         if (capabilityClass.isAssignableFrom(javaClass<Impl>()))
             [suppress("UNCHECKED_CAST")]
-            return Impl(jetType, flexibility) as T
+            return Impl as T
         else return null
     }
 
 
-    private class Impl(val type: JetType, val flexibility: Flexibility) : Dynamicity, Specificity {
-
-        private val lowerBound: JetType get() = flexibility.lowerBound
-        private val upperBound: JetType get() = flexibility.upperBound
+    private object Impl : Dynamicity, Specificity, NullAwareness {
 
         override fun getSpecificityRelationTo(otherType: JetType): Specificity.Relation {
             return if (!otherType.isDynamic()) Specificity.Relation.LESS_SPECIFIC else Specificity.Relation.DONT_KNOW
+        }
+
+        override fun makeNullableAsSpecified(nullable: Boolean): JetType {
+            // Nullability has no effect on dynamics
+            return DynamicType
         }
     }
 }
