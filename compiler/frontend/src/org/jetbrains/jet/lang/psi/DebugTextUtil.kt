@@ -56,6 +56,7 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetPackageDirective
 import org.jetbrains.jet.lang.psi.JetImportDirective
 import org.jetbrains.jet.lang.psi.JetImportList
+import org.jetbrains.jet.lang.psi.JetDynamicType
 
 // invoke this instead of getText() when you need debug text to identify some place in PSI without storing the element itself
 // this is need to avoid unnecessary file parses
@@ -121,6 +122,10 @@ private object DebugTextBuildingVisitor : JetVisitor<String, Unit>() {
 
     override fun visitUserType(userType: JetUserType, data: Unit?): String? {
         return render(userType, userType.getQualifier(), userType.getReferenceExpression(), userType.getTypeArgumentList())
+    }
+
+    override fun visitDynamicType(type: JetDynamicType, data: Unit?): String? {
+        return "dynamic"
     }
 
     override fun visitAnnotation(annotation: JetAnnotation, data: Unit?): String? {

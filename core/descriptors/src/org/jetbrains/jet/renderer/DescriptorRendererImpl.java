@@ -311,6 +311,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (type instanceof LazyType && debugMode) {
             return type.toString();
         }
+        if (TypesPackage.isDynamic(type)) {
+            return "dynamic";
+        }
         if (TypesPackage.isFlexible(type)) {
             if (debugMode) {
                 return renderFlexibleTypeWithBothBounds(TypesPackage.flexibility(type).getLowerBound(),

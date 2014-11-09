@@ -27,8 +27,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.types.isFlexible
 import org.jetbrains.jet.lang.types.flexibility
-import java.util.ArrayList
 import java.util.LinkedHashSet
+import org.jetbrains.jet.lang.types.isDynamic
 
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
 fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
@@ -39,6 +39,7 @@ fun JetType.isUnit(): Boolean = KotlinBuiltIns.getInstance().isUnit(this)
 fun JetType.isAny(): Boolean = KotlinBuiltIns.getInstance().isAnyOrNullableAny(this)
 
 public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true): JetType {
+    if (jetType.isDynamic()) return jetType
     if (jetType.isFlexible()) {
         val flexible = jetType.flexibility()
         val lowerClass = flexible.lowerBound.getConstructor().getDeclarationDescriptor() as? ClassDescriptor?
