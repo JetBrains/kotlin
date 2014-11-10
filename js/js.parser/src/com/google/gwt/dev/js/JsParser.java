@@ -120,7 +120,7 @@ public class JsParser {
                 return null;
 
             case TokenStream.EXPRSTMT:
-                return mapExprStmt(node);
+                return mapExpressionStatement(node);
 
             case TokenStream.REGEXP:
                 return mapRegExp(node);
@@ -513,7 +513,7 @@ public class JsParser {
         }
     }
 
-    private JsExprStmt mapExprStmt(Node node) throws JsParserException {
+    private JsStatement mapExpressionStatement(Node node) throws JsParserException {
         JsExpression expr = mapExpression(node.getFirstChild());
         return expr.makeStmt();
     }
