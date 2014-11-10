@@ -165,6 +165,11 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         return Annotations.EMPTY;
     }
 
+    @Override
+    public String toString() {
+        return "enum entry " + getName();
+    }
+
     private class EnumEntryScope extends JetScopeImpl {
         private final MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>> functions;
         private final MemoizedFunctionToNotNull<Name, Collection<PropertyDescriptor>> properties;
