@@ -83,10 +83,14 @@ fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
     return typeParameters
 }
 
-fun JetExpression.guessTypes(context: BindingContext, module: ModuleDescriptor?): Array<JetType> {
+fun JetExpression.guessTypes(
+        context: BindingContext,
+        module: ModuleDescriptor?,
+        coerceUnusedToUnit: Boolean = true
+): Array<JetType> {
     val builtIns = KotlinBuiltIns.getInstance()
 
-    if (this !is JetDeclaration && isUsedAsStatement(context)) return array(builtIns.getUnitType())
+    if (coerceUnusedToUnit && this !is JetDeclaration && isUsedAsStatement(context)) return array(builtIns.getUnitType())
 
     // if we know the actual type of the expression
     val theType1 = context[BindingContext.EXPRESSION_TYPE, this]

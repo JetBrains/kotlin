@@ -228,6 +228,10 @@ public class JetPsiFactory(private val project: Project) {
         return createFunction("fun foo$text{}").getValueParameterList()!!
     }
 
+    public fun createEnumEntry(text: String): JetEnumEntry {
+        return createDeclaration<JetClass>("enum class E {$text}").getDeclarations()[0] as JetEnumEntry
+    }
+
     public fun createWhenEntry(entryText: String): JetWhenEntry {
         val function = createFunction("fun foo() { when(12) { " + entryText + " } }")
         val whenEntry = PsiTreeUtil.findChildOfType(function, javaClass<JetWhenEntry>())

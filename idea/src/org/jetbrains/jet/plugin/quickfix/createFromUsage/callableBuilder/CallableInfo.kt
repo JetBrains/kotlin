@@ -14,6 +14,12 @@ import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetTypeReference
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassKind
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassInfo
+import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 
 /**
  * Represents a concrete type or a set of types yet to be inferred from an expression.
@@ -77,6 +83,15 @@ fun TypeInfo(theType: JetType, variance: Variance): TypeInfo = TypeInfo.ByType(t
 
 fun TypeInfo.noSubstitutions(): TypeInfo = (this as? TypeInfo.NoSubstitutions) ?: TypeInfo.NoSubstitutions(this)
 
+fun TypeInfo.forceNotNull(): TypeInfo {
+    class ForcedNotNull(delegate: TypeInfo): TypeInfo.DelegatingTypeInfo(delegate) {
+        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
+                super.getPossibleTypes(builder).map { it.makeNotNullable() }
+    }
+
+    return (this as? ForcedNotNull) ?: ForcedNotNull(this)
+}
+
 /**
  * Encapsulates information about a function parameter that is going to be created.
  */
@@ -87,6 +102,7 @@ class ParameterInfo(
 
 enum class CallableKind {
     FUNCTION
+    CONSTRUCTOR
     PROPERTY
 }
 
@@ -109,6 +125,13 @@ class FunctionInfo(name: String,
                    typeParameterInfos: List<TypeInfo> = Collections.emptyList()
 ) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos) {
     override val kind: CallableKind get() = CallableKind.FUNCTION
+}
+
+class ConstructorInfo(val classInfo: ClassInfo, expectedTypeInfo: TypeInfo): CallableInfo(
+        classInfo.name, TypeInfo.Empty, expectedTypeInfo.forceNotNull(), Collections.emptyList(), classInfo.typeArguments
+) {
+    override val kind: CallableKind get() = CallableKind.CONSTRUCTOR
+    override val parameterInfos: List<ParameterInfo> get() = classInfo.parameterInfos
 }
 
 class PropertyInfo(name: String,

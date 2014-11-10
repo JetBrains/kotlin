@@ -36,6 +36,7 @@ public class CreateCallableFromUsageFix(
             val kind = when (it.kind) {
                 CallableKind.FUNCTION -> "function"
                 CallableKind.PROPERTY -> "property"
+                else -> throw AssertionError("Unexpected callable info: $it")
             }
             "$kind '${it.name}'"
         }

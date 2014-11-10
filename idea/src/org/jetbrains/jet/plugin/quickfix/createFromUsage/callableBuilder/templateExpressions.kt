@@ -19,6 +19,11 @@ import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import java.util.Collections
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassKind
+import org.jetbrains.jet.lang.psi.JetClass
+import org.jetbrains.jet.lang.psi.JetParameterList
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 
 /**
  * Special <code>Expression</code> for parameter names based on its type.
@@ -48,8 +53,12 @@ private class ParameterNameExpression(
         val editor = context.getEditor()!!
         val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as JetFile
         val elementAt = file.findElementAt(offset)
-        val func = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetFunction>()) ?: return array<LookupElement>()
-        val parameterList = func.getValueParameterList()!!
+        val declaration = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetFunction>(), javaClass<JetClass>()) ?: return array<LookupElement>()
+        val parameterList = when (declaration) {
+            is JetFunction -> declaration.getValueParameterList()
+            is JetClass -> declaration.getPrimaryConstructorParameterList()
+            else -> throw AssertionError("Unexpected declaration: ${declaration.getText()}")
+        }
 
         // add names based on selected type
         val parameter = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetParameter>())
@@ -80,11 +89,24 @@ private class ParameterNameExpression(
 }
 
 /**
- * An <code>Expression</code> for type references.
+ * An <code>Expression</code> for type references and delegation specifiers.
  */
-private class TypeExpression(public val typeCandidates: List<TypeCandidate>) : Expression() {
-    private val cachedLookupElements: Array<LookupElement> =
-            typeCandidates.map { LookupElementBuilder.create(it, it.renderedType!!) }.copyToArray()
+private abstract class TypeExpression(public val typeCandidates: List<TypeCandidate>) : Expression() {
+    class ForTypeReference(typeCandidates: List<TypeCandidate>) : TypeExpression(typeCandidates) {
+        override val cachedLookupElements: Array<LookupElement> =
+                typeCandidates.map { LookupElementBuilder.create(it, it.renderedType!!) }.copyToArray()
+    }
+
+    class ForDelegationSpecifier(typeCandidates: List<TypeCandidate>) : TypeExpression(typeCandidates) {
+        override val cachedLookupElements: Array<LookupElement> =
+                typeCandidates.map {
+                    val descriptor = it.theType.getConstructor().getDeclarationDescriptor() as ClassDescriptor
+                    val text = it.renderedType!! + if (descriptor.getKind() == ClassKind.TRAIT) "" else "()"
+                    LookupElementBuilder.create(it, text)
+                }.copyToArray()
+    }
+
+    protected abstract val cachedLookupElements: Array<LookupElement>
 
     override fun calculateResult(context: ExpressionContext?): Result {
         val lookupItems = calculateLookupItems(context)
@@ -100,7 +122,10 @@ private class TypeExpression(public val typeCandidates: List<TypeCandidate>) : E
  * A sort-of dummy <code>Expression</code> for parameter lists, to allow us to update the parameter list as the user makes selections.
  */
 private class TypeParameterListExpression(private val mandatoryTypeParameters: List<RenderedTypeParameter>,
-                                          private val parameterTypeToTypeParameterNamesMap: Map<String, List<RenderedTypeParameter>>) : Expression() {
+                                          private val parameterTypeToTypeParameterNamesMap: Map<String, List<RenderedTypeParameter>>,
+                                          insertLeadingSpace: Boolean) : Expression() {
+    private val prefix = if (insertLeadingSpace) " <" else "<"
+
     public var currentTypeParameters: List<TypeParameterDescriptor> = Collections.emptyList()
         private set
 
@@ -113,12 +138,11 @@ private class TypeParameterListExpression(private val mandatoryTypeParameters: L
         val editor = context.getEditor()!!
         val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as JetFile
         val elementAt = file.findElementAt(offset)
-        val callable = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetCallableDeclaration>()) ?: return TextResult("")
-        val parameters = callable.getValueParameterList()?.getParameters() ?: Collections.emptyList<JetParameter>()
+        val declaration = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetNamedDeclaration>()) ?: return TextResult("")
 
         val renderedTypeParameters = LinkedHashSet<RenderedTypeParameter>()
         renderedTypeParameters.addAll(mandatoryTypeParameters)
-        for (parameter in parameters) {
+        for (parameter in declaration.getValueParameters()) {
             val parameterTypeRef = parameter.getTypeReference()
             if (parameterTypeRef != null) {
                 val typeParameterNamesFromParameter = parameterTypeToTypeParameterNamesMap[parameterTypeRef.getText()]
@@ -127,7 +151,7 @@ private class TypeParameterListExpression(private val mandatoryTypeParameters: L
                 }
             }
         }
-        val returnTypeRef = callable.getTypeReference()
+        val returnTypeRef = declaration.getReturnTypeReference()
         if (returnTypeRef != null) {
             val typeParameterNamesFromReturnType = parameterTypeToTypeParameterNamesMap[returnTypeRef.getText()]
             if (typeParameterNamesFromReturnType != null) {
@@ -140,7 +164,7 @@ private class TypeParameterListExpression(private val mandatoryTypeParameters: L
         currentTypeParameters = sortedRenderedTypeParameters.map { it.typeParameter }
 
         return TextResult(
-                if (sortedRenderedTypeParameters.empty) "" else sortedRenderedTypeParameters.map { it.text }.joinToString(", ", " <", ">")
+                if (sortedRenderedTypeParameters.empty) "" else sortedRenderedTypeParameters.map { it.text }.joinToString(", ", prefix, ">")
         )
     }
 

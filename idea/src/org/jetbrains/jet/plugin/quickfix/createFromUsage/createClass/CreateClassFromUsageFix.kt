@@ -1,0 +1,97 @@
+/*
+ * Copyright 2010-2014 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass
+
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.CreateFromUsageFixBase
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.plugin.JetBundle
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.editor.Editor
+import org.jetbrains.jet.lang.psi.JetFile
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiDirectory
+import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.ParameterInfo
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.ConstructorInfo
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallableBuilderConfiguration
+import org.jetbrains.jet.lang.psi.JetExpression
+import java.util.Collections
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.createBuilder
+import com.intellij.openapi.command.CommandProcessor
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallablePlacement
+import org.jetbrains.jet.plugin.refactoring.getOrCreateKotlinFile
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassKind.*
+
+enum class ClassKind(val keyword: String, val description: String) {
+    PLAIN_CLASS: ClassKind("class", "class")
+    ENUM_CLASS: ClassKind("enum class", "enum")
+    ENUM_ENTRY: ClassKind("", "enum constant")
+    ANNOTATION_CLASS: ClassKind("annotation class", "annotation")
+    TRAIT: ClassKind("trait", "trait")
+    OBJECT: ClassKind("object", "object")
+}
+
+public class ClassInfo(
+        val kind: ClassKind,
+        val name: String,
+        val targetParent: PsiElement,
+        val expectedTypeInfo: TypeInfo,
+        val inner: Boolean = false,
+        val typeArguments: List<TypeInfo> = Collections.emptyList(),
+        val parameterInfos: List<ParameterInfo> = Collections.emptyList()
+)
+
+public class CreateClassFromUsageFix(
+        element: JetElement,
+        val classInfo: ClassInfo
+): CreateFromUsageFixBase(element) {
+    override fun getText(): String =
+            JetBundle.message("create.0.from.usage", "${classInfo.kind.description} '${classInfo.name}'")
+
+    override fun invoke(project: Project, editor: Editor, file: JetFile) {
+        with (classInfo) {
+            val targetParent = when (targetParent) {
+                                   is JetElement -> targetParent
+                                   is PsiDirectory -> {
+                                       val fileName = "$name.${JetFileType.INSTANCE.getDefaultExtension()}"
+                                       val targetFile = getOrCreateKotlinFile(fileName, targetParent)
+                                       if (targetFile == null) {
+                                           val filePath = "${targetParent.getVirtualFile().getPath()}/$fileName"
+                                           CodeInsightUtils.showErrorHint(
+                                                   targetParent.getProject(),
+                                                   editor,
+                                                   "File $filePath already exists but does not correspond to Kotlin file",
+                                                   "Create file",
+                                                   null
+                                           )
+                                       }
+                                       targetFile
+                                   }
+                                   else -> throw AssertionError("Unexpected element: " + targetParent.getText())
+                               } as? JetElement ?: return
+
+            val constructorInfo = ConstructorInfo(classInfo, expectedTypeInfo)
+            val builder = CallableBuilderConfiguration(
+                    Collections.singletonList(constructorInfo), element as JetElement, file, editor, kind == PLAIN_CLASS || kind == TRAIT
+            ).createBuilder()
+            builder.placement = CallablePlacement.NoReceiver(targetParent)
+            CommandProcessor.getInstance().executeCommand(project, { builder.build() }, getText(), null)
+        }
+    }
+}
