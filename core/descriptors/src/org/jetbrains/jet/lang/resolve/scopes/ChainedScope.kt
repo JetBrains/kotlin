@@ -61,7 +61,7 @@ public class ChainedScope(private val containingDeclaration: DeclarationDescript
 
     override fun getDescriptors(kindFilterMask: Int,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        val result = HashSet<DeclarationDescriptor>()
+        val result = LinkedHashSet<DeclarationDescriptor>()
         scopeChain.flatMapTo(result) { it.getDescriptors(kindFilterMask, nameFilter) }
         return result
     }

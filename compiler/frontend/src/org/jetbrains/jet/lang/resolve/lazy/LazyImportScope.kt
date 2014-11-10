@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.scopes.*
 import org.jetbrains.jet.utils.Printer
 
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode
-import java.util.HashSet
+import java.util.LinkedHashSet
 
 public class LazyImportScope(private val resolveSession: ResolveSession,
                              private val containingDeclaration: PackageViewDescriptor,
@@ -160,7 +160,7 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
 
     override fun getDescriptors(kindFilterMask: Int, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         return resolveSession.getStorageManager().compute {
-            val descriptors = HashSet<DeclarationDescriptor>()
+            val descriptors = LinkedHashSet<DeclarationDescriptor>()
             for (directive in importsProvider.getAllImports()) {
                 if (directive == directiveUnderResolve) {
                     // This is the recursion in imports analysis
