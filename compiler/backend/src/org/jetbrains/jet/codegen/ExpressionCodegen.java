@@ -24,7 +24,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
-import jet.runtime.typeinfo.JetValueParameter;
 import kotlin.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -246,9 +245,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull ClassDescriptor required
     ) {
         if (!isInterface(provided) && isInterface(required)) {
-            //TODO: is needed double wrapping?
-            Type type = asmType(required.getDefaultType());
-            return StackValue.lazyCast(StackValue.lazyCast(inner, OBJECT_TYPE), type);
+            return StackValue.coercion(inner, asmType(required.getDefaultType()));
         }
 
         return inner;
@@ -307,7 +304,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     public StackValue genLazy(JetElement expr, Type type) {
         StackValue value = gen(expr);
-        return StackValue.lazyCast(value, type);
+        return StackValue.coercion(value, type);
     }
 
     private StackValue genStatement(JetElement statement) {
@@ -421,7 +418,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (isEmptyExpression(thenExpression)) {
             if (isEmptyExpression(elseExpression)) {
-                return StackValue.lazyCast(condition, asmType);
+                return StackValue.coercion(condition, asmType);
             }
             return generateSingleBranchIf(condition, expression, elseExpression, false, isStatement);
         }
@@ -433,7 +430,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         return StackValue.operation(asmType, new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(@JetValueParameter(name = "p1") InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 Label elseLabel = new Label();
                 condition.condJump(elseLabel, true, v);   // == 0, i.e. false
 
@@ -783,7 +780,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                                                                       LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, loopRange,
                                                                       "No hasNext() function " + DiagnosticUtils.atLocation(loopRange));
             @SuppressWarnings("ConstantConditions") Call fakeCall = makeFakeCall(new TransientReceiver(iteratorCall.getResultingDescriptor().getReturnType()));
-            invokeFunctionNotLazy(fakeCall, hasNextCall, StackValue.local(iteratorVarIndex, asmTypeForIterator));
+            StackValue result = invokeFunction(fakeCall, hasNextCall, StackValue.local(iteratorVarIndex, asmTypeForIterator));
+            result.put(result.type, v);
 
             JetType type = hasNextCall.getResultingDescriptor().getReturnType();
             assert type != null && JetTypeChecker.DEFAULT.isSubtypeOf(type, KotlinBuiltIns.getInstance().getBooleanType());
@@ -1246,7 +1244,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type targetType = isStatement ? Type.VOID_TYPE : expressionType(ifExpression);
         return StackValue.operation(targetType, new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 Label elseLabel = new Label();
                 condition.condJump(elseLabel, inverse, v);
 
@@ -1318,7 +1316,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         else {
             return StackValue.operation(AsmTypeConstants.JAVA_STRING_TYPE, new Function1<InstructionAdapter, Unit>() {
                 @Override
-                public Unit invoke(InstructionAdapter adapter) {
+                public Unit invoke(InstructionAdapter v) {
                     genStringBuilderConstructor(v);
                     for (JetStringTemplateEntry entry : entries) {
                         if (entry instanceof JetStringTemplateEntryWithExpression) {
@@ -1408,7 +1406,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             parentCodegen.setWereReifierMarkers(true);
         }
 
-        return closureCodegen.putInstanceOnStack(v, this);
+        return closureCodegen.putInstanceOnStack(this);
     }
 
     @Override
@@ -1830,7 +1828,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
             if (intrinsic != null) {
                 Type returnType = typeMapper.mapType(memberDescriptor);
-                return intrinsic.generate(this, v, returnType, expression, Collections.<JetExpression>emptyList(), receiver);
+                return intrinsic.generate(this, returnType, expression, Collections.<JetExpression>emptyList(), receiver);
             }
         }
 
@@ -1882,7 +1880,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
             ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
             StackValue script = StackValue.thisOrOuter(this, scriptClass, false, false);
-            //script.put(script.type, v);
             Type fieldType = typeMapper.mapType(valueParameterDescriptor);
             return StackValue.field(fieldType, scriptClassType, valueParameterDescriptor.getName().getIdentifier(), false, script);
         }
@@ -1897,7 +1894,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return stackValueForLocal(descriptor, index);
         }
 
-        return context.lookupInContext(descriptor, StackValue.local(0, OBJECT_TYPE), state, false);
+        return context.lookupInContext(descriptor, StackValue.thiz(), state, false);
     }
 
 
@@ -2147,17 +2144,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    public void invokeFunctionNotLazy(@NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
-        StackValue result = invokeFunction(resolvedCall.getCall(), resolvedCall, receiver);
-        result.put(result.type, v);
-    }
-
-    public void invokeFunctionNotLazy(@NotNull Call call, @NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
-        StackValue result = invokeFunction(call, resolvedCall, receiver);
-        result.put(result.type, v);
-    }
-
-    @NotNull
     public StackValue invokeFunction(@NotNull Call call, @NotNull final ResolvedCall<?> resolvedCall, @NotNull final StackValue receiver) {
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             return invokeFunction(call, ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall(), receiver);
@@ -2182,7 +2168,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (callable instanceof CallableMethod) {
             return StackValue.functionCall(returnType, new Function1<InstructionAdapter, Unit>() {
                 @Override
-                public Unit invoke(InstructionAdapter adapter) {
+                public Unit invoke(InstructionAdapter v) {
                     CallableMethod callableMethod = (CallableMethod) callable;
                     invokeMethodWithArguments(callableMethod, resolvedCall, receiver);
 
@@ -2199,7 +2185,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 args.add(argument.getArgumentExpression());
             }
 
-            return ((IntrinsicMethod) callable).generate(this, v, returnType, call.getCallElement(), args, newReceiver);
+            return ((IntrinsicMethod) callable).generate(this, returnType, call.getCallElement(), args, newReceiver);
         }
     }
 
@@ -2357,7 +2343,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (DescriptorUtils.isClassObject(receiverDescriptor)) {
                 CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
                 if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
-                    return StackValue.local(0, OBJECT_TYPE);
+                    return StackValue.thiz();
                 }
                 else {
                     return StackValue.singleton(receiverDescriptor, typeMapper);
@@ -2399,7 +2385,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     // SCRIPT: generate script, move to ScriptingUtil
     private StackValue generateScript(@NotNull ScriptReceiver receiver) {
         CodegenContext cur = context;
-        StackValue result = StackValue.local(0, OBJECT_TYPE);
+        StackValue result = StackValue.thiz();
         boolean inStartConstructorContext = cur instanceof ConstructorContext;
         while (cur != null) {
             if (!inStartConstructorContext) {
@@ -2568,7 +2554,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         if (functionDescriptor != null) {
             CallableReferenceGenerationStrategy strategy = new CallableReferenceGenerationStrategy(state, functionDescriptor, resolvedCall);
-
             return genClosure(expression, functionDescriptor, strategy, null, KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER);
         }
 
@@ -2616,7 +2601,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         return StackValue.operation(factoryMethod.getReturnType(), new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 v.visitLdcInsn(descriptor.getName().asString());
                 v.getstatic(packageClassInternalName, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, K_PACKAGE_IMPL_TYPE.getDescriptor());
 
@@ -2789,7 +2774,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type type = expressionType(expression);
 
         if (expression instanceof JetSafeQualifiedExpression && !isPrimitive(type)) {
-            return StackValue.lazyCast(generateSafeQualifiedExpression((JetSafeQualifiedExpression) expression, ifnull), type);
+            return StackValue.coercion(generateSafeQualifiedExpression((JetSafeQualifiedExpression) expression, ifnull), type);
         }
         else {
             return genLazy(expression, type);
@@ -2803,6 +2788,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type receiverType = expressionType(receiver);
         StackValue receiverValue = generateExpressionWithNullFallback(receiver, ifNull);
 
+        //Do not optimize for primitives cause in case of safe call extension receiver should be generated before dispatch one
         StackValue newReceiver = new StackValue.Safe(receiverType, receiverValue, isPrimitive(receiverType) ? null : ifNull);
         return genQualified(newReceiver, selector);
     }
@@ -2813,13 +2799,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type type = boxType(expressionType(expression));
 
         StackValue value = generateSafeQualifiedExpression(expression, ifnull);
-        StackValue newReceiver = StackValue.lazyCast(value, type);
+        StackValue newReceiver = StackValue.coercion(value, type);
         StackValue result;
 
         if (!isPrimitive(expressionType(expression.getReceiverExpression()))) {
             result = new StackValue.SafeFallback(type, ifnull, newReceiver);
         } else {
-            //TODO safefallbacl
             result = newReceiver;
         }
 
@@ -2863,7 +2848,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Callable callable = resolveToCallable(descriptor, false);
             if (callable instanceof IntrinsicMethod) {
                 Type returnType = typeMapper.mapType(descriptor);
-                return ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
+                return ((IntrinsicMethod) callable).generate(this, returnType, expression,
                                                              Arrays.asList(expression.getLeft(), expression.getRight()), receiver);
             }
 
@@ -2875,13 +2860,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         final JetExpression deparenthesized = JetPsiUtil.deparenthesize(rangeExpression);
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 if (isIntRangeExpr(deparenthesized)) {
                     genInIntRange(leftValue, (JetBinaryExpression) deparenthesized);
                 }
                 else {
                     ResolvedCall<? extends CallableDescriptor> resolvedCall = getResolvedCallWithAssert(operationReference, bindingContext);
-                    invokeFunctionNotLazy(resolvedCall, StackValue.none());
+                    StackValue result = invokeFunction(resolvedCall.getCall(), resolvedCall, StackValue.none());
+                    result.put(result.type, v);
                 }
                 if (operationReference.getReferencedNameElementType() == JetTokens.NOT_IN) {
                     genInvertBoolean(v);
@@ -2930,7 +2916,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue generateBooleanAnd(final JetBinaryExpression expression) {
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 gen(expression.getLeft(), Type.BOOLEAN_TYPE);
                 Label ifFalse = new Label();
                 v.ifeq(ifFalse);
@@ -2948,7 +2934,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue generateBooleanOr(final JetBinaryExpression expression) {
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 gen(expression.getLeft(), Type.BOOLEAN_TYPE);
                 Label ifTrue = new Label();
                 v.ifne(ifTrue);
@@ -2999,7 +2985,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue genCmpWithZero(final JetExpression exp, final Type expType, final IElementType opToken) {
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 gen(exp, expType);
                 Label trueLabel = new Label();
                 Label afterLabel = new Label();
@@ -3105,7 +3091,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         else {
             type = Type.INT_TYPE;
-            leftValue = StackValue.lazyCast(invokeFunction(resolvedCall, receiver), type);
+            leftValue = StackValue.coercion(invokeFunction(resolvedCall, receiver), type);
             rightValue = StackValue.constant(0, type);
         }
         return StackValue.cmp(expression.getOperationToken(), type, leftValue, rightValue);
@@ -3135,7 +3121,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 value.put(lhsType, v);                    // receiver lhs
                 Type returnType = typeMapper.mapType(descriptor);
-                StackValue rightSide = ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
+                StackValue rightSide = ((IntrinsicMethod) callable).generate(this, returnType, expression,
                                                       Collections.singletonList(expression.getRight()), StackValue.onStack(lhsType));
                 value.store(rightSide, v, true);
                 return StackValue.none();
@@ -3220,7 +3206,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Callable callable = resolveToCallable((FunctionDescriptor) op, false);
         if (callable instanceof IntrinsicMethod) {
             Type returnType = typeMapper.mapType(op);
-            return ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
+            return ((IntrinsicMethod) callable).generate(this, returnType, expression,
                                                          Collections.singletonList(expression.getBaseExpression()), receiver);
         }
 
@@ -3296,7 +3282,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         return StackValue.operation(asmResultType, new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 StackValue value = gen(expression.getBaseExpression());
                 value = StackValue.complexWriteReadReceiver(value);
 
@@ -3364,7 +3350,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(COMPONENT_RESOLVED_CALL, variableDeclaration);
                     assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
                     Call call = makeFakeCall(initializerAsReceiver);
-                    invokeFunctionNotLazy(call, resolvedCall, local);
+                    StackValue result = invokeFunction(call, resolvedCall, local);
+                    result.put(result.type, v);
                     return null;
                 }
             });
@@ -3480,7 +3467,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         return StackValue.operation(type, new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 gen(args.get(0), Type.INT_TYPE);
                 newArrayInstruction(arrayType);
 
@@ -3664,7 +3651,7 @@ The "returned" value of try expression with no finally is either the last expres
 
         return StackValue.operation(expectedAsmType, new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
 
            JetFinallySection finallyBlock = expression.getFinallyBlock();
                 FinallyBlockStackElement finallyBlockStackElement = null;
@@ -3815,7 +3802,7 @@ The "returned" value of try expression with no finally is either the last expres
 
                 return StackValue.operation(rightTypeAsm, new Function1<InstructionAdapter, Unit>() {
                     @Override
-                    public Unit invoke(InstructionAdapter adapter) {
+                    public Unit invoke(InstructionAdapter v) {
                         value.put(boxType(value.type), v);
 
                         if (opToken != JetTokens.AS_SAFE) {
@@ -3875,7 +3862,7 @@ The "returned" value of try expression with no finally is either the last expres
                 condType = OBJECT_TYPE;
             }
             StackValue condition = genLazy(patternExpression, condType);
-            return genEqualsForExpressionsOnStack(JetTokens.EQEQ, StackValue.lazyCast(expressionToMatch, subjectType), condition);
+            return genEqualsForExpressionsOnStack(JetTokens.EQEQ, StackValue.coercion(expressionToMatch, subjectType), condition);
         }
         else {
             return gen(patternExpression);
@@ -3957,7 +3944,7 @@ The "returned" value of try expression with no finally is either the last expres
 
         return StackValue.operation(resultType, new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 SwitchCodegen switchCodegen =
                         SwitchCodegenUtil.buildAppropriateSwitchCodegenIfPossible(expression, isStatement, ExpressionCodegen.this);
                 if (switchCodegen != null) {

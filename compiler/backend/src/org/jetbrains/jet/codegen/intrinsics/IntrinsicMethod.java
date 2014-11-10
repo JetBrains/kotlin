@@ -33,7 +33,6 @@ import java.util.List;
 public abstract class IntrinsicMethod implements Callable {
     public final StackValue generate(
             @NotNull final ExpressionCodegen codegen,
-            @NotNull final InstructionAdapter v,
             @NotNull final Type returnType,
             @Nullable final PsiElement element,
             @Nullable final List<JetExpression> arguments,
@@ -42,7 +41,7 @@ public abstract class IntrinsicMethod implements Callable {
         return StackValue.operation(returnType, new Function1<InstructionAdapter, Unit>() {
 
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 Type actualType = generateImpl(codegen, v, returnType, element, arguments, receiver);
                 StackValue.coerce(actualType, returnType, v);
                 return Unit.INSTANCE$;

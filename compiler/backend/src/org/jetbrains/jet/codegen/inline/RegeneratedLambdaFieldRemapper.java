@@ -94,7 +94,7 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
         StackValue result = StackValue.field(field.getType(),
                                              Type.getObjectType(newOwnerType), /*TODO owner type*/
                                              field.getNewFieldName(), false,
-                                             prefix == null ? StackValue.local(0, Type.getObjectType(getLambdaInternalName())) : prefix);
+                                             prefix == null ? StackValue.thiz() : prefix);
 
         return searchInParent ? parent.getFieldForInline(node, result) : result;
     }

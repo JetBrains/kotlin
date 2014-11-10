@@ -45,7 +45,7 @@ public class Equals extends IntrinsicMethod {
         StackValue leftExpr;
         JetExpression rightExpr;
         if (element instanceof JetCallExpression) {
-            leftExpr = StackValue.lazyCast(receiver, OBJECT_TYPE);
+            leftExpr = StackValue.coercion(receiver, OBJECT_TYPE);
             rightExpr = arguments.get(0);
         }
         else {

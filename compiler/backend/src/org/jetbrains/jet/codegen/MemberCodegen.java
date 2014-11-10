@@ -238,7 +238,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
         JetType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
 
-        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER, StackValue.local(0, OBJECT_TYPE));
+        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER, StackValue.thiz());
 
         Type type = codegen.expressionType(initializer);
         if (jetType.isNullable()) {

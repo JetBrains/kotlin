@@ -21,11 +21,13 @@ import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
-public interface StackValueI {
+public interface IStackValue {
 
     void moveToTopOfStack(@NotNull Type type, @NotNull InstructionAdapter v, int depth);
 
     void put(@NotNull Type type, @NotNull InstructionAdapter v);
+
+    void put(@NotNull Type type, @NotNull InstructionAdapter v, boolean skipReceiver);
 
     void store(@NotNull Type topOfStackType, @NotNull InstructionAdapter v);
 

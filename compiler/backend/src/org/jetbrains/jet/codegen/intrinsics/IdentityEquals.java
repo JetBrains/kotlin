@@ -45,7 +45,7 @@ public class IdentityEquals extends IntrinsicMethod {
         StackValue left;
         StackValue right;
         if (element instanceof JetCallExpression) {
-            left = StackValue.lazyCast(receiver, OBJECT_TYPE);
+            left = StackValue.coercion(receiver, OBJECT_TYPE);
             right = codegen.genLazy(arguments.get(0), OBJECT_TYPE);
         }
         else {

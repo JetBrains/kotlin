@@ -339,7 +339,8 @@ public class InlineCodegen implements CallGenerator {
         StackValue receiver = null;
         if (stackValue instanceof StackValue.Field) {
             receiver = ((StackValue.Field) stackValue).receiver;
-        } else if(stackValue instanceof StackValue.FieldForSharedVar) {
+        }
+        else if (stackValue instanceof StackValue.FieldForSharedVar) {
             receiver = ((StackValue.Field) ((StackValue.FieldForSharedVar) stackValue).receiver).receiver;
         }
 

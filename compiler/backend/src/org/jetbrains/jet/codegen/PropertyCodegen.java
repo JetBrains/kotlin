@@ -380,7 +380,7 @@ public class PropertyCodegen {
         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             InstructionAdapter v = codegen.v;
             PropertyDescriptor propertyDescriptor = callableDescriptor.getCorrespondingProperty();
-            StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.local(0, OBJECT_TYPE));
+            StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.thiz());
 
             if (callableDescriptor instanceof PropertyGetterDescriptor) {
                 Type type = signature.getReturnType();
@@ -436,7 +436,7 @@ public class PropertyCodegen {
                 }
         );
 
-        StackValue delegatedProperty = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.local(0, OBJECT_TYPE));
+        StackValue delegatedProperty = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.thiz());
         return codegen.invokeFunction(resolvedCall, delegatedProperty);
     }
 

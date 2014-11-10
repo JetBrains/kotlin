@@ -23,14 +23,16 @@ import org.jetbrains.jet.codegen.StackValue.StackValueWithReceiver
 import org.jetbrains.jet.codegen.StackValue.StackValueWithoutReceiver
 import org.jetbrains.jet.codegen.StackValue.StackValueWithSimpleReceiver
 
-public fun castValue(value: StackValue, castType: Type): StackValue {
-    return if (value is StackValueWithReceiver) CastValueWithReceiver(value, castType) else CastValue(value, castType)
+public fun coercion(value: StackValue, castType: Type): StackValue {
+    return if (value is StackValueWithReceiver) CoercionValueWithReceiver(value, castType) else CoercionValue(value, castType)
 }
 
-class CastValueWithReceiver(val value: StackValueWithReceiver, val castType: Type) : StackValueWithSimpleReceiver(castType, !value.hasReceiver(true), !value.hasReceiver(false), value.receiver), StackValueI by value {
+class CoercionValue(val value: StackValue, val castType: Type) : StackValueWithoutReceiver(castType), IStackValue by value
+
+class CoercionValueWithReceiver(val value: StackValueWithReceiver, val castType: Type) : StackValueWithSimpleReceiver(castType, !value.hasReceiver(true), !value.hasReceiver(false), value.receiver), IStackValue by value {
 
     override fun putReceiver(v: InstructionAdapter, isRead: Boolean) {
-        value.putReceiver(v, isRead )
+        value.putReceiver(v, isRead)
     }
 
     override fun putNoReceiver(type: Type, v: InstructionAdapter) {
@@ -42,23 +44,8 @@ class CastValueWithReceiver(val value: StackValueWithReceiver, val castType: Typ
     }
 }
 
-class CastValue(val value: StackValue, val castType: Type) : StackValueWithoutReceiver(castType), StackValueI by value {
 
-}
-
-class FunctionCallStackValue(val resultType: Type, val lambda: (v: InstructionAdapter)-> Unit) : StackValueWithoutReceiver(resultType) {
-
-    override fun put(type: Type, v: InstructionAdapter) {
-        lambda(v)
-        coerceTo(type, v)
-    }
-
-    override fun store(topOfStackType: Type, v: InstructionAdapter) {
-        throw UnsupportedOperationException();
-    }
-}
-
-public class StackValueWithLeaveTask(val stackValue: StackValue, val leaveTasks: StackValueWithLeaveTask.()-> Unit) : StackValueWithReceiver(stackValue.type, if (stackValue is StackValueWithReceiver) stackValue.receiver else StackValue.none()), StackValueI by stackValue {
+public class StackValueWithLeaveTask(val stackValue: StackValue, val leaveTasks: StackValueWithLeaveTask.()-> Unit) : StackValueWithReceiver(stackValue.type, if (stackValue is StackValueWithReceiver) stackValue.receiver else StackValue.none()), IStackValue by stackValue {
 
     override fun put(type: Type, v: InstructionAdapter) {
         stackValue.put(type, v)
@@ -89,7 +76,14 @@ public class StackValueWithLeaveTask(val stackValue: StackValue, val leaveTasks:
     }
 }
 
-class OperationStackValue(val resultType: Type, val lambda: (v: InstructionAdapter)-> Unit) : StackValueWithoutReceiver(resultType) {
+public abstract class ReadOnlyValue(type: Type) : StackValueWithoutReceiver(type) {
+
+    override fun store(topOfStackType: Type, v: InstructionAdapter) {
+        throw UnsupportedOperationException("Read only value could not be stored")
+    }
+}
+
+open class OperationStackValue(val resultType: Type, val lambda: (v: InstructionAdapter)-> Unit) : ReadOnlyValue(resultType) {
 
     override fun put(type: Type, v: InstructionAdapter) {
         lambda(v)
@@ -100,3 +94,5 @@ class OperationStackValue(val resultType: Type, val lambda: (v: InstructionAdapt
         throw UnsupportedOperationException();
     }
 }
+
+class FunctionCallStackValue(resultType: Type, lambda: (v: InstructionAdapter)-> Unit) : OperationStackValue(resultType, lambda)

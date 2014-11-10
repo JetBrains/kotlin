@@ -204,7 +204,7 @@ public class ClosureCodegen extends ParentCodegenAware {
     }
 
     @NotNull
-    public StackValue putInstanceOnStack(@NotNull InstructionAdapter v, @NotNull final ExpressionCodegen codegen) {
+    public StackValue putInstanceOnStack(@NotNull final ExpressionCodegen codegen) {
         return StackValue.operation(asmType, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
@@ -215,8 +215,8 @@ public class ClosureCodegen extends ParentCodegenAware {
                     v.anew(asmType);
                     v.dup();
 
-                codegen.pushClosureOnStack(classDescriptor, true, codegen.defaultCallGenerator);
-                v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
+                    codegen.pushClosureOnStack(classDescriptor, true, codegen.defaultCallGenerator);
+                    v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
                 }
                 return Unit.INSTANCE$;
             }

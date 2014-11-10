@@ -60,7 +60,7 @@ public interface LocalLookup {
                 Type type = sharedVarType != null ? sharedVarType : localType;
 
                 String fieldName = "$" + vd.getName();
-                StackValue.Local thiz = StackValue.local(0, AsmTypeConstants.OBJECT_TYPE);
+                StackValue.Local thiz = StackValue.thiz();
                 StackValue.StackValueWithSimpleReceiver innerValue = sharedVarType != null
                                         ? StackValue.fieldForSharedVar(localType, classType, fieldName, thiz)
                                         : StackValue.field(type, classType, fieldName, false, thiz);
@@ -98,11 +98,11 @@ public interface LocalLookup {
                 if (localFunClosure != null && JvmCodegenUtil.isConst(localFunClosure)) {
                     // This is an optimization: we can obtain an instance of a const closure simply by GETSTATIC ...$instance
                     // (instead of passing this instance to the constructor and storing as a field)
-                    return StackValue.field(localType, localType, JvmAbi.INSTANCE_FIELD, true, StackValue.local(0, AsmTypeConstants.OBJECT_TYPE));
+                    return StackValue.field(localType, localType, JvmAbi.INSTANCE_FIELD, true, StackValue.thiz());
                 }
 
                 String fieldName = "$" + vd.getName();
-                StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(localType, classType, fieldName, false, StackValue.local(0, AsmTypeConstants.OBJECT_TYPE));
+                StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(localType, classType, fieldName, false, StackValue.thiz());
 
                 closure.recordField(fieldName, localType);
                 closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, localType));
@@ -131,7 +131,7 @@ public interface LocalLookup {
 
                 JetType receiverType = closure.getEnclosingReceiverDescriptor().getType();
                 Type type = state.getTypeMapper().mapType(receiverType);
-                StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(type, classType, CAPTURED_RECEIVER_FIELD, false, StackValue.local(0, AsmTypeConstants.OBJECT_TYPE));
+                StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(type, classType, CAPTURED_RECEIVER_FIELD, false, StackValue.thiz());
                 closure.setCaptureReceiver();
 
                 return innerValue;
