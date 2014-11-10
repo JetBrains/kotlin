@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 import org.jetbrains.jet.lang.resolve.java.resolver.*
+import org.jetbrains.jet.lang.resolve.java.sam.SamConversionResolverImpl
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory

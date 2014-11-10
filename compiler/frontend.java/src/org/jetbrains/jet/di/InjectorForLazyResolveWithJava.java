@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaPropertyInitializerEvaluatorImpl;
-import org.jetbrains.jet.lang.resolve.java.resolver.SamConversionResolverImpl;
+import org.jetbrains.jet.lang.resolve.java.sam.SamConversionResolverImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSourceElementFactoryImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaFlexibleTypeCapabilitiesProvider;
 import org.jetbrains.jet.context.LazyResolveToken;
