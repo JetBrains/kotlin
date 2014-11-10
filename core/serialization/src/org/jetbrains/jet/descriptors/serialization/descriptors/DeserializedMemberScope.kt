@@ -40,7 +40,7 @@ public abstract class DeserializedMemberScope protected(
     protected open fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> = allMemberProtos
 
     private fun groupByName(membersList: Collection<ProtoBuf.Callable>): Map<Name, List<ProtoBuf.Callable>> {
-        val map = HashMap<Name, MutableList<ProtoBuf.Callable>>()
+        val map = LinkedHashMap<Name, MutableList<ProtoBuf.Callable>>()
         for (memberProto in membersList) {
             val name = context.nameResolver.getName(memberProto.getName())
             var protos = map[name]
