@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.tree.IElementType;
 import kotlin.Function1;
-import kotlin.Function2;
 import kotlin.Unit;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -199,16 +198,16 @@ public abstract class StackValue implements StackValueI {
     @NotNull
     public static Property property(
             @NotNull PropertyDescriptor descriptor,
-            @NotNull Type methodOwner,
+            @NotNull Type backingFieldOwner,
             @NotNull Type type,
-            boolean isStatic,
+            boolean isStaticBackingField,
             @Nullable String fieldName,
             @Nullable CallableMethod getter,
             @Nullable CallableMethod setter,
             GenerationState state,
             @NotNull StackValue receiver
     ) {
-        return new Property(descriptor, methodOwner, getter, setter, isStatic, fieldName, type, state, receiver);
+        return new Property(descriptor, backingFieldOwner, getter, setter, isStaticBackingField, fieldName, type, state, receiver);
     }
 
     @NotNull
@@ -1028,7 +1027,7 @@ public abstract class StackValue implements StackValueI {
     static class Property extends StackValueWithSimpleReceiver {
         private final CallableMethod getter;
         private final CallableMethod setter;
-        private final Type methodOwner;
+        private final Type backingFieldOwner;
 
         private final PropertyDescriptor descriptor;
         private final GenerationState state;
@@ -1036,13 +1035,13 @@ public abstract class StackValue implements StackValueI {
         private final String fieldName;
 
         public Property(
-                @NotNull PropertyDescriptor descriptor, @NotNull Type methodOwner,
+                @NotNull PropertyDescriptor descriptor, @NotNull Type backingFieldOwner,
                 @Nullable CallableMethod getter, @Nullable CallableMethod setter, boolean isStaticBackingField,
                 @Nullable String fieldName, @NotNull Type type, @NotNull GenerationState state,
                 @NotNull StackValue receiver
         ) {
             super(type, isStatic(isStaticBackingField, getter), isStatic(isStaticBackingField, setter), receiver);
-            this.methodOwner = methodOwner;
+            this.backingFieldOwner = backingFieldOwner;
             this.getter = getter;
             this.setter = setter;
             this.descriptor = descriptor;
@@ -1054,7 +1053,7 @@ public abstract class StackValue implements StackValueI {
         public void putNoReceiver(@NotNull Type type, @NotNull InstructionAdapter v) {
             if (getter == null) {
                 assert fieldName != null : "Property should have either a getter or a field name: " + descriptor;
-                v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD, methodOwner.getInternalName(), fieldName, this.type.getDescriptor());
+                v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD, backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
                 genNotNullAssertionForField(v, state, descriptor);
                 coerceTo(type, v);
             }
@@ -1069,7 +1068,7 @@ public abstract class StackValue implements StackValueI {
             coerceFrom(topOfStackType, v);
             if (setter == null) {
                 assert fieldName != null : "Property should have either a setter or a field name: " + descriptor;
-                v.visitFieldInsn(isStaticStore ? PUTSTATIC : PUTFIELD, methodOwner.getInternalName(), fieldName, this.type.getDescriptor());
+                v.visitFieldInsn(isStaticStore ? PUTSTATIC : PUTFIELD, backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
             }
             else {
                 setter.invokeWithoutAssertions(v);

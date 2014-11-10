@@ -6173,6 +6173,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/staticFields"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("classObjectAnonymousInitializer.kt")
+        public void testClassObjectAnonymousInitializer() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/classObjectAnonymousInitializer.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("classObjectInc.kt")
         public void testClassObjectInc() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/classObjectInc.kt");

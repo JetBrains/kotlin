@@ -1956,7 +1956,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
 
         boolean isBackingFieldInAnotherClass = AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
-        boolean isStatic = DescriptorUtils.isStaticDeclaration(propertyDescriptor);
+        boolean isStaticBackingField = DescriptorUtils.isStaticDeclaration(propertyDescriptor) || isBackingFieldInAnotherClass;
         boolean isSuper = superExpression != null;
         boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
 
@@ -1969,16 +1969,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean skipPropertyAccessors = forceField && !isBackingFieldInAnotherClass;
 
         CodegenContext backingFieldContext = context.getParentContext();
+        boolean changeOwnerOnTypeMap = isBackingFieldInAnotherClass;
 
         if (isBackingFieldInAnotherClass && forceField) {
-            //delegate call to classObject owner : OWNER
+            //delegate call to classObject backingFieldOwner : OWNER
             backingFieldContext = context.findParentContextWithDescriptor(containingDeclaration.getContainingDeclaration());
             int flags = AsmUtil.getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegatedProperty);
             skipPropertyAccessors = (flags & ACC_PRIVATE) == 0 || methodKind == MethodKind.SYNTHETIC_ACCESSOR || methodKind == MethodKind.INITIALIZER;
             if (!skipPropertyAccessors) {
                 propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(propertyDescriptor, true, delegateType);
+                changeOwnerOnTypeMap = changeOwnerOnTypeMap && !(propertyDescriptor instanceof AccessorForPropertyBackingFieldInOuterClass);
             }
-            isStatic = true;
         }
 
         if (!skipPropertyAccessors) {
@@ -2016,17 +2017,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        Type owner;
-        CallableMethod callableMethod = callableGetter != null ? callableGetter : callableSetter;
-
         propertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
-        if (callableMethod == null) {
-            owner = typeMapper.mapOwner(isBackingFieldInAnotherClass ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor,
-                                        isCallInsideSameModuleAsDeclared(propertyDescriptor, context, state.getOutDirectory()));
-        }
-        else {
-            owner = callableMethod.getOwner();
-        }
+        Type backingFieldOwner = typeMapper.mapOwner(changeOwnerOnTypeMap ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor,
+                                    isCallInsideSameModuleAsDeclared(propertyDescriptor, context, state.getOutDirectory()));
 
         String fieldName;
         if (isExtensionProperty && !isDelegatedProperty) {
@@ -2041,9 +2034,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             fieldName = JvmAbi.getDefaultFieldNameForProperty(propertyDescriptor.getName(), isDelegatedProperty);
         }
 
-        return StackValue.property(propertyDescriptor, owner,
+        return StackValue.property(propertyDescriptor, backingFieldOwner,
                             typeMapper.mapType(isDelegatedProperty && forceField ? delegateType : propertyDescriptor.getOriginal().getType()),
-                            isStatic, fieldName, callableGetter, callableSetter, state, receiver);
+                            isStaticBackingField, fieldName, callableGetter, callableSetter, state, receiver);
 
     }
 
