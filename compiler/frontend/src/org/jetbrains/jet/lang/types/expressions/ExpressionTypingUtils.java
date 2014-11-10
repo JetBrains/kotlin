@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
+import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall;
 import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -334,6 +335,26 @@ public class ExpressionTypingUtils {
         return Pair.create(call, results);
     }
 
+    @NotNull
+    public OverloadResolutionResults<FunctionDescriptor> makeFunctionCallWithLambdaArgumentAndResolve(
+            @NotNull ReceiverValue receiver,
+            @NotNull ExpressionTypingContext context,
+            @NotNull JetFunctionLiteralExpression argumentLambda,
+            @NotNull Name name,
+            @NotNull JetElement callElement
+    ) {
+        JetReferenceExpression callee = JetPsiFactory(expressionTypingServices.getProject()).createSimpleName(name.asString());
+        final List<FunctionLiteralArgument> arguments = Collections.singletonList(CallMaker.makeFunctionLiteralArgument(argumentLambda));
+        Call call = new DelegatingCall(CallMaker.makeCall(callElement, receiver, null, callee, arguments, Call.CallType.DEFAULT)) {
+            @NotNull
+            @Override
+            public List<? extends FunctionLiteralArgument> getFunctionLiteralArguments() {
+                return arguments;
+            }
+        };
+        return callResolver.resolveCallWithGivenName(context, call, callee, name);
+    }
+
     public void defineLocalVariablesFromMultiDeclaration(
             @NotNull WritableScope writableScope,
             @NotNull JetMultiDeclaration multiDeclaration,
@@ -382,6 +403,8 @@ public class ExpressionTypingUtils {
 
     public static void checkVariableShadowing(@NotNull ExpressionTypingContext context, @NotNull VariableDescriptor variableDescriptor, VariableDescriptor oldDescriptor) {
         if (oldDescriptor != null && isLocal(variableDescriptor.getContainingDeclaration(), oldDescriptor)) {
+            if (DescriptorToSourceUtils.descriptorToDeclaration(oldDescriptor) instanceof JetPsiUtil.JetSyntheticElement) return;
+
             PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
             if (declaration != null) {
                 context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));

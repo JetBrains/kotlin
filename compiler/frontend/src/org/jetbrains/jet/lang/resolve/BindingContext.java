@@ -112,6 +112,9 @@ public interface BindingContext {
     WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_HAS_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
 
+    WritableSlice<JetForClause, ResolvedCall<FunctionDescriptor>> FOR_COMPREHENSION_RESOLVED_CALL = Slices.createSimpleSlice();
+    WritableSlice<JetForClause, JetFunctionLiteralExpression> FOR_COMPREHENSION_SYNTHETIC_LAMBDA = Slices.createSimpleSlice();
+
     WritableSlice<PropertyAccessorDescriptor, ResolvedCall<FunctionDescriptor>> DELEGATED_PROPERTY_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<PropertyAccessorDescriptor, Call> DELEGATED_PROPERTY_CALL = Slices.createSimpleSlice();
 

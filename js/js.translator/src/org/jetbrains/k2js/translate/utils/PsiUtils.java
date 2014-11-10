@@ -20,6 +20,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -108,14 +109,17 @@ public final class PsiUtils {
 
     @NotNull
     public static JetExpression getLoopBody(@NotNull JetLoopExpression expression) {
-        JetExpression body = expression.getBody();
+        JetExpression body = expression instanceof JetForExpression
+                             ? PsiUtilPackage.stripLeadingClause((JetForExpression) expression)
+                             : expression.getBody();
         assert body != null : "Loops cannot have null bodies.";
         return body;
     }
 
     @Nullable
     public static JetParameter getLoopParameter(@NotNull JetForExpression expression) {
-        return expression.getLoopParameter();
+        JetForClause clause = expression.getLeadingClause();
+        return clause != null ? clause.getLoopParameter() : null;
     }
 
     @NotNull
@@ -128,7 +132,8 @@ public final class PsiUtils {
 
     @NotNull
     public static JetExpression getLoopRange(@NotNull JetForExpression expression) {
-        JetExpression rangeExpression = expression.getLoopRange();
+        JetForClause clause = expression.getLeadingClause();
+        JetExpression rangeExpression = clause != null ? clause.getLoopRange() : null;
         assert rangeExpression != null;
         return rangeExpression;
     }

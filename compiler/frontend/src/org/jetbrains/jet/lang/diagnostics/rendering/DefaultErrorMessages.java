@@ -281,6 +281,12 @@ public class DefaultErrorMessages {
         MAP.put(ITERATOR_MISSING, "For-loop range must have an iterator() method");
         MAP.put(ITERATOR_AMBIGUITY, "Method ''iterator()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
 
+        MAP.put(COMPREHENSION_MAP_MISSING, "For-comprehension range must have a map() method");
+        MAP.put(COMPREHENSION_MAP_AMBIGUITY, "Method ''map()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
+
+        MAP.put(COMPREHENSION_FLAT_MAP_MISSING, "For-comprehension range must have a flatMap() method");
+        MAP.put(COMPREHENSION_FLAT_MAP_AMBIGUITY, "Method ''flatMap()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
+
         MAP.put(DELEGATE_SPECIAL_FUNCTION_MISSING, "Missing ''{0}'' method on delegate of type ''{1}''", STRING, RENDER_TYPE);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, "Overload resolution ambiguity on method ''{0}'': {1}",  STRING, AMBIGUOUS_CALLS);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, "Property delegate must have a ''{0}'' method. None of the following functions is suitable: {1}",
@@ -355,6 +361,7 @@ public class DefaultErrorMessages {
         MAP.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found");
         MAP.put(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION, "A type annotation is required on a value parameter");
         MAP.put(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP, "'break' and 'continue' are only allowed inside a loop");
+        MAP.put(YIELD_OUTSIDE_A_FOR_COMPREHENSION, "'yield' must be the body of a for comprehension");
         MAP.put(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY, "'break' or 'continue' jumps across a function boundary");
         MAP.put(NOT_A_LOOP_LABEL, "The label ''{0}'' does not denote a loop", STRING);
         MAP.put(NOT_A_RETURN_LABEL, "The label ''{0}'' does not reference to a context from which we can return", STRING);

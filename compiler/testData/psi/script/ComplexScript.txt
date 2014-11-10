@@ -99,14 +99,15 @@ JetFile: ComplexScript.kts
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('arg')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('args')
+        FOR_CLAUSE
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('arg')
+          PsiWhiteSpace(' ')
+          PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          LOOP_RANGE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('args')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BODY

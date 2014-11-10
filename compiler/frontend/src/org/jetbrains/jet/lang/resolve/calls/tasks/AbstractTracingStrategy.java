@@ -191,8 +191,11 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void danglingFunctionLiteralArgumentSuspected(@NotNull BindingTrace trace, @NotNull List<JetFunctionLiteralArgument> functionLiteralArguments) {
-        for (JetFunctionLiteralArgument functionLiteralArgument : functionLiteralArguments) {
+    public void danglingFunctionLiteralArgumentSuspected(
+            @NotNull BindingTrace trace,
+            @NotNull List<? extends FunctionLiteralArgument> functionLiteralArguments
+    ) {
+        for (FunctionLiteralArgument functionLiteralArgument : functionLiteralArguments) {
             trace.report(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED.on(functionLiteralArgument.getArgumentExpression()));
         }
     }

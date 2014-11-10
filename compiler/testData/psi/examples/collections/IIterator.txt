@@ -306,35 +306,36 @@ JetFile: IIterator.kt
             PsiElement(for)('for')
             PsiWhiteSpace(' ')
             PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('i')
-            PsiWhiteSpace(' ')
-            PsiElement(in)('in')
-            PsiWhiteSpace(' ')
-            LOOP_RANGE
-              BINARY_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('from')
-                PsiWhiteSpace(' ')
-                OPERATION_REFERENCE
-                  PsiElement(RANGE)('..')
-                PsiWhiteSpace(' ')
+            FOR_CLAUSE
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('i')
+              PsiWhiteSpace(' ')
+              PsiElement(in)('in')
+              PsiWhiteSpace(' ')
+              LOOP_RANGE
                 BINARY_EXPRESSION
-                  BINARY_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('from')
-                    PsiWhiteSpace(' ')
-                    OPERATION_REFERENCE
-                      PsiElement(PLUS)('+')
-                    PsiWhiteSpace(' ')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('length')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('from')
                   PsiWhiteSpace(' ')
                   OPERATION_REFERENCE
-                    PsiElement(MINUS)('-')
+                    PsiElement(RANGE)('..')
                   PsiWhiteSpace(' ')
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('1')
+                  BINARY_EXPRESSION
+                    BINARY_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('from')
+                      PsiWhiteSpace(' ')
+                      OPERATION_REFERENCE
+                        PsiElement(PLUS)('+')
+                      PsiWhiteSpace(' ')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('length')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(MINUS)('-')
+                    PsiWhiteSpace(' ')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
             PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             BODY

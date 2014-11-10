@@ -36,7 +36,7 @@ public class JetReferenceContributor() : PsiReferenceContributor() {
             registerProvider(javaClass<JetArrayAccessExpression>()) {
                 JetArrayAccessReference(it)
             }
-            registerProvider(javaClass<JetForExpression>()) {
+            registerProvider(javaClass<JetForClause>()) {
                 JetForLoopInReference(it)
             }
             registerProvider(javaClass<JetPropertyDelegate>()) {

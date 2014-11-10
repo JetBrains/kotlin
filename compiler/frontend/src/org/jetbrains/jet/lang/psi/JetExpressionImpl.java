@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeType;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
@@ -32,13 +31,6 @@ public abstract class JetExpressionImpl extends JetElementImpl implements JetExp
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitExpression(this, data);
-    }
-
-    protected JetExpression findExpressionUnder(JetNodeType type) {
-        JetContainerNode containerNode = (JetContainerNode) findChildByType(type);
-        if (containerNode == null) return null;
-
-        return containerNode.findChildByClass(JetExpression.class);
     }
 
     //NOTE: duplicate with JetExpressionImplStub

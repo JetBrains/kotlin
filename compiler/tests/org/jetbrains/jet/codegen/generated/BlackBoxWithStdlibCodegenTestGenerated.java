@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxWithStdlib")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BlackBoxWithStdlibCodegenTestGenerated.Annotations.class, BlackBoxWithStdlibCodegenTestGenerated.Arrays.class, BlackBoxWithStdlibCodegenTestGenerated.BoxingOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.CallableReference.class, BlackBoxWithStdlibCodegenTestGenerated.Casts.class, BlackBoxWithStdlibCodegenTestGenerated.DataClasses.class, BlackBoxWithStdlibCodegenTestGenerated.DefaultArguments.class, BlackBoxWithStdlibCodegenTestGenerated.Enum.class, BlackBoxWithStdlibCodegenTestGenerated.Evaluate.class, BlackBoxWithStdlibCodegenTestGenerated.FullJdk.class, BlackBoxWithStdlibCodegenTestGenerated.HashPMap.class, BlackBoxWithStdlibCodegenTestGenerated.Intrinsics.class, BlackBoxWithStdlibCodegenTestGenerated.JdkAnnotations.class, BlackBoxWithStdlibCodegenTestGenerated.NonLocalReturns.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformNames.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformStatic.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformTypes.class, BlackBoxWithStdlibCodegenTestGenerated.Ranges.class, BlackBoxWithStdlibCodegenTestGenerated.Reflection.class, BlackBoxWithStdlibCodegenTestGenerated.Regressions.class, BlackBoxWithStdlibCodegenTestGenerated.StoreStackBeforeInline.class, BlackBoxWithStdlibCodegenTestGenerated.Strings.class, BlackBoxWithStdlibCodegenTestGenerated.ToArray.class, BlackBoxWithStdlibCodegenTestGenerated.Vararg.class, BlackBoxWithStdlibCodegenTestGenerated.When.class, BlackBoxWithStdlibCodegenTestGenerated.WhenEnumOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.WhenStringOptimization.class})
+@InnerTestClasses({BlackBoxWithStdlibCodegenTestGenerated.Annotations.class, BlackBoxWithStdlibCodegenTestGenerated.Arrays.class, BlackBoxWithStdlibCodegenTestGenerated.BoxingOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.CallableReference.class, BlackBoxWithStdlibCodegenTestGenerated.Casts.class, BlackBoxWithStdlibCodegenTestGenerated.DataClasses.class, BlackBoxWithStdlibCodegenTestGenerated.DefaultArguments.class, BlackBoxWithStdlibCodegenTestGenerated.Enum.class, BlackBoxWithStdlibCodegenTestGenerated.Evaluate.class, BlackBoxWithStdlibCodegenTestGenerated.ForComprehension.class, BlackBoxWithStdlibCodegenTestGenerated.FullJdk.class, BlackBoxWithStdlibCodegenTestGenerated.HashPMap.class, BlackBoxWithStdlibCodegenTestGenerated.Intrinsics.class, BlackBoxWithStdlibCodegenTestGenerated.JdkAnnotations.class, BlackBoxWithStdlibCodegenTestGenerated.NonLocalReturns.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformNames.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformStatic.class, BlackBoxWithStdlibCodegenTestGenerated.PlatformTypes.class, BlackBoxWithStdlibCodegenTestGenerated.Ranges.class, BlackBoxWithStdlibCodegenTestGenerated.Reflection.class, BlackBoxWithStdlibCodegenTestGenerated.Regressions.class, BlackBoxWithStdlibCodegenTestGenerated.StoreStackBeforeInline.class, BlackBoxWithStdlibCodegenTestGenerated.Strings.class, BlackBoxWithStdlibCodegenTestGenerated.ToArray.class, BlackBoxWithStdlibCodegenTestGenerated.Vararg.class, BlackBoxWithStdlibCodegenTestGenerated.When.class, BlackBoxWithStdlibCodegenTestGenerated.WhenEnumOptimization.class, BlackBoxWithStdlibCodegenTestGenerated.WhenStringOptimization.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxWithStdlib() throws Exception {
@@ -1228,6 +1228,51 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("unaryPlus.kt")
         public void testUnaryPlus() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/evaluate/unaryPlus.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/forComprehension")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ForComprehension extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInForComprehension() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/forComprehension"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("onIntRange.kt")
+        public void testOnIntRange() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/forComprehension/onIntRange.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("onIntRangeMulti.kt")
+        public void testOnIntRangeMulti() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/forComprehension/onIntRangeMulti.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("onIntRangeNested.kt")
+        public void testOnIntRangeNested() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/forComprehension/onIntRangeNested.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("onIntRangeNestedMulti.kt")
+        public void testOnIntRangeNestedMulti() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/forComprehension/onIntRangeNestedMulti.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("onIntRangePairs.kt")
+        public void testOnIntRangePairs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/forComprehension/onIntRangePairs.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("onIntRangePairsMulti.kt")
+        public void testOnIntRangePairsMulti() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/forComprehension/onIntRangePairsMulti.kt");
             doTestWithStdlib(fileName);
         }
     }

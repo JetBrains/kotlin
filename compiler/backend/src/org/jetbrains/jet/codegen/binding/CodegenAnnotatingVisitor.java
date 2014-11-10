@@ -295,6 +295,20 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         popClassDescriptor();
     }
 
+    @Override
+    public void visitForExpression(@NotNull JetForExpression expression) {
+        if (expression.isComprehension()) {
+            JetFunctionLiteralExpression functionLiteral = bindingContext.get(FOR_COMPREHENSION_SYNTHETIC_LAMBDA, expression.getLeadingClause());
+
+            if (functionLiteral != null) {
+                visitFunctionLiteralExpression(functionLiteral);
+            }
+        }
+        else {
+            super.visitForExpression(expression);
+        }
+    }
+
     private void pushClassDescriptor(ClassDescriptor classDescriptor) {
         classStack.push(new ClassDescriptorWithState(classDescriptor));
     }

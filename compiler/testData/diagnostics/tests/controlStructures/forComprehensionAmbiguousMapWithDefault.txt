@@ -1,0 +1,5 @@
+package
+
+internal fun foo(): kotlin.List<kotlin.Int>
+internal fun kotlin.Int.map(/*0*/ f: (kotlin.Int) -> kotlin.Int): kotlin.List<kotlin.Int>
+internal fun kotlin.Int.map(/*0*/ f: (kotlin.Int) -> kotlin.Int, /*1*/ b: kotlin.Boolean = ...): kotlin.List<kotlin.Int>

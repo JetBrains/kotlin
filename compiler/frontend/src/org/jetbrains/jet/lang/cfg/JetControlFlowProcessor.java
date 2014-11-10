@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithVa
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.MagicKind;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -862,9 +863,16 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitForExpression(@NotNull JetForExpression expression) {
+            if (expression.isComprehension()) {
+                ResolvedCall<?> mapResolvedCall = trace.get(BindingContext.FOR_COMPREHENSION_RESOLVED_CALL, expression.getLeadingClause());
+                checkAndGenerateCall(mapResolvedCall);
+                return;
+            }
+
             builder.enterLexicalScope(expression);
 
-            JetExpression loopRange = expression.getLoopRange();
+            JetForClause clause = expression.getLeadingClause();
+            JetExpression loopRange = clause != null ? clause.getLoopRange() : null;
             if (loopRange != null) {
                 generateInstructions(loopRange);
             }
@@ -881,7 +889,7 @@ public class JetControlFlowProcessor {
 
             mark(expression);
             builder.enterLoopBody(expression);
-            JetExpression body = expression.getBody();
+            JetExpression body = PsiUtilPackage.stripLeadingClause(expression);
             if (body != null) {
                 generateInstructions(body);
             }
@@ -893,9 +901,16 @@ public class JetControlFlowProcessor {
             builder.exitLexicalScope(expression);
         }
 
+        @Override
+        public void visitYieldExpression(@NotNull JetYieldExpression expression) {
+            trace.report(Errors.YIELD_OUTSIDE_A_FOR_COMPREHENSION.on(expression));
+            generateInstructions(expression.getBaseExpression());
+        }
+
         private void declareLoopParameter(JetForExpression expression) {
-            JetParameter loopParameter = expression.getLoopParameter();
-            JetMultiDeclaration multiDeclaration = expression.getMultiParameter();
+            JetForClause clause = expression.getLeadingClause();
+            JetParameter loopParameter = clause != null ? clause.getLoopParameter() : null;
+            JetMultiDeclaration multiDeclaration = clause != null ? clause.getMultiParameter() : null;
             if (loopParameter != null) {
                 builder.declareParameter(loopParameter);
             }
@@ -905,9 +920,10 @@ public class JetControlFlowProcessor {
         }
 
         private void writeLoopParameterAssignment(JetForExpression expression) {
-            JetParameter loopParameter = expression.getLoopParameter();
-            JetMultiDeclaration multiDeclaration = expression.getMultiParameter();
-            JetExpression loopRange = expression.getLoopRange();
+            JetForClause clause = expression.getLeadingClause();
+            JetParameter loopParameter = clause != null ? clause.getLoopParameter() : null;
+            JetMultiDeclaration multiDeclaration = clause != null ? clause.getMultiParameter() : null;
+            JetExpression loopRange = clause != null ? clause.getLoopRange() : null;
 
             TypePredicate loopRangeTypePredicate =
                     getTypePredicateByReceiverValue(trace.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange));

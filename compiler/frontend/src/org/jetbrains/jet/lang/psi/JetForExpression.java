@@ -17,10 +17,12 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lexer.JetTokens;
+
+import java.util.List;
 
 public class JetForExpression extends JetLoopExpression {
     public JetForExpression(@NotNull ASTNode node) {
@@ -32,23 +34,24 @@ public class JetForExpression extends JetLoopExpression {
         return visitor.visitForExpression(this, data);
     }
 
-    @Nullable
-    public JetParameter getLoopParameter() {
-        return (JetParameter) findChildByType(JetNodeTypes.VALUE_PARAMETER);
+    @NotNull
+    public List<JetForClause> getClauses() {
+        return findChildrenByType(JetNodeTypes.FOR_CLAUSE);
     }
 
     @Nullable
-    public JetMultiDeclaration getMultiParameter() {
-        return (JetMultiDeclaration) findChildByType(JetNodeTypes.MULTI_VARIABLE_DECLARATION);
+    public JetForClause getLeadingClause() {
+        return KotlinPackage.firstOrNull(getClauses());
     }
 
-    @Nullable @IfNotParsed
-    public JetExpression getLoopRange() {
-        return findExpressionUnder(JetNodeTypes.LOOP_RANGE);
+    public boolean isComprehension() {
+        return getBody() instanceof JetYieldExpression;
     }
 
-    @Nullable @IfNotParsed
-    public ASTNode getInKeywordNode() {
-        return getNode().findChildByType(JetTokens.IN_KEYWORD);
+    @Nullable
+    public JetExpression getComprehensionBody() {
+        if (!isComprehension()) return null;
+        //noinspection ConstantConditions
+        return ((JetYieldExpression) getBody()).getBaseExpression();
     }
 }

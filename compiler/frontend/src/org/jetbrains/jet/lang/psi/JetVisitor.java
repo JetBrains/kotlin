@@ -234,6 +234,14 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitLoopExpression(expression, data);
     }
 
+    public R visitForClause(@NotNull JetForClause forClause, D data) {
+        return visitJetElement(forClause, data);
+    }
+
+    public R visitYieldExpression(@NotNull JetYieldExpression yieldExpression, D data) {
+        return visitExpression(yieldExpression, data);
+    }
+
     public R visitWhileExpression(@NotNull JetWhileExpression expression, D data) {
         return visitLoopExpression(expression, data);
     }

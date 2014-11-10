@@ -823,19 +823,20 @@ JetFile: LinkedList.kt
             PsiElement(for)('for')
             PsiWhiteSpace(' ')
             PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('i')
-            PsiWhiteSpace(' ')
-            PsiElement(in)('in')
-            PsiWhiteSpace(' ')
-            LOOP_RANGE
-              BINARY_EXPRESSION
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-                OPERATION_REFERENCE
-                  PsiElement(RANGE)('..')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('index')
+            FOR_CLAUSE
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('i')
+              PsiWhiteSpace(' ')
+              PsiElement(in)('in')
+              PsiWhiteSpace(' ')
+              LOOP_RANGE
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+                  OPERATION_REFERENCE
+                    PsiElement(RANGE)('..')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('index')
             PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             BODY

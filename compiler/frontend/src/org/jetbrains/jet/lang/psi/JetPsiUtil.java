@@ -59,6 +59,10 @@ public class JetPsiUtil {
         JetExpression getBaseExpression();
     }
 
+    public interface JetSyntheticElement {
+
+    }
+
     public static <D> void visitChildren(@NotNull JetElement element, @NotNull JetTreeVisitor<D> visitor, D data) {
         PsiElement child = element.getFirstChild();
         while (child != null) {
@@ -363,7 +367,7 @@ public class JetPsiUtil {
         if (declaration instanceof JetProperty) return true;
         assert declaration instanceof JetMultiDeclarationEntry;
         JetMultiDeclarationEntry multiDeclarationEntry = (JetMultiDeclarationEntry) declaration;
-        return !(multiDeclarationEntry.getParent().getParent() instanceof JetForExpression);
+        return !(multiDeclarationEntry.getParent().getParent() instanceof JetForClause);
     }
 
     @Nullable

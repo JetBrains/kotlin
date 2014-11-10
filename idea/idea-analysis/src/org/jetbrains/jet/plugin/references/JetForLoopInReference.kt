@@ -18,11 +18,13 @@ package org.jetbrains.jet.plugin.references
 
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.psi.JetForExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.Collections
+import org.jetbrains.jet.lang.psi.JetForClause
+import org.jetbrains.jet.lang.psi.JetForExpression
+import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 
-public class JetForLoopInReference(element: JetForExpression) : JetMultiReference<JetForExpression>(element) {
+public class JetForLoopInReference(element: JetForClause) : JetMultiReference<JetForClause>(element) {
 
     override fun getRangeInElement(): TextRange {
         val inKeywordNode = expression.getInKeywordNode()
@@ -34,6 +36,10 @@ public class JetForLoopInReference(element: JetForExpression) : JetMultiReferenc
     }
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
+        if ((expression.getParent() as JetForExpression).isComprehension()) {
+            return context[BindingContext.FOR_COMPREHENSION_RESOLVED_CALL, expression]?.getCandidateDescriptor().singletonOrEmptyList()
+        }
+
         val loopRange = expression.getLoopRange()
         if (loopRange == null) {
             return Collections.emptyList()

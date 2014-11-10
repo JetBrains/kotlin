@@ -215,6 +215,11 @@ public final class BindingUtils {
     }
 
     @NotNull
+    public static ResolvedCall<FunctionDescriptor> getForComprehensionCall(@NotNull BindingContext context, @NotNull JetForClause forClause) {
+        return BindingContextUtils.getNotNull(context, BindingContext.FOR_COMPREHENSION_RESOLVED_CALL, forClause);
+    }
+
+    @NotNull
     public static JetType getTypeForExpression(@NotNull BindingContext context,
             @NotNull JetExpression expression) {
         return BindingContextUtils.getNotNull(context, BindingContext.EXPRESSION_TYPE, expression);

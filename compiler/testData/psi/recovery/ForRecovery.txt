@@ -16,23 +16,24 @@ JetFile: ForRecovery.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('v')
-          PsiElement(COLON)(':')
+        FOR_CLAUSE
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('v')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+          PsiElement(in)('in')
           PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            PsiErrorElement:Type expected
-              <empty list>
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          BINARY_EXPRESSION
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-            OPERATION_REFERENCE
-              PsiElement(RANGE)('..')
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('2')
+          LOOP_RANGE
+            BINARY_EXPRESSION
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+              OPERATION_REFERENCE
+                PsiElement(RANGE)('..')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('2')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BODY

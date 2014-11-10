@@ -455,16 +455,17 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(val)('val')
+        FOR_CLAUSE
+          VALUE_PARAMETER
+            PsiElement(val)('val')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('x')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('x')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('foo')
+          PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          LOOP_RANGE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BODY
@@ -475,14 +476,15 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('x')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('foo')
+        FOR_CLAUSE
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('x')
+          PsiWhiteSpace(' ')
+          PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          LOOP_RANGE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BODY
@@ -493,23 +495,24 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(val)('val')
+        FOR_CLAUSE
+          VALUE_PARAMETER
+            PsiElement(val)('val')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('x')
+          PsiElement(in)('in')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('foo')
+          LOOP_RANGE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BODY
@@ -520,21 +523,22 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('x')
+        FOR_CLAUSE
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(in)('in')
           PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('foo')
+          LOOP_RANGE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BODY
@@ -590,14 +594,15 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
+        FOR_CLAUSE
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          LOOP_RANGE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
         PsiElement(RPAR)(')')
         PsiWhiteSpace('\n      ')
         BODY
@@ -608,14 +613,15 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
+        FOR_CLAUSE
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          LOOP_RANGE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BODY
@@ -627,14 +633,15 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
+        FOR_CLAUSE
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          LOOP_RANGE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BODY
@@ -650,14 +657,15 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
+        FOR_CLAUSE
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          LOOP_RANGE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
         PsiElement(RPAR)(')')
         BODY
           <empty list>

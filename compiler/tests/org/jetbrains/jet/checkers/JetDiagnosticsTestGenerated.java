@@ -1854,9 +1854,51 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("breakOrContinueInForComprehension.kt")
+            public void testBreakOrContinueInForComprehension() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/breakOrContinueInForComprehension.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("emptyIf.kt")
             public void testEmptyIf() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/emptyIf.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forComprehensionAmbiguousFlatMap.kt")
+            public void testForComprehensionAmbiguousFlatMap() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forComprehensionAmbiguousFlatMap.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forComprehensionAmbiguousMap.kt")
+            public void testForComprehensionAmbiguousMap() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forComprehensionAmbiguousMap.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forComprehensionAmbiguousMapWithDefault.kt")
+            public void testForComprehensionAmbiguousMapWithDefault() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forComprehensionAmbiguousMapWithDefault.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forComprehensionMissingFlatMap.kt")
+            public void testForComprehensionMissingFlatMap() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forComprehensionMissingFlatMap.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forComprehensionMissingMap.kt")
+            public void testForComprehensionMissingMap() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forComprehensionMissingMap.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("forComprehensionNoSyntheticParameterShadowing.kt")
+            public void testForComprehensionNoSyntheticParameterShadowing() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forComprehensionNoSyntheticParameterShadowing.kt");
                 doTest(fileName);
             }
 

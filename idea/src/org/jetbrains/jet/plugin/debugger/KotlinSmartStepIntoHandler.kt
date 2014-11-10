@@ -93,7 +93,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             }
 
             override fun visitForExpression(expression: JetForExpression) {
-                expression.getLoopRange()?.accept(this)
+                expression.getLeadingClause()?.getLoopRange()?.accept(this)
             }
 
             override fun visitWhenExpression(expression: JetWhenExpression) {

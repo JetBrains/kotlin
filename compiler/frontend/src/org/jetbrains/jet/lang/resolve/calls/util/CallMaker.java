@@ -98,6 +98,21 @@ public class CallMaker {
         }
     }
 
+    private static class FunctionLiteralArgumentImpl extends ExpressionValueArgument implements FunctionLiteralArgument {
+        public FunctionLiteralArgumentImpl(@NotNull JetExpression expression) {
+            super(expression, expression, false);
+        }
+
+        @NotNull
+        @Override
+        public JetFunctionLiteralExpression getFunctionLiteral() {
+            JetExpression expression = getArgumentExpression();
+            assert expression != null;
+            assert expression instanceof JetFunctionLiteralExpression : "Function literal expression is expected: " + expression.getText();
+            return (JetFunctionLiteralExpression) expression;
+        }
+    }
+
     private static class CallImpl implements Call {
 
         private final JetElement callElement;
@@ -162,7 +177,7 @@ public class CallMaker {
 
         @NotNull
         @Override
-        public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
+        public List<? extends FunctionLiteralArgument> getFunctionLiteralArguments() {
             return Collections.emptyList();
         }
         @NotNull
@@ -257,6 +272,11 @@ public class CallMaker {
     }
 
     @NotNull
+    public static FunctionLiteralArgument makeFunctionLiteralArgument(@NotNull JetFunctionLiteralExpression expression) {
+        return new FunctionLiteralArgumentImpl(expression);
+    }
+
+    @NotNull
     public static Call makePropertyCall(@NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetSimpleNameExpression nameExpression) {
         return makeCallWithExpressions(nameExpression, explicitReceiver, callOperationNode, nameExpression, Collections.<JetExpression>emptyList());
     }
@@ -301,7 +321,7 @@ public class CallMaker {
 
             @Override
             @NotNull
-            public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
+            public List<? extends FunctionLiteralArgument> getFunctionLiteralArguments() {
                 return callElement.getFunctionLiteralArguments();
             }
 

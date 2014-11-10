@@ -22,10 +22,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory0;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetForExpression;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
@@ -38,6 +43,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Collections;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -87,7 +93,6 @@ public class ForLoopConventionsChecker {
         Name iterator = Name.identifier("iterator");
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls =
                 expressionTypingUtils.makeAndResolveFakeCall(loopRange, context, Collections.<JetExpression>emptyList(), iterator);
-        Call iteratorCall = calls.getFirst();
         OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = calls.getSecond();
 
         if (iteratorResolutionResults.isSuccess()) {
@@ -120,6 +125,58 @@ public class ForLoopConventionsChecker {
             }
         }
         return null;
+    }
+
+    @Nullable
+    /*package*/ JetType checkComprehensionConvention(
+            @NotNull JetForExpression forExpression,
+            @NotNull ExpressionReceiver loopRange,
+            ExpressionTypingContext context
+    ) {
+        assert forExpression.isComprehension() : "For-comprehension expected: " + forExpression.getText();
+
+        JetExpression loopRangeExpression = loopRange.getExpression();
+
+        // Make a fake call range.map{ parameter -> body}, and try to resolve it
+        JetFunctionLiteralExpression lambda = JetPsiFactory(project).wrapInALambda(forExpression, context.scope);
+
+        boolean flatMapExpected = forExpression.getClauses().size() > 1;
+        Name name = Name.identifier(flatMapExpected ? "flatMap" : "map");
+
+        TemporaryBindingTrace mapResolveTrace =
+                TemporaryBindingTrace.create(context.trace, "trace to resolve for-comprehension " + name.asString() + "() call", loopRangeExpression);
+
+        OverloadResolutionResults<FunctionDescriptor> mapResolutionResults =
+                expressionTypingUtils.makeFunctionCallWithLambdaArgumentAndResolve(
+                        loopRange,
+                        context.replaceBindingTrace(mapResolveTrace),
+                        lambda,
+                        name,
+                        forExpression
+                );
+
+        mapResolveTrace.record(FOR_COMPREHENSION_SYNTHETIC_LAMBDA, forExpression.getLeadingClause(), lambda);
+
+        if (mapResolutionResults.isSingleResult()) {
+            ResolvedCall<FunctionDescriptor> mapResolvedCall = mapResolutionResults.getResultingCall();
+            mapResolveTrace.record(FOR_COMPREHENSION_RESOLVED_CALL, forExpression.getLeadingClause(), mapResolvedCall);
+        }
+
+        if (!mapResolutionResults.isSuccess()) {
+            DiagnosticFactory1<JetExpression, Collection<? extends ResolvedCall<?>>> ambiguityDiagnostic =
+                    flatMapExpected ? COMPREHENSION_FLAT_MAP_AMBIGUITY : COMPREHENSION_MAP_AMBIGUITY;
+            DiagnosticFactory0<JetExpression> missingDiagnostic =
+                    flatMapExpected ? COMPREHENSION_FLAT_MAP_MISSING : COMPREHENSION_MAP_MISSING;
+            Diagnostic error = mapResolutionResults.getResultingCalls().size() > 1
+                               ? ambiguityDiagnostic.on(loopRangeExpression, mapResolutionResults.getResultingCalls())
+                               : missingDiagnostic.on(loopRangeExpression);
+            mapResolveTrace.report(error);
+        }
+
+        mapResolveTrace.commit();
+
+        FunctionDescriptor lambdaDescriptor = mapResolveTrace.get(FUNCTION, lambda.getFunctionLiteral());
+        return lambdaDescriptor != null ? lambdaDescriptor.getValueParameters().get(0).getType() : null;
     }
 
     @Nullable

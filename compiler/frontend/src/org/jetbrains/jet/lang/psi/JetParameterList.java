@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
@@ -38,6 +39,7 @@ public class JetParameterList extends JetElementImplStub<KotlinPlaceHolderStub<J
     }
 
     @NotNull
+    @ReadOnly
     public List<JetParameter> getParameters() {
         return getStubOrPsiChildrenAsList(JetStubElementTypes.VALUE_PARAMETER);
     }

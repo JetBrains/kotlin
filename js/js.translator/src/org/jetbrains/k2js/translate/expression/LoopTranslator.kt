@@ -33,6 +33,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils.*
 import org.jetbrains.k2js.translate.utils.PsiUtils.*
 import org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization
 import org.jetbrains.k2js.translate.utils.TranslationUtils
+import org.jetbrains.jet.lang.resolve.BindingContext
 
 public fun createWhile(doWhile: Boolean, expression: JetWhileExpressionBase, context: TranslationContext): JsNode {
     val conditionExpression = expression.getCondition() ?:
@@ -86,7 +87,7 @@ public fun createWhile(doWhile: Boolean, expression: JetWhileExpressionBase, con
     return result.source(expression)!!
 }
 
-public fun translateForExpression(expression: JetForExpression, context: TranslationContext): JsStatement {
+public fun translateForExpression(expression: JetForExpression, context: TranslationContext): JsNode {
     val loopRange = getLoopRange(expression)
     val rangeType = getTypeForExpression(context.bindingContext(), loopRange)
 
@@ -106,7 +107,7 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
                getClassDescriptorForType(rangeType).getName().asString() == "IntArray"
     }
 
-    val multiParameter: JetMultiDeclaration? = expression.getMultiParameter();
+    val multiParameter: JetMultiDeclaration? = expression?.getLeadingClause()?.getMultiParameter();
 
     fun declareParameter(): JsName {
         val loopParameter = getLoopParameter(expression)
@@ -225,7 +226,16 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
         return JsWhile(hasNextMethodInvocation(), translateBody(nextMethodInvocation()))
     }
 
+    fun translateForComprehension(): JsExpression {
+        val range = Translation.translateAsExpression(loopRange, context)
+        val resolvedCall = getForComprehensionCall(context.bindingContext(), expression.getLeadingClause())
+        return CallTranslator.translate(context, resolvedCall, range)
+    }
+
     return when {
+        expression.isComprehension() ->
+            translateForComprehension()
+
         isForOverRangeLiteral() ->
             translateForOverLiteralRange()
 

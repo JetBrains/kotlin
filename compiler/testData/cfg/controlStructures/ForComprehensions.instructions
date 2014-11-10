@@ -1,0 +1,215 @@
+== map ==
+fun IntRange.map<T>(f: (Int) -> T): List<T> = throw AssertionError("")
+---------------------
+L0:
+  1 <START>
+    v(f: (Int) -> T)
+    magic[FAKE_INITIALIZER](f: (Int) -> T) -> <v0>
+    w(f|<v0>)
+    mark(throw AssertionError(""))
+    mark("")
+    r("") -> <v1>
+    mark(AssertionError(""))
+    call(AssertionError(""), <init>|<v1>) -> <v2>
+    throw (throw AssertionError("")|<v2>)             NEXT:[<ERROR>]
+L1:
+    <END>                                             NEXT:[<SINK>]                                            PREV:[]
+error:
+    <ERROR>                                           PREV:[throw (throw AssertionError("")|<v2>)]
+sink:
+    <SINK>                                            PREV:[<ERROR>, <END>]
+=====================
+== main ==
+fun main() {
+    foo(for (i in 1..3) yield i*i)
+
+    val list = for (i in 1..3) yield {
+        foo(i)
+        i*i
+    }
+
+    val matrix = for (i in 1..3) yield for (j in 1..i) yield i*j
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ foo(for (i in 1..3) yield i*i) val list = for (i in 1..3) yield { foo(i) i*i } val matrix = for (i in 1..3) yield for (j in 1..i) yield i*j })
+    r(1) -> <v0>
+    r(3) -> <v1>
+    mark(1..3)
+    call(1..3, rangeTo|<v0>, <v1>) -> <v2>
+    mark({ (i) -> i*i })
+    jmp?(L2)                                                                                                                                                 NEXT:[r({ (i) -> i*i }) -> <v3>, d({ (i) -> i*i })]
+    d({ (i) -> i*i })                                                                                                                                        NEXT:[<SINK>]
+L2 [after local declaration]:
+    r({ (i) -> i*i }) -> <v3>                                                                                                                                PREV:[jmp?(L2)]
+    mark(for (i in 1..3) yield i*i)
+    call(for (i in 1..3) yield i*i, map|<v2>, <v3>) -> <v4>
+    mark(foo(for (i in 1..3) yield i*i))
+    call(foo(for (i in 1..3) yield i*i), foo|<v4>) -> <v5>
+    v(val list = for (i in 1..3) yield { foo(i) i*i })
+    r(1) -> <v6>
+    r(3) -> <v7>
+    mark(1..3)
+    call(1..3, rangeTo|<v6>, <v7>) -> <v8>
+    mark({ (i) -> foo(i) i*i })
+    jmp?(L5)                                                                                                                                                 NEXT:[r({ (i) -> foo(i) i*i }) -> <v9>, d({ (i) -> foo(i) i*i })]
+    d({ (i) -> foo(i) i*i })                                                                                                                                 NEXT:[<SINK>]
+L5 [after local declaration]:
+    r({ (i) -> foo(i) i*i }) -> <v9>                                                                                                                         PREV:[jmp?(L5)]
+    mark(for (i in 1..3) yield { foo(i) i*i })
+    call(for (i in 1..3) yield { foo(i) i*i }, map|<v8>, <v9>) -> <v10>
+    w(list|<v10>)
+    v(val matrix = for (i in 1..3) yield for (j in 1..i) yield i*j)
+    r(1) -> <v11>
+    r(3) -> <v12>
+    mark(1..3)
+    call(1..3, rangeTo|<v11>, <v12>) -> <v13>
+    mark({ (i) -> for (j in 1..i) yield i*j })
+    jmp?(L8)                                                                                                                                                 NEXT:[r({ (i) -> for (j in 1..i) yield i*j }) -> <v14>, d({ (i) -> for (j in 1..i) yield i*j })]
+    d({ (i) -> for (j in 1..i) yield i*j })                                                                                                                  NEXT:[<SINK>]
+L8 [after local declaration]:
+    r({ (i) -> for (j in 1..i) yield i*j }) -> <v14>                                                                                                         PREV:[jmp?(L8)]
+    mark(for (i in 1..3) yield for (j in 1..i) yield i*j)
+    call(for (i in 1..3) yield for (j in 1..i) yield i*j, map|<v13>, <v14>) -> <v15>
+    w(matrix|<v15>)
+L1:
+  1 <END>                                                                                                                                                    NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                                                                                  PREV:[]
+sink:
+    <SINK>                                                                                                                                                   PREV:[<ERROR>, <END>, d({ (i) -> i*i }), d({ (i) -> foo(i) i*i }), d({ (i) -> for (j in 1..i) yield i*j })]
+=====================
+== anonymous_0 ==
+{ (i) -> i*i }
+---------------------
+L3:
+  3 <START>
+    v(i)
+    magic[FAKE_INITIALIZER](i) -> <v0>
+    w(i|<v0>)
+  4 mark(i*i)
+    r(i) -> <v1>
+    r(i) -> <v2>
+    mark(i*i)
+    call(i*i, times|<v1>, <v2>) -> <v3>
+  3 ret(*|<v3>) L4
+L4:
+    <END>                                  NEXT:[<SINK>]
+error:
+    <ERROR>                                PREV:[]
+sink:
+    <SINK>                                 PREV:[<ERROR>, <END>]
+=====================
+== anonymous_1 ==
+{ (i) -> foo(i)
+i*i }
+---------------------
+L6:
+  3 <START>
+    v(i)
+    magic[FAKE_INITIALIZER](i) -> <v0>
+    w(i|<v0>)
+  4 mark(foo(i) i*i)
+    r(i) -> <v1>
+    mark(foo(i))
+    call(foo(i), foo|<v1>) -> <v2>
+    r(i) -> <v3>
+    r(i) -> <v4>
+    mark(i*i)
+    call(i*i, times|<v3>, <v4>) -> <v5>
+  3 ret(*|<v5>) L7
+L7:
+    <END>                                  NEXT:[<SINK>]
+error:
+    <ERROR>                                PREV:[]
+sink:
+    <SINK>                                 PREV:[<ERROR>, <END>]
+=====================
+== anonymous_2 ==
+{ (i) -> for (j in 1..i) yield i*j }
+---------------------
+L9:
+  3 <START>
+    v(i)
+    magic[FAKE_INITIALIZER](i) -> <v0>
+    w(i|<v0>)
+  4 mark(for (j in 1..i) yield i*j)
+    r(1) -> <v1>
+    r(i) -> <v2>
+    mark(1..i)
+    call(1..i, rangeTo|<v1>, <v2>) -> <v3>
+    mark({ (j) -> i*j })
+    jmp?(L11)                                                  NEXT:[r({ (j) -> i*j }) -> <v4>, d({ (j) -> i*j })]
+    d({ (j) -> i*j })                                          NEXT:[<SINK>]
+L11 [after local declaration]:
+    r({ (j) -> i*j }) -> <v4>                                  PREV:[jmp?(L11)]
+    mark(for (j in 1..i) yield i*j)
+    call(for (j in 1..i) yield i*j, map|<v3>, <v4>) -> <v5>
+  3 ret(*|<v5>) L10
+L10:
+    <END>                                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                                    PREV:[]
+sink:
+    <SINK>                                                     PREV:[<ERROR>, <END>, d({ (j) -> i*j })]
+=====================
+== anonymous_3 ==
+{ (j) -> i*j }
+---------------------
+L12:
+  5 <START>
+    v(j)
+    magic[FAKE_INITIALIZER](j) -> <v0>
+    w(j|<v0>)
+  6 mark(i*j)
+    r(i) -> <v1>
+    r(j) -> <v2>
+    mark(i*j)
+    call(i*j, times|<v1>, <v2>) -> <v3>
+  5 ret(*|<v3>) L13
+L13:
+    <END>                                  NEXT:[<SINK>]
+error:
+    <ERROR>                                PREV:[]
+sink:
+    <SINK>                                 PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo(n: Int) {
+
+}
+---------------------
+L0:
+  1 <START>
+    v(n: Int)
+    magic[FAKE_INITIALIZER](n: Int) -> <v0>
+    w(n|<v0>)
+  2 mark({ })
+    read (Unit)
+L1:
+  1 <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo(list: List<Int>) {
+
+}
+---------------------
+L0:
+  1 <START>
+    v(list: List<Int>)
+    magic[FAKE_INITIALIZER](list: List<Int>) -> <v0>
+    w(list|<v0>)
+  2 mark({ })
+    read (Unit)
+L1:
+  1 <END>                                               NEXT:[<SINK>]
+error:
+    <ERROR>                                             PREV:[]
+sink:
+    <SINK>                                              PREV:[<ERROR>, <END>]
+=====================
