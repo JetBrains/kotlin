@@ -205,7 +205,7 @@ public class RecursiveDescriptorComparator {
         doCompareDescriptors(null, actual, configuration, txtFile);
     }
 
-    private static void compareDescriptors(
+    public static void compareDescriptors(
             @NotNull DeclarationDescriptor expected,
             @NotNull DeclarationDescriptor actual,
             @NotNull Configuration configuration,

@@ -67,7 +67,7 @@ public class DescriptorValidator {
         private boolean allowErrorTypes = false;
         private Predicate<DeclarationDescriptor> recursiveFilter = Predicates.alwaysTrue();
 
-        private ValidationVisitor() {
+        protected ValidationVisitor() {
         }
 
         @NotNull
@@ -82,7 +82,7 @@ public class DescriptorValidator {
             return this;
         }
 
-        private void validateScope(@NotNull JetScope scope, @NotNull DiagnosticCollector collector) {
+        protected void validateScope(@NotNull JetScope scope, @NotNull DiagnosticCollector collector) {
             for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
                 if (recursiveFilter.apply(descriptor)) {
                     descriptor.accept(new ScopeValidatorVisitor(collector), scope);

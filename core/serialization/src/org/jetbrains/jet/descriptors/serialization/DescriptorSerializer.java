@@ -31,7 +31,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 public class DescriptorSerializer {
 
     private static final DescriptorRenderer RENDERER = DescriptorRenderer.STARTS_FROM_NAME;
-    private static final Comparator<DeclarationDescriptor> DESCRIPTOR_COMPARATOR = new Comparator<DeclarationDescriptor>() {
+    public static final Comparator<DeclarationDescriptor> DESCRIPTOR_COMPARATOR = new Comparator<DeclarationDescriptor>() {
         @Override
         public int compare(@NotNull DeclarationDescriptor o1, @NotNull DeclarationDescriptor o2) {
             int names = o1.getName().compareTo(o2.getName());

@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
+import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
 
@@ -62,6 +63,7 @@ import java.util.regex.Pattern;
 import static org.jetbrains.jet.JetTestUtils.*;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.errorTypesAllowed;
+import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.*;
 
 /*
@@ -118,12 +120,12 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             }
         }
 
-        validateAndCompareDescriptors(packageFromSource, packageFromBinary,
-                                      RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
-                                              .checkPrimaryConstructors(true)
-                                              .checkPropertyAccessors(true),
-                                      txtFile
-        );
+        DescriptorValidator.validate(errorTypesForbidden(), packageFromSource);
+        DescriptorValidator.validate(new DeserializedScopeValidationVisitor(), packageFromBinary);
+        Configuration configuration = RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
+                .checkPrimaryConstructors(true)
+                .checkPropertyAccessors(true);
+        compareDescriptors(packageFromSource, packageFromBinary, configuration, txtFile);
     }
 
     protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
@@ -198,7 +200,9 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         PackageViewDescriptor packageView = exhaust.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
         assertNotNull(packageView);
 
-        validateAndCompareDescriptorWithFile(packageView, DONT_INCLUDE_METHODS_OF_OBJECT, expectedFile);
+        validateAndCompareDescriptorWithFile(packageView, DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(
+                new DeserializedScopeValidationVisitor()
+        ), expectedFile);
     }
 
     protected void doTestSourceJava(@NotNull String javaFileName) throws Exception {
