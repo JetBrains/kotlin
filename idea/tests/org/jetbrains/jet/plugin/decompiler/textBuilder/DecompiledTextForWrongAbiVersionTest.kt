@@ -33,7 +33,7 @@ import org.jetbrains.jet.plugin.decompiler.INCOMPATIBLE_ABI_VERSION_COMMENT
 public class DecompiledTextForWrongAbiVersionTest : JetLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JetJdkAndLibraryProjectDescriptor(File(JetTestCaseBuilder.getTestDataPathBase() + "/cli/jvm/wrongAbiVersionLib"))
+        return JetJdkAndLibraryProjectDescriptor(File(JetTestCaseBuilder.getTestDataPathBase() + "/cli/jvm/wrongAbiVersionLib/bin"))
     }
 
     fun testClassWithWrongAbiVersion() {
