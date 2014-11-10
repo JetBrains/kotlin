@@ -42,7 +42,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.FORBID_ERROR_TYPES;
+import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
 
 public class RecursiveDescriptorComparator {
     private static final DescriptorRenderer DEFAULT_RENDERER = new DescriptorRendererBuilder()
@@ -52,16 +52,16 @@ public class RecursiveDescriptorComparator {
             .setIncludePropertyConstant(true)
             .setVerbose(true).build();
 
-    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false, 
+    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false,
                                                                                          Predicates.<DeclarationDescriptor>alwaysTrue(),
-                                                                                         FORBID_ERROR_TYPES, DEFAULT_RENDERER);
-    public static final Configuration RECURSIVE = new Configuration(false, false, true, 
+                                                                                         errorTypesForbidden(), DEFAULT_RENDERER);
+    public static final Configuration RECURSIVE = new Configuration(false, false, true,
                                                                     Predicates.<DeclarationDescriptor>alwaysTrue(),
-                                                                    FORBID_ERROR_TYPES, DEFAULT_RENDERER);
+                                                                    errorTypesForbidden(), DEFAULT_RENDERER);
 
-    public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true, 
+    public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true,
                                                                         Predicates.<DeclarationDescriptor>alwaysTrue(),
-                                                                        FORBID_ERROR_TYPES, DEFAULT_RENDERER);
+                                                                        errorTypesForbidden(), DEFAULT_RENDERER);
 
     public static final Predicate<DeclarationDescriptor> SKIP_BUILT_INS_PACKAGES = new Predicate<DeclarationDescriptor>() {
         @Override
@@ -280,13 +280,13 @@ public class RecursiveDescriptorComparator {
             this.checkPropertyAccessors = checkPropertyAccessors;
             this.includeMethodsOfKotlinAny = includeMethodsOfKotlinAny;
             this.recursiveFilter = recursiveFilter;
-            this.validationStrategy = validationStrategy.withStepIntoFilter(recursiveFilter);
+            this.validationStrategy = validationStrategy;
             this.renderer = renderer;
         }
 
         public Configuration filterRecursion(@NotNull Predicate<DeclarationDescriptor> stepIntoFilter) {
             return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, stepIntoFilter,
-                                     validationStrategy, renderer);
+                                     validationStrategy.withStepIntoFilter(stepIntoFilter), renderer);
         }
 
         public Configuration checkPrimaryConstructors(boolean checkPrimaryConstructors) {

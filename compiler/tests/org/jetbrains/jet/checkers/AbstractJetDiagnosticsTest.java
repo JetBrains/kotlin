@@ -262,7 +262,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             }
         };
 
-        return RECURSIVE.filterRecursion(stepIntoFilter).withValidationStrategy(DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES);
+        return RECURSIVE.filterRecursion(stepIntoFilter).withValidationStrategy(DescriptorValidator.ValidationVisitor.errorTypesAllowed());
     }
 
     public static Map<TestModule, ModuleDescriptorImpl> createModules(Map<TestModule, List<TestFile>> groupedByModule) {

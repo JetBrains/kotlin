@@ -61,7 +61,7 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.jet.JetTestUtils.*;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
-import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES;
+import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.errorTypesAllowed;
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.*;
 
 /*
@@ -213,7 +213,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
         checkJavaPackage(expectedFile, javaPackageAndContext.first, javaPackageAndContext.second,
-                         DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(ALLOW_ERROR_TYPES));
+                         DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(errorTypesAllowed()));
     }
 
     private void doTestCompiledJava(@NotNull String javaFileName, Configuration configuration) throws Exception {

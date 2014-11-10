@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
-import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES;
-import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.FORBID_ERROR_TYPES;
+import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.errorTypesAllowed;
+import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
 
 public abstract class AbstractLazyResolveRecursiveComparingTest extends KotlinTestWithEnvironment {
 
@@ -79,7 +79,7 @@ public abstract class AbstractLazyResolveRecursiveComparingTest extends KotlinTe
                         .filterRecursion(RecursiveDescriptorComparator.SKIP_BUILT_INS_PACKAGES)
                         .checkPrimaryConstructors(checkPrimaryConstructors)
                         .checkPropertyAccessors(checkPropertyAccessors)
-                        .withValidationStrategy(allowErrorTypes ? ALLOW_ERROR_TYPES : FORBID_ERROR_TYPES),
+                        .withValidationStrategy(allowErrorTypes ? errorTypesAllowed() : errorTypesForbidden()),
                 serializeResultsTo);
     }
 }
