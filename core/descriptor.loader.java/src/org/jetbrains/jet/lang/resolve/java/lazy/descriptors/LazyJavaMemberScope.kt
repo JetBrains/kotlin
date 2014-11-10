@@ -49,6 +49,8 @@ public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
         private val containingDeclaration: DeclarationDescriptor
 ) : JetScope {
+    // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
+    // but is placed in the base class to not duplicate code
     private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
             { computeDescriptors(JetScope.ALL_KINDS_MASK, JetScope.ALL_NAME_FILTER) },
             // This is to avoid the following recursive case:
@@ -280,6 +282,8 @@ public abstract class LazyJavaMemberScope(
     }
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> = properties(name)
+
+    // we do not have nameFilter here because it only makes sense in package but java package does not contain any properties
     protected open fun getAllPropertyNames(): Collection<Name> = memberIndex().getAllFieldNames()
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null

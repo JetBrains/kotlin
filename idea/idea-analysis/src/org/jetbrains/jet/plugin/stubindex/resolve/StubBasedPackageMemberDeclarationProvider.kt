@@ -63,7 +63,8 @@ public class StubBasedPackageMemberDeclarationProvider(
                 .stream()
                 .map { FqName(it) }
                 .filter { !it.isRoot() && it.parent() == fqName && nameFilter(it.shortName()) }
-                .flatMapTo(this) { index[it.asString(), project, searchScope].stream() }
+                .toSet()
+                .flatMapTo(this) { index[it.asString(), project, searchScope] }
     }
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<JetClassLikeInfo> {

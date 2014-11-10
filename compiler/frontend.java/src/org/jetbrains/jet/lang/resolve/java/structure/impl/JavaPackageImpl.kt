@@ -28,7 +28,7 @@ import com.intellij.psi.search.GlobalSearchScope
 
 public class JavaPackageImpl(psiPackage: PsiPackage, private val scope: GlobalSearchScope) : JavaElementImpl<PsiPackage>(psiPackage), JavaPackage {
 
-    override fun getClasses(nameFilter: (Name) -> Boolean): MutableCollection<JavaClass> {
+    override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {
         val psiClasses = getPsi().getClasses(scope).filter {
             val name = it.getName()
             name != null && nameFilter(Name.identifier(name))
