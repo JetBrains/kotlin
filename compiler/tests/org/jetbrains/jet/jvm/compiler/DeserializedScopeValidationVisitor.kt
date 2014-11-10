@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.test.util.DescriptorValidator
 import org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 
 class DeserializedScopeValidationVisitor : DescriptorValidator.ValidationVisitor() {
     override fun validateScope(scope: JetScope, collector: DescriptorValidator.DiagnosticCollector) {
@@ -39,7 +40,7 @@ private fun validateDeserializedScope(scope: JetScope) {
     val isPackageViewScope = scope.safeGetContainingDeclaration() is PackageViewDescriptor
     if (scope is DeserializedMemberScope || isPackageViewScope) {
         val relevantDescriptors = scope.getAllDescriptors().filter { member ->
-            member is CallableMemberDescriptor && member.getKind().isReal()
+            member is CallableMemberDescriptor && member.getKind().isReal() || (!isPackageViewScope && member is ClassDescriptor)
         }
         checkSorted(relevantDescriptors, scope.getContainingDeclaration())
     }
