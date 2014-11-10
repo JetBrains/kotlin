@@ -99,6 +99,7 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
     protected void doTest(String filePath) throws Exception {
         File file = new File(filePath);
         final File javaFilesDir = createJavaFilesDir();
+        final File kotlinFilesDir = getKotlinSourceRoot();
 
         String expectedText = JetTestUtils.doLoadFile(file);
 
@@ -115,6 +116,10 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
                     ) {
                         if (fileName.endsWith(".java")) {
                             writeSourceFile(fileName, text, javaFilesDir);
+                        }
+
+                        if (fileName.endsWith(".kt") && kotlinFilesDir != null) {
+                            writeSourceFile(fileName, text, kotlinFilesDir);
                         }
 
                         return createTestFile(module, fileName, text, directives);
