@@ -139,6 +139,15 @@ public class ArgumentTypeResolver {
 
     @Nullable
     private static JetFunctionLiteralExpression getFunctionLiteralArgumentIfAny(@NotNull JetExpression expression) {
+        JetExpression deparenthesizedExpression = deparenthesizeArgument(expression);
+        if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
+            return (JetFunctionLiteralExpression) deparenthesizedExpression;
+        }
+        return null;
+    }
+
+    @Nullable
+    public static JetExpression deparenthesizeArgument(@Nullable JetExpression expression) {
         JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(expression, false);
         if (deparenthesizedExpression instanceof JetBlockExpression) {
             // todo
@@ -147,13 +156,10 @@ public class ArgumentTypeResolver {
             // (no arguments and no receiver) and therefore analyze them straight away (not in the 'complete' phase).
             JetElement lastStatementInABlock = JetPsiUtil.getLastStatementInABlock((JetBlockExpression) deparenthesizedExpression);
             if (lastStatementInABlock instanceof JetExpression) {
-                deparenthesizedExpression = JetPsiUtil.deparenthesize((JetExpression) lastStatementInABlock, false);
+                return deparenthesizeArgument((JetExpression) lastStatementInABlock);
             }
         }
-        if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
-            return (JetFunctionLiteralExpression) deparenthesizedExpression;
-        }
-        return null;
+        return deparenthesizedExpression;
     }
 
     @NotNull
@@ -263,7 +269,7 @@ public class ArgumentTypeResolver {
         return type;
     }
 
-    public static <D extends CallableDescriptor> void updateNumberType(
+    public static void updateNumberType(
             @NotNull JetType numberType,
             @Nullable JetExpression expression,
             @NotNull BindingTrace trace
@@ -272,15 +278,9 @@ public class ArgumentTypeResolver {
         BindingContextUtils.updateRecordedType(numberType, expression, trace, false);
 
         if (!(expression instanceof JetConstantExpression)) {
-            JetExpression deparenthesized = JetPsiUtil.deparenthesize(expression, false);
+            JetExpression deparenthesized = deparenthesizeArgument(expression);
             if (deparenthesized != expression) {
                 updateNumberType(numberType, deparenthesized, trace);
-            }
-            if (deparenthesized instanceof JetBlockExpression) {
-                JetElement lastStatement = JetPsiUtil.getLastStatementInABlock((JetBlockExpression) deparenthesized);
-                if (lastStatement instanceof JetExpression) {
-                    updateNumberType(numberType, (JetExpression) lastStatement, trace);
-                }
             }
             return;
         }

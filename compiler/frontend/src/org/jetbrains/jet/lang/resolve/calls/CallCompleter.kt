@@ -229,12 +229,13 @@ public class CallCompleter(
         if (valueArgument.isExternal()) return
 
         val expression = valueArgument.getArgumentExpression()
-        if (expression == null) return
+        val deparenthesized = ArgumentTypeResolver.deparenthesizeArgument(expression)
+        if (deparenthesized == null) return
 
         val recordedType = context.trace[BindingContext.EXPRESSION_TYPE, expression]
         var updatedType: JetType? = recordedType
 
-        val results = completeCallForArgument(expression, context)
+        val results = completeCallForArgument(deparenthesized, context)
         if (results != null && results.isSingleResult()) {
             val resolvedCall = results.getResultingCall()
             updatedType = if (resolvedCall.hasInferredReturnType()) resolvedCall.getResultingDescriptor()?.getReturnType() else null
@@ -256,14 +257,16 @@ public class CallCompleter(
                     context as CallResolutionContext<*>, RESOLVE_FUNCTION_ARGUMENTS)
         }
 
-        DataFlowUtils.checkType(updatedType, expression, context as ResolutionContext<*>)
+        DataFlowUtils.checkType(updatedType, deparenthesized, context as ResolutionContext<*>)
     }
 
     private fun completeCallForArgument(
             expression: JetExpression,
             context: BasicCallResolutionContext
     ): OverloadResolutionResultsImpl<*>? {
-        val argumentCall = getCallForArgument(expression, context.trace.getBindingContext())
+        if (!ExpressionTypingUtils.dependsOnExpectedType(expression)) return null
+
+        val argumentCall = expression.getCall(context.trace.getBindingContext())
         if (argumentCall == null) return null
 
         val cachedDataForCall = context.resolutionResultsCache[argumentCall]
@@ -276,17 +279,6 @@ public class CallCompleter(
                 .replaceExpectedType(context.expectedType).replaceCollectAllCandidates(false)
 
         return completeCall(contextForArgument, cachedResults, tracing)
-    }
-
-    private fun getCallForArgument(argument: JetExpression?, bindingContext: BindingContext): Call? {
-        if (!ExpressionTypingUtils.dependsOnExpectedType(argument)) {
-            return null
-        }
-        if (argument is JetBlockExpression) {
-            val lastStatement = JetPsiUtil.getLastStatementInABlock(argument)
-            return getCallForArgument(lastStatement as? JetExpression, bindingContext)
-        }
-        return argument?.getCall(bindingContext)
     }
 
     private fun updateRecordedTypeForArgument(
