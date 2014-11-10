@@ -153,7 +153,7 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                     builder.append(subindent)
                     appendDescriptor(classObject, subindent)
                 }
-                for (member in sortDeclarations(descriptor.getDefaultType().getMemberScope().getAllDescriptors())) {
+                for (member in sortDeclarations(descriptor.getDefaultType().getMemberScope().getDescriptors())) {
                     if (member.getContainingDeclaration() != descriptor) {
                         continue
                     }

@@ -68,7 +68,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
                 JavaProtoBufUtil.readPackageDataFrom(annotationData),
                 deserializationContext
         ) { listOf() }
-        return membersScope.getAllDescriptors()
+        return membersScope.getDescriptors()
     }
 
     private val localClassFinder = object : KotlinClassFinder {
