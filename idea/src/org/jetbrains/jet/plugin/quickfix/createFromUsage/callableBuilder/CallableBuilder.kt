@@ -65,6 +65,7 @@ import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl
 import java.util.LinkedHashMap
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -256,6 +257,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 (receiverClassDescriptor as ClassDescriptorWithResolutionScopes).getScopeForMemberDeclarationResolution()
             }
 
+            receiverTypeCandidate = receiverType?.let { TypeCandidate(it, scope) }
+
             val fakeFunction: FunctionDescriptor?
             // figure out type substitutions for type parameters
             val substitutionMap = LinkedHashMap<JetType, JetType>()
@@ -270,7 +273,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         .subtract(substitutionMap.keySet())
                 fakeFunction = createFakeFunctionDescriptor(scope, typeArgumentsForFakeFunction.size)
                 collectSubstitutionsForCallableTypeParameters(fakeFunction!!, typeArgumentsForFakeFunction, substitutionMap)
-                mandatoryTypeParametersAsCandidates = typeArgumentsForFakeFunction.map { TypeCandidate(substitutionMap[it], scope) }
+                mandatoryTypeParametersAsCandidates = receiverTypeCandidate.singletonOrEmptyList() + typeArgumentsForFakeFunction.map { TypeCandidate(substitutionMap[it], scope) }
             }
             else {
                 fakeFunction = null
@@ -286,9 +289,6 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             skipReturnType = callableInfo is FunctionInfo
                              && returnTypeCandidates.size == 1
                              && returnTypeCandidates.first().theType.isUnit()
-
-            // now that we have done substitutions, we can throw it away
-            receiverTypeCandidate = receiverType?.let { TypeCandidate(it, scope) }
 
             // figure out type parameter renames to avoid conflicts
             typeParameterNameMap = getTypeParameterRenames(scope)
