@@ -820,7 +820,7 @@ public abstract class StackValue implements StackValueI {
 
             if (resolvedSetCall.getDispatchReceiver().exists()) {
                 if (resolvedSetCall.getExtensionReceiver().exists()) {
-                    codegen.generateReceiverValue(resolvedSetCall.getDispatchReceiver(), OBJECT_TYPE);
+                    codegen.generateReceiverValue(resolvedSetCall.getDispatchReceiver()).put(OBJECT_TYPE, v);
                 }
                 v.load(realReceiverIndex, realReceiverType);
             }
@@ -1384,10 +1384,10 @@ public abstract class StackValue implements StackValueI {
                                 callableMethod.getOwner() :
                                 codegen.typeMapper.mapType(descriptor.getDispatchReceiverParameter().getType());
 
-                        codegen.generateReceiverValue(dispatchReceiver, resultType);
+                        codegen.generateReceiverValue(dispatchReceiver).put(resultType, v);
                     }
                     else {
-                        genReceiver(v, dispatchReceiver, type, null, 0, receiver);
+                        genReceiver(v, dispatchReceiver, type, 0, receiver);
                     }
                     depth = 1;
                 }
@@ -1403,7 +1403,7 @@ public abstract class StackValue implements StackValueI {
             }
 
             if (putReceiverArgumentOnStack && extensionReceiver.exists()) {
-                genReceiver(v, extensionReceiver, type, descriptor.getExtensionReceiverParameter(), depth, currentReceiver);
+                genReceiver(v, extensionReceiver, type, depth, currentReceiver);
             }
         }
 
@@ -1411,19 +1411,11 @@ public abstract class StackValue implements StackValueI {
                 @NotNull InstructionAdapter v,
                 @NotNull ReceiverValue receiverArgument,
                 @NotNull Type type,
-                @Nullable ReceiverParameterDescriptor receiverParameter,
                 int depth,
                 @NotNull StackValue receiver
         ) {
             if (receiver == StackValue.none()) {
-                if (receiverParameter != null) {
-                    Type receiverType = codegen.typeMapper.mapType(receiverParameter.getType());
-                    codegen.generateReceiverValue(receiverArgument, receiverType);
-                    StackValue.onStack(receiverType).put(type, v);
-                }
-                else {
-                    codegen.generateReceiverValue(receiverArgument, type);
-                }
+                codegen.generateReceiverValue(receiverArgument).put(type, v);
             }
             else {
                 receiver.moveToTopOfStack(type, v, depth);
@@ -1468,11 +1460,7 @@ public abstract class StackValue implements StackValueI {
 
         @Override
         public boolean hasReceiver(boolean isRead) {
-            boolean result = isRead ? !isStaticPut : !isStaticStore;
-            if (!result) {
-
-            }
-            return result;
+            return isRead ? !isStaticPut : !isStaticStore;
         }
     }
 

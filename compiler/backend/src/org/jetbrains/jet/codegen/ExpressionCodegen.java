@@ -2351,33 +2351,31 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         );
     }
 
-    public void generateReceiverValue(@NotNull ReceiverValue receiverValue, @NotNull Type type) {
+    public StackValue generateReceiverValue(@NotNull ReceiverValue receiverValue) {
         if (receiverValue instanceof ClassReceiver) {
             ClassDescriptor receiverDescriptor = ((ClassReceiver) receiverValue).getDeclarationDescriptor();
             if (DescriptorUtils.isClassObject(receiverDescriptor)) {
                 CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
                 if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
-                    v.load(0, OBJECT_TYPE);
+                    return StackValue.local(0, OBJECT_TYPE);
                 }
                 else {
-                    FieldInfo info = FieldInfo.createForSingleton(receiverDescriptor, typeMapper);
-                    v.getstatic(info.getOwnerInternalName(), info.getFieldName(), info.getFieldType().getDescriptor());
+                    return StackValue.singleton(receiverDescriptor, typeMapper);
                 }
-                StackValue.onStack(asmType(receiverValue.getType())).put(type, v);
             }
             else {
-                StackValue.thisOrOuter(this, receiverDescriptor, false, false).put(type, v);
+                return StackValue.thisOrOuter(this, receiverDescriptor, false, false);
             }
         }
         else if (receiverValue instanceof ScriptReceiver) {
             // SCRIPT: generate script
-            generateScript((ScriptReceiver) receiverValue);
+            return generateScript((ScriptReceiver) receiverValue);
         }
         else if (receiverValue instanceof ExtensionReceiver) {
-            generateReceiver(((ExtensionReceiver) receiverValue).getDeclarationDescriptor()).put(type, v);
+            return generateReceiver(((ExtensionReceiver) receiverValue).getDeclarationDescriptor());
         }
         else if (receiverValue instanceof ExpressionReceiver) {
-            gen(((ExpressionReceiver) receiverValue).getExpression(), type);
+            return gen(((ExpressionReceiver) receiverValue).getExpression());
         }
         else {
             throw new UnsupportedOperationException("Unsupported receiver value: " + receiverValue);
@@ -2399,7 +2397,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     // SCRIPT: generate script, move to ScriptingUtil
-    private void generateScript(@NotNull ScriptReceiver receiver) {
+    private StackValue generateScript(@NotNull ScriptReceiver receiver) {
         CodegenContext cur = context;
         StackValue result = StackValue.local(0, OBJECT_TYPE);
         boolean inStartConstructorContext = cur instanceof ConstructorContext;
@@ -2413,14 +2411,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 Type currentScriptType = asmTypeForScriptDescriptor(bindingContext, scriptContext.getScriptDescriptor());
                 if (scriptContext.getScriptDescriptor() == receiver.getDeclarationDescriptor()) {
-                    result.put(currentScriptType, v);
+                    //TODO lazy
+                    return result;
                 }
                 else {
                     Type classType = asmTypeForScriptDescriptor(bindingContext, receiver.getDeclarationDescriptor());
                     String fieldName = scriptContext.getScriptFieldName(receiver.getDeclarationDescriptor());
-                    StackValue.field(classType, currentScriptType, fieldName, false, result).put(classType, v);
+                    return StackValue.field(classType, currentScriptType, fieldName, false, result);
                 }
-                return;
             }
 
             result = cur.getOuterExpression(result, false);
@@ -3435,7 +3433,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue generateConstructorCall(@NotNull final ResolvedCall<?> resolvedCall, @NotNull final Type objectType) {
         return StackValue.functionCall(objectType, new Function1<InstructionAdapter, Unit>() {
             @Override
-            public Unit invoke(InstructionAdapter adapter) {
+            public Unit invoke(InstructionAdapter v) {
                 v.anew(objectType);
                 v.dup();
 
@@ -3444,7 +3442,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 ReceiverParameterDescriptor dispatchReceiver = constructor.getDispatchReceiverParameter();
                 if (dispatchReceiver != null) {
                     Type receiverType = typeMapper.mapType(dispatchReceiver.getType());
-                    generateReceiverValue(resolvedCall.getDispatchReceiver(), receiverType);
+                    generateReceiverValue(resolvedCall.getDispatchReceiver()).put(receiverType, v);
                 }
 
                 // Resolved call to local class constructor doesn't have dispatchReceiver, so we need to generate closure on stack
