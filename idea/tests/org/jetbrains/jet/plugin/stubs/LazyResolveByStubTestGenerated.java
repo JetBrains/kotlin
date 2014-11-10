@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/loadJava/compiledKotlin")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({LazyResolveByStubTestGenerated.Annotations.class, LazyResolveByStubTestGenerated.Class.class, LazyResolveByStubTestGenerated.ClassFun.class, LazyResolveByStubTestGenerated.ClassObject.class, LazyResolveByStubTestGenerated.Constructor.class, LazyResolveByStubTestGenerated.DataClass.class, LazyResolveByStubTestGenerated.Enum.class, LazyResolveByStubTestGenerated.FromLoadJava.class, LazyResolveByStubTestGenerated.Fun.class, LazyResolveByStubTestGenerated.Inline.class, LazyResolveByStubTestGenerated.PlatformTypes.class, LazyResolveByStubTestGenerated.Prop.class, LazyResolveByStubTestGenerated.Type.class, LazyResolveByStubTestGenerated.Visibility.class})
+@InnerTestClasses({LazyResolveByStubTestGenerated.Annotations.class, LazyResolveByStubTestGenerated.Class.class, LazyResolveByStubTestGenerated.ClassFun.class, LazyResolveByStubTestGenerated.ClassObject.class, LazyResolveByStubTestGenerated.Constructor.class, LazyResolveByStubTestGenerated.DataClass.class, LazyResolveByStubTestGenerated.Enum.class, LazyResolveByStubTestGenerated.FromLoadJava.class, LazyResolveByStubTestGenerated.Fun.class, LazyResolveByStubTestGenerated.Inline.class, LazyResolveByStubTestGenerated.MemberOrder.class, LazyResolveByStubTestGenerated.PlatformTypes.class, LazyResolveByStubTestGenerated.Prop.class, LazyResolveByStubTestGenerated.Type.class, LazyResolveByStubTestGenerated.Visibility.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTest {
     public void testAllFilesPresentInCompiledKotlin() throws Exception {
@@ -2350,6 +2350,27 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
         @TestMetadata("inlineFunction.kt")
         public void testInlineFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/inline/inlineFunction.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MemberOrder extends AbstractLazyResolveByStubTest {
+        public void testAllFilesPresentInMemberOrder() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("innerClasses.kt")
+        public void testInnerClasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/innerClasses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelCallables.kt")
+        public void testTopLevelCallables() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/topLevelCallables.kt");
             doTest(fileName);
         }
     }
