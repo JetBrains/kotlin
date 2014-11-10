@@ -182,6 +182,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
                     return computeFunctions(name);
                 }
             });
+
             this.properties = storageManager.createMemoizedFunction(new Function1<Name, Collection<PropertyDescriptor>>() {
                 @Override
                 public Collection<PropertyDescriptor> invoke(Name name) {

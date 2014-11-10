@@ -4133,6 +4133,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("enumEntries.kt")
+            public void testEnumEntries() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/enumEntries.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("innerClasses.kt")
             public void testInnerClasses() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/innerClasses.kt");
