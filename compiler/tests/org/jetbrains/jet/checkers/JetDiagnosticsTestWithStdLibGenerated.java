@@ -635,6 +635,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/reified"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("nonCallableReiefied.kt")
+        public void testNonCallableReiefied() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/reified/nonCallableReiefied.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("reifiedNothingSubstitution.kt")
         public void testReifiedNothingSubstitution() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/reified/reifiedNothingSubstitution.kt");
