@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.utils.Printer
 
 import java.util.*
+import com.intellij.util.SmartList
 
 // Reads from:
 // 1. Maps
@@ -37,7 +38,7 @@ public class WritableScopeImpl(scope: JetScope,
                                debugName: String)
 : WritableScopeWithImports(scope, redeclarationHandler, debugName) {
 
-    private val explicitlyAddedDescriptors = ArrayList<DeclarationDescriptor>()
+    private val explicitlyAddedDescriptors = SmartList<DeclarationDescriptor>()
     private val declaredDescriptorsAccessibleBySimpleName = HashMultimap.create<Name, DeclarationDescriptor>()
 
     private var functionGroups: SetMultimap<Name, FunctionDescriptor>? = null

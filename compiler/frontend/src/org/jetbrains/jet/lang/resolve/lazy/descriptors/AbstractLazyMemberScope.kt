@@ -53,7 +53,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
                 LazyScriptClassDescriptor(resolveSession, thisDescriptor, name, it)
             else
                 LazyClassDescriptor(resolveSession, thisDescriptor, name, it)
-        }
+        }.toReadOnlyList()
     }
 
     override fun getContainingDeclaration() = thisDescriptor
