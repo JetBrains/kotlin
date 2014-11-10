@@ -24,6 +24,15 @@ import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
+import java.util.ArrayList
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
+import org.jetbrains.jet.lang.resolve.java.sources.JavaSourceElement
 
 public object SamConversionResolverImpl : SamConversionResolver {
     override fun resolveSamConstructor(name: Name, scope: JetScope): SamConstructorDescriptor? {
@@ -40,5 +49,43 @@ public object SamConversionResolverImpl : SamConversionResolver {
             original is JavaMethodDescriptor -> SingleAbstractMethodUtils.createSamAdapterFunction(original) as D
             else -> null
         }
+    }
+
+    override fun resolveFunctionTypeIfSamInterface(
+            classDescriptor: JavaClassDescriptor,
+            resolveMethod: (JavaMethod) -> FunctionDescriptor
+    ): JetType? {
+        val jClass = (classDescriptor.getSource() as? JavaSourceElement)?.javaElement as? JavaClass ?: return null
+        val samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(jClass) ?: return null
+        val abstractMethod = if (jClass.getFqName() == samInterfaceMethod.getContainingClass().getFqName()) {
+            resolveMethod(samInterfaceMethod)
+        }
+        else {
+            findFunctionWithMostSpecificReturnType(TypeUtils.getAllSupertypes(classDescriptor.getDefaultType()))
+        }
+        return SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod)
+    }
+
+    private fun findFunctionWithMostSpecificReturnType(supertypes: Set<JetType>): SimpleFunctionDescriptor {
+        val candidates = ArrayList<SimpleFunctionDescriptor>(supertypes.size())
+        for (supertype in supertypes) {
+            val abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype)
+            if (!abstractMembers.isEmpty()) {
+                candidates.add((abstractMembers[0] as SimpleFunctionDescriptor))
+            }
+        }
+        if (candidates.isEmpty()) {
+            throw IllegalStateException("Couldn't find abstract method in supertypes " + supertypes)
+        }
+        var currentMostSpecificType = candidates[0]
+        for (candidate in candidates) {
+            val candidateReturnType = candidate.getReturnType()
+            val currentMostSpecificReturnType = currentMostSpecificType.getReturnType()
+            assert(candidateReturnType != null && currentMostSpecificReturnType != null) { "$candidate, $currentMostSpecificReturnType" }
+            if (JetTypeChecker.DEFAULT.isSubtypeOf(candidateReturnType!!, currentMostSpecificReturnType!!)) {
+                currentMostSpecificType = candidate
+            }
+        }
+        return currentMostSpecificType
     }
 }

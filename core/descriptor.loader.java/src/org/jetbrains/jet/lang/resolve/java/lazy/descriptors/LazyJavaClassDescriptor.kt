@@ -31,13 +31,8 @@ import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.utils.*
-import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
-import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import java.util.ArrayList
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
 
 class LazyJavaClassDescriptor(
@@ -96,50 +91,12 @@ class LazyJavaClassDescriptor(
     override fun getAnnotations() = _annotations()
 
     private val _functionTypeForSamInterface = c.storageManager.createNullableLazyValue {
-        val samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(jClass);
-        if (samInterfaceMethod != null) {
-            val abstractMethod = resolveFunctionOfSamInterface(samInterfaceMethod);
-            SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod);
+        c.samConversionResolver.resolveFunctionTypeIfSamInterface(this) { method ->
+            _scopeForMemberLookup.resolveMethodToFunctionDescriptor(method, false)
         }
-        else null
     }
 
     override fun getFunctionTypeForSamInterface(): JetType? = _functionTypeForSamInterface()
-
-    private fun resolveFunctionOfSamInterface(samInterfaceMethod: JavaMethod): SimpleFunctionDescriptor {
-        val methodContainer = samInterfaceMethod.getContainingClass()
-        val containerFqName = methodContainer.getFqName()
-        assert(containerFqName != null, "qualified name is null for " + methodContainer)
-        if (fqName == containerFqName) {
-            return _scopeForMemberLookup.resolveMethodToFunctionDescriptor(samInterfaceMethod, false)
-        }
-        else {
-            return findFunctionWithMostSpecificReturnType(TypeUtils.getAllSupertypes(getDefaultType()))
-        }
-    }
-
-    private fun findFunctionWithMostSpecificReturnType(supertypes: Set<JetType>): SimpleFunctionDescriptor {
-        val candidates = ArrayList<SimpleFunctionDescriptor>(supertypes.size())
-        for (supertype in supertypes) {
-            val abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype)
-            if (!abstractMembers.isEmpty()) {
-                candidates.add((abstractMembers[0] as SimpleFunctionDescriptor))
-            }
-        }
-        if (candidates.isEmpty()) {
-            throw IllegalStateException("Couldn't find abstract method in supertypes " + supertypes)
-        }
-        var currentMostSpecificType = candidates[0]
-        for (candidate in candidates) {
-            val candidateReturnType = candidate.getReturnType()
-            val currentMostSpecificReturnType = currentMostSpecificType.getReturnType()
-            assert(candidateReturnType != null && currentMostSpecificReturnType != null, "$candidate, $currentMostSpecificReturnType")
-            if (JetTypeChecker.DEFAULT.isSubtypeOf(candidateReturnType!!, currentMostSpecificReturnType!!)) {
-                currentMostSpecificType = candidate
-            }
-        }
-        return currentMostSpecificType
-    }
 
     override fun toString() = "lazy java class $fqName"
 
