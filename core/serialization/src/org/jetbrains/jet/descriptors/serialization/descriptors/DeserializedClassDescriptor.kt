@@ -265,7 +265,7 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
         }
 
         private fun nestedClassNames(): Set<Name> {
-            val result = HashSet<Name>()
+            val result = LinkedHashSet<Name>()
             val nameResolver = context.nameResolver
             for (index in classProto.getNestedClassNameList()) {
                 result.add(nameResolver.getName(index!!))
