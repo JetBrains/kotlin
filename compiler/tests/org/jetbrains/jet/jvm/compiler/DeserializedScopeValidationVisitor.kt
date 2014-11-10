@@ -28,6 +28,7 @@ import org.jetbrains.jet.test.util.DescriptorValidator
 import org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.resolve.MemberComparator
 
 class DeserializedScopeValidationVisitor : DescriptorValidator.ValidationVisitor() {
     override fun validateScope(scope: JetScope, collector: DescriptorValidator.DiagnosticCollector) {
@@ -60,6 +61,6 @@ private fun checkSorted(descriptors: Collection<DeclarationDescriptor>, declarat
     UsefulTestCase.assertOrderedEquals(
             "Members of $declaration should be sorted by serialization.",
             descriptors,
-            descriptors.sortBy(DescriptorSerializer.DESCRIPTOR_COMPARATOR)
+            descriptors.sortBy(MemberComparator.INSTANCE)
     )
 }
