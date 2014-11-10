@@ -39,7 +39,11 @@ public class JsParser {
     }
 
     private final Stack<JsScope> scopeStack = new Stack<JsScope>();
-    private final Stack<SourceInfo> sourceInfoStack = new Stack<SourceInfo>();
+
+    /**
+     * since source maps are not mapped to kotlin source maps
+     */
+    private static final String sourceNameStub = "jsCode";
 
     private JsParser() {
     }
@@ -53,7 +57,7 @@ public class JsParser {
             @Override
             public void error(String msg, String loc, int ln, String src, int col) {
                 throw new UncheckedJsParserException(new JsParserException(msg, ln,
-                                                                           src, col, rootSourceInfo.getFileName()));
+                                                                           src, col, sourceNameStub));
             }
 
             @Override
@@ -63,7 +67,7 @@ public class JsParser {
             ) {
                 // Never called, but just in case.
                 throw new UncheckedJsParserException(new JsParserException(msg, ln,
-                                                                           src, col, rootSourceInfo.getFileName()));
+                                                                           src, col, sourceNameStub));
             }
 
             @Override
@@ -74,13 +78,12 @@ public class JsParser {
         try {
             // Parse using the Rhino parser.
             //
-            TokenStream ts = new TokenStream(r, rootSourceInfo.getFileName(),
-                                             rootSourceInfo.getStartLine());
+            TokenStream ts = new TokenStream(r, sourceNameStub, rootSourceInfo.getLine());
             Parser parser = new Parser(new IRFactory(ts));
             Node topNode = (Node) parser.parse(ts);
 
             // Map the Rhino AST to ours.
-            pushScope(scope, rootSourceInfo);
+            pushScope(scope);
             List<JsStatement> stmts = mapStatements(topNode);
             popScope();
             return stmts;
@@ -94,42 +97,17 @@ public class JsParser {
     }
 
     private JsParserException createParserException(String msg, Node offender) {
-        return new JsParserException(msg, offender.getLineno(), null, 0,
-                                     sourceInfoStack.peek().getFileName());
+        return new JsParserException(msg, offender.getLineno(), null, 0, sourceNameStub);
     }
 
     private JsScope getScope() {
         return scopeStack.peek();
     }
 
-    private SourceInfo makeSourceInfo(Node node) {
-        SourceInfo parent = sourceInfoStack.peek();
-        int lineno = node.getLineno();
-        if (lineno == -1) {
-            // Rhino only reports line numbers for statement nodes, not expressions
-            return parent;
-        }
-        return parent.makeChild(SourceOrigin.create(lineno, parent.getFileName()));
-    }
-
-    /**
-     * Force a distinct child to be created, so correlations can be added.
-     */
-    private SourceInfo makeSourceInfoDistinct(Node node) {
-        SourceInfo parent = sourceInfoStack.peek();
-        int lineno = node.getLineno();
-        if (lineno == -1) {
-            // Rhino only reports line numbers for statement nodes, not expressions
-            lineno = parent.getStartLine();
-        }
-        return parent.makeChild(SourceOrigin.create(lineno, parent.getFileName()));
-    }
-
     private JsNode map(Node node) throws JsParserException {
-
         switch (node.getType()) {
             case TokenStream.SCRIPT: {
-                JsBlock block = new JsBlock(makeSourceInfo(node));
+                JsBlock block = new JsBlock();
                 mapStatements(block.getStatements(), node);
                 return block;
             }
@@ -201,11 +179,8 @@ public class JsParser {
             case TokenStream.HOOK:
                 return mapConditional(node);
 
-            case TokenStream.STRING: {
-                SourceInfo info = makeSourceInfoDistinct(node);
-                info.addCorrelation(info.getCorrelator().by(Literal.STRING));
-                return new JsStringLiteral(info, node.getString());
-            }
+            case TokenStream.STRING:
+                return new JsStringLiteral(node.getString());
 
             case TokenStream.NUMBER:
                 return mapNumber(node);
@@ -303,7 +278,7 @@ public class JsParser {
     }
 
     private JsArrayLiteral mapArrayLit(Node node) throws JsParserException {
-        JsArrayLiteral toLit = new JsArrayLiteral(makeSourceInfo(node));
+        JsArrayLiteral toLit = new JsArrayLiteral();
         Node from = node.getFirstChild();
         while (from != null) {
             toLit.getExpressions().add(mapExpression(from));
@@ -324,7 +299,7 @@ public class JsParser {
         if (unknown instanceof JsStringLiteral) {
             JsStringLiteral lit = (JsStringLiteral) unknown;
             String litName = lit.getValue();
-            return new JsNameRef(makeSourceInfo(nameRefNode), litName);
+            return new JsNameRef(litName);
         }
         else {
             throw createParserException("Expecting a name reference", nameRefNode);
@@ -384,30 +359,21 @@ public class JsParser {
         JsExpression to1 = mapExpression(from1);
         JsExpression to2 = mapExpression(from2);
 
-        return new JsBinaryOperation(makeSourceInfo(node), op, to1, to2);
+        return new JsBinaryOperation(op, to1, to2);
     }
 
     private JsBlock mapBlock(Node nodeStmts) throws JsParserException {
-        SourceInfo info = makeSourceInfo(nodeStmts);
-        JsBlock block = new JsBlock(info);
-        pushSourceInfo(info);
+        JsBlock block = new JsBlock();
         mapStatements(block.getStatements(), nodeStmts);
-        popSourceInfo();
         return block;
     }
 
     private JsBreak mapBreak(Node breakNode) {
-        Node fromLabel = breakNode.getFirstChild();
-        if (fromLabel != null) {
-            return new JsBreak(makeSourceInfo(breakNode), mapName(fromLabel));
-        }
-        else {
-            return new JsBreak(makeSourceInfo(breakNode));
-        }
+        return new JsBreak();
     }
 
     private JsInvocation mapCall(Node callNode) throws JsParserException {
-        JsInvocation invocation = new JsInvocation(makeSourceInfo(callNode));
+        JsInvocation invocation = new JsInvocation();
 
         // Map the target expression.
         //
@@ -429,7 +395,7 @@ public class JsParser {
     }
 
     private JsExpression mapConditional(Node condNode) throws JsParserException {
-        JsConditional toCond = new JsConditional(makeSourceInfo(condNode));
+        JsConditional toCond = new JsConditional();
 
         Node fromTest = condNode.getFirstChild();
         toCond.setTestExpression(mapExpression(fromTest));
@@ -444,31 +410,25 @@ public class JsParser {
     }
 
     private JsContinue mapContinue(Node contNode) {
-        Node fromLabel = contNode.getFirstChild();
-        if (fromLabel != null) {
-            return new JsContinue(makeSourceInfo(contNode), mapName(fromLabel));
-        }
-        else {
-            return new JsContinue(makeSourceInfo(contNode));
-        }
+        return new JsContinue();
     }
 
     private JsStatement mapDebuggerStatement(Node node) {
         // Calls an optional method to invoke the debugger.
         //
-        return new JsDebugger(makeSourceInfo(node));
+        return new JsDebugger();
     }
 
     private JsExpression mapDeleteProp(Node node) throws JsParserException {
         Node from = node.getFirstChild();
         JsExpression to = mapExpression(from);
         if (to instanceof JsNameRef) {
-            return new JsPrefixOperation(makeSourceInfo(node),
-                                         JsUnaryOperator.DELETE, to);
+            return new JsPrefixOperation(
+                    JsUnaryOperator.DELETE, to);
         }
         else if (to instanceof JsArrayAccess) {
-            return new JsPrefixOperation(makeSourceInfo(node),
-                                         JsUnaryOperator.DELETE, to);
+            return new JsPrefixOperation(
+                    JsUnaryOperator.DELETE, to);
         }
         else {
             throw createParserException(
@@ -493,9 +453,6 @@ public class JsParser {
             fromTestExpr = ifNode.getFirstChild().getNext();
         }
 
-        SourceInfo info = makeSourceInfo(ifNode);
-        pushSourceInfo(info);
-
         // Map the test expression.
         //
         JsExpression toTestExpr = mapExpression(fromTestExpr);
@@ -504,15 +461,13 @@ public class JsParser {
         //
         JsStatement toBody = mapStatement(fromBody);
 
-        popSourceInfo();
-
         // Create and attach the "while" or "do" statement we're mapping to.
         //
         if (isWhile) {
-            return new JsWhile(info, toTestExpr, toBody);
+            return new JsWhile(toTestExpr, toBody);
         }
         else {
-            return new JsDoWhile(info, toTestExpr, toBody);
+            return new JsDoWhile(toTestExpr, toBody);
         }
     }
 
@@ -559,9 +514,7 @@ public class JsParser {
     }
 
     private JsExprStmt mapExprStmt(Node node) throws JsParserException {
-        pushSourceInfo(makeSourceInfo(node));
         JsExpression expr = mapExpression(node.getFirstChild());
-        popSourceInfo();
         return expr.makeStmt();
     }
 
@@ -571,7 +524,6 @@ public class JsParser {
         Node fromIncr = fromTest.getNext();
         Node fromBody = fromIncr.getNext();
 
-        SourceInfo info = makeSourceInfo(forNode);
         if (fromBody == null) {
             // This could be a "for...in" structure.
             // We could based on the different child layout.
@@ -587,21 +539,21 @@ public class JsParser {
                 Node fromIterVarName = fromIter.getFirstChild();
                 String fromName = fromIterVarName.getString();
                 JsName toName = getScope().declareName(fromName);
-                toForIn = new JsForIn(info, toName);
+                toForIn = new JsForIn(toName);
                 Node fromIterInit = fromIterVarName.getFirstChild();
                 if (fromIterInit != null) {
                     // That has an initializer expression (useful only for side effects).
                     //
-                    toForIn.setIterExpr(mapOptionalExpression(fromIterInit));
+                    toForIn.setIterExpression(mapOptionalExpression(fromIterInit));
                 }
             }
             else {
                 // An unnamed iterator var.
                 //
-                toForIn = new JsForIn(info);
-                toForIn.setIterExpr(mapExpression(fromIter));
+                toForIn = new JsForIn();
+                toForIn.setIterExpression(mapExpression(fromIter));
             }
-            toForIn.setObjExpr(mapExpression(fromObjExpr));
+            toForIn.setObjectExpression(mapExpression(fromObjExpr));
 
             // The body stmt.
             //
@@ -610,7 +562,7 @@ public class JsParser {
                 toForIn.setBody(bodyStmt);
             }
             else {
-                toForIn.setBody(new JsEmpty(info));
+                toForIn.setBody(new JsEmpty());
             }
 
             return toForIn;
@@ -618,28 +570,27 @@ public class JsParser {
         else {
             // Regular ol' for loop.
             //
-            JsFor toFor = new JsFor(info);
+            JsFor toFor;
 
             // The first item is either an expression or a JsVars.
-            JsNode initThingy = map(fromInit);
-            if (initThingy != null) {
-                if (initThingy instanceof JsVars) {
-                    toFor.setInitVars((JsVars) initThingy);
-                }
-                else {
-                    assert (initThingy instanceof JsExpression);
-                    toFor.setInitExpr((JsExpression) initThingy);
-                }
+            JsNode init = map(fromInit);
+            JsExpression condition = mapOptionalExpression(fromTest);
+            JsExpression increment = mapOptionalExpression(fromIncr);
+            assert (init != null);
+            if (init instanceof JsVars) {
+                toFor = new JsFor((JsVars) init, condition, increment);
             }
-            toFor.setCondition(mapOptionalExpression(fromTest));
-            toFor.setIncrExpr(mapOptionalExpression(fromIncr));
+            else {
+                assert (init instanceof JsExpression);
+                toFor = new JsFor((JsExpression) init, condition, increment);
+            }
 
             JsStatement bodyStmt = mapStatement(fromBody);
             if (bodyStmt != null) {
                 toFor.setBody(bodyStmt);
             }
             else {
-                toFor.setBody(new JsEmpty(info));
+                toFor.setBody(new JsEmpty());
             }
             return toFor;
         }
@@ -661,19 +612,18 @@ public class JsParser {
 
         // Create it, and set the params.
         //
-        SourceInfo fnSourceInfo = makeSourceInfo(fnNode);
-        JsFunction toFn = new JsFunction(fnSourceInfo, getScope(), toFnName);
+        JsFunction toFn = new JsFunction(getScope());
 
         // Creating a function also creates a new scope, which we push onto
         // the scope stack.
         //
-        pushScope(toFn.getScope(), fnSourceInfo);
+        pushScope(toFn.getScope());
 
         while (fromParamNode != null) {
             String fromParamName = fromParamNode.getString();
             // should this be unique? I think not since you can have dup args.
             JsName paramName = toFn.getScope().declareName(fromParamName);
-            toFn.getParameters().add(new JsParameter(fnSourceInfo, paramName));
+            toFn.getParameters().add(new JsParameter(paramName));
             fromParamNode = fromParamNode.getNext();
         }
 
@@ -696,7 +646,7 @@ public class JsParser {
         JsExpression to1 = mapExpression(from1);
         JsExpression to2 = mapExpression(from2);
 
-        return new JsArrayAccess(makeSourceInfo(getElemNode), to1, to2);
+        return new JsArrayAccess(to1, to2);
     }
 
     private JsNameRef mapGetProp(Node getPropNode) throws JsParserException {
@@ -713,7 +663,7 @@ public class JsParser {
             //
             Object obj = getPropNode.getProp(Node.SPECIAL_PROP_PROP);
             assert (obj instanceof String);
-            toNameRef = new JsNameRef(makeSourceInfo(getPropNode), (String) obj);
+            toNameRef = new JsNameRef((String) obj);
         }
         toNameRef.setQualifier(toQualifier);
 
@@ -730,21 +680,21 @@ public class JsParser {
 
         // Create the "if" statement we're mapping to.
         //
-        JsIf toIf = new JsIf(makeSourceInfo(ifNode));
+        JsIf toIf = new JsIf();
 
         // Map the test expression.
         //
         JsExpression toTestExpr = mapExpression(fromTestExpr);
-        toIf.setIfExpr(toTestExpr);
+        toIf.setIfExpression(toTestExpr);
 
         // Map the "then" block.
         //
-        toIf.setThenStmt(mapStatement(fromThenBlock));
+        toIf.setThenStatement(mapStatement(fromThenBlock));
 
         // Map the "else" block.
         //
         if (fromElseBlock != null) {
-            toIf.setElseStmt(mapStatement(fromElseBlock));
+            toIf.setElseStatement(mapStatement(fromElseBlock));
         }
 
         return toIf;
@@ -767,8 +717,8 @@ public class JsParser {
         String fromName = labelNode.getFirstChild().getString();
         JsName toName = getScope().declareName(fromName);
         Node fromStmt = labelNode.getFirstChild().getNext();
-        JsLabel toLabel = new JsLabel(makeSourceInfo(labelNode), toName);
-        toLabel.setStmt(mapStatement(fromStmt));
+        JsLabel toLabel = new JsLabel(toName);
+        toLabel.setStatement(mapStatement(fromStmt));
         return toLabel;
     }
 
@@ -778,7 +728,7 @@ public class JsParser {
      */
     private JsNameRef mapName(Node node) {
         String ident = node.getString();
-        return new JsNameRef(makeSourceInfo(node), ident);
+        return new JsNameRef(ident);
     }
 
     private JsNew mapNew(Node newNode) throws JsParserException {
@@ -786,8 +736,8 @@ public class JsParser {
         // some lambda.
         //
         Node fromCtorExpr = newNode.getFirstChild();
-        JsNew newExpr = new JsNew(makeSourceInfo(newNode),
-                                  mapExpression(fromCtorExpr));
+        JsNew newExpr = new JsNew(
+                mapExpression(fromCtorExpr));
 
         // Iterate over and map the arguments.
         //
@@ -802,12 +752,11 @@ public class JsParser {
     }
 
     private JsExpression mapNumber(Node numberNode) {
-        return new JsNumberLiteral(makeSourceInfo(numberNode),
-                                   numberNode.getDouble());
+        return new JsNumberLiteral.JsDoubleLiteral(numberNode.getDouble());
     }
 
     private JsExpression mapObjectLit(Node objLitNode) throws JsParserException {
-        JsObjectLiteral toLit = new JsObjectLiteral(makeSourceInfo(objLitNode));
+        JsObjectLiteral toLit = new JsObjectLiteral();
         Node fromPropInit = objLitNode.getFirstChild();
         while (fromPropInit != null) {
 
@@ -825,7 +774,7 @@ public class JsParser {
             JsExpression toValueExpr = mapExpression(fromValueExpr);
 
             JsPropertyInitializer toPropInit = new JsPropertyInitializer(
-                    makeSourceInfo(fromLabelExpr), toLabelExpr, toValueExpr);
+                    toLabelExpr, toValueExpr);
             toLit.getPropertyInitializers().add(toPropInit);
 
             // Begin the next property initializer, if there is one.
@@ -854,20 +803,20 @@ public class JsParser {
             throws JsParserException {
         Node from = node.getFirstChild();
         JsExpression to = mapExpression(from);
-        return new JsPostfixOperation(makeSourceInfo(node), op, to);
+        return new JsPostfixOperation(op, to);
     }
 
     private JsExpression mapPrefixOperation(JsUnaryOperator op, Node node)
             throws JsParserException {
         Node from = node.getFirstChild();
         JsExpression to = mapExpression(from);
-        return new JsPrefixOperation(makeSourceInfo(node), op, to);
+        return new JsPrefixOperation(op, to);
     }
 
     private JsExpression mapPrimary(Node node) throws JsParserException {
         switch (node.getIntDatum()) {
             case TokenStream.THIS:
-                return new JsThisRef(makeSourceInfo(node));
+                return new JsLiteral.JsThisRef();
 
             case TokenStream.TRUE:
                 return JsBooleanLiteral.TRUE;
@@ -876,11 +825,10 @@ public class JsParser {
                 return JsBooleanLiteral.FALSE;
 
             case TokenStream.NULL:
-                return JsNullLiteral.INSTANCE;
+                return JsNullLiteral.NULL;
 
             case TokenStream.UNDEFINED:
-                return new JsNameRef(makeSourceInfo(node),
-                                     JsRootScope.INSTANCE.getUndefined());
+                return JsLiteral.UNDEFINED;
 
             default:
                 throw createParserException("Unknown primary: " + node.getIntDatum(),
@@ -889,7 +837,7 @@ public class JsParser {
     }
 
     private JsNode mapRegExp(Node regExpNode) {
-        JsRegExp toRegExp = new JsRegExp(makeSourceInfo(regExpNode));
+        JsRegExp toRegExp = new JsRegExp();
 
         Node fromPattern = regExpNode.getFirstChild();
         toRegExp.setPattern(fromPattern.getString());
@@ -930,16 +878,13 @@ public class JsParser {
     }
 
     private JsReturn mapReturn(Node returnNode) throws JsParserException {
-        SourceInfo info = makeSourceInfo(returnNode);
-        JsReturn toReturn = new JsReturn(info);
-        pushSourceInfo(info);
+        JsReturn toReturn = new JsReturn();
         Node from = returnNode.getFirstChild();
         if (from != null) {
             JsExpression to = mapExpression(from);
-            toReturn.setExpr(to);
+            toReturn.setExpression(to);
         }
 
-        popSourceInfo();
         return toReturn;
     }
 
@@ -953,8 +898,8 @@ public class JsParser {
         Node fromRhs = setElemNode.getFirstChild().getNext().getNext();
         JsExpression toRhs = mapExpression(fromRhs);
 
-        return new JsBinaryOperation(makeSourceInfo(setElemNode),
-                                     JsBinaryOperator.ASG, lhs, toRhs);
+        return new JsBinaryOperation(
+                JsBinaryOperator.ASG, lhs, toRhs);
     }
 
     private JsExpression mapSetProp(Node getPropNode) throws JsParserException {
@@ -967,8 +912,8 @@ public class JsParser {
         Node fromRhs = getPropNode.getFirstChild().getNext().getNext();
         JsExpression toRhs = mapExpression(fromRhs);
 
-        return new JsBinaryOperation(makeSourceInfo(getPropNode),
-                                     JsBinaryOperator.ASG, lhs, toRhs);
+        return new JsBinaryOperation(
+                JsBinaryOperator.ASG, lhs, toRhs);
     }
 
     private JsExpression mapShiftVariant(Node shiftNode) throws JsParserException {
@@ -1004,7 +949,7 @@ public class JsParser {
         else {
             // When map() returns null, we return an empty statement.
             //
-            return new JsEmpty(makeSourceInfo(nodeStmt));
+            return new JsEmpty();
         }
     }
 
@@ -1032,31 +977,29 @@ public class JsParser {
     }
 
     private JsSwitch mapSwitchStatement(Node switchNode) throws JsParserException {
-        SourceInfo info = makeSourceInfo(switchNode);
-        JsSwitch toSwitch = new JsSwitch(info);
-        pushSourceInfo(info);
+        JsSwitch toSwitch = new JsSwitch();
 
         // The switch expression.
         //
         Node fromSwitchExpr = switchNode.getFirstChild();
-        toSwitch.setExpr(mapExpression(fromSwitchExpr));
+        toSwitch.setExpression(mapExpression(fromSwitchExpr));
 
         // The members.
         //
         Node fromMember = fromSwitchExpr.getNext();
         while (fromMember != null) {
             if (fromMember.getType() == TokenStream.CASE) {
-                JsCase toCase = new JsCase(makeSourceInfo(fromMember));
+                JsCase toCase = new JsCase();
 
                 // Set the case expression. In JS, this can be any expression.
                 //
                 Node fromCaseExpr = fromMember.getFirstChild();
-                toCase.setCaseExpr(mapExpression(fromCaseExpr));
+                toCase.setCaseExpression(mapExpression(fromCaseExpr));
 
                 // Set the case statements.
                 //
                 Node fromCaseBlock = fromCaseExpr.getNext();
-                mapStatements(toCase.getStmts(), fromCaseBlock);
+                mapStatements(toCase.getStatements(), fromCaseBlock);
 
                 // Attach the case to the switch.
                 //
@@ -1067,12 +1010,12 @@ public class JsParser {
                 // If more than one is present, we keep the last one.
                 //
                 assert (fromMember.getType() == TokenStream.DEFAULT);
-                JsDefault toDefault = new JsDefault(makeSourceInfo(fromMember));
+                JsDefault toDefault = new JsDefault();
 
                 // Set the default statements.
                 //
                 Node fromDefaultBlock = fromMember.getFirstChild();
-                mapStatements(toDefault.getStmts(), fromDefaultBlock);
+                mapStatements(toDefault.getStatements(), fromDefaultBlock);
 
                 // Attach the default to the switch.
                 //
@@ -1081,25 +1024,20 @@ public class JsParser {
             fromMember = fromMember.getNext();
         }
 
-        popSourceInfo();
         return toSwitch;
     }
 
     private JsThrow mapThrowStatement(Node throwNode) throws JsParserException {
-        SourceInfo info = makeSourceInfo(throwNode);
-        pushSourceInfo(info);
-
         // Create, map, and attach.
         //
         Node fromExpr = throwNode.getFirstChild();
-        JsThrow toThrow = new JsThrow(info, mapExpression(fromExpr));
+        JsThrow toThrow = new JsThrow(mapExpression(fromExpr));
 
-        popSourceInfo();
         return toThrow;
     }
 
     private JsTry mapTryStatement(Node tryNode) throws JsParserException {
-        JsTry toTry = new JsTry(makeSourceInfo(tryNode));
+        JsTry toTry = new JsTry();
 
         // Map the "try" body.
         //
@@ -1115,8 +1053,8 @@ public class JsParser {
             // Map the catch variable.
             //
             Node fromCatchVarName = fromCatchNode.getFirstChild();
-            JsCatch catchBlock = new JsCatch(makeSourceInfo(fromCatchNode),
-                                             getScope(), fromCatchVarName.getString());
+            JsCatch catchBlock = new JsCatch(
+                    getScope(), fromCatchVarName.getString());
 
             // Pre-advance to the next catch block, if any.
             // We do this here to decide whether or not this is the last one.
@@ -1143,9 +1081,7 @@ public class JsParser {
             // Map the catch body.
             //
             Node fromCatchBody = fromCondition.getNext();
-            pushScope(catchBlock.getScope(), catchBlock.getSourceInfo());
             catchBlock.setBody(mapBlock(fromCatchBody));
-            popScope();
 
             // Attach it.
             //
@@ -1193,9 +1129,7 @@ public class JsParser {
     }
 
     private JsVars mapVar(Node varNode) throws JsParserException {
-        SourceInfo info = makeSourceInfo(varNode);
-        pushSourceInfo(info);
-        JsVars toVars = new JsVars(info);
+        JsVars toVars = new JsVars();
         Node fromVar = varNode.getFirstChild();
         while (fromVar != null) {
             // Use a conservative name allocation strategy that allocates all names
@@ -1204,19 +1138,18 @@ public class JsParser {
             //
             String fromName = fromVar.getString();
             JsName toName = getScope().declareName(fromName);
-            JsVars.JsVar toVar = new JsVars.JsVar(makeSourceInfo(fromVar), toName);
+            JsVars.JsVar toVar = new JsVars.JsVar(toName);
 
             Node fromInit = fromVar.getFirstChild();
             if (fromInit != null) {
                 JsExpression toInit = mapExpression(fromInit);
-                toVar.setInitExpr(toInit);
+                toVar.setInitExpression(toInit);
             }
             toVars.add(toVar);
 
             fromVar = fromVar.getNext();
         }
 
-        popSourceInfo();
         return toVars;
     }
 
@@ -1233,27 +1166,9 @@ public class JsParser {
 
     private void popScope() {
         scopeStack.pop();
-        sourceInfoStack.pop();
     }
 
-    private void popSourceInfo() {
-        sourceInfoStack.pop();
-    }
-
-    private void pushScope(JsScope scope, SourceInfo sourceInfo) {
+    private void pushScope(JsScope scope) {
         scopeStack.push(scope);
-        sourceInfoStack.push(sourceInfo);
-    }
-
-    /**
-     * This should be called when processing any Rhino statement Node that has
-     * line number data so that enclosed expressions will have a useful source
-     * location.
-     *
-     * @see Node#hasLineno
-     */
-    private void pushSourceInfo(SourceInfo sourceInfo) {
-        assert sourceInfo.getStartLine() >= 0 : "Bad SourceInfo line number";
-        sourceInfoStack.push(sourceInfo);
     }
 }
