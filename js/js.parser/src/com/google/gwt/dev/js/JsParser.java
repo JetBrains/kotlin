@@ -38,15 +38,6 @@ public class JsParser {
         return new JsParser().parseImpl(rootSourceInfo, scope, r);
     }
 
-    public static void parseInto(
-            SourceInfo rootSourceInfo, JsScope scope,
-            JsBlock block, Reader r
-    ) throws IOException, JsParserException {
-        List<JsStatement> childStmts = parse(rootSourceInfo, scope, r);
-        List<JsStatement> parentStmts = block.getStatements();
-        parentStmts.addAll(childStmts);
-    }
-
     private final Stack<JsScope> scopeStack = new Stack<JsScope>();
     private final Stack<SourceInfo> sourceInfoStack = new Stack<SourceInfo>();
 
