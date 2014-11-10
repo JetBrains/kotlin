@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaPackage;
+import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.*;
 import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
@@ -273,8 +274,8 @@ public class SingleAbstractMethodUtils {
             @Nullable DeclarationDescriptor newOwner
     ) {
         Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> traitToFunTypeParameters =
-                DescriptorResolverUtils.recreateTypeParametersAndReturnMapping(originalParameters, newOwner);
-        TypeSubstitutor typeParametersSubstitutor = DescriptorResolverUtils.createSubstitutorForTypeParameters(traitToFunTypeParameters);
+                JavaResolverPsiUtils.recreateTypeParametersAndReturnMapping(originalParameters, newOwner);
+        TypeSubstitutor typeParametersSubstitutor = JavaResolverPsiUtils.createSubstitutorForTypeParameters(traitToFunTypeParameters);
         for (Map.Entry<TypeParameterDescriptor, TypeParameterDescriptorImpl> mapEntry : traitToFunTypeParameters.entrySet()) {
             TypeParameterDescriptor traitTypeParameter = mapEntry.getKey();
             TypeParameterDescriptorImpl funTypeParameter = mapEntry.getValue();
@@ -404,8 +405,8 @@ public class SingleAbstractMethodUtils {
                 JavaValueParameter param2 = it2.next();
                 if (param1.isVararg() != param2.isVararg()) return false;
 
-                JavaType type1 = DescriptorResolverUtils.erasure(substitutor1.substitute(param1.getType()), substitutor1);
-                JavaType type2 = DescriptorResolverUtils.erasure(substitutor2.substitute(param2.getType()), substitutor2);
+                JavaType type1 = JavaResolverPsiUtils.erasure(substitutor1.substitute(param1.getType()), substitutor1);
+                JavaType type2 = JavaResolverPsiUtils.erasure(substitutor2.substitute(param2.getType()), substitutor2);
                 if (!(type1 == null ? type2 == null : type1.equals(type2))) return false;
             }
 
