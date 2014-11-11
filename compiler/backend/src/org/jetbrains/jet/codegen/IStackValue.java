@@ -29,7 +29,7 @@ public interface IStackValue {
 
     void put(@NotNull Type type, @NotNull InstructionAdapter v, boolean skipReceiver);
 
-    void store(@NotNull Type topOfStackType, @NotNull InstructionAdapter v);
+    void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v);
 
     void store(@NotNull StackValue value, @NotNull InstructionAdapter v);
 

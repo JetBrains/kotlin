@@ -92,18 +92,15 @@ public abstract class StackValue implements IStackValue {
         }
     }
 
-    /**
-     * Set this value from the top of the stack.
-     */
     @Override
-    public void store(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
+    public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
         throw new UnsupportedOperationException("cannot store to value " + this);
     }
 
     @Override
     public void store(@NotNull StackValue value, @NotNull InstructionAdapter v, boolean skipReceiver) {
         value.put(value.type, v);
-        store(value.type, v);
+        storeSelector(value.type, v);
     }
 
     @Override
@@ -486,7 +483,7 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void store(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
+        public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             v.store(index, this.type);
         }
@@ -689,7 +686,7 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void store(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
+        public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             v.astore(this.type);
         }
@@ -700,7 +697,7 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void putNoReceiver(
+        public void putSelector(
                 @NotNull Type type, @NotNull InstructionAdapter v
         ) {
             v.aload(this.type);    // assumes array and index are on the stack
@@ -932,7 +929,7 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void putNoReceiver(@NotNull Type type, @NotNull InstructionAdapter v) {
+        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
             if (getter == null) {
                 throw new UnsupportedOperationException("no getter specified");
             }
@@ -988,7 +985,7 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void store(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
+        public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
             if (setter == null) {
                 throw new UnsupportedOperationException("no setter specified");
             }
@@ -1023,13 +1020,13 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void putNoReceiver(@NotNull Type type, @NotNull InstructionAdapter v) {
+        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
             v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD, owner.getInternalName(), name, this.type.getDescriptor());
             coerceTo(type, v);
         }
 
         @Override
-        public void store(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
+        public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             v.visitFieldInsn(isStaticStore ? PUTSTATIC : PUTFIELD, owner.getInternalName(), name, this.type.getDescriptor());
         }
@@ -1061,7 +1058,7 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void putNoReceiver(@NotNull Type type, @NotNull InstructionAdapter v) {
+        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
             if (getter == null) {
                 assert fieldName != null : "Property should have either a getter or a field name: " + descriptor;
                 v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD, backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
@@ -1075,7 +1072,7 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void store(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
+        public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             if (setter == null) {
                 assert fieldName != null : "Property should have either a setter or a field name: " + descriptor;
@@ -1143,7 +1140,7 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void putNoReceiver(@NotNull Type type, @NotNull InstructionAdapter v) {
+        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
             v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "element", refType.getDescriptor());
@@ -1156,7 +1153,7 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void store(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
+        public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
@@ -1210,7 +1207,7 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void putNoReceiver(@NotNull Type type, @NotNull InstructionAdapter v) {
+        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
             Type sharedType = sharedTypeForType(this.type);
             Type refType = refType(this.type);
             v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "element", refType.getDescriptor());
@@ -1219,7 +1216,7 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void store(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
+        public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             v.visitFieldInsn(PUTFIELD, sharedTypeForType(type).getInternalName(), "element", refType(type).getDescriptor());
         }
@@ -1479,12 +1476,12 @@ public abstract class StackValue implements IStackValue {
             if (!skipReceiver) {
                 putReceiver(v, true);
             }
-            putNoReceiver(type, v);
+            putSelector(type, v);
         }
 
         public abstract void putReceiver(@NotNull InstructionAdapter v, boolean isRead);
 
-        public abstract void putNoReceiver(@NotNull Type type, @NotNull InstructionAdapter v);
+        public abstract void putSelector(@NotNull Type type, @NotNull InstructionAdapter v);
 
         public abstract boolean hasReceiver(boolean isRead);
 
@@ -1535,7 +1532,7 @@ public abstract class StackValue implements IStackValue {
                 putReceiver(v, false);
             }
             rightSide.put(rightSide.type, v);
-            store(rightSide.type, v);
+            storeSelector(rightSide.type, v);
         }
     }
 
@@ -1618,17 +1615,17 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void putNoReceiver(
+        public void putSelector(
                 @NotNull Type type, @NotNull InstructionAdapter v
         ) {
-            originalValue.putNoReceiver(type, v);
+            originalValue.putSelector(type, v);
         }
 
         @Override
-        public void store(
+        public void storeSelector(
                 @NotNull Type topOfStackType, @NotNull InstructionAdapter v
         ) {
-            originalValue.store(topOfStackType, v);
+            originalValue.storeSelector(topOfStackType, v);
         }
 
         @Override
@@ -1689,7 +1686,7 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
-        public void putNoReceiver(@NotNull Type type, @NotNull InstructionAdapter v) {
+        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
             Label end = new Label();
 
             v.goTo(end);
