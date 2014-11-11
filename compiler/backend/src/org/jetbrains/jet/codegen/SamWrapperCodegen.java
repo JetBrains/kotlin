@@ -171,11 +171,14 @@ public class SamWrapperCodegen {
     private FqName getWrapperName(@NotNull JetFile containingFile) {
         FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(containingFile.getPackageFqName());
         JavaClassDescriptor descriptor = samType.getJavaClassDescriptor();
-        String shortName = packageClassFqName.shortName().asString() + "$sam$" + descriptor.getName().asString() + "$" +
-                   Integer.toHexString(
-                           PackagePartClassUtils.getPathHashCode(containingFile.getVirtualFile()) * 31 +
-                           DescriptorUtils.getFqNameSafe(descriptor).hashCode()
-                   );
+        int hash = PackagePartClassUtils.getPathHashCode(containingFile.getVirtualFile()) * 31 +
+                DescriptorUtils.getFqNameSafe(descriptor).hashCode();
+        String shortName = String.format(
+                "%s$sam$%s$%08x",
+                packageClassFqName.shortName().asString(),
+                descriptor.getName().asString(),
+                hash
+        );
         return packageClassFqName.parent().child(Name.identifier(shortName));
     }
 }
