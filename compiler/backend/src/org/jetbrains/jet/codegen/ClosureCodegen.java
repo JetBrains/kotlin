@@ -245,6 +245,8 @@ public class ClosureCodegen extends ParentCodegenAware {
         mv.visitCode();
 
         InstructionAdapter iv = new InstructionAdapter(mv);
+        ImplementationBodyCodegen.markLineNumberForSyntheticFunction(DescriptorUtils.getParentOfType(funDescriptor, ClassDescriptor.class), iv);
+
         iv.load(0, asmType);
 
         ReceiverParameterDescriptor receiver = funDescriptor.getExtensionReceiverParameter();
