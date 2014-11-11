@@ -1,63 +1,63 @@
 LazyJavaClassDescriptor@0['Integer'] {
-    _typeConstructor = LazyJavaClassTypeConstructor@1['Integer']
+    typeConstructor = LazyJavaClassTypeConstructor@1['Integer']
 }
 
 LazyJavaClassTypeConstructor@1['Integer'] {
-    _parameters = ArrayList@2[empty]
-    _supertypes = ArrayList@3[2] { LazyJavaClassifierType@4['Number'], LazyJavaClassifierType@5['Comparable<Integer>'] }
+    parameters = ArrayList@2[empty]
+    supertypes = ArrayList@3[2] { LazyJavaClassifierType@4['Number'], LazyJavaClassifierType@5['Comparable<Integer>'] }
 }
 
 LazyJavaClassifierType@5['Comparable<Integer>'] {
-    _typeConstructor = DeserializedClassTypeConstructor@6
-    classifier = JavaClassImpl@7['Comparable']
+    classifier = JavaClassImpl@6['Comparable']
+    typeConstructor = DeserializedClassTypeConstructor@7
 }
 
 LazyJavaClassifierType@4['Number'] {
-    _arguments = ArrayList@8[empty]
-    _typeConstructor = DeserializedClassTypeConstructor@9
-    classifier = JavaClassImpl@10['Number']
+    arguments = ArrayList@8[empty]
+    classifier = JavaClassImpl@9['Number']
+    typeConstructor = DeserializedClassTypeConstructor@10
 }
 
 LazyJavaPackageFragmentProvider@11 {
-    _packageFragments('<root>': FqName@12) = LazyJavaPackageFragment@13['<root>']
-    _packageFragments('Annotation': FqName@14) = null
-    _packageFragments('Int': FqName@15) = null
-    _packageFragments('Integer': FqName@16) = null
-    _packageFragments('Iterable': FqName@17) = null
-    _packageFragments('Iterator': FqName@18) = null
-    _packageFragments('java': FqName@19) = LazyJavaPackageFragment@20['java']
-    _packageFragments('java.lang': FqName@21) = LazyJavaPackageFragment@22['lang']
-    _packageFragments('java.lang.Annotation': FqName@23) = null
-    _packageFragments('java.lang.Int': FqName@24) = null
-    _packageFragments('java.lang.Integer': FqName@25) = null
-    _packageFragments('java.lang.Iterable': FqName@26) = null
-    _packageFragments('java.lang.Iterator': FqName@27) = null
-    _packageFragments('java.lang.annotation': FqName@28) = LazyJavaPackageFragment@29['annotation']
-    _packageFragments('java.lang.annotation.Annotation': FqName@30) = null
-    _packageFragments('java.lang.annotation.Int': FqName@31) = null
-    _packageFragments('java.lang.annotation.Integer': FqName@32) = null
-    _packageFragments('java.lang.annotation.Iterable': FqName@33) = null
-    _packageFragments('java.lang.annotation.Iterator': FqName@34) = null
-    _packageFragments('java.util': FqName@35) = LazyJavaPackageFragment@36['util']
-    _packageFragments('java.util.Annotation': FqName@37) = null
-    _packageFragments('java.util.Int': FqName@38) = null
-    _packageFragments('java.util.Integer': FqName@39) = null
-    _packageFragments('java.util.Iterable': FqName@40) = null
-    _packageFragments('java.util.Iterator': FqName@41) = null
-    _packageFragments('kotlin': FqName@42) = null
-    _packageFragments('kotlin.Annotation': FqName@43) = null
-    _packageFragments('kotlin.Int': FqName@44) = null
-    _packageFragments('kotlin.Integer': FqName@45) = null
-    _packageFragments('kotlin.Iterable': FqName@46) = null
-    _packageFragments('kotlin.Iterator': FqName@47) = null
-    _packageFragments('kotlin.io': FqName@48) = null
-    _packageFragments('kotlin.jvm': FqName@49) = null
-    _packageFragments('n': FqName@50) = null
-    _packageFragments('n.Annotation': FqName@51) = null
-    _packageFragments('n.Int': FqName@52) = null
-    _packageFragments('n.Integer': FqName@53) = null
-    _packageFragments('n.Iterable': FqName@54) = null
-    _packageFragments('n.Iterator': FqName@55) = null
+    packageFragments('<root>': FqName@12) = LazyJavaPackageFragment@13['<root>']
+    packageFragments('Annotation': FqName@14) = null
+    packageFragments('Int': FqName@15) = null
+    packageFragments('Integer': FqName@16) = null
+    packageFragments('Iterable': FqName@17) = null
+    packageFragments('Iterator': FqName@18) = null
+    packageFragments('java': FqName@19) = LazyJavaPackageFragment@20['java']
+    packageFragments('java.lang': FqName@21) = LazyJavaPackageFragment@22['lang']
+    packageFragments('java.lang.Annotation': FqName@23) = null
+    packageFragments('java.lang.Int': FqName@24) = null
+    packageFragments('java.lang.Integer': FqName@25) = null
+    packageFragments('java.lang.Iterable': FqName@26) = null
+    packageFragments('java.lang.Iterator': FqName@27) = null
+    packageFragments('java.lang.annotation': FqName@28) = LazyJavaPackageFragment@29['annotation']
+    packageFragments('java.lang.annotation.Annotation': FqName@30) = null
+    packageFragments('java.lang.annotation.Int': FqName@31) = null
+    packageFragments('java.lang.annotation.Integer': FqName@32) = null
+    packageFragments('java.lang.annotation.Iterable': FqName@33) = null
+    packageFragments('java.lang.annotation.Iterator': FqName@34) = null
+    packageFragments('java.util': FqName@35) = LazyJavaPackageFragment@36['util']
+    packageFragments('java.util.Annotation': FqName@37) = null
+    packageFragments('java.util.Int': FqName@38) = null
+    packageFragments('java.util.Integer': FqName@39) = null
+    packageFragments('java.util.Iterable': FqName@40) = null
+    packageFragments('java.util.Iterator': FqName@41) = null
+    packageFragments('kotlin': FqName@42) = null
+    packageFragments('kotlin.Annotation': FqName@43) = null
+    packageFragments('kotlin.Int': FqName@44) = null
+    packageFragments('kotlin.Integer': FqName@45) = null
+    packageFragments('kotlin.Iterable': FqName@46) = null
+    packageFragments('kotlin.Iterator': FqName@47) = null
+    packageFragments('kotlin.io': FqName@48) = null
+    packageFragments('kotlin.jvm': FqName@49) = null
+    packageFragments('n': FqName@50) = null
+    packageFragments('n.Annotation': FqName@51) = null
+    packageFragments('n.Int': FqName@52) = null
+    packageFragments('n.Integer': FqName@53) = null
+    packageFragments('n.Iterable': FqName@54) = null
+    packageFragments('n.Iterator': FqName@55) = null
     topLevelClasses(JavaClassImpl@56['Annotation']) = LazyJavaClassDescriptor@57['Annotation']
     topLevelClasses(JavaClassImpl@58['Integer']) = LazyJavaClassDescriptor@0['Integer']
     topLevelClasses(JavaClassImpl@59['Iterator']) = LazyJavaClassDescriptor@60['Iterator']
@@ -72,20 +72,20 @@ LazyJavaPackageFragment@29['annotation'] {
 }
 
 LazyJavaPackageFragment@20['java'] {
-    _functions('lang': Name@67) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@69
-    _functions('util': Name@70) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@69
-    classes('lang': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@69
-    classes('util': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@69
-    deserializedPackageScope = Empty@73 // through LazyPackageFragmentScopeForJavaPackage@69
-    memberIndex = computeMemberIndex$1@74 // through LazyPackageFragmentScopeForJavaPackage@69
+    classes('lang': Name@67) = null // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('util': Name@69) = null // through LazyPackageFragmentScopeForJavaPackage@68
+    deserializedPackageScope = Empty@70 // through LazyPackageFragmentScopeForJavaPackage@68
+    functions('lang': Name@71) = EmptyList@72[empty] // through LazyPackageFragmentScopeForJavaPackage@68
+    functions('util': Name@73) = EmptyList@72[empty] // through LazyPackageFragmentScopeForJavaPackage@68
+    memberIndex = computeMemberIndex$1@74 // through LazyPackageFragmentScopeForJavaPackage@68
 }
 
 LazyJavaPackageFragment@22['lang'] {
-    _functions('annotation': Name@75) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@76
-    classes('Integer': Name@64) = LazyJavaClassDescriptor@0['Integer'] // through LazyPackageFragmentScopeForJavaPackage@76
-    classes('annotation': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@76
-    deserializedPackageScope = Empty@73 // through LazyPackageFragmentScopeForJavaPackage@76
-    memberIndex = computeMemberIndex$1@78 // through LazyPackageFragmentScopeForJavaPackage@76
+    classes('Integer': Name@64) = LazyJavaClassDescriptor@0['Integer'] // through LazyPackageFragmentScopeForJavaPackage@75
+    classes('annotation': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@75
+    deserializedPackageScope = Empty@70 // through LazyPackageFragmentScopeForJavaPackage@75
+    functions('annotation': Name@77) = EmptyList@72[empty] // through LazyPackageFragmentScopeForJavaPackage@75
+    memberIndex = computeMemberIndex$1@78 // through LazyPackageFragmentScopeForJavaPackage@75
 }
 
 LazyJavaPackageFragment@36['util'] {

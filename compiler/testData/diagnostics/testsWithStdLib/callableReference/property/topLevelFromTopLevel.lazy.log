@@ -179,55 +179,55 @@ DeserializedType@129['K in kotlin'] {
 }
 
 DeserializedType@130['R in kotlin.reflect.KMutableProperty'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@117
-}
-
-DeserializedType@131['R in kotlin.reflect.KMutableTopLevelProperty'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@121
-}
-
-DeserializedType@132['R in kotlin.reflect.KMutableTopLevelProperty'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@121
-}
-
-DeserializedType@133['R in kotlin.reflect.KMutableTopLevelVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@109
-}
-
-DeserializedType@134['R in kotlin.reflect.KMutableTopLevelVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@109
-}
-
-DeserializedType@135['R in kotlin.reflect.KMutableTopLevelVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@109
-}
-
-DeserializedType@136['R in kotlin.reflect.KMutableVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@98
-}
-
-DeserializedType@137['R in kotlin.reflect.KMutableVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@98
-}
-
-DeserializedType@138['R in kotlin.reflect.KMutableVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@98
-}
-
-DeserializedType@139['R in kotlin.reflect.KProperty'] {
     constructor = AbstractLazyTypeParameterDescriptor$1@105
 }
 
-DeserializedType@140['R in kotlin.reflect.KTopLevelProperty'] {
+DeserializedType@131['R in kotlin.reflect.KMutableTopLevelProperty'] {
     constructor = AbstractLazyTypeParameterDescriptor$1@113
 }
 
-DeserializedType@141['R in kotlin.reflect.KTopLevelVariable'] {
+DeserializedType@132['R in kotlin.reflect.KMutableTopLevelProperty'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@113
+}
+
+DeserializedType@133['R in kotlin.reflect.KMutableTopLevelVariable'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@117
+}
+
+DeserializedType@134['R in kotlin.reflect.KMutableTopLevelVariable'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@117
+}
+
+DeserializedType@135['R in kotlin.reflect.KMutableTopLevelVariable'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@117
+}
+
+DeserializedType@136['R in kotlin.reflect.KMutableVariable'] {
     constructor = AbstractLazyTypeParameterDescriptor$1@88
 }
 
-DeserializedType@142['R in kotlin.reflect.KTopLevelVariable'] {
+DeserializedType@137['R in kotlin.reflect.KMutableVariable'] {
     constructor = AbstractLazyTypeParameterDescriptor$1@88
+}
+
+DeserializedType@138['R in kotlin.reflect.KMutableVariable'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@88
+}
+
+DeserializedType@139['R in kotlin.reflect.KProperty'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@109
+}
+
+DeserializedType@140['R in kotlin.reflect.KTopLevelProperty'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@121
+}
+
+DeserializedType@141['R in kotlin.reflect.KTopLevelVariable'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@98
+}
+
+DeserializedType@142['R in kotlin.reflect.KTopLevelVariable'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@98
 }
 
 DeserializedType@143['R in kotlin.reflect.KVariable'] {
@@ -250,27 +250,7 @@ DeserializedType@147['V in kotlin'] {
     constructor = AbstractLazyTypeParameterDescriptor$1@125
 }
 
-DeserializedType@107['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
-DeserializedType@85['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
-DeserializedType@111['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
-DeserializedType@127['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
-DeserializedType@90['kotlin.Any'] {
+DeserializedType@95['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@148
     memberScope = DeserializedClassMemberScope@149
 }
@@ -280,12 +260,37 @@ DeserializedType@150['kotlin.Any'] {
     memberScope = DeserializedClassMemberScope@149
 }
 
+DeserializedType@90['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
+DeserializedType@127['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
+DeserializedType@100['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
+DeserializedType@107['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
 DeserializedType@123['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@148
     memberScope = DeserializedClassMemberScope@149
 }
 
-DeserializedType@95['kotlin.Any'] {
+DeserializedType@111['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
+DeserializedType@85['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@148
     memberScope = DeserializedClassMemberScope@149
 }
@@ -296,11 +301,6 @@ DeserializedType@115['kotlin.Any'] {
 }
 
 DeserializedType@119['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
-DeserializedType@100['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@148
     memberScope = DeserializedClassMemberScope@149
 }
@@ -386,250 +386,250 @@ DeserializedType@192['kotlin.reflect.KVariable'] {
 }
 
 LazyJavaPackageFragmentProvider@194 {
-    _packageFragments('<root>': FqName@195) = LazyJavaPackageFragment@196['<root>']
-    _packageFragments('Int': FqName@197) = null
-    _packageFragments('KCallable': FqName@198) = null
-    _packageFragments('KMutableProperty': FqName@199) = null
-    _packageFragments('KMutableTopLevelProperty': FqName@200) = null
-    _packageFragments('KMutableTopLevelVariable': FqName@201) = null
-    _packageFragments('KMutableVariable': FqName@202) = null
-    _packageFragments('KProperty': FqName@203) = null
-    _packageFragments('KTopLevelProperty': FqName@204) = null
-    _packageFragments('KTopLevelVariable': FqName@205) = null
-    _packageFragments('String': FqName@206) = null
-    _packageFragments('java': FqName@207) = LazyJavaPackageFragment@208['java']
-    _packageFragments('java.lang': FqName@209) = LazyJavaPackageFragment@210['lang']
-    _packageFragments('java.lang.Int': FqName@211) = null
-    _packageFragments('java.lang.KCallable': FqName@212) = null
-    _packageFragments('java.lang.KMutableProperty': FqName@213) = null
-    _packageFragments('java.lang.KMutableTopLevelProperty': FqName@214) = null
-    _packageFragments('java.lang.KMutableTopLevelVariable': FqName@215) = null
-    _packageFragments('java.lang.KMutableVariable': FqName@216) = null
-    _packageFragments('java.lang.KProperty': FqName@217) = null
-    _packageFragments('java.lang.KTopLevelProperty': FqName@218) = null
-    _packageFragments('java.lang.KTopLevelVariable': FqName@219) = null
-    _packageFragments('java.lang.String': FqName@220) = null
-    _packageFragments('kotlin': FqName@221) = LazyJavaPackageFragment@81['kotlin']
-    _packageFragments('kotlin.Int': FqName@222) = null
-    _packageFragments('kotlin.KCallable': FqName@223) = null
-    _packageFragments('kotlin.KMutableProperty': FqName@224) = null
-    _packageFragments('kotlin.KMutableTopLevelProperty': FqName@225) = null
-    _packageFragments('kotlin.KMutableTopLevelVariable': FqName@226) = null
-    _packageFragments('kotlin.KMutableVariable': FqName@227) = null
-    _packageFragments('kotlin.KProperty': FqName@228) = null
-    _packageFragments('kotlin.KTopLevelProperty': FqName@229) = null
-    _packageFragments('kotlin.KTopLevelVariable': FqName@230) = null
-    _packageFragments('kotlin.String': FqName@231) = null
-    _packageFragments('kotlin.io': FqName@232) = LazyJavaPackageFragment@233['io']
-    _packageFragments('kotlin.io.Int': FqName@234) = null
-    _packageFragments('kotlin.io.KCallable': FqName@235) = null
-    _packageFragments('kotlin.io.KMutableProperty': FqName@236) = null
-    _packageFragments('kotlin.io.KMutableTopLevelProperty': FqName@237) = null
-    _packageFragments('kotlin.io.KMutableTopLevelVariable': FqName@238) = null
-    _packageFragments('kotlin.io.KMutableVariable': FqName@239) = null
-    _packageFragments('kotlin.io.KProperty': FqName@240) = null
-    _packageFragments('kotlin.io.KTopLevelProperty': FqName@241) = null
-    _packageFragments('kotlin.io.KTopLevelVariable': FqName@242) = null
-    _packageFragments('kotlin.io.String': FqName@243) = null
-    _packageFragments('kotlin.jvm': FqName@244) = LazyJavaPackageFragment@245['jvm']
-    _packageFragments('kotlin.jvm.Int': FqName@246) = null
-    _packageFragments('kotlin.jvm.KCallable': FqName@247) = null
-    _packageFragments('kotlin.jvm.KMutableProperty': FqName@248) = null
-    _packageFragments('kotlin.jvm.KMutableTopLevelProperty': FqName@249) = null
-    _packageFragments('kotlin.jvm.KMutableTopLevelVariable': FqName@250) = null
-    _packageFragments('kotlin.jvm.KMutableVariable': FqName@251) = null
-    _packageFragments('kotlin.jvm.KProperty': FqName@252) = null
-    _packageFragments('kotlin.jvm.KTopLevelProperty': FqName@253) = null
-    _packageFragments('kotlin.jvm.KTopLevelVariable': FqName@254) = null
-    _packageFragments('kotlin.jvm.String': FqName@255) = null
-    _packageFragments('kotlin.reflect': FqName@256) = LazyJavaPackageFragment@21['reflect']
-    _packageFragments('kotlin.reflect.Int': FqName@257) = null
-    _packageFragments('kotlin.reflect.KCallable': FqName@258) = null
-    _packageFragments('kotlin.reflect.KMutableProperty': FqName@259) = null
-    _packageFragments('kotlin.reflect.KMutableTopLevelProperty': FqName@260) = null
-    _packageFragments('kotlin.reflect.KMutableTopLevelVariable': FqName@261) = null
-    _packageFragments('kotlin.reflect.KMutableVariable': FqName@262) = null
-    _packageFragments('kotlin.reflect.KProperty': FqName@263) = null
-    _packageFragments('kotlin.reflect.KTopLevelProperty': FqName@264) = null
-    _packageFragments('kotlin.reflect.KTopLevelVariable': FqName@265) = null
-    _packageFragments('kotlin.reflect.String': FqName@266) = null
-    _packageFragments('x': FqName@267) = null
-    _packageFragments('y': FqName@268) = null
+    packageFragments('<root>': FqName@195) = LazyJavaPackageFragment@196['<root>']
+    packageFragments('Int': FqName@197) = null
+    packageFragments('KCallable': FqName@198) = null
+    packageFragments('KMutableProperty': FqName@199) = null
+    packageFragments('KMutableTopLevelProperty': FqName@200) = null
+    packageFragments('KMutableTopLevelVariable': FqName@201) = null
+    packageFragments('KMutableVariable': FqName@202) = null
+    packageFragments('KProperty': FqName@203) = null
+    packageFragments('KTopLevelProperty': FqName@204) = null
+    packageFragments('KTopLevelVariable': FqName@205) = null
+    packageFragments('String': FqName@206) = null
+    packageFragments('java': FqName@207) = LazyJavaPackageFragment@208['java']
+    packageFragments('java.lang': FqName@209) = LazyJavaPackageFragment@210['lang']
+    packageFragments('java.lang.Int': FqName@211) = null
+    packageFragments('java.lang.KCallable': FqName@212) = null
+    packageFragments('java.lang.KMutableProperty': FqName@213) = null
+    packageFragments('java.lang.KMutableTopLevelProperty': FqName@214) = null
+    packageFragments('java.lang.KMutableTopLevelVariable': FqName@215) = null
+    packageFragments('java.lang.KMutableVariable': FqName@216) = null
+    packageFragments('java.lang.KProperty': FqName@217) = null
+    packageFragments('java.lang.KTopLevelProperty': FqName@218) = null
+    packageFragments('java.lang.KTopLevelVariable': FqName@219) = null
+    packageFragments('java.lang.String': FqName@220) = null
+    packageFragments('kotlin': FqName@221) = LazyJavaPackageFragment@81['kotlin']
+    packageFragments('kotlin.Int': FqName@222) = null
+    packageFragments('kotlin.KCallable': FqName@223) = null
+    packageFragments('kotlin.KMutableProperty': FqName@224) = null
+    packageFragments('kotlin.KMutableTopLevelProperty': FqName@225) = null
+    packageFragments('kotlin.KMutableTopLevelVariable': FqName@226) = null
+    packageFragments('kotlin.KMutableVariable': FqName@227) = null
+    packageFragments('kotlin.KProperty': FqName@228) = null
+    packageFragments('kotlin.KTopLevelProperty': FqName@229) = null
+    packageFragments('kotlin.KTopLevelVariable': FqName@230) = null
+    packageFragments('kotlin.String': FqName@231) = null
+    packageFragments('kotlin.io': FqName@232) = LazyJavaPackageFragment@233['io']
+    packageFragments('kotlin.io.Int': FqName@234) = null
+    packageFragments('kotlin.io.KCallable': FqName@235) = null
+    packageFragments('kotlin.io.KMutableProperty': FqName@236) = null
+    packageFragments('kotlin.io.KMutableTopLevelProperty': FqName@237) = null
+    packageFragments('kotlin.io.KMutableTopLevelVariable': FqName@238) = null
+    packageFragments('kotlin.io.KMutableVariable': FqName@239) = null
+    packageFragments('kotlin.io.KProperty': FqName@240) = null
+    packageFragments('kotlin.io.KTopLevelProperty': FqName@241) = null
+    packageFragments('kotlin.io.KTopLevelVariable': FqName@242) = null
+    packageFragments('kotlin.io.String': FqName@243) = null
+    packageFragments('kotlin.jvm': FqName@244) = LazyJavaPackageFragment@245['jvm']
+    packageFragments('kotlin.jvm.Int': FqName@246) = null
+    packageFragments('kotlin.jvm.KCallable': FqName@247) = null
+    packageFragments('kotlin.jvm.KMutableProperty': FqName@248) = null
+    packageFragments('kotlin.jvm.KMutableTopLevelProperty': FqName@249) = null
+    packageFragments('kotlin.jvm.KMutableTopLevelVariable': FqName@250) = null
+    packageFragments('kotlin.jvm.KMutableVariable': FqName@251) = null
+    packageFragments('kotlin.jvm.KProperty': FqName@252) = null
+    packageFragments('kotlin.jvm.KTopLevelProperty': FqName@253) = null
+    packageFragments('kotlin.jvm.KTopLevelVariable': FqName@254) = null
+    packageFragments('kotlin.jvm.String': FqName@255) = null
+    packageFragments('kotlin.reflect': FqName@256) = LazyJavaPackageFragment@21['reflect']
+    packageFragments('kotlin.reflect.Int': FqName@257) = null
+    packageFragments('kotlin.reflect.KCallable': FqName@258) = null
+    packageFragments('kotlin.reflect.KMutableProperty': FqName@259) = null
+    packageFragments('kotlin.reflect.KMutableTopLevelProperty': FqName@260) = null
+    packageFragments('kotlin.reflect.KMutableTopLevelVariable': FqName@261) = null
+    packageFragments('kotlin.reflect.KMutableVariable': FqName@262) = null
+    packageFragments('kotlin.reflect.KProperty': FqName@263) = null
+    packageFragments('kotlin.reflect.KTopLevelProperty': FqName@264) = null
+    packageFragments('kotlin.reflect.KTopLevelVariable': FqName@265) = null
+    packageFragments('kotlin.reflect.String': FqName@266) = null
+    packageFragments('x': FqName@267) = null
+    packageFragments('y': FqName@268) = null
 }
 
 LazyJavaPackageFragment@196['<root>'] {
-    _functions('get': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@269
-    _functions('invoke': Name@270) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@269
-    _functions('kotlin': Name@271) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@269
-    _functions('set': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@269
-    _functions('x': Name@272) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@269
-    _functions('y': Name@273) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('Int': Name@274) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('KCallable': Name@275) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('KMutableProperty': Name@276) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('KMutableTopLevelProperty': Name@277) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('KMutableTopLevelVariable': Name@278) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('KMutableVariable': Name@279) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('KProperty': Name@280) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('KTopLevelProperty': Name@281) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('KTopLevelVariable': Name@282) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('String': Name@283) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('get': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('invoke': Name@270) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('kotlin': Name@284) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('set': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('x': Name@272) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    classes('y': Name@273) = null // through LazyPackageFragmentScopeForJavaPackage@269
-    deserializedPackageScope = Empty@285 // through LazyPackageFragmentScopeForJavaPackage@269
-    memberIndex = computeMemberIndex$1@286 // through LazyPackageFragmentScopeForJavaPackage@269
+    classes('Int': Name@269) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('KCallable': Name@271) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('KMutableProperty': Name@272) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('KMutableTopLevelProperty': Name@273) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('KMutableTopLevelVariable': Name@274) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('KMutableVariable': Name@275) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('KProperty': Name@276) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('KTopLevelProperty': Name@277) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('KTopLevelVariable': Name@278) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('String': Name@279) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('get': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('invoke': Name@280) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('kotlin': Name@281) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('set': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('x': Name@282) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    classes('y': Name@283) = null // through LazyPackageFragmentScopeForJavaPackage@270
+    deserializedPackageScope = Empty@284 // through LazyPackageFragmentScopeForJavaPackage@270
+    functions('get': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@270
+    functions('invoke': Name@280) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@270
+    functions('kotlin': Name@285) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@270
+    functions('set': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@270
+    functions('x': Name@282) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@270
+    functions('y': Name@283) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@270
+    memberIndex = computeMemberIndex$1@286 // through LazyPackageFragmentScopeForJavaPackage@270
 }
 
 LazyJavaPackageFragment@233['io'] {
-    _functions('get': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@287
-    _functions('invoke': Name@270) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@287
-    _functions('set': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@287
-    _functions('x': Name@272) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@287
-    _functions('y': Name@273) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@287
-    classes('Int': Name@274) = null // through LazyPackageFragmentScopeForJavaPackage@287
-    classes('String': Name@283) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('Int': Name@269) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('String': Name@279) = null // through LazyPackageFragmentScopeForJavaPackage@287
     classes('get': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@287
-    classes('invoke': Name@270) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('invoke': Name@280) = null // through LazyPackageFragmentScopeForJavaPackage@287
     classes('set': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@287
-    classes('x': Name@272) = null // through LazyPackageFragmentScopeForJavaPackage@287
-    classes('y': Name@273) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('x': Name@282) = null // through LazyPackageFragmentScopeForJavaPackage@287
+    classes('y': Name@283) = null // through LazyPackageFragmentScopeForJavaPackage@287
     deserializedPackageScope = DeserializedPackageMemberScope@288 // through LazyPackageFragmentScopeForJavaPackage@287
     functions('get': Name@23) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
-    functions('invoke': Name@270) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
+    functions('get': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    functions('invoke': Name@280) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
+    functions('invoke': Name@280) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@287
     functions('set': Name@26) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
-    functions('x': Name@272) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
-    functions('y': Name@273) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
+    functions('set': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    functions('x': Name@282) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
+    functions('x': Name@282) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@287
+    functions('y': Name@283) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
+    functions('y': Name@283) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@287
     memberIndex = computeMemberIndex$1@289 // through LazyPackageFragmentScopeForJavaPackage@287
     membersProtos = HashMap@290 // through DeserializedPackageMemberScope@288
     properties('get': Name@23) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
     properties('name': Name@28) = ArrayList@291[1] { DeserializedPropertyDescriptor@292['name'] } // through DeserializedPackageMemberScope@288
     properties('set': Name@26) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
-    properties('x': Name@272) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
-    properties('y': Name@273) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
+    properties('x': Name@282) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
+    properties('y': Name@283) = EmptyList@24[empty] // through DeserializedPackageMemberScope@288
 }
 
 LazyJavaPackageFragment@208['java'] {
-    _functions('lang': Name@293) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@294
-    classes('lang': Name@295) = null // through LazyPackageFragmentScopeForJavaPackage@294
-    deserializedPackageScope = Empty@285 // through LazyPackageFragmentScopeForJavaPackage@294
+    classes('lang': Name@293) = null // through LazyPackageFragmentScopeForJavaPackage@294
+    deserializedPackageScope = Empty@284 // through LazyPackageFragmentScopeForJavaPackage@294
+    functions('lang': Name@295) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@294
     memberIndex = computeMemberIndex$1@296 // through LazyPackageFragmentScopeForJavaPackage@294
 }
 
 LazyJavaPackageFragment@245['jvm'] {
-    _functions('get': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@297
-    _functions('invoke': Name@270) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@297
-    _functions('set': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@297
-    _functions('x': Name@272) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@297
-    _functions('y': Name@273) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@297
-    classes('Int': Name@274) = null // through LazyPackageFragmentScopeForJavaPackage@297
-    classes('String': Name@283) = null // through LazyPackageFragmentScopeForJavaPackage@297
+    classes('Int': Name@269) = null // through LazyPackageFragmentScopeForJavaPackage@297
+    classes('String': Name@279) = null // through LazyPackageFragmentScopeForJavaPackage@297
     classes('get': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@297
-    classes('invoke': Name@270) = null // through LazyPackageFragmentScopeForJavaPackage@297
+    classes('invoke': Name@280) = null // through LazyPackageFragmentScopeForJavaPackage@297
     classes('set': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@297
-    classes('x': Name@272) = null // through LazyPackageFragmentScopeForJavaPackage@297
-    classes('y': Name@273) = null // through LazyPackageFragmentScopeForJavaPackage@297
-    deserializedPackageScope = Empty@285 // through LazyPackageFragmentScopeForJavaPackage@297
+    classes('x': Name@282) = null // through LazyPackageFragmentScopeForJavaPackage@297
+    classes('y': Name@283) = null // through LazyPackageFragmentScopeForJavaPackage@297
+    deserializedPackageScope = Empty@284 // through LazyPackageFragmentScopeForJavaPackage@297
+    functions('get': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@297
+    functions('invoke': Name@280) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@297
+    functions('set': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@297
+    functions('x': Name@282) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@297
+    functions('y': Name@283) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@297
     memberIndex = computeMemberIndex$1@298 // through LazyPackageFragmentScopeForJavaPackage@297
 }
 
 LazyJavaPackageFragment@81['kotlin'] {
-    _functions('get': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@299
-    _functions('invoke': Name@270) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@299
-    _functions('io': Name@300) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@299
-    _functions('jvm': Name@301) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@299
-    _functions('reflect': Name@302) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@299
-    _functions('set': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@299
-    _functions('x': Name@272) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@299
-    _functions('y': Name@273) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('Any': Name@303) = null // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('Int': Name@274) = null // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('MutableMap': Name@304) = null // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('String': Name@283) = null // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('Unit': Name@305) = DeserializedClassDescriptor@20['Unit'] // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('get': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('invoke': Name@270) = null // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('io': Name@306) = null // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('jvm': Name@307) = null // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('reflect': Name@308) = null // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('set': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('x': Name@272) = null // through LazyPackageFragmentScopeForJavaPackage@299
-    classes('y': Name@273) = null // through LazyPackageFragmentScopeForJavaPackage@299
-    deserializedPackageScope = DeserializedPackageMemberScope@309 // through LazyPackageFragmentScopeForJavaPackage@299
-    functions('get': Name@23) = ArrayList@310[2] { DeserializedSimpleFunctionDescriptor@311['get'], DeserializedSimpleFunctionDescriptor@312['get'] } // through DeserializedPackageMemberScope@309
-    functions('invoke': Name@270) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    functions('io': Name@300) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    functions('jvm': Name@301) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    functions('reflect': Name@302) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    functions('set': Name@26) = ArrayList@313[1] { DeserializedSimpleFunctionDescriptor@314['set'] } // through DeserializedPackageMemberScope@309
-    functions('x': Name@272) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    functions('y': Name@273) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    memberIndex = computeMemberIndex$1@315 // through LazyPackageFragmentScopeForJavaPackage@299
-    membersProtos = HashMap@316 // through DeserializedPackageMemberScope@309
-    properties('get': Name@23) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    properties('io': Name@300) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    properties('jvm': Name@301) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    properties('name': Name@28) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    properties('reflect': Name@302) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    properties('set': Name@26) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    properties('x': Name@272) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
-    properties('y': Name@273) = EmptyList@24[empty] // through DeserializedPackageMemberScope@309
+    classes('Any': Name@299) = null // through LazyPackageFragmentScopeForJavaPackage@300
+    classes('Int': Name@269) = null // through LazyPackageFragmentScopeForJavaPackage@300
+    classes('MutableMap': Name@301) = null // through LazyPackageFragmentScopeForJavaPackage@300
+    classes('String': Name@279) = null // through LazyPackageFragmentScopeForJavaPackage@300
+    classes('Unit': Name@302) = DeserializedClassDescriptor@20['Unit'] // through LazyPackageFragmentScopeForJavaPackage@300
+    classes('get': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@300
+    classes('invoke': Name@280) = null // through LazyPackageFragmentScopeForJavaPackage@300
+    classes('io': Name@303) = null // through LazyPackageFragmentScopeForJavaPackage@300
+    classes('jvm': Name@304) = null // through LazyPackageFragmentScopeForJavaPackage@300
+    classes('reflect': Name@305) = null // through LazyPackageFragmentScopeForJavaPackage@300
+    classes('set': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@300
+    classes('x': Name@282) = null // through LazyPackageFragmentScopeForJavaPackage@300
+    classes('y': Name@283) = null // through LazyPackageFragmentScopeForJavaPackage@300
+    deserializedPackageScope = DeserializedPackageMemberScope@306 // through LazyPackageFragmentScopeForJavaPackage@300
+    functions('get': Name@23) = ArrayList@307[2] { DeserializedSimpleFunctionDescriptor@308['get'], DeserializedSimpleFunctionDescriptor@309['get'] } // through DeserializedPackageMemberScope@306
+    functions('get': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@300
+    functions('invoke': Name@280) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    functions('invoke': Name@280) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@300
+    functions('io': Name@310) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    functions('io': Name@310) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@300
+    functions('jvm': Name@311) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    functions('jvm': Name@311) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@300
+    functions('reflect': Name@312) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    functions('reflect': Name@312) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@300
+    functions('set': Name@26) = ArrayList@313[1] { DeserializedSimpleFunctionDescriptor@314['set'] } // through DeserializedPackageMemberScope@306
+    functions('set': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@300
+    functions('x': Name@282) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    functions('x': Name@282) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@300
+    functions('y': Name@283) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    functions('y': Name@283) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@300
+    memberIndex = computeMemberIndex$1@315 // through LazyPackageFragmentScopeForJavaPackage@300
+    membersProtos = HashMap@316 // through DeserializedPackageMemberScope@306
+    properties('get': Name@23) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    properties('io': Name@310) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    properties('jvm': Name@311) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    properties('name': Name@28) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    properties('reflect': Name@312) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    properties('set': Name@26) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    properties('x': Name@282) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
+    properties('y': Name@283) = EmptyList@24[empty] // through DeserializedPackageMemberScope@306
 }
 
 LazyJavaPackageFragment@210['lang'] {
-    _functions('get': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@317
-    _functions('invoke': Name@270) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@317
-    _functions('set': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@317
-    _functions('x': Name@272) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@317
-    _functions('y': Name@273) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@317
     classes('get': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@317
-    classes('invoke': Name@270) = null // through LazyPackageFragmentScopeForJavaPackage@317
+    classes('invoke': Name@280) = null // through LazyPackageFragmentScopeForJavaPackage@317
     classes('set': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@317
-    classes('x': Name@272) = null // through LazyPackageFragmentScopeForJavaPackage@317
-    classes('y': Name@273) = null // through LazyPackageFragmentScopeForJavaPackage@317
-    deserializedPackageScope = Empty@285 // through LazyPackageFragmentScopeForJavaPackage@317
+    classes('x': Name@282) = null // through LazyPackageFragmentScopeForJavaPackage@317
+    classes('y': Name@283) = null // through LazyPackageFragmentScopeForJavaPackage@317
+    deserializedPackageScope = Empty@284 // through LazyPackageFragmentScopeForJavaPackage@317
+    functions('get': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@317
+    functions('invoke': Name@280) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@317
+    functions('set': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@317
+    functions('x': Name@282) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@317
+    functions('y': Name@283) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@317
     memberIndex = computeMemberIndex$1@318 // through LazyPackageFragmentScopeForJavaPackage@317
 }
 
 LazyJavaPackageFragment@21['reflect'] {
-    _functions('get': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@319
-    _functions('invoke': Name@270) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@319
-    _functions('set': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@319
-    _functions('x': Name@272) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@319
-    _functions('y': Name@273) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@319
-    classes('Int': Name@274) = null // through LazyPackageFragmentScopeForJavaPackage@319
+    classes('Int': Name@269) = null // through LazyPackageFragmentScopeForJavaPackage@319
     classes('KCallable': Name@320) = DeserializedClassDescriptor@2['KCallable'] // through LazyPackageFragmentScopeForJavaPackage@319
     classes('KMutableProperty': Name@321) = DeserializedClassDescriptor@4['KMutableProperty'] // through LazyPackageFragmentScopeForJavaPackage@319
-    classes('KMutableTopLevelProperty': Name@277) = DeserializedClassDescriptor@6['KMutableTopLevelProperty'] // through LazyPackageFragmentScopeForJavaPackage@319
+    classes('KMutableTopLevelProperty': Name@273) = DeserializedClassDescriptor@6['KMutableTopLevelProperty'] // through LazyPackageFragmentScopeForJavaPackage@319
     classes('KMutableTopLevelVariable': Name@322) = DeserializedClassDescriptor@8['KMutableTopLevelVariable'] // through LazyPackageFragmentScopeForJavaPackage@319
     classes('KMutableVariable': Name@323) = DeserializedClassDescriptor@10['KMutableVariable'] // through LazyPackageFragmentScopeForJavaPackage@319
     classes('KProperty': Name@324) = DeserializedClassDescriptor@12['KProperty'] // through LazyPackageFragmentScopeForJavaPackage@319
     classes('KTopLevelProperty': Name@325) = DeserializedClassDescriptor@14['KTopLevelProperty'] // through LazyPackageFragmentScopeForJavaPackage@319
     classes('KTopLevelVariable': Name@326) = DeserializedClassDescriptor@16['KTopLevelVariable'] // through LazyPackageFragmentScopeForJavaPackage@319
     classes('KVariable': Name@327) = DeserializedClassDescriptor@18['KVariable'] // through LazyPackageFragmentScopeForJavaPackage@319
-    classes('String': Name@283) = null // through LazyPackageFragmentScopeForJavaPackage@319
+    classes('String': Name@279) = null // through LazyPackageFragmentScopeForJavaPackage@319
     classes('get': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@319
-    classes('invoke': Name@270) = null // through LazyPackageFragmentScopeForJavaPackage@319
+    classes('invoke': Name@280) = null // through LazyPackageFragmentScopeForJavaPackage@319
     classes('set': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@319
-    classes('x': Name@272) = null // through LazyPackageFragmentScopeForJavaPackage@319
-    classes('y': Name@273) = null // through LazyPackageFragmentScopeForJavaPackage@319
-    deserializedPackageScope = Empty@285 // through LazyPackageFragmentScopeForJavaPackage@319
+    classes('x': Name@282) = null // through LazyPackageFragmentScopeForJavaPackage@319
+    classes('y': Name@283) = null // through LazyPackageFragmentScopeForJavaPackage@319
+    deserializedPackageScope = Empty@284 // through LazyPackageFragmentScopeForJavaPackage@319
+    functions('get': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@319
+    functions('invoke': Name@280) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@319
+    functions('set': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@319
+    functions('x': Name@282) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@319
+    functions('y': Name@283) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@319
     memberIndex = computeMemberIndex$1@328 // through LazyPackageFragmentScopeForJavaPackage@319
 }
 
 NestedClassDescriptors@329 {
-    findClass('get': Name@330) = null
-    findClass('name': Name@331) = null
-    findClass('set': Name@332) = null
-}
-
-NestedClassDescriptors@333 {
     findClass('get': Name@23) = null
     findClass('name': Name@28) = null
     findClass('set': Name@26) = null
+}
+
+NestedClassDescriptors@330 {
+    findClass('get': Name@331) = null
+    findClass('name': Name@332) = null
+    findClass('set': Name@333) = null
 }
 
 TypeDeserializer@334 {

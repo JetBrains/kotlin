@@ -7,98 +7,98 @@ EnumEntrySyntheticClassDescriptor@2['RUNTIME'] {
 }
 
 LazyJavaClassDescriptor@4['RetentionPolicy'] {
-    _functionTypeForSamInterface = null
-    _properties('RUNTIME': Name@5) = EmptyList@6[empty] // through LazyJavaClassMemberScope@7
-    _properties('RUNTIME': Name@5) = EmptyList@6[empty] // through LazyJavaStaticClassScope@8
-    _typeConstructor = LazyJavaClassTypeConstructor@9['RetentionPolicy']
-    defaultType = JetTypeImpl@10['RetentionPolicy']
-    enumEntryIndex = LinkedHashMap@11 // through LazyJavaClassMemberScope@7
-    memberIndex = computeMemberIndex$1@12 // through LazyJavaClassMemberScope@7
-    memberIndex = computeMemberIndex$1@13 // through LazyJavaStaticClassScope@8
-    nestedClassIndex = LinkedHashMap@14 // through LazyJavaClassMemberScope@7
-    nestedClasses('RUNTIME': Name@5) = EnumEntrySyntheticClassDescriptor@2['RUNTIME'] // through LazyJavaClassMemberScope@7
+    defaultType = JetTypeImpl@5['RetentionPolicy']
+    enumEntryIndex = LinkedHashMap@6 // through LazyJavaClassMemberScope@7
+    functionTypeForSamInterface = null
+    memberIndex = computeMemberIndex$1@8 // through LazyJavaClassMemberScope@7
+    memberIndex = computeMemberIndex$1@9 // through LazyJavaStaticClassScope@10
+    nestedClassIndex = LinkedHashMap@11 // through LazyJavaClassMemberScope@7
+    nestedClasses('RUNTIME': Name@12) = EnumEntrySyntheticClassDescriptor@2['RUNTIME'] // through LazyJavaClassMemberScope@7
+    properties('RUNTIME': Name@12) = EmptyList@13[empty] // through LazyJavaClassMemberScope@7
+    properties('RUNTIME': Name@12) = EmptyList@13[empty] // through LazyJavaStaticClassScope@10
+    typeConstructor = LazyJavaClassTypeConstructor@14['RetentionPolicy']
 }
 
-LazyJavaClassTypeConstructor@9['RetentionPolicy'] {
-    _parameters = ArrayList@15[empty]
-    _supertypes = ArrayList@16[1] { LazyJavaClassifierType@17['Enum<RetentionPolicy>'] }
+LazyJavaClassTypeConstructor@14['RetentionPolicy'] {
+    parameters = ArrayList@15[empty]
+    supertypes = ArrayList@16[1] { LazyJavaClassifierType@17['Enum<RetentionPolicy>'] }
 }
 
 LazyJavaClassifierType@17['Enum<RetentionPolicy>'] {
-    _arguments = ArrayList@18[1] { TypeProjectionImpl@19 }
-    _memberScope = SubstitutingScope@20
-    _typeConstructor = DeserializedClassTypeConstructor@21
-    classifier = JavaClassImpl@22['Enum']
+    arguments = ArrayList@18[1] { TypeProjectionImpl@19 }
+    classifier = JavaClassImpl@20['Enum']
+    memberScope = SubstitutingScope@21
+    typeConstructor = DeserializedClassTypeConstructor@22
 }
 
 LazyJavaClassifierType@23['RetentionPolicy'] {
-    _arguments = ArrayList@24[empty]
-    _nullable = 'false': Boolean@25
-    _typeConstructor = LazyJavaClassTypeConstructor@9['RetentionPolicy']
-    classifier = JavaClassImpl@26['RetentionPolicy']
+    arguments = ArrayList@24[empty]
+    classifier = JavaClassImpl@25['RetentionPolicy']
+    nullable = 'false': Boolean@26
+    typeConstructor = LazyJavaClassTypeConstructor@14['RetentionPolicy']
 }
 
 LazyJavaClassifierType@27['RetentionPolicy'] {
-    _arguments = ArrayList@28[empty]
-    _nullable = 'true': Boolean@29
-    _typeConstructor = LazyJavaClassTypeConstructor@9['RetentionPolicy']
-    classifier = JavaClassImpl@26['RetentionPolicy']
+    arguments = ArrayList@28[empty]
+    classifier = JavaClassImpl@25['RetentionPolicy']
+    nullable = 'true': Boolean@29
+    typeConstructor = LazyJavaClassTypeConstructor@14['RetentionPolicy']
 }
 
 LazyJavaPackageFragmentProvider@30 {
-    _packageFragments('<root>': FqName@31) = LazyJavaPackageFragment@32['<root>']
-    _packageFragments('E': FqName@33) = null
-    _packageFragments('Enum': FqName@34) = null
-    _packageFragments('InlineOption': FqName@35) = null
-    _packageFragments('RetentionPolicy': FqName@36) = null
-    _packageFragments('a': FqName@37) = null
-    _packageFragments('b': FqName@38) = null
-    _packageFragments('c': FqName@39) = null
-    _packageFragments('java': FqName@40) = LazyJavaPackageFragment@41['java']
-    _packageFragments('java.lang': FqName@42) = LazyJavaPackageFragment@43['lang']
-    _packageFragments('java.lang.E': FqName@44) = null
-    _packageFragments('java.lang.Enum': FqName@45) = null
-    _packageFragments('java.lang.InlineOption': FqName@46) = null
-    _packageFragments('java.lang.RetentionPolicy': FqName@47) = null
-    _packageFragments('java.lang.annotation': FqName@48) = LazyJavaPackageFragment@49['annotation']
-    _packageFragments('java.lang.annotation.RetentionPolicy': FqName@50) = null
-    _packageFragments('kotlin': FqName@51) = null
-    _packageFragments('kotlin.E': FqName@52) = null
-    _packageFragments('kotlin.Enum': FqName@53) = null
-    _packageFragments('kotlin.InlineOption': FqName@54) = null
-    _packageFragments('kotlin.RetentionPolicy': FqName@55) = null
-    _packageFragments('kotlin.io': FqName@56) = null
-    _packageFragments('kotlin.jvm': FqName@57) = null
+    packageFragments('<root>': FqName@31) = LazyJavaPackageFragment@32['<root>']
+    packageFragments('E': FqName@33) = null
+    packageFragments('Enum': FqName@34) = null
+    packageFragments('InlineOption': FqName@35) = null
+    packageFragments('RetentionPolicy': FqName@36) = null
+    packageFragments('a': FqName@37) = null
+    packageFragments('b': FqName@38) = null
+    packageFragments('c': FqName@39) = null
+    packageFragments('java': FqName@40) = LazyJavaPackageFragment@41['java']
+    packageFragments('java.lang': FqName@42) = LazyJavaPackageFragment@43['lang']
+    packageFragments('java.lang.E': FqName@44) = null
+    packageFragments('java.lang.Enum': FqName@45) = null
+    packageFragments('java.lang.InlineOption': FqName@46) = null
+    packageFragments('java.lang.RetentionPolicy': FqName@47) = null
+    packageFragments('java.lang.annotation': FqName@48) = LazyJavaPackageFragment@49['annotation']
+    packageFragments('java.lang.annotation.RetentionPolicy': FqName@50) = null
+    packageFragments('kotlin': FqName@51) = null
+    packageFragments('kotlin.E': FqName@52) = null
+    packageFragments('kotlin.Enum': FqName@53) = null
+    packageFragments('kotlin.InlineOption': FqName@54) = null
+    packageFragments('kotlin.RetentionPolicy': FqName@55) = null
+    packageFragments('kotlin.io': FqName@56) = null
+    packageFragments('kotlin.jvm': FqName@57) = null
     topLevelClasses(JavaClassImpl@58['RetentionPolicy']) = LazyJavaClassDescriptor@4['RetentionPolicy']
 }
 
 LazyJavaPackageFragment@32['<root>'] {
-    _functions('java': Name@59) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@60
-    classes('Enum': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@60
-    classes('InlineOption': Name@62) = null // through LazyPackageFragmentScopeForJavaPackage@60
-    classes('RetentionPolicy': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@60
-    classes('java': Name@64) = null // through LazyPackageFragmentScopeForJavaPackage@60
-    deserializedPackageScope = Empty@65 // through LazyPackageFragmentScopeForJavaPackage@60
+    classes('Enum': Name@59) = null // through LazyPackageFragmentScopeForJavaPackage@60
+    classes('InlineOption': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@60
+    classes('RetentionPolicy': Name@62) = null // through LazyPackageFragmentScopeForJavaPackage@60
+    classes('java': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@60
+    deserializedPackageScope = Empty@64 // through LazyPackageFragmentScopeForJavaPackage@60
+    functions('java': Name@65) = EmptyList@13[empty] // through LazyPackageFragmentScopeForJavaPackage@60
     memberIndex = computeMemberIndex$1@66 // through LazyPackageFragmentScopeForJavaPackage@60
 }
 
 LazyJavaPackageFragment@49['annotation'] {
-    _functions('RetentionPolicy': Name@67) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@68
-    classes('RetentionPolicy': Name@69) = LazyJavaClassDescriptor@4['RetentionPolicy'] // through LazyPackageFragmentScopeForJavaPackage@68
-    deserializedPackageScope = Empty@65 // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('RetentionPolicy': Name@67) = LazyJavaClassDescriptor@4['RetentionPolicy'] // through LazyPackageFragmentScopeForJavaPackage@68
+    deserializedPackageScope = Empty@64 // through LazyPackageFragmentScopeForJavaPackage@68
+    functions('RetentionPolicy': Name@69) = EmptyList@13[empty] // through LazyPackageFragmentScopeForJavaPackage@68
     memberIndex = computeMemberIndex$1@70 // through LazyPackageFragmentScopeForJavaPackage@68
 }
 
 LazyJavaPackageFragment@41['java'] {
-    _functions('lang': Name@71) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@72
-    classes('lang': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@72
-    deserializedPackageScope = Empty@65 // through LazyPackageFragmentScopeForJavaPackage@72
+    classes('lang': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@72
+    deserializedPackageScope = Empty@64 // through LazyPackageFragmentScopeForJavaPackage@72
+    functions('lang': Name@73) = EmptyList@13[empty] // through LazyPackageFragmentScopeForJavaPackage@72
     memberIndex = computeMemberIndex$1@74 // through LazyPackageFragmentScopeForJavaPackage@72
 }
 
 LazyJavaPackageFragment@43['lang'] {
-    _functions('annotation': Name@75) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@76
-    classes('annotation': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@76
-    deserializedPackageScope = Empty@65 // through LazyPackageFragmentScopeForJavaPackage@76
+    classes('annotation': Name@75) = null // through LazyPackageFragmentScopeForJavaPackage@76
+    deserializedPackageScope = Empty@64 // through LazyPackageFragmentScopeForJavaPackage@76
+    functions('annotation': Name@77) = EmptyList@13[empty] // through LazyPackageFragmentScopeForJavaPackage@76
     memberIndex = computeMemberIndex$1@78 // through LazyPackageFragmentScopeForJavaPackage@76
 }

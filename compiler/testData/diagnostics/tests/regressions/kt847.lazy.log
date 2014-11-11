@@ -1,13 +1,13 @@
 LazyJavaPackageFragmentProvider@0 {
-    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
-    _packageFragments('T': FqName@3) = null
-    _packageFragments('java': FqName@4) = LazyJavaPackageFragment@5['java']
-    _packageFragments('java.lang': FqName@6) = LazyJavaPackageFragment@7['lang']
-    _packageFragments('java.lang.T': FqName@8) = null
-    _packageFragments('kotlin': FqName@9) = null
-    _packageFragments('kotlin.T': FqName@10) = null
-    _packageFragments('kotlin.io': FqName@11) = null
-    _packageFragments('kotlin.jvm': FqName@12) = null
+    packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    packageFragments('T': FqName@3) = null
+    packageFragments('java': FqName@4) = LazyJavaPackageFragment@5['java']
+    packageFragments('java.lang': FqName@6) = LazyJavaPackageFragment@7['lang']
+    packageFragments('java.lang.T': FqName@8) = null
+    packageFragments('kotlin': FqName@9) = null
+    packageFragments('kotlin.T': FqName@10) = null
+    packageFragments('kotlin.io': FqName@11) = null
+    packageFragments('kotlin.jvm': FqName@12) = null
 }
 
 LazyJavaPackageFragment@2['<root>'] {
@@ -15,10 +15,10 @@ LazyJavaPackageFragment@2['<root>'] {
 }
 
 LazyJavaPackageFragment@5['java'] {
-    _functions('lang': Name@15) = EmptyList@16[empty] // through LazyPackageFragmentScopeForJavaPackage@17
-    classes('lang': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@17
-    deserializedPackageScope = Empty@13 // through LazyPackageFragmentScopeForJavaPackage@17
-    memberIndex = computeMemberIndex$1@19 // through LazyPackageFragmentScopeForJavaPackage@17
+    classes('lang': Name@15) = null // through LazyPackageFragmentScopeForJavaPackage@16
+    deserializedPackageScope = Empty@13 // through LazyPackageFragmentScopeForJavaPackage@16
+    functions('lang': Name@17) = EmptyList@18[empty] // through LazyPackageFragmentScopeForJavaPackage@16
+    memberIndex = computeMemberIndex$1@19 // through LazyPackageFragmentScopeForJavaPackage@16
 }
 
 LazyJavaPackageFragment@7['lang'] {

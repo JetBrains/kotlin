@@ -42,11 +42,11 @@ DeserializedTypeParameterDescriptor@25['T'] {
 }
 
 DeserializedType@29['T in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@26
+    constructor = AbstractLazyTypeParameterDescriptor$1@22
 }
 
 DeserializedType@30['T in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@26
+    constructor = AbstractLazyTypeParameterDescriptor$1@22
 }
 
 DeserializedType@31['T in kotlin'] {
@@ -91,146 +91,146 @@ DeserializedType@45['kotlin.deprecated'] {
 }
 
 LazyAnnotationDescriptor@47 {
-    _resolutionResults = OverloadResolutionResultsImpl@48
-    _type = JetTypeImpl@49['IAnn']
+    resolutionResults = OverloadResolutionResultsImpl@48
+    type = JetTypeImpl@49['IAnn']
 }
 
 LazyAnnotationDescriptor@50 {
-    _resolutionResults = OverloadResolutionResultsImpl@51
-    _type = JetTypeImpl@52['IAnn']
+    resolutionResults = OverloadResolutionResultsImpl@51
+    type = JetTypeImpl@52['IAnn']
 }
 
 LazyAnnotationDescriptor@53 {
-    _resolutionResults = OverloadResolutionResultsImpl@54
-    _type = JetTypeImpl@55['ann1']
-    _valueArguments(ValueParameterDescriptorImpl@56['p']) = AnnotationValue@57
+    resolutionResults = OverloadResolutionResultsImpl@54
+    type = JetTypeImpl@55['ann1']
+    valueArguments(ValueParameterDescriptorImpl@56['p']) = AnnotationValue@57
 }
 
 LazyAnnotationDescriptor@58 {
-    _resolutionResults = OverloadResolutionResultsImpl@59
-    _type = JetTypeImpl@60['ann1']
-    _valueArguments(ValueParameterDescriptorImpl@56['p']) = null
+    resolutionResults = OverloadResolutionResultsImpl@59
+    type = JetTypeImpl@60['ann1']
+    valueArguments(ValueParameterDescriptorImpl@56['p']) = null
 }
 
 LazyAnnotationDescriptor@61 {
-    _resolutionResults = OverloadResolutionResultsImpl@62
-    _type = JetTypeImpl@63['ann2']
-    _valueArguments(ValueParameterDescriptorImpl@64['p']) = AnnotationValue@65
+    resolutionResults = OverloadResolutionResultsImpl@62
+    type = JetTypeImpl@63['ann2']
+    valueArguments(ValueParameterDescriptorImpl@64['p']) = AnnotationValue@65
 }
 
 LazyAnnotationDescriptor@66 {
-    _resolutionResults = OverloadResolutionResultsImpl@67
-    _type = JetTypeImpl@68['ann3']
-    _valueArguments(ValueParameterDescriptorImpl@69['p']) = AnnotationValue@70
-    _valueArguments(ValueParameterDescriptorImpl@71['p2']) = null
+    resolutionResults = OverloadResolutionResultsImpl@67
+    type = JetTypeImpl@68['ann3']
+    valueArguments(ValueParameterDescriptorImpl@69['p']) = AnnotationValue@70
+    valueArguments(ValueParameterDescriptorImpl@71['p2']) = null
 }
 
 LazyAnnotationDescriptor@72 {
-    _resolutionResults = OverloadResolutionResultsImpl@73
-    _type = JetTypeImpl@74['ann3']
-    _valueArguments(ValueParameterDescriptorImpl@69['p']) = AnnotationValue@75
-    _valueArguments(ValueParameterDescriptorImpl@71['p2']) = null
+    resolutionResults = OverloadResolutionResultsImpl@73
+    type = JetTypeImpl@74['ann3']
+    valueArguments(ValueParameterDescriptorImpl@69['p']) = AnnotationValue@75
+    valueArguments(ValueParameterDescriptorImpl@71['p2']) = null
 }
 
 LazyAnnotationDescriptor@76 {
-    _resolutionResults = OverloadResolutionResultsImpl@77
-    _type = JetTypeImpl@78['annArray']
-    _valueArguments(ValueParameterDescriptorImpl@79['p']) = ArrayValue@80
+    resolutionResults = OverloadResolutionResultsImpl@77
+    type = JetTypeImpl@78['annArray']
+    valueArguments(ValueParameterDescriptorImpl@79['p']) = ArrayValue@80
 }
 
 LazyAnnotationDescriptor@81 {
-    _resolutionResults = OverloadResolutionResultsImpl@82
-    _type = JetTypeImpl@83['annJavaClass']
-    _valueArguments(ValueParameterDescriptorImpl@84['p']) = JavaClassValue@85
+    resolutionResults = OverloadResolutionResultsImpl@82
+    type = JetTypeImpl@83['annJavaClass']
+    valueArguments(ValueParameterDescriptorImpl@84['p']) = JavaClassValue@85
 }
 
 LazyAnnotationDescriptor@86 {
-    _resolutionResults = OverloadResolutionResultsImpl@87
-    _type = JetTypeImpl@88['deprecated']
-    _valueArguments(ValueParameterDescriptorImpl@89['value']) = StringValue@90
+    resolutionResults = OverloadResolutionResultsImpl@87
+    type = JetTypeImpl@88['deprecated']
+    valueArguments(ValueParameterDescriptorImpl@89['value']) = StringValue@90
 }
 
 LazyJavaClassDescriptor@91['Class'] {
-    _typeConstructor = LazyJavaClassTypeConstructor@34['Class']
+    typeConstructor = LazyJavaClassTypeConstructor@34['Class']
 }
 
 LazyJavaClassTypeConstructor@34['Class'] {
-    _parameters = ArrayList@92[1] { LazyJavaTypeParameterDescriptor@93['T'] }
+    parameters = ArrayList@92[1] { LazyJavaTypeParameterDescriptor@93['T'] }
 }
 
 LazyJavaPackageFragmentProvider@94 {
-    _packageFragments('<root>': FqName@95) = LazyJavaPackageFragment@96['<root>']
-    _packageFragments('A': FqName@97) = null
-    _packageFragments('Array': FqName@98) = null
-    _packageFragments('Class': FqName@99) = null
-    _packageFragments('String': FqName@100) = null
-    _packageFragments('a': FqName@101) = null
-    _packageFragments('a.b': FqName@102) = null
-    _packageFragments('a.b.c': FqName@103) = null
-    _packageFragments('a.b.c.A': FqName@104) = null
-    _packageFragments('a.b.c.Array': FqName@105) = null
-    _packageFragments('a.b.c.Class': FqName@106) = null
-    _packageFragments('a.b.c.String': FqName@107) = null
-    _packageFragments('a.b.c.a': FqName@108) = null
-    _packageFragments('a.b.c.ann1': FqName@109) = null
-    _packageFragments('a.b.c.ann2': FqName@110) = null
-    _packageFragments('a.b.c.ann3': FqName@111) = null
-    _packageFragments('a.b.c.annArray': FqName@112) = null
-    _packageFragments('a.b.c.annJavaClass': FqName@113) = null
-    _packageFragments('a.b.c.deprecated': FqName@114) = null
-    _packageFragments('a.b.c.kotlin': FqName@115) = null
-    _packageFragments('ann1': FqName@116) = null
-    _packageFragments('ann2': FqName@117) = null
-    _packageFragments('ann3': FqName@118) = null
-    _packageFragments('annArray': FqName@119) = null
-    _packageFragments('annJavaClass': FqName@120) = null
-    _packageFragments('deprecated': FqName@121) = null
-    _packageFragments('java': FqName@122) = LazyJavaPackageFragment@123['java']
-    _packageFragments('java.lang': FqName@124) = LazyJavaPackageFragment@125['lang']
-    _packageFragments('java.lang.A': FqName@126) = null
-    _packageFragments('java.lang.Array': FqName@127) = null
-    _packageFragments('java.lang.Class': FqName@128) = null
-    _packageFragments('java.lang.String': FqName@129) = null
-    _packageFragments('java.lang.ann1': FqName@130) = null
-    _packageFragments('java.lang.ann2': FqName@131) = null
-    _packageFragments('java.lang.ann3': FqName@132) = null
-    _packageFragments('java.lang.annArray': FqName@133) = null
-    _packageFragments('java.lang.annJavaClass': FqName@134) = null
-    _packageFragments('java.lang.deprecated': FqName@135) = null
-    _packageFragments('kotlin': FqName@136) = LazyJavaPackageFragment@17['kotlin']
-    _packageFragments('kotlin.A': FqName@137) = null
-    _packageFragments('kotlin.Array': FqName@138) = null
-    _packageFragments('kotlin.Class': FqName@139) = null
-    _packageFragments('kotlin.String': FqName@140) = null
-    _packageFragments('kotlin.ann1': FqName@141) = null
-    _packageFragments('kotlin.ann2': FqName@142) = null
-    _packageFragments('kotlin.ann3': FqName@143) = null
-    _packageFragments('kotlin.annArray': FqName@144) = null
-    _packageFragments('kotlin.annJavaClass': FqName@145) = null
-    _packageFragments('kotlin.deprecated': FqName@146) = null
-    _packageFragments('kotlin.io': FqName@147) = LazyJavaPackageFragment@148['io']
-    _packageFragments('kotlin.io.A': FqName@149) = null
-    _packageFragments('kotlin.io.Array': FqName@150) = null
-    _packageFragments('kotlin.io.Class': FqName@151) = null
-    _packageFragments('kotlin.io.String': FqName@152) = null
-    _packageFragments('kotlin.io.ann1': FqName@153) = null
-    _packageFragments('kotlin.io.ann2': FqName@154) = null
-    _packageFragments('kotlin.io.ann3': FqName@155) = null
-    _packageFragments('kotlin.io.annArray': FqName@156) = null
-    _packageFragments('kotlin.io.annJavaClass': FqName@157) = null
-    _packageFragments('kotlin.io.deprecated': FqName@158) = null
-    _packageFragments('kotlin.jvm': FqName@159) = LazyJavaPackageFragment@160['jvm']
-    _packageFragments('kotlin.jvm.A': FqName@161) = null
-    _packageFragments('kotlin.jvm.Array': FqName@162) = null
-    _packageFragments('kotlin.jvm.Class': FqName@163) = null
-    _packageFragments('kotlin.jvm.String': FqName@164) = null
-    _packageFragments('kotlin.jvm.ann1': FqName@165) = null
-    _packageFragments('kotlin.jvm.ann2': FqName@166) = null
-    _packageFragments('kotlin.jvm.ann3': FqName@167) = null
-    _packageFragments('kotlin.jvm.annArray': FqName@168) = null
-    _packageFragments('kotlin.jvm.annJavaClass': FqName@169) = null
-    _packageFragments('kotlin.jvm.deprecated': FqName@170) = null
-    _packageFragments('kotlin.jvm.internal': FqName@171) = LazyJavaPackageFragment@14['internal']
+    packageFragments('<root>': FqName@95) = LazyJavaPackageFragment@96['<root>']
+    packageFragments('A': FqName@97) = null
+    packageFragments('Array': FqName@98) = null
+    packageFragments('Class': FqName@99) = null
+    packageFragments('String': FqName@100) = null
+    packageFragments('a': FqName@101) = null
+    packageFragments('a.b': FqName@102) = null
+    packageFragments('a.b.c': FqName@103) = null
+    packageFragments('a.b.c.A': FqName@104) = null
+    packageFragments('a.b.c.Array': FqName@105) = null
+    packageFragments('a.b.c.Class': FqName@106) = null
+    packageFragments('a.b.c.String': FqName@107) = null
+    packageFragments('a.b.c.a': FqName@108) = null
+    packageFragments('a.b.c.ann1': FqName@109) = null
+    packageFragments('a.b.c.ann2': FqName@110) = null
+    packageFragments('a.b.c.ann3': FqName@111) = null
+    packageFragments('a.b.c.annArray': FqName@112) = null
+    packageFragments('a.b.c.annJavaClass': FqName@113) = null
+    packageFragments('a.b.c.deprecated': FqName@114) = null
+    packageFragments('a.b.c.kotlin': FqName@115) = null
+    packageFragments('ann1': FqName@116) = null
+    packageFragments('ann2': FqName@117) = null
+    packageFragments('ann3': FqName@118) = null
+    packageFragments('annArray': FqName@119) = null
+    packageFragments('annJavaClass': FqName@120) = null
+    packageFragments('deprecated': FqName@121) = null
+    packageFragments('java': FqName@122) = LazyJavaPackageFragment@123['java']
+    packageFragments('java.lang': FqName@124) = LazyJavaPackageFragment@125['lang']
+    packageFragments('java.lang.A': FqName@126) = null
+    packageFragments('java.lang.Array': FqName@127) = null
+    packageFragments('java.lang.Class': FqName@128) = null
+    packageFragments('java.lang.String': FqName@129) = null
+    packageFragments('java.lang.ann1': FqName@130) = null
+    packageFragments('java.lang.ann2': FqName@131) = null
+    packageFragments('java.lang.ann3': FqName@132) = null
+    packageFragments('java.lang.annArray': FqName@133) = null
+    packageFragments('java.lang.annJavaClass': FqName@134) = null
+    packageFragments('java.lang.deprecated': FqName@135) = null
+    packageFragments('kotlin': FqName@136) = LazyJavaPackageFragment@17['kotlin']
+    packageFragments('kotlin.A': FqName@137) = null
+    packageFragments('kotlin.Array': FqName@138) = null
+    packageFragments('kotlin.Class': FqName@139) = null
+    packageFragments('kotlin.String': FqName@140) = null
+    packageFragments('kotlin.ann1': FqName@141) = null
+    packageFragments('kotlin.ann2': FqName@142) = null
+    packageFragments('kotlin.ann3': FqName@143) = null
+    packageFragments('kotlin.annArray': FqName@144) = null
+    packageFragments('kotlin.annJavaClass': FqName@145) = null
+    packageFragments('kotlin.deprecated': FqName@146) = null
+    packageFragments('kotlin.io': FqName@147) = LazyJavaPackageFragment@148['io']
+    packageFragments('kotlin.io.A': FqName@149) = null
+    packageFragments('kotlin.io.Array': FqName@150) = null
+    packageFragments('kotlin.io.Class': FqName@151) = null
+    packageFragments('kotlin.io.String': FqName@152) = null
+    packageFragments('kotlin.io.ann1': FqName@153) = null
+    packageFragments('kotlin.io.ann2': FqName@154) = null
+    packageFragments('kotlin.io.ann3': FqName@155) = null
+    packageFragments('kotlin.io.annArray': FqName@156) = null
+    packageFragments('kotlin.io.annJavaClass': FqName@157) = null
+    packageFragments('kotlin.io.deprecated': FqName@158) = null
+    packageFragments('kotlin.jvm': FqName@159) = LazyJavaPackageFragment@160['jvm']
+    packageFragments('kotlin.jvm.A': FqName@161) = null
+    packageFragments('kotlin.jvm.Array': FqName@162) = null
+    packageFragments('kotlin.jvm.Class': FqName@163) = null
+    packageFragments('kotlin.jvm.String': FqName@164) = null
+    packageFragments('kotlin.jvm.ann1': FqName@165) = null
+    packageFragments('kotlin.jvm.ann2': FqName@166) = null
+    packageFragments('kotlin.jvm.ann3': FqName@167) = null
+    packageFragments('kotlin.jvm.annArray': FqName@168) = null
+    packageFragments('kotlin.jvm.annJavaClass': FqName@169) = null
+    packageFragments('kotlin.jvm.deprecated': FqName@170) = null
+    packageFragments('kotlin.jvm.internal': FqName@171) = LazyJavaPackageFragment@14['internal']
     topLevelClasses(JavaClassImpl@172['Class']) = LazyJavaClassDescriptor@91['Class']
 }
 
@@ -253,9 +253,9 @@ LazyJavaPackageFragment@148['io'] {
 }
 
 LazyJavaPackageFragment@123['java'] {
-    _functions('lang': Name@188) = EmptyList@185[empty] // through LazyPackageFragmentScopeForJavaPackage@189
-    classes('lang': Name@190) = null // through LazyPackageFragmentScopeForJavaPackage@189
-    deserializedPackageScope = Empty@191 // through LazyPackageFragmentScopeForJavaPackage@189
+    classes('lang': Name@188) = null // through LazyPackageFragmentScopeForJavaPackage@189
+    deserializedPackageScope = Empty@190 // through LazyPackageFragmentScopeForJavaPackage@189
+    functions('lang': Name@191) = EmptyList@185[empty] // through LazyPackageFragmentScopeForJavaPackage@189
     memberIndex = computeMemberIndex$1@192 // through LazyPackageFragmentScopeForJavaPackage@189
 }
 
@@ -266,50 +266,50 @@ LazyJavaPackageFragment@160['jvm'] {
     classes('a': Name@179) = null // through LazyPackageFragmentScopeForJavaPackage@193
     classes('deprecated': Name@180) = null // through LazyPackageFragmentScopeForJavaPackage@193
     classes('kotlin': Name@181) = null // through LazyPackageFragmentScopeForJavaPackage@193
-    deserializedPackageScope = Empty@191 // through LazyPackageFragmentScopeForJavaPackage@193
+    deserializedPackageScope = Empty@190 // through LazyPackageFragmentScopeForJavaPackage@193
 }
 
 LazyJavaPackageFragment@17['kotlin'] {
-    _functions('array': Name@194) = EmptyList@185[empty] // through LazyPackageFragmentScopeForJavaPackage@195
-    _functions('deprecated': Name@196) = EmptyList@185[empty] // through LazyPackageFragmentScopeForJavaPackage@195
-    _functions('io': Name@197) = EmptyList@185[empty] // through LazyPackageFragmentScopeForJavaPackage@195
-    _functions('javaClass': Name@198) = EmptyList@185[empty] // through LazyPackageFragmentScopeForJavaPackage@195
-    _functions('jvm': Name@199) = EmptyList@185[empty] // through LazyPackageFragmentScopeForJavaPackage@195
-    classes('Any': Name@200) = null // through LazyPackageFragmentScopeForJavaPackage@195
+    classes('Any': Name@194) = null // through LazyPackageFragmentScopeForJavaPackage@195
     classes('Array': Name@175) = null // through LazyPackageFragmentScopeForJavaPackage@195
     classes('Class': Name@177) = null // through LazyPackageFragmentScopeForJavaPackage@195
     classes('String': Name@178) = null // through LazyPackageFragmentScopeForJavaPackage@195
     classes('a': Name@179) = null // through LazyPackageFragmentScopeForJavaPackage@195
-    classes('array': Name@194) = null // through LazyPackageFragmentScopeForJavaPackage@195
+    classes('array': Name@196) = null // through LazyPackageFragmentScopeForJavaPackage@195
     classes('deprecated': Name@180) = DeserializedClassDescriptor@4['deprecated'] // through LazyPackageFragmentScopeForJavaPackage@195
-    classes('inline': Name@201) = DeserializedClassDescriptor@6['inline'] // through LazyPackageFragmentScopeForJavaPackage@195
-    classes('io': Name@202) = null // through LazyPackageFragmentScopeForJavaPackage@195
-    classes('javaClass': Name@198) = null // through LazyPackageFragmentScopeForJavaPackage@195
-    classes('jvm': Name@203) = null // through LazyPackageFragmentScopeForJavaPackage@195
+    classes('inline': Name@197) = DeserializedClassDescriptor@6['inline'] // through LazyPackageFragmentScopeForJavaPackage@195
+    classes('io': Name@198) = null // through LazyPackageFragmentScopeForJavaPackage@195
+    classes('javaClass': Name@199) = null // through LazyPackageFragmentScopeForJavaPackage@195
+    classes('jvm': Name@200) = null // through LazyPackageFragmentScopeForJavaPackage@195
     classes('kotlin': Name@181) = null // through LazyPackageFragmentScopeForJavaPackage@195
-    deserializedPackageScope = DeserializedPackageMemberScope@204 // through LazyPackageFragmentScopeForJavaPackage@195
-    functions('array': Name@194) = ArrayList@205[1] { DeserializedSimpleFunctionDescriptor@206['array'] } // through DeserializedPackageMemberScope@204
-    functions('deprecated': Name@196) = EmptyList@185[empty] // through DeserializedPackageMemberScope@204
-    functions('io': Name@197) = EmptyList@185[empty] // through DeserializedPackageMemberScope@204
-    functions('javaClass': Name@198) = ArrayList@207[1] { DeserializedSimpleFunctionDescriptor@208['javaClass'] } // through DeserializedPackageMemberScope@204
-    functions('jvm': Name@199) = EmptyList@185[empty] // through DeserializedPackageMemberScope@204
+    deserializedPackageScope = DeserializedPackageMemberScope@201 // through LazyPackageFragmentScopeForJavaPackage@195
+    functions('array': Name@196) = ArrayList@202[1] { DeserializedSimpleFunctionDescriptor@203['array'] } // through DeserializedPackageMemberScope@201
+    functions('array': Name@196) = EmptyList@185[empty] // through LazyPackageFragmentScopeForJavaPackage@195
+    functions('deprecated': Name@204) = EmptyList@185[empty] // through DeserializedPackageMemberScope@201
+    functions('deprecated': Name@204) = EmptyList@185[empty] // through LazyPackageFragmentScopeForJavaPackage@195
+    functions('io': Name@205) = EmptyList@185[empty] // through DeserializedPackageMemberScope@201
+    functions('io': Name@205) = EmptyList@185[empty] // through LazyPackageFragmentScopeForJavaPackage@195
+    functions('javaClass': Name@199) = ArrayList@206[1] { DeserializedSimpleFunctionDescriptor@207['javaClass'] } // through DeserializedPackageMemberScope@201
+    functions('javaClass': Name@199) = EmptyList@185[empty] // through LazyPackageFragmentScopeForJavaPackage@195
+    functions('jvm': Name@208) = EmptyList@185[empty] // through DeserializedPackageMemberScope@201
+    functions('jvm': Name@208) = EmptyList@185[empty] // through LazyPackageFragmentScopeForJavaPackage@195
     memberIndex = computeMemberIndex$1@209 // through LazyPackageFragmentScopeForJavaPackage@195
-    membersProtos = HashMap@210 // through DeserializedPackageMemberScope@204
-    properties('A': Name@184) = EmptyList@185[empty] // through DeserializedPackageMemberScope@204
-    properties('a': Name@186) = EmptyList@185[empty] // through DeserializedPackageMemberScope@204
-    properties('array': Name@194) = EmptyList@185[empty] // through DeserializedPackageMemberScope@204
-    properties('deprecated': Name@196) = EmptyList@185[empty] // through DeserializedPackageMemberScope@204
-    properties('io': Name@197) = EmptyList@185[empty] // through DeserializedPackageMemberScope@204
-    properties('javaClass': Name@198) = ArrayList@211[1] { DeserializedPropertyDescriptor@212['javaClass'] } // through DeserializedPackageMemberScope@204
-    properties('jvm': Name@199) = EmptyList@185[empty] // through DeserializedPackageMemberScope@204
-    properties('kotlin': Name@187) = EmptyList@185[empty] // through DeserializedPackageMemberScope@204
+    membersProtos = HashMap@210 // through DeserializedPackageMemberScope@201
+    properties('A': Name@184) = EmptyList@185[empty] // through DeserializedPackageMemberScope@201
+    properties('a': Name@186) = EmptyList@185[empty] // through DeserializedPackageMemberScope@201
+    properties('array': Name@196) = EmptyList@185[empty] // through DeserializedPackageMemberScope@201
+    properties('deprecated': Name@204) = EmptyList@185[empty] // through DeserializedPackageMemberScope@201
+    properties('io': Name@205) = EmptyList@185[empty] // through DeserializedPackageMemberScope@201
+    properties('javaClass': Name@199) = ArrayList@211[1] { DeserializedPropertyDescriptor@212['javaClass'] } // through DeserializedPackageMemberScope@201
+    properties('jvm': Name@208) = EmptyList@185[empty] // through DeserializedPackageMemberScope@201
+    properties('kotlin': Name@187) = EmptyList@185[empty] // through DeserializedPackageMemberScope@201
 }
 
 LazyJavaPackageFragment@125['lang'] {
     classes('Class': Name@177) = LazyJavaClassDescriptor@91['Class'] // through LazyPackageFragmentScopeForJavaPackage@213
     classes('a': Name@179) = null // through LazyPackageFragmentScopeForJavaPackage@213
     classes('kotlin': Name@181) = null // through LazyPackageFragmentScopeForJavaPackage@213
-    deserializedPackageScope = Empty@191 // through LazyPackageFragmentScopeForJavaPackage@213
+    deserializedPackageScope = Empty@190 // through LazyPackageFragmentScopeForJavaPackage@213
 }
 
 LazyJavaTypeParameterDescriptor@93['T'] {

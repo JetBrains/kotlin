@@ -6,28 +6,28 @@ DescriptorResolver@0 {
 }
 
 LazyJavaPackageFragmentProvider@5 {
-    _packageFragments('<root>': FqName@6) = LazyJavaPackageFragment@7['<root>']
-    _packageFragments('A': FqName@8) = null
-    _packageFragments('Any': FqName@9) = null
-    _packageFragments('T': FqName@10) = null
-    _packageFragments('U': FqName@11) = null
-    _packageFragments('java': FqName@12) = LazyJavaPackageFragment@13['java']
-    _packageFragments('java.lang': FqName@14) = LazyJavaPackageFragment@15['lang']
-    _packageFragments('java.lang.Any': FqName@16) = null
-    _packageFragments('java.lang.T': FqName@17) = null
-    _packageFragments('java.lang.U': FqName@18) = null
-    _packageFragments('kotlin': FqName@19) = LazyJavaPackageFragment@20['kotlin']
-    _packageFragments('kotlin.Any': FqName@21) = null
-    _packageFragments('kotlin.T': FqName@22) = null
-    _packageFragments('kotlin.U': FqName@23) = null
-    _packageFragments('kotlin.io': FqName@24) = LazyJavaPackageFragment@25['io']
-    _packageFragments('kotlin.io.Any': FqName@26) = null
-    _packageFragments('kotlin.io.T': FqName@27) = null
-    _packageFragments('kotlin.io.U': FqName@28) = null
-    _packageFragments('kotlin.jvm': FqName@29) = LazyJavaPackageFragment@30['jvm']
-    _packageFragments('kotlin.jvm.Any': FqName@31) = null
-    _packageFragments('kotlin.jvm.T': FqName@32) = null
-    _packageFragments('kotlin.jvm.U': FqName@33) = null
+    packageFragments('<root>': FqName@6) = LazyJavaPackageFragment@7['<root>']
+    packageFragments('A': FqName@8) = null
+    packageFragments('Any': FqName@9) = null
+    packageFragments('T': FqName@10) = null
+    packageFragments('U': FqName@11) = null
+    packageFragments('java': FqName@12) = LazyJavaPackageFragment@13['java']
+    packageFragments('java.lang': FqName@14) = LazyJavaPackageFragment@15['lang']
+    packageFragments('java.lang.Any': FqName@16) = null
+    packageFragments('java.lang.T': FqName@17) = null
+    packageFragments('java.lang.U': FqName@18) = null
+    packageFragments('kotlin': FqName@19) = LazyJavaPackageFragment@20['kotlin']
+    packageFragments('kotlin.Any': FqName@21) = null
+    packageFragments('kotlin.T': FqName@22) = null
+    packageFragments('kotlin.U': FqName@23) = null
+    packageFragments('kotlin.io': FqName@24) = LazyJavaPackageFragment@25['io']
+    packageFragments('kotlin.io.Any': FqName@26) = null
+    packageFragments('kotlin.io.T': FqName@27) = null
+    packageFragments('kotlin.io.U': FqName@28) = null
+    packageFragments('kotlin.jvm': FqName@29) = LazyJavaPackageFragment@30['jvm']
+    packageFragments('kotlin.jvm.Any': FqName@31) = null
+    packageFragments('kotlin.jvm.T': FqName@32) = null
+    packageFragments('kotlin.jvm.U': FqName@33) = null
 }
 
 LazyJavaPackageFragment@7['<root>'] {
@@ -39,10 +39,10 @@ LazyJavaPackageFragment@25['io'] {
 }
 
 LazyJavaPackageFragment@13['java'] {
-    _functions('lang': Name@37) = EmptyList@38[empty] // through LazyPackageFragmentScopeForJavaPackage@39
-    classes('lang': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@39
-    deserializedPackageScope = Empty@41 // through LazyPackageFragmentScopeForJavaPackage@39
-    memberIndex = computeMemberIndex$1@42 // through LazyPackageFragmentScopeForJavaPackage@39
+    classes('lang': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@38
+    deserializedPackageScope = Empty@39 // through LazyPackageFragmentScopeForJavaPackage@38
+    functions('lang': Name@40) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    memberIndex = computeMemberIndex$1@42 // through LazyPackageFragmentScopeForJavaPackage@38
 }
 
 LazyJavaPackageFragment@30['jvm'] {
@@ -50,16 +50,16 @@ LazyJavaPackageFragment@30['jvm'] {
 }
 
 LazyJavaPackageFragment@20['kotlin'] {
-    _functions('io': Name@44) = EmptyList@38[empty] // through LazyPackageFragmentScopeForJavaPackage@45
-    _functions('jvm': Name@46) = EmptyList@38[empty] // through LazyPackageFragmentScopeForJavaPackage@45
-    classes('Any': Name@34) = null // through LazyPackageFragmentScopeForJavaPackage@45
-    classes('io': Name@47) = null // through LazyPackageFragmentScopeForJavaPackage@45
-    classes('jvm': Name@48) = null // through LazyPackageFragmentScopeForJavaPackage@45
-    deserializedPackageScope = DeserializedPackageMemberScope@49 // through LazyPackageFragmentScopeForJavaPackage@45
-    functions('io': Name@44) = EmptyList@38[empty] // through DeserializedPackageMemberScope@49
-    functions('jvm': Name@46) = EmptyList@38[empty] // through DeserializedPackageMemberScope@49
-    memberIndex = computeMemberIndex$1@50 // through LazyPackageFragmentScopeForJavaPackage@45
-    membersProtos = HashMap@51 // through DeserializedPackageMemberScope@49
-    properties('io': Name@44) = EmptyList@38[empty] // through DeserializedPackageMemberScope@49
-    properties('jvm': Name@46) = EmptyList@38[empty] // through DeserializedPackageMemberScope@49
+    classes('Any': Name@34) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    classes('io': Name@45) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    classes('jvm': Name@46) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    deserializedPackageScope = DeserializedPackageMemberScope@47 // through LazyPackageFragmentScopeForJavaPackage@44
+    functions('io': Name@48) = EmptyList@41[empty] // through DeserializedPackageMemberScope@47
+    functions('io': Name@48) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@44
+    functions('jvm': Name@49) = EmptyList@41[empty] // through DeserializedPackageMemberScope@47
+    functions('jvm': Name@49) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@44
+    memberIndex = computeMemberIndex$1@50 // through LazyPackageFragmentScopeForJavaPackage@44
+    membersProtos = HashMap@51 // through DeserializedPackageMemberScope@47
+    properties('io': Name@48) = EmptyList@41[empty] // through DeserializedPackageMemberScope@47
+    properties('jvm': Name@49) = EmptyList@41[empty] // through DeserializedPackageMemberScope@47
 }

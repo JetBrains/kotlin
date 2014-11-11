@@ -1,30 +1,30 @@
 LazyJavaClassDescriptor@0['J'] {
-    _constructors = ArrayList@1[1] { JavaConstructorDescriptor@2['<init>'] } // through LazyJavaClassMemberScope@3
-    _typeConstructor = LazyJavaClassTypeConstructor@4['J']
-    defaultType = JetTypeImpl@5['J']
+    constructors = ArrayList@1[1] { JavaConstructorDescriptor@2['<init>'] } // through LazyJavaClassMemberScope@3
+    defaultType = JetTypeImpl@4['J']
+    typeConstructor = LazyJavaClassTypeConstructor@5['J']
 }
 
-LazyJavaClassTypeConstructor@4['J'] {
-    _parameters = ArrayList@6[empty]
-    _supertypes = ArrayList@7[1] { LazyJavaClassifierType@8['K'] }
+LazyJavaClassTypeConstructor@5['J'] {
+    parameters = ArrayList@6[empty]
+    supertypes = ArrayList@7[1] { LazyJavaClassifierType@8['K'] }
 }
 
 LazyJavaClassifierType@8['K'] {
-    _typeConstructor = TypeConstructorImpl$1@9
-    classifier = JavaClassImpl@10['K']
+    classifier = JavaClassImpl@9['K']
+    typeConstructor = TypeConstructorImpl$1@10
 }
 
 LazyJavaPackageFragmentProvider@11 {
-    _packageFragments('<root>': FqName@12) = LazyJavaPackageFragment@13['<root>']
-    _packageFragments('J': FqName@14) = null
-    _packageFragments('K': FqName@15) = null
-    _packageFragments('java': FqName@16) = LazyJavaPackageFragment@17['java']
-    _packageFragments('java.lang': FqName@18) = LazyJavaPackageFragment@19['lang']
-    _packageFragments('java.lang.J': FqName@20) = null
-    _packageFragments('kotlin': FqName@21) = null
-    _packageFragments('kotlin.J': FqName@22) = null
-    _packageFragments('kotlin.io': FqName@23) = null
-    _packageFragments('kotlin.jvm': FqName@24) = null
+    packageFragments('<root>': FqName@12) = LazyJavaPackageFragment@13['<root>']
+    packageFragments('J': FqName@14) = null
+    packageFragments('K': FqName@15) = null
+    packageFragments('java': FqName@16) = LazyJavaPackageFragment@17['java']
+    packageFragments('java.lang': FqName@18) = LazyJavaPackageFragment@19['lang']
+    packageFragments('java.lang.J': FqName@20) = null
+    packageFragments('kotlin': FqName@21) = null
+    packageFragments('kotlin.J': FqName@22) = null
+    packageFragments('kotlin.io': FqName@23) = null
+    packageFragments('kotlin.jvm': FqName@24) = null
     topLevelClasses(JavaClassImpl@25['J']) = LazyJavaClassDescriptor@0['J']
 }
 
@@ -33,8 +33,8 @@ LazyJavaPackageFragment@13['<root>'] {
 }
 
 LazyJavaPackageFragment@17['java'] {
-    _functions('lang': Name@28) = EmptyList@29[empty] // through LazyPackageFragmentScopeForJavaPackage@30
-    classes('lang': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@30
-    deserializedPackageScope = Empty@32 // through LazyPackageFragmentScopeForJavaPackage@30
-    memberIndex = computeMemberIndex$1@33 // through LazyPackageFragmentScopeForJavaPackage@30
+    classes('lang': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    deserializedPackageScope = Empty@30 // through LazyPackageFragmentScopeForJavaPackage@29
+    functions('lang': Name@31) = EmptyList@32[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    memberIndex = computeMemberIndex$1@33 // through LazyPackageFragmentScopeForJavaPackage@29
 }
