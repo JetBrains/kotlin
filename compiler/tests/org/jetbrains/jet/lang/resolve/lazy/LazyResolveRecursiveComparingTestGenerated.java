@@ -984,6 +984,12 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
                 doTest(fileName);
             }
 
+            @TestMetadata("enumWithInnerClasses.kt")
+            public void testEnumWithInnerClasses() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/enum/enumWithInnerClasses.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("innerEnum.kt")
             public void testInnerEnum() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/enum/innerEnum.kt");

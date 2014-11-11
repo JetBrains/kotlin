@@ -1,0 +1,66 @@
+package test
+
+internal final enum class Enum : kotlin.Enum<test.Enum> {
+    public enum entry ENTRY1 : test.Enum {
+        /*primary*/ private constructor ENTRY1()
+        internal final override /*1*/ /*fake_override*/ val c: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ fun <get-c>(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
+        internal final override /*1*/ /*fake_override*/ fun f(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        public class object <class-object-for-ENTRY1> : test.Enum.ENTRY1 {
+            /*primary*/ private constructor <class-object-for-ENTRY1>()
+            internal final override /*1*/ /*fake_override*/ val c: kotlin.Int
+                internal final override /*1*/ /*fake_override*/ fun <get-c>(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
+            internal final override /*1*/ /*fake_override*/ fun f(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+    }
+
+    public enum entry ENTRY2 : test.Enum {
+        /*primary*/ private constructor ENTRY2()
+        internal final override /*1*/ /*fake_override*/ val c: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ fun <get-c>(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
+        internal final override /*1*/ /*fake_override*/ fun f(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        public class object <class-object-for-ENTRY2> : test.Enum.ENTRY2 {
+            /*primary*/ private constructor <class-object-for-ENTRY2>()
+            internal final override /*1*/ /*fake_override*/ val c: kotlin.Int
+                internal final override /*1*/ /*fake_override*/ fun <get-c>(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
+            internal final override /*1*/ /*fake_override*/ fun f(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+    }
+
+    /*primary*/ private constructor Enum()
+    internal final val c: kotlin.Int = 1
+        internal final fun <get-c>(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
+    internal final fun f(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+    internal final inner class Inner {
+        /*primary*/ public constructor Inner()
+    }
+
+    internal final class Nested {
+        /*primary*/ public constructor Nested()
+    }
+
+    internal trait Trait {
+    }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Enum
+    public final /*synthesized*/ fun values(): kotlin.Array<test.Enum>
+}
