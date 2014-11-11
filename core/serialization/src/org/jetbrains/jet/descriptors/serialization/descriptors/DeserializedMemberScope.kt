@@ -106,15 +106,16 @@ public abstract class DeserializedMemberScope protected(
                                      nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>(0)
 
-        for (name in membersProtos().keySet()) {
-            if (nameFilter(name)) {
-                if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
-                    result.addAll(getFunctions(name))
-                }
-                if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
-                    result.addAll(getProperties(name))
-                }
-            }
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
+            addEnumEntryDescriptors(result, nameFilter)
+        }
+
+        val names = membersProtos().keySet().filter(nameFilter)
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
+            names.forEach { result.addAll(getProperties(it)) }
+        }
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
+            names.forEach { result.addAll(getFunctions(it)) }
         }
 
         addNonDeclaredDescriptors(result)
@@ -127,6 +128,8 @@ public abstract class DeserializedMemberScope protected(
     }
 
     protected abstract fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>)
+
+    protected abstract fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         val receiver = getImplicitReceiver()

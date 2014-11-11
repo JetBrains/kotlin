@@ -61,5 +61,9 @@ public open class DeserializedPackageMemberScope(
         // Do nothing
     }
 
+    override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
+        // Do nothing
+    }
+
     override fun getImplicitReceiver(): ReceiverParameterDescriptor? = null
 }

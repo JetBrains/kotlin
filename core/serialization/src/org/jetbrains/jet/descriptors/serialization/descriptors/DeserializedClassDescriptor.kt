@@ -241,7 +241,11 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
                 classDescriptor.enumEntries.findEnumEntry(name) ?: classDescriptor.nestedClasses.findNestedClass(name)
 
         override fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
-            result.addAll(classDescriptor.nestedClasses.all() + classDescriptor.enumEntries.all())
+            result.addAll(classDescriptor.nestedClasses.all())
+        }
+
+        override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
+            result.addAll(classDescriptor.enumEntries.all())
         }
     }
 
