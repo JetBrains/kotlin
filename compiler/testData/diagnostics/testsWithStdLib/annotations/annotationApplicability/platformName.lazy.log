@@ -207,7 +207,7 @@ LazyJavaPackageFragment@102['kotlin'] {
     functions('platform': Name@148) = EmptyList@132[empty] // through DeserializedPackageMemberScope@145
     functions('platform': Name@148) = EmptyList@132[empty] // through LazyPackageFragmentScopeForJavaPackage@140
     memberIndex = computeMemberIndex$1@149 // through LazyPackageFragmentScopeForJavaPackage@140
-    membersProtos = HashMap@150 // through DeserializedPackageMemberScope@145
+    membersProtos = LinkedHashMap@150 // through DeserializedPackageMemberScope@145
     properties('io': Name@146) = EmptyList@132[empty] // through DeserializedPackageMemberScope@145
     properties('jvm': Name@147) = EmptyList@132[empty] // through DeserializedPackageMemberScope@145
     properties('platform': Name@148) = EmptyList@132[empty] // through DeserializedPackageMemberScope@145

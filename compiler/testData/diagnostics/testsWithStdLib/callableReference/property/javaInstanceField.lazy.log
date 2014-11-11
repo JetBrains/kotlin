@@ -36,12 +36,12 @@ DeserializedType@21['kotlin.Any'] {
     memberScope = DeserializedClassMemberScope@23
 }
 
-DeserializedType@17['kotlin.Any'] {
+DeserializedType@13['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@22
     memberScope = DeserializedClassMemberScope@23
 }
 
-DeserializedType@13['kotlin.Any'] {
+DeserializedType@17['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@22
     memberScope = DeserializedClassMemberScope@23
 }
@@ -256,7 +256,7 @@ LazyJavaPackageFragment@115['io'] {
     functions('publicMutable': Name@164) = EmptyList@29[empty] // through DeserializedPackageMemberScope@169
     functions('publicMutable': Name@164) = EmptyList@29[empty] // through LazyPackageFragmentScopeForJavaPackage@168
     memberIndex = computeMemberIndex$1@170 // through LazyPackageFragmentScopeForJavaPackage@168
-    membersProtos = HashMap@171 // through DeserializedPackageMemberScope@169
+    membersProtos = LinkedHashMap@171 // through DeserializedPackageMemberScope@169
     properties('privateFinal': Name@159) = EmptyList@29[empty] // through DeserializedPackageMemberScope@169
     properties('privateMutable': Name@160) = EmptyList@29[empty] // through DeserializedPackageMemberScope@169
     properties('protectedFinal': Name@161) = EmptyList@29[empty] // through DeserializedPackageMemberScope@169
@@ -336,7 +336,7 @@ LazyJavaPackageFragment@104['kotlin'] {
     functions('reflect': Name@186) = EmptyList@29[empty] // through DeserializedPackageMemberScope@183
     functions('reflect': Name@186) = EmptyList@29[empty] // through LazyPackageFragmentScopeForJavaPackage@179
     memberIndex = computeMemberIndex$1@187 // through LazyPackageFragmentScopeForJavaPackage@179
-    membersProtos = HashMap@188 // through DeserializedPackageMemberScope@183
+    membersProtos = LinkedHashMap@188 // through DeserializedPackageMemberScope@183
     properties('io': Name@184) = EmptyList@29[empty] // through DeserializedPackageMemberScope@183
     properties('jvm': Name@185) = EmptyList@29[empty] // through DeserializedPackageMemberScope@183
     properties('privateFinal': Name@159) = EmptyList@29[empty] // through DeserializedPackageMemberScope@183

@@ -63,12 +63,7 @@ DeserializedType@30['kotlin.Any'] {
     memberScope = DeserializedClassMemberScope@36
 }
 
-DeserializedType@34['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@35
-    memberScope = DeserializedClassMemberScope@36
-}
-
-DeserializedType@22['kotlin.Any'] {
+DeserializedType@18['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@35
     memberScope = DeserializedClassMemberScope@36
 }
@@ -78,7 +73,12 @@ DeserializedType@26['kotlin.Any'] {
     memberScope = DeserializedClassMemberScope@36
 }
 
-DeserializedType@18['kotlin.Any'] {
+DeserializedType@34['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@35
+    memberScope = DeserializedClassMemberScope@36
+}
+
+DeserializedType@22['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@35
     memberScope = DeserializedClassMemberScope@36
 }
@@ -182,7 +182,7 @@ LazyJavaPackageFragment@71['io'] {
     functions('foo': Name@101) = EmptyList@104[empty] // through DeserializedPackageMemberScope@108
     functions('foo': Name@101) = EmptyList@104[empty] // through LazyPackageFragmentScopeForJavaPackage@107
     memberIndex = computeMemberIndex$1@109 // through LazyPackageFragmentScopeForJavaPackage@107
-    membersProtos = HashMap@110 // through DeserializedPackageMemberScope@108
+    membersProtos = LinkedHashMap@110 // through DeserializedPackageMemberScope@108
     properties('bar': Name@99) = EmptyList@104[empty] // through DeserializedPackageMemberScope@108
     properties('baz': Name@100) = EmptyList@104[empty] // through DeserializedPackageMemberScope@108
     properties('foo': Name@101) = EmptyList@104[empty] // through DeserializedPackageMemberScope@108
@@ -239,7 +239,7 @@ LazyJavaPackageFragment@13['kotlin'] {
     functions('reflect': Name@130) = EmptyList@104[empty] // through DeserializedPackageMemberScope@127
     functions('reflect': Name@130) = EmptyList@104[empty] // through LazyPackageFragmentScopeForJavaPackage@121
     memberIndex = computeMemberIndex$1@131 // through LazyPackageFragmentScopeForJavaPackage@121
-    membersProtos = HashMap@132 // through DeserializedPackageMemberScope@127
+    membersProtos = LinkedHashMap@132 // through DeserializedPackageMemberScope@127
     properties('bar': Name@99) = EmptyList@104[empty] // through DeserializedPackageMemberScope@127
     properties('baz': Name@100) = EmptyList@104[empty] // through DeserializedPackageMemberScope@127
     properties('foo': Name@101) = EmptyList@104[empty] // through DeserializedPackageMemberScope@127

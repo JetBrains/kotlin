@@ -228,7 +228,7 @@ LazyJavaPackageFragment@115['io'] {
     functions('javaClass': Name@134) = EmptyList@38[empty] // through DeserializedPackageMemberScope@135
     functions('javaClass': Name@134) = EmptyList@38[empty] // through LazyPackageFragmentScopeForJavaPackage@133
     memberIndex = computeMemberIndex$1@136 // through LazyPackageFragmentScopeForJavaPackage@133
-    membersProtos = HashMap@137 // through DeserializedPackageMemberScope@135
+    membersProtos = LinkedHashMap@137 // through DeserializedPackageMemberScope@135
     properties('javaClass': Name@134) = EmptyList@38[empty] // through DeserializedPackageMemberScope@135
 }
 
@@ -267,7 +267,7 @@ LazyJavaPackageFragment@11['kotlin'] {
     functions('jvm': Name@154) = EmptyList@38[empty] // through DeserializedPackageMemberScope@150
     functions('jvm': Name@154) = EmptyList@38[empty] // through LazyPackageFragmentScopeForJavaPackage@146
     memberIndex = computeMemberIndex$1@155 // through LazyPackageFragmentScopeForJavaPackage@146
-    membersProtos = HashMap@156 // through DeserializedPackageMemberScope@150
+    membersProtos = LinkedHashMap@156 // through DeserializedPackageMemberScope@150
     properties('io': Name@151) = EmptyList@38[empty] // through DeserializedPackageMemberScope@150
     properties('javaClass': Name@134) = ArrayList@157[1] { DeserializedPropertyDescriptor@158['javaClass'] } // through DeserializedPackageMemberScope@150
     properties('jvm': Name@154) = EmptyList@38[empty] // through DeserializedPackageMemberScope@150
@@ -294,11 +294,11 @@ LazyJavaTypeParameterResolver@164 {
 }
 
 TypeDeserializer@166 {
-    classDescriptors('2': Integer@167) = DeserializedClassDescriptor@168['Any']
-    classDescriptors('54': Integer@169) = LazyJavaClassDescriptor@42['Class']
+    classDescriptors('27': Integer@167) = LazyJavaClassDescriptor@42['Class']
+    classDescriptors('9': Integer@168) = DeserializedClassDescriptor@169['Any']
 }
 
 TypeDeserializer@170 {
-    classDescriptors('2': Integer@167) = DeserializedClassDescriptor@168['Any']
-    classDescriptors('54': Integer@169) = LazyJavaClassDescriptor@42['Class']
+    classDescriptors('27': Integer@167) = LazyJavaClassDescriptor@42['Class']
+    classDescriptors('9': Integer@168) = DeserializedClassDescriptor@169['Any']
 }

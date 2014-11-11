@@ -60,12 +60,12 @@ DeserializedType@33['java.lang.Class'] {
     memberScope = SubstitutingScope@35
 }
 
-DeserializedType@24['kotlin.Any'] {
+DeserializedType@28['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@36
     memberScope = DeserializedClassMemberScope@37
 }
 
-DeserializedType@28['kotlin.Any'] {
+DeserializedType@24['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@36
     memberScope = DeserializedClassMemberScope@37
 }
@@ -353,7 +353,7 @@ LazyJavaPackageFragment@173['io'] {
     functions('javaClass': Name@202) = EmptyList@204[empty] // through DeserializedPackageMemberScope@209
     functions('javaClass': Name@202) = EmptyList@204[empty] // through LazyPackageFragmentScopeForJavaPackage@208
     memberIndex = computeMemberIndex$1@210 // through LazyPackageFragmentScopeForJavaPackage@208
-    membersProtos = HashMap@211 // through DeserializedPackageMemberScope@209
+    membersProtos = LinkedHashMap@211 // through DeserializedPackageMemberScope@209
     properties('Ann': Name@190) = EmptyList@204[empty] // through DeserializedPackageMemberScope@209
     properties('array': Name@194) = EmptyList@204[empty] // through DeserializedPackageMemberScope@209
     properties('foo': Name@195) = EmptyList@204[empty] // through DeserializedPackageMemberScope@209
@@ -430,7 +430,7 @@ LazyJavaPackageFragment@19['kotlin'] {
     functions('jvm': Name@233) = EmptyList@204[empty] // through DeserializedPackageMemberScope@225
     functions('jvm': Name@233) = EmptyList@204[empty] // through LazyPackageFragmentScopeForJavaPackage@218
     memberIndex = computeMemberIndex$1@234 // through LazyPackageFragmentScopeForJavaPackage@218
-    membersProtos = HashMap@235 // through DeserializedPackageMemberScope@225
+    membersProtos = LinkedHashMap@235 // through DeserializedPackageMemberScope@225
     properties('Ann': Name@190) = EmptyList@204[empty] // through DeserializedPackageMemberScope@225
     properties('array': Name@194) = EmptyList@204[empty] // through DeserializedPackageMemberScope@225
     properties('foo': Name@195) = EmptyList@204[empty] // through DeserializedPackageMemberScope@225
@@ -477,16 +477,16 @@ LazyJavaTypeParameterResolver@243 {
 }
 
 TypeDeserializer@245 {
-    classDescriptors('2': Integer@246) = DeserializedClassDescriptor@247['Any']
-    classDescriptors('3': Integer@248) = DeserializedClassDescriptor@249['Array']
+    classDescriptors('22': Integer@246) = DeserializedClassDescriptor@247['Int']
+    classDescriptors('35': Integer@248) = DeserializedClassDescriptor@249['IntArray']
 }
 
 TypeDeserializer@250 {
-    classDescriptors('2': Integer@246) = DeserializedClassDescriptor@247['Any']
-    classDescriptors('54': Integer@251) = LazyJavaClassDescriptor@100['Class']
+    classDescriptors('27': Integer@251) = LazyJavaClassDescriptor@100['Class']
+    classDescriptors('9': Integer@252) = DeserializedClassDescriptor@253['Any']
 }
 
-TypeDeserializer@252 {
-    classDescriptors('20': Integer@253) = DeserializedClassDescriptor@254['Int']
-    classDescriptors('45': Integer@255) = DeserializedClassDescriptor@256['IntArray']
+TypeDeserializer@254 {
+    classDescriptors('8': Integer@255) = DeserializedClassDescriptor@256['Array']
+    classDescriptors('9': Integer@252) = DeserializedClassDescriptor@253['Any']
 }

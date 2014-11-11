@@ -51,12 +51,12 @@ DeserializedType@26['kotlin.Any'] {
     memberScope = DeserializedClassMemberScope@28
 }
 
-DeserializedType@18['kotlin.Any'] {
+DeserializedType@22['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@27
     memberScope = DeserializedClassMemberScope@28
 }
 
-DeserializedType@22['kotlin.Any'] {
+DeserializedType@18['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@27
     memberScope = DeserializedClassMemberScope@28
 }
@@ -160,7 +160,7 @@ LazyJavaPackageFragment@63['io'] {
     functions('foo': Name@93) = EmptyList@96[empty] // through DeserializedPackageMemberScope@100
     functions('foo': Name@93) = EmptyList@96[empty] // through LazyPackageFragmentScopeForJavaPackage@99
     memberIndex = computeMemberIndex$1@101 // through LazyPackageFragmentScopeForJavaPackage@99
-    membersProtos = HashMap@102 // through DeserializedPackageMemberScope@100
+    membersProtos = LinkedHashMap@102 // through DeserializedPackageMemberScope@100
     properties('bar': Name@91) = EmptyList@96[empty] // through DeserializedPackageMemberScope@100
     properties('baz': Name@92) = EmptyList@96[empty] // through DeserializedPackageMemberScope@100
     properties('foo': Name@93) = EmptyList@96[empty] // through DeserializedPackageMemberScope@100
@@ -217,7 +217,7 @@ LazyJavaPackageFragment@13['kotlin'] {
     functions('reflect': Name@122) = EmptyList@96[empty] // through DeserializedPackageMemberScope@119
     functions('reflect': Name@122) = EmptyList@96[empty] // through LazyPackageFragmentScopeForJavaPackage@113
     memberIndex = computeMemberIndex$1@123 // through LazyPackageFragmentScopeForJavaPackage@113
-    membersProtos = HashMap@124 // through DeserializedPackageMemberScope@119
+    membersProtos = LinkedHashMap@124 // through DeserializedPackageMemberScope@119
     properties('bar': Name@91) = EmptyList@96[empty] // through DeserializedPackageMemberScope@119
     properties('baz': Name@92) = EmptyList@96[empty] // through DeserializedPackageMemberScope@119
     properties('foo': Name@93) = EmptyList@96[empty] // through DeserializedPackageMemberScope@119

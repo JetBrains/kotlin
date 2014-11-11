@@ -22,12 +22,12 @@ DeserializedTypeParameterDescriptor@11['T'] {
     upperBoundsAsType = DeserializedType@14['kotlin.Any']
 }
 
-DeserializedType@14['kotlin.Any'] {
+DeserializedType@10['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@15
     memberScope = DeserializedClassMemberScope@16
 }
 
-DeserializedType@10['kotlin.Any'] {
+DeserializedType@14['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@15
     memberScope = DeserializedClassMemberScope@16
 }
@@ -83,7 +83,7 @@ LazyJavaPackageFragment@39['io'] {
     functions('Inner': Name@50) = EmptyList@55[empty] // through DeserializedPackageMemberScope@59
     functions('Inner': Name@50) = EmptyList@55[empty] // through LazyPackageFragmentScopeForJavaPackage@58
     memberIndex = computeMemberIndex$1@60 // through LazyPackageFragmentScopeForJavaPackage@58
-    membersProtos = HashMap@61 // through DeserializedPackageMemberScope@59
+    membersProtos = LinkedHashMap@61 // through DeserializedPackageMemberScope@59
     properties('Inner': Name@50) = EmptyList@55[empty] // through DeserializedPackageMemberScope@59
     properties('x': Name@62) = EmptyList@55[empty] // through DeserializedPackageMemberScope@59
     properties('y': Name@63) = EmptyList@55[empty] // through DeserializedPackageMemberScope@59
@@ -120,7 +120,7 @@ LazyJavaPackageFragment@5['kotlin'] {
     functions('reflect': Name@79) = EmptyList@55[empty] // through DeserializedPackageMemberScope@76
     functions('reflect': Name@79) = EmptyList@55[empty] // through LazyPackageFragmentScopeForJavaPackage@71
     memberIndex = computeMemberIndex$1@80 // through LazyPackageFragmentScopeForJavaPackage@71
-    membersProtos = HashMap@81 // through DeserializedPackageMemberScope@76
+    membersProtos = LinkedHashMap@81 // through DeserializedPackageMemberScope@76
     properties('Inner': Name@50) = EmptyList@55[empty] // through DeserializedPackageMemberScope@76
     properties('io': Name@77) = EmptyList@55[empty] // through DeserializedPackageMemberScope@76
     properties('jvm': Name@78) = EmptyList@55[empty] // through DeserializedPackageMemberScope@76

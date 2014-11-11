@@ -46,17 +46,17 @@ DeserializedTypeParameterDescriptor@23['R'] {
     upperBounds = LinkedHashSet@25[1] { DeserializedType@26['kotlin.Any'] }
 }
 
-DeserializedType@26['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@27
-    memberScope = DeserializedClassMemberScope@28
-}
-
 DeserializedType@22['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@27
     memberScope = DeserializedClassMemberScope@28
 }
 
 DeserializedType@18['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@27
+    memberScope = DeserializedClassMemberScope@28
+}
+
+DeserializedType@26['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@27
     memberScope = DeserializedClassMemberScope@28
 }
@@ -161,7 +161,7 @@ LazyJavaPackageFragment@64['io'] {
     functions('foo': Name@94) = EmptyList@97[empty] // through DeserializedPackageMemberScope@101
     functions('foo': Name@94) = EmptyList@97[empty] // through LazyPackageFragmentScopeForJavaPackage@100
     memberIndex = computeMemberIndex$1@102 // through LazyPackageFragmentScopeForJavaPackage@100
-    membersProtos = HashMap@103 // through DeserializedPackageMemberScope@101
+    membersProtos = LinkedHashMap@103 // through DeserializedPackageMemberScope@101
     properties('bar': Name@92) = EmptyList@97[empty] // through DeserializedPackageMemberScope@101
     properties('baz': Name@93) = EmptyList@97[empty] // through DeserializedPackageMemberScope@101
     properties('foo': Name@94) = EmptyList@97[empty] // through DeserializedPackageMemberScope@101
@@ -218,7 +218,7 @@ LazyJavaPackageFragment@13['kotlin'] {
     functions('reflect': Name@123) = EmptyList@97[empty] // through DeserializedPackageMemberScope@120
     functions('reflect': Name@123) = EmptyList@97[empty] // through LazyPackageFragmentScopeForJavaPackage@114
     memberIndex = computeMemberIndex$1@124 // through LazyPackageFragmentScopeForJavaPackage@114
-    membersProtos = HashMap@125 // through DeserializedPackageMemberScope@120
+    membersProtos = LinkedHashMap@125 // through DeserializedPackageMemberScope@120
     properties('bar': Name@92) = EmptyList@97[empty] // through DeserializedPackageMemberScope@120
     properties('baz': Name@93) = EmptyList@97[empty] // through DeserializedPackageMemberScope@120
     properties('foo': Name@94) = EmptyList@97[empty] // through DeserializedPackageMemberScope@120

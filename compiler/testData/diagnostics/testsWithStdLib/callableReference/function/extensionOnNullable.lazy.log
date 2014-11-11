@@ -48,17 +48,17 @@ DeserializedTypeParameterDescriptor@26['T'] {
     upperBoundsAsType = DeserializedType@29['kotlin.Any']
 }
 
-DeserializedType@21['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@30
-    memberScope = DeserializedClassMemberScope@31
-}
-
 DeserializedType@29['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@30
     memberScope = DeserializedClassMemberScope@31
 }
 
 DeserializedType@17['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@30
+    memberScope = DeserializedClassMemberScope@31
+}
+
+DeserializedType@21['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@30
     memberScope = DeserializedClassMemberScope@31
 }
@@ -139,7 +139,7 @@ LazyJavaPackageFragment@60['io'] {
     functions('foo': Name@80) = EmptyList@83[empty] // through DeserializedPackageMemberScope@87
     functions('foo': Name@80) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@86
     memberIndex = computeMemberIndex$1@88 // through LazyPackageFragmentScopeForJavaPackage@86
-    membersProtos = HashMap@89 // through DeserializedPackageMemberScope@87
+    membersProtos = LinkedHashMap@89 // through DeserializedPackageMemberScope@87
     properties('foo': Name@80) = EmptyList@83[empty] // through DeserializedPackageMemberScope@87
 }
 
@@ -176,7 +176,7 @@ LazyJavaPackageFragment@12['kotlin'] {
     functions('reflect': Name@105) = EmptyList@83[empty] // through DeserializedPackageMemberScope@102
     functions('reflect': Name@105) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@97
     memberIndex = computeMemberIndex$1@106 // through LazyPackageFragmentScopeForJavaPackage@97
-    membersProtos = HashMap@107 // through DeserializedPackageMemberScope@102
+    membersProtos = LinkedHashMap@107 // through DeserializedPackageMemberScope@102
     properties('foo': Name@80) = EmptyList@83[empty] // through DeserializedPackageMemberScope@102
     properties('io': Name@103) = EmptyList@83[empty] // through DeserializedPackageMemberScope@102
     properties('jvm': Name@104) = EmptyList@83[empty] // through DeserializedPackageMemberScope@102

@@ -54,7 +54,7 @@ LazyJavaPackageFragment@25['io'] {
     functions('foo': Name@38) = EmptyList@40[empty] // through DeserializedPackageMemberScope@43
     functions('foo': Name@38) = EmptyList@40[empty] // through LazyPackageFragmentScopeForJavaPackage@42
     memberIndex = computeMemberIndex$1@44 // through LazyPackageFragmentScopeForJavaPackage@42
-    membersProtos = HashMap@45 // through DeserializedPackageMemberScope@43
+    membersProtos = LinkedHashMap@45 // through DeserializedPackageMemberScope@43
     properties('foo': Name@38) = EmptyList@40[empty] // through DeserializedPackageMemberScope@43
 }
 
@@ -90,7 +90,7 @@ LazyJavaPackageFragment@6['kotlin'] {
     functions('jvm': Name@57) = EmptyList@40[empty] // through DeserializedPackageMemberScope@55
     functions('jvm': Name@57) = EmptyList@40[empty] // through LazyPackageFragmentScopeForJavaPackage@52
     memberIndex = computeMemberIndex$1@58 // through LazyPackageFragmentScopeForJavaPackage@52
-    membersProtos = HashMap@59 // through DeserializedPackageMemberScope@55
+    membersProtos = LinkedHashMap@59 // through DeserializedPackageMemberScope@55
     properties('foo': Name@38) = EmptyList@40[empty] // through DeserializedPackageMemberScope@55
     properties('io': Name@56) = EmptyList@40[empty] // through DeserializedPackageMemberScope@55
     properties('jvm': Name@57) = EmptyList@40[empty] // through DeserializedPackageMemberScope@55

@@ -1,18 +1,6 @@
 package
 
 internal final enum class EnumWithOpenMembers : kotlin.Enum<EnumWithOpenMembers> {
-    private constructor EnumWithOpenMembers()
-    internal final val b: kotlin.Int = 3
-    internal open val bar: kotlin.String = ""
-    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumWithOpenMembers): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    internal final fun f(): kotlin.Int
-    internal open fun foo(): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
     public enum entry E1 : EnumWithOpenMembers {
         private constructor E1()
         internal final override /*1*/ /*fake_override*/ val b: kotlin.Int
@@ -68,6 +56,18 @@ internal final enum class EnumWithOpenMembers : kotlin.Enum<EnumWithOpenMembers>
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
+
+    private constructor EnumWithOpenMembers()
+    internal final val b: kotlin.Int = 3
+    internal open val bar: kotlin.String = ""
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumWithOpenMembers): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun f(): kotlin.Int
+    internal open fun foo(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumWithOpenMembers
