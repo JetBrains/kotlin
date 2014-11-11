@@ -30,13 +30,17 @@ import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInf
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.ConstructorInfo
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallableBuilderConfiguration
-import org.jetbrains.jet.lang.psi.JetExpression
 import java.util.Collections
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.createBuilder
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.CallablePlacement
 import org.jetbrains.jet.plugin.refactoring.getOrCreateKotlinFile
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassKind.*
+import com.intellij.psi.PsiPackage
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.ide.util.DirectoryChooserUtil
+import java.util.HashMap
+import com.intellij.openapi.application.ApplicationManager
 
 enum class ClassKind(val keyword: String, val description: String) {
     PLAIN_CLASS: ClassKind("class", "class")
@@ -66,26 +70,44 @@ public class CreateClassFromUsageFix(
             JetBundle.message("create.0.from.usage", "${classInfo.kind.description} '${classInfo.name}'")
 
     override fun invoke(project: Project, editor: Editor, file: JetFile) {
+        fun createFileByPackage(psiPackage: PsiPackage): JetFile? {
+            val directories = psiPackage.getDirectories().filter { it.canRefactor() }
+            assert (directories.isNotEmpty(), "Package '${psiPackage.getQualifiedName() ?: ""}' must be refactorable")
+
+            val currentModule = ModuleUtilCore.findModuleForPsiElement(file)
+            val preferredDirectory =
+                    directories.firstOrNull { ModuleUtilCore.findModuleForPsiElement(it) == currentModule }
+                    ?: directories.firstOrNull()
+
+            val targetDirectory = if (directories.size > 1 && !ApplicationManager.getApplication().isUnitTestMode()) {
+                DirectoryChooserUtil.chooseDirectory(directories.copyToArray(), preferredDirectory, project, HashMap<PsiDirectory, String>())
+            }
+            else {
+                preferredDirectory
+            } ?: return null
+
+            val fileName = "${classInfo.name}.${JetFileType.INSTANCE.getDefaultExtension()}"
+            val targetFile = getOrCreateKotlinFile(fileName, targetDirectory)
+            if (targetFile == null) {
+                val filePath = "${targetDirectory.getVirtualFile().getPath()}/$fileName"
+                CodeInsightUtils.showErrorHint(
+                        targetDirectory.getProject(),
+                        editor,
+                        "File $filePath already exists but does not correspond to Kotlin file",
+                        "Create file",
+                        null
+                )
+            }
+            return targetFile
+        }
+
         with (classInfo) {
-            val targetParent = when (targetParent) {
-                                   is JetElement -> targetParent
-                                   is PsiDirectory -> {
-                                       val fileName = "$name.${JetFileType.INSTANCE.getDefaultExtension()}"
-                                       val targetFile = getOrCreateKotlinFile(fileName, targetParent)
-                                       if (targetFile == null) {
-                                           val filePath = "${targetParent.getVirtualFile().getPath()}/$fileName"
-                                           CodeInsightUtils.showErrorHint(
-                                                   targetParent.getProject(),
-                                                   editor,
-                                                   "File $filePath already exists but does not correspond to Kotlin file",
-                                                   "Create file",
-                                                   null
-                                           )
-                                       }
-                                       targetFile
-                                   }
-                                   else -> throw AssertionError("Unexpected element: " + targetParent.getText())
-                               } as? JetElement ?: return
+            val targetParent =
+                    when (targetParent) {
+                        is JetElement -> targetParent
+                        is PsiPackage -> createFileByPackage(targetParent)
+                        else -> throw AssertionError("Unexpected element: " + targetParent.getText())
+                    } as? JetElement ?: return
 
             val constructorInfo = ConstructorInfo(classInfo, expectedTypeInfo)
             val builder = CallableBuilderConfiguration(

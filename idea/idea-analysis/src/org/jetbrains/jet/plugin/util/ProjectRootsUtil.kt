@@ -24,13 +24,14 @@ import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 import org.jetbrains.jet.plugin.configuration.JetModuleTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiDirectory
 
 public object ProjectRootsUtil {
     platformStatic
     public fun isInSources(project: Project, file: VirtualFile,
-                           includeLibrarySources: Boolean, withLibraryClassesRoots: Boolean,
+                           includeTestSources: Boolean, includeLibrarySources: Boolean, withLibraryClassesRoots: Boolean,
                            fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)): Boolean {
-        if (fileIndex.isInSourceContent(file)) {
+        if (fileIndex.isInSourceContent(file) || (includeTestSources && fileIndex.isInTestSourceContent(file))) {
             return !JetModuleTypeManager.getInstance()!!.isKtFileInGradleProjectInWrongFolder(file, project)
         }
 
@@ -40,16 +41,20 @@ public object ProjectRootsUtil {
     }
 
     platformStatic
-    public fun isInSource(element: PsiElement, includeLibrarySources: Boolean, withLibraryClassesRoots: Boolean = false): Boolean {
+    public fun isInSource(
+            element: PsiElement,
+            includeLibrarySources: Boolean,
+            includeTestSources: Boolean = false,
+            withLibraryClassesRoots: Boolean = false
+    ): Boolean {
         return runReadAction { (): Boolean ->
-            val containingFile = element.getContainingFile()
-            if (containingFile == null) return@runReadAction false
-
-            val virtualFile = containingFile.getVirtualFile()
-            if (virtualFile == null) return@runReadAction false
+            val virtualFile = when(element) {
+                                  is PsiDirectory -> element.getVirtualFile()
+                                  else -> element.getContainingFile()?.getVirtualFile()
+                              } ?: return@runReadAction false
 
             val project = element.getProject()
-            return@runReadAction isInSources(project, virtualFile, includeLibrarySources, withLibraryClassesRoots)
+            return@runReadAction isInSources(project, virtualFile, includeTestSources, includeLibrarySources, withLibraryClassesRoots)
         }
     }
 

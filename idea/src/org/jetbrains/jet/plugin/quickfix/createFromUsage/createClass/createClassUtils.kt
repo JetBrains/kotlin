@@ -8,7 +8,6 @@ import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiDirectory
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.guessTypes
@@ -26,6 +25,9 @@ import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.noSubstitutions
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import com.intellij.psi.PsiPackage
+import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.canRefactor
+import com.intellij.psi.PsiDirectory
 
 private fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUpperCase(first())
 
@@ -34,31 +36,20 @@ private fun getTargetParentByQualifier(
         isQualified: Boolean,
         qualifierDescriptor: DeclarationDescriptor?): PsiElement? {
     val project = file.getProject()
-
     val targetParent = when {
-        !isQualified -> file
-
-        qualifierDescriptor is ClassDescriptor -> {
+        !isQualified ->
+            file
+        qualifierDescriptor is ClassDescriptor ->
             DescriptorToDeclarationUtil.getDeclaration(project, qualifierDescriptor)
-        }
-
-        qualifierDescriptor is PackageViewDescriptor -> {
-            val currentModule = ModuleUtilCore.findModuleForPsiElement(file)
-            val targetFqName = qualifierDescriptor.getFqName()
-            if (targetFqName != file.getPackageFqName()) {
-                JavaPsiFacade.getInstance(project)
-                        .findPackage(targetFqName.asString())
-                        ?.getDirectories()
-                        ?.firstOrNull { ModuleUtilCore.findModuleForPsiElement(it) == currentModule }
+        qualifierDescriptor is PackageViewDescriptor ->
+            if (qualifierDescriptor.getFqName() != file.getPackageFqName()) {
+                JavaPsiFacade.getInstance(project).findPackage(qualifierDescriptor.getFqName().asString())
             }
-            else file
-        }
-
-        else -> null
+            else file : PsiElement
+        else ->
+            null
     } ?: return null
-    return if (targetParent.isWritable()
-               && ProjectRootsUtil.isInProjectOrLibSource(targetParent)
-               && (targetParent is PsiDirectory || targetParent is JetElement)) return targetParent else null
+    return if (targetParent.canRefactor()) return targetParent else null
 }
 
 private fun getTargetParentByCall(call: Call, file: JetFile): PsiElement? {
@@ -96,5 +87,16 @@ private fun JetExpression.getInheritableTypeInfo(
             ClassKind.ENUM_ENTRY -> isEnum && containingDeclaration == DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
             else -> canHaveSubtypes
         }
+    }
+}
+
+private fun PsiElement.canRefactor(): Boolean {
+    return when (this) {
+        is PsiPackage ->
+            getDirectories().any { it.canRefactor() }
+        is JetElement, is PsiDirectory ->
+            isWritable() && ProjectRootsUtil.isInSource(element = this, includeLibrarySources = false, includeTestSources = true)
+        else ->
+            false
     }
 }
