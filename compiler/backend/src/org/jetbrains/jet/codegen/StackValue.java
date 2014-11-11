@@ -695,6 +695,11 @@ public abstract class StackValue implements IStackValue {
         }
 
         @Override
+        public int receiverSize() {
+            return 2;
+        }
+
+        @Override
         public void putNoReceiver(
                 @NotNull Type type, @NotNull InstructionAdapter v
         ) {

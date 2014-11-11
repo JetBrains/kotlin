@@ -1966,16 +1966,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean skipPropertyAccessors = forceField && !isBackingFieldInAnotherClass;
 
         CodegenContext backingFieldContext = context.getParentContext();
-        boolean changeOwnerOnTypeMap = isBackingFieldInAnotherClass;
+        boolean changeOwnerOnTypeMapping = isBackingFieldInAnotherClass;
 
         if (isBackingFieldInAnotherClass && forceField) {
-            //delegate call to classObject backingFieldOwner : OWNER
             backingFieldContext = context.findParentContextWithDescriptor(containingDeclaration.getContainingDeclaration());
             int flags = AsmUtil.getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegatedProperty);
             skipPropertyAccessors = (flags & ACC_PRIVATE) == 0 || methodKind == MethodKind.SYNTHETIC_ACCESSOR || methodKind == MethodKind.INITIALIZER;
             if (!skipPropertyAccessors) {
                 propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(propertyDescriptor, true, delegateType);
-                changeOwnerOnTypeMap = changeOwnerOnTypeMap && !(propertyDescriptor instanceof AccessorForPropertyBackingFieldInOuterClass);
+                changeOwnerOnTypeMapping = changeOwnerOnTypeMapping && !(propertyDescriptor instanceof AccessorForPropertyBackingFieldInOuterClass);
             }
         }
 
@@ -2015,7 +2014,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         propertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
-        Type backingFieldOwner = typeMapper.mapOwner(changeOwnerOnTypeMap ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor,
+        Type backingFieldOwner = typeMapper.mapOwner(changeOwnerOnTypeMapping ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor,
                                     isCallInsideSameModuleAsDeclared(propertyDescriptor, context, state.getOutDirectory()));
 
         String fieldName;
@@ -2395,12 +2394,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (cur instanceof ScriptContext) {
                 ScriptContext scriptContext = (ScriptContext) cur;
 
-                Type currentScriptType = asmTypeForScriptDescriptor(bindingContext, scriptContext.getScriptDescriptor());
                 if (scriptContext.getScriptDescriptor() == receiver.getDeclarationDescriptor()) {
                     //TODO lazy
                     return result;
                 }
                 else {
+                    Type currentScriptType = asmTypeForScriptDescriptor(bindingContext, scriptContext.getScriptDescriptor());
                     Type classType = asmTypeForScriptDescriptor(bindingContext, receiver.getDeclarationDescriptor());
                     String fieldName = scriptContext.getScriptFieldName(receiver.getDeclarationDescriptor());
                     return StackValue.field(classType, currentScriptType, fieldName, false, result);
@@ -2534,7 +2533,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             newArrayInstruction(outType);
             for (int i = 0; i != size; ++i) {
                 v.dup();
-                StackValue rightSide = genLazy(arguments.get(i).getArgumentExpression(), elementType);
+                StackValue rightSide = gen(arguments.get(i).getArgumentExpression());
                 StackValue.arrayElement(elementType, StackValue.onStack(type), StackValue.constant(i, Type.INT_TYPE)).store(rightSide, v);
             }
         }
@@ -3086,12 +3085,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (callable instanceof IntrinsicMethod) {
             // Compare two primitive values
             type = comparisonOperandType(expressionType(left), expressionType(right));
-            leftValue = genLazy(left, type);
-            rightValue = genLazy(right, type);
+            leftValue = gen(left);
+            rightValue = gen(right);
         }
         else {
             type = Type.INT_TYPE;
-            leftValue = StackValue.coercion(invokeFunction(resolvedCall, receiver), type);
+            leftValue = invokeFunction(resolvedCall, receiver);
             rightValue = StackValue.constant(0, type);
         }
         return StackValue.cmp(expression.getOperationToken(), type, leftValue, rightValue);
@@ -3101,8 +3100,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         StackValue stackValue = gen(expression.getLeft());
         JetExpression right = expression.getRight();
         assert right != null : expression.getText();
-        StackValue rightSide = genLazy(right, stackValue.type);
-        stackValue.store(rightSide, v);
+        stackValue.store(gen(right), v);
         return StackValue.none();
     }
 
@@ -3217,8 +3215,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         Type type = expressionType(expression.getBaseExpression());
-        StackValue value = genLazy(expression.getBaseExpression(), type);
-
+        StackValue value = gen(expression.getBaseExpression());
         return StackValue.preIncrement(type, value, -1, callable, resolvedCall, this);
     }
 
@@ -3314,14 +3311,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (initializer == null) {
             return StackValue.none();
         }
-        initializeLocalVariable(property, new Function<VariableDescriptor, Void>() {
-            @Override
-            public Void fun(VariableDescriptor descriptor) {
-                Type varType = asmType(descriptor.getType());
-                gen(initializer, varType);
-                return null;
-            }
-        });
+        initializeLocalVariable(property, gen(initializer));
         return StackValue.none();
     }
 
@@ -3344,17 +3334,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         final StackValue.Local local = StackValue.local(tempVarIndex, initializerAsmType);
 
         for (final JetMultiDeclarationEntry variableDeclaration : multiDeclaration.getEntries()) {
-            initializeLocalVariable(variableDeclaration, new Function<VariableDescriptor, Void>() {
-                @Override
-                public Void fun(VariableDescriptor descriptor) {
-                    ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(COMPONENT_RESOLVED_CALL, variableDeclaration);
-                    assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
-                    Call call = makeFakeCall(initializerAsReceiver);
-                    StackValue result = invokeFunction(call, resolvedCall, local);
-                    result.put(result.type, v);
-                    return null;
-                }
-            });
+            ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(COMPONENT_RESOLVED_CALL, variableDeclaration);
+            assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
+            Call call = makeFakeCall(initializerAsReceiver);
+            initializeLocalVariable(variableDeclaration, invokeFunction(call, resolvedCall, local));
         }
 
         if (initializerAsmType.getSort() == Type.OBJECT || initializerAsmType.getSort() == Type.ARRAY) {
@@ -3368,7 +3351,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private void initializeLocalVariable(
             @NotNull JetVariableDeclaration variableDeclaration,
-            @NotNull Function<VariableDescriptor, Void> generateInitializer
+            @NotNull StackValue initializer
     ) {
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, variableDeclaration);
 
@@ -3386,24 +3369,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         Type varType = asmType(variableDescriptor.getType());
 
+        StackValue storeTo;
         // SCRIPT: Variable at the top of the script is generated as field
         if (JetPsiUtil.isScriptDeclaration(variableDeclaration)) {
-            generateInitializer.fun(variableDescriptor);
             JetScript scriptPsi = JetPsiUtil.getScript(variableDeclaration);
             assert scriptPsi != null;
             Type scriptClassType = asmTypeForScriptPsi(bindingContext, scriptPsi);
-            v.putfield(scriptClassType.getInternalName(), variableDeclaration.getName(), varType.getDescriptor());
+            storeTo = StackValue.field(varType, scriptClassType, variableDeclaration.getName(), false, StackValue.thiz());
         }
         else if (sharedVarType == null) {
-            generateInitializer.fun(variableDescriptor);
-            v.store(index, varType);
+            storeTo = StackValue.local(index, varType);
         }
         else {
-            v.load(index, OBJECT_TYPE);
-            generateInitializer.fun(variableDescriptor);
-            v.putfield(sharedVarType.getInternalName(), "element",
-                       sharedVarType.equals(OBJECT_REF_TYPE) ? "Ljava/lang/Object;" : varType.getDescriptor());
+            storeTo = StackValue.shared(index, varType);
         }
+
+        storeTo.store(initializer, v);
     }
 
     @NotNull
@@ -3547,7 +3528,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             else {
                 elementType = correctElementType(arrayType);
             }
-            StackValue arrayValue = genLazy(array, arrayType);
+            StackValue arrayValue = gen(array);
             StackValue index = genLazy(indices.get(0), Type.INT_TYPE);
 
             return StackValue.arrayElement(elementType, arrayValue, index);

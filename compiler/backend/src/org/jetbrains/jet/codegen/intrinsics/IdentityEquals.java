@@ -45,14 +45,14 @@ public class IdentityEquals extends IntrinsicMethod {
         StackValue left;
         StackValue right;
         if (element instanceof JetCallExpression) {
-            left = StackValue.coercion(receiver, OBJECT_TYPE);
-            right = codegen.genLazy(arguments.get(0), OBJECT_TYPE);
+            left = receiver;
+            right = codegen.gen(arguments.get(0));
         }
         else {
             assert element instanceof JetBinaryExpression;
             JetBinaryExpression e = (JetBinaryExpression) element;
-            left = codegen.genLazy(e.getLeft(), OBJECT_TYPE);
-            right = codegen.genLazy(e.getRight(), OBJECT_TYPE);
+            left = codegen.gen(e.getLeft());
+            right = codegen.gen(e.getRight());
         }
         StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE, left, right).put(returnType, v);
         return returnType;

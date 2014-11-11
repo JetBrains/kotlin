@@ -236,16 +236,9 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         JetExpression initializer = property.getDelegateExpressionOrInitializer();
         assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
 
-        JetType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
-
         StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER, StackValue.thiz());
 
-        Type type = codegen.expressionType(initializer);
-        if (jetType.isNullable()) {
-            type = boxType(type);
-        }
-
-        propValue.store(codegen.genLazy(initializer, type), codegen.v);
+        propValue.store(codegen.gen(initializer), codegen.v);
 
         ResolvedCall<FunctionDescriptor> pdResolvedCall =
                 bindingContext.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, propertyDescriptor);

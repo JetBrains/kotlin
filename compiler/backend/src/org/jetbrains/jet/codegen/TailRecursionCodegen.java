@@ -118,7 +118,7 @@ public class TailRecursionCodegen {
             }
             else if (arg instanceof DefaultValueArgument) {
                 AsmUtil.pop(v, type);
-                DefaultParameterValueLoader.DEFAULT.putValueOnStack(parameterDescriptor, codegen);
+                DefaultParameterValueLoader.DEFAULT.genValue(parameterDescriptor, codegen).put(type, v);
             }
             else if (arg instanceof VarargValueArgument) {
                 // assign the parameter below

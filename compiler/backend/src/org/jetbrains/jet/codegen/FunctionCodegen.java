@@ -663,9 +663,7 @@ public class FunctionCodegen extends ParentCodegenAware {
                 Label loadArg = new Label();
                 iv.ifeq(loadArg);
 
-                loadStrategy.putValueOnStack(parameterDescriptor, codegen);
-
-                iv.store(parameterIndex, type);
+                StackValue.local(parameterIndex, type).store(loadStrategy.genValue(parameterDescriptor, codegen), iv);
 
                 iv.mark(loadArg);
             }

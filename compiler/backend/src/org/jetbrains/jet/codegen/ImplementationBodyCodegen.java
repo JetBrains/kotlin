@@ -795,14 +795,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     context.intoFunction(function), methodSignature, function, OwnerKind.IMPLEMENTATION,
                     new DefaultParameterValueLoader() {
                         @Override
-                        public void putValueOnStack(ValueParameterDescriptor valueParameter, ExpressionCodegen codegen) {
+                        public StackValue genValue(ValueParameterDescriptor valueParameter, ExpressionCodegen codegen) {
                             assert KotlinBuiltIns.getInstance().isData((ClassDescriptor) function.getContainingDeclaration())
                                     : "Function container should be annotated with [data]: " + function;
                             PropertyDescriptor property = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter);
                             assert property != null : "Copy function doesn't correspond to any property: " + function;
-                            Type propertyType = typeMapper.mapType(property);
-                            codegen.intermediateValueForProperty(property, false, null, StackValue.thiz())
-                                    .put(propertyType, codegen.v);
+                            return codegen.intermediateValueForProperty(property, false, null, StackValue.thiz());
                         }
                     },
                     null
@@ -1270,8 +1268,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         DelegationFieldsInfo.Field fieldInfo = fieldsInfo.getInfo(specifier);
         if (fieldInfo.generateField) {
             iv.load(0, classAsmType);
-            StackValue rightSide = codegen.genLazy(expression, codegen.expressionType(expression));
-            fieldInfo.getStackValue().store(rightSide, iv);
+            fieldInfo.getStackValue().store(codegen.gen(expression), iv);
         }
     }
 
