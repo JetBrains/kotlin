@@ -38,6 +38,7 @@ import org.jetbrains.jet.test.TestMetadata;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
 import org.junit.Assert;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -119,6 +120,11 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             }
         }
         return null;
+    }
+
+    @Override
+    protected void checkResultByText(String message, @NotNull String fileText, boolean ignoreTrailingSpaces, String filePath) {
+        super.checkResultByText(message, fileText, ignoreTrailingSpaces, new File(filePath).getAbsolutePath());
     }
 
     @Override
