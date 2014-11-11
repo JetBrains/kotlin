@@ -276,7 +276,7 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
         private fun enumEntryNames(): Set<Name> {
             if (getKind() != ClassKind.ENUM_CLASS) return setOf()
 
-            val result = HashSet<Name>()
+            val result = LinkedHashSet<Name>()
             val nameResolver = context.nameResolver
             for (index in classProto.getEnumEntryList()) {
                 result.add(nameResolver.getName(index!!))
