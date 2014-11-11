@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -232,7 +233,13 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            if (expectedType == null || expectedType == DONT_CARE || ErrorUtils.isUninferredParameter(expectedType)) {
+            boolean containsUninferredParameter = TypeUtils.containsSpecialType(expectedType, new Function1<JetType, Boolean>() {
+                @Override
+                public Boolean invoke(JetType type) {
+                    return TypeUtils.isDontCarePlaceholder(type) || ErrorUtils.isUninferredParameter(type);
+                }
+            });
+            if (expectedType == null || containsUninferredParameter) {
                 context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter));
             }
             if (expectedType != null) {

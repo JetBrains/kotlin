@@ -338,7 +338,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private String renderInflexibleType(@NotNull JetType type) {
         assert !TypesPackage.isFlexible(type) : "Flexible types not allowed here: " + renderNormalizedType(type);
 
-        if (type == CANT_INFER_LAMBDA_PARAM_TYPE || type == DONT_CARE) {
+        if (type == CANT_INFER_LAMBDA_PARAM_TYPE || TypeUtils.isDontCarePlaceholder(type)) {
             return "???";
         }
         if (ErrorUtils.isUninferredParameter(type)) {
