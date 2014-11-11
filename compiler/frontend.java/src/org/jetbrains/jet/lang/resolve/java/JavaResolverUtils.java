@@ -35,8 +35,8 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_CLASS;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_PACKAGE;
 
-public class JavaResolverPsiUtils {
-    private JavaResolverPsiUtils() {
+public class JavaResolverUtils {
+    private JavaResolverUtils() {
     }
 
     public static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {

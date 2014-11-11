@@ -21,7 +21,7 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.jet.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils
+import org.jetbrains.jet.lang.resolve.java.JavaResolverUtils
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
@@ -56,10 +56,10 @@ class TypesCompletion(val parameters: CompletionParameters,
     private fun addAdaptedJavaCompletion(collector: LookupElementsCollector) {
         AllClassesGetter.processJavaClasses(parameters, prefixMatcher, true, { psiClass ->
             if (psiClass!! !is KotlinLightClass) { // Kotlin non-compiled class should have already been added as kotlin element before
-                if (JavaResolverPsiUtils.isCompiledKotlinClass(psiClass)) {
+                if (JavaResolverUtils.isCompiledKotlinClass(psiClass)) {
                     addLookupElementForCompiledKotlinClass(psiClass, collector)
                 }
-                else if (!JavaResolverPsiUtils.isCompiledKotlinPackageClass(psiClass)) {
+                else if (!JavaResolverUtils.isCompiledKotlinPackageClass(psiClass)) {
                     collector.addElementWithAutoInsertionSuppressed(KotlinLookupElementFactory.createLookupElementForJavaClass(psiClass))
                 }
             }

@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaResolverUtils;
 
 import javax.swing.*;
 
@@ -148,11 +148,11 @@ public final class JetDescriptorIconProvider {
             return true;
         }
         else if (declaration instanceof PsiClass) {
-            return JavaResolverPsiUtils.isCompiledKotlinClassOrPackageClass((PsiClass) declaration);
+            return JavaResolverUtils.isCompiledKotlinClassOrPackageClass((PsiClass) declaration);
         }
         else if (declaration instanceof PsiMember) {
             PsiClass containingClass = ((PsiMember) declaration).getContainingClass();
-            return containingClass != null && JavaResolverPsiUtils.isCompiledKotlinClassOrPackageClass(containingClass);
+            return containingClass != null && JavaResolverUtils.isCompiledKotlinClassOrPackageClass(containingClass);
         }
         else {
             return false;

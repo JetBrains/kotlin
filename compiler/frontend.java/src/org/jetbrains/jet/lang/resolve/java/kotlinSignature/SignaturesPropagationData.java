@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaPackage;
-import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmSignaturePackage;
@@ -84,7 +84,7 @@ public class SignaturesPropagationData {
 
         superFunctions = getSuperFunctionsForMethod(method, autoMethodDescriptor, containingClass);
 
-        autoTypeParameterToModified = JavaResolverPsiUtils.recreateTypeParametersAndReturnMapping(autoTypeParameters, null);
+        autoTypeParameterToModified = JavaResolverUtils.recreateTypeParametersAndReturnMapping(autoTypeParameters, null);
 
         modifiedTypeParameters = modifyTypeParametersAccordingToSuperMethods(autoTypeParameters);
         modifiedReturnType = modifyReturnTypeAccordingToSuperMethods(autoReturnType);
