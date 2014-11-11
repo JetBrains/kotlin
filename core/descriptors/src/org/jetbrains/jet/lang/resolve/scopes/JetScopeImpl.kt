@@ -34,7 +34,7 @@ public abstract class JetScopeImpl : JetScope {
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
-    override fun getDescriptors(kindFilterMask: Int,
+    override fun getDescriptors(kindFilter: JetScope.KindFilter,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = listOf()
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()

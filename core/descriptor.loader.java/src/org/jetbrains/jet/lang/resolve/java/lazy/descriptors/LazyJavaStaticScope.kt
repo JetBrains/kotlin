@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.lazy.withTypes
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptorImpl
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 
 public abstract class LazyJavaStaticScope(
         c: LazyJavaResolverContext,

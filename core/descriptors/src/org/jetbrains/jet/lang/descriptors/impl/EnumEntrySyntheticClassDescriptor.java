@@ -257,7 +257,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         @NotNull
         @Override
         public Collection<DeclarationDescriptor> getDescriptors(
-                int kindFilterMask,
+                @NotNull JetScope.KindFilter kindFilter,
                 @NotNull Function1<? super Name, ? extends Boolean> nameFilter
         ) {
             return allDescriptors.invoke();

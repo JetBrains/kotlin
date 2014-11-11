@@ -25,8 +25,8 @@ public class CombinedPackageMemberDeclarationProvider(val providers: Collection<
 
     override fun getPackageFiles() = providers.flatMap { it.getPackageFiles() }
 
-    override fun getDeclarations(kindFilterMask: Int, nameFilter: (Name) -> Boolean)
-            = providers.flatMap { it.getDeclarations(kindFilterMask, nameFilter) }
+    override fun getDeclarations(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean)
+            = providers.flatMap { it.getDeclarations(kindFilter, nameFilter) }
 
     override fun getFunctionDeclarations(name: Name) = providers.flatMap { it.getFunctionDeclarations(name) }
 

@@ -408,7 +408,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             }
         };
         Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(
-                callNameExpression, bindingContext, JetScope.FUNCTIONS_MASK | JetScope.TYPE, nameFilter, visibilityFilter);
+                callNameExpression, bindingContext, new JetScope.KindFilter(JetScope.FUNCTION | JetScope.CLASSIFIERS_MASK, Collections.<JetScope.DescriptorKindExclude>emptyList()), nameFilter, visibilityFilter);
 
         Collection<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>>();
         for (DeclarationDescriptor variant : variants) {

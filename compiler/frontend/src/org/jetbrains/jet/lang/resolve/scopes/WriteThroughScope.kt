@@ -164,7 +164,7 @@ public class WriteThroughScope(outerScope: JetScope, private val writableWorker:
         writableWorker.setImplicitReceiver(implicitReceiver)
     }
 
-    override fun getDescriptors(kindFilterMask: Int,
+    override fun getDescriptors(kindFilter: JetScope.KindFilter,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         checkMayRead()
 

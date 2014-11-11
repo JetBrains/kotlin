@@ -37,8 +37,8 @@ public class FilteringScope(private val workerScope: JetScope, private val predi
 
     override fun getLocalVariable(name: Name) = filterDescriptor(workerScope.getLocalVariable(name))
 
-    override fun getDescriptors(kindFilterMask: Int,
-                                nameFilter: (Name) -> Boolean) = workerScope.getDescriptors(kindFilterMask, nameFilter).filter(predicate)
+    override fun getDescriptors(kindFilter: JetScope.KindFilter,
+                                nameFilter: (Name) -> Boolean) = workerScope.getDescriptors(kindFilter, nameFilter).filter(predicate)
 
     override fun getImplicitReceiversHierarchy() = workerScope.getImplicitReceiversHierarchy()
 

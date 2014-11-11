@@ -158,7 +158,7 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
-    override fun getDescriptors(kindFilterMask: Int, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getDescriptors(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         return resolveSession.getStorageManager().compute {
             val descriptors = LinkedHashSet<DeclarationDescriptor>()
             for (directive in importsProvider.getAllImports()) {
@@ -170,7 +170,7 @@ public class LazyImportScope(private val resolveSession: ResolveSession,
                 val importPath = directive.getImportPath() ?: continue
                 val importedName = importPath.getImportedName()
                 if (importedName == null || nameFilter(importedName)) {
-                    descriptors.addAll(getImportScope(directive, LookupMode.EVERYTHING).getDescriptors(kindFilterMask, nameFilter))
+                    descriptors.addAll(getImportScope(directive, LookupMode.EVERYTHING).getDescriptors(kindFilter, nameFilter))
                 }
             }
 

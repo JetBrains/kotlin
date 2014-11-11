@@ -25,10 +25,10 @@ public class InnerClassesScopeWrapper(override val workerScope: JetScope) : Abst
 
     override fun getDeclarationsByLabel(labelName: Name) = workerScope.getDeclarationsByLabel(labelName).filterIsInstance(javaClass<ClassDescriptor>())
 
-    override fun getDescriptors(kindFilterMask: Int,
+    override fun getDescriptors(kindFilter: JetScope.KindFilter,
                                 nameFilter: (Name) -> Boolean): List<ClassDescriptor> {
-        if (kindFilterMask and JetScope.CLASSIFIERS_MASK == 0) return listOf()
-        return workerScope.getDescriptors(JetScope.CLASSIFIERS_MASK, nameFilter).filterIsInstance(javaClass<ClassDescriptor>())
+        val restrictedFilter = kindFilter.restrictedToKinds(JetScope.CLASSIFIERS_MASK) ?: return listOf()
+        return workerScope.getDescriptors(restrictedFilter, nameFilter).filterIsInstance(javaClass<ClassDescriptor>())
     }
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()

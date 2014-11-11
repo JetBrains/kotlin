@@ -41,10 +41,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class JetAnonymousSuperMacro extends Macro {
     @Override
@@ -96,7 +93,7 @@ public class JetAnonymousSuperMacro extends Macro {
 
         List<PsiNamedElement> result = new ArrayList<PsiNamedElement>();
 
-        for (DeclarationDescriptor descriptor : scope.getDescriptors(JetScope.TYPE, JetScope.ALL_NAME_FILTER)) {
+        for (DeclarationDescriptor descriptor : scope.getDescriptors(JetScope.KindFilter.NON_SINGLETON_CLASSIFIERS, JetScope.ALL_NAME_FILTER)) {
             if (!(descriptor instanceof ClassDescriptor)) continue;
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             if (!classDescriptor.getModality().isOverridable()) continue;

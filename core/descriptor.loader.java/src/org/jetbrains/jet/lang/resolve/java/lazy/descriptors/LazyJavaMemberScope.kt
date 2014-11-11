@@ -52,7 +52,7 @@ public abstract class LazyJavaMemberScope(
     // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
     // but is placed in the base class to not duplicate code
     private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
-            { computeDescriptors(JetScope.ALL_KINDS_MASK, JetScope.ALL_NAME_FILTER) },
+            { computeDescriptors(JetScope.KindFilter.ALL, JetScope.ALL_NAME_FILTER) },
             // This is to avoid the following recursive case:
             //    when computing getAllPackageNames() we ask the JavaPsiFacade for all subpackages of foo
             //    it, in turn, asks JavaElementFinder for subpackages of Kotlin package foo, which calls getAllPackageNames() recursively
@@ -291,14 +291,15 @@ public abstract class LazyJavaMemberScope(
 
     override fun getOwnDeclaredDescriptors() = getDescriptors()
 
-    override fun getDescriptors(kindFilterMask: Int,
+    override fun getDescriptors(kindFilter: JetScope.KindFilter,
                                 nameFilter: (Name) -> Boolean) = allDescriptors()
 
-    protected fun computeDescriptors(kindFilterMask: Int,
+    protected fun computeDescriptors(kindFilter: JetScope.KindFilter,
                                      nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()
 
-        if (kindFilterMask and JetScope.TYPE != 0) {
+        //TODO: only non-singleton classifiers in package!
+        if (kindFilter.acceptsKind(JetScope.CLASSIFIERS_MASK)) {
             for (name in getClassNames(nameFilter)) {
                 if (nameFilter(name)) {
                     // Null signifies that a class found in Java is not present in Kotlin (e.g. package class)
@@ -307,7 +308,8 @@ public abstract class LazyJavaMemberScope(
             }
         }
 
-        if (kindFilterMask and (JetScope.ORDINARY_FUNCTION or JetScope.SAM_CONSTRUCTOR) != 0) {
+        //TODO: SAM-constructors only in package!
+        if (kindFilter.acceptsKind(JetScope.FUNCTION) && !kindFilter.excludes.contains(JetScope.DescriptorKindExclude.NonExtensions)) {
             for (name in getFunctionNames(nameFilter)) {
                 if (nameFilter(name)) {
                     result.addAll(getFunctions(name))
@@ -315,7 +317,7 @@ public abstract class LazyJavaMemberScope(
             }
         }
 
-        if (kindFilterMask and JetScope.NON_EXTENSION_PROPERTY != 0) {
+        if (kindFilter.acceptsKind(JetScope.VARIABLE) && !kindFilter.excludes.contains(JetScope.DescriptorKindExclude.NonExtensions)) {
             for (name in getAllPropertyNames()) {
                 if (nameFilter(name)) {
                     result.addAll(getProperties(name))
@@ -323,13 +325,13 @@ public abstract class LazyJavaMemberScope(
             }
         }
 
-        addExtraDescriptors(result, kindFilterMask, nameFilter)
+        addExtraDescriptors(result, kindFilter, nameFilter)
 
         return result.toReadOnlyList()
     }
 
     protected open fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
-                                           kindFilterMask: Int,
+                                           kindFilter: JetScope.KindFilter,
                                            nameFilter: (Name) -> Boolean) {
         // Do nothing
     }

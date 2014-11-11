@@ -44,8 +44,8 @@ public open class DeserializedPackageMemberScope(
     private val packageFqName = packageDescriptor.fqName
     private val classNames = context.storageManager.createLazyValue(classNames)
 
-    override fun getDescriptors(kindFilterMask: Int, nameFilter: (Name) -> Boolean)
-            = computeDescriptors(kindFilterMask, nameFilter)
+    override fun getDescriptors(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean)
+            = computeDescriptors(kindFilter, nameFilter)
 
     override fun getClassDescriptor(name: Name) = context.deserializeClass(ClassId(packageFqName, name))
 

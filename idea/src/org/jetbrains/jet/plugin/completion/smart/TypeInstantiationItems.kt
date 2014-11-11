@@ -38,7 +38,7 @@ import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
-import org.jetbrains.jet.lang.descriptors.SamConstructorDescriptor
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 
 class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bindingContext: BindingContext, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {

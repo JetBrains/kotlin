@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.codeInsight.TipsManager
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
@@ -33,9 +32,9 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.DelegatingGlobalSearchScope
-import java.util.HashSet
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptorKindExclude
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -95,10 +94,10 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected abstract fun doComplete()
 
-    protected fun getReferenceVariants(kindFilterMask: Int): Collection<DeclarationDescriptor> {
+    protected fun getReferenceVariants(kindFilter: JetScope.KindFilter): Collection<DeclarationDescriptor> {
         return TipsManager.getReferenceVariants(jetReference!!.expression,
                                                 bindingContext!!,
-                                                kindFilterMask,
+                                                kindFilter,
                                                 prefixMatcher.asNameFilter(),
                                                 { isVisibleDescriptor(it) })
     }
@@ -141,7 +140,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             val onlyTypes = shouldRunOnlyTypeCompletion()
 
             if (completeReference) {
-                addReferenceVariants(if (onlyTypes) JetScope.TYPE or JetScope.PACKAGE else JetScope.ALL_KINDS_MASK)
+                val kindMask = if (onlyTypes)
+                    JetScope.NON_SINGLETON_CLASSIFIER or JetScope.PACKAGE
+                else
+                    JetScope.ALL_KINDS_MASK
+                addReferenceVariants(JetScope.KindFilter(kindMask))
 
                 if (onlyTypes) {
                     collector.addDescriptorElements(listOf(KotlinBuiltIns.getInstance().getUnit()), false)
@@ -192,8 +195,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         return false
     }
 
-    private fun addReferenceVariants(kindFilterMask: Int) {
-        collector.addDescriptorElements(getReferenceVariants(kindFilterMask), suppressAutoInsertion = false)
+    private fun addReferenceVariants(kindFilter: JetScope.KindFilter) {
+        collector.addDescriptorElements(getReferenceVariants(kindFilter), suppressAutoInsertion = false)
     }
 }
 
@@ -201,10 +204,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 : CompletionSessionBase(configuration, parameters, resultSet) {
 
     // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
-    private val DESCRIPTOR_KIND_MASK = JetScope.ORDINARY_FUNCTION or
-            JetScope.EXTENSION_FUNCTION or
-            JetScope.VARIABLES_AND_PROPERTIES_MASK or
-            JetScope.ENUM_ENTRY
+    private val DESCRIPTOR_KIND_MASK = JetScope.KindFilter.VALUES exclude SamConstructorDescriptorKindExclude
 
     override fun doComplete() {
         if (jetReference != null) {

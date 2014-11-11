@@ -147,7 +147,7 @@ public class SingleAbstractMethodUtils {
     ) {
         assert isSamInterface(samInterface) : samInterface;
 
-        SamConstructorDescriptorImpl result = new SamConstructorDescriptorImpl(owner, samInterface);
+        SamConstructorDescriptor result = new SamConstructorDescriptor(owner, samInterface);
 
         TypeParameters typeParameters = recreateAndInitializeTypeParameters(samInterface.getTypeConstructor().getParameters(), result);
 

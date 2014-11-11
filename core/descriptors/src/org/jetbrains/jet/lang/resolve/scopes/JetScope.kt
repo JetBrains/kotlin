@@ -50,7 +50,7 @@ public trait JetScope {
      * All visible descriptors from current scope possibly filtered by the given name and kind filters
      * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
      */
-    public fun getDescriptors(kindFilterMask: Int = ALL_KINDS_MASK,
+    public fun getDescriptors(kindFilter: JetScope.KindFilter = KindFilter(ALL_KINDS_MASK),
                               nameFilter: (Name) -> Boolean = ALL_NAME_FILTER): Collection<DeclarationDescriptor>
 
     /**
@@ -77,62 +77,92 @@ public trait JetScope {
         }
     }
 
+    public trait DescriptorKindExclude {
+        public fun matches(descriptor: DeclarationDescriptor): Boolean
+
+        public object Extensions : DescriptorKindExclude {
+            override fun matches(descriptor: DeclarationDescriptor)
+                    = descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null
+        }
+
+        public object NonExtensions : DescriptorKindExclude {
+            override fun matches(descriptor: DeclarationDescriptor)
+                    = descriptor !is CallableDescriptor || descriptor.getExtensionReceiverParameter() == null
+        }
+    }
+
+    public data class KindFilter(
+            public val kindMask: Int,
+            public val excludes: List<DescriptorKindExclude> = listOf()
+    ) {
+        public fun accepts(descriptor: DeclarationDescriptor): Boolean
+                = kindMask and descriptor.kind() != 0 && excludes.all { !it.matches(descriptor) }
+
+        public fun acceptsKind(kinds: Int): Boolean
+                = kindMask and kinds != 0
+
+        public fun exclude(exclude: DescriptorKindExclude): KindFilter
+                = KindFilter(kindMask, excludes + listOf(exclude))
+
+        public fun withoutKind(kinds: Int): KindFilter
+                = KindFilter(kindMask and kinds.inv(), excludes)
+
+        public fun restrictedToKinds(kinds: Int): KindFilter? {
+            val mask = kindMask and kinds
+            if (mask == 0) return null
+            return KindFilter(mask, excludes)
+        }
+
+        public val isEmpty: Boolean
+            get() = kindMask == 0
+
+        class object {
+            public val ALL: KindFilter = KindFilter(ALL_KINDS_MASK)
+            public val CALLABLES: KindFilter = KindFilter(FUNCTION or VARIABLE)
+            public val NON_SINGLETON_CLASSIFIERS: KindFilter = KindFilter(NON_SINGLETON_CLASSIFIER)
+            public val SINGLETON_CLASSIFIERS: KindFilter = KindFilter(SINGLETON_CLASSIFIER)
+            public val CLASSIFIERS: KindFilter = KindFilter(CLASSIFIERS_MASK)
+            public val PACKAGES: KindFilter = KindFilter(PACKAGE)
+            public val FUNCTIONS: KindFilter = KindFilter(FUNCTION)
+            public val VARIABLES: KindFilter = KindFilter(VARIABLE)
+            public val VALUES: KindFilter = KindFilter(VALUES_MASK)
+        }
+    }
+
     class object {
-        public val TYPE: Int = 0x001 // class, trait ot type parameter
-        public val ENUM_ENTRY: Int = 0x002
-        public val OBJECT: Int = 0x004
-        public val PACKAGE: Int = 0x008
-        public val ORDINARY_FUNCTION: Int = 0x010 // not extension and not SAM-constructor
-        public val EXTENSION_FUNCTION: Int = 0x020
-        public val SAM_CONSTRUCTOR: Int = 0x040
-        public val NON_EXTENSION_PROPERTY: Int = 0x080
-        public val EXTENSION_PROPERTY: Int = 0x100
-        public val LOCAL_VARIABLE: Int = 0x200
+        public val NON_SINGLETON_CLASSIFIER: Int = 0x01
+        public val SINGLETON_CLASSIFIER: Int = 0x02
+        public val PACKAGE: Int = 0x04
+        public val FUNCTION: Int = 0x08
+        public val VARIABLE: Int = 0x10
 
-        public val ALL_KINDS_MASK: Int = 0xFFFF
+        public val ALL_KINDS_MASK: Int = 0x1F
+        public val CLASSIFIERS_MASK: Int = NON_SINGLETON_CLASSIFIER or SINGLETON_CLASSIFIER
+        public val VALUES_MASK: Int = SINGLETON_CLASSIFIER or FUNCTION or VARIABLE
 
-        public val EXTENSIONS_MASK: Int = EXTENSION_FUNCTION or EXTENSION_PROPERTY
-        public val FUNCTIONS_MASK: Int = ORDINARY_FUNCTION or EXTENSION_FUNCTION or SAM_CONSTRUCTOR
-        public val PROPERTIES_MASK: Int = NON_EXTENSION_PROPERTY or EXTENSION_PROPERTY
-        public val CALLABLES_MASK: Int = ORDINARY_FUNCTION or EXTENSION_FUNCTION or SAM_CONSTRUCTOR or NON_EXTENSION_PROPERTY or EXTENSION_PROPERTY or LOCAL_VARIABLE
-        public val NON_EXTENSIONS_MASK: Int = ALL_KINDS_MASK and (EXTENSION_FUNCTION or EXTENSION_PROPERTY).inv()
-        public val CLASSIFIERS_MASK: Int = TYPE or ENUM_ENTRY or OBJECT
-        public val VARIABLES_AND_PROPERTIES_MASK: Int = LOCAL_VARIABLE or NON_EXTENSION_PROPERTY or EXTENSION_PROPERTY
-
-        public val ALL_NAME_FILTER: (Name) -> Boolean = { true }
-
-        public fun descriptorKind(descriptor: DeclarationDescriptor): Int {
-            return when (descriptor) {
-                is ClassDescriptor -> when (descriptor.getKind()) {
-                    ClassKind.OBJECT, ClassKind.CLASS_OBJECT -> OBJECT
-                    ClassKind.ENUM_ENTRY -> ENUM_ENTRY
-                    else -> TYPE
-                }
-
+        public fun DeclarationDescriptor.kind(): Int {
+            return when (this) {
+                is ClassDescriptor -> if (this.getKind().isSingleton()) SINGLETON_CLASSIFIER else NON_SINGLETON_CLASSIFIER
+                is ClassifierDescriptor -> NON_SINGLETON_CLASSIFIER
                 is PackageFragmentDescriptor, is PackageViewDescriptor -> PACKAGE
-
-                is SamConstructorDescriptor -> SAM_CONSTRUCTOR
-
-                is FunctionDescriptor -> if (descriptor.getExtensionReceiverParameter() != null) EXTENSION_FUNCTION else ORDINARY_FUNCTION
-
-                is PropertyDescriptor -> if (descriptor.getExtensionReceiverParameter() != null) EXTENSION_PROPERTY else NON_EXTENSION_PROPERTY
-
-                is VariableDescriptor -> LOCAL_VARIABLE
-
-                else -> 0 /* unknown */
+                is FunctionDescriptor -> FUNCTION
+                is VariableDescriptor -> VARIABLE
+                else -> 0
             }
         }
+
+        public val ALL_NAME_FILTER: (Name) -> Boolean = { true }
     }
 }
 
 /**
- * The same as getDescriptors(kindFilterMask, nameFilter) but the result is guaranteed to be filtered by kind and name.
+ * The same as getDescriptors(kindFilter, nameFilter) but the result is guaranteed to be filtered by kind and name.
  */
-public fun JetScope.getDescriptorsFiltered(kindFilterMask: Int,
-                                  nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-    return getDescriptors(kindFilterMask, nameFilter).filter {
-        (JetScope.descriptorKind(it) and kindFilterMask) != 0 && nameFilter(it.getName())
-    }
+public fun JetScope.getDescriptorsFiltered(
+        kindFilter: JetScope.KindFilter,
+        nameFilter: (Name) -> Boolean
+): Collection<DeclarationDescriptor> {
+    return getDescriptors(kindFilter, nameFilter).filter { kindFilter.accepts(it) && nameFilter(it.getName()) }
 }
 
 

@@ -73,7 +73,7 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
 
     protected abstract fun doCreateIndex(index: Index)
 
-    override fun getDeclarations(kindFilterMask: Int, nameFilter: (Name) -> Boolean): List<JetDeclaration>
+    override fun getDeclarations(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration>
             = index().allDeclarations
 
     override fun getFunctionDeclarations(name: Name): List<JetNamedFunction>

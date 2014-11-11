@@ -39,18 +39,18 @@ public class StubBasedPackageMemberDeclarationProvider(
         private val searchScope: GlobalSearchScope
 ) : PackageMemberDeclarationProvider {
 
-    override fun getDeclarations(kindFilterMask: Int, nameFilter: (Name) -> Boolean): List<JetDeclaration> {
+    override fun getDeclarations(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration> {
         val result = ArrayList<JetDeclaration>()
 
-        if (kindFilterMask and (JetScope.TYPE or JetScope.OBJECT) != 0) {
+        if (kindFilter.acceptsKind(JetScope.CLASSIFIERS_MASK)) {
             result.addDeclarations(JetFullClassNameIndex.getInstance(), nameFilter)
         }
 
-        if (kindFilterMask and JetScope.FUNCTIONS_MASK != 0) {
+        if (kindFilter.acceptsKind(JetScope.FUNCTION)) {
             result.addDeclarations(JetTopLevelFunctionsFqnNameIndex.getInstance(), nameFilter)
         }
 
-        if (kindFilterMask and JetScope.PROPERTIES_MASK != 0) {
+        if (kindFilter.acceptsKind(JetScope.VARIABLE)) {
             result.addDeclarations(JetTopLevelPropertiesFqnNameIndex.getInstance(), nameFilter)
         }
 

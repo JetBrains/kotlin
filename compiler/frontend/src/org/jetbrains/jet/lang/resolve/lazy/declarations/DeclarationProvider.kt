@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 public trait DeclarationProvider {
-    public fun getDeclarations(kindFilterMask: Int, nameFilter: (Name) -> Boolean): List<JetDeclaration>
+    public fun getDeclarations(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration>
 
     public fun getFunctionDeclarations(name: Name): Collection<JetNamedFunction>
 

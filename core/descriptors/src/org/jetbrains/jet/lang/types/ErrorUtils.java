@@ -126,7 +126,7 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<DeclarationDescriptor> getDescriptors(
-                int kindFilterMask, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
+                @NotNull JetScope.KindFilter kindFilter, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
         ) {
             return Collections.emptyList();
         }
@@ -206,7 +206,7 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<DeclarationDescriptor> getDescriptors(
-                int kindFilterMask, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
+                @NotNull JetScope.KindFilter kindFilter, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
         ) {
             throw new IllegalStateException();
         }

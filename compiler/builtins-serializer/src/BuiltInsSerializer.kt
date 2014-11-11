@@ -117,7 +117,7 @@ public class BuiltInsSerializer(val out: PrintStream?) {
         })
 
         val classNames = ArrayList<Name>()
-        val classifierDescriptors = DescriptorSerializer.sort(packageView.getMemberScope().getDescriptors(JetScope.CLASSIFIERS_MASK))
+        val classifierDescriptors = DescriptorSerializer.sort(packageView.getMemberScope().getDescriptors(JetScope.KindFilter.CLASSIFIERS))
 
         ClassSerializationUtil.serializeClasses(classifierDescriptors, serializer, object : ClassSerializationUtil.Sink {
             override fun writeClass(classDescriptor: ClassDescriptor, classProto: ProtoBuf.Class) {
