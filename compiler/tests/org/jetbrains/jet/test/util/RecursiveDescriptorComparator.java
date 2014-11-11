@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
 
 public class RecursiveDescriptorComparator {
@@ -93,7 +94,8 @@ public class RecursiveDescriptorComparator {
             @NotNull Printer printer,
             boolean topLevel
     ) {
-        if ((descriptor instanceof ClassOrPackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) && !topLevel) {
+        if (!isEnumEntry(descriptor) &&
+            (descriptor instanceof ClassOrPackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) && !topLevel) {
             printer.println();
         }
 
@@ -153,6 +155,10 @@ public class RecursiveDescriptorComparator {
         }
         else {
             printer.printlnWithNoIndent();
+        }
+
+        if (isEnumEntry(descriptor)) {
+            printer.println();
         }
     }
 

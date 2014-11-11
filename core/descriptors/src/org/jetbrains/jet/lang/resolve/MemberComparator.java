@@ -24,6 +24,8 @@ import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 import java.util.Comparator;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
+
 public class MemberComparator implements Comparator<DeclarationDescriptor> {
     public static final MemberComparator INSTANCE = new MemberComparator();
 
@@ -33,7 +35,10 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
     }
 
     private static int getDeclarationPriority(DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ConstructorDescriptor) {
+        if (isEnumEntry(descriptor)) {
+            return 7;
+        }
+        else if (descriptor instanceof ConstructorDescriptor) {
             return 6;
         }
         else if (descriptor instanceof PropertyDescriptor) {
@@ -63,6 +68,10 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
         int prioritiesCompareTo = getDeclarationPriority(o2) - getDeclarationPriority(o1);
         if (prioritiesCompareTo != 0) {
             return prioritiesCompareTo;
+        }
+        if (isEnumEntry(o1) && isEnumEntry(o2)) {
+            //never reorder enum entries
+            return 0;
         }
 
         int namesCompareTo = o1.getName().compareTo(o2.getName());
