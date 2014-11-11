@@ -285,6 +285,8 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
         }
 
         private fun computeEnumMemberNames(): Collection<Name> {
+            // NOTE: order of enum entry members should be irrelevant
+            // because enum entries are effectively invisible to user (as classes)
             val result = HashSet<Name>()
 
             for (supertype in getTypeConstructor().getSupertypes()) {
