@@ -1,3 +1,0 @@
-fun usageWithFunctionLiteral() {
-    SamInterface { ":)" }
-}

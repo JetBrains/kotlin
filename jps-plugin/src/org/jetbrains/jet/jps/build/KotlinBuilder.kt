@@ -134,7 +134,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         var recompilationDecision = updateKotlinIncrementalCache(compilationErrors, dirtyFilesHolder, incrementalCaches, outputsItemsAndTargets)
         registerOutputItems(outputConsumer, outputsItemsAndTargets)
-        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, outputsItemsAndTargets)
 
         if (compilationErrors) {
             return ABORT
@@ -205,34 +204,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             result.add(Pair(outputItem, target!!))
         }
         return result
-    }
-
-    private fun updateJavaMappings(
-            chunk: ModuleChunk,
-            compilationErrors: Boolean,
-            context: CompileContext,
-            dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-            filesToCompile: MultiMap<ModuleBuildTarget, File>,
-            outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>
-    ) {
-        if (!IncrementalCompilation.ENABLED) {
-            return
-        }
-
-        val delta = context.getProjectDescriptor().dataManager.getMappings()!!.createDelta()
-        val callback = delta!!.getCallback()!!
-
-        for ((outputItem, _) in outputsItemsAndTargets) {
-            val outputFile = outputItem.getOutputFile()
-            callback.associate(FileUtil.toSystemIndependentName(outputFile.getAbsolutePath()),
-                               outputItem.getSourceFiles().map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
-                               ClassReader(outputFile.readBytes())
-            )
-        }
-
-        val allCompiled = filesToCompile.values()
-        val compiledInThisRound = if (compilationErrors) listOf<File>() else allCompiled
-        JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
     }
 
     private fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>) {

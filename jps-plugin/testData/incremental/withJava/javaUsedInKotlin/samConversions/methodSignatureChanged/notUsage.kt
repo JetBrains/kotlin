@@ -1,3 +1,0 @@
-fun notUsage() {
-    println("!")
-}
