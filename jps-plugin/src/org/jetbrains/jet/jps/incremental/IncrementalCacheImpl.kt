@@ -280,7 +280,12 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
             if (oldMap == constantsMap) {
                 return false
             }
-            map.put(key, constantsMap)
+            if (constantsMap != null) {
+                map.put(key, constantsMap)
+            }
+            else {
+                map.remove(key)
+            }
             return true
         }
     }
@@ -395,6 +400,9 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
             }
             if (inlineFunctionsMap != null) {
                 map.put(key, inlineFunctionsMap)
+            }
+            else {
+                map.remove(key)
             }
             return true
         }
