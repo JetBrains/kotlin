@@ -48,7 +48,7 @@ public class LazyJavaPackageFragmentProvider(
             outerContext.moduleClassResolver
     )
 
-    private val _packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
+    private val packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
             c.storageManager.createMemoizedFunctionWithNullableValues {
                 fqName ->
                 val jPackage = c.finder.findPackage(fqName)
@@ -74,7 +74,7 @@ public class LazyJavaPackageFragmentProvider(
         )
     }
 
-    fun getPackageFragment(fqName: FqName) = _packageFragments(fqName)
+    fun getPackageFragment(fqName: FqName) = packageFragments(fqName)
 
     override fun getPackageFragments(fqName: FqName) = getPackageFragment(fqName)?.let {listOf(it)}.orEmpty()
 

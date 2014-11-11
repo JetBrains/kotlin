@@ -47,9 +47,9 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
-        private val _containingDeclaration: DeclarationDescriptor
+        private val containingDeclaration: DeclarationDescriptor
 ) : JetScope {
-    private val _allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
+    private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
             {computeAllDescriptors()},
             // This is to avoid the following recursive case:
             //    when computing getAllPackageNames() we ask the JavaPsiFacade for all subpackages of foo
@@ -58,7 +58,7 @@ public abstract class LazyJavaMemberScope(
             listOf()
     )
 
-    override fun getContainingDeclaration() = _containingDeclaration
+    override fun getContainingDeclaration() = containingDeclaration
 
     protected val memberIndex: NotNullLazyValue<MemberIndex> = c.storageManager.createLazyValue {
         computeMemberIndex()
@@ -105,7 +105,7 @@ public abstract class LazyJavaMemberScope(
 
         val annotations = c.resolveAnnotations(method)
         val functionDescriptorImpl = JavaMethodDescriptor.createJavaMethod(
-                _containingDeclaration, annotations, method.getName(), c.sourceElementFactory.source(method)
+                containingDeclaration, annotations, method.getName(), c.sourceElementFactory.source(method)
         )
 
         val c = c.child(functionDescriptorImpl, method.getTypeParameters().toSet())
@@ -255,7 +255,7 @@ public abstract class LazyJavaMemberScope(
         val annotations = c.resolveAnnotations(field)
         val propertyName = field.getName()
 
-        return JavaPropertyDescriptor(_containingDeclaration, annotations, visibility, isVar, propertyName,
+        return JavaPropertyDescriptor(containingDeclaration, annotations, visibility, isVar, propertyName,
                                       c.sourceElementFactory.source(field))
     }
 
@@ -283,7 +283,7 @@ public abstract class LazyJavaMemberScope(
     override fun getDeclarationsByLabel(labelName: Name) = listOf<DeclarationDescriptor>()
 
     override fun getOwnDeclaredDescriptors() = getAllDescriptors()
-    override fun getAllDescriptors() = _allDescriptors()
+    override fun getAllDescriptors() = allDescriptors()
 
     private fun computeAllDescriptors(): List<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()

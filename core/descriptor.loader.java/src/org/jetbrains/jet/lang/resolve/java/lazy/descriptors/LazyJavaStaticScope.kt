@@ -116,7 +116,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
                 .map { c -> c.getName() }.toList()
     }
 
-    private val _subPackages = c.storageManager.createRecursionTolerantLazyValue(
+    private val subPackages = c.storageManager.createRecursionTolerantLazyValue(
             {
                 jPackage.getSubPackages().map { sp -> sp.getFqName() }
             },
@@ -128,7 +128,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
         result.addIfNotNull(c.samConversionResolver.resolveSamConstructor(name, this))
     }
 
-    override fun getSubPackages() = _subPackages()
+    override fun getSubPackages() = subPackages()
 
     override fun getAllPropertyNames() = Collections.emptyList<Name>()
 }

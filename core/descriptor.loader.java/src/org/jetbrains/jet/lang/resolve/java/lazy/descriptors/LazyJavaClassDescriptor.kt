@@ -49,70 +49,70 @@ class LazyJavaClassDescriptor(
         c.javaResolverCache.recordClass(jClass, this)
     }
 
-    private val _kind = when {
+    private val kind = when {
         jClass.isAnnotationType() -> ClassKind.ANNOTATION_CLASS
         jClass.isInterface() -> ClassKind.TRAIT
         jClass.isEnum() -> ClassKind.ENUM_CLASS
         else -> ClassKind.CLASS
     }
 
-    private val _modality = if (jClass.isAnnotationType())
-                                Modality.FINAL
-                            else Modality.convertFromFlags(jClass.isAbstract() || jClass.isInterface(), !jClass.isFinal())
+    private val modality = if (jClass.isAnnotationType())
+                               Modality.FINAL
+                           else Modality.convertFromFlags(jClass.isAbstract() || jClass.isInterface(), !jClass.isFinal())
 
-    private val _visibility = jClass.getVisibility()
-    private val _isInner = jClass.getOuterClass() != null && !jClass.isStatic()
+    private val visibility = jClass.getVisibility()
+    private val isInner = jClass.getOuterClass() != null && !jClass.isStatic()
 
-    override fun getKind() = _kind
-    override fun getModality() = _modality
-    override fun getVisibility() = _visibility
-    override fun isInner() = _isInner
+    override fun getKind() = kind
+    override fun getModality() = modality
+    override fun getVisibility() = visibility
+    override fun isInner() = isInner
 
-    private val _typeConstructor = c.storageManager.createLazyValue { LazyJavaClassTypeConstructor() }
-    override fun getTypeConstructor(): TypeConstructor = _typeConstructor()
+    private val typeConstructor = c.storageManager.createLazyValue { LazyJavaClassTypeConstructor() }
+    override fun getTypeConstructor(): TypeConstructor = typeConstructor()
 
-    private val _scopeForMemberLookup = LazyJavaClassMemberScope(c, this, jClass)
-    override fun getScopeForMemberLookup() = _scopeForMemberLookup
+    private val scopeForMemberLookup = LazyJavaClassMemberScope(c, this, jClass)
+    override fun getScopeForMemberLookup() = scopeForMemberLookup
 
-    private val _innerClassesScope = InnerClassesScopeWrapper(getScopeForMemberLookup())
-    override fun getUnsubstitutedInnerClassesScope(): JetScope = _innerClassesScope
+    private val innerClassesScope = InnerClassesScopeWrapper(getScopeForMemberLookup())
+    override fun getUnsubstitutedInnerClassesScope(): JetScope = innerClassesScope
 
-    private val _staticScope = LazyJavaStaticClassScope(c, jClass, this)
-    override fun getStaticScope(): JetScope = _staticScope
+    private val staticScope = LazyJavaStaticClassScope(c, jClass, this)
+    override fun getStaticScope(): JetScope = staticScope
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
 
     override fun getClassObjectDescriptor(): ClassDescriptor? = null
     override fun getClassObjectType(): JetType? = getClassObjectDescriptor()?.let { d -> d.getDefaultType() }
 
-    override fun getConstructors() = _scopeForMemberLookup.constructors()
+    override fun getConstructors() = scopeForMemberLookup.constructors()
 
-    private val _annotations = c.storageManager.createLazyValue { c.resolveAnnotations(jClass) }
-    override fun getAnnotations() = _annotations()
+    private val annotations = c.storageManager.createLazyValue { c.resolveAnnotations(jClass) }
+    override fun getAnnotations() = annotations()
 
-    private val _functionTypeForSamInterface = c.storageManager.createNullableLazyValue {
+    private val functionTypeForSamInterface = c.storageManager.createNullableLazyValue {
         c.samConversionResolver.resolveFunctionTypeIfSamInterface(this) { method ->
-            _scopeForMemberLookup.resolveMethodToFunctionDescriptor(method, false)
+            scopeForMemberLookup.resolveMethodToFunctionDescriptor(method, false)
         }
     }
 
-    override fun getFunctionTypeForSamInterface(): JetType? = _functionTypeForSamInterface()
+    override fun getFunctionTypeForSamInterface(): JetType? = functionTypeForSamInterface()
 
     override fun toString() = "lazy java class $fqName"
 
     private inner class LazyJavaClassTypeConstructor : AbstractClassTypeConstructor() {
 
-        private val _parameters = c.storageManager.createLazyValue {
-            jClass.getTypeParameters().map({
+        private val parameters = c.storageManager.createLazyValue {
+            jClass.getTypeParameters().map {
                 p ->
                 c.typeParameterResolver.resolveTypeParameter(p)
                     ?: throw AssertionError("Parameter $p surely belongs to class ${jClass}, so it must be resolved")
-            })
+            }
         }
 
-        override fun getParameters(): List<TypeParameterDescriptor> = _parameters()
+        override fun getParameters(): List<TypeParameterDescriptor> = parameters()
 
-        private val _supertypes = c.storageManager.createLazyValue<Collection<JetType>> {
+        private val supertypes = c.storageManager.createLazyValue<Collection<JetType>> {
             jClass.getSupertypes().stream()
                     .map {
                         supertype ->
@@ -125,7 +125,7 @@ class LazyJavaClassDescriptor(
                     }
         }
 
-        override fun getSupertypes(): Collection<JetType> = _supertypes()
+        override fun getSupertypes(): Collection<JetType> = supertypes()
 
         override fun getAnnotations() = Annotations.EMPTY
 

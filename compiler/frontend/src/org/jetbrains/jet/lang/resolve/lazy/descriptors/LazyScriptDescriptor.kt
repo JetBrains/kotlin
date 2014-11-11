@@ -43,10 +43,10 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.resolve.source.toSourceElement
 
 public class LazyScriptDescriptor(
-        val resolveSession: ResolveSession,
+        private val resolveSession: ResolveSession,
         scriptBodyResolver: ScriptBodyResolver,
-        val jetScript: JetScript,
-        val _priority: Int
+        private val jetScript: JetScript,
+        private val priority: Int
 ) : ScriptDescriptor, LazyEntity, DeclarationDescriptorNonRootImpl(
         jetScript.getContainingJetFile().getPackageFqName().let {
             fqName ->
@@ -60,20 +60,20 @@ public class LazyScriptDescriptor(
         resolveSession.getTrace().record(BindingContext.SCRIPT, jetScript, this)
     }
 
-    private val _implicitReceiver = ReceiverParameterDescriptorImpl(this, KotlinBuiltIns.getInstance().getAnyType(), ScriptReceiver(this))
+    private val implicitReceiver = ReceiverParameterDescriptorImpl(this, KotlinBuiltIns.getInstance().getAnyType(), ScriptReceiver(this))
 
-    override fun getThisAsReceiverParameter() = _implicitReceiver
+    override fun getThisAsReceiverParameter() = implicitReceiver
 
-    override fun getPriority() = _priority
+    override fun getPriority() = priority
 
     override fun getClassDescriptor() = resolveSession.getClassDescriptorForScript(jetScript) as LazyScriptClassDescriptor
 
     override fun getScriptResultProperty(): PropertyDescriptor = getClassDescriptor().getScopeForMemberLookup().getScriptResultProperty()
 
-    private val _scriptCodeDescriptor = resolveSession.getStorageManager().createLazyValue {
+    private val scriptCodeDescriptor = resolveSession.getStorageManager().createLazyValue {
         val result = ScriptCodeDescriptor(this)
         result.initialize(
-                _implicitReceiver,
+                implicitReceiver,
                 ScriptParameterResolver.resolveScriptParameters(jetScript, this),
                 DeferredType.create(resolveSession.getStorageManager(), resolveSession.getTrace()) {
                     scriptBodyResolver.resolveScriptReturnType(jetScript, this, resolveSession.getTrace())
@@ -82,11 +82,11 @@ public class LazyScriptDescriptor(
         result
     }
 
-    override fun getScriptCodeDescriptor() = _scriptCodeDescriptor()
+    override fun getScriptCodeDescriptor() = scriptCodeDescriptor()
 
     override fun getScopeForBodyResolution(): JetScope {
         val parametersScope = WritableScopeImpl(JetScope.Empty, this, RedeclarationHandler.DO_NOTHING, "Parameters of " + this)
-        parametersScope.setImplicitReceiver(_implicitReceiver)
+        parametersScope.setImplicitReceiver(implicitReceiver)
         for (valueParameterDescriptor in getScriptCodeDescriptor().getValueParameters()) {
             parametersScope.addVariableDescriptor(valueParameterDescriptor)
         }

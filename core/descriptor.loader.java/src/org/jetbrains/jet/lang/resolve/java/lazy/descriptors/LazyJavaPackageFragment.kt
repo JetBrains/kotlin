@@ -25,9 +25,9 @@ class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
         private val jPackage: JavaPackage
 ) : PackageFragmentDescriptorImpl(c.packageFragmentProvider.module, jPackage.getFqName()) {
-    private val _memberScope by Delegates.lazy { LazyPackageFragmentScopeForJavaPackage(c, jPackage, this) }
+    private val scope by Delegates.lazy { LazyPackageFragmentScopeForJavaPackage(c, jPackage, this) }
 
-    override fun getMemberScope() = _memberScope
+    override fun getMemberScope() = scope
 
     override fun toString() = "lazy java package fragment: $fqName"
 }
