@@ -110,13 +110,7 @@ public abstract class DeserializedMemberScope protected(
             addEnumEntryDescriptors(result, nameFilter)
         }
 
-        val names = membersProtos().keySet().filter(nameFilter)
-        if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
-            names.forEach { result.addAll(getProperties(it)) }
-        }
-        if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
-            names.forEach { result.addAll(getFunctions(it)) }
-        }
+        addFunctionsAndProperties(result, kindFilter, nameFilter)
 
         addNonDeclaredDescriptors(result)
 
@@ -125,6 +119,40 @@ public abstract class DeserializedMemberScope protected(
         }
 
         return result.toReadOnlyList()
+    }
+
+    private fun addFunctionsAndProperties(
+            result: LinkedHashSet<DeclarationDescriptor>,
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean
+    ) {
+        val names = membersProtos().keySet().filter(nameFilter)
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
+            addMembers(names, result) { getProperties(it) }
+        }
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
+            addMembers(names, result) { getFunctions(it) }
+        }
+    }
+
+    private fun addMembers(
+            names: List<Name>,
+            result: MutableCollection<DeclarationDescriptor>,
+            getMembers: (Name) -> Collection<CallableDescriptor>) {
+        val extensions = ArrayList<DeclarationDescriptor>()
+        val nonExtensions = ArrayList<DeclarationDescriptor>()
+        names.forEach { name ->
+            getMembers(name).forEach { member ->
+                if (member.getExtensionReceiverParameter() == null) {
+                    nonExtensions.add(member)
+                }
+                else {
+                    extensions.add(member)
+                }
+            }
+        }
+        result.addAll(nonExtensions)
+        result.addAll(extensions)
     }
 
     protected abstract fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>)

@@ -4145,6 +4145,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
+            @TestMetadata("extensionMembers.kt")
+            public void testExtensionMembers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionMembers.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("innerClasses.kt")
             public void testInnerClasses() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/innerClasses.kt");

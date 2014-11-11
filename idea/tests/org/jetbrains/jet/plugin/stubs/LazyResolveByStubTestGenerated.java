@@ -2374,6 +2374,12 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
             doTest(fileName);
         }
 
+        @TestMetadata("extensionMembers.kt")
+        public void testExtensionMembers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionMembers.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("innerClasses.kt")
         public void testInnerClasses() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/innerClasses.kt");
