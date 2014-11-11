@@ -124,7 +124,7 @@ public class DescriptorResolver {
         }
         int index = 0;
         for (JetTypeParameter typeParameter : typeParameters) {
-            if (!topDownAnalysisParameters.isLazyTopDownAnalysis()) {
+            if (!topDownAnalysisParameters.isLazy()) {
                 // TODO: Support
                 AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, trace);
             }

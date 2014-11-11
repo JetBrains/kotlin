@@ -133,7 +133,7 @@ public class TopDownAnalyzer {
 //        c.enableDebugOutput();
         c.debug("Enter");
 
-        if (c.getTopDownAnalysisParameters().isLazyTopDownAnalysis()) {
+        if (c.getTopDownAnalysisParameters().isLazy()) {
             ResolveSession resolveSession = new InjectorForLazyResolve(
                     project,
                     new GlobalContextImpl((LockBasedStorageManager) c.getStorageManager(), c.getExceptionTracker()), // TODO

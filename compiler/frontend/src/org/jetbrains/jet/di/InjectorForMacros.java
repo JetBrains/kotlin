@@ -27,8 +27,9 @@ import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
-import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
+import org.jetbrains.jet.context.LazinessToken;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
@@ -58,8 +59,9 @@ public class InjectorForMacros {
     private final AdditionalCheckerProvider additionalCheckerProvider;
     private final AnnotationResolver annotationResolver;
     private final TypeResolver typeResolver;
-    private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
+    private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
+    private final LazinessToken lazinessToken;
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
@@ -86,9 +88,10 @@ public class InjectorForMacros {
         this.storageManager = globalContext.getStorageManager();
         this.additionalCheckerProvider = org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider.Empty.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
-        this.typeResolver = new TypeResolver();
-        this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
+        this.lazinessToken = new LazinessToken();
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken);
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
@@ -128,11 +131,6 @@ public class InjectorForMacros {
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setStorageManager(storageManager);
         annotationResolver.setTypeResolver(typeResolver);
-
-        typeResolver.setAnnotationResolver(annotationResolver);
-        typeResolver.setFlexibleTypeCapabilitiesProvider(flexibleTypeCapabilitiesProvider);
-        typeResolver.setModuleDescriptor(moduleDescriptor);
-        typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 

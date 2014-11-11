@@ -1,6 +1,7 @@
 Usage: kotlinc-js <options> <source files>
 where possible options include:
   -output <path>             Output file path
+  -no-stdlib                 Don't use bundled Kotlin stdlib
   -library-files <path[,]>   Path to zipped library sources or kotlin files separated by commas
   -source-map                Generate source map
   -target <version>          Generate JS files for specific ECMA version (only ECMA 5 is supported)

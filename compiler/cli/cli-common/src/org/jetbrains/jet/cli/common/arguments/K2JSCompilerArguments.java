@@ -28,6 +28,9 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String outputFile;
 
+    @Argument(value = "no-stdlib", description = "Don't use bundled Kotlin stdlib")
+    public boolean noStdlib;
+
     @Argument(value = "library-files", description = "Path to zipped library sources or kotlin files separated by commas")
     @ValueDescription("<path[,]>")
     public String[] libraryFiles;

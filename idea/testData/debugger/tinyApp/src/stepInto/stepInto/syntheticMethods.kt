@@ -19,4 +19,4 @@ class Derived: Base<String>() {
     }
 }
 
-// STEP_INTO: 3
+// STEP_INTO: 4

@@ -16,29 +16,23 @@
 
 package org.jetbrains.k2js.config;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.io.URLUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
-import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.utils.LibraryUtils.isJsRuntimeLibrary;
 
 public class LibrarySourcesConfig extends Config {
@@ -77,75 +71,55 @@ public class LibrarySourcesConfig extends Config {
         List<JetFile> jetFiles = new ArrayList<JetFile>();
         String moduleName = UNKNOWN_EXTERNAL_MODULE_NAME;
         VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
+        VirtualFileSystem jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL);
+
         PsiManager psiManager = PsiManager.getInstance(getProject());
 
         for (String path : files) {
             if (path.charAt(0) == '@') {
                 moduleName = path.substring(1);
+                continue;
             }
-            else if (path.endsWith(".jar") || path.endsWith(".zip")) {
-                String actualModuleName = isJsRuntimeLibrary(new File(path)) ? STDLIB_JS_MODULE_NAME : moduleName;
 
-                try {
-                    jetFiles.addAll(readZip(path, actualModuleName));
-                }
-                catch (IOException e) {
-                    LOG.error(e);
+            VirtualFile file;
+            String actualModuleName = moduleName;
+
+            if (path.endsWith(".jar") || path.endsWith(".zip")) {
+                file = jarFileSystem.findFileByPath(path + URLUtil.JAR_SEPARATOR);
+
+                if (isJsRuntimeLibrary(new File(path))) {
+                    actualModuleName = STDLIB_JS_MODULE_NAME;
                 }
             }
             else {
-                VirtualFile file = fileSystem.findFileByPath(path);
-                if (file == null) {
-                    LOG.error("File '" + path + "not found.'");
-                }
-                else if (file.isDirectory()) {
-                    JetFileCollector jetFileCollector = new JetFileCollector(jetFiles, moduleName, psiManager);
-                    VfsUtilCore.visitChildrenRecursively(file, jetFileCollector);
-                }
-                else {
-                    jetFiles.add(getJetFileByVirtualFile(file, moduleName, psiManager));
-                }
+                file = fileSystem.findFileByPath(path);
+            }
+
+            if (file == null) {
+                LOG.error("File '" + path + "not found.'");
+            }
+            else {
+                JetFileCollector jetFileCollector = new JetFileCollector(jetFiles, actualModuleName, psiManager);
+                VfsUtilCore.visitChildrenRecursively(file, jetFileCollector);
             }
         }
 
         return jetFiles;
     }
 
-    private List<JetFile> readZip(String file, String moduleName) throws IOException {
-        ZipFile zipFile = new ZipFile(file);
-        try {
-            return traverseArchive(zipFile, moduleName);
-        }
-        finally {
-            zipFile.close();
-        }
-    }
-
-    @NotNull
-    private List<JetFile> traverseArchive(@NotNull ZipFile zipFile, String moduleName) throws IOException {
-        List<JetFile> result = Lists.newArrayList();
-        Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
-        while (zipEntries.hasMoreElements()) {
-            ZipEntry entry = zipEntries.nextElement();
-            if (!entry.isDirectory() && entry.getName().endsWith(".kt")) {
-                InputStream stream = zipFile.getInputStream(entry);
-                String text = StringUtil.convertLineSeparators(FileUtil.loadTextAndClose(stream));
-                JetFile jetFile = JetPsiFactory(getProject()).createFile(entry.getName(), text);
-                jetFile.putUserData(EXTERNAL_MODULE_NAME, moduleName);
-                result.add(jetFile);
-            }
-        }
-        return result;
-    }
-
-    private static JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
+    protected JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
         PsiFile psiFile = psiManager.findFile(file);
         assert psiFile != null;
-        psiFile.putUserData(EXTERNAL_MODULE_NAME, moduleName);
+
+        setupPsiFile(psiFile, moduleName);
         return (JetFile) psiFile;
     }
 
-    private static class JetFileCollector extends VirtualFileVisitor {
+    protected static void setupPsiFile(PsiFile psiFile, String moduleName) {
+        psiFile.putUserData(EXTERNAL_MODULE_NAME, moduleName);
+    }
+
+    private class JetFileCollector extends VirtualFileVisitor {
         private final List<JetFile> jetFiles;
         private final String moduleName;
         private final PsiManager psiManager;
@@ -158,9 +132,8 @@ public class LibrarySourcesConfig extends Config {
 
         @Override
         public boolean visitFile(@NotNull VirtualFile file) {
-            if (file.getName().endsWith(".kt")) {
+            if (!file.isDirectory() && StringUtil.notNullize(file.getExtension()).equalsIgnoreCase(JetFileType.EXTENSION)) {
                 jetFiles.add(getJetFileByVirtualFile(file, moduleName, psiManager));
-                return false;
             }
             return true;
         }

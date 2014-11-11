@@ -1,0 +1,120 @@
+DescriptorResolver@0 {
+    <name not found> = IntValue@1
+}
+
+LazyAnnotationDescriptor@2 {
+    _resolutionResults = OverloadResolutionResultsImpl@3
+    _type = JetTypeImpl@4['IllegalModifiers6']
+}
+
+LazyAnnotationDescriptor@5 {
+    _resolutionResults = OverloadResolutionResultsImpl@6
+    _type = JetTypeImpl@7['annotated']
+    _valueArguments(ValueParameterDescriptorImpl@8['text']) = StringValue@9
+}
+
+LazyAnnotationDescriptor@10 {
+    _resolutionResults = OverloadResolutionResultsImpl@11
+    _type = JetTypeImpl@12['annotated']
+    _valueArguments(ValueParameterDescriptorImpl@8['text']) = StringValue@13
+}
+
+LazyAnnotationDescriptor@14 {
+    _resolutionResults = OverloadResolutionResultsImpl@15
+    _type = JetTypeImpl@16['annotated']
+    _valueArguments(ValueParameterDescriptorImpl@8['text']) = StringValue@17
+}
+
+LazyAnnotationDescriptor@18 {
+    _resolutionResults = OverloadResolutionResultsImpl@19
+    _type = JetTypeImpl@20['annotated']
+    _valueArguments(ValueParameterDescriptorImpl@8['text']) = null
+}
+
+LazyAnnotationDescriptor@21 {
+    _resolutionResults = OverloadResolutionResultsImpl@22
+    _type = JetTypeImpl@23['annotated']
+    _valueArguments(ValueParameterDescriptorImpl@8['text']) = null
+}
+
+LazyAnnotationDescriptor@24 {
+    _resolutionResults = OverloadResolutionResultsImpl@25
+    _type = JetTypeImpl@26['annotated']
+    _valueArguments(ValueParameterDescriptorImpl@8['text']) = null
+}
+
+LazyAnnotationDescriptor@27 {
+    _resolutionResults = OverloadResolutionResultsImpl@28
+    _type = JetTypeImpl@29['annotated']
+    _valueArguments(ValueParameterDescriptorImpl@8['text']) = null
+}
+
+LazyJavaClassDescriptor@30['Exception'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@31['Exception']
+}
+
+LazyJavaClassTypeConstructor@31['Exception'] {
+    _parameters = ArrayList@32[empty]
+    _supertypes = ArrayList@33[1] { LazyJavaClassifierType@34['Throwable'] }
+}
+
+LazyJavaClassifierType@34['Throwable'] {
+    _arguments = ArrayList@35[empty]
+    _typeConstructor = DeserializedClassTypeConstructor@36
+    classifier = JavaClassImpl@37['Throwable']
+}
+
+LazyJavaPackageFragmentProvider@38 {
+    _packageFragments('<root>': FqName@39) = LazyJavaPackageFragment@40['<root>']
+    _packageFragments('Exception': FqName@41) = null
+    _packageFragments('IllegalModifiers6': FqName@42) = null
+    _packageFragments('Int': FqName@43) = null
+    _packageFragments('String': FqName@44) = null
+    _packageFragments('annotated': FqName@45) = null
+    _packageFragments('illegal_modifiers': FqName@46) = null
+    _packageFragments('illegal_modifiers.A': FqName@47) = null
+    _packageFragments('illegal_modifiers.C': FqName@48) = null
+    _packageFragments('illegal_modifiers.D': FqName@49) = null
+    _packageFragments('illegal_modifiers.Exception': FqName@50) = null
+    _packageFragments('illegal_modifiers.FinalClass': FqName@51) = null
+    _packageFragments('illegal_modifiers.IllegalModifiers1': FqName@52) = null
+    _packageFragments('illegal_modifiers.IllegalModifiers2': FqName@53) = null
+    _packageFragments('illegal_modifiers.IllegalModifiers3': FqName@54) = null
+    _packageFragments('illegal_modifiers.IllegalModifiers4': FqName@55) = null
+    _packageFragments('illegal_modifiers.IllegalModifiers5': FqName@56) = null
+    _packageFragments('illegal_modifiers.IllegalModifiers6': FqName@57) = null
+    _packageFragments('illegal_modifiers.Int': FqName@58) = null
+    _packageFragments('illegal_modifiers.LegalModifier': FqName@59) = null
+    _packageFragments('illegal_modifiers.String': FqName@60) = null
+    _packageFragments('illegal_modifiers.T': FqName@61) = null
+    _packageFragments('illegal_modifiers.annotated': FqName@62) = null
+    _packageFragments('java': FqName@63) = LazyJavaPackageFragment@64['java']
+    _packageFragments('java.lang': FqName@65) = LazyJavaPackageFragment@66['lang']
+    _packageFragments('java.lang.Exception': FqName@67) = null
+    _packageFragments('java.lang.IllegalModifiers6': FqName@68) = null
+    _packageFragments('java.lang.Int': FqName@69) = null
+    _packageFragments('java.lang.String': FqName@70) = null
+    _packageFragments('java.lang.annotated': FqName@71) = null
+    _packageFragments('kotlin': FqName@72) = null
+    _packageFragments('kotlin.Exception': FqName@73) = null
+    _packageFragments('kotlin.IllegalModifiers6': FqName@74) = null
+    _packageFragments('kotlin.Int': FqName@75) = null
+    _packageFragments('kotlin.String': FqName@76) = null
+    _packageFragments('kotlin.annotated': FqName@77) = null
+    _packageFragments('kotlin.io': FqName@78) = null
+    _packageFragments('kotlin.jvm': FqName@79) = null
+    topLevelClasses(JavaClassImpl@80['Exception']) = LazyJavaClassDescriptor@30['Exception']
+}
+
+LazyJavaPackageFragment@64['java'] {
+    _functions('lang': Name@81) = EmptyList@82[empty] // through LazyPackageFragmentScopeForJavaPackage@83
+    classes('lang': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@83
+    deserializedPackageScope = Empty@85 // through LazyPackageFragmentScopeForJavaPackage@83
+    memberIndex = computeMemberIndex$1@86 // through LazyPackageFragmentScopeForJavaPackage@83
+}
+
+LazyJavaPackageFragment@66['lang'] {
+    classes('Exception': Name@87) = LazyJavaClassDescriptor@30['Exception'] // through LazyPackageFragmentScopeForJavaPackage@88
+    classes('i': Name@89) = null // through LazyPackageFragmentScopeForJavaPackage@88
+    deserializedPackageScope = Empty@85 // through LazyPackageFragmentScopeForJavaPackage@88
+}

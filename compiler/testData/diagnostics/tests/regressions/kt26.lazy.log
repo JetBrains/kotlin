@@ -1,0 +1,32 @@
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('Any': FqName@3) = null
+    _packageFragments('T': FqName@4) = null
+    _packageFragments('html': FqName@5) = null
+    _packageFragments('html.Any': FqName@6) = null
+    _packageFragments('html.Factory': FqName@7) = null
+    _packageFragments('html.T': FqName@8) = null
+    _packageFragments('java': FqName@9) = LazyJavaPackageFragment@10['java']
+    _packageFragments('java.lang': FqName@11) = LazyJavaPackageFragment@12['lang']
+    _packageFragments('java.lang.Any': FqName@13) = null
+    _packageFragments('java.lang.T': FqName@14) = null
+    _packageFragments('kotlin': FqName@15) = null
+    _packageFragments('kotlin.Any': FqName@16) = null
+    _packageFragments('kotlin.T': FqName@17) = null
+    _packageFragments('kotlin.io': FqName@18) = null
+    _packageFragments('kotlin.jvm': FqName@19) = null
+}
+
+LazyJavaPackageFragment@2['<root>'] {
+    _functions('html': Name@20) = EmptyList@21[empty] // through LazyPackageFragmentScopeForJavaPackage@22
+    classes('html': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@22
+    deserializedPackageScope = Empty@24 // through LazyPackageFragmentScopeForJavaPackage@22
+    memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@22
+}
+
+LazyJavaPackageFragment@10['java'] {
+    _functions('lang': Name@26) = EmptyList@21[empty] // through LazyPackageFragmentScopeForJavaPackage@27
+    classes('lang': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@27
+    deserializedPackageScope = Empty@24 // through LazyPackageFragmentScopeForJavaPackage@27
+    memberIndex = computeMemberIndex$1@29 // through LazyPackageFragmentScopeForJavaPackage@27
+}

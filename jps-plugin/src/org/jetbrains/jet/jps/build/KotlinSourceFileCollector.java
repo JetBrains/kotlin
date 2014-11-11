@@ -131,7 +131,7 @@ public class KotlinSourceFileCollector {
         return (Iterable) target.getModule().getSourceRoots(sourceRootType);
     }
 
-    private static boolean isKotlinSourceFile(File file) {
+    static boolean isKotlinSourceFile(File file) {
         return FileUtilRt.extensionEquals(file.getName(), "kt");
     }
 

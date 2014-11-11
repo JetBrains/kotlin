@@ -127,4 +127,11 @@ class StringTest {
         assertEquals("xxx", s.replaceBefore("=", "new name", "xxx"))
         assertEquals("xxx", s.replaceBeforeLast("=", "/new/path", "xxx"))
     }
+
+    test fun stringIterator() {
+        var sum = 0
+        for(c in "239")
+            sum += (c.toInt() - '0'.toInt())
+        assertTrue(sum == 14)
+    }
 }

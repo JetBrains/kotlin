@@ -125,8 +125,9 @@ class Field {
         Class<?> clazz = type.getClazz();
         List<Field> result = Lists.newArrayList();
         for (Method method : allGetters(clazz)) {
-            DiType type = DiType.fromReflectionType(method.getGenericReturnType());
-            result.add(create(false, type, var(type), new GivenExpression(this.getName() + "." + method.getName() + "()")));
+            MethodCall init = new MethodCall(this, method);
+            DiType initType = init.getType();
+            result.add(create(false, initType, var(initType), init));
         }
         return result;
     }

@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.recordScopeAndDataFlowInfo
 import kotlin.properties.Delegates
 
-public trait Qualifier {
+public trait Qualifier: ReceiverValue {
 
     public val expression: JetExpression
 
@@ -56,7 +56,7 @@ class QualifierReceiver (
         val referenceExpression: JetSimpleNameExpression,
         override val packageView: PackageViewDescriptor?,
         override val classifier: ClassifierDescriptor?
-) : Qualifier, ReceiverValue {
+) : Qualifier {
 
     override val expression: JetExpression = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
 

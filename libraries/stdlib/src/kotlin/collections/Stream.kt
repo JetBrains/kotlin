@@ -156,7 +156,7 @@ public class Multistream<T>(private val stream: Stream<Stream<T>>) : Stream<T> {
 }
 
 public class TakeStream<T>(private val stream: Stream<T>,
-                           private var count: Int
+                           private val count: Int
                           ) : Stream<T> {
     {
         if (count < 0)
@@ -164,17 +164,18 @@ public class TakeStream<T>(private val stream: Stream<T>,
     }
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
+        var left = count
         val iterator = stream.iterator();
 
         override fun next(): T {
-            if (count == 0)
+            if (left == 0)
                 throw NoSuchElementException()
-            count--
+            left--
             return iterator.next()
         }
 
         override fun hasNext(): Boolean {
-            return count > 0 && iterator.hasNext()
+            return left > 0 && iterator.hasNext()
         }
     }
 }
@@ -221,7 +222,7 @@ public class TakeWhileStream<T>(private val stream: Stream<T>,
 }
 
 public class DropStream<T>(private val stream: Stream<T>,
-                           private var count: Int
+                           private val count: Int
                           ) : Stream<T> {
     {
         if (count < 0)
@@ -230,12 +231,13 @@ public class DropStream<T>(private val stream: Stream<T>,
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         val iterator = stream.iterator();
+        var left = count
 
         // Shouldn't be called from constructor to avoid premature iteration
         private fun drop() {
-            while (count > 0 && iterator.hasNext()) {
+            while (left > 0 && iterator.hasNext()) {
                 iterator.next()
-                count--
+                left--
             }
         }
 

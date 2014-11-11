@@ -1,0 +1,46 @@
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1['Relation<2>']
+}
+
+LazyJavaPackageFragmentProvider@2 {
+    _packageFragments('<root>': FqName@3) = LazyJavaPackageFragment@4['<root>']
+    _packageFragments('Persistent': FqName@5) = null
+    _packageFragments('PersistentFactory': FqName@6) = null
+    _packageFragments('Source': FqName@7) = null
+    _packageFragments('Target': FqName@8) = null
+    _packageFragments('a': FqName@9) = null
+    _packageFragments('a.Persistent': FqName@10) = null
+    _packageFragments('a.PersistentFactory': FqName@11) = null
+    _packageFragments('a.Relation': FqName@12) = null
+    _packageFragments('a.Source': FqName@13) = null
+    _packageFragments('a.Target': FqName@14) = null
+    _packageFragments('java': FqName@15) = LazyJavaPackageFragment@16['java']
+    _packageFragments('java.lang': FqName@17) = LazyJavaPackageFragment@18['lang']
+    _packageFragments('java.lang.Persistent': FqName@19) = null
+    _packageFragments('java.lang.PersistentFactory': FqName@20) = null
+    _packageFragments('java.lang.Source': FqName@21) = null
+    _packageFragments('java.lang.Target': FqName@22) = null
+    _packageFragments('kotlin': FqName@23) = null
+    _packageFragments('kotlin.Persistent': FqName@24) = null
+    _packageFragments('kotlin.PersistentFactory': FqName@25) = null
+    _packageFragments('kotlin.Source': FqName@26) = null
+    _packageFragments('kotlin.Target': FqName@27) = null
+    _packageFragments('kotlin.io': FqName@28) = null
+    _packageFragments('kotlin.jvm': FqName@29) = null
+}
+
+LazyJavaPackageFragment@16['java'] {
+    _functions('lang': Name@30) = EmptyList@31[empty] // through LazyPackageFragmentScopeForJavaPackage@32
+    classes('lang': Name@33) = null // through LazyPackageFragmentScopeForJavaPackage@32
+    deserializedPackageScope = Empty@34 // through LazyPackageFragmentScopeForJavaPackage@32
+    memberIndex = computeMemberIndex$1@35 // through LazyPackageFragmentScopeForJavaPackage@32
+}
+
+LazyJavaPackageFragment@18['lang'] {
+    _functions('Relation': Name@36) = EmptyList@31[empty] // through LazyPackageFragmentScopeForJavaPackage@37
+    classes('Relation': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@37
+    classes('sources': Name@38) = null // through LazyPackageFragmentScopeForJavaPackage@37
+    classes('targets': Name@39) = null // through LazyPackageFragmentScopeForJavaPackage@37
+    deserializedPackageScope = Empty@34 // through LazyPackageFragmentScopeForJavaPackage@37
+    memberIndex = computeMemberIndex$1@40 // through LazyPackageFragmentScopeForJavaPackage@37
+}

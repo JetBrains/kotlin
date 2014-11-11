@@ -33,9 +33,12 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.Flexibility;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.org.objectweb.asm.*;
 
@@ -184,10 +187,27 @@ public abstract class AnnotationCodegen {
             return;
         }
 
+        if (TypesPackage.isFlexible(type)) {
+            // A flexible type whose lower bound in not-null and upper bound is nullable, should not be annotated
+            Flexibility flexibility = TypesPackage.flexibility(type);
+
+            if (!TypeUtils.isNullableType(flexibility.getLowerBound()) && TypeUtils.isNullableType(flexibility.getUpperBound())) {
+                AnnotationDescriptor notNull = type.getAnnotations().findAnnotation(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION);
+                if (notNull != null) {
+                    generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, NotNull.class);
+                }
+                return;
+            }
+        }
+
         boolean isNullableType = TypeUtils.isNullableType(type);
 
         Class<?> annotationClass = isNullableType ? Nullable.class : NotNull.class;
 
+        generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass);
+    }
+
+    private void generateAnnotationIfNotPresent(Set<String> annotationDescriptorsAlreadyPresent, Class<?> annotationClass) {
         String descriptor = Type.getType(annotationClass).getDescriptor();
         if (!annotationDescriptorsAlreadyPresent.contains(descriptor)) {
             visitAnnotation(descriptor, false).visitEnd();

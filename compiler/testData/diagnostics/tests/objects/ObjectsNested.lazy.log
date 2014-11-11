@@ -1,0 +1,56 @@
+DescriptorResolver@0 {
+    <name not found> = ErrorTypeImpl@1
+    <name not found> = ErrorTypeImpl@2
+    <name not found> = JetTypeImpl@3['A']
+    <name not found> = JetTypeImpl@4['A']
+    <name not found> = JetTypeImpl@4['A']
+    <name not found> = JetTypeImpl@4['A']
+    <name not found> = JetTypeImpl@4['A']
+    <name not found> = JetTypeImpl@4['A']
+    <name not found> = JetTypeImpl@4['A']
+    <name not found> = JetTypeImpl@5['B']
+    <name not found> = JetTypeImpl@6['B']
+    <name not found> = JetTypeImpl@6['B']
+    <name not found> = JetTypeImpl@5['B']
+    <name not found> = JetTypeImpl@6['B']
+    <name not found> = JetTypeImpl@6['B']
+}
+
+LazyJavaPackageFragmentProvider@7 {
+    _packageFragments('<root>': FqName@8) = LazyJavaPackageFragment@9['<root>']
+    _packageFragments('A': FqName@10) = null
+    _packageFragments('B': FqName@11) = null
+    _packageFragments('java': FqName@12) = LazyJavaPackageFragment@13['java']
+    _packageFragments('java.lang': FqName@14) = LazyJavaPackageFragment@15['lang']
+    _packageFragments('java.lang.A': FqName@16) = null
+    _packageFragments('java.lang.B': FqName@17) = null
+    _packageFragments('kotlin': FqName@18) = null
+    _packageFragments('kotlin.A': FqName@19) = null
+    _packageFragments('kotlin.B': FqName@20) = null
+    _packageFragments('kotlin.io': FqName@21) = null
+    _packageFragments('kotlin.jvm': FqName@22) = null
+    _packageFragments('nestedObejcts': FqName@23) = null
+    _packageFragments('nestedObejcts.A': FqName@24) = null
+    _packageFragments('nestedObejcts.B': FqName@25) = null
+    _packageFragments('nestedObejcts.a': FqName@26) = null
+    _packageFragments('nestedObejcts.b': FqName@27) = null
+    _packageFragments('nestedObejcts.c': FqName@28) = null
+    _packageFragments('nestedObejcts.d': FqName@29) = null
+    _packageFragments('nestedObejcts.e': FqName@30) = null
+    _packageFragments('nestedObejcts.nestedObejcts': FqName@31) = null
+}
+
+LazyJavaPackageFragment@13['java'] {
+    _functions('lang': Name@32) = EmptyList@33[empty] // through LazyPackageFragmentScopeForJavaPackage@34
+    classes('lang': Name@35) = null // through LazyPackageFragmentScopeForJavaPackage@34
+    deserializedPackageScope = Empty@36 // through LazyPackageFragmentScopeForJavaPackage@34
+    memberIndex = computeMemberIndex$1@37 // through LazyPackageFragmentScopeForJavaPackage@34
+}
+
+LazyJavaPackageFragment@15['lang'] {
+    _functions('A': Name@38) = EmptyList@33[empty] // through LazyPackageFragmentScopeForJavaPackage@39
+    classes('A': Name@38) = null // through LazyPackageFragmentScopeForJavaPackage@39
+    classes('nestedObejcts': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@39
+    deserializedPackageScope = Empty@36 // through LazyPackageFragmentScopeForJavaPackage@39
+    memberIndex = computeMemberIndex$1@41 // through LazyPackageFragmentScopeForJavaPackage@39
+}

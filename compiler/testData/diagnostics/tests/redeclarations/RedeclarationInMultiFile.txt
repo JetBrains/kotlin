@@ -2,3 +2,5 @@ package
 
 internal val a: kotlin.Int = 1
 internal val a: kotlin.Int = 1
+internal fun f(): kotlin.Unit
+internal fun f(): kotlin.Unit

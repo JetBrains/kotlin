@@ -68,6 +68,8 @@ import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus
+import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier
+import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver
 
 enum class Tail {
     COMMA
@@ -132,12 +134,13 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: Reso
         if (parent is JetQualifiedExpression && callElement == parent.getSelectorExpression()) {
             val receiverExpression = parent.getReceiverExpression()
             val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, receiverExpression]
+            val qualifier = bindingContext[BindingContext.QUALIFIER, receiverExpression]
             if (expressionType != null) {
                 receiver = ExpressionReceiver(receiverExpression, expressionType)
                 callOperationNode = parent.getOperationTokenNode()
             }
-            else if (bindingContext[BindingContext.QUALIFIER, receiverExpression] != null) {
-                receiver = ReceiverValue.NO_RECEIVER
+            else if (qualifier != null) {
+                receiver = qualifier
                 callOperationNode = null
             }
             else {

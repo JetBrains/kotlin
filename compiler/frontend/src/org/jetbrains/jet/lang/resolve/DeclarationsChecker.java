@@ -267,7 +267,7 @@ public class DeclarationsChecker {
 
     private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         checkOpenMembers(classDescriptor);
-        if (c.getTopDownAnalysisParameters().isLazyTopDownAnalysis()) {
+        if (c.getTopDownAnalysisParameters().isLazy()) {
             checkTypeParameters(aClass);
         }
         if (aClass.isTrait()) {

@@ -1,0 +1,51 @@
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('html': FqName@3) = null
+    _packageFragments('import': FqName@4) = null
+    _packageFragments('java': FqName@5) = LazyJavaPackageFragment@6['java']
+    _packageFragments('java.lang': FqName@7) = LazyJavaPackageFragment@8['lang']
+    _packageFragments('java.lang.html': FqName@9) = null
+    _packageFragments('java.lang.import': FqName@10) = null
+    _packageFragments('kotlin': FqName@11) = null
+    _packageFragments('kotlin.html': FqName@12) = null
+    _packageFragments('kotlin.import': FqName@13) = null
+    _packageFragments('kotlin.io': FqName@14) = null
+    _packageFragments('kotlin.jvm': FqName@15) = null
+}
+
+LazyJavaPackageFragment@2['<root>'] {
+    _functions('a': Name@16) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    _functions('compareTo': Name@19) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    _functions('html': Name@20) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    _functions('import': Name@21) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    _functions('plus': Name@22) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('a': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('compareTo': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('html': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('import': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('plus': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    deserializedPackageScope = Empty@25 // through LazyPackageFragmentScopeForJavaPackage@18
+    memberIndex = computeMemberIndex$1@26 // through LazyPackageFragmentScopeForJavaPackage@18
+}
+
+LazyJavaPackageFragment@6['java'] {
+    _functions('lang': Name@27) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@28
+    classes('lang': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@28
+    deserializedPackageScope = Empty@25 // through LazyPackageFragmentScopeForJavaPackage@28
+    memberIndex = computeMemberIndex$1@30 // through LazyPackageFragmentScopeForJavaPackage@28
+}
+
+LazyJavaPackageFragment@8['lang'] {
+    _functions('a': Name@16) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@31
+    _functions('compareTo': Name@19) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@31
+    _functions('html': Name@20) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@31
+    _functions('import': Name@21) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@31
+    _functions('plus': Name@22) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@31
+    classes('a': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@31
+    classes('compareTo': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@31
+    classes('html': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@31
+    classes('import': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@31
+    classes('plus': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@31
+    deserializedPackageScope = Empty@25 // through LazyPackageFragmentScopeForJavaPackage@31
+    memberIndex = computeMemberIndex$1@32 // through LazyPackageFragmentScopeForJavaPackage@31
+}

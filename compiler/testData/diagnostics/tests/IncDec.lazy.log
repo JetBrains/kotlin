@@ -1,0 +1,58 @@
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('IncDec': FqName@3) = null
+    _packageFragments('Int': FqName@4) = null
+    _packageFragments('Unit': FqName@5) = null
+    _packageFragments('UnitIncDec': FqName@6) = null
+    _packageFragments('WrongIncDec': FqName@7) = null
+    _packageFragments('java': FqName@8) = LazyJavaPackageFragment@9['java']
+    _packageFragments('java.lang': FqName@10) = LazyJavaPackageFragment@11['lang']
+    _packageFragments('java.lang.IncDec': FqName@12) = null
+    _packageFragments('java.lang.Int': FqName@13) = null
+    _packageFragments('java.lang.Unit': FqName@14) = null
+    _packageFragments('kotlin': FqName@15) = null
+    _packageFragments('kotlin.IncDec': FqName@16) = null
+    _packageFragments('kotlin.Int': FqName@17) = null
+    _packageFragments('kotlin.Unit': FqName@18) = null
+    _packageFragments('kotlin.io': FqName@19) = null
+    _packageFragments('kotlin.jvm': FqName@20) = null
+}
+
+LazyJavaPackageFragment@2['<root>'] {
+    _functions('IncDec': Name@21) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@23
+    _functions('UnitIncDec': Name@24) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@23
+    _functions('WrongIncDec': Name@25) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@23
+    _functions('dec': Name@26) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@23
+    _functions('inc': Name@27) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('IncDec': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('Int': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('Unit': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('UnitIncDec': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('WrongIncDec': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('dec': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('inc': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    deserializedPackageScope = Empty@30 // through LazyPackageFragmentScopeForJavaPackage@23
+    memberIndex = computeMemberIndex$1@31 // through LazyPackageFragmentScopeForJavaPackage@23
+}
+
+LazyJavaPackageFragment@9['java'] {
+    _functions('lang': Name@32) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('lang': Name@34) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    deserializedPackageScope = Empty@30 // through LazyPackageFragmentScopeForJavaPackage@33
+    memberIndex = computeMemberIndex$1@35 // through LazyPackageFragmentScopeForJavaPackage@33
+}
+
+LazyJavaPackageFragment@11['lang'] {
+    _functions('IncDec': Name@21) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@36
+    _functions('UnitIncDec': Name@24) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@36
+    _functions('WrongIncDec': Name@25) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@36
+    _functions('dec': Name@26) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@36
+    _functions('inc': Name@27) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@36
+    classes('IncDec': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@36
+    classes('UnitIncDec': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@36
+    classes('WrongIncDec': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@36
+    classes('dec': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@36
+    classes('inc': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@36
+    deserializedPackageScope = Empty@30 // through LazyPackageFragmentScopeForJavaPackage@36
+    memberIndex = computeMemberIndex$1@37 // through LazyPackageFragmentScopeForJavaPackage@36
+}

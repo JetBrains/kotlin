@@ -6,4 +6,4 @@ class Client<T: Data, X> where X: Data {
 
 }
 
-val c = Client<Data>()
+val c = Client<Data/*, [ERROR]*/>()

@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.context.LazyResolveToken;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -38,8 +39,8 @@ import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
-import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.resolve.calls.CallCompleter;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
@@ -62,6 +63,7 @@ public class InjectorForLazyResolve {
     private final BindingTrace bindingTrace;
     private final AdditionalCheckerProvider additionalCheckerProvider;
     private final ResolveSession resolveSession;
+    private final LazyResolveToken lazyResolveToken;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -75,8 +77,8 @@ public class InjectorForLazyResolve {
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final TypeResolver typeResolver;
-    private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
+    private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
@@ -101,6 +103,7 @@ public class InjectorForLazyResolve {
         this.bindingTrace = bindingTrace;
         this.additionalCheckerProvider = additionalCheckerProvider;
         this.resolveSession = new ResolveSession(project, globalContext, moduleDescriptor, declarationProviderFactory, bindingTrace);
+        this.lazyResolveToken = new LazyResolveToken();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -113,9 +116,9 @@ public class InjectorForLazyResolve {
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.typeResolver = new TypeResolver();
-        this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, lazyResolveToken);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
@@ -176,11 +179,6 @@ public class InjectorForLazyResolve {
 
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
-
-        typeResolver.setAnnotationResolver(annotationResolver);
-        typeResolver.setFlexibleTypeCapabilitiesProvider(flexibleTypeCapabilitiesProvider);
-        typeResolver.setModuleDescriptor(moduleDescriptor);
-        typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 

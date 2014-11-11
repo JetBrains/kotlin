@@ -1,0 +1,32 @@
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1['Boolean']
+    <name not found> = JetTypeImpl@2['String']
+}
+
+LazyJavaPackageFragmentProvider@3 {
+    _packageFragments('<root>': FqName@4) = LazyJavaPackageFragment@5['<root>']
+    _packageFragments('java': FqName@6) = LazyJavaPackageFragment@7['java']
+    _packageFragments('java.lang': FqName@8) = LazyJavaPackageFragment@9['lang']
+    _packageFragments('kotlin': FqName@10) = null
+    _packageFragments('kotlin.io': FqName@11) = null
+    _packageFragments('kotlin.jvm': FqName@12) = null
+    _packageFragments('myApp': FqName@13) = null
+    _packageFragments('weatherForecast': FqName@14) = null
+    _packageFragments('weatherForecast.weatherToday': FqName@15) = null
+}
+
+LazyJavaPackageFragment@7['java'] {
+    _functions('lang': Name@16) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('lang': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@18
+    memberIndex = computeMemberIndex$1@21 // through LazyPackageFragmentScopeForJavaPackage@18
+}
+
+LazyJavaPackageFragment@9['lang'] {
+    _functions('equals': Name@22) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@23
+    _functions('weatherToday': Name@24) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('equals': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('weatherToday': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@23
+    memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@23
+}

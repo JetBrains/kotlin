@@ -19,12 +19,15 @@ package org.jetbrains.jet.cli.js;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.extensions.ExtensionsArea;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -43,16 +46,18 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.config.Services;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression;
+import org.jetbrains.k2js.analyze.SuppressUnusedParameterForJsNative;
+import org.jetbrains.k2js.analyze.SuppressWarningsFromExternalModules;
+import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.*;
 import org.jetbrains.k2js.facade.MainCallParameters;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.ExitCode.COMPILATION_ERROR;
@@ -91,6 +96,13 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         CompileEnvironmentUtil.addSourceFilesCheckingForDuplicates(configuration, arguments.freeArgs);
         JetCoreEnvironment environmentForJS = JetCoreEnvironment.createForProduction(rootDisposable, configuration);
+
+        ExtensionsArea rootArea = Extensions.getRootArea();
+        rootArea.getExtensionPoint(DiagnosticsWithSuppression.SuppressStringProvider.EP_NAME)
+                .registerExtension(new SuppressUnusedParameterForJsNative());
+
+        rootArea.getExtensionPoint(DiagnosticsWithSuppression.DiagnosticSuppressor.EP_NAME)
+                .registerExtension(new SuppressWarningsFromExternalModules());
 
         Project project = environmentForJS.getProject();
         List<JetFile> sourcesFiles = environmentForJS.getSourceFiles();
@@ -200,8 +212,17 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         String moduleId = FileUtil.getNameWithoutExtension(new File(arguments.outputFile));
         boolean inlineEnabled = !arguments.noInline;
 
+        List<String> libraryFiles = new SmartList<String>();
+        if (!arguments.noStdlib) {
+            libraryFiles.add(0, PathUtil.getKotlinPathsForCompiler().getJsLibJarPath().getAbsolutePath());
+        }
+
         if (arguments.libraryFiles != null) {
-            return new LibrarySourcesConfig(project, moduleId, Arrays.asList(arguments.libraryFiles), ecmaVersion, arguments.sourceMap, inlineEnabled);
+            ContainerUtil.addAllNotNull(libraryFiles, arguments.libraryFiles);
+        }
+
+        if (!libraryFiles.isEmpty()) {
+            return new LibrarySourcesConfig(project, moduleId, libraryFiles, ecmaVersion, arguments.sourceMap, inlineEnabled);
         }
         else {
             // lets discover the JS library definitions on the classpath

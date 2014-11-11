@@ -23,7 +23,7 @@ import com.intellij.refactoring.ui.MethodSignatureComponent
 public class KotlinFunctionSignatureComponent(
         signature: String, project: Project
 ) : MethodSignatureComponent(signature, project, JetFileType.INSTANCE) {
-    private val myFileName = "dummy." + JetFileType.INSTANCE.getDefaultExtension()
+    private val myFileName = "dummy." + JetFileType.EXTENSION
 
     override fun getFileName(): String = myFileName
 }

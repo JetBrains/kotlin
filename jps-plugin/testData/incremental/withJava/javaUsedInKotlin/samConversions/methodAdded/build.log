@@ -1,0 +1,23 @@
+Cleaning output files:
+out/production/module/SamInterface.class
+End of files
+Compiling files:
+src/SamInterface.java
+End of files
+Cleaning output files:
+out/production/module/_DefaultPackage$sam$SamInterface$*.class
+out/production/module/_DefaultPackage$usageWithFunctionExpression$*$usageWithFunctionExpression$a$1.class
+out/production/module/_DefaultPackage$usageWithFunctionExpression$*.class
+out/production/module/_DefaultPackage$usageWithFunctionLiteral$*$usageWithFunctionLiteral$1.class
+out/production/module/_DefaultPackage$usageWithFunctionLiteral$*.class
+out/production/module/_DefaultPackage.class
+End of files
+Compiling files:
+src/usageWithFunctionExpression.kt
+src/usageWithFunctionLiteral.kt
+End of files
+COMPILATION FAILED
+Kotlin:ERROR:Expression 'SamInterface' cannot be invoked as a function. The function invoke() is not found
+Kotlin:ERROR:Please specify constructor invocation; classifier 'SamInterface' does not have a class object
+Kotlin:ERROR:Expression 'SamInterface' cannot be invoked as a function. The function invoke() is not found
+Kotlin:ERROR:Please specify constructor invocation; classifier 'SamInterface' does not have a class object

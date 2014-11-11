@@ -18,12 +18,10 @@ package org.jetbrains.jet.checkers;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.io.Files;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -34,29 +32,22 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.asJava.AsJavaPackage;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.lang.types.Flexibility;
-import org.jetbrains.jet.utils.UtilsPackage;
 import org.junit.Assert;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class BaseDiagnosticsTest extends JetLiteFixture {
+public abstract class BaseDiagnosticsTest extends
+                                          KotlinMultiFileTestWithWithJava<BaseDiagnosticsTest.TestModule, BaseDiagnosticsTest.TestFile> {
 
     public static final String DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS";
     public static final Pattern DIAGNOSTICS_PATTERN = Pattern.compile("([\\+\\-!])(\\w+)\\s*");
@@ -86,81 +77,17 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
     private static final String EXPLICIT_FLEXIBLE_TYPES_IMPORT = "import " + EXPLICIT_FLEXIBLE_PACKAGE + "." + EXPLICIT_FLEXIBLE_CLASS_NAME;
 
     @Override
-    protected JetCoreEnvironment createEnvironment() {
-        File javaFilesDir = createJavaFilesDir();
-        return JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
-                        ConfigurationKind.JDK_AND_ANNOTATIONS,
-                        TestJdkKind.MOCK_JDK,
-                        Arrays.asList(JetTestUtils.getAnnotationsJar()),
-                        Arrays.asList(javaFilesDir)
-                ));
+    protected TestModule createTestModule(String name) {
+        return new TestModule(name);
     }
 
-    protected File createJavaFilesDir() {
-        File javaFilesDir = new File(FileUtil.getTempDirectory(), "java-files");
-        try {
-            JetTestUtils.mkdirs(javaFilesDir);
-        }
-        catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
-        }
-        return javaFilesDir;
+    @Override
+    protected TestFile createTestFile(TestModule module, String fileName, String text, Map<String, String> directives) {
+        return new TestFile(module, fileName, text, directives);
     }
 
-    private static boolean writeJavaFile(@NotNull String fileName, @NotNull String content, @NotNull File javaFilesDir) {
-        try {
-            File javaFile = new File(javaFilesDir, fileName);
-            JetTestUtils.mkdirs(javaFile.getParentFile());
-            Files.write(content, javaFile, Charset.forName("utf-8"));
-            return true;
-        } catch (Exception e) {
-            throw UtilsPackage.rethrow(e);
-        }
-    }
-
-    protected void doTest(String filePath) throws IOException {
-        File file = new File(filePath);
-        final File javaFilesDir = createJavaFilesDir();
-
-        String expectedText = JetTestUtils.doLoadFile(file);
-
-        class ModuleAndDependencies {
-            final TestModule module;
-            final List<String> dependencies;
-
-            ModuleAndDependencies(TestModule module, List<String> dependencies) {
-                this.module = module;
-                this.dependencies = dependencies;
-            }
-        }
-        final Map<String, ModuleAndDependencies> modules = new HashMap<String, ModuleAndDependencies>();
-
-        List<TestFile> testFiles =
-                JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<TestModule, TestFile>() {
-                    @Override
-                    public TestFile createFile(
-                            @Nullable TestModule module,
-                            @NotNull String fileName,
-                            @NotNull String text,
-                            @NotNull Map<String, String> directives
-                    ) {
-                        if (fileName.endsWith(".java")) {
-                            writeJavaFile(fileName, text, javaFilesDir);
-                        }
-
-                        return new TestFile(module, fileName, text, directives);
-                    }
-
-                    @Override
-                    public TestModule createModule(@NotNull String name, @NotNull List<String> dependencies) {
-                        TestModule module = new TestModule(name);
-                        ModuleAndDependencies oldValue = modules.put(name, new ModuleAndDependencies(module, dependencies));
-                        assert oldValue == null : "Module " + name + " declared more than once";
-
-                        return module;
-                    }
-                });
-
+    @Override
+    protected void doMultiFileTest(File file, final Map<String, ModuleAndDependencies> modules, List<TestFile> testFiles) {
         for (final ModuleAndDependencies moduleAndDependencies : modules.values()) {
             List<TestModule> dependencies = KotlinPackage.map(
                     moduleAndDependencies.dependencies,
@@ -168,7 +95,10 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
                         @Override
                         public TestModule invoke(String name) {
                             ModuleAndDependencies dependency = modules.get(name);
-                            assert dependency != null : "Dependency not found: " + name + " for module " + moduleAndDependencies.module.getName();
+                            assert dependency != null : "Dependency not found: " +
+                                                        name +
+                                                        " for module " +
+                                                        moduleAndDependencies.module.getName();
                             return dependency.module;
                         }
                     }

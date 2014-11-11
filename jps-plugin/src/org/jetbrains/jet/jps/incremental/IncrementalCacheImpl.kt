@@ -251,7 +251,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
                 ConstantsMapExternalizer
         )
 
-        private fun getConstantsMap(bytes: ByteArray): Map<String, Any> {
+        private fun getConstantsMap(bytes: ByteArray): Map<String, Any>? {
             val result = HashMap<String, Any>()
 
             ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
@@ -264,14 +264,14 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
                 }
             }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
 
-            return result
+            return if (result.isEmpty()) null else result
         }
 
         public fun process(className: JvmClassName, bytes: ByteArray): Boolean {
             return put(className, getConstantsMap(bytes))
         }
 
-        private fun put(className: JvmClassName, constantsMap: Map<String, Any>): Boolean {
+        private fun put(className: JvmClassName, constantsMap: Map<String, Any>?): Boolean {
             val key = className.getInternalName()
 
             val oldMap = map[key]

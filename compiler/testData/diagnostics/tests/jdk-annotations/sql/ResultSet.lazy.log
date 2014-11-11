@@ -1,0 +1,117 @@
+LazyJavaClassDescriptor@0['AutoCloseable'] {
+    _functions('getMetaData': Name@1) = EmptyList@2[empty] // through LazyJavaClassMemberScope@3
+    _properties('getMetaData': Name@4) = EmptyList@2[empty] // through LazyJavaClassMemberScope@3
+    _typeConstructor = LazyJavaClassTypeConstructor@5['AutoCloseable']
+    memberIndex = computeMemberIndex$1@6 // through LazyJavaClassMemberScope@3
+}
+
+LazyJavaClassDescriptor@7['ResultSet'] {
+    _functions('getMetaData': Name@4) = ArrayList@8[1] { JavaMethodDescriptor@9['getMetaData'] } // through LazyJavaClassMemberScope@10
+    _properties('getMetaData': Name@4) = EmptyList@2[empty] // through LazyJavaClassMemberScope@10
+    _typeConstructor = LazyJavaClassTypeConstructor@11['ResultSet']
+    defaultType = JetTypeImpl@12['ResultSet']
+    enumEntryIndex = LinkedHashMap@13 // through LazyJavaClassMemberScope@10
+    memberIndex = computeMemberIndex$1@14 // through LazyJavaClassMemberScope@10
+    nestedClassIndex = LinkedHashMap@15 // through LazyJavaClassMemberScope@10
+    nestedClasses('getMetaData': Name@4) = null // through LazyJavaClassMemberScope@10
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@16['<this>']
+}
+
+LazyJavaClassDescriptor@17['ResultSetMetaData'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@18['ResultSetMetaData']
+}
+
+LazyJavaClassTypeConstructor@5['AutoCloseable'] {
+    _parameters = ArrayList@19[empty]
+    _supertypes = ArrayList@20[1] { JetTypeImpl@21['Any'] }
+}
+
+LazyJavaClassTypeConstructor@11['ResultSet'] {
+    _parameters = ArrayList@22[empty]
+    _supertypes = ArrayList@23[1] { LazyJavaClassifierType@24['AutoCloseable'] }
+}
+
+LazyJavaClassTypeConstructor@18['ResultSetMetaData'] {
+    _parameters = ArrayList@25[empty]
+    _supertypes = ArrayList@26[1] { JetTypeImpl@21['Any'] }
+}
+
+LazyJavaClassifierType@24['AutoCloseable'] {
+    _arguments = ArrayList@27[empty]
+    _memberScope = LazyJavaClassMemberScope@3
+    _typeConstructor = LazyJavaClassTypeConstructor@5['AutoCloseable']
+    classifier = JavaClassImpl@28['AutoCloseable']
+}
+
+LazyJavaClassifierType@29['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@30
+    classifier = JavaClassImpl@31['Object']
+}
+
+LazyJavaClassifierType@32['ResultSetMetaData'] {
+    _arguments = ArrayList@33[empty]
+    _nullable = 'false': Boolean@34
+    _typeConstructor = LazyJavaClassTypeConstructor@18['ResultSetMetaData']
+    classifier = JavaClassImpl@35['ResultSetMetaData']
+}
+
+LazyJavaClassifierType@36['ResultSetMetaData'] {
+    _arguments = ArrayList@37[empty]
+    _nullable = 'true': Boolean@38
+    _typeConstructor = LazyJavaClassTypeConstructor@18['ResultSetMetaData']
+    classifier = JavaClassImpl@35['ResultSetMetaData']
+}
+
+LazyJavaClassifierType@39['Wrapper'] {
+    _typeConstructor = TypeConstructorImpl$1@40
+    classifier = null
+}
+
+LazyJavaClassifierType@41['Wrapper'] {
+    _typeConstructor = TypeConstructorImpl$1@42
+    classifier = null
+}
+
+LazyJavaPackageFragmentProvider@43 {
+    _packageFragments('<root>': FqName@44) = LazyJavaPackageFragment@45['<root>']
+    _packageFragments('java': FqName@46) = LazyJavaPackageFragment@47['java']
+    _packageFragments('java.lang': FqName@48) = LazyJavaPackageFragment@49['lang']
+    _packageFragments('java.sql': FqName@50) = LazyJavaPackageFragment@51['sql']
+    _packageFragments('java.sql.ResultSet': FqName@52) = null
+    _packageFragments('java.sql.ResultSetMetaData': FqName@53) = null
+    _packageFragments('kotlin': FqName@54) = null
+    _packageFragments('kotlin.io': FqName@55) = null
+    _packageFragments('kotlin.jvm': FqName@56) = null
+    topLevelClasses(JavaClassImpl@28['AutoCloseable']) = LazyJavaClassDescriptor@0['AutoCloseable']
+    topLevelClasses(JavaClassImpl@57['ResultSet']) = LazyJavaClassDescriptor@7['ResultSet']
+    topLevelClasses(JavaClassImpl@58['ResultSetMetaData']) = LazyJavaClassDescriptor@17['ResultSetMetaData']
+}
+
+LazyJavaPackageFragment@45['<root>'] {
+    _functions('getMetaData': Name@4) = EmptyList@2[empty] // through LazyPackageFragmentScopeForJavaPackage@59
+    classes('getMetaData': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@59
+    classes('java': Name@60) = null // through LazyPackageFragmentScopeForJavaPackage@59
+    deserializedPackageScope = Empty@61 // through LazyPackageFragmentScopeForJavaPackage@59
+    memberIndex = computeMemberIndex$1@62 // through LazyPackageFragmentScopeForJavaPackage@59
+}
+
+LazyJavaPackageFragment@47['java'] {
+    _functions('lang': Name@63) = EmptyList@2[empty] // through LazyPackageFragmentScopeForJavaPackage@64
+    classes('lang': Name@65) = null // through LazyPackageFragmentScopeForJavaPackage@64
+    classes('sql': Name@66) = null // through LazyPackageFragmentScopeForJavaPackage@64
+    deserializedPackageScope = Empty@61 // through LazyPackageFragmentScopeForJavaPackage@64
+    memberIndex = computeMemberIndex$1@67 // through LazyPackageFragmentScopeForJavaPackage@64
+}
+
+LazyJavaPackageFragment@49['lang'] {
+    _functions('getMetaData': Name@4) = EmptyList@2[empty] // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('getMetaData': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('java': Name@60) = null // through LazyPackageFragmentScopeForJavaPackage@68
+    deserializedPackageScope = Empty@61 // through LazyPackageFragmentScopeForJavaPackage@68
+    memberIndex = computeMemberIndex$1@69 // through LazyPackageFragmentScopeForJavaPackage@68
+}
+
+LazyJavaPackageFragment@51['sql'] {
+    classes('ResultSet': Name@70) = LazyJavaClassDescriptor@7['ResultSet'] // through LazyPackageFragmentScopeForJavaPackage@71
+    classes('ResultSetMetaData': Name@72) = LazyJavaClassDescriptor@17['ResultSetMetaData'] // through LazyPackageFragmentScopeForJavaPackage@71
+}

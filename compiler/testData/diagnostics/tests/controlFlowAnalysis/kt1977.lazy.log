@@ -1,0 +1,184 @@
+LazyJavaClassDescriptor@0['Exception'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@1['Exception']
+}
+
+LazyJavaClassDescriptor@2['IllegalArgumentException'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@3['IllegalArgumentException']
+}
+
+LazyJavaClassDescriptor@4['Integer'] {
+    _functions('parseInt': Name@5) = ArrayList@6[2] { JavaMethodDescriptor@7['parseInt'], JavaMethodDescriptor@8['parseInt'] } // through LazyJavaStaticClassScope@9
+    _functions('parseInt': Name@5) = EmptyList@10[empty] // through LazyJavaClassMemberScope@11
+    _properties('parseInt': Name@5) = EmptyList@10[empty] // through LazyJavaClassMemberScope@11
+    _properties('parseInt': Name@5) = EmptyList@10[empty] // through LazyJavaStaticClassScope@9
+    _typeConstructor = LazyJavaClassTypeConstructor@12['Integer']
+    enumEntryIndex = LinkedHashMap@13 // through LazyJavaClassMemberScope@11
+    memberIndex = computeMemberIndex$1@14 // through LazyJavaClassMemberScope@11
+    memberIndex = computeMemberIndex$1@15 // through LazyJavaStaticClassScope@9
+    nestedClassIndex = LinkedHashMap@16 // through LazyJavaClassMemberScope@11
+    nestedClasses('parseInt': Name@5) = null // through LazyJavaClassMemberScope@11
+}
+
+LazyJavaClassDescriptor@17['NumberFormatException'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@18['NumberFormatException']
+}
+
+LazyJavaClassDescriptor@19['RuntimeException'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@20['RuntimeException']
+}
+
+LazyJavaClassTypeConstructor@1['Exception'] {
+    _parameters = ArrayList@21[empty]
+    _supertypes = ArrayList@22[1] { LazyJavaClassifierType@23['Throwable'] }
+}
+
+LazyJavaClassTypeConstructor@3['IllegalArgumentException'] {
+    _parameters = ArrayList@24[empty]
+    _supertypes = ArrayList@25[1] { LazyJavaClassifierType@26['RuntimeException'] }
+}
+
+LazyJavaClassTypeConstructor@12['Integer'] {
+    _supertypes = ArrayList@27[2] { LazyJavaClassifierType@28['Number'], LazyJavaClassifierType@29['Comparable<Integer>'] }
+}
+
+LazyJavaClassTypeConstructor@18['NumberFormatException'] {
+    _parameters = ArrayList@30[empty]
+    _supertypes = ArrayList@31[1] { LazyJavaClassifierType@32['IllegalArgumentException'] }
+}
+
+LazyJavaClassTypeConstructor@20['RuntimeException'] {
+    _parameters = ArrayList@33[empty]
+    _supertypes = ArrayList@34[1] { LazyJavaClassifierType@35['Exception'] }
+}
+
+LazyJavaClassifierType@29['Comparable<Integer>'] {
+    _arguments = ArrayList@36[1] { TypeProjectionImpl@37 }
+    _memberScope = SubstitutingScope@38
+    _typeConstructor = DeserializedClassTypeConstructor@39
+    classifier = JavaClassImpl@40['Comparable']
+}
+
+LazyJavaClassifierType@35['Exception'] {
+    _arguments = ArrayList@41[empty]
+    _typeConstructor = LazyJavaClassTypeConstructor@1['Exception']
+    classifier = JavaClassImpl@42['Exception']
+}
+
+LazyJavaClassifierType@32['IllegalArgumentException'] {
+    _arguments = ArrayList@43[empty]
+    _typeConstructor = LazyJavaClassTypeConstructor@3['IllegalArgumentException']
+    classifier = JavaClassImpl@44['IllegalArgumentException']
+}
+
+LazyJavaClassifierType@45['Integer'] {
+    _arguments = ArrayList@46[empty]
+    _nullable = 'false': Boolean@47
+    _typeConstructor = DeserializedClassTypeConstructor@48
+    classifier = JavaClassImpl@49['Integer']
+}
+
+LazyJavaClassifierType@50['Integer'] {
+    _arguments = ArrayList@51[empty]
+    _nullable = 'true': Boolean@52
+    _typeConstructor = DeserializedClassTypeConstructor@48
+    classifier = JavaClassImpl@49['Integer']
+}
+
+LazyJavaClassifierType@28['Number'] {
+    _arguments = ArrayList@53[empty]
+    _memberScope = DeserializedClassMemberScope@54
+    _typeConstructor = DeserializedClassTypeConstructor@55
+    classifier = JavaClassImpl@56['Number']
+}
+
+LazyJavaClassifierType@26['RuntimeException'] {
+    _arguments = ArrayList@57[empty]
+    _typeConstructor = LazyJavaClassTypeConstructor@20['RuntimeException']
+    classifier = JavaClassImpl@58['RuntimeException']
+}
+
+LazyJavaClassifierType@59['String'] {
+    _arguments = ArrayList@60[empty]
+    _nullable = 'false': Boolean@47
+    _typeConstructor = DeserializedClassTypeConstructor@61
+    classifier = JavaClassImpl@62['String']
+}
+
+LazyJavaClassifierType@63['String'] {
+    _arguments = ArrayList@64[empty]
+    _nullable = 'false': Boolean@47
+    _typeConstructor = DeserializedClassTypeConstructor@61
+    classifier = JavaClassImpl@65['String']
+}
+
+LazyJavaClassifierType@66['String'] {
+    _arguments = ArrayList@67[empty]
+    _nullable = 'true': Boolean@52
+    _typeConstructor = DeserializedClassTypeConstructor@61
+    classifier = JavaClassImpl@62['String']
+}
+
+LazyJavaClassifierType@68['String'] {
+    _arguments = ArrayList@69[empty]
+    _nullable = 'true': Boolean@52
+    _typeConstructor = DeserializedClassTypeConstructor@61
+    classifier = JavaClassImpl@65['String']
+}
+
+LazyJavaClassifierType@23['Throwable'] {
+    _arguments = ArrayList@70[empty]
+    _typeConstructor = DeserializedClassTypeConstructor@71
+    classifier = JavaClassImpl@72['Throwable']
+}
+
+LazyJavaPackageFragmentProvider@73 {
+    _packageFragments('<root>': FqName@74) = LazyJavaPackageFragment@75['<root>']
+    _packageFragments('Exception': FqName@76) = null
+    _packageFragments('Int': FqName@77) = null
+    _packageFragments('Integer': FqName@78) = null
+    _packageFragments('NumberFormatException': FqName@79) = null
+    _packageFragments('String': FqName@80) = null
+    _packageFragments('java': FqName@81) = LazyJavaPackageFragment@82['java']
+    _packageFragments('java.lang': FqName@83) = LazyJavaPackageFragment@84['lang']
+    _packageFragments('java.lang.Exception': FqName@85) = null
+    _packageFragments('java.lang.Int': FqName@86) = null
+    _packageFragments('java.lang.Integer': FqName@87) = null
+    _packageFragments('java.lang.NumberFormatException': FqName@88) = null
+    _packageFragments('java.lang.String': FqName@89) = null
+    _packageFragments('kotlin': FqName@90) = null
+    _packageFragments('kotlin.Exception': FqName@91) = null
+    _packageFragments('kotlin.Int': FqName@92) = null
+    _packageFragments('kotlin.Integer': FqName@93) = null
+    _packageFragments('kotlin.NumberFormatException': FqName@94) = null
+    _packageFragments('kotlin.String': FqName@95) = null
+    _packageFragments('kotlin.io': FqName@96) = null
+    _packageFragments('kotlin.jvm': FqName@97) = null
+    _packageFragments('kt1977': FqName@98) = null
+    _packageFragments('kt1977.Exception': FqName@99) = null
+    _packageFragments('kt1977.Int': FqName@100) = null
+    _packageFragments('kt1977.Integer': FqName@101) = null
+    _packageFragments('kt1977.NumberFormatException': FqName@102) = null
+    _packageFragments('kt1977.String': FqName@103) = null
+    topLevelClasses(JavaClassImpl@42['Exception']) = LazyJavaClassDescriptor@0['Exception']
+    topLevelClasses(JavaClassImpl@44['IllegalArgumentException']) = LazyJavaClassDescriptor@2['IllegalArgumentException']
+    topLevelClasses(JavaClassImpl@104['Integer']) = LazyJavaClassDescriptor@4['Integer']
+    topLevelClasses(JavaClassImpl@105['NumberFormatException']) = LazyJavaClassDescriptor@17['NumberFormatException']
+    topLevelClasses(JavaClassImpl@58['RuntimeException']) = LazyJavaClassDescriptor@19['RuntimeException']
+}
+
+LazyJavaPackageFragment@82['java'] {
+    _functions('lang': Name@106) = EmptyList@10[empty] // through LazyPackageFragmentScopeForJavaPackage@107
+    classes('lang': Name@108) = null // through LazyPackageFragmentScopeForJavaPackage@107
+    deserializedPackageScope = Empty@109 // through LazyPackageFragmentScopeForJavaPackage@107
+    memberIndex = computeMemberIndex$1@110 // through LazyPackageFragmentScopeForJavaPackage@107
+}
+
+LazyJavaPackageFragment@84['lang'] {
+    _functions('bar': Name@111) = EmptyList@10[empty] // through LazyPackageFragmentScopeForJavaPackage@112
+    classes('Exception': Name@113) = LazyJavaClassDescriptor@0['Exception'] // through LazyPackageFragmentScopeForJavaPackage@112
+    classes('Integer': Name@114) = LazyJavaClassDescriptor@4['Integer'] // through LazyPackageFragmentScopeForJavaPackage@112
+    classes('NumberFormatException': Name@115) = LazyJavaClassDescriptor@17['NumberFormatException'] // through LazyPackageFragmentScopeForJavaPackage@112
+    classes('bar': Name@111) = null // through LazyPackageFragmentScopeForJavaPackage@112
+    deserializedPackageScope = Empty@109 // through LazyPackageFragmentScopeForJavaPackage@112
+    memberIndex = computeMemberIndex$1@116 // through LazyPackageFragmentScopeForJavaPackage@112
+}

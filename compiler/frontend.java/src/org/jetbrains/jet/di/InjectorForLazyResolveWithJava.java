@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationRe
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaPropertyInitializerEvaluatorImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSourceElementFactoryImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaFlexibleTypeCapabilitiesProvider;
+import org.jetbrains.jet.context.LazyResolveToken;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -94,6 +95,7 @@ public class InjectorForLazyResolveWithJava {
     private final JavaPropertyInitializerEvaluatorImpl javaPropertyInitializerEvaluator;
     private final JavaSourceElementFactoryImpl javaSourceElementFactory;
     private final JavaFlexibleTypeCapabilitiesProvider javaFlexibleTypeCapabilitiesProvider;
+    private final LazyResolveToken lazyResolveToken;
     private final AdditionalCheckerProvider additionalCheckerProvider;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -157,6 +159,7 @@ public class InjectorForLazyResolveWithJava {
         this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, module);
         this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, module);
         this.javaFlexibleTypeCapabilitiesProvider = new JavaFlexibleTypeCapabilitiesProvider();
+        this.lazyResolveToken = new LazyResolveToken();
         this.additionalCheckerProvider = org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider.INSTANCE$;
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -170,8 +173,8 @@ public class InjectorForLazyResolveWithJava {
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, javaFlexibleTypeCapabilitiesProvider, storageManager, lazyResolveToken);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
@@ -251,11 +254,6 @@ public class InjectorForLazyResolveWithJava {
 
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
-
-        typeResolver.setAnnotationResolver(annotationResolver);
-        typeResolver.setFlexibleTypeCapabilitiesProvider(javaFlexibleTypeCapabilitiesProvider);
-        typeResolver.setModuleDescriptor(module);
-        typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 

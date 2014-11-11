@@ -40,8 +40,9 @@ import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
-import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider;
+import org.jetbrains.jet.context.LazinessToken;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.resolve.calls.CallCompleter;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
@@ -88,8 +89,9 @@ public class InjectorForTopDownAnalyzerBasic {
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final TypeResolver typeResolver;
-    private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
+    private final FlexibleTypeCapabilitiesProvider flexibleTypeCapabilitiesProvider;
+    private final LazinessToken lazinessToken;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
@@ -136,9 +138,10 @@ public class InjectorForTopDownAnalyzerBasic {
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.typeResolver = new TypeResolver();
-        this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
+        this.lazinessToken = new LazinessToken();
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModuleDescriptor(), flexibleTypeCapabilitiesProvider, storageManager, lazinessToken);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
@@ -229,11 +232,6 @@ public class InjectorForTopDownAnalyzerBasic {
 
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
-
-        typeResolver.setAnnotationResolver(annotationResolver);
-        typeResolver.setFlexibleTypeCapabilitiesProvider(flexibleTypeCapabilitiesProvider);
-        typeResolver.setModuleDescriptor(moduleDescriptor);
-        typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 

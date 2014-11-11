@@ -1,0 +1,41 @@
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1['Boolean']
+}
+
+LazyJavaPackageFragmentProvider@2 {
+    _packageFragments('<root>': FqName@3) = LazyJavaPackageFragment@4['<root>']
+    _packageFragments('BaseTwo': FqName@5) = null
+    _packageFragments('D': FqName@6) = null
+    _packageFragments('DerivedWithOne': FqName@7) = null
+    _packageFragments('String': FqName@8) = null
+    _packageFragments('T': FqName@9) = null
+    _packageFragments('U': FqName@10) = null
+    _packageFragments('java': FqName@11) = LazyJavaPackageFragment@12['java']
+    _packageFragments('java.lang': FqName@13) = LazyJavaPackageFragment@14['lang']
+    _packageFragments('java.lang.BaseTwo': FqName@15) = null
+    _packageFragments('java.lang.D': FqName@16) = null
+    _packageFragments('java.lang.DerivedWithOne': FqName@17) = null
+    _packageFragments('java.lang.String': FqName@18) = null
+    _packageFragments('java.lang.T': FqName@19) = null
+    _packageFragments('java.lang.U': FqName@20) = null
+    _packageFragments('kotlin': FqName@21) = null
+    _packageFragments('kotlin.BaseTwo': FqName@22) = null
+    _packageFragments('kotlin.D': FqName@23) = null
+    _packageFragments('kotlin.DerivedWithOne': FqName@24) = null
+    _packageFragments('kotlin.String': FqName@25) = null
+    _packageFragments('kotlin.T': FqName@26) = null
+    _packageFragments('kotlin.U': FqName@27) = null
+    _packageFragments('kotlin.io': FqName@28) = null
+    _packageFragments('kotlin.jvm': FqName@29) = null
+}
+
+LazyJavaPackageFragment@4['<root>'] {
+    classes('String': Name@30) = null // through LazyPackageFragmentScopeForJavaPackage@31
+}
+
+LazyJavaPackageFragment@12['java'] {
+    _functions('lang': Name@32) = EmptyList@33[empty] // through LazyPackageFragmentScopeForJavaPackage@34
+    classes('lang': Name@35) = null // through LazyPackageFragmentScopeForJavaPackage@34
+    deserializedPackageScope = Empty@36 // through LazyPackageFragmentScopeForJavaPackage@34
+    memberIndex = computeMemberIndex$1@37 // through LazyPackageFragmentScopeForJavaPackage@34
+}

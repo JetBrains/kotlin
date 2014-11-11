@@ -1,0 +1,46 @@
+LazyAnnotationDescriptor@0 {
+    _resolutionResults = OverloadResolutionResultsImpl@1
+    _type = JetTypeImpl@2['A']
+    _valueArguments(ValueParameterDescriptorImpl@3['x']) = IntegerValueTypeConstant@4
+    _valueArguments(ValueParameterDescriptorImpl@5['y']) = StringValue@6
+}
+
+LazyJavaClassDescriptor@7['A'] {
+    _constructors = ArrayList@8[1] { JavaConstructorDescriptor@9['<init>'] } // through LazyJavaClassMemberScope@10
+    _typeConstructor = LazyJavaClassTypeConstructor@11['A']
+    defaultType = JetTypeImpl@12['A']
+}
+
+LazyJavaClassTypeConstructor@11['A'] {
+    _parameters = ArrayList@13[empty]
+}
+
+LazyJavaClassifierType@14['String'] {
+    _arguments = ArrayList@15[empty]
+    _typeConstructor = DeserializedClassTypeConstructor@16
+    classifier = JavaClassImpl@17['String']
+}
+
+LazyJavaPackageFragmentProvider@18 {
+    _packageFragments('<root>': FqName@19) = LazyJavaPackageFragment@20['<root>']
+    _packageFragments('A': FqName@21) = null
+    _packageFragments('java': FqName@22) = LazyJavaPackageFragment@23['java']
+    _packageFragments('java.lang': FqName@24) = LazyJavaPackageFragment@25['lang']
+    _packageFragments('java.lang.A': FqName@26) = null
+    _packageFragments('kotlin': FqName@27) = null
+    _packageFragments('kotlin.A': FqName@28) = null
+    _packageFragments('kotlin.io': FqName@29) = null
+    _packageFragments('kotlin.jvm': FqName@30) = null
+    topLevelClasses(JavaClassImpl@31['A']) = LazyJavaClassDescriptor@7['A']
+}
+
+LazyJavaPackageFragment@20['<root>'] {
+    classes('A': Name@32) = LazyJavaClassDescriptor@7['A'] // through LazyPackageFragmentScopeForJavaPackage@33
+}
+
+LazyJavaPackageFragment@23['java'] {
+    _functions('lang': Name@34) = EmptyList@35[empty] // through LazyPackageFragmentScopeForJavaPackage@36
+    classes('lang': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@36
+    deserializedPackageScope = Empty@38 // through LazyPackageFragmentScopeForJavaPackage@36
+    memberIndex = computeMemberIndex$1@39 // through LazyPackageFragmentScopeForJavaPackage@36
+}

@@ -18,12 +18,15 @@ package org.jetbrains.k2js.test.config;
 
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
@@ -31,6 +34,7 @@ import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -96,6 +100,22 @@ public class LibrarySourcesConfigWithCaching extends LibrarySourcesConfig {
     @Override
     public boolean isTestConfig() {
         return isUnitTestConfig;
+    }
+
+    @Override
+    protected JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
+        JetFile jetFile;
+        try {
+            String text = new String(file.contentsToByteArray(false), file.getCharset());
+            jetFile = new JetPsiFactory(getProject()).createPhysicalFile(file.getName(), text);
+        }
+        catch (IOException e) {
+            JetFile jetFileByVirtualFile = super.getJetFileByVirtualFile(file, moduleName, psiManager);
+            jetFile = new JetPsiFactory(getProject()).createPhysicalFile(file.getPath(), jetFileByVirtualFile.getText());
+        }
+
+        setupPsiFile(jetFile, moduleName);
+        return jetFile;
     }
 
     private AnalyzeExhaust getExhaust() {

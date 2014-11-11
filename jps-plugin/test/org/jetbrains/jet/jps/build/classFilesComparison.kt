@@ -94,7 +94,7 @@ fun getAllRelativePaths(dir: File): Set<String> {
     return result
 }
 
-fun assertEqualDirectories(expected: File, actual: File) {
+fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Boolean) {
     val pathsInExpected = getAllRelativePaths(expected)
     val pathsInActual = getAllRelativePaths(actual)
 
@@ -108,6 +108,17 @@ fun assertEqualDirectories(expected: File, actual: File) {
 
     if (DUMP_ALL) {
         assertEquals(expectedString, actualString + " ")
+    }
+
+    if (forgiveExtraFiles) {
+        // If compilation fails, output may be different for full rebuild and partial make. Parsing output (directory string) for simplicity.
+        if (changedPaths.isEmpty()) {
+            val expectedListingLines = expectedString.split('\n').toList()
+            val actualListingLines = actualString.split('\n').toList()
+            if (actualListingLines.containsAll(expectedListingLines)) {
+                return
+            }
+        }
     }
 
     assertEquals(expectedString, actualString)

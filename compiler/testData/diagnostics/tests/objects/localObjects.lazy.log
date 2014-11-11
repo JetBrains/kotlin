@@ -1,0 +1,27 @@
+ClosureExpressionsTypingVisitor$1@0 {
+    <name not found> = JetTypeImpl@1['<no name provided>']
+}
+
+LazyJavaPackageFragmentProvider@2 {
+    _packageFragments('<root>': FqName@3) = LazyJavaPackageFragment@4['<root>']
+    _packageFragments('java': FqName@5) = LazyJavaPackageFragment@6['java']
+    _packageFragments('java.lang': FqName@7) = LazyJavaPackageFragment@8['lang']
+    _packageFragments('kotlin': FqName@9) = null
+    _packageFragments('kotlin.io': FqName@10) = null
+    _packageFragments('kotlin.jvm': FqName@11) = null
+}
+
+LazyJavaPackageFragment@4['<root>'] {
+    deserializedPackageScope = Empty@12 // through LazyPackageFragmentScopeForJavaPackage@13
+}
+
+LazyJavaPackageFragment@6['java'] {
+    _functions('lang': Name@14) = EmptyList@15[empty] // through LazyPackageFragmentScopeForJavaPackage@16
+    classes('lang': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@16
+    deserializedPackageScope = Empty@12 // through LazyPackageFragmentScopeForJavaPackage@16
+    memberIndex = computeMemberIndex$1@18 // through LazyPackageFragmentScopeForJavaPackage@16
+}
+
+LazyJavaPackageFragment@8['lang'] {
+    deserializedPackageScope = Empty@12 // through LazyPackageFragmentScopeForJavaPackage@19
+}

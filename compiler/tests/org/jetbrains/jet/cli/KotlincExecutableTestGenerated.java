@@ -191,6 +191,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJsTest(fileName);
         }
 
+        @TestMetadata("nativeDeclarations.args")
+        public void testNativeDeclarations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/nativeDeclarations.args");
+            doJsTest(fileName);
+        }
+
         @TestMetadata("outputPostfixFileNotFound.args")
         public void testOutputPostfixFileNotFound() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/outputPostfixFileNotFound.args");

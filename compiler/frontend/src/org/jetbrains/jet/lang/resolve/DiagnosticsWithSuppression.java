@@ -17,11 +17,14 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.ImmutableSet;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ConcurrentWeakValueHashMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
@@ -29,27 +32,64 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetAnnotated;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetStubbedPsiUtil;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.codeFragmentUtil.CodeFragmentUtilPackage;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class DiagnosticsWithSuppression implements Diagnostics {
 
+    public interface SuppressStringProvider {
+        ExtensionPointName<SuppressStringProvider> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.suppressStringProvider");
+
+        @NotNull
+        List<String> get(@NotNull AnnotationDescriptor annotationDescriptor);
+    }
+
+    public interface DiagnosticSuppressor {
+        ExtensionPointName<DiagnosticSuppressor> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.diagnosticSuppressor");
+
+        boolean isSuppressed(@NotNull Diagnostic diagnostic);
+    }
+
     private static final Logger LOG = Logger.getInstance(DiagnosticsWithSuppression.class);
+
+    private static Application app = null;
+    private static SuppressStringProvider[] ADDITIONAL_SUPPRESS_STRING_PROVIDERS = null;
+    private static DiagnosticSuppressor[] DIAGNOSTIC_SUPPRESSORS = null;
+
+    static {
+        resetExtensionsIfNeed();
+    }
+
+    private static SuppressStringProvider[] getAdditionalSuppressStringProviders() {
+        resetExtensionsIfNeed();
+        return ADDITIONAL_SUPPRESS_STRING_PROVIDERS;
+    }
+
+    private static DiagnosticSuppressor[] getDiagnosticSuppressors() {
+        resetExtensionsIfNeed();
+        return DIAGNOSTIC_SUPPRESSORS;
+    }
+
+    // We need to update extensions in tests because they may be different for different tests.
+    private static void resetExtensionsIfNeed() {
+        if (app != null && !app.isUnitTestMode()) return;
+
+        Application newApp = ApplicationManager.getApplication();
+        if (app == newApp) return;
+
+        app = newApp;
+
+        ADDITIONAL_SUPPRESS_STRING_PROVIDERS = Extensions.getExtensions(SuppressStringProvider.EP_NAME);
+        DIAGNOSTIC_SUPPRESSORS = Extensions.getExtensions(DiagnosticSuppressor.EP_NAME);
+    }
 
     private final BindingContext context;
     private final Collection<Diagnostic> diagnostics;
@@ -102,23 +142,14 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     private boolean isSuppressed(@NotNull Diagnostic diagnostic) {
         PsiElement element = diagnostic.getPsiElement();
 
-        if (isSuppressedForDebugger(diagnostic, element)) return true;
+        for (DiagnosticSuppressor suppressor : getDiagnosticSuppressors()) {
+            if (suppressor.isSuppressed(diagnostic)) return true;
+        }
 
         JetAnnotated annotated = JetStubbedPsiUtil.getPsiOrStubParent(element, JetAnnotated.class, false);
         if (annotated == null) return false;
 
         return isSuppressedByAnnotated(diagnostic, annotated, 0);
-    }
-
-    private static boolean isSuppressedForDebugger(@NotNull Diagnostic diagnostic, @NotNull PsiElement element) {
-        PsiFile containingFile = element.getContainingFile();
-        if (containingFile instanceof JetFile && CodeFragmentUtilPackage.getSkipVisibilityCheck((JetFile) containingFile)) {
-            DiagnosticFactory<?> diagnosticFactory = diagnostic.getFactory();
-            return diagnosticFactory == Errors.INVISIBLE_MEMBER ||
-                   diagnosticFactory == Errors.INVISIBLE_REFERENCE ||
-                   diagnosticFactory == Errors.INVISIBLE_SETTER;
-        }
-        return false;
     }
 
     /*
@@ -196,6 +227,10 @@ public class DiagnosticsWithSuppression implements Diagnostics {
         for (JetAnnotationEntry annotationEntry : annotated.getAnnotationEntries()) {
             AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
             if (annotationDescriptor == null) continue;
+
+            for (SuppressStringProvider suppressStringProvider : getAdditionalSuppressStringProviders()) {
+                builder.addAll(suppressStringProvider.get(annotationDescriptor));
+            }
 
             if (!KotlinBuiltIns.getInstance().isSuppressAnnotation(annotationDescriptor)) continue;
 

@@ -1,0 +1,25 @@
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('java': FqName@3) = LazyJavaPackageFragment@4['java']
+    _packageFragments('java.lang': FqName@5) = LazyJavaPackageFragment@6['lang']
+    _packageFragments('java.lang.main': FqName@7) = null
+    _packageFragments('kotlin': FqName@8) = null
+    _packageFragments('kotlin.io': FqName@9) = null
+    _packageFragments('kotlin.jvm': FqName@10) = null
+    _packageFragments('kotlin.main': FqName@11) = null
+    _packageFragments('main': FqName@12) = null
+    _packageFragments('typeReferenceError': FqName@13) = null
+    _packageFragments('typeReferenceError.Pair': FqName@14) = null
+    _packageFragments('typeReferenceError.main': FqName@15) = null
+}
+
+LazyJavaPackageFragment@4['java'] {
+    _functions('lang': Name@16) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('lang': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@18
+    memberIndex = computeMemberIndex$1@21 // through LazyPackageFragmentScopeForJavaPackage@18
+}
+
+LazyJavaPackageFragment@6['lang'] {
+    classes('main': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@23
+}

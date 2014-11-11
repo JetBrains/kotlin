@@ -1,0 +1,38 @@
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('A': FqName@3) = null
+    _packageFragments('B': FqName@4) = null
+    _packageFragments('C': FqName@5) = null
+    _packageFragments('D': FqName@6) = null
+    _packageFragments('T': FqName@7) = null
+    _packageFragments('java': FqName@8) = LazyJavaPackageFragment@9['java']
+    _packageFragments('java.lang': FqName@10) = LazyJavaPackageFragment@11['lang']
+    _packageFragments('java.lang.A': FqName@12) = null
+    _packageFragments('java.lang.B': FqName@13) = null
+    _packageFragments('java.lang.C': FqName@14) = null
+    _packageFragments('java.lang.D': FqName@15) = null
+    _packageFragments('java.lang.T': FqName@16) = null
+    _packageFragments('kotlin': FqName@17) = null
+    _packageFragments('kotlin.A': FqName@18) = null
+    _packageFragments('kotlin.B': FqName@19) = null
+    _packageFragments('kotlin.C': FqName@20) = null
+    _packageFragments('kotlin.D': FqName@21) = null
+    _packageFragments('kotlin.T': FqName@22) = null
+    _packageFragments('kotlin.io': FqName@23) = null
+    _packageFragments('kotlin.jvm': FqName@24) = null
+    _packageFragments('kt1822': FqName@25) = null
+    _packageFragments('kt1822.A': FqName@26) = null
+    _packageFragments('kt1822.B': FqName@27) = null
+    _packageFragments('kt1822.C': FqName@28) = null
+    _packageFragments('kt1822.D': FqName@29) = null
+    _packageFragments('kt1822.E': FqName@30) = null
+    _packageFragments('kt1822.G': FqName@31) = null
+    _packageFragments('kt1822.T': FqName@32) = null
+}
+
+LazyJavaPackageFragment@9['java'] {
+    _functions('lang': Name@33) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@35
+    classes('lang': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@35
+    deserializedPackageScope = Empty@37 // through LazyPackageFragmentScopeForJavaPackage@35
+    memberIndex = computeMemberIndex$1@38 // through LazyPackageFragmentScopeForJavaPackage@35
+}

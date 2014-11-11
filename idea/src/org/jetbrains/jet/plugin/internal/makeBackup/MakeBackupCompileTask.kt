@@ -23,6 +23,8 @@ import java.util.Random
 import com.intellij.openapi.util.Key
 import com.intellij.compiler.CompilerWorkspaceConfiguration
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.components.ServiceManager
+import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerWorkspaceSettings
 
 val random = Random()
 
@@ -46,6 +48,5 @@ public class MakeBackupCompileTask: CompileTask {
 }
 
 fun incrementalCompilationEnabled(project: Project): Boolean {
-    val compilerVmOptions = CompilerWorkspaceConfiguration.getInstance(project)!!.COMPILER_PROCESS_ADDITIONAL_VM_OPTIONS!!
-    return compilerVmOptions.contains("-Dkotlin.incremental.compilation=true")
+    return ServiceManager.getService(project, javaClass<KotlinCompilerWorkspaceSettings>()).incrementalCompilationEnabled
 }

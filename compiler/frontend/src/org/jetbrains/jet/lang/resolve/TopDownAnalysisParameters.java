@@ -20,13 +20,14 @@ import com.google.common.base.Predicate;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.jet.context.LazinessToken;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.StorageManager;
 
 /**
  * Various junk that cannot be placed into context (yet).
  */
-public class TopDownAnalysisParameters implements GlobalContext {
+public class TopDownAnalysisParameters extends LazinessToken implements GlobalContext {
     private static boolean LAZY;
 
     static {
@@ -118,8 +119,9 @@ public class TopDownAnalysisParameters implements GlobalContext {
     }
 
     // Used temporarily while we are transitioning from eager to lazy analysis of headers in the IDE
+    @Override
     @Deprecated
-    public boolean isLazyTopDownAnalysis() {
+    public boolean isLazy() {
         return lazyTopDownAnalysis;
     }
 }

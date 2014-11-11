@@ -31,7 +31,8 @@ fun foo(i: Int) = i
 //Breakpoint!
 fun fooOneLine(i: Int): Int { return 1 }
 
-// Cannot stop at this breakpoint - empty body
+// EXPRESSION: i
+// RESULT: 2: I
 //Breakpoint!
 fun fooEmpty(i: Int) {}
 

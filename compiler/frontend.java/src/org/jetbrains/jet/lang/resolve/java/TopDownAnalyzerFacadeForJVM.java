@@ -63,10 +63,25 @@ public enum TopDownAnalyzerFacadeForJVM {
             BindingTrace trace,
             Predicate<PsiFile> filesToAnalyzeCompletely,
             ModuleDescriptorImpl module,
-            List<String> moduleIds,
+            @Nullable List<String> moduleIds,
             @Nullable IncrementalCacheProvider incrementalCacheProvider
     ) {
         GlobalContext globalContext = ContextPackage.GlobalContext();
+        return analyzeFilesWithJavaIntegrationWithCustomContext(project, globalContext, files, trace, filesToAnalyzeCompletely, module,
+                                                                moduleIds,
+                                                                incrementalCacheProvider);
+    }
+
+    public static AnalyzeExhaust analyzeFilesWithJavaIntegrationWithCustomContext(
+            @NotNull Project project,
+            @NotNull GlobalContext globalContext,
+            @NotNull Collection<JetFile> files,
+            @NotNull BindingTrace trace,
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
+            @NotNull ModuleDescriptorImpl module,
+            @Nullable List<String> moduleIds,
+            @Nullable IncrementalCacheProvider incrementalCacheProvider
+    ) {
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
                 globalContext.getStorageManager(),
                 globalContext.getExceptionTracker(),

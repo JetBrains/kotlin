@@ -1,0 +1,61 @@
+LazyJavaClassDescriptor@0['ArrayList'] {
+    _functionTypeForSamInterface = null
+    _typeConstructor = LazyJavaClassTypeConstructor@1['ArrayList']
+}
+
+LazyJavaClassTypeConstructor@1['ArrayList'] {
+    _parameters = ArrayList@2[1] { LazyJavaTypeParameterDescriptor@3['E'] }
+}
+
+LazyJavaPackageFragmentProvider@4 {
+    _packageFragments('<root>': FqName@5) = LazyJavaPackageFragment@6['<root>']
+    _packageFragments('ArrayList': FqName@7) = null
+    _packageFragments('Imports': FqName@8) = null
+    _packageFragments('String': FqName@9) = null
+    _packageFragments('java': FqName@10) = LazyJavaPackageFragment@11['java']
+    _packageFragments('java.lang': FqName@12) = LazyJavaPackageFragment@13['lang']
+    _packageFragments('java.lang.ArrayList': FqName@14) = null
+    _packageFragments('java.lang.String': FqName@15) = null
+    _packageFragments('java.util': FqName@16) = LazyJavaPackageFragment@17['util']
+    _packageFragments('java.util.ArrayList': FqName@18) = null
+    _packageFragments('kotlin': FqName@19) = null
+    _packageFragments('kotlin.ArrayList': FqName@20) = null
+    _packageFragments('kotlin.String': FqName@21) = null
+    _packageFragments('kotlin.io': FqName@22) = null
+    _packageFragments('kotlin.jvm': FqName@23) = null
+    topLevelClasses(JavaClassImpl@24['ArrayList']) = LazyJavaClassDescriptor@0['ArrayList']
+}
+
+LazyJavaPackageFragment@6['<root>'] {
+    _functions('java': Name@25) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@27
+    classes('ArrayList': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@27
+    classes('String': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@27
+    classes('java': Name@30) = null // through LazyPackageFragmentScopeForJavaPackage@27
+    deserializedPackageScope = Empty@31 // through LazyPackageFragmentScopeForJavaPackage@27
+    memberIndex = computeMemberIndex$1@32 // through LazyPackageFragmentScopeForJavaPackage@27
+}
+
+LazyJavaPackageFragment@11['java'] {
+    _functions('lang': Name@33) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@34
+    _functions('util': Name@35) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@34
+    classes('lang': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@34
+    classes('util': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@34
+    deserializedPackageScope = Empty@31 // through LazyPackageFragmentScopeForJavaPackage@34
+    memberIndex = computeMemberIndex$1@38 // through LazyPackageFragmentScopeForJavaPackage@34
+}
+
+LazyJavaPackageFragment@17['util'] {
+    _functions('ArrayList': Name@39) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('ArrayList': Name@41) = LazyJavaClassDescriptor@0['ArrayList'] // through LazyPackageFragmentScopeForJavaPackage@40
+    deserializedPackageScope = Empty@31 // through LazyPackageFragmentScopeForJavaPackage@40
+    memberIndex = computeMemberIndex$1@42 // through LazyPackageFragmentScopeForJavaPackage@40
+}
+
+LazyJavaTypeParameterDescriptor@3['E'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@43
+    upperBounds = LinkedHashSet@44[1] { NullableType@45 }
+}
+
+LazyJavaTypeParameterResolver@46 {
+    resolve(JavaTypeParameterImpl@47['E']) = LazyJavaTypeParameterDescriptor@3['E']
+}

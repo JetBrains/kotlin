@@ -143,6 +143,7 @@ public class KotlinCompilerRunner {
             List<String> libraryFiles,
             K2JSCompilerArguments settings
     ) {
+        settings.noStdlib = true;
         settings.freeArgs = ContainerUtil.map(sourceFiles, new Function<File, String>() {
             @Override
             public String fun(File file) {
