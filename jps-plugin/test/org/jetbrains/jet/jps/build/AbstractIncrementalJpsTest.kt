@@ -60,7 +60,8 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         get() = false
 
     fun buildGetLog(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all()): String {
-        val logger = MyLogger(FileUtil.toSystemIndependentName(workDir.getAbsolutePath()))
+        val workDirPath = FileUtil.toSystemIndependentName(workDir.getAbsolutePath())
+        val logger = MyLogger(workDirPath)
         val descriptor = createProjectDescriptor(BuildLoggingManager(logger))
         try {
             val buildResult = doBuild(descriptor, scope)!!
@@ -69,8 +70,9 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
                         buildResult
                                 .getMessages(BuildMessage.Kind.ERROR)
                                 .joinToString("\n")
-                                .replace(workDir.getAbsolutePath(), "\$PROJECT")
                                 .replace(File.separatorChar, '/')
+                                .replace("/" + workDirPath, "\$PROJECT") // Sometimes path is rendered as "/C:/foo/bar" on Windows
+                                .replace(workDirPath, "\$PROJECT")
                 return logger.log + "$COMPILATION_FAILED\n" + errorMessages + "\n"
             }
             else {
