@@ -25,13 +25,7 @@ public interface IStackValue {
 
     void moveToTopOfStack(@NotNull Type type, @NotNull InstructionAdapter v, int depth);
 
-    void put(@NotNull Type type, @NotNull InstructionAdapter v);
-
     void put(@NotNull Type type, @NotNull InstructionAdapter v, boolean skipReceiver);
-
-    void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v);
-
-    void store(@NotNull StackValue value, @NotNull InstructionAdapter v);
 
     void store(@NotNull StackValue value, @NotNull InstructionAdapter v, boolean skipReceiver);
 

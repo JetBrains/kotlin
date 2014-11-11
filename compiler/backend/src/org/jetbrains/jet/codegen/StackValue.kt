@@ -20,14 +20,17 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.jet.codegen.StackValue.StackValueWithReceiver
-import org.jetbrains.jet.codegen.StackValue.StackValueWithoutReceiver
 import org.jetbrains.jet.codegen.StackValue.StackValueWithSimpleReceiver
 
 public fun coercion(value: StackValue, castType: Type): StackValue {
     return if (value is StackValueWithReceiver) CoercionValueWithReceiver(value, castType) else CoercionValue(value, castType)
 }
 
-class CoercionValue(val value: StackValue, val castType: Type) : StackValueWithoutReceiver(castType), IStackValue by value
+class CoercionValue(val value: StackValue, val castType: Type) : StackValue(castType), IStackValue by value {
+    override fun putSelector(type: Type, v: InstructionAdapter) {
+        value.putSelector(type, v)
+    }
+}
 
 class CoercionValueWithReceiver(
         val value: StackValueWithReceiver,
@@ -85,22 +88,11 @@ public class StackValueWithLeaveTask(
     }
 }
 
-public abstract class ReadOnlyValue(type: Type) : StackValueWithoutReceiver(type) {
+open class OperationStackValue(val resultType: Type, val lambda: (v: InstructionAdapter)-> Unit) : StackValue(resultType) {
 
-    override fun storeSelector(topOfStackType: Type, v: InstructionAdapter) {
-        throw UnsupportedOperationException("Read only value could not be stored")
-    }
-}
-
-open class OperationStackValue(val resultType: Type, val lambda: (v: InstructionAdapter)-> Unit) : ReadOnlyValue(resultType) {
-
-    override fun put(type: Type, v: InstructionAdapter) {
+    override fun putSelector(type: Type, v: InstructionAdapter) {
         lambda(v)
         coerceTo(type, v)
-    }
-
-    override fun storeSelector(topOfStackType: Type, v: InstructionAdapter) {
-        throw UnsupportedOperationException();
     }
 }
 

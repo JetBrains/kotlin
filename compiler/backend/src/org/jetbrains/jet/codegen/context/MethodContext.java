@@ -26,11 +26,8 @@ import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
-
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     private final boolean isInliningLambda;
@@ -65,7 +62,7 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     @Override
     public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
         if (getContextDescriptor() == d) {
-            return result != null ? result : StackValue.thiz();
+            return result != null ? result : StackValue.LOCAL_0;
         }
 
         return getParentContext().lookupInContext(d, result, state, ignoreNoOuter);
@@ -77,7 +74,7 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
             return getReceiverExpression(state.getTypeMapper());
         }
         ReceiverParameterDescriptor parameter = descriptor.getExtensionReceiverParameter();
-        return lookupInContext(parameter, StackValue.thiz(), state, ignoreNoOuter);
+        return lookupInContext(parameter, StackValue.LOCAL_0, state, ignoreNoOuter);
     }
 
     @Override

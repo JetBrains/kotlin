@@ -1894,7 +1894,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return stackValueForLocal(descriptor, index);
         }
 
-        return context.lookupInContext(descriptor, StackValue.thiz(), state, false);
+        return context.lookupInContext(descriptor, StackValue.LOCAL_0, state, false);
     }
 
 
@@ -2342,7 +2342,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (DescriptorUtils.isClassObject(receiverDescriptor)) {
                 CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
                 if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
-                    return StackValue.thiz();
+                    return StackValue.LOCAL_0;
                 }
                 else {
                     return StackValue.singleton(receiverDescriptor, typeMapper);
@@ -2384,7 +2384,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     // SCRIPT: generate script, move to ScriptingUtil
     private StackValue generateScript(@NotNull ScriptReceiver receiver) {
         CodegenContext cur = context;
-        StackValue result = StackValue.thiz();
+        StackValue result = StackValue.LOCAL_0;
         boolean inStartConstructorContext = cur instanceof ConstructorContext;
         while (cur != null) {
             if (!inStartConstructorContext) {
@@ -2788,7 +2788,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         StackValue receiverValue = generateExpressionWithNullFallback(receiver, ifNull);
 
         //Do not optimize for primitives cause in case of safe call extension receiver should be generated before dispatch one
-        StackValue newReceiver = new StackValue.Safe(receiverType, receiverValue, isPrimitive(receiverType) ? null : ifNull);
+        StackValue newReceiver = new StackValue.SafeCall(receiverType, receiverValue, isPrimitive(receiverType) ? null : ifNull);
         return genQualified(newReceiver, selector);
     }
 
@@ -2855,7 +2855,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private StackValue generateIn(final StackValue leftValue, final JetExpression rangeExpression, final JetSimpleNameExpression operationReference) {
+    private StackValue generateIn(final StackValue leftValue, JetExpression rangeExpression, final JetSimpleNameExpression operationReference) {
         final JetExpression deparenthesized = JetPsiUtil.deparenthesize(rangeExpression);
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
@@ -3220,7 +3220,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitPostfixExpression(@NotNull final JetPostfixExpression expression, final StackValue receiver) {
+    public StackValue visitPostfixExpression(@NotNull final JetPostfixExpression expression, StackValue receiver) {
         if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL) {
             final StackValue base = genQualified(receiver, expression.getBaseExpression());
             if (isPrimitive(base.type)) {
@@ -3307,7 +3307,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitProperty(@NotNull JetProperty property, StackValue receiver) {
-        final JetExpression initializer = property.getInitializer();
+        JetExpression initializer = property.getInitializer();
         if (initializer == null) {
             return StackValue.none();
         }
@@ -3325,15 +3325,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         Type initializerAsmType = asmType(initializerType);
 
-        final TransientReceiver initializerAsReceiver = new TransientReceiver(initializerType);
+        TransientReceiver initializerAsReceiver = new TransientReceiver(initializerType);
 
         int tempVarIndex = myFrameMap.enterTemp(initializerAsmType);
 
         gen(initializer, initializerAsmType);
         v.store(tempVarIndex, initializerAsmType);
-        final StackValue.Local local = StackValue.local(tempVarIndex, initializerAsmType);
+        StackValue.Local local = StackValue.local(tempVarIndex, initializerAsmType);
 
-        for (final JetMultiDeclarationEntry variableDeclaration : multiDeclaration.getEntries()) {
+        for (JetMultiDeclarationEntry variableDeclaration : multiDeclaration.getEntries()) {
             ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(COMPONENT_RESOLVED_CALL, variableDeclaration);
             assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
             Call call = makeFakeCall(initializerAsReceiver);
@@ -3375,7 +3375,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             JetScript scriptPsi = JetPsiUtil.getScript(variableDeclaration);
             assert scriptPsi != null;
             Type scriptClassType = asmTypeForScriptPsi(bindingContext, scriptPsi);
-            storeTo = StackValue.field(varType, scriptClassType, variableDeclaration.getName(), false, StackValue.thiz());
+            storeTo = StackValue.field(varType, scriptClassType, variableDeclaration.getName(), false, StackValue.LOCAL_0);
         }
         else if (sharedVarType == null) {
             storeTo = StackValue.local(index, varType);
@@ -3433,7 +3433,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return generateNewArray(expression, arrayType);
     }
 
-    private StackValue generateNewArray(@NotNull final JetCallExpression expression, @NotNull final JetType arrayType) {
+    private StackValue generateNewArray(@NotNull JetCallExpression expression, @NotNull final JetType arrayType) {
 
         final List < JetExpression > args = new ArrayList<JetExpression>();
         for (ValueArgument va : expression.getValueArguments()) {

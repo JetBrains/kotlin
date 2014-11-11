@@ -653,10 +653,10 @@ public class AsmUtil {
         if (!state.isCallAssertionsEnabled()) return stackValue;
         if (approximationInfo == null || !TypesPackage.assertNotNull(approximationInfo)) return stackValue;
 
-        return new StackValue.StackValueWithoutReceiver(stackValue.type) {
+        return new StackValue(stackValue.type) {
 
             @Override
-            public void put(@NotNull Type type, @NotNull InstructionAdapter v) {
+            public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
                 stackValue.put(type, v);
                 if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
                     v.dup();
