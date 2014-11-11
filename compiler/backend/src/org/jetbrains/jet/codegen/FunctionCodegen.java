@@ -782,20 +782,12 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         mv.visitCode();
 
-        PsiElement classElement = classDescriptorToDeclaration(owner.getThisDescriptor());
-        if (classElement != null) {
-            Integer lineNumber = CodegenUtil.getLineNumberForElement(classElement, false);
-            if (lineNumber != null) {
-                Label label = new Label();
-                mv.visitLabel(label);
-                mv.visitLineNumber(lineNumber, label);
-            }
-        }
-
         Type[] argTypes = bridge.getArgumentTypes();
         Type[] originalArgTypes = delegateTo.getArgumentTypes();
 
         InstructionAdapter iv = new InstructionAdapter(mv);
+        ImplementationBodyCodegen.markLineNumberForSyntheticFunction(owner.getThisDescriptor(), iv);
+
         iv.load(0, OBJECT_TYPE);
         for (int i = 0, reg = 1; i < argTypes.length; i++) {
             StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);

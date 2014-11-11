@@ -71,6 +71,7 @@ import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
+import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.classDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
@@ -875,6 +876,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, bridge) {
                         @Override
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
+                            markLineNumberForSyntheticFunction(descriptor, codegen.v);
+
                             generateMethodCallTo(original, codegen.v);
                             codegen.v.areturn(signature.getReturnType());
                         }
@@ -897,6 +900,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     StackValue property = codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR);
 
                     InstructionAdapter iv = codegen.v;
+
+                    markLineNumberForSyntheticFunction(descriptor, iv);
+
                     Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
                     for (int i = 0, reg = 0; i < argTypes.length; i++) {
                         Type argType = argTypes[i];
@@ -936,6 +942,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         else {
             throw new UnsupportedOperationException();
+        }
+    }
+
+    public static void markLineNumberForSyntheticFunction(@Nullable ClassDescriptor declarationDescriptor, @NotNull InstructionAdapter v) {
+        if (declarationDescriptor == null) {
+            return;
+        }
+
+        PsiElement classElement = classDescriptorToDeclaration(declarationDescriptor);
+        if (classElement != null) {
+            Integer lineNumber = CodegenUtil.getLineNumberForElement(classElement, false);
+            if (lineNumber != null) {
+                Label label = new Label();
+                v.visitLabel(label);
+                v.visitLineNumber(lineNumber, label);
+            }
         }
     }
 

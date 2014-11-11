@@ -179,15 +179,22 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: JetFile, contextEle
 private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment, contextElement: PsiElement): JetExpression? {
     val psiFactory = JetPsiFactory(codeFragment)
 
+    fun insertNewInitializer(classBody: JetClassBody): PsiElement? {
+        val initializer = psiFactory.createAnonymousInitializer()
+        val newInitializer = (classBody.addAfter(initializer, classBody.getFirstChild()) as JetClassInitializer)
+        val block = newInitializer.getBody() as JetBlockExpression
+        return block.getLastChild()
+    }
+
     val elementBefore = when {
         contextElement is JetProperty && !contextElement.isLocal() -> {
             wrapInRunFun(contextElement.getDelegateExpressionOrInitializer()!!)
         }
         contextElement is JetClass -> {
-            val initializer = psiFactory.createAnonymousInitializer()
-            val newInitializer = (contextElement.getBody().addAfter(initializer, contextElement.getBody().getFirstChild()) as JetClassInitializer)
-            val block = newInitializer.getBody() as JetBlockExpression
-            block.getLastChild()
+            insertNewInitializer(contextElement.getBody())
+        }
+        contextElement is JetClassObject -> {
+            insertNewInitializer(contextElement.getObjectDeclaration().getBody())
         }
         contextElement is JetFunctionLiteral -> {
             val block = contextElement.getBodyExpression()!!
