@@ -126,7 +126,7 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
         return new Computable<HierarchyTreeStructure>() {
             @Override
             public HierarchyTreeStructure compute() {
-                return KotlinCallerMethodsTreeStructure.newInstance(
+                return new KotlinCallerMethodsTreeStructure(
                         getProject(),
                         getElementAtCaret(LanguageCallHierarchy.INSTANCE.forLanguage(getLanguage())),
                         HierarchyBrowserBaseEx.SCOPE_PROJECT

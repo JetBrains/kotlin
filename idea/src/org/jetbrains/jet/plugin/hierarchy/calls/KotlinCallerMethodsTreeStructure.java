@@ -42,29 +42,32 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.references.JetReference;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchPackage;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
-    private static class WithLocalRoot extends KotlinCallerMethodsTreeStructure {
-        private final JetElement codeBlockForLocalDeclaration;
+public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
+    private final CallerMethodsTreeStructure javaTreeStructure;
+    private final PsiClass basePsiClass;
 
-        private WithLocalRoot(
-                @NotNull Project project,
-                @NotNull PsiElement element,
-                String scopeType,
-                JetElement codeBlockForLocalDeclaration
-        ) {
-            super(project, element, scopeType);
-            this.codeBlockForLocalDeclaration = codeBlockForLocalDeclaration;
-        }
+    public KotlinCallerMethodsTreeStructure(@NotNull Project project, @NotNull PsiElement element, String scopeType) {
+        super(project, element, scopeType);
 
-        @NotNull
-        @Override
-        protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
-            final PsiElement element = getTargetElement(descriptor);
-            assert element instanceof JetElement :
-                    "JetElement must be passed by KotlinCallerMethodsTreeStructure.newInstance(): " + element.getText();
+        PsiMethod basePsiMethod = getRepresentativePsiMethod(element);
+        assert basePsiMethod != null : "Can't generate light method: " + element.getText();
 
+        basePsiClass = basePsiMethod.getContainingClass();
+        javaTreeStructure = new CallerMethodsTreeStructure(project, basePsiMethod, scopeType);
+    }
+
+    @NotNull
+    @Override
+    protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
+        final PsiElement element = getTargetElement(descriptor);
+
+        JetElement codeBlockForLocalDeclaration = getEnclosingElementForLocalDeclaration(element);
+        if (codeBlockForLocalDeclaration != null) {
             BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
 
             final Map<PsiReference, PsiElement> referencesToElements = new HashMap<PsiReference, PsiElement>();
@@ -74,8 +77,10 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
                     if (!declaration.equals(element)) return;
 
                     //noinspection unchecked
-                    PsiElement container =
-                            PsiTreeUtil.getParentOfType(reference, JetNamedFunction.class, JetPropertyAccessor.class, JetClassOrObject.class);
+                    PsiElement container = PsiTreeUtil.getParentOfType(
+                            reference,
+                            JetNamedFunction.class, JetPropertyAccessor.class, JetClassOrObject.class
+                    );
                     if (container instanceof JetPropertyAccessor) {
                         container = PsiTreeUtil.getParentOfType(container, JetProperty.class);
                     }
@@ -87,168 +92,137 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
             });
             return collectNodeDescriptors(descriptor, referencesToElements, null);
         }
+
+        SearchScope searchScope = getSearchScope(scopeType, basePsiClass);
+        Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap = Maps.newHashMap();
+
+        Object[] javaCallers = null;
+        if (element instanceof PsiMethod) {
+            javaCallers = javaTreeStructure.getChildElements(getJavaNodeDescriptor(descriptor));
+            processPsiMethodCallers(
+                    Collections.singleton((PsiMethod) element), descriptor, methodToDescriptorMap, searchScope, true
+            );
+        }
+        if (element instanceof JetNamedFunction) {
+            PsiMethod lightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) element);
+            processPsiMethodCallers(Collections.singleton(lightMethod), descriptor, methodToDescriptorMap, searchScope, false);
+        }
+        if (element instanceof JetProperty) {
+            LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
+                    LightClassUtil.getLightClassPropertyMethods((JetProperty) element);
+            processPsiMethodCallers(propertyMethods, descriptor, methodToDescriptorMap, searchScope, false);
+        }
+        if (element instanceof JetClassOrObject) {
+            processJetClassOrObjectCallers((JetClassOrObject) element, descriptor, methodToDescriptorMap, searchScope);
+        }
+
+        Object[] callers = methodToDescriptorMap.values().toArray(new Object[methodToDescriptorMap.size()]);
+        return (javaCallers != null) ? ArrayUtil.mergeArrays(javaCallers, callers) : callers;
     }
 
-    private static class WithNonLocalRoot extends KotlinCallerMethodsTreeStructure {
-        private final CallerMethodsTreeStructure javaTreeStructure;
-        private final PsiClass basePsiClass;
+    private void processPsiMethodCallers(
+            Iterable<PsiMethod> lightMethods,
+            HierarchyNodeDescriptor descriptor,
+            Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
+            SearchScope searchScope,
+            boolean kotlinOnly
+    ) {
+        Set<PsiMethod> methodsToFind = new HashSet<PsiMethod>();
+        for (PsiMethod lightMethod : lightMethods) {
+            if (lightMethod == null) continue;
 
-        private WithNonLocalRoot(@NotNull Project project, @NotNull PsiElement element, String scopeType, PsiMethod basePsiMethod) {
-            super(project, element, scopeType);
-
-            this.basePsiClass = basePsiMethod.getContainingClass();
-            this.javaTreeStructure = new CallerMethodsTreeStructure(project, basePsiMethod, scopeType);
+            PsiMethod[] superMethods = lightMethod.findDeepestSuperMethods();
+            methodsToFind.add(lightMethod);
+            ContainerUtil.addAll(methodsToFind, superMethods);
         }
 
-        @NotNull
-        @Override
-        protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
-            PsiElement element = getTargetElement(descriptor);
+        if (methodsToFind.isEmpty()) return;
 
-            SearchScope searchScope = getSearchScope(scopeType, basePsiClass);
-            Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap = Maps.newHashMap();
-
-            Object[] javaCallers = null;
-            if (element instanceof PsiMethod) {
-                javaCallers = javaTreeStructure.getChildElements(getJavaNodeDescriptor(descriptor));
-                processPsiMethodCallers(
-                        Collections.singleton((PsiMethod) element), descriptor, methodToDescriptorMap, searchScope, true
-                );
-            }
-            if (element instanceof JetNamedFunction) {
-                PsiMethod lightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) element);
-                processPsiMethodCallers(Collections.singleton(lightMethod), descriptor, methodToDescriptorMap, searchScope, false);
-            }
-            if (element instanceof JetProperty) {
-                LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
-                        LightClassUtil.getLightClassPropertyMethods((JetProperty) element);
-                processPsiMethodCallers(propertyMethods, descriptor, methodToDescriptorMap, searchScope, false);
-            }
-            if (element instanceof JetClassOrObject) {
-                processJetClassOrObjectCallers((JetClassOrObject) element, descriptor, methodToDescriptorMap, searchScope);
-            }
-
-            Object[] callers = methodToDescriptorMap.values().toArray(new Object[methodToDescriptorMap.size()]);
-            return (javaCallers != null) ? ArrayUtil.mergeArrays(javaCallers, callers) : callers;
-        }
-
-        private void processPsiMethodCallers(
-                Iterable<PsiMethod> lightMethods,
-                HierarchyNodeDescriptor descriptor,
-                Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
-                SearchScope searchScope,
-                boolean kotlinOnly
-        ) {
-            Set<PsiMethod> methodsToFind = new HashSet<PsiMethod>();
-            for (PsiMethod lightMethod : lightMethods) {
-                if (lightMethod == null) continue;
-
-                PsiMethod[] superMethods = lightMethod.findDeepestSuperMethods();
-                methodsToFind.add(lightMethod);
-                ContainerUtil.addAll(methodsToFind, superMethods);
-            }
-
-            if (methodsToFind.isEmpty()) return;
-
-            Set<PsiReference> references = ContainerUtil.newTroveSet(
-                    new TObjectHashingStrategy<PsiReference>() {
-                        @Override
-                        public int computeHashCode(PsiReference object) {
-                            return object.getElement().hashCode();
-                        }
-
-                        @Override
-                        public boolean equals(PsiReference o1, PsiReference o2) {
-                            return o1.getElement().equals(o2.getElement());
-                        }
-                    }
-            );
-            for (PsiMethod superMethod: methodsToFind) {
-                ContainerUtil.addAll(references, MethodReferencesSearch.search(superMethod, searchScope, true));
-            }
-            ContainerUtil.process(references, defaultQueryProcessor(descriptor, methodToDescriptorMap, kotlinOnly));
-        }
-
-        private void processJetClassOrObjectCallers(
-                final JetClassOrObject classOrObject,
-                HierarchyNodeDescriptor descriptor,
-                Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
-                SearchScope searchScope
-        ) {
-            Processor<PsiReference> processor = new FilteringProcessor<PsiReference>(
-                    new Condition<PsiReference>() {
-                        @Override
-                        public boolean value(PsiReference reference) {
-                            return UsagesSearchPackage.isConstructorUsage(reference, classOrObject);
-                        }
-                    },
-                    defaultQueryProcessor(descriptor, methodToDescriptorMap, false)
-            );
-            ReferencesSearch.search(classOrObject, searchScope, false).forEach(processor);
-        }
-
-        private Processor<PsiReference> defaultQueryProcessor(
-                final HierarchyNodeDescriptor descriptor,
-                final Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
-                final boolean kotlinOnly
-        ) {
-            return new ReadActionProcessor<PsiReference>() {
-                @Override
-                public boolean processInReadAction(PsiReference ref) {
-                    // copied from Java
-                    if (!(ref instanceof PsiReferenceExpression || ref instanceof JetReference)) {
-                        if (!(ref instanceof PsiElement)) {
-                            return true;
-                        }
-
-                        PsiElement parent = ((PsiElement) ref).getParent();
-                        if (parent instanceof PsiNewExpression) {
-                            if (((PsiNewExpression) parent).getClassReference() != ref) {
-                                return true;
-                            }
-                        }
-                        else if (parent instanceof PsiAnonymousClass) {
-                            if (((PsiAnonymousClass) parent).getBaseClassReference() != ref) {
-                                return true;
-                            }
-                        }
-                        else {
-                            return true;
-                        }
+        Set<PsiReference> references = ContainerUtil.newTroveSet(
+                new TObjectHashingStrategy<PsiReference>() {
+                    @Override
+                    public int computeHashCode(PsiReference object) {
+                        return object.getElement().hashCode();
                     }
 
-                    PsiElement element = HierarchyUtils.getCallHierarchyElement(ref.getElement());
-
-                    if (kotlinOnly && !(element instanceof JetNamedDeclaration)) return true;
-
-                    // If reference belongs to property initializer, show enclosing declaration instead
-                    if (element instanceof JetProperty) {
-                        JetProperty property = (JetProperty) element;
-                        if (PsiTreeUtil.isAncestor(property.getInitializer(), ref.getElement(), false)) {
-                            element = HierarchyUtils.getCallHierarchyElement(element.getParent());
-                        }
+                    @Override
+                    public boolean equals(PsiReference o1, PsiReference o2) {
+                        return o1.getElement().equals(o2.getElement());
                     }
-
-                    if (element != null) {
-                        addNodeDescriptorForElement(ref, element, methodToDescriptorMap, descriptor);
-                    }
-
-                    return true;
                 }
-            };
+        );
+        for (PsiMethod superMethod: methodsToFind) {
+            ContainerUtil.addAll(references, MethodReferencesSearch.search(superMethod, searchScope, true));
         }
+        ContainerUtil.process(references, defaultQueryProcessor(descriptor, methodToDescriptorMap, kotlinOnly));
     }
 
-    private KotlinCallerMethodsTreeStructure(@NotNull Project project, @NotNull PsiElement element, String scopeType) {
-        super(project, element, scopeType);
+    private void processJetClassOrObjectCallers(
+            final JetClassOrObject classOrObject,
+            HierarchyNodeDescriptor descriptor,
+            Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
+            SearchScope searchScope
+    ) {
+        Processor<PsiReference> processor = new FilteringProcessor<PsiReference>(
+                new Condition<PsiReference>() {
+                    @Override
+                    public boolean value(PsiReference reference) {
+                        return UsagesSearchPackage.isConstructorUsage(reference, classOrObject);
+                    }
+                },
+                defaultQueryProcessor(descriptor, methodToDescriptorMap, false)
+        );
+        ReferencesSearch.search(classOrObject, searchScope, false).forEach(processor);
     }
 
-    public static KotlinCallerMethodsTreeStructure newInstance(@NotNull Project project, @NotNull PsiElement element, String scopeType) {
-        JetElement codeBlockForLocalDeclaration = getEnclosingElementForLocalDeclaration(element);
-        if (codeBlockForLocalDeclaration != null) return new WithLocalRoot(project, element, scopeType, codeBlockForLocalDeclaration);
+    private Processor<PsiReference> defaultQueryProcessor(
+            final HierarchyNodeDescriptor descriptor,
+            final Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
+            final boolean kotlinOnly
+    ) {
+        return new ReadActionProcessor<PsiReference>() {
+            @Override
+            public boolean processInReadAction(PsiReference ref) {
+                // copied from Java
+                if (!(ref instanceof PsiReferenceExpression || ref instanceof JetReference)) {
+                    if (!(ref instanceof PsiElement)) {
+                        return true;
+                    }
 
-        PsiMethod representativeMethod = getRepresentativePsiMethod(element);
-        assert representativeMethod != null : "Can't generate light method: " + element.getText();
-        return new WithNonLocalRoot(project, element, scopeType, representativeMethod);
+                    PsiElement parent = ((PsiElement) ref).getParent();
+                    if (parent instanceof PsiNewExpression) {
+                        if (((PsiNewExpression) parent).getClassReference() != ref) {
+                            return true;
+                        }
+                    }
+                    else if (parent instanceof PsiAnonymousClass) {
+                        if (((PsiAnonymousClass) parent).getBaseClassReference() != ref) {
+                            return true;
+                        }
+                    }
+                    else {
+                        return true;
+                    }
+                }
+
+                PsiElement element = HierarchyUtils.getCallHierarchyElement(ref.getElement());
+
+                if (kotlinOnly && !(element instanceof JetNamedDeclaration)) return true;
+
+                // If reference belongs to property initializer, show enclosing declaration instead
+                if (element instanceof JetProperty) {
+                    JetProperty property = (JetProperty) element;
+                    if (PsiTreeUtil.isAncestor(property.getInitializer(), ref.getElement(), false)) {
+                        element = HierarchyUtils.getCallHierarchyElement(element.getParent());
+                    }
+                }
+
+                if (element != null) {
+                    addNodeDescriptorForElement(ref, element, methodToDescriptorMap, descriptor);
+                }
+
+                return true;
+            }
+        };
     }
 }
