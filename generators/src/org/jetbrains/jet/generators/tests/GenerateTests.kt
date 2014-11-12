@@ -660,7 +660,7 @@ fun main(args: Array<String>) {
 
     testGroup("jps-plugin/test", "jps-plugin/testData") {
         testClass(javaClass<AbstractIncrementalJpsTest>()) {
-            model("incremental/circularDependency", extension = null, excludeParentDirs = true)
+            model("incremental/multiModule", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, excludeParentDirs = true)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
         }
