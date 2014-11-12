@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
-import org.jetbrains.jet.lang.descriptors.SamConstructorDescriptor
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 
 public trait SamConversionResolver {
     public fun resolveSamConstructor(name: Name, scope: JetScope): SamConstructorDescriptor?

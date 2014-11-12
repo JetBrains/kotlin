@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaVisibilities
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
@@ -45,7 +46,8 @@ public class LazyJavaClassMemberScope(
     override fun computeMemberIndex(): MemberIndex {
         return object : ClassMemberIndex(jClass, { !it.isStatic() }) {
             // For SAM-constructors
-            override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> = super.getMethodNames(nameFilter) + getClassNames(nameFilter)
+            override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name>
+                    = super.getMethodNames(nameFilter) + getClassNames(JetScope.KindFilter.CLASSIFIERS, nameFilter)
         }
     }
 
@@ -230,7 +232,9 @@ public class LazyJavaClassMemberScope(
             DescriptorUtils.getDispatchReceiverParameterIfNeeded(getContainingDeclaration())
 
     override fun getClassifier(name: Name): ClassifierDescriptor? = nestedClasses(name)
-    override fun getClassNames(nameFilter: (Name) -> Boolean): Collection<Name> = nestedClassIndex().keySet() + enumEntryIndex().keySet()
+
+    override fun getClassNames(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
+            = nestedClassIndex().keySet() + enumEntryIndex().keySet()
 
     // TODO
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()

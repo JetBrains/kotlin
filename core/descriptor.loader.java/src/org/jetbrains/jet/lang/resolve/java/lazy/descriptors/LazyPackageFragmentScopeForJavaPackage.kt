@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptorKindExclude
 
 public class LazyPackageFragmentScopeForJavaPackage(
         c: LazyJavaResolverContext,
@@ -75,13 +76,23 @@ public class LazyPackageFragmentScopeForJavaPackage(
 
     override fun computeMemberIndex(): MemberIndex = object : MemberIndex by EMPTY_MEMBER_INDEX {
         // For SAM-constructors
-        override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> = getClassNames(nameFilter)
+        override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> = getClassNames(JetScope.KindFilter.CLASSIFIERS, nameFilter)
     }
 
-    override fun getClassNames(nameFilter: (Name) -> Boolean): Collection<Name> {
+    override fun getClassNames(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
+        // neither objects nor enum members can be in java package
+        if (!kindFilter.acceptsKind(JetScope.NON_SINGLETON_CLASSIFIER)) return listOf()
+
         return jPackage.getClasses(nameFilter).stream()
                 .filter { c -> c.getOriginKind() != JavaClass.OriginKind.KOTLIN_LIGHT_CLASS }
                 .map { c -> c.getName() }.toList()
+    }
+
+    override fun getFunctionNames(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
+        // optimization: only SAM-constructors may exist in java package
+        if (kindFilter.excludes.contains(SamConstructorDescriptorKindExclude)) return listOf()
+
+        return super.getFunctionNames(kindFilter, nameFilter)
     }
 
     private val subPackages = c.storageManager.createRecursionTolerantLazyValue(

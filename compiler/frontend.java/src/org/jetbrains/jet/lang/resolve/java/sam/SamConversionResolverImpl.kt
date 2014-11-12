@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.types.TypeUtils
 import java.util.ArrayList
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
-import org.jetbrains.jet.lang.descriptors.SamConstructorDescriptor
 
 public object SamConversionResolverImpl : SamConversionResolver {
     override fun resolveSamConstructor(name: Name, scope: JetScope): SamConstructorDescriptor? {

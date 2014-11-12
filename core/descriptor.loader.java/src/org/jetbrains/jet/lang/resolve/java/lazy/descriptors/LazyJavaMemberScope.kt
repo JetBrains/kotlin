@@ -210,7 +210,9 @@ public abstract class LazyJavaMemberScope(
     }
 
     override fun getFunctions(name: Name) = functions(name)
-    protected open fun getFunctionNames(nameFilter: (Name) -> Boolean): Collection<Name> = memberIndex().getMethodNames(nameFilter)
+
+    protected open fun getFunctionNames(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
+            = memberIndex().getMethodNames(nameFilter)
 
     protected abstract fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>)
 
@@ -298,9 +300,8 @@ public abstract class LazyJavaMemberScope(
                                      nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()
 
-        //TODO: only non-singleton classifiers in package!
         if (kindFilter.acceptsKind(JetScope.CLASSIFIERS_MASK)) {
-            for (name in getClassNames(nameFilter)) {
+            for (name in getClassNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
                     // Null signifies that a class found in Java is not present in Kotlin (e.g. package class)
                     result.addIfNotNull(getClassifier(name))
@@ -308,9 +309,8 @@ public abstract class LazyJavaMemberScope(
             }
         }
 
-        //TODO: SAM-constructors only in package!
         if (kindFilter.acceptsKind(JetScope.FUNCTION) && !kindFilter.excludes.contains(JetScope.DescriptorKindExclude.NonExtensions)) {
-            for (name in getFunctionNames(nameFilter)) {
+            for (name in getFunctionNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
                     result.addAll(getFunctions(name))
                 }
@@ -336,7 +336,7 @@ public abstract class LazyJavaMemberScope(
         // Do nothing
     }
 
-    protected abstract fun getClassNames(nameFilter: (Name) -> Boolean): Collection<Name>
+    protected abstract fun getClassNames(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
 
     override fun toString() = "Lazy scope for ${getContainingDeclaration()}"
     
