@@ -169,7 +169,8 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         args.noParamAssertions = kotlinOptions.noParamAssertions
     }
 
-    private fun getJavaSourceRoots(): Set<File> = getSource()
+    private fun getJavaSourceRoots(): Set<File> = 
+            getSource()
             .filter { isJava(it) }
             .map { findSrcDirRoot(it) }
             .filterNotNull()
@@ -177,6 +178,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
 
     override fun afterCompileHook(args: K2JVMCompilerArguments) {
         getLogger().debug("Copying resulting files to classes")
+
         // Copy kotlin classes to all classes directory
         val outputDirFile = File(args.destination!!)
         if (outputDirFile.exists()) {
@@ -212,6 +214,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
     }
 
     override fun populateTargetSpecificArgs(args: K2JSCompilerArguments) {
+        args.noStdlib = true
         args.outputFile = outputFile()
         args.outputPrefix = kotlinOptions.outputPrefix
         args.outputPostfix = kotlinOptions.outputPostfix
@@ -220,7 +223,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
         args.sourceMap = kotlinOptions.sourceMap
 
         if (args.outputFile == null) {
-            throw GradleException("${getName()}.kotlinOptions.outputFile must be set to a string.")
+            throw GradleException("${getName()}.kotlinOptions.outputFile should be specified.")
         }
 
         val outputDir = File(args.outputFile).directory

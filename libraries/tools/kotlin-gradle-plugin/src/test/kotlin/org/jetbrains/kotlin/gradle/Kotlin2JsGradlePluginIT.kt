@@ -60,8 +60,9 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
     Test fun testNoOutputFileFails() {
         val project = Project("kotlin2JsNoOutputFileProject", "1.6")
         project.build("build") {
+            assertFailed()
             assertReportExists()
-            assertContains("compileKotlin2Js.kotlinOptions.outputFile must be set to a string")
+            assertContains("compileKotlin2Js.kotlinOptions.outputFile should be specified.")
         }
     }
 }
