@@ -260,8 +260,8 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractKotlincExecutableTest>()) {
-            model("cli/jvm", extension = "args", testMethod = "doJvmTest")
-            model("cli/js", extension = "args", testMethod = "doJsTest")
+            model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
+            model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
         }
 
         testClass(javaClass<AbstractReplInterpreterTest>()) {
