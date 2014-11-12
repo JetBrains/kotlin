@@ -1,0 +1,11 @@
+package b
+
+class B: a.A() {
+   fun f() {
+   }
+}
+
+open class BB {
+   fun f() {
+   }
+}
