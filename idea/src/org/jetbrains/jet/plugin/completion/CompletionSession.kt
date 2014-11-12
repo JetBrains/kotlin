@@ -103,32 +103,25 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
                                                 { isVisibleDescriptor(it) })
     }
 
-    protected fun shouldRunTopLevelCompletion(): Boolean {
-        if (!configuration.completeNonImportedDeclarations) return false
+    protected fun shouldRunTopLevelCompletion(): Boolean
+            = configuration.completeNonImportedDeclarations && isNoQualifierContext()
 
-        if (position.getNode()!!.getElementType() == JetTokens.IDENTIFIER) {
-            val parent = position.getParent()
-            if (parent is JetSimpleNameExpression && !JetPsiUtil.isSelectorInQualified(parent)) return true
-        }
-
-        return false
+    protected fun isNoQualifierContext(): Boolean {
+        val parent = position.getParent()
+        return parent is JetSimpleNameExpression && !JetPsiUtil.isSelectorInQualified(parent)
     }
 
-    protected fun shouldRunExtensionsCompletion(): Boolean {
-        return configuration.completeNonImportedDeclarations || prefixMatcher.getPrefix().length >= 3
-    }
+    protected fun shouldRunExtensionsCompletion(): Boolean
+            = configuration.completeNonImportedDeclarations || prefixMatcher.getPrefix().length >= 3
 
-    protected fun getKotlinTopLevelCallables(): Collection<DeclarationDescriptor> {
-        return indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
-    }
+    protected fun getKotlinTopLevelCallables(): Collection<DeclarationDescriptor>
+            = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
 
-    protected fun getKotlinTopLevelObjects(): Collection<DeclarationDescriptor> {
-        return indicesHelper.getTopLevelObjects({ prefixMatcher.prefixMatches(it) })
-    }
+    protected fun getKotlinTopLevelObjects(): Collection<DeclarationDescriptor>
+            = indicesHelper.getTopLevelObjects({ prefixMatcher.prefixMatches(it) })
 
-    protected fun getKotlinExtensions(): Collection<CallableDescriptor> {
-        return indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
-    }
+    protected fun getKotlinExtensions(): Collection<CallableDescriptor>
+            = indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
         AllClassesCompletion(parameters, resolveSession, searchScope, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }).collect(collector)
@@ -145,41 +138,41 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         if (!NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
             val completeReference = jetReference != null && !isOnlyKeywordCompletion()
+            val onlyTypes = shouldRunOnlyTypeCompletion()
 
             if (completeReference) {
-                if (shouldRunOnlyTypeCompletion()) {
-                    if (configuration.completeNonImportedDeclarations) {
-                        addAllClasses { !it.isSingleton() }
-                    }
-                    else {
-                        addReferenceVariants(JetScope.TYPE or JetScope.PACKAGE)
-                        collector.addDescriptorElements(listOf(KotlinBuiltIns.getInstance().getUnit()), false)
-                        JavaCompletionContributor.advertiseSecondCompletion(project, resultSet)
-                    }
-                }
-                else {
-                    addReferenceVariants(JetScope.ALL_KINDS_MASK)
+                addReferenceVariants(if (onlyTypes) JetScope.TYPE or JetScope.PACKAGE else JetScope.ALL_KINDS_MASK)
+
+                if (onlyTypes) {
+                    collector.addDescriptorElements(listOf(KotlinBuiltIns.getInstance().getUnit()), false)
                 }
             }
 
             KeywordCompletion.complete(parameters, prefixMatcher.getPrefix(), collector)
 
-            if (completeReference && !shouldRunOnlyTypeCompletion()) {
+            if (completeReference) {
+                if (!configuration.completeNonImportedDeclarations && isNoQualifierContext()) {
+                    JavaCompletionContributor.advertiseSecondCompletion(project, resultSet)
+                }
+
                 flushToResultSet()
-                addNonImported()
+                addNonImported(onlyTypes)
             }
         }
 
         NamedParametersCompletion.complete(position, collector)
     }
 
-    private fun addNonImported() {
+    private fun addNonImported(onlyTypes: Boolean) {
         if (shouldRunTopLevelCompletion()) {
-            addAllClasses { it != ClassKind.ENUM_ENTRY }
-            collector.addDescriptorElements(getKotlinTopLevelCallables(), suppressAutoInsertion = true)
+            addAllClasses { if (onlyTypes) !it.isSingleton() else it != ClassKind.ENUM_ENTRY }
+
+            if (!onlyTypes) {
+                collector.addDescriptorElements(getKotlinTopLevelCallables(), suppressAutoInsertion = true)
+            }
         }
 
-        if (shouldRunExtensionsCompletion()) {
+        if (!onlyTypes && shouldRunExtensionsCompletion()) {
             collector.addDescriptorElements(getKotlinExtensions(), suppressAutoInsertion = true)
         }
     }
