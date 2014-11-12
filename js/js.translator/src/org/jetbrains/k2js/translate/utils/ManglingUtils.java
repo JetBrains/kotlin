@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.*;
@@ -144,7 +145,7 @@ public class ManglingUtils {
         int counter = 0;
 
         if (jetScope != null) {
-            Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(JetScope.KindFilter.CALLABLES, JetScope.ALL_NAME_FILTER);
+            Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(DescriptorKindFilter.CALLABLES, JetScope.ALL_NAME_FILTER);
             List<CallableMemberDescriptor>
                     overloadedFunctions = ContainerUtil.mapNotNull(declarations, new Function<DeclarationDescriptor, CallableMemberDescriptor>() {
                 @Override

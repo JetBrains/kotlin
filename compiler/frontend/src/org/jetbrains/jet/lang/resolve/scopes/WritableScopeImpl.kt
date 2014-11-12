@@ -95,7 +95,7 @@ public class WritableScopeImpl(scope: JetScope,
         super.clearImports()
     }
 
-    override fun getDescriptors(kindFilter: JetScope.KindFilter,
+    override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         checkMayRead()
         changeLockLevel(WritableScope.LockLevel.READING)

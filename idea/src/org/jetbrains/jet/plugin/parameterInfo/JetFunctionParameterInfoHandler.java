@@ -40,6 +40,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -408,7 +410,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             }
         };
         Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(
-                callNameExpression, bindingContext, new JetScope.KindFilter(JetScope.FUNCTION | JetScope.CLASSIFIERS_MASK, Collections.<JetScope.DescriptorKindExclude>emptyList()), nameFilter, visibilityFilter);
+                callNameExpression, bindingContext, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK, Collections.<DescriptorKindExclude>emptyList()), nameFilter, visibilityFilter);
 
         Collection<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>>();
         for (DeclarationDescriptor variant : variants) {

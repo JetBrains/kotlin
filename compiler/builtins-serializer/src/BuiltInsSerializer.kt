@@ -47,7 +47,7 @@ import org.jetbrains.jet.analyzer.ModuleInfo
 import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
 import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class BuiltInsSerializer(val out: PrintStream?) {
     private var totalSize = 0
@@ -117,7 +117,7 @@ public class BuiltInsSerializer(val out: PrintStream?) {
         })
 
         val classNames = ArrayList<Name>()
-        val classifierDescriptors = DescriptorSerializer.sort(packageView.getMemberScope().getDescriptors(JetScope.KindFilter.CLASSIFIERS))
+        val classifierDescriptors = DescriptorSerializer.sort(packageView.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
         ClassSerializationUtil.serializeClasses(classifierDescriptors, serializer, object : ClassSerializationUtil.Sink {
             override fun writeClass(classDescriptor: ClassDescriptor, classProto: ProtoBuf.Class) {

@@ -58,7 +58,7 @@ public abstract class AbstractScopeAdapter : JetScope {
         return workerScope.getDeclarationsByLabel(labelName)
     }
 
-    override fun getDescriptors(kindFilter: JetScope.KindFilter,
+    override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         return workerScope.getDescriptors(kindFilter, nameFilter)
     }

@@ -36,13 +36,17 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage.getDataFlowInfo;
 
@@ -74,7 +78,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
 
         List<VariableDescriptor> filteredDescriptors = new ArrayList<VariableDescriptor>();
-        for (DeclarationDescriptor declarationDescriptor : scope.getDescriptors(JetScope.KindFilter.VARIABLES, JetScope.ALL_NAME_FILTER)) {
+        for (DeclarationDescriptor declarationDescriptor : scope.getDescriptors(DescriptorKindFilter.VARIABLES, JetScope.ALL_NAME_FILTER)) {
             if (declarationDescriptor instanceof VariableDescriptor) {
                 VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
 

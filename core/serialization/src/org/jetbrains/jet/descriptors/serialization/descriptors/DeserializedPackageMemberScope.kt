@@ -24,8 +24,8 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 
 public fun DeserializedPackageMemberScope(packageDescriptor: PackageFragmentDescriptor,
@@ -44,7 +44,7 @@ public open class DeserializedPackageMemberScope(
     private val packageFqName = packageDescriptor.fqName
     private val classNames = context.storageManager.createLazyValue(classNames)
 
-    override fun getDescriptors(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean)
+    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = computeDescriptors(kindFilter, nameFilter)
 
     override fun getClassDescriptor(name: Name) = context.deserializeClass(ClassId(packageFqName, name))

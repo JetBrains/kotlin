@@ -26,6 +26,7 @@ import org.jetbrains.jet.utils.Printer
 
 import java.util.*
 import org.jetbrains.jet.utils.toReadOnlyList
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public abstract class DeserializedMemberScope protected(
         private val context: DeserializationContextWithTypes,
@@ -101,16 +102,16 @@ public abstract class DeserializedMemberScope protected(
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
-    protected fun computeDescriptors(kindFilter: JetScope.KindFilter,
+    protected fun computeDescriptors(kindFilter: DescriptorKindFilter,
                                      nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>(0)
 
         for (name in membersProtos().keySet()) {
             if (nameFilter(name)) {
-                if (kindFilter.acceptsKind(JetScope.FUNCTION)) {
+                if (kindFilter.acceptsKind(DescriptorKindFilter.FUNCTIONS_MASK)) {
                     result.addAll(getFunctions(name))
                 }
-                if (kindFilter.acceptsKind(JetScope.VARIABLE)) {
+                if (kindFilter.acceptsKind(DescriptorKindFilter.VARIABLES_MASK)) {
                     result.addAll(getProperties(name))
                 }
             }
@@ -118,7 +119,7 @@ public abstract class DeserializedMemberScope protected(
 
         addNonDeclaredDescriptors(result)
 
-        if (kindFilter.acceptsKind(JetScope.CLASSIFIERS_MASK)) {
+        if (kindFilter.acceptsKind(DescriptorKindFilter.CLASSIFIERS_MASK)) {
             addClassDescriptors(result, nameFilter)
         }
 

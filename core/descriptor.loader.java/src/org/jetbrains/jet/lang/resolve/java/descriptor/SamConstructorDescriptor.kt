@@ -16,11 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java.descriptor
 
-import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
 
 public class SamConstructorDescriptor(
         containingDeclaration: DeclarationDescriptor,
@@ -34,6 +33,6 @@ public class SamConstructorDescriptor(
         samInterface.getSource()
 )
 
-public object SamConstructorDescriptorKindExclude : JetScope.DescriptorKindExclude {
+public object SamConstructorDescriptorKindExclude : DescriptorKindExclude {
         override fun matches(descriptor: DeclarationDescriptor) = descriptor is SamConstructorDescriptor
 }

@@ -24,6 +24,7 @@ import org.jetbrains.jet.utils.*
 
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class SubpackagesScope(private val containingDeclaration: PackageViewDescriptor) : JetScopeImpl() {
     override fun getContainingDeclaration(): DeclarationDescriptor {
@@ -34,9 +35,9 @@ public class SubpackagesScope(private val containingDeclaration: PackageViewDesc
         return if (name.isSpecial()) null else containingDeclaration.getModule().getPackage(containingDeclaration.getFqName().child(name))
     }
 
-    override fun getDescriptors(kindFilter: JetScope.KindFilter,
+    override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        if (!kindFilter.acceptsKind(JetScope.PACKAGE)) return listOf()
+        if (!kindFilter.acceptsKind(DescriptorKindFilter.PACKAGES_MASK)) return listOf()
 
         val subFqNames = containingDeclaration.getModule().getPackageFragmentProvider().getSubPackagesOf(containingDeclaration.getFqName(), nameFilter)
         val result = ArrayList<DeclarationDescriptor>(subFqNames.size())

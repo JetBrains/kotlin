@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaVisibilities
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
@@ -47,7 +47,7 @@ public class LazyJavaClassMemberScope(
         return object : ClassMemberIndex(jClass, { !it.isStatic() }) {
             // For SAM-constructors
             override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name>
-                    = super.getMethodNames(nameFilter) + getClassNames(JetScope.KindFilter.CLASSIFIERS, nameFilter)
+                    = super.getMethodNames(nameFilter) + getClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
         }
     }
 
@@ -233,7 +233,7 @@ public class LazyJavaClassMemberScope(
 
     override fun getClassifier(name: Name): ClassifierDescriptor? = nestedClasses(name)
 
-    override fun getClassNames(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
+    override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
             = nestedClassIndex().keySet() + enumEntryIndex().keySet()
 
     // TODO

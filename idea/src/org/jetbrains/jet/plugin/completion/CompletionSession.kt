@@ -35,6 +35,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptorKindExclude
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -94,7 +95,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected abstract fun doComplete()
 
-    protected fun getReferenceVariants(kindFilter: JetScope.KindFilter): Collection<DeclarationDescriptor> {
+    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter): Collection<DeclarationDescriptor> {
         return TipsManager.getReferenceVariants(jetReference!!.expression,
                                                 bindingContext!!,
                                                 kindFilter,
@@ -141,10 +142,10 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
             if (completeReference) {
                 val kindMask = if (onlyTypes)
-                    JetScope.NON_SINGLETON_CLASSIFIER or JetScope.PACKAGE
+                    DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK
                 else
-                    JetScope.ALL_KINDS_MASK
-                addReferenceVariants(JetScope.KindFilter(kindMask))
+                    DescriptorKindFilter.ALL_KINDS_MASK
+                addReferenceVariants(DescriptorKindFilter(kindMask))
 
                 if (onlyTypes) {
                     collector.addDescriptorElements(listOf(KotlinBuiltIns.getInstance().getUnit()), false)
@@ -195,7 +196,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         return false
     }
 
-    private fun addReferenceVariants(kindFilter: JetScope.KindFilter) {
+    private fun addReferenceVariants(kindFilter: DescriptorKindFilter) {
         collector.addDescriptorElements(getReferenceVariants(kindFilter), suppressAutoInsertion = false)
     }
 }
@@ -204,7 +205,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 : CompletionSessionBase(configuration, parameters, resultSet) {
 
     // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
-    private val DESCRIPTOR_KIND_MASK = JetScope.KindFilter.VALUES exclude SamConstructorDescriptorKindExclude
+    private val DESCRIPTOR_KIND_MASK = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
 
     override fun doComplete() {
         if (jetReference != null) {

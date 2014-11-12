@@ -84,7 +84,7 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
         throw UnsupportedOperationException() // TODO
     }
 
-    override fun getDescriptors(kindFilter: JetScope.KindFilter,
+    override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean) = _allDescriptors
 
     override fun getOwnDeclaredDescriptors() = substitute(workerScope.getOwnDeclaredDescriptors())

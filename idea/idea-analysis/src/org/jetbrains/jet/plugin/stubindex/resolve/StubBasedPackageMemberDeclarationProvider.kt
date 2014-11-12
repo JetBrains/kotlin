@@ -30,8 +30,8 @@ import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import java.util.ArrayList
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -39,18 +39,18 @@ public class StubBasedPackageMemberDeclarationProvider(
         private val searchScope: GlobalSearchScope
 ) : PackageMemberDeclarationProvider {
 
-    override fun getDeclarations(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration> {
+    override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration> {
         val result = ArrayList<JetDeclaration>()
 
-        if (kindFilter.acceptsKind(JetScope.CLASSIFIERS_MASK)) {
+        if (kindFilter.acceptsKind(DescriptorKindFilter.CLASSIFIERS_MASK)) {
             result.addDeclarations(JetFullClassNameIndex.getInstance(), nameFilter)
         }
 
-        if (kindFilter.acceptsKind(JetScope.FUNCTION)) {
+        if (kindFilter.acceptsKind(DescriptorKindFilter.FUNCTIONS_MASK)) {
             result.addDeclarations(JetTopLevelFunctionsFqnNameIndex.getInstance(), nameFilter)
         }
 
-        if (kindFilter.acceptsKind(JetScope.VARIABLE)) {
+        if (kindFilter.acceptsKind(DescriptorKindFilter.VARIABLES_MASK)) {
             result.addDeclarations(JetTopLevelPropertiesFqnNameIndex.getInstance(), nameFilter)
         }
 

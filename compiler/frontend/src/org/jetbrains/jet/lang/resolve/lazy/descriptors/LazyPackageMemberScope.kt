@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class LazyPackageMemberScope(
         resolveSession: ResolveSession,
@@ -29,7 +29,7 @@ public class LazyPackageMemberScope(
         thisPackage: PackageFragmentDescriptor)
 : AbstractLazyMemberScope<PackageFragmentDescriptor, PackageMemberDeclarationProvider>(resolveSession, declarationProvider, thisPackage, resolveSession.getTrace()) {
 
-    override fun getDescriptors(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         return computeDescriptorsFromDeclaredElements(kindFilter, nameFilter)
     }
 

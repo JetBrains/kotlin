@@ -37,7 +37,7 @@ public class StaticScopeForKotlinClass(
         }
     }
 
-    override fun getDescriptors(kindFilter: JetScope.KindFilter,
+    override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean) = functions
 
     override fun getOwnDeclaredDescriptors() = functions

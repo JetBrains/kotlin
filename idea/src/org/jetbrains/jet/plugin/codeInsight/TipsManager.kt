@@ -31,12 +31,14 @@ import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
 
 public object TipsManager{
 
     public fun getReferenceVariants(expression: JetSimpleNameExpression,
                                     context: BindingContext,
-                                    kindFilter: JetScope.KindFilter,
+                                    kindFilter: DescriptorKindFilter,
                                     nameFilter: (Name) -> Boolean,
                                     visibilityFilter: (DeclarationDescriptor) -> Boolean): Collection<DeclarationDescriptor> {
         return getReferenceVariants(expression, context, kindFilter, nameFilter).filter(visibilityFilter)
@@ -44,7 +46,7 @@ public object TipsManager{
 
     private fun getReferenceVariants(expression: JetSimpleNameExpression,
                                      context: BindingContext,
-                                     kindFilter: JetScope.KindFilter,
+                                     kindFilter: DescriptorKindFilter,
                                      nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val receiverExpression = expression.getReceiverExpression()
         val parent = expression.getParent()
@@ -65,7 +67,7 @@ public object TipsManager{
                 val qualifier = context[BindingContext.QUALIFIER, receiverExpression]
                 if (qualifier != null) {
                     // It's impossible to add extension function for package or class (if it's class object, expression type is not null)
-                    qualifier.scope.getDescriptorsFiltered(kindFilter exclude JetScope.DescriptorKindExclude.Extensions, nameFilter).filterTo(descriptors, ::filterIfInfix)
+                    qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter).filterTo(descriptors, ::filterIfInfix)
                 }
 
                 val expressionType = context[BindingContext.EXPRESSION_TYPE, receiverExpression]
@@ -73,7 +75,7 @@ public object TipsManager{
                     val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
                     val dataFlowInfo = context.getDataFlowInfo(expression)
 
-                    val mask = kindFilter.withoutKind(JetScope.NON_SINGLETON_CLASSIFIER).exclude(JetScope.DescriptorKindExclude.Extensions)
+                    val mask = kindFilter.withoutKind(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK).exclude(DescriptorKindExclude.Extensions)
                     for (variant in SmartCastUtils.getSmartCastVariants(receiverValue, context, dataFlowInfo)) {
                         variant.getMemberScope().getDescriptorsFiltered(mask, nameFilter).filterTo(descriptors, ::filterIfInfix)
                     }
@@ -86,7 +88,7 @@ public object TipsManager{
         }
 
         if (parent is JetImportDirective || parent is JetPackageDirective) {
-            val restrictedFilter = kindFilter.restrictedToKinds(JetScope.PACKAGE) ?: return listOf()
+            val restrictedFilter = kindFilter.restrictedToKinds(DescriptorKindFilter.PACKAGES_MASK) ?: return listOf()
             return resolutionScope.getDescriptorsFiltered(restrictedFilter, nameFilter)
         }
         else {
@@ -94,7 +96,7 @@ public object TipsManager{
 
             val receivers = resolutionScope.getImplicitReceiversHierarchy()
             receivers.flatMapTo(descriptorsSet) {
-                it.getType().getMemberScope().getDescriptorsFiltered(kindFilter exclude JetScope.DescriptorKindExclude.Extensions, nameFilter)
+                it.getType().getMemberScope().getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter)
             }
 
             val dataFlowInfo = context.getDataFlowInfo(expression)
@@ -117,10 +119,10 @@ public object TipsManager{
             context: BindingContext,
             dataFlowInfo: DataFlowInfo,
             isInfixCall: Boolean,
-            kindFilter: JetScope.KindFilter,
+            kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ) {
-        if (!kindFilter.excludes.contains(JetScope.DescriptorKindExclude.Extensions)) {
+        if (!kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) {
             resolutionScope.getDescriptorsFiltered(kindFilter, nameFilter)
                     .stream()
                     .filterIsInstance(javaClass<CallableDescriptor>())
@@ -141,6 +143,6 @@ public object TipsManager{
                                            context: BindingContext,
                                            nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
-        return resolutionScope.getDescriptorsFiltered(JetScope.KindFilter.PACKAGES, nameFilter)
+        return resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter)
     }
 }

@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATI
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.jet.lang.resolve.DelegationResolver.generateDelegatedMembers
 import org.jetbrains.jet.storage.NotNullLazyValue
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public open class LazyClassMemberScope(resolveSession: ResolveSession,
                                   declarationProvider: ClassMemberDeclarationProvider,
@@ -46,13 +47,13 @@ public open class LazyClassMemberScope(resolveSession: ResolveSession,
 : AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider>(resolveSession, declarationProvider, thisClass, trace) {
 
     private val descriptorsFromDeclaredElements = storageManager.createLazyValue {
-        computeDescriptorsFromDeclaredElements(JetScope.KindFilter.ALL, JetScope.ALL_NAME_FILTER)
+        computeDescriptorsFromDeclaredElements(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER)
     }
     private val extraDescriptors: NotNullLazyValue<Collection<DeclarationDescriptor>> = storageManager.createLazyValue {
         computeExtraDescriptors()
     }
 
-    override fun getDescriptors(kindFilter: JetScope.KindFilter,
+    override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val result = LinkedHashSet(descriptorsFromDeclaredElements())
         result.addAll(extraDescriptors())

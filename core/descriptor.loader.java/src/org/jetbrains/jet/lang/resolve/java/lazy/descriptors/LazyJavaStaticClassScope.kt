@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.DescriptorFactory.*
 import org.jetbrains.jet.utils.addIfNotNull
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class LazyJavaStaticClassScope(
         c: LazyJavaResolverContext,
@@ -43,14 +43,14 @@ public class LazyJavaStaticClassScope(
         }
     }
 
-    override fun getFunctionNames(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
+    override fun getFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
         if (jClass.isEnum()) {
             return super.getFunctionNames(kindFilter, nameFilter) + listOf(DescriptorUtils.ENUM_VALUE_OF, DescriptorUtils.ENUM_VALUES)
         }
         return super.getFunctionNames(kindFilter, nameFilter)
     }
     
-    override fun getClassNames(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
+    override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
     override fun getClassifier(name: Name): ClassifierDescriptor? = null
 
     override fun getSubPackages(): Collection<FqName> = listOf()

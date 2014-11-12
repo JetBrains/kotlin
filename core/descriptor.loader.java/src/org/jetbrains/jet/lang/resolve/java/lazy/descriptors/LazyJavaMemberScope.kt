@@ -44,7 +44,8 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.resolve.scopes.JetScope.DescriptorKindExclude.NonExtensions
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude.NonExtensions
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
@@ -53,7 +54,7 @@ public abstract class LazyJavaMemberScope(
     // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
     // but is placed in the base class to not duplicate code
     private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
-            { computeDescriptors(JetScope.KindFilter.ALL, JetScope.ALL_NAME_FILTER) },
+            { computeDescriptors(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER) },
             // This is to avoid the following recursive case:
             //    when computing getAllPackageNames() we ask the JavaPsiFacade for all subpackages of foo
             //    it, in turn, asks JavaElementFinder for subpackages of Kotlin package foo, which calls getAllPackageNames() recursively
@@ -212,7 +213,7 @@ public abstract class LazyJavaMemberScope(
 
     override fun getFunctions(name: Name) = functions(name)
 
-    protected open fun getFunctionNames(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
+    protected open fun getFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
             = memberIndex().getMethodNames(nameFilter)
 
     protected abstract fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>)
@@ -294,14 +295,14 @@ public abstract class LazyJavaMemberScope(
 
     override fun getOwnDeclaredDescriptors() = getDescriptors()
 
-    override fun getDescriptors(kindFilter: JetScope.KindFilter,
+    override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean) = allDescriptors()
 
-    protected fun computeDescriptors(kindFilter: JetScope.KindFilter,
+    protected fun computeDescriptors(kindFilter: DescriptorKindFilter,
                                      nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()
 
-        if (kindFilter.acceptsKind(JetScope.CLASSIFIERS_MASK)) {
+        if (kindFilter.acceptsKind(DescriptorKindFilter.CLASSIFIERS_MASK)) {
             for (name in getClassNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
                     // Null signifies that a class found in Java is not present in Kotlin (e.g. package class)
@@ -310,7 +311,7 @@ public abstract class LazyJavaMemberScope(
             }
         }
 
-        if (kindFilter.acceptsKind(JetScope.FUNCTION) && !kindFilter.excludes.contains(NonExtensions)) {
+        if (kindFilter.acceptsKind(DescriptorKindFilter.FUNCTIONS_MASK) && !kindFilter.excludes.contains(NonExtensions)) {
             for (name in getFunctionNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
                     result.addAll(getFunctions(name))
@@ -318,7 +319,7 @@ public abstract class LazyJavaMemberScope(
             }
         }
 
-        if (kindFilter.acceptsKind(JetScope.VARIABLE) && !kindFilter.excludes.contains(NonExtensions)) {
+        if (kindFilter.acceptsKind(DescriptorKindFilter.VARIABLES_MASK) && !kindFilter.excludes.contains(NonExtensions)) {
             for (name in getAllPropertyNames()) {
                 if (nameFilter(name)) {
                     result.addAll(getProperties(name))
@@ -332,12 +333,12 @@ public abstract class LazyJavaMemberScope(
     }
 
     protected open fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
-                                           kindFilter: JetScope.KindFilter,
+                                           kindFilter: DescriptorKindFilter,
                                            nameFilter: (Name) -> Boolean) {
         // Do nothing
     }
 
-    protected abstract fun getClassNames(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
+    protected abstract fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
 
     override fun toString() = "Lazy scope for ${getContainingDeclaration()}"
     

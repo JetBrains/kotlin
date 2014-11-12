@@ -21,10 +21,10 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public trait DeclarationProvider {
-    public fun getDeclarations(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration>
+    public fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration>
 
     public fun getFunctionDeclarations(name: Name): Collection<JetNamedFunction>
 

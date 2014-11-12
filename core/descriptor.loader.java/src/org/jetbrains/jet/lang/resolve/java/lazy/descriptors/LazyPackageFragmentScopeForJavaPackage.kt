@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptorKindExclude
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class LazyPackageFragmentScopeForJavaPackage(
         c: LazyJavaResolverContext,
@@ -69,26 +70,26 @@ public class LazyPackageFragmentScopeForJavaPackage(
     override fun getFunctions(name: Name) = deserializedPackageScope().getFunctions(name) + super.getFunctions(name)
 
     override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
-                                     kindFilter: JetScope.KindFilter,
+                                     kindFilter: DescriptorKindFilter,
                                      nameFilter: (Name) -> Boolean) {
         result.addAll(deserializedPackageScope().getDescriptors(kindFilter, nameFilter))
     }
 
     override fun computeMemberIndex(): MemberIndex = object : MemberIndex by EMPTY_MEMBER_INDEX {
         // For SAM-constructors
-        override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> = getClassNames(JetScope.KindFilter.CLASSIFIERS, nameFilter)
+        override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> = getClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
     }
 
-    override fun getClassNames(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
+    override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
         // neither objects nor enum members can be in java package
-        if (!kindFilter.acceptsKind(JetScope.NON_SINGLETON_CLASSIFIER)) return listOf()
+        if (!kindFilter.acceptsKind(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)) return listOf()
 
         return jPackage.getClasses(nameFilter).stream()
                 .filter { c -> c.getOriginKind() != JavaClass.OriginKind.KOTLIN_LIGHT_CLASS }
                 .map { c -> c.getName() }.toList()
     }
 
-    override fun getFunctionNames(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
+    override fun getFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
         // optimization: only SAM-constructors may exist in java package
         if (kindFilter.excludes.contains(SamConstructorDescriptorKindExclude)) return listOf()
 
@@ -112,7 +113,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
     override fun getAllPropertyNames() = listOf<Name>()
 
     // we don't use implementation from super which caches all descriptors and does not use filters
-    override fun getDescriptors(kindFilter: JetScope.KindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         return computeDescriptors(kindFilter, nameFilter)
     }
 }

@@ -34,6 +34,7 @@ import org.jetbrains.jet.utils.Printer
 import java.util.*
 import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.utils.toReadOnlyList
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider> protected(
         protected val resolveSession: ResolveSession,
@@ -118,7 +119,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
 
     override fun getDeclarationsByLabel(labelName: Name) = setOf<DeclarationDescriptor>()
 
-    protected fun computeDescriptorsFromDeclaredElements(kindFilter: JetScope.KindFilter,
+    protected fun computeDescriptorsFromDeclaredElements(kindFilter: DescriptorKindFilter,
                                                          nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
         val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
         val result = ArrayList<DeclarationDescriptor>(declarations.size())
