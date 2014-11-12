@@ -37,6 +37,9 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
+import jet.runtime.typeinfo.JetValueParameter;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -542,8 +545,18 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     @NotNull
     @Override
     public List<PsiClass> getOwnInnerClasses() {
-        // TODO: Should return inner class wrapper
-        return Arrays.asList(getDelegate().getInnerClasses());
+        return KotlinPackage.filterNotNull(
+                KotlinPackage.map(
+                        getDelegate().getInnerClasses(),
+                        new Function1<PsiClass, PsiClass>() {
+                            @Override
+                            public PsiClass invoke(PsiClass aClass) {
+                                JetClassOrObject declaration = (JetClassOrObject) ClsWrapperStubPsiFactory.getOriginalDeclaration(aClass);
+                                return declaration != null ? KotlinLightClassForExplicitDeclaration.create(myManager, declaration) : null;
+                            }
+                        }
+                )
+        );
     }
 
     private static boolean checkSuperTypeByFQName(@NotNull ClassDescriptor classDescriptor, @NotNull String qualifiedName, Boolean deep) {

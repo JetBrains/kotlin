@@ -321,6 +321,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kotlinDeeplyNestedClassAllUsages.0.kt")
+            public void testKotlinDeeplyNestedClassAllUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/kotlinDeeplyNestedClassAllUsages.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kotlinInnerClassAllUsages.0.kt")
             public void testKotlinInnerClassAllUsages() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/kotlinInnerClassAllUsages.0.kt");
@@ -471,6 +477,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("kotlinMultiRefInImport.0.kt")
             public void testKotlinMultiRefInImport() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinMultiRefInImport.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kotlinNestedClassMethodUsages.0.kt")
+            public void testKotlinNestedClassMethodUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinNestedClassMethodUsages.0.kt");
                 doTest(fileName);
             }
 
@@ -675,6 +687,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("kotlinMultiRefInImport.0.kt")
             public void testKotlinMultiRefInImport() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinMultiRefInImport.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kotlinNestedClassPropertyUsages.0.kt")
+            public void testKotlinNestedClassPropertyUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinNestedClassPropertyUsages.0.kt");
                 doTest(fileName);
             }
 
