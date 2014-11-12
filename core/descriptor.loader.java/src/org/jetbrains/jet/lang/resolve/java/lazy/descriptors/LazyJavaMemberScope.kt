@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.jet.lang.resolve.scopes.JetScope.DescriptorKindExclude.NonExtensions
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
@@ -309,7 +310,7 @@ public abstract class LazyJavaMemberScope(
             }
         }
 
-        if (kindFilter.acceptsKind(JetScope.FUNCTION) && !kindFilter.excludes.contains(JetScope.DescriptorKindExclude.NonExtensions)) {
+        if (kindFilter.acceptsKind(JetScope.FUNCTION) && !kindFilter.excludes.contains(NonExtensions)) {
             for (name in getFunctionNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
                     result.addAll(getFunctions(name))
@@ -317,7 +318,7 @@ public abstract class LazyJavaMemberScope(
             }
         }
 
-        if (kindFilter.acceptsKind(JetScope.VARIABLE) && !kindFilter.excludes.contains(JetScope.DescriptorKindExclude.NonExtensions)) {
+        if (kindFilter.acceptsKind(JetScope.VARIABLE) && !kindFilter.excludes.contains(NonExtensions)) {
             for (name in getAllPropertyNames()) {
                 if (nameFilter(name)) {
                     result.addAll(getProperties(name))

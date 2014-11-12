@@ -101,9 +101,8 @@ public object TipsManager{
             val receiverValues = receivers.map { it.getValue() }
 
             resolutionScope.getDescriptorsFiltered(kindFilter, nameFilter).filterTo(descriptorsSet) {
-                if (it is CallableDescriptor && it.getExtensionReceiverParameter() != null) {
+                if (it is CallableDescriptor && it.getExtensionReceiverParameter() != null)
                     it.isExtensionCallable(receiverValues, context, dataFlowInfo, false)
-                }
                 else
                     true
             }

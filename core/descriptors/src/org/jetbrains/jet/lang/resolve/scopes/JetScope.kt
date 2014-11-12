@@ -91,7 +91,7 @@ public trait JetScope {
         }
     }
 
-    public data class KindFilter(
+    public class KindFilter(
             public val kindMask: Int,
             public val excludes: List<DescriptorKindExclude> = listOf()
     ) {
@@ -112,9 +112,6 @@ public trait JetScope {
             if (mask == 0) return null
             return KindFilter(mask, excludes)
         }
-
-        public val isEmpty: Boolean
-            get() = kindMask == 0
 
         class object {
             public val ALL: KindFilter = KindFilter(ALL_KINDS_MASK)
