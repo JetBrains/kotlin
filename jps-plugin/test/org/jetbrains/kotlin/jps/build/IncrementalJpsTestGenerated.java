@@ -40,9 +40,39 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
+        @TestMetadata("circularDependencyClasses")
+        public void testCircularDependencyClasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/circularDependencyClasses/");
+            doTest(fileName);
+        }
+
         @TestMetadata("circularDependencyTopLevelFunctions")
         public void testCircularDependencyTopLevelFunctions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/circularDependencyTopLevelFunctions/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleDependency")
+        public void testSimpleDependency() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/simpleDependency/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleDependencyUnchanged")
+        public void testSimpleDependencyUnchanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/simpleDependencyUnchanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("transitiveDependency")
+        public void testTransitiveDependency() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/transitiveDependency/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("twoDependants")
+        public void testTwoDependants() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/twoDependants/");
             doTest(fileName);
         }
 
