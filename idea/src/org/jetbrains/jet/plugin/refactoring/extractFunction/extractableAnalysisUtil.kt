@@ -395,6 +395,17 @@ fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<J
             .filterNotNull()
 }
 
+private fun JetType.isExtractable(): Boolean {
+    return collectReferencedTypes(true).fold(true) { (extractable, typeToCheck) ->
+        val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
+        val typeParameter = parameterTypeDescriptor?.let {
+            DescriptorToSourceUtils.descriptorToDeclaration(it)
+        } as? JetTypeParameter
+
+        extractable && (typeParameter != null || typeToCheck.canBeReferencedViaImport())
+    }
+}
+
 private fun JetType.processTypeIfExtractable(
         typeParameters: MutableSet<TypeParameter>,
         nonDenotableTypes: MutableSet<JetType>,
@@ -429,8 +440,6 @@ private fun JetType.processTypeIfExtractable(
 private class MutableParameter(
         override val argumentText: String,
         override val originalDescriptor: DeclarationDescriptor,
-        override val name: String,
-        override val mirrorVarName: String?,
         override val receiverCandidate: Boolean
 ): Parameter {
     // All modifications happen in the same thread
@@ -441,24 +450,32 @@ private class MutableParameter(
     var refCount: Int = 0
 
     fun addDefaultType(jetType: JetType) {
-        assert(writable, "Can't add type to non-writable parameter $name")
+        assert(writable, "Can't add type to non-writable parameter $currentName")
         defaultTypes.add(jetType)
     }
 
     fun addTypePredicate(predicate: TypePredicate) {
-        assert(writable, "Can't add type predicate to non-writable parameter $name")
+        assert(writable, "Can't add type predicate to non-writable parameter $currentName")
         typePredicates.add(predicate)
+    }
+
+    var currentName: String? = null
+    override val name: String get() = currentName!!
+
+    override var mirrorVarName: String? = null
+
+    private val defaultType: JetType by Delegates.lazy {
+        writable = false
+        CommonSupertypes.commonSupertype(defaultTypes)
     }
 
     override val parameterTypeCandidates: List<JetType> by Delegates.lazy {
         writable = false
-        listOf(parameterType) + TypeUtils.getAllSupertypes(parameterType).filter(and(typePredicates))
+        val superTypes = TypeUtils.getAllSupertypes(defaultType).filter(and(typePredicates))
+        (Collections.singletonList(defaultType) + superTypes).filter { it.isExtractable() }
     }
 
-    override val parameterType: JetType by Delegates.lazy {
-        writable = false
-        CommonSupertypes.commonSupertype(defaultTypes)
-    }
+    override val parameterType: JetType by Delegates.lazy { parameterTypeCandidates.firstOrNull() ?: defaultType }
 
     override fun copy(name: String, parameterType: JetType): Parameter = DelegatingParameter(this, name, parameterType)
 }
@@ -487,12 +504,6 @@ private fun ExtractionData.inferParametersInfo(
         modifiedVarDescriptors: Set<VariableDescriptor>
 ): ParametersInfo {
     val info = ParametersInfo()
-
-    val varNameValidator = JetNameValidatorImpl(
-            commonParent.getParentByType(javaClass<JetExpression>()),
-            originalElements.first,
-            JetNameValidatorImpl.Target.PROPERTIES
-    )
 
     val extractedDescriptorToParameter = HashMap<DeclarationDescriptor, MutableParameter>()
 
@@ -557,28 +568,21 @@ private fun ExtractionData.inferParametersInfo(
                             ?: DEFAULT_PARAMETER_TYPE
                 }
 
-                if (!parameterType.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes)) continue
-
                 val parameterTypePredicate =
                         and(pseudocode.getElementValuesRecursively(originalRef).map { getExpectedTypePredicate(it, bindingContext) })
 
                 val parameter = extractedDescriptorToParameter.getOrPut(descriptorToExtract) {
-                    val parameterName =
-                            if (extractThis) {
-                                JetNameSuggester.suggestNames(parameterType, varNameValidator, null).first()
-                            }
-                            else originalDeclaration.getName()!!
-
-                    val mirrorVarName =
-                            if (descriptorToExtract in modifiedVarDescriptors) varNameValidator.validateName(parameterName)!! else null
-
                     val argumentText =
                             if (hasThisReceiver && extractThis)
                                 "this@${parameterType.getConstructor().getDeclarationDescriptor()!!.getName().asString()}"
                             else
                                 (thisExpr ?: ref).getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = ${getCodeFragmentText()}")
 
-                    MutableParameter(argumentText, descriptorToExtract, parameterName, mirrorVarName, extractThis)
+                    MutableParameter(argumentText, descriptorToExtract, extractThis)
+                }
+
+                if (!extractThis) {
+                    parameter.currentName = originalDeclaration.getName()
                 }
 
                 parameter.refCount++
@@ -593,11 +597,28 @@ private fun ExtractionData.inferParametersInfo(
         }
     }
 
+    val varNameValidator = JetNameValidatorImpl(
+            commonParent.getParentByType(javaClass<JetExpression>()),
+            originalElements.first,
+            JetNameValidatorImpl.Target.PROPERTIES
+    )
+
+    for ((descriptorToExtract, parameter) in extractedDescriptorToParameter) {
+        if (!parameter.parameterType.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes)) continue
+
+        with (parameter) {
+            if (currentName == null) {
+                currentName = JetNameSuggester.suggestNames(parameterType, varNameValidator, null).first()
+            }
+            mirrorVarName = if (descriptorToExtract in modifiedVarDescriptors) varNameValidator.validateName(name) else null
+            info.parameters.add(this)
+        }
+    }
+
     for (typeToCheck in info.typeParameters.flatMapTo(HashSet<JetType>()) { it.collectReferencedTypes(bindingContext) }) {
         typeToCheck.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes)
     }
 
-    info.parameters.addAll(extractedDescriptorToParameter.values())
 
     return info
 }

@@ -43,7 +43,7 @@ public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
     if (this is PackageViewDescriptor ||
         DescriptorUtils.isTopLevelDeclaration(this) ||
         (this is CallableDescriptor && DescriptorUtils.isStaticDeclaration(this))) {
-        return true
+        return !getName().isSpecial()
     }
     val parent = getContainingDeclaration()!!
     if (parent !is ClassDescriptor || !parent.canBeReferencedViaImport()) {

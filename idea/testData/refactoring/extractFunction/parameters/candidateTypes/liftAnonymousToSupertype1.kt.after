@@ -1,0 +1,14 @@
+// PARAM_DESCRIPTOR: internal final class <no name provided> defined in root package
+// PARAM_TYPES: kotlin.Any
+// WITH_RUNTIME
+
+// SIBLING:
+val x = object {
+    fun test() {
+        unit()
+    }
+}
+
+private fun Any.unit() {
+    println(this)
+}
