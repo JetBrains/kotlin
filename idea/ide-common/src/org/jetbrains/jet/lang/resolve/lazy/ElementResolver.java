@@ -203,31 +203,44 @@ public abstract class ElementResolver {
         if (!(codeFragmentExpression instanceof JetExpression)) return;
 
         PsiElement contextElement = codeFragment.getContext();
-        if (!(contextElement instanceof JetExpression)) return;
 
-        JetExpression contextExpression = (JetExpression) contextElement;
-        BindingContext contextForElement = resolveToElement(contextExpression);
+        JetScope scopeForContextElement;
+        DataFlowInfo dataFlowInfoForContextElement;
 
-        JetScope scopeForContextElement = contextForElement.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
-        if (scopeForContextElement != null) {
-            JetScope codeFragmentScope = resolveSession.getScopeProvider().getFileScope(codeFragment);
-            ChainedScope chainedScope = new ChainedScope(
-                    scopeForContextElement.getContainingDeclaration(),
-                    "Scope for resolve code fragment",
-                    scopeForContextElement,
-                    codeFragmentScope
-            );
+        if (contextElement instanceof JetClassOrObject) {
+            LazyClassDescriptor descriptor = (LazyClassDescriptor) resolveSession.resolveToDescriptor((JetClassOrObject) contextElement);
 
-            DataFlowInfo dataFlowInfoForContextElement = getDataFlowInfo(contextForElement, contextExpression);
-            AnalyzerPackage.computeTypeInContext(
-                    (JetExpression) codeFragmentExpression,
-                    chainedScope,
-                    trace,
-                    dataFlowInfoForContextElement,
-                    TypeUtils.NO_EXPECTED_TYPE,
-                    resolveSession.getModuleDescriptor()
-            );
+            scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution();
+            dataFlowInfoForContextElement = DataFlowInfo.EMPTY;
         }
+        else {
+            if (!(contextElement instanceof JetExpression)) return;
+
+            JetExpression contextExpression = (JetExpression) contextElement;
+            BindingContext contextForElement = resolveToElement((JetElement) contextElement);
+
+            scopeForContextElement = contextForElement.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
+            dataFlowInfoForContextElement = getDataFlowInfo(contextForElement, contextExpression);
+        }
+
+        if (scopeForContextElement == null) return;
+
+        JetScope codeFragmentScope = resolveSession.getScopeProvider().getFileScope(codeFragment);
+        ChainedScope chainedScope = new ChainedScope(
+                scopeForContextElement.getContainingDeclaration(),
+                "Scope for resolve code fragment",
+                scopeForContextElement,
+                codeFragmentScope
+        );
+
+        AnalyzerPackage.computeTypeInContext(
+                (JetExpression) codeFragmentExpression,
+                chainedScope,
+                trace,
+                dataFlowInfoForContextElement,
+                TypeUtils.NO_EXPECTED_TYPE,
+                resolveSession.getModuleDescriptor()
+        );
     }
 
     private static void annotationAdditionalResolve(ResolveSession resolveSession, JetAnnotationEntry jetAnnotationEntry) {
