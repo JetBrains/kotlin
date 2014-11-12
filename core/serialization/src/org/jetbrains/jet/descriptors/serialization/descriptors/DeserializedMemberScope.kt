@@ -108,10 +108,10 @@ public abstract class DeserializedMemberScope protected(
 
         for (name in membersProtos().keySet()) {
             if (nameFilter(name)) {
-                if (kindFilter.acceptsKind(DescriptorKindFilter.FUNCTIONS_MASK)) {
+                if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
                     result.addAll(getFunctions(name))
                 }
-                if (kindFilter.acceptsKind(DescriptorKindFilter.VARIABLES_MASK)) {
+                if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
                     result.addAll(getProperties(name))
                 }
             }
@@ -119,7 +119,7 @@ public abstract class DeserializedMemberScope protected(
 
         addNonDeclaredDescriptors(result)
 
-        if (kindFilter.acceptsKind(DescriptorKindFilter.CLASSIFIERS_MASK)) {
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
             addClassDescriptors(result, nameFilter)
         }
 

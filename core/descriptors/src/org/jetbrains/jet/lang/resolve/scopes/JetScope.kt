@@ -99,13 +99,13 @@ public class DescriptorKindFilter(
     public fun accepts(descriptor: DeclarationDescriptor): Boolean
             = kindMask and descriptor.kind() != 0 && excludes.all { !it.matches(descriptor) }
 
-    public fun acceptsKind(kinds: Int): Boolean
+    public fun acceptsKinds(kinds: Int): Boolean
             = kindMask and kinds != 0
 
     public fun exclude(exclude: DescriptorKindExclude): DescriptorKindFilter
             = DescriptorKindFilter(kindMask, excludes + listOf(exclude))
 
-    public fun withoutKind(kinds: Int): DescriptorKindFilter
+    public fun withoutKinds(kinds: Int): DescriptorKindFilter
             = DescriptorKindFilter(kindMask and kinds.inv(), excludes)
 
     public fun restrictedToKinds(kinds: Int): DescriptorKindFilter? {
