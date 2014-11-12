@@ -132,9 +132,16 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val compilationErrors = Utils.ERRORS_DETECTED_KEY[context, false]
         val outputsItemsAndTargets = getOutputItemsAndTargets(chunk, outputItemCollector)
 
-        var recompilationDecision = updateKotlinIncrementalCache(compilationErrors, dirtyFilesHolder, incrementalCaches, outputsItemsAndTargets)
         registerOutputItems(outputConsumer, outputsItemsAndTargets)
-        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, outputsItemsAndTargets)
+
+        val recompilationDecision: IncrementalCacheImpl.RecompilationDecision
+        if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
+            recompilationDecision = IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
+        }
+        else {
+            recompilationDecision = updateKotlinIncrementalCache(compilationErrors, dirtyFilesHolder, incrementalCaches, outputsItemsAndTargets)
+            updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, outputsItemsAndTargets)
+        }
 
         if (compilationErrors) {
             return ABORT
