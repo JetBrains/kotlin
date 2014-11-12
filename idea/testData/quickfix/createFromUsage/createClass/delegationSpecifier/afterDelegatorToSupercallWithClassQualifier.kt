@@ -2,7 +2,6 @@
 package p
 
 class X {
-
     open class A(i: Int, s: String) {
 
     }

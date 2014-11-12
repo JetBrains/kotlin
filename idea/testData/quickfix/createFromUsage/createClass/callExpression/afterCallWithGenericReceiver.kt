@@ -3,7 +3,6 @@
 // ERROR: <html>Type mismatch.<table><tr><td>Required:</td><td>U</td></tr><tr><td>Found:</td><td>U</td></tr></table></html>
 
 class A<T>(val n: T) {
-
     inner class Foo<U>(u: U) {
 
     }

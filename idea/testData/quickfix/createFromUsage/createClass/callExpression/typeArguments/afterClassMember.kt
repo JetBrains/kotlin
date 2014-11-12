@@ -1,7 +1,6 @@
 // "Create class 'Foo'" "true"
 
 class B<T>(val t: T) {
-
     class Foo<U, V>(u: U, v: V) {
 
     }

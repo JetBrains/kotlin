@@ -3,7 +3,6 @@
 
 class A<T>(val n: T) {
     class object {
-
         val foo: Int
 
     }

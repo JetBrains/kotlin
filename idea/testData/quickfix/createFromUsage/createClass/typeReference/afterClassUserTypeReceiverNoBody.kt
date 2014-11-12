@@ -1,11 +1,10 @@
 // "Create class 'A'" "true"
 package p
 
-import p.X.A
-
-class X {
+class T {
     class A {
 
     }
-
 }
+
+fun foo(): T.A = throw Throwable("")

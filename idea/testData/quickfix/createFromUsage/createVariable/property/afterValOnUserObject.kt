@@ -3,7 +3,6 @@
 
 object A {
     val foo: Int
-
 }
 
 fun test() {

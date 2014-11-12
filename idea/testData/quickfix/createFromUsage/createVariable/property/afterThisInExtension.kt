@@ -3,7 +3,6 @@
 
 class A<T>(val n: T) {
     val foo: A<Int>
-
 }
 
 fun <U> A<U>.test(): A<Int> {

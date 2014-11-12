@@ -4,7 +4,6 @@ package p
 fun foo() = X.A
 
 enum class X {
-
     A
 
 }

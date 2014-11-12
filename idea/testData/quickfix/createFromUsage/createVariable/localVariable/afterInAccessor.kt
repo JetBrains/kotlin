@@ -5,7 +5,6 @@
 class A {
     val t: Int get() {
         val foo: Int
-
         return foo
     }
 }

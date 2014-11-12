@@ -5,7 +5,6 @@
 fun test(n: Int) {
     val f: (Int, Int) -> Int = { (a, b) ->
         val foo: Int
-
         foo
     }
 }
