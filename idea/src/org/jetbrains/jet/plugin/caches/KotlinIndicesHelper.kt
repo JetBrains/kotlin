@@ -199,12 +199,13 @@ public class KotlinIndicesHelper(private val project: Project,
                                        module: ModuleDescriptor,
                                        bindingContext: BindingContext): Collection<CallableDescriptor> {
         val fqnString = callableFQN.asString()
-        val descriptors = if (index != null) {
+        val descriptors = /* this code is temporarily disabled because taking descriptors from another resolve session causes duplicates and potentially other problems*/
+        /*if (index != null) {
             index.get(fqnString, project, scope)
                     .filter { it.getReceiverTypeReference() != null }
                     .map { it.getLazyResolveSession().resolveToDescriptor(it) as CallableDescriptor }
         }
-        else {
+        else*/ run {
             val importDirective = JetPsiFactory(project).createImportDirective(fqnString)
             analyzeImportReference(importDirective, resolutionScope, BindingTraceContext(), module)
                     .filterIsInstance(javaClass<CallableDescriptor>())
