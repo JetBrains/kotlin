@@ -75,7 +75,7 @@ class KMutableMemberPropertyImpl<T : Any, R>(
     {
         try {
             val returnType = if (getter != null) getter.getReturnType() else field!!.getType()
-            setter = owner.jClass.getMaybeDeclaredMethod(setterName(name), returnType!!)
+            setter = owner.jClass.getMaybeDeclaredMethod(setterName(name), returnType)
         }
         catch (e: NoSuchMethodException) {
             if (field == null) throw NoSuchPropertyException(e)

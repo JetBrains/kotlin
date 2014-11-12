@@ -59,7 +59,7 @@ class KMutableTopLevelVariableImpl<R>(
         owner: KPackageImpl
 ) : KMutableTopLevelVariable<R>, KMutableVariableImpl<R>, KTopLevelVariableImpl<R>(name, owner) {
     override val setter: Method = try {
-        owner.jClass.getMethod(setterName(name), getter.getReturnType()!!)
+        owner.jClass.getMethod(setterName(name), getter.getReturnType())
     }
     catch (e: NoSuchMethodException) {
         throw NoSuchPropertyException(e)
