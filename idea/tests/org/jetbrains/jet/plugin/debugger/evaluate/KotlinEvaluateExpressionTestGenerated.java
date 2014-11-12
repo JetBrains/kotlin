@@ -160,6 +160,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("onObjectHeader.kt")
+        public void testOnObjectHeader() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/onObjectHeader.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("privateMember.kt")
         public void testPrivateMember() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/privateMember.kt");

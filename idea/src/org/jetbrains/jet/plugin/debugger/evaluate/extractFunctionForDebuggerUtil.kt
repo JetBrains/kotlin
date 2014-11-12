@@ -190,7 +190,7 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
         contextElement is JetProperty && !contextElement.isLocal() -> {
             wrapInRunFun(contextElement.getDelegateExpressionOrInitializer()!!)
         }
-        contextElement is JetClass -> {
+        contextElement is JetClassOrObject -> {
             insertNewInitializer(contextElement.getBody())
         }
         contextElement is JetClassObject -> {
