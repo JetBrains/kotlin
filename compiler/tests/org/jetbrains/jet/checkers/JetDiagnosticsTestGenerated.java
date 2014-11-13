@@ -3722,6 +3722,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("dynamicCalls.kt")
+            public void testDynamicCalls() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/dynamicCalls.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implicitDynamicReceiver.kt")
+            public void testImplicitDynamicReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/implicitDynamicReceiver.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nullable.kt")
             public void testNullable() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/nullable.kt");

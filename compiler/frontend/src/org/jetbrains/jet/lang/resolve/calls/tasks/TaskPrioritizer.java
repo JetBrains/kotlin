@@ -38,11 +38,13 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.isOrOverridesSynthesized;
@@ -129,6 +131,7 @@ public class TaskPrioritizer {
         if (receiver.exists()) {
             addCandidatesForExplicitReceiver(receiver, implicitReceivers, c, /*isExplicit=*/true);
             addMembers(receiver, c, /*static=*/true, /*isExplicit=*/true);
+            addCandidatesForDynamicReceiver(receiver, c);
             return;
         }
         addCandidatesForNoReceiver(implicitReceivers, c);
@@ -186,6 +189,28 @@ public class TaskPrioritizer {
         }
     }
 
+    private static <D extends CallableDescriptor, F extends D> void addCandidatesForDynamicReceiver(
+            @NotNull ReceiverValue receiver,
+            @NotNull TaskPrioritizerContext<D, F> c
+    ) {
+        if (!TypesPackage.isDynamic(receiver.getType())) return;
+
+        //noinspection unchecked
+        D dynamicDescriptor = (D) DynamicCallableDescriptors.createCallableDescriptorForDynamicCall(
+                c.context.call,
+                c.scope.getContainingDeclaration()
+        );
+        if (dynamicDescriptor == null) return;
+
+        ResolutionCandidate<D> dynamicCandidate = ResolutionCandidate.create(
+                c.context.call,
+                dynamicDescriptor
+        );
+        dynamicCandidate.setDispatchReceiver(receiver);
+        dynamicCandidate.setExplicitReceiverKind(DISPATCH_RECEIVER);
+        c.result.addCandidates(Collections.singletonList(dynamicCandidate));
+    }
+
     private static ExplicitReceiverKind createKind(ExplicitReceiverKind kind, boolean isExplicit) {
         if (isExplicit) return kind;
         return ExplicitReceiverKind.NO_EXPLICIT_RECEIVER;
@@ -235,6 +260,7 @@ public class TaskPrioritizer {
         //try all implicit receivers as explicit
         for (ReceiverValue implicitReceiver : implicitReceivers) {
             addCandidatesForExplicitReceiver(implicitReceiver, implicitReceivers, c, /*isExplicit=*/false);
+            addCandidatesForDynamicReceiver(implicitReceiver, c);
         }
 
         //nonlocals
