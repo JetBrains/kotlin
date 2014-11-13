@@ -28,6 +28,7 @@ import org.jetbrains.jet.storage.StorageManager
 
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve
 import java.util.ArrayList
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManager) : DeclarationProvider {
 
@@ -72,7 +73,8 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
 
     protected abstract fun doCreateIndex(index: Index)
 
-    override fun getAllDeclarations(): List<JetDeclaration> = index().allDeclarations
+    override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration>
+            = index().allDeclarations
 
     override fun getFunctionDeclarations(name: Name): List<JetNamedFunction>
             = index().functions[ResolveSessionUtils.safeNameForLazyResolve(name)].toList()

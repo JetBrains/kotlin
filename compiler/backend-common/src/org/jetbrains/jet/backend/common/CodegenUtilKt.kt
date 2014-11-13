@@ -25,6 +25,7 @@ import org.jetbrains.jet.utils.keysToMapExceptNulls
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.MemberComparator
 import java.util.Comparator
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 public object CodegenUtilKt {
 
@@ -39,7 +40,7 @@ public object CodegenUtilKt {
             delegateExpressionType: JetType? = null
     ): Map<CallableMemberDescriptor, CallableDescriptor> {
 
-        return descriptor.getDefaultType().getMemberScope().getAllDescriptors().stream()
+        return descriptor.getDefaultType().getMemberScope().getDescriptors().stream()
             .filterIsInstance(javaClass<CallableMemberDescriptor>())
             .filter { it.getKind() == CallableMemberDescriptor.Kind.DELEGATION }
             .toList()

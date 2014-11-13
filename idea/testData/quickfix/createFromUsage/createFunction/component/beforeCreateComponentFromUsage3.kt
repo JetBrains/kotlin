@@ -1,4 +1,4 @@
-// "Create function 'component2' from usage" "true"
+// "Create function 'component2'" "true"
 class FooIterator<T> {
     fun hasNext(): Boolean { return false }
     fun next(): Any {

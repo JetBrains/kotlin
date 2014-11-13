@@ -1,4 +1,4 @@
-// "Create function 'inc' from usage" "true"
+// "Create function 'inc'" "true"
 
 class A<T>(val n: T)
 

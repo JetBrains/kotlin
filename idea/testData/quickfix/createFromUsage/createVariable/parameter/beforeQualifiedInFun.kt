@@ -1,6 +1,6 @@
 // "Create parameter 'foo'" "false"
 // ACTION: Split property declaration
-// ACTION: Create property 'foo' from usage
+// ACTION: Create property 'foo'
 // ERROR: Unresolved reference: foo
 
 class A

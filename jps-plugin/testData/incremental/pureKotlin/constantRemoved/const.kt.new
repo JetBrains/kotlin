@@ -1,0 +1,3 @@
+package test
+
+val CONST = "I'm not a constant anymore:" + System.currentTimeMillis()

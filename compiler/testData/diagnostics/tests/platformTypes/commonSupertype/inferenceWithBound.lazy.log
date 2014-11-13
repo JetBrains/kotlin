@@ -1,213 +1,213 @@
 LazyJavaClassDescriptor@0['Other'] {
-    _properties('subs': Name@1) = ArrayList@2[1] { JavaPropertyDescriptor@3['subs'] } // through LazyJavaStaticClassScope@4
-    _properties('subs': Name@1) = EmptyList@5[empty] // through LazyJavaClassMemberScope@6
-    _properties('supers': Name@7) = ArrayList@8[1] { JavaPropertyDescriptor@9['supers'] } // through LazyJavaStaticClassScope@4
-    _properties('supers': Name@7) = EmptyList@5[empty] // through LazyJavaClassMemberScope@6
-    _typeConstructor = LazyJavaClassTypeConstructor@10['Other']
-    enumEntryIndex = LinkedHashMap@11 // through LazyJavaClassMemberScope@6
-    memberIndex = computeMemberIndex$1@12 // through LazyJavaClassMemberScope@6
-    memberIndex = computeMemberIndex$1@13 // through LazyJavaStaticClassScope@4
-    nestedClassIndex = LinkedHashMap@14 // through LazyJavaClassMemberScope@6
-    nestedClasses('subs': Name@1) = null // through LazyJavaClassMemberScope@6
-    nestedClasses('supers': Name@7) = null // through LazyJavaClassMemberScope@6
+    enumEntryIndex = LinkedHashMap@1 // through LazyJavaClassMemberScope@2
+    memberIndex = computeMemberIndex$1@3 // through LazyJavaClassMemberScope@2
+    memberIndex = computeMemberIndex$1@4 // through LazyJavaStaticClassScope@5
+    nestedClassIndex = LinkedHashMap@6 // through LazyJavaClassMemberScope@2
+    nestedClasses('subs': Name@7) = null // through LazyJavaClassMemberScope@2
+    nestedClasses('supers': Name@8) = null // through LazyJavaClassMemberScope@2
+    properties('subs': Name@7) = ArrayList@9[1] { JavaPropertyDescriptor@10['subs'] } // through LazyJavaStaticClassScope@5
+    properties('subs': Name@7) = EmptyList@11[empty] // through LazyJavaClassMemberScope@2
+    properties('supers': Name@8) = ArrayList@12[1] { JavaPropertyDescriptor@13['supers'] } // through LazyJavaStaticClassScope@5
+    properties('supers': Name@8) = EmptyList@11[empty] // through LazyJavaClassMemberScope@2
+    typeConstructor = LazyJavaClassTypeConstructor@14['Other']
 }
 
 LazyJavaClassDescriptor@15['Sub'] {
-    _typeConstructor = LazyJavaClassTypeConstructor@16['Sub']
+    typeConstructor = LazyJavaClassTypeConstructor@16['Sub']
 }
 
 LazyJavaClassDescriptor@17['Super'] {
-    _typeConstructor = LazyJavaClassTypeConstructor@18['Super']
+    typeConstructor = LazyJavaClassTypeConstructor@18['Super']
 }
 
-LazyJavaClassTypeConstructor@10['Other'] {
-    _supertypes = ArrayList@19[1] { JetTypeImpl@20['Any'] }
+LazyJavaClassTypeConstructor@14['Other'] {
+    supertypes = ArrayList@19[1] { JetTypeImpl@20['Any'] }
 }
 
 LazyJavaClassTypeConstructor@16['Sub'] {
-    _parameters = ArrayList@21[empty]
-    _supertypes = ArrayList@22[1] { LazyJavaClassifierType@23['Super'] }
+    parameters = ArrayList@21[empty]
+    supertypes = ArrayList@22[1] { LazyJavaClassifierType@23['Super'] }
 }
 
 LazyJavaClassTypeConstructor@18['Super'] {
-    _parameters = ArrayList@24[empty]
-    _supertypes = ArrayList@25[1] { JetTypeImpl@20['Any'] }
+    parameters = ArrayList@24[empty]
+    supertypes = ArrayList@25[1] { JetTypeImpl@20['Any'] }
 }
 
 LazyJavaClassifierType@26['Collection<Sub>'] {
-    _arguments = ArrayList@27[1] { TypeProjectionImpl@28 }
-    _nullable = 'false': Boolean@29
-    _typeConstructor = DeserializedClassTypeConstructor@30
-    classifier = JavaClassImpl@31['Collection']
+    arguments = ArrayList@27[1] { TypeProjectionImpl@28 }
+    classifier = JavaClassImpl@29['Collection']
+    nullable = 'false': Boolean@30
+    typeConstructor = DeserializedClassTypeConstructor@31
 }
 
 LazyJavaClassifierType@32['Collection<Sub>'] {
-    _arguments = ArrayList@33[1] { TypeProjectionImpl@34 }
-    _nullable = 'true': Boolean@35
-    _typeConstructor = DeserializedClassTypeConstructor@36
-    classifier = JavaClassImpl@31['Collection']
+    arguments = ArrayList@33[1] { TypeProjectionImpl@34 }
+    classifier = JavaClassImpl@29['Collection']
+    nullable = 'true': Boolean@35
+    typeConstructor = DeserializedClassTypeConstructor@36
 }
 
 LazyJavaClassifierType@37['Collection<Super>'] {
-    _arguments = ArrayList@38[1] { TypeProjectionImpl@39 }
-    _nullable = 'false': Boolean@29
-    _typeConstructor = DeserializedClassTypeConstructor@30
+    arguments = ArrayList@38[1] { TypeProjectionImpl@39 }
     classifier = JavaClassImpl@40['Collection']
+    nullable = 'false': Boolean@30
+    typeConstructor = DeserializedClassTypeConstructor@31
 }
 
 LazyJavaClassifierType@41['Collection<Super>'] {
-    _arguments = ArrayList@42[1] { TypeProjectionImpl@43 }
-    _nullable = 'true': Boolean@35
-    _typeConstructor = DeserializedClassTypeConstructor@36
+    arguments = ArrayList@42[1] { TypeProjectionImpl@43 }
     classifier = JavaClassImpl@40['Collection']
+    nullable = 'true': Boolean@35
+    typeConstructor = DeserializedClassTypeConstructor@36
 }
 
 LazyJavaClassifierType@44['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@45
-    classifier = JavaClassImpl@46['Object']
+    classifier = JavaClassImpl@45['Object']
+    typeConstructor = DeserializedClassTypeConstructor@46
 }
 
 LazyJavaClassifierType@47['Object'] {
-    _typeConstructor = DeserializedClassTypeConstructor@45
     classifier = JavaClassImpl@48['Object']
+    typeConstructor = DeserializedClassTypeConstructor@46
 }
 
 LazyJavaClassifierType@49['Sub'] {
-    _arguments = ArrayList@50[empty]
-    _nullable = 'false': Boolean@29
-    _typeConstructor = LazyJavaClassTypeConstructor@16['Sub']
+    arguments = ArrayList@50[empty]
     classifier = JavaClassImpl@51['Sub']
+    nullable = 'false': Boolean@30
+    typeConstructor = LazyJavaClassTypeConstructor@16['Sub']
 }
 
 LazyJavaClassifierType@52['Sub'] {
-    _arguments = ArrayList@53[empty]
-    _nullable = 'false': Boolean@29
-    _typeConstructor = LazyJavaClassTypeConstructor@16['Sub']
+    arguments = ArrayList@53[empty]
     classifier = JavaClassImpl@54['Sub']
+    nullable = 'false': Boolean@30
+    typeConstructor = LazyJavaClassTypeConstructor@16['Sub']
 }
 
 LazyJavaClassifierType@55['Sub'] {
-    _arguments = ArrayList@56[empty]
-    _nullable = 'true': Boolean@35
-    _typeConstructor = LazyJavaClassTypeConstructor@16['Sub']
-    classifier = JavaClassImpl@54['Sub']
+    arguments = ArrayList@56[empty]
+    classifier = JavaClassImpl@51['Sub']
+    nullable = 'true': Boolean@35
+    typeConstructor = LazyJavaClassTypeConstructor@16['Sub']
 }
 
 LazyJavaClassifierType@57['Sub'] {
-    _arguments = ArrayList@58[empty]
-    _nullable = 'true': Boolean@35
-    _typeConstructor = LazyJavaClassTypeConstructor@16['Sub']
-    classifier = JavaClassImpl@51['Sub']
+    arguments = ArrayList@58[empty]
+    classifier = JavaClassImpl@54['Sub']
+    nullable = 'true': Boolean@35
+    typeConstructor = LazyJavaClassTypeConstructor@16['Sub']
 }
 
 LazyJavaClassifierType@59['Super'] {
-    _arguments = ArrayList@60[empty]
-    _nullable = 'false': Boolean@29
-    _typeConstructor = LazyJavaClassTypeConstructor@18['Super']
+    arguments = ArrayList@60[empty]
     classifier = JavaClassImpl@61['Super']
-}
-
-LazyJavaClassifierType@62['Super'] {
-    _arguments = ArrayList@63[empty]
-    _nullable = 'false': Boolean@29
-    _typeConstructor = LazyJavaClassTypeConstructor@18['Super']
-    classifier = JavaClassImpl@64['Super']
+    nullable = 'false': Boolean@30
+    typeConstructor = LazyJavaClassTypeConstructor@18['Super']
 }
 
 LazyJavaClassifierType@23['Super'] {
-    _arguments = ArrayList@65[empty]
-    _nullable = 'false': Boolean@29
-    _typeConstructor = LazyJavaClassTypeConstructor@18['Super']
+    arguments = ArrayList@62[empty]
+    classifier = JavaClassImpl@63['Super']
+    nullable = 'false': Boolean@30
+    typeConstructor = LazyJavaClassTypeConstructor@18['Super']
+}
+
+LazyJavaClassifierType@64['Super'] {
+    arguments = ArrayList@65[empty]
     classifier = JavaClassImpl@66['Super']
+    nullable = 'false': Boolean@30
+    typeConstructor = LazyJavaClassTypeConstructor@18['Super']
 }
 
 LazyJavaClassifierType@67['Super'] {
-    _arguments = ArrayList@68[empty]
-    _nullable = 'true': Boolean@35
-    _typeConstructor = LazyJavaClassTypeConstructor@18['Super']
+    arguments = ArrayList@68[empty]
     classifier = JavaClassImpl@61['Super']
+    nullable = 'true': Boolean@35
+    typeConstructor = LazyJavaClassTypeConstructor@18['Super']
 }
 
 LazyJavaClassifierType@69['Super'] {
-    _arguments = ArrayList@70[empty]
-    _nullable = 'true': Boolean@35
-    _typeConstructor = LazyJavaClassTypeConstructor@18['Super']
-    classifier = JavaClassImpl@64['Super']
+    arguments = ArrayList@70[empty]
+    classifier = JavaClassImpl@66['Super']
+    nullable = 'true': Boolean@35
+    typeConstructor = LazyJavaClassTypeConstructor@18['Super']
 }
 
 LazyJavaPackageFragmentProvider@71 {
-    _packageFragments('<root>': FqName@72) = LazyJavaPackageFragment@73['<root>']
-    _packageFragments('Collection': FqName@74) = null
-    _packageFragments('List': FqName@75) = null
-    _packageFragments('Other': FqName@76) = null
-    _packageFragments('Super': FqName@77) = null
-    _packageFragments('T': FqName@78) = null
-    _packageFragments('java': FqName@79) = LazyJavaPackageFragment@80['java']
-    _packageFragments('java.lang': FqName@81) = LazyJavaPackageFragment@82['lang']
-    _packageFragments('java.lang.Collection': FqName@83) = null
-    _packageFragments('java.lang.List': FqName@84) = null
-    _packageFragments('java.lang.Other': FqName@85) = null
-    _packageFragments('java.lang.Super': FqName@86) = null
-    _packageFragments('java.lang.T': FqName@87) = null
-    _packageFragments('kotlin': FqName@88) = null
-    _packageFragments('kotlin.Collection': FqName@89) = null
-    _packageFragments('kotlin.List': FqName@90) = null
-    _packageFragments('kotlin.Other': FqName@91) = null
-    _packageFragments('kotlin.Super': FqName@92) = null
-    _packageFragments('kotlin.T': FqName@93) = null
-    _packageFragments('kotlin.io': FqName@94) = null
-    _packageFragments('kotlin.jvm': FqName@95) = null
-    _packageFragments('p': FqName@96) = LazyJavaPackageFragment@97['p']
-    _packageFragments('p.Collection': FqName@98) = null
-    _packageFragments('p.List': FqName@99) = null
-    _packageFragments('p.Other': FqName@100) = null
-    _packageFragments('p.Super': FqName@101) = null
-    _packageFragments('p.T': FqName@102) = null
+    packageFragments('<root>': FqName@72) = LazyJavaPackageFragment@73['<root>']
+    packageFragments('Collection': FqName@74) = null
+    packageFragments('List': FqName@75) = null
+    packageFragments('Other': FqName@76) = null
+    packageFragments('Super': FqName@77) = null
+    packageFragments('T': FqName@78) = null
+    packageFragments('java': FqName@79) = LazyJavaPackageFragment@80['java']
+    packageFragments('java.lang': FqName@81) = LazyJavaPackageFragment@82['lang']
+    packageFragments('java.lang.Collection': FqName@83) = null
+    packageFragments('java.lang.List': FqName@84) = null
+    packageFragments('java.lang.Other': FqName@85) = null
+    packageFragments('java.lang.Super': FqName@86) = null
+    packageFragments('java.lang.T': FqName@87) = null
+    packageFragments('kotlin': FqName@88) = null
+    packageFragments('kotlin.Collection': FqName@89) = null
+    packageFragments('kotlin.List': FqName@90) = null
+    packageFragments('kotlin.Other': FqName@91) = null
+    packageFragments('kotlin.Super': FqName@92) = null
+    packageFragments('kotlin.T': FqName@93) = null
+    packageFragments('kotlin.io': FqName@94) = null
+    packageFragments('kotlin.jvm': FqName@95) = null
+    packageFragments('p': FqName@96) = LazyJavaPackageFragment@97['p']
+    packageFragments('p.Collection': FqName@98) = null
+    packageFragments('p.List': FqName@99) = null
+    packageFragments('p.Other': FqName@100) = null
+    packageFragments('p.Super': FqName@101) = null
+    packageFragments('p.T': FqName@102) = null
     topLevelClasses(JavaClassImpl@103['Other']) = LazyJavaClassDescriptor@0['Other']
     topLevelClasses(JavaClassImpl@54['Sub']) = LazyJavaClassDescriptor@15['Sub']
     topLevelClasses(JavaClassImpl@104['Super']) = LazyJavaClassDescriptor@17['Super']
 }
 
 LazyJavaPackageFragment@73['<root>'] {
-    _functions('compareTo': Name@105) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@106
-    _functions('foo': Name@107) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@106
-    _functions('p': Name@108) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@106
-    classes('Collection': Name@109) = null // through LazyPackageFragmentScopeForJavaPackage@106
-    classes('List': Name@110) = null // through LazyPackageFragmentScopeForJavaPackage@106
-    classes('Other': Name@111) = null // through LazyPackageFragmentScopeForJavaPackage@106
-    classes('Super': Name@112) = null // through LazyPackageFragmentScopeForJavaPackage@106
-    classes('compareTo': Name@105) = null // through LazyPackageFragmentScopeForJavaPackage@106
-    classes('foo': Name@107) = null // through LazyPackageFragmentScopeForJavaPackage@106
-    classes('p': Name@113) = null // through LazyPackageFragmentScopeForJavaPackage@106
-    deserializedPackageScope = Empty@114 // through LazyPackageFragmentScopeForJavaPackage@106
+    classes('Collection': Name@105) = null // through LazyPackageFragmentScopeForJavaPackage@106
+    classes('List': Name@107) = null // through LazyPackageFragmentScopeForJavaPackage@106
+    classes('Other': Name@108) = null // through LazyPackageFragmentScopeForJavaPackage@106
+    classes('Super': Name@109) = null // through LazyPackageFragmentScopeForJavaPackage@106
+    classes('compareTo': Name@110) = null // through LazyPackageFragmentScopeForJavaPackage@106
+    classes('foo': Name@111) = null // through LazyPackageFragmentScopeForJavaPackage@106
+    classes('p': Name@112) = null // through LazyPackageFragmentScopeForJavaPackage@106
+    deserializedPackageScope = Empty@113 // through LazyPackageFragmentScopeForJavaPackage@106
+    functions('compareTo': Name@110) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@106
+    functions('foo': Name@111) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@106
+    functions('p': Name@114) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@106
     memberIndex = computeMemberIndex$1@115 // through LazyPackageFragmentScopeForJavaPackage@106
 }
 
 LazyJavaPackageFragment@80['java'] {
-    _functions('lang': Name@116) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@117
-    classes('lang': Name@118) = null // through LazyPackageFragmentScopeForJavaPackage@117
-    deserializedPackageScope = Empty@114 // through LazyPackageFragmentScopeForJavaPackage@117
+    classes('lang': Name@116) = null // through LazyPackageFragmentScopeForJavaPackage@117
+    deserializedPackageScope = Empty@113 // through LazyPackageFragmentScopeForJavaPackage@117
+    functions('lang': Name@118) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@117
     memberIndex = computeMemberIndex$1@119 // through LazyPackageFragmentScopeForJavaPackage@117
 }
 
 LazyJavaPackageFragment@82['lang'] {
-    _functions('compareTo': Name@105) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@120
-    _functions('foo': Name@107) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@120
-    classes('compareTo': Name@105) = null // through LazyPackageFragmentScopeForJavaPackage@120
-    classes('foo': Name@107) = null // through LazyPackageFragmentScopeForJavaPackage@120
-    deserializedPackageScope = Empty@114 // through LazyPackageFragmentScopeForJavaPackage@120
+    classes('compareTo': Name@110) = null // through LazyPackageFragmentScopeForJavaPackage@120
+    classes('foo': Name@111) = null // through LazyPackageFragmentScopeForJavaPackage@120
+    deserializedPackageScope = Empty@113 // through LazyPackageFragmentScopeForJavaPackage@120
+    functions('compareTo': Name@110) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@120
+    functions('foo': Name@111) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@120
     memberIndex = computeMemberIndex$1@121 // through LazyPackageFragmentScopeForJavaPackage@120
 }
 
 LazyJavaPackageFragment@97['p'] {
-    _functions('compareTo': Name@105) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@122
-    _functions('foo': Name@107) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('Collection': Name@109) = null // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('List': Name@110) = null // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('Other': Name@111) = LazyJavaClassDescriptor@0['Other'] // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('Super': Name@112) = LazyJavaClassDescriptor@17['Super'] // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('compareTo': Name@105) = null // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('foo': Name@107) = null // through LazyPackageFragmentScopeForJavaPackage@122
-    deserializedPackageScope = Empty@114 // through LazyPackageFragmentScopeForJavaPackage@122
+    classes('Collection': Name@105) = null // through LazyPackageFragmentScopeForJavaPackage@122
+    classes('List': Name@107) = null // through LazyPackageFragmentScopeForJavaPackage@122
+    classes('Other': Name@108) = LazyJavaClassDescriptor@0['Other'] // through LazyPackageFragmentScopeForJavaPackage@122
+    classes('Super': Name@109) = LazyJavaClassDescriptor@17['Super'] // through LazyPackageFragmentScopeForJavaPackage@122
+    classes('compareTo': Name@110) = null // through LazyPackageFragmentScopeForJavaPackage@122
+    classes('foo': Name@111) = null // through LazyPackageFragmentScopeForJavaPackage@122
+    deserializedPackageScope = Empty@113 // through LazyPackageFragmentScopeForJavaPackage@122
+    functions('compareTo': Name@110) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@122
+    functions('foo': Name@111) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@122
     memberIndex = computeMemberIndex$1@123 // through LazyPackageFragmentScopeForJavaPackage@122
 }

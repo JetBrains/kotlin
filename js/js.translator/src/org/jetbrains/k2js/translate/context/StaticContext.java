@@ -39,7 +39,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
-import static org.jetbrains.k2js.config.LibrarySourcesConfig.STDLIB_JS_MODULE_NAME;
+import static org.jetbrains.k2js.config.LibrarySourcesConfig.BUILTINS_JS_MODULE_NAME;
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.ManglingUtils.getMangledName;
@@ -468,7 +468,7 @@ public final class StaticContext {
                 }
 
                 private String getExternalModuleName(DeclarationDescriptor descriptor) {
-                    if (isBuiltin(descriptor)) return STDLIB_JS_MODULE_NAME;
+                    if (isBuiltin(descriptor)) return BUILTINS_JS_MODULE_NAME;
 
                     PsiElement element = descriptorToDeclaration(descriptor);
                     if (element == null && descriptor instanceof PropertyAccessorDescriptor) {

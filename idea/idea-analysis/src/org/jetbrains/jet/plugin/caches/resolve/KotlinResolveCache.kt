@@ -61,6 +61,9 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 public trait CacheExtension<T> {
     public val platform: TargetPlatform
@@ -272,11 +275,24 @@ private object KotlinResolveDataProvider {
         if (codeFragmentExpression !is JetExpression) return BindingContext.EMPTY
 
         val contextElement = codeFragment.getContext()
-        if (contextElement !is JetExpression) return BindingContext.EMPTY
 
-        val contextForElement = contextElement.getBindingContext()
+        val scopeForContextElement: JetScope?
+        val dataFlowInfo: DataFlowInfo
+        if (contextElement is JetClassOrObject) {
+            val descriptor = resolveSession.resolveToDescriptor(contextElement) as LazyClassDescriptor
 
-        val scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, contextElement]
+            scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution()
+            dataFlowInfo = DataFlowInfo.EMPTY
+        }
+        else {
+            if (contextElement !is JetExpression) return BindingContext.EMPTY
+
+            val contextForElement = contextElement.getBindingContext()
+
+            scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, contextElement]
+            dataFlowInfo = contextForElement.getDataFlowInfo(contextElement)
+        }
+
         if (scopeForContextElement == null) return BindingContext.EMPTY
 
         val codeFragmentScope = resolveSession.getScopeProvider().getFileScope(codeFragment)
@@ -285,7 +301,6 @@ private object KotlinResolveDataProvider {
                                 "Scope for resolve code fragment",
                                 scopeForContextElement, codeFragmentScope)
 
-        val dataFlowInfo = contextForElement.getDataFlowInfo(contextElement)
         return codeFragmentExpression.analyzeInContext(
                 chainedScope,
                 BindingTraceContext(),

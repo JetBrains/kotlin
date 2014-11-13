@@ -1,4 +1,4 @@
-// "Create function 'contains' from usage" "true"
+// "Create function 'contains'" "true"
 
 class A<T>(val n: T)
 

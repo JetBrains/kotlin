@@ -96,6 +96,6 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     @Override
     public JavaPackage findPackage(@NotNull FqName fqName) {
         PsiPackage psiPackage = javaFacade.findPackage(fqName.asString());
-        return psiPackage == null ? null : new JavaPackageImpl(psiPackage);
+        return psiPackage == null ? null : new JavaPackageImpl(psiPackage, javaSearchScope);
     }
 }

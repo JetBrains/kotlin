@@ -42,6 +42,8 @@ import org.jetbrains.jps.builders.storage.StorageProvider
 import java.io.IOException
 import java.util.Scanner
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
+import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
@@ -106,11 +108,11 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         val annotationDataEncoded = header.annotationData
         if (annotationDataEncoded != null) {
             val data = BitEncoding.decodeBytes(annotationDataEncoded)
-            when (header.kind) {
-                KotlinClassHeader.Kind.PACKAGE_FACADE -> {
+            when {
+                header.isCompatiblePackageFacadeKind() -> {
                     return if (protoMap.put(className, data)) COMPILE_OTHERS else DO_NOTHING
                 }
-                KotlinClassHeader.Kind.CLASS -> {
+                header.isCompatibleClassKind() -> {
                     val inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
                     val protoChanged = protoMap.put(className, data)
                     val constantsChanged = constantsMap.process(className, fileBytes)
@@ -118,7 +120,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
                     return if (inlinesChanged) RECOMPILE_ALL else if (protoChanged || constantsChanged) COMPILE_OTHERS else DO_NOTHING
                 }
                 else -> {
-                    throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}")
+                    throw IllegalStateException("Unexpected kind with annotationData: ${header.kind}, isCompatible: ${header.isCompatibleAbiVersion}")
                 }
             }
         }
@@ -165,20 +167,20 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
     }
 
     private abstract class BasicMap<V> {
-        protected var map: PersistentHashMap<String, V> = createMap()
+        protected var storage: PersistentHashMap<String, V> = createMap()
 
         protected abstract fun createMap(): PersistentHashMap<String, V>
 
         public fun clean() {
             try {
-                map.close()
+                storage.close()
             }
             catch (ignored: IOException) {
             }
 
-            PersistentHashMap.deleteFilesStartingWith(map.getBaseFile()!!)
+            PersistentHashMap.deleteFilesStartingWith(storage.getBaseFile()!!)
             try {
-                map = createMap()
+                storage = createMap()
             }
             catch (ignored: IOException) {
             }
@@ -186,17 +188,17 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
 
         public fun flush(memoryCachesOnly: Boolean) {
             if (memoryCachesOnly) {
-                if (map.isDirty()) {
-                    map.dropMemoryCaches()
+                if (storage.isDirty()) {
+                    storage.dropMemoryCaches()
                 }
             }
             else {
-                map.force()
+                storage.force()
             }
         }
 
         public fun close() {
-            map.close()
+            storage.close()
         }
     }
 
@@ -206,7 +208,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         public fun clearOutdated(outDirectory: File) {
             val keysToRemove = HashSet<String>()
 
-            map.processKeysWithExistingMapping { key ->
+            storage.processKeysWithExistingMapping { key ->
                 val className = JvmClassName.byInternalName(key!!)
                 val classFile = File(outDirectory, FileUtil.toSystemDependentName(className.getInternalName()) + ".class")
                 if (!classFile.exists()) {
@@ -217,7 +219,7 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
             }
 
             for (key in keysToRemove) {
-                map.remove(key)
+                storage.remove(key)
             }
         }
     }
@@ -231,16 +233,16 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
 
         public fun put(className: JvmClassName, data: ByteArray): Boolean {
             val key = className.getInternalName()
-            val oldData = map[key]
+            val oldData = storage[key]
             if (Arrays.equals(data, oldData)) {
                 return false
             }
-            map.put(key, data)
+            storage.put(key, data)
             return true
         }
 
         public fun get(className: JvmClassName): ByteArray? {
-            return map[className.getInternalName()]
+            return storage[className.getInternalName()]
         }
     }
 
@@ -274,11 +276,16 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         private fun put(className: JvmClassName, constantsMap: Map<String, Any>?): Boolean {
             val key = className.getInternalName()
 
-            val oldMap = map[key]
+            val oldMap = storage[key]
             if (oldMap == constantsMap) {
                 return false
             }
-            map.put(key, constantsMap)
+            if (constantsMap != null) {
+                storage.put(key, constantsMap)
+            }
+            else {
+                storage.remove(key)
+            }
             return true
         }
     }
@@ -387,12 +394,15 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         private fun put(className: JvmClassName, inlineFunctionsMap: Map<String, Long>?): Boolean {
             val key = className.getInternalName()
 
-            val oldMap = map[key]
+            val oldMap = storage[key]
             if (oldMap == inlineFunctionsMap) {
                 return false
             }
             if (inlineFunctionsMap != null) {
-                map.put(key, inlineFunctionsMap)
+                storage.put(key, inlineFunctionsMap)
+            }
+            else {
+                storage.remove(key)
             }
             return true
         }
@@ -433,20 +443,20 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         )
 
         public fun putPackagePartSourceData(sourceFile: File, className: JvmClassName) {
-            map.put(sourceFile.getAbsolutePath(), className.getInternalName())
+            storage.put(sourceFile.getAbsolutePath(), className.getInternalName())
         }
 
         public fun remove(sourceFile: File) {
-            map.remove(sourceFile.getAbsolutePath())
+            storage.remove(sourceFile.getAbsolutePath())
         }
 
         public fun getRemovedPackageParts(compiledSourceFilesToFqName: Map<File, String>): Collection<String> {
             val result = HashSet<String>()
 
-            map.processKeysWithExistingMapping { key ->
+            storage.processKeysWithExistingMapping { key ->
                 val sourceFile = File(key!!)
 
-                val packagePartClassName = map[key]!!
+                val packagePartClassName = storage[key]!!
                 if (!sourceFile.exists()) {
                     result.add(packagePartClassName)
                 }
@@ -467,8 +477,8 @@ public class IncrementalCacheImpl(val baseDir: File): StorageOwner, IncrementalC
         public fun getPackages(): Set<FqName> {
             val result = HashSet<FqName>()
 
-            map.processKeysWithExistingMapping { key ->
-                val packagePartClassName = map[key!!]!!
+            storage.processKeysWithExistingMapping { key ->
+                val packagePartClassName = storage[key!!]!!
 
                 val packageFqName = JvmClassName.byInternalName(packagePartClassName).getPackageFqName()
 

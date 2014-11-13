@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -125,6 +126,14 @@ public class ErrorUtils {
 
         @NotNull
         @Override
+        public Collection<DeclarationDescriptor> getDescriptors(
+                @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
+        ) {
+            return Collections.emptyList();
+        }
+
+        @NotNull
+        @Override
         public Collection<DeclarationDescriptor> getAllDescriptors() {
             return Collections.emptyList();
         }
@@ -192,6 +201,14 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull Name labelName) {
+            throw new IllegalStateException();
+        }
+
+        @NotNull
+        @Override
+        public Collection<DeclarationDescriptor> getDescriptors(
+                @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
+        ) {
             throw new IllegalStateException();
         }
 

@@ -40,6 +40,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -370,7 +372,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             return null;
         }
 
-        JetSimpleNameExpression callNameExpression = getCallSimpleNameExpression(argumentList);
+        final JetSimpleNameExpression callNameExpression = getCallSimpleNameExpression(argumentList);
         if (callNameExpression == null) {
             return null;
         }
@@ -399,26 +401,27 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             }
         };
 
-        Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(callNameExpression, bindingContext, visibilityFilter);
+        final Name refName = callNameExpression.getReferencedNameAsName();
 
-        Name refName = callNameExpression.getReferencedNameAsName();
+        Function1<Name, Boolean> nameFilter = new Function1<Name, Boolean>() {
+            @Override
+            public Boolean invoke(Name name) {
+                return name.equals(refName);
+            }
+        };
+        Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(
+                callNameExpression, bindingContext, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK, Collections.<DescriptorKindExclude>emptyList()), nameFilter, visibilityFilter);
 
         Collection<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>>();
         for (DeclarationDescriptor variant : variants) {
             if (variant instanceof FunctionDescriptor) {
-                FunctionDescriptor functionDescriptor = (FunctionDescriptor) variant;
-                if (functionDescriptor.getName().equals(refName)) {
-                    //todo: renamed functions?
-                    itemsToShow.add(Pair.create(functionDescriptor, resolveSession));
-                }
+                //todo: renamed functions?
+                itemsToShow.add(Pair.create((FunctionDescriptor) variant, resolveSession));
             }
             else if (variant instanceof ClassDescriptor) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) variant;
-                if (classDescriptor.getName().equals(refName)) {
-                    //todo: renamed classes?
-                    for (ConstructorDescriptor constructorDescriptor : classDescriptor.getConstructors()) {
-                        itemsToShow.add(Pair.create(constructorDescriptor, resolveSession));
-                    }
+                //todo: renamed classes?
+                for (ConstructorDescriptor constructorDescriptor : ((ClassDescriptor) variant).getConstructors()) {
+                    itemsToShow.add(Pair.create(constructorDescriptor, resolveSession));
                 }
             }
         }

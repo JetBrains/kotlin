@@ -17,8 +17,6 @@
 package org.jetbrains.jet.lang.resolve.lazy.descriptors
 
 import com.google.common.collect.Sets
-import com.intellij.util.Function
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.AnnotationResolver
@@ -26,17 +24,17 @@ import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
-import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull
-import org.jetbrains.jet.storage.NotNullLazyValue
 import org.jetbrains.jet.utils.Printer
 
 import java.util.*
+import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.utils.toReadOnlyList
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider> protected(
         protected val resolveSession: ResolveSession,
@@ -44,46 +42,26 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
         protected val thisDescriptor: D,
         protected val trace: BindingTrace) : JetScope {
 
-    private val classDescriptors: MemoizedFunctionToNotNull<Name, List<ClassDescriptor>>
-
-    private val functionDescriptors: MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>>
-    private val propertyDescriptors: MemoizedFunctionToNotNull<Name, Collection<VariableDescriptor>>
-
-    private val descriptorsFromDeclaredElements: NotNullLazyValue<Collection<DeclarationDescriptor>>
-    private val extraDescriptors: NotNullLazyValue<Collection<DeclarationDescriptor>>
-
-    {
-        val storageManager = resolveSession.getStorageManager()
-        this.classDescriptors = storageManager.createMemoizedFunction { resolveClassDescriptor(it) }
-        this.functionDescriptors = storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { doGetFunctions(it) }
-        this.propertyDescriptors = storageManager.createMemoizedFunction<Name, Collection<VariableDescriptor>> { doGetProperties(it) }
-        this.descriptorsFromDeclaredElements = storageManager.createLazyValue<Collection<DeclarationDescriptor>> { computeDescriptorsFromDeclaredElements() }
-        this.extraDescriptors = storageManager.createLazyValue<Collection<DeclarationDescriptor>> { computeExtraDescriptors() }
-    }
+    protected val storageManager: StorageManager = resolveSession.getStorageManager()
+    private val classDescriptors: MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> = storageManager.createMemoizedFunction { resolveClassDescriptor(it) }
+    private val functionDescriptors: MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>> = storageManager.createMemoizedFunction { doGetFunctions(it) }
+    private val propertyDescriptors: MemoizedFunctionToNotNull<Name, Collection<VariableDescriptor>> = storageManager.createMemoizedFunction { doGetProperties(it) }
 
     private fun resolveClassDescriptor(name: Name): List<ClassDescriptor> {
-        val classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name)
-
-        return ContainerUtil.mapNotNull<JetClassLikeInfo, ClassDescriptor>(classOrObjectDeclarations, object : Function<JetClassLikeInfo, ClassDescriptor> {
-            override fun `fun`(classLikeInfo: JetClassLikeInfo): ClassDescriptor {
-                // SCRIPT: Creating a script class
-                if (classLikeInfo is JetScriptInfo) {
-                    return LazyScriptClassDescriptor(resolveSession, thisDescriptor, name, classLikeInfo)
-                }
-                return LazyClassDescriptor(resolveSession, thisDescriptor, name, classLikeInfo)
-            }
-        }).toReadOnlyList()
+        return declarationProvider.getClassOrObjectDeclarations(name).map {
+            // SCRIPT: Creating a script class
+            if (it is JetScriptInfo)
+                LazyScriptClassDescriptor(resolveSession, thisDescriptor, name, it)
+            else
+                LazyClassDescriptor(resolveSession, thisDescriptor, name, it)
+        }.toReadOnlyList()
     }
 
     override fun getContainingDeclaration() = thisDescriptor
 
-    override fun getClassifier(name: Name): ClassDescriptor? {
-        return classDescriptors.invoke(name).firstOrNull()
-    }
+    override fun getClassifier(name: Name): ClassDescriptor? = classDescriptors(name).firstOrNull()
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
-        return functionDescriptors.invoke(name)
-    }
+    override fun getFunctions(name: Name): Collection<FunctionDescriptor> = functionDescriptors(name)
 
     private fun doGetFunctions(name: Name): Collection<FunctionDescriptor> {
         val result = Sets.newLinkedHashSet<FunctionDescriptor>()
@@ -110,12 +88,10 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
 
     protected abstract fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>)
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> {
-        return propertyDescriptors.invoke(name)
-    }
+    override fun getProperties(name: Name): Collection<VariableDescriptor> = propertyDescriptors(name)
 
     public fun doGetProperties(name: Name): Collection<VariableDescriptor> {
-        val result = Sets.newLinkedHashSet<VariableDescriptor>()
+        val result = LinkedHashSet<VariableDescriptor>()
 
         val declarations = declarationProvider.getPropertyDeclarations(name)
         for (propertyDeclaration in declarations) {
@@ -143,30 +119,40 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
 
     override fun getDeclarationsByLabel(labelName: Name) = setOf<DeclarationDescriptor>()
 
-    override fun getAllDescriptors(): Collection<DeclarationDescriptor> {
-        val result = LinkedHashSet(descriptorsFromDeclaredElements())
-        result.addAll(extraDescriptors())
-        return result
-    }
-
-    private fun computeDescriptorsFromDeclaredElements(): Collection<DeclarationDescriptor> {
-        val declarations = declarationProvider.getAllDeclarations()
+    protected fun computeDescriptorsFromDeclaredElements(kindFilter: DescriptorKindFilter,
+                                                         nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
+        val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
         val result = ArrayList<DeclarationDescriptor>(declarations.size())
         for (declaration in declarations) {
             if (declaration is JetClassOrObject) {
-                result.addAll(classDescriptors.invoke(declaration.getNameAsSafeName()))
+                val name = declaration.getNameAsSafeName()
+                if (nameFilter(name)) {
+                    result.addAll(classDescriptors(name))
+                }
             }
             else if (declaration is JetFunction) {
-                result.addAll(getFunctions(declaration.getNameAsSafeName()))
+                val name = declaration.getNameAsSafeName()
+                if (nameFilter(name)) {
+                    result.addAll(getFunctions(name))
+                }
             }
             else if (declaration is JetProperty) {
-                result.addAll(getProperties(declaration.getNameAsSafeName()))
+                val name = declaration.getNameAsSafeName()
+                if (nameFilter(name)) {
+                    result.addAll(getProperties(name))
+                }
             }
             else if (declaration is JetParameter) {
-                result.addAll(getProperties(declaration.getNameAsSafeName()))
+                val name = declaration.getNameAsSafeName()
+                if (nameFilter(name)) {
+                    result.addAll(getProperties(name))
+                }
             }
             else if (declaration is JetScript) {
-                result.addAll(classDescriptors.invoke(ScriptNameUtil.classNameForScript(declaration).shortName()))
+                val name = ScriptNameUtil.classNameForScript(declaration).shortName()
+                if (nameFilter(name)) {
+                    result.addAll(classDescriptors(name))
+                }
             }
             else if (declaration is JetTypedef || declaration is JetMultiDeclaration) {
                 // Do nothing for typedefs as they are not supported.
@@ -179,8 +165,6 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
         return result.toReadOnlyList()
     }
 
-    protected abstract fun computeExtraDescriptors(): Collection<DeclarationDescriptor>
-
     override fun getImplicitReceiversHierarchy() = listOf<ReceiverParameterDescriptor>()
 
     // Do not change this, override in concrete subclasses:
@@ -188,7 +172,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
     // a generic implementation can't do this properly
     abstract override fun toString(): String
 
-    override fun getOwnDeclaredDescriptors() = getAllDescriptors()
+    override fun getOwnDeclaredDescriptors() = getDescriptors()
 
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")

@@ -209,6 +209,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StepIntoOnly extends AbstractKotlinSteppingTest {
+        @TestMetadata("accessors.kt")
+        public void testAccessors() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/stepInto/accessors.kt");
+            doStepIntoTest(fileName);
+        }
+
         public void testAllFilesPresentInStepIntoOnly() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepInto/stepInto"), Pattern.compile("^(.+)\\.kt$"), true);
         }

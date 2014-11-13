@@ -24,7 +24,7 @@ import java.util.HashSet
 
 trait MemberIndex {
     fun findMethodsByName(name: Name): Collection<JavaMethod>
-    fun getAllMethodNames(): Collection<Name>
+    fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name>
 
     fun findFieldByName(name: Name): JavaField?
     fun getAllFieldNames(): Collection<Name>
@@ -32,7 +32,7 @@ trait MemberIndex {
 
 object EMPTY_MEMBER_INDEX : MemberIndex {
     override fun findMethodsByName(name: Name) = listOf<JavaMethod>()
-    override fun getAllMethodNames() = listOf<Name>()
+    override fun getMethodNames(nameFilter: (Name) -> Boolean) = listOf<Name>()
 
     override fun findFieldByName(name: Name): JavaField? = null
     override fun getAllFieldNames() = listOf<Name>()
@@ -48,7 +48,7 @@ open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember
     private val fields = jClass.getFields().stream().filter(memberFilter).valuesToMap { m -> m.getName() }
 
     override fun findMethodsByName(name: Name): Collection<JavaMethod> = methods[name] ?: listOf()
-    override fun getAllMethodNames(): Collection<Name> = jClass.getAllMemberNames(methodFilter) { getMethods() }
+    override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> = jClass.getAllMemberNames(methodFilter) { getMethods() }
 
     override fun findFieldByName(name: Name): JavaField? = fields[name]
     override fun getAllFieldNames(): Collection<Name> = jClass.getAllMemberNames(memberFilter) { getFields() }

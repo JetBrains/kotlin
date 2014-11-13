@@ -31,76 +31,76 @@ public abstract class JetCodeFragment(
         name: String,
         text: CharSequence,
         elementType: IElementType,
-        private val _context: PsiElement?
+        private val context: PsiElement?
 ): JetFile((PsiManager.getInstance(_project) as PsiManagerEx).getFileManager().createFileViewProvider(LightVirtualFile(name, JetFileType.INSTANCE, text), true), false), JavaCodeFragment {
 
-    private var _viewProvider = super<JetFile>.getViewProvider() as SingleRootFileViewProvider
-    private var _myImports = HashSet<String>();
+    private var viewProvider = super<JetFile>.getViewProvider() as SingleRootFileViewProvider
+    private var myImports = HashSet<String>();
 
     {
         getViewProvider().forceCachedPsi(this)
         init(TokenType.CODE_FRAGMENT, elementType)
-        if (_context != null) {
-            addImportsFromString(getImportsForElement(_context))
+        if (context != null) {
+            addImportsFromString(getImportsForElement(context))
         }
     }
 
-    private var _resolveScope: GlobalSearchScope? = null
-    private var _thisType: PsiType? = null
-    private var _superType: PsiType? = null
-    private var _exceptionHandler: JavaCodeFragment.ExceptionHandler? = null
+    private var resolveScope: GlobalSearchScope? = null
+    private var thisType: PsiType? = null
+    private var superType: PsiType? = null
+    private var exceptionHandler: JavaCodeFragment.ExceptionHandler? = null
 
     public abstract fun getContentElement(): JetElement?
 
     override fun forceResolveScope(scope: GlobalSearchScope?) {
-        _resolveScope = scope
+        resolveScope = scope
     }
 
-    override fun getForcedResolveScope() = _resolveScope
+    override fun getForcedResolveScope() = resolveScope
 
     override fun isPhysical() = true
 
     override fun isValid() = true
 
-    override fun getContext() = _context
+    override fun getContext() = context
 
-    override fun getResolveScope() = _resolveScope ?: super<JetFile>.getResolveScope()
+    override fun getResolveScope() = resolveScope ?: super<JetFile>.getResolveScope()
 
     override fun clone(): JetCodeFragment {
         val clone = cloneImpl(calcTreeElement().clone() as FileElement) as JetCodeFragment
         clone.setOriginalFile(this)
-        clone._myImports = _myImports
-        clone._viewProvider = SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(getName(), JetFileType.INSTANCE, getText()), true)
-        clone._viewProvider.forceCachedPsi(clone)
+        clone.myImports = myImports
+        clone.viewProvider = SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(getName(), JetFileType.INSTANCE, getText()), true)
+        clone.viewProvider.forceCachedPsi(clone)
         return clone
     }
 
-    override fun getViewProvider() = _viewProvider
+    override fun getViewProvider() = viewProvider
 
-    override fun getThisType() = _thisType
+    override fun getThisType() = thisType
 
     override fun setThisType(psiType: PsiType?) {
-        _thisType = psiType
+        thisType = psiType
     }
 
-    override fun getSuperType() = _superType
+    override fun getSuperType() = superType
 
     override fun setSuperType(superType: PsiType?) {
-        _superType = superType
+        $superType = superType
     }
 
     override fun importsToString(): String {
-        return _myImports.makeString(IMPORT_SEPARATOR)
+        return myImports.makeString(IMPORT_SEPARATOR)
     }
 
     override fun addImportsFromString(imports: String?) {
         if (imports == null || imports.isEmpty()) return
 
-        _myImports.addAll(imports.split(IMPORT_SEPARATOR))
+        myImports.addAll(imports.split(IMPORT_SEPARATOR))
     }
 
     public fun importsAsImportList(): JetImportList? {
-        return JetPsiFactory(this).createFile(_myImports.makeString("\n")).getImportList()
+        return JetPsiFactory(this).createFile(myImports.makeString("\n")).getImportList()
     }
 
     override fun setVisibilityChecker(checker: JavaCodeFragment.VisibilityChecker?) { }
@@ -108,10 +108,10 @@ public abstract class JetCodeFragment(
     override fun getVisibilityChecker() = JavaCodeFragment.VisibilityChecker.EVERYTHING_VISIBLE
 
     override fun setExceptionHandler(checker: JavaCodeFragment.ExceptionHandler?) {
-        _exceptionHandler = checker
+        exceptionHandler = checker
     }
 
-    override fun getExceptionHandler() = _exceptionHandler
+    override fun getExceptionHandler() = exceptionHandler
 
     override fun importClass(aClass: PsiClass?): Boolean {
         return true

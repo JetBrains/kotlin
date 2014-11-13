@@ -1,8 +1,8 @@
-// "Create function 'foo' from usage" "true"
+// "Create function 'foo'" "true"
 // ERROR: Unresolved reference: s
 
 class A<T>(val n: T) {
-    fun foo(s: Any, arg: T): T {
+    fun foo(s: Any, t: T): T {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

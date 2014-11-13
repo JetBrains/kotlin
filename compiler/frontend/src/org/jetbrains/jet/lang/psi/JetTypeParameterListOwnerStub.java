@@ -35,11 +35,13 @@ abstract class JetTypeParameterListOwnerStub<T extends KotlinStubWithFqName> ext
         super(node);
     }
 
+    @Override
     @Nullable
     public JetTypeParameterList getTypeParameterList() {
         return getStubOrPsiChild(JetStubElementTypes.TYPE_PARAMETER_LIST);
     }
 
+    @Override
     @Nullable
     public JetTypeConstraintList getTypeConstraintList() {
         return getStubOrPsiChild(JetStubElementTypes.TYPE_CONSTRAINT_LIST);

@@ -31,6 +31,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetBlockCodeFragment
+import org.jetbrains.jet.asJava.KotlinLightClass
 
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
@@ -66,6 +67,10 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
             if (elementAt is PsiCodeBlock) {
                 return getContextElement(elementAt.getContext()?.getContext())
+            }
+
+            if (elementAt is KotlinLightClass) {
+                return getContextElement(elementAt.origin)
             }
 
             val expressionAtOffset = PsiTreeUtil.findElementOfClassAtOffset(elementAt.getContainingFile()!!, elementAt.getTextOffset(), javaClass<JetExpression>(), false)

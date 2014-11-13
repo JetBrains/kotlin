@@ -23,15 +23,11 @@ import org.jetbrains.jet.utils.Printer
 import java.util.*
 
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeSelectorUtil.*
-import kotlin.Collection
-import kotlin.List
-import kotlin.Set
 
 public class ChainedScope(private val containingDeclaration: DeclarationDescriptor?/* it's nullable as a hack for TypeUtils.intersect() */,
                           private val debugName: String,
                           vararg scopes: JetScope) : JetScope {
     private val scopeChain = scopes.clone()
-    private var allDescriptors: MutableCollection<DeclarationDescriptor>? = null
     private var implicitReceiverHierarchy: List<ReceiverParameterDescriptor>? = null
 
     override fun getClassifier(name: Name): ClassifierDescriptor?
@@ -52,9 +48,7 @@ public class ChainedScope(private val containingDeclaration: DeclarationDescript
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         if (implicitReceiverHierarchy == null) {
             val result = ArrayList<ReceiverParameterDescriptor>()
-            for (jetScope in scopeChain) {
-                result.addAll(jetScope.getImplicitReceiversHierarchy())
-            }
+            scopeChain.flatMapTo(result) { it.getImplicitReceiversHierarchy() }
             result.trimToSize()
             implicitReceiverHierarchy = result
         }
@@ -63,23 +57,13 @@ public class ChainedScope(private val containingDeclaration: DeclarationDescript
 
     override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclaration!!
 
-    override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> {
-        val result = ArrayList<DeclarationDescriptor>()
-        for (jetScope in scopeChain) {
-            result.addAll(jetScope.getDeclarationsByLabel(labelName))
-        }
-        result.trimToSize()
-        return result
-    }
+    override fun getDeclarationsByLabel(labelName: Name) = scopeChain.flatMap { it.getDeclarationsByLabel(labelName) }
 
-    override fun getAllDescriptors(): Collection<DeclarationDescriptor> {
-        if (allDescriptors == null) {
-            allDescriptors = HashSet<DeclarationDescriptor>()
-            for (scope in scopeChain) {
-                allDescriptors!!.addAll(scope.getAllDescriptors())
-            }
-        }
-        return allDescriptors!!
+    override fun getDescriptors(kindFilter: DescriptorKindFilter,
+                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        val result = LinkedHashSet<DeclarationDescriptor>()
+        scopeChain.flatMapTo(result) { it.getDescriptors(kindFilter, nameFilter) }
+        return result
     }
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {

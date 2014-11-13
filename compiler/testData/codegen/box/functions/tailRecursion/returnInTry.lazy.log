@@ -1,58 +1,58 @@
 LazyAnnotationDescriptor@0 {
-    _resolutionResults = OverloadResolutionResultsImpl@1
-    _type = JetTypeImpl@2['tailRecursive']
+    resolutionResults = OverloadResolutionResultsImpl@1
+    type = JetTypeImpl@2['tailRecursive']
 }
 
 LazyJavaPackageFragmentProvider@3 {
-    _packageFragments('<root>': FqName@4) = LazyJavaPackageFragment@5['<root>']
-    _packageFragments('Int': FqName@6) = null
-    _packageFragments('String': FqName@7) = null
-    _packageFragments('Throwable': FqName@8) = null
-    _packageFragments('java': FqName@9) = LazyJavaPackageFragment@10['java']
-    _packageFragments('java.lang': FqName@11) = LazyJavaPackageFragment@12['lang']
-    _packageFragments('java.lang.Int': FqName@13) = null
-    _packageFragments('java.lang.String': FqName@14) = null
-    _packageFragments('java.lang.Throwable': FqName@15) = null
-    _packageFragments('java.lang.tailRecursive': FqName@16) = null
-    _packageFragments('kotlin': FqName@17) = null
-    _packageFragments('kotlin.Int': FqName@18) = null
-    _packageFragments('kotlin.String': FqName@19) = null
-    _packageFragments('kotlin.Throwable': FqName@20) = null
-    _packageFragments('kotlin.io': FqName@21) = null
-    _packageFragments('kotlin.jvm': FqName@22) = null
-    _packageFragments('kotlin.tailRecursive': FqName@23) = null
-    _packageFragments('tailRecursive': FqName@24) = null
+    packageFragments('<root>': FqName@4) = LazyJavaPackageFragment@5['<root>']
+    packageFragments('Int': FqName@6) = null
+    packageFragments('String': FqName@7) = null
+    packageFragments('Throwable': FqName@8) = null
+    packageFragments('java': FqName@9) = LazyJavaPackageFragment@10['java']
+    packageFragments('java.lang': FqName@11) = LazyJavaPackageFragment@12['lang']
+    packageFragments('java.lang.Int': FqName@13) = null
+    packageFragments('java.lang.String': FqName@14) = null
+    packageFragments('java.lang.Throwable': FqName@15) = null
+    packageFragments('java.lang.tailRecursive': FqName@16) = null
+    packageFragments('kotlin': FqName@17) = null
+    packageFragments('kotlin.Int': FqName@18) = null
+    packageFragments('kotlin.String': FqName@19) = null
+    packageFragments('kotlin.Throwable': FqName@20) = null
+    packageFragments('kotlin.io': FqName@21) = null
+    packageFragments('kotlin.jvm': FqName@22) = null
+    packageFragments('kotlin.tailRecursive': FqName@23) = null
+    packageFragments('tailRecursive': FqName@24) = null
 }
 
 LazyJavaPackageFragment@5['<root>'] {
-    _functions('equals': Name@25) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@27
-    _functions('minus': Name@28) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@27
-    _functions('test': Name@29) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@27
-    classes('Int': Name@30) = null // through LazyPackageFragmentScopeForJavaPackage@27
-    classes('String': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@27
-    classes('Throwable': Name@32) = null // through LazyPackageFragmentScopeForJavaPackage@27
-    classes('equals': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@27
-    classes('minus': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@27
-    classes('tailRecursive': Name@33) = null // through LazyPackageFragmentScopeForJavaPackage@27
-    classes('test': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@27
-    deserializedPackageScope = Empty@34 // through LazyPackageFragmentScopeForJavaPackage@27
-    memberIndex = computeMemberIndex$1@35 // through LazyPackageFragmentScopeForJavaPackage@27
+    classes('Int': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@26
+    classes('String': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@26
+    classes('Throwable': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@26
+    classes('equals': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@26
+    classes('minus': Name@30) = null // through LazyPackageFragmentScopeForJavaPackage@26
+    classes('tailRecursive': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@26
+    classes('test': Name@32) = null // through LazyPackageFragmentScopeForJavaPackage@26
+    deserializedPackageScope = Empty@33 // through LazyPackageFragmentScopeForJavaPackage@26
+    functions('equals': Name@29) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@26
+    functions('minus': Name@30) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@26
+    functions('test': Name@32) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@26
+    memberIndex = computeMemberIndex$1@35 // through LazyPackageFragmentScopeForJavaPackage@26
 }
 
 LazyJavaPackageFragment@10['java'] {
-    _functions('lang': Name@36) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@37
-    classes('lang': Name@38) = null // through LazyPackageFragmentScopeForJavaPackage@37
-    deserializedPackageScope = Empty@34 // through LazyPackageFragmentScopeForJavaPackage@37
+    classes('lang': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@37
+    deserializedPackageScope = Empty@33 // through LazyPackageFragmentScopeForJavaPackage@37
+    functions('lang': Name@38) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@37
     memberIndex = computeMemberIndex$1@39 // through LazyPackageFragmentScopeForJavaPackage@37
 }
 
 LazyJavaPackageFragment@12['lang'] {
-    _functions('equals': Name@25) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@40
-    _functions('minus': Name@28) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@40
-    _functions('test': Name@29) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@40
-    classes('equals': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@40
-    classes('minus': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@40
-    classes('test': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@40
-    deserializedPackageScope = Empty@34 // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('equals': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('minus': Name@30) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('test': Name@32) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    deserializedPackageScope = Empty@33 // through LazyPackageFragmentScopeForJavaPackage@40
+    functions('equals': Name@29) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    functions('minus': Name@30) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    functions('test': Name@32) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@40
     memberIndex = computeMemberIndex$1@41 // through LazyPackageFragmentScopeForJavaPackage@40
 }

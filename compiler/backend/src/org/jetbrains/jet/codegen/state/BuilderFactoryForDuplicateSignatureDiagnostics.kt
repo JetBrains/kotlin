@@ -31,6 +31,7 @@ import org.jetbrains.jet.codegen.ClassBuilderMode
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.diagnostics.DiagnosticSink
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 class BuilderFactoryForDuplicateSignatureDiagnostics(
         builderFactory: ClassBuilderFactory,
@@ -127,7 +128,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
             }
         }
 
-        for (member in descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+        for (member in descriptor.getDefaultType().getMemberScope().getDescriptors()) {
             processMember(member)
         }
 

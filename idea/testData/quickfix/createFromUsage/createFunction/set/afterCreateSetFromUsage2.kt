@@ -1,4 +1,4 @@
-// "Create function 'set' from usage" "true"
+// "Create function 'set'" "true"
 
 import java.util.ArrayList
 

@@ -2,6 +2,10 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
+    <excludeFromCompile>
+      <directory url="file://$PROJECT_DIR$/core/reflection" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/core/reflection.jvm" includeSubdirectories="true" />
+    </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>
       <entry name="!?*.java" />
@@ -23,4 +27,3 @@
     <option name="ADDITIONAL_OPTIONS_STRING" value="-target 1.6" />
   </component>
 </project>
-

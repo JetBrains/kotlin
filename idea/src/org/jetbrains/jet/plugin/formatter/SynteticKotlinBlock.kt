@@ -26,35 +26,35 @@ import com.intellij.formatting.Spacing
 import com.intellij.lang.ASTNode
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.formatting.ASTBlock
-import java.util.ArrayList
 
 public class SyntheticKotlinBlock(
-        private val _node: ASTNode,
-        private val _subBlocks: MutableList<Block>,
-        private val _alignment: Alignment?,
-        private val _indent: Indent?,
-        private val _wrap: Wrap?,
-        private val spacingBuilder: KotlinSpacingBuilder) : ASTBlock {
+        private val node: ASTNode,
+        private val subBlocks: MutableList<Block>,
+        private val alignment: Alignment?,
+        private val indent: Indent?,
+        private val wrap: Wrap?,
+        private val spacingBuilder: KotlinSpacingBuilder
+) : ASTBlock {
 
-    private val _textRange = TextRange(
-            _subBlocks.first().getTextRange().getStartOffset(),
-            _subBlocks.last().getTextRange().getEndOffset())
+    private val textRange = TextRange(
+            subBlocks.first().getTextRange().getStartOffset(),
+            subBlocks.last().getTextRange().getEndOffset())
 
-    override fun getTextRange(): TextRange = _textRange
-    override fun getSubBlocks() = _subBlocks
-    override fun getWrap() = _wrap
-    override fun getIndent() = _indent
-    override fun getAlignment() = _alignment
+    override fun getTextRange(): TextRange = textRange
+    override fun getSubBlocks() = subBlocks
+    override fun getWrap() = wrap
+    override fun getIndent() = indent
+    override fun getAlignment() = alignment
     override fun getChildAttributes(newChildIndex: Int) = ChildAttributes(getIndent(), null)
     override fun isIncomplete() = getSubBlocks().last().isIncomplete()
     override fun isLeaf() = false
-    override fun getNode() = _node
+    override fun getNode() = node
     override fun getSpacing(child1: Block?, child2: Block): Spacing? =
-            spacingBuilder.getSpacing(KotlinSpacingBuilder.SpacingNodeBlock(_node.getTreeParent()!!), child1, child2)
+            spacingBuilder.getSpacing(KotlinSpacingBuilder.SpacingNodeBlock(node.getTreeParent()!!), child1, child2)
 
 
     override fun toString(): String {
-        var child = _subBlocks.first()
+        var child = subBlocks.first()
         var treeNode: ASTNode? = null
         while (treeNode == null) when (child) {
             is AbstractBlock -> {

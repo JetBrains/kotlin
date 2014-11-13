@@ -19,14 +19,13 @@ package org.jetbrains.jet.descriptors.serialization.descriptors
 import org.jetbrains.jet.descriptors.serialization.PackageData
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
 import org.jetbrains.jet.descriptors.serialization.context.*
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.jet.lang.resolve.name.ClassId
-import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.storage.NotNullLazyValue
+import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 
 public fun DeserializedPackageMemberScope(packageDescriptor: PackageFragmentDescriptor,
@@ -43,16 +42,17 @@ public open class DeserializedPackageMemberScope(
 : DeserializedMemberScope(context.withTypes(packageDescriptor), proto.getMemberList()) {
 
     private val packageFqName = packageDescriptor.fqName
-    private val classNames = context.storageManager.createLazyValue<Collection<Name>>(classNames)
+    private val classNames = context.storageManager.createLazyValue(classNames)
+
+    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+            = computeDescriptors(kindFilter, nameFilter)
 
     override fun getClassDescriptor(name: Name) = context.deserializeClass(ClassId(packageFqName, name))
 
-    override fun addAllClassDescriptors(result: MutableCollection<DeclarationDescriptor>) {
-        for (className in classNames.invoke()) {
-            val classDescriptor = getClassDescriptor(className)
-
-            if (classDescriptor != null) {
-                result.add(classDescriptor)
+    override fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
+        for (className in classNames()) {
+            if (nameFilter(className)) {
+                result.addIfNotNull(getClassDescriptor(className))
             }
         }
     }

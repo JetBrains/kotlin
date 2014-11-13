@@ -1,9 +1,9 @@
-// "Create function 'foo' from usage" "true"
+// "Create function 'foo'" "true"
 
 class A<T>(val n: T) {
     fun foo(a: Int): A<T> = throw Exception()
 
-    fun foo(arg: T, s: String): A<T> {
+    fun foo(t: T, s: String): A<T> {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

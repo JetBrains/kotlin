@@ -1,9 +1,9 @@
 package client;
 
-import server.O
+import server.O;
 
 class Client {
-    fun fooBar() {
-        println("foo = " + O.INSTANCE$.getFoo())
+    void fooBar() {
+        System.out.println("foo = " + O.INSTANCE$.getFoo());
     }
 }

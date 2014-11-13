@@ -21,11 +21,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeResolver
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinder
-import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver
-import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
-import org.jetbrains.jet.lang.resolve.java.resolver.MethodSignatureChecker
-import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaResolverCache
+import org.jetbrains.jet.lang.resolve.java.resolver.*
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPropertyInitializerEvaluator
@@ -42,6 +38,7 @@ open class GlobalJavaResolverContext(
         val methodSignatureChecker: MethodSignatureChecker,
         val javaResolverCache: JavaResolverCache,
         val javaPropertyInitializerEvaluator: JavaPropertyInitializerEvaluator,
+        val samConversionResolver: SamConversionResolver,
         val sourceElementFactory: JavaSourceElementFactory,
         val moduleClassResolver: ModuleClassResolver
 )
@@ -59,12 +56,13 @@ open class LazyJavaResolverContext(
         methodSignatureChecker: MethodSignatureChecker,
         javaResolverCache: JavaResolverCache,
         javaPropertyInitializerEvaluator: JavaPropertyInitializerEvaluator,
+        samConversionResolver: SamConversionResolver,
         sourceElementFactory: JavaSourceElementFactory,
         moduleClassResolver: ModuleClassResolver
 ) : GlobalJavaResolverContext(storageManager, finder, kotlinClassFinder, deserializedDescriptorResolver,
                               externalAnnotationResolver, externalSignatureResolver,
                               errorReporter, methodSignatureChecker, javaResolverCache, javaPropertyInitializerEvaluator,
-                              sourceElementFactory, moduleClassResolver)
+                              samConversionResolver, sourceElementFactory, moduleClassResolver)
 
 fun LazyJavaResolverContext.withTypes(
         typeParameterResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
@@ -81,10 +79,12 @@ fun LazyJavaResolverContext.withTypes(
         methodSignatureChecker,
         javaResolverCache,
         javaPropertyInitializerEvaluator,
+        samConversionResolver,
         sourceElementFactory,
         moduleClassResolver,
         LazyJavaTypeResolver(this, typeParameterResolver),
-        typeParameterResolver)
+        typeParameterResolver
+)
 
 class LazyJavaResolverContextWithTypes(
         packageFragmentProvider: LazyJavaPackageFragmentProvider,
@@ -99,14 +99,15 @@ class LazyJavaResolverContextWithTypes(
         methodSignatureChecker: MethodSignatureChecker,
         javaResolverCache: JavaResolverCache,
         javaPropertyInitializerEvaluator: JavaPropertyInitializerEvaluator,
+        samConversionResolver: SamConversionResolver,
         sourceElementFactory: JavaSourceElementFactory,
         moduleClassResolver: ModuleClassResolver,
         val typeResolver: LazyJavaTypeResolver,
         val typeParameterResolver: TypeParameterResolver
-) : LazyJavaResolverContext(packageFragmentProvider, javaClassResolver, storageManager, finder,
-                            kotlinClassFinder, deserializedDescriptorResolver,
-                            externalAnnotationResolver, externalSignatureResolver, errorReporter, methodSignatureChecker,
-                            javaResolverCache, javaPropertyInitializerEvaluator, sourceElementFactory, moduleClassResolver)
+) : LazyJavaResolverContext(packageFragmentProvider, javaClassResolver, storageManager, finder, kotlinClassFinder,
+                            deserializedDescriptorResolver, externalAnnotationResolver, externalSignatureResolver, errorReporter,
+                            methodSignatureChecker, javaResolverCache, javaPropertyInitializerEvaluator, samConversionResolver,
+                            sourceElementFactory, moduleClassResolver)
 
 fun LazyJavaResolverContextWithTypes.child(
         containingDeclaration: DeclarationDescriptor,

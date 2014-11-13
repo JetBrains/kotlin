@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -318,14 +317,14 @@ public class OverrideResolver {
     private static List<CallableMemberDescriptor> getCallableMembersFromSupertypes(ClassDescriptor classDescriptor) {
         Set<CallableMemberDescriptor> r = Sets.newLinkedHashSet();
         for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-            r.addAll(getCallableMembersFromType(supertype.getMemberScope()));
+            r.addAll(getCallableMembersFromType(supertype));
         }
         return new ArrayList<CallableMemberDescriptor>(r);
     }
 
-    private static List<CallableMemberDescriptor> getCallableMembersFromType(JetScope scope) {
+    private static List<CallableMemberDescriptor> getCallableMembersFromType(JetType type) {
         List<CallableMemberDescriptor> r = Lists.newArrayList();
-        for (DeclarationDescriptor decl : scope.getAllDescriptors()) {
+        for (DeclarationDescriptor decl : type.getMemberScope().getAllDescriptors()) {
             if (decl instanceof PropertyDescriptor || decl instanceof SimpleFunctionDescriptor) {
                 r.add((CallableMemberDescriptor) decl);
             }

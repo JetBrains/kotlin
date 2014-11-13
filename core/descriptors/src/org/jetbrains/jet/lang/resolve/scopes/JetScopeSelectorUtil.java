@@ -37,28 +37,12 @@ public class JetScopeSelectorUtil {
         Collection<D> get(JetScope scope, Name name);
     }
 
-    public interface ScopeDescriptorSelector<D extends DeclarationDescriptor> {
-        @NotNull
-        Collection<D> get(JetScope scope);
-    }
-
     @NotNull
     public static <D extends DeclarationDescriptor> Collection<D> collect(Collection<JetScope> scopes, ScopeByNameMultiSelector<D> selector, Name name) {
         Set<D> descriptors = new HashSet<D>();
 
         for (JetScope scope : scopes) {
             descriptors.addAll(selector.get(scope, name));
-        }
-
-        return descriptors;
-    }
-
-    @NotNull
-    public static <D extends DeclarationDescriptor> Collection<D> collect(Collection<JetScope> scopes, ScopeDescriptorSelector<D> selector) {
-        Set<D> descriptors = new HashSet<D>();
-
-        for (JetScope scope : scopes) {
-            descriptors.addAll(selector.get(scope));
         }
 
         return descriptors;
@@ -106,15 +90,6 @@ public class JetScopeSelectorUtil {
                 @Override
                 public Collection<VariableDescriptor> get(@NotNull JetScope scope, @NotNull Name name) {
                     return scope.getProperties(name);
-                }
-            };
-
-    public static final ScopeDescriptorSelector<DeclarationDescriptor> ALL_DESCRIPTORS_SCOPE_SELECTOR =
-            new ScopeDescriptorSelector<DeclarationDescriptor>() {
-                @NotNull
-                @Override
-                public Collection<DeclarationDescriptor> get(@NotNull JetScope scope) {
-                    return scope.getAllDescriptors();
                 }
             };
 

@@ -19,36 +19,28 @@
         </and>
     </condition>
 
-    <property name="idea.build.number" value="135.SNAPSHOT"/>
-
-    <property name="idea.archive.name" value="ideaIC-${idea.build.number}.${os.tag}"/>
-
     <property name="idea.sdk.fetch.needed" value="true"/>
-
-    <property name="continuous.idea.version" value=".lastSuccessful"/>
 
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
         <execute_update
-            base.url="https://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
-            build.zip="${idea.archive.name}"/>
+            base.url="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/id:${public.buildserver.build.id}"
+            ic.marker.in.jps.files="-IC"
+        />
     </target>
 
     <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from internal server">
         <execute_update
-            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/${jb.buildserver.build.id}:id"
-            build.zip="${idea.archive.name}"/>
+            base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/id:${jb.buildserver.build.id}"
+            ic.marker.in.jps.files="-IC"
+        />
     </target>
 
-    <target name="jb_update_continuous_local" depends="fetch-third-party,fetch-annotations">
-        <execute_update
-            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/IDEA_Trunk_Installers/${continuous.idea.version}"
-            build.zip="ideaIC-{build.number}.win.zip"/>
+    <target name="jb_update_continuous_139" depends="fetch-third-party,fetch-annotations">
+        <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:ijplatform_IjPlatformMaster_IdeaTrunk_Installers,status:SUCCESS"/>
     </target>
 
-    <target name="jb_update_continuous" depends="fetch-third-party,fetch-annotations">
-        <execute_update
-            base.url="file:///${basedir}/idea_artifacts"
-            build.zip="${idea.archive.name}"/>
+    <target name="jb_update_continuous_140" depends="fetch-third-party,fetch-annotations">
+        <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:IDEA_Trunk_Installers,status:SUCCESS"/>
     </target>
 
     <macrodef name="get-maven-library">
@@ -241,12 +233,33 @@
     </macrodef>
 
     <macrodef name="execute_update">
-        <attribute name="base.url" default="http://teamcity.example.com/guestAuth/repository/download/btXXX/XXXX:id"/>
-        <attribute name="base.url.for.core" default="@{base.url}"/>
-        <attribute name="build.zip" default="ideaIC-XXX.SNAPSHOT.win.zip"/>
+        <attribute name="base.url"/>
+
+        <!-- JPS files are named with different convention when build by dist.gant script in IDEA CE repo, and release.gant in IDEA UE repo:
+             'standalone-jps-IC-139.SNAPSHOT.zip' and 'standalone-jps-140.508.zip', respectively. This may change, but it is so yet. -->
+        <attribute name="ic.marker.in.jps.files" default=""/>
 
         <sequential>
             <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+
+            <loadresource property="idea.build.number">
+                <url url="@{base.url}/artifacts/children"/>
+                <filterchain>
+                    <tokenfilter>
+                        <filetokenizer/>
+
+                        <replaceregex pattern="^(.*)ideaIC-([\w\.]+)\.win\.zip(.*)$" replace="\2" flags="s"/>
+                    </tokenfilter>
+                </filterchain>
+            </loadresource>
+
+            <property name="idea.archive.name" value="ideaIC-${idea.build.number}.${os.tag}"/>
+
+            <echo message="IDEA build number: ${idea.build.number}"/>
+            <echo message="IDEA archive file: ${idea.archive.name}"/>
+
+            <property name="content.base.url" value="@{base.url}/artifacts/content"/>
+
             <property name="core" value="ideaSDK/core"/>
             <property name="core-analysis" value="ideaSDK/core-analysis"/>
             <property name="jps" value="ideaSDK/jps"/>
@@ -264,45 +277,45 @@
                     <mkdir dir="${core}"/>
                     <mkdir dir="${jps}"/>
                     <mkdir dir="${jps-test}"/>
-                    <get src="@{base.url.for.core}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/core/guava-14.0.1.jar" dest="${core}/guava-14.0.1.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
-                    <!--<get src="@{base.url}/core/snappy-java-1.0.5.jar" dest="${core}/snappy-java-1.0.5.jar" usetimestamp="true"/>-->
+                    <get src="${content.base.url}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/core/guava-14.0.1.jar" dest="${core}/guava-14.0.1.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
+                    <!--<get src="${content.base.url}/core/snappy-java-1.0.5.jar" dest="${core}/snappy-java-1.0.5.jar" usetimestamp="true"/>-->
 
-                    <get src="@{base.url}/jps/groovy-jps-plugin.jar" dest="${jps}/groovy-jps-plugin.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/groovy_rt.jar" dest="${jps}/groovy_rt.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/jdom.jar" dest="${jps}/jdom.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/jgoodies-forms.jar" dest="${jps}/jgoodies-forms.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/jna.jar" dest="${jps}/jna.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/jps-builders.jar" dest="${jps}/jps-builders.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/jps-model.jar" dest="${jps}/jps-model.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/log4j.jar" dest="${jps}/log4j.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/nanoxml-2.2.3.jar" dest="${jps}/nanoxml-2.2.3.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/protobuf-2.5.0.jar" dest="${jps}/protobuf-2.5.0.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/trove4j.jar" dest="${jps}/trove4j.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/ui-designer-jps-plugin.jar" dest="${jps}/ui-designer-jps-plugin.jar" usetimestamp="true"/>
-                    <get src="@{base.url}/jps/util.jar" dest="${jps}/util.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/groovy-jps-plugin.jar" dest="${jps}/groovy-jps-plugin.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/groovy_rt.jar" dest="${jps}/groovy_rt.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/jdom.jar" dest="${jps}/jdom.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/jgoodies-forms.jar" dest="${jps}/jgoodies-forms.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/jna.jar" dest="${jps}/jna.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/jps-builders.jar" dest="${jps}/jps-builders.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/jps-model.jar" dest="${jps}/jps-model.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/log4j.jar" dest="${jps}/log4j.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/nanoxml-2.2.3.jar" dest="${jps}/nanoxml-2.2.3.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/protobuf-2.5.0.jar" dest="${jps}/protobuf-2.5.0.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/trove4j.jar" dest="${jps}/trove4j.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/ui-designer-jps-plugin.jar" dest="${jps}/ui-designer-jps-plugin.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/util.jar" dest="${jps}/util.jar" usetimestamp="true"/>
 
-                    <get src="@{base.url}/jps/test/jps-build-test.jar" dest="${jps-test}/jps-build-test.jar" usetimestamp="true"/>
+                    <get src="${content.base.url}/jps/test/jps-build-test.jar" dest="${jps-test}/jps-build-test.jar" usetimestamp="true"/>
 
-                    <get src="@{base.url}/@{build.zip}" dest="dependencies/download/@{build.zip}" usetimestamp="true"/>
-
+                    <get src="${content.base.url}/${idea.archive.name}" dest="dependencies/download/${idea.archive.name}" usetimestamp="true"/>
+                    
                     <delete file="dependencies/download/idea-sdk-sources.zip" failonerror="false"/>
-                    <get src="@{base.url}/sources.zip" dest="dependencies/download/idea-sdk-sources.zip" usetimestamp="true"/>
+                    <get src="${content.base.url}/sources.zip" dest="dependencies/download/idea-sdk-sources.zip" usetimestamp="true"/>
                 </then>
             </if>
 
             <if>
-                <matches pattern=".+\.win\.zip" string="@{build.zip}"/>
+                <matches pattern=".+\.win\.zip" string="${idea.archive.name}"/>
                 <then>
-                    <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK"/>
+                    <unzip src="dependencies/download/${idea.archive.name}" dest="ideaSDK"/>
                 </then>
                 <elseif>
-                    <matches pattern=".+\.mac\.zip" string="@{build.zip}"/>
+                    <matches pattern=".+\.mac\.zip" string="${idea.archive.name}"/>
                     <then>
-                        <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK">
+                        <unzip src="dependencies/download/${idea.archive.name}" dest="ideaSDK">
                             <cutdirsmapper dirs="2"/>
                         </unzip>
                         <!-- Java can't manipulate permissions -->
@@ -316,7 +329,7 @@
                     </then>
                 </elseif>
                 <else>
-                    <untar src="dependencies/download/@{build.zip}" dest="ideaSDK" compression="gzip">
+                    <untar src="dependencies/download/${idea.archive.name}" dest="ideaSDK" compression="gzip">
                         <cutdirsmapper dirs="1"/>
                     </untar>
                     <!-- Java can't manipulate permissions -->

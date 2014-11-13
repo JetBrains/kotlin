@@ -218,12 +218,18 @@
     </target>
 
     <target name="jslib">
+        <property name="compiled.builtins.js" value="builtins.js" />
         <property name="compiled.stdlib.js" value="stdlib.js" />
         <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData" />
 
-        <kotlin2js output="${output}/${compiled.stdlib.js}" noStdlib="true" main="noCall">
+        <kotlin2js output="${output}/${compiled.builtins.js}" noStdlib="true" main="noCall">
             <src>
                 <fileset refid="kotlin.builtin.files" />
+            </src>
+        </kotlin2js>
+
+        <kotlin2js output="${output}/${compiled.stdlib.js}" noStdlib="true" main="noCall">
+            <src>
                 <resources refid="js.lib.files" />
             </src>
         </kotlin2js>
@@ -262,6 +268,10 @@
                 <file name="kotlin_lib.js"/>
                 <file name="maps.js"/>
                 <file name="long.js"/>
+            </sources>
+
+            <sources dir="${output}">
+                <file name="${compiled.builtins.js}"/>
             </sources>
 
             <sources dir="${output}">
@@ -615,13 +625,14 @@
             </sequential>
         </macrodef>
 
-        <new_kotlinc src="${basedir}/core/builtins/src ${basedir}/core/runtime.jvm/src ${basedir}/core/reflection/src"
+        <new_kotlinc src="${basedir}/core/builtins/src ${basedir}/core/runtime.jvm/src ${basedir}/core/reflection/src ${basedir}/core/reflection.jvm/src"
                      output="${output}/classes/runtime"
-                     classpath="${basedir}/core/runtime.jvm/src"/>
+                     classpath="${basedir}/core/runtime.jvm/src${path.separator}${basedir}/core/reflection.jvm/src"/>
 
         <javac2 destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
             <src path="${basedir}/core/runtime.jvm/src"/>
+            <src path="${basedir}/core/reflection.jvm/src"/>
             <classpath location="${output}/classes/runtime"/>
         </javac2>
 
@@ -650,6 +661,7 @@
             <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
             <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
             <fileset dir="${basedir}/core/reflection/src" includes="**/*"/>
+            <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
             <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 

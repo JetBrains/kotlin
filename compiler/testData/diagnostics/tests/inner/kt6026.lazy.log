@@ -12,32 +12,32 @@ DescriptorResolver@4 {
 }
 
 LazyJavaPackageFragmentProvider@6 {
-    _packageFragments('<root>': FqName@7) = LazyJavaPackageFragment@8['<root>']
-    _packageFragments('java': FqName@9) = LazyJavaPackageFragment@10['java']
-    _packageFragments('java.lang': FqName@11) = LazyJavaPackageFragment@12['lang']
-    _packageFragments('kotlin': FqName@13) = null
-    _packageFragments('kotlin.io': FqName@14) = null
-    _packageFragments('kotlin.jvm': FqName@15) = null
-    _packageFragments('oo': FqName@16) = null
+    packageFragments('<root>': FqName@7) = LazyJavaPackageFragment@8['<root>']
+    packageFragments('java': FqName@9) = LazyJavaPackageFragment@10['java']
+    packageFragments('java.lang': FqName@11) = LazyJavaPackageFragment@12['lang']
+    packageFragments('kotlin': FqName@13) = null
+    packageFragments('kotlin.io': FqName@14) = null
+    packageFragments('kotlin.jvm': FqName@15) = null
+    packageFragments('oo': FqName@16) = null
 }
 
 LazyJavaPackageFragment@8['<root>'] {
-    _functions('Nested': Name@17) = EmptyList@18[empty] // through LazyPackageFragmentScopeForJavaPackage@19
-    classes('Nested': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@19
-    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@19
-    memberIndex = computeMemberIndex$1@21 // through LazyPackageFragmentScopeForJavaPackage@19
+    classes('Nested': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    deserializedPackageScope = Empty@19 // through LazyPackageFragmentScopeForJavaPackage@18
+    functions('Nested': Name@17) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    memberIndex = computeMemberIndex$1@21 // through LazyPackageFragmentScopeForJavaPackage@18
 }
 
 LazyJavaPackageFragment@10['java'] {
-    _functions('lang': Name@22) = EmptyList@18[empty] // through LazyPackageFragmentScopeForJavaPackage@23
-    classes('lang': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@23
-    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('lang': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    deserializedPackageScope = Empty@19 // through LazyPackageFragmentScopeForJavaPackage@23
+    functions('lang': Name@24) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@23
     memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@23
 }
 
 LazyJavaPackageFragment@12['lang'] {
-    _functions('Nested': Name@17) = EmptyList@18[empty] // through LazyPackageFragmentScopeForJavaPackage@26
     classes('Nested': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@26
-    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@26
+    deserializedPackageScope = Empty@19 // through LazyPackageFragmentScopeForJavaPackage@26
+    functions('Nested': Name@17) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@26
     memberIndex = computeMemberIndex$1@27 // through LazyPackageFragmentScopeForJavaPackage@26
 }

@@ -598,6 +598,24 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("NoEnumEntryType.kt")
+        public void testNoEnumEntryType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoEnumEntryType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoExtensionsAfterQualifier.kt")
+        public void testNoExtensionsAfterQualifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoExtensionsAfterQualifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoNestedClassAfterReceiver.kt")
+        public void testNoNestedClassAfterReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoNestedClassAfterReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoObjectInTypePosition.kt")
         public void testNoObjectInTypePosition() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoObjectInTypePosition.kt");
@@ -934,6 +952,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("NoDuplicationForRuntimeClass.kt")
         public void testNoDuplicationForRuntimeClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/java/NoDuplicationForRuntimeClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("PackageDirective.kt")
+        public void testPackageDirective() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/java/PackageDirective.kt");
             doTest(fileName);
         }
 

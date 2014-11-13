@@ -8,6 +8,8 @@ public class RawSuperType {
 
     public interface Super<T> {
         void foo(T t);
+
+        void dummy(); // To make it not SAM
     }
 
     public class Derived implements Super {
@@ -15,6 +17,9 @@ public class RawSuperType {
         public void foo(Object o) {
             throw new UnsupportedOperationException();
         }
+
+        @Override
+        public void dummy() {}
     }
 
 }

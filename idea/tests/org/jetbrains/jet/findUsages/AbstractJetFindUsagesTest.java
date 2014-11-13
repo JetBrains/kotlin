@@ -48,6 +48,7 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
@@ -359,8 +360,7 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
         };
 
         Collection<String> finalUsages = Ordering.natural().sortedCopy(Collections2.transform(filteredUsages, convertToString));
-        String expectedText = FileUtil.loadFile(new File(rootPath, prefix + "results.txt"), true);
-        assertOrderedEquals(finalUsages, Ordering.natural().sortedCopy(StringUtil.split(expectedText, "\n")));
+        JetTestUtils.assertEqualsToFile(new File(rootPath, prefix + "results.txt"), StringUtil.join(finalUsages, "\n"));
     }
 
     private Collection<UsageInfo> findUsages(@NotNull PsiElement targetElement, @Nullable FindUsagesOptions options) {

@@ -145,6 +145,18 @@ public class JetParameter extends JetNamedDeclarationStub<KotlinParameterStub> i
         return null;
     }
 
+    @Nullable
+    @Override
+    public JetTypeParameterList getTypeParameterList() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public JetTypeConstraintList getTypeConstraintList() {
+        return null;
+    }
+
     @NotNull
     @Override
     public List<JetTypeConstraint> getTypeConstraints() {

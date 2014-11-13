@@ -28,7 +28,7 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
 
     private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor?>? = null
 
-    private val _allDescriptors by Delegates.lazy { substitute(workerScope.getAllDescriptors()) }
+    private val _allDescriptors by Delegates.lazy { substitute(workerScope.getDescriptors()) }
 
     private fun <D : DeclarationDescriptor> substitute(descriptor: D?): D? {
         if (descriptor == null) return null
@@ -84,7 +84,8 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
         throw UnsupportedOperationException() // TODO
     }
 
-    override fun getAllDescriptors() = _allDescriptors
+    override fun getDescriptors(kindFilter: DescriptorKindFilter,
+                                nameFilter: (Name) -> Boolean) = _allDescriptors
 
     override fun getOwnDeclaredDescriptors() = substitute(workerScope.getOwnDeclaredDescriptors())
 

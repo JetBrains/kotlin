@@ -80,6 +80,9 @@ fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     return data
 }
 
+fun getOrCreateKotlinFile(fileName: String, targetDir: PsiDirectory): JetFile? =
+        (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir)) as? JetFile
+
 fun createKotlinFile(fileName: String, targetDir: PsiDirectory): JetFile {
     val packageName = targetDir.getPackage()?.getQualifiedName()
 
@@ -95,6 +98,10 @@ public fun File.toVirtualFile(): VirtualFile? = LocalFileSystem.getInstance().fi
 
 public fun File.toPsiFile(project: Project): PsiFile? {
     return toVirtualFile()?.let { vfile -> PsiManager.getInstance(project).findFile(vfile) }
+}
+
+public fun File.toPsiDirectory(project: Project): PsiDirectory? {
+    return toVirtualFile()?.let { vfile -> PsiManager.getInstance(project).findDirectory(vfile) }
 }
 
 public fun PsiElement.getUsageContext(): PsiElement {

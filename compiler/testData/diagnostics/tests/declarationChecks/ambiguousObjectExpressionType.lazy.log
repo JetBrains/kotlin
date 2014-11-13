@@ -180,67 +180,67 @@ DescriptorResolver@66 {
 }
 
 LazyJavaPackageFragmentProvider@98 {
-    _packageFragments('<root>': FqName@99) = LazyJavaPackageFragment@100['<root>']
-    _packageFragments('Foo': FqName@101) = null
-    _packageFragments('MyClass': FqName@102) = null
-    _packageFragments('MyTrait': FqName@103) = null
-    _packageFragments('java': FqName@104) = LazyJavaPackageFragment@105['java']
-    _packageFragments('java.lang': FqName@106) = LazyJavaPackageFragment@107['lang']
-    _packageFragments('java.lang.MyClass': FqName@108) = null
-    _packageFragments('java.lang.MyTrait': FqName@109) = null
-    _packageFragments('kotlin': FqName@110) = null
-    _packageFragments('kotlin.MyClass': FqName@111) = null
-    _packageFragments('kotlin.MyTrait': FqName@112) = null
-    _packageFragments('kotlin.io': FqName@113) = null
-    _packageFragments('kotlin.jvm': FqName@114) = null
-    _packageFragments('packageInternal2Property': FqName@115) = null
-    _packageFragments('packageInternalProperty': FqName@116) = null
-    _packageFragments('packagePrivateProperty': FqName@117) = null
-    _packageFragments('packageProtectedProperty': FqName@118) = null
-    _packageFragments('packagePublicProperty': FqName@119) = null
+    packageFragments('<root>': FqName@99) = LazyJavaPackageFragment@100['<root>']
+    packageFragments('Foo': FqName@101) = null
+    packageFragments('MyClass': FqName@102) = null
+    packageFragments('MyTrait': FqName@103) = null
+    packageFragments('java': FqName@104) = LazyJavaPackageFragment@105['java']
+    packageFragments('java.lang': FqName@106) = LazyJavaPackageFragment@107['lang']
+    packageFragments('java.lang.MyClass': FqName@108) = null
+    packageFragments('java.lang.MyTrait': FqName@109) = null
+    packageFragments('kotlin': FqName@110) = null
+    packageFragments('kotlin.MyClass': FqName@111) = null
+    packageFragments('kotlin.MyTrait': FqName@112) = null
+    packageFragments('kotlin.io': FqName@113) = null
+    packageFragments('kotlin.jvm': FqName@114) = null
+    packageFragments('packageInternal2Property': FqName@115) = null
+    packageFragments('packageInternalProperty': FqName@116) = null
+    packageFragments('packagePrivateProperty': FqName@117) = null
+    packageFragments('packageProtectedProperty': FqName@118) = null
+    packageFragments('packagePublicProperty': FqName@119) = null
 }
 
 LazyJavaPackageFragment@100['<root>'] {
-    _functions('f1': Name@120) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@122
-    _functions('f2': Name@123) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@122
-    _functions('foo2': Name@124) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@122
-    _functions('fooPackageLocal': Name@125) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@122
-    _functions('privateFunction': Name@126) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@122
-    _functions('privateFunctionInner': Name@127) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('f1': Name@120) = null // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('f2': Name@123) = null // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('foo2': Name@124) = null // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('fooPackageLocal': Name@125) = null // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('privateFunction': Name@126) = null // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('privateFunctionInner': Name@127) = null // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('privateProperty': Name@128) = null // through LazyPackageFragmentScopeForJavaPackage@122
-    classes('privatePropertyInner': Name@129) = null // through LazyPackageFragmentScopeForJavaPackage@122
-    deserializedPackageScope = Empty@130 // through LazyPackageFragmentScopeForJavaPackage@122
-    memberIndex = computeMemberIndex$1@131 // through LazyPackageFragmentScopeForJavaPackage@122
+    classes('f1': Name@120) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('f2': Name@122) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('foo2': Name@123) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('fooPackageLocal': Name@124) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('privateFunction': Name@125) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('privateFunctionInner': Name@126) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('privateProperty': Name@127) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('privatePropertyInner': Name@128) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    deserializedPackageScope = Empty@129 // through LazyPackageFragmentScopeForJavaPackage@121
+    functions('f1': Name@120) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@121
+    functions('f2': Name@122) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@121
+    functions('foo2': Name@123) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@121
+    functions('fooPackageLocal': Name@124) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@121
+    functions('privateFunction': Name@125) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@121
+    functions('privateFunctionInner': Name@126) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@121
+    memberIndex = computeMemberIndex$1@131 // through LazyPackageFragmentScopeForJavaPackage@121
 }
 
 LazyJavaPackageFragment@105['java'] {
-    _functions('lang': Name@132) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@133
-    classes('lang': Name@134) = null // through LazyPackageFragmentScopeForJavaPackage@133
-    deserializedPackageScope = Empty@130 // through LazyPackageFragmentScopeForJavaPackage@133
+    classes('lang': Name@132) = null // through LazyPackageFragmentScopeForJavaPackage@133
+    deserializedPackageScope = Empty@129 // through LazyPackageFragmentScopeForJavaPackage@133
+    functions('lang': Name@134) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@133
     memberIndex = computeMemberIndex$1@135 // through LazyPackageFragmentScopeForJavaPackage@133
 }
 
 LazyJavaPackageFragment@107['lang'] {
-    _functions('f1': Name@120) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@136
-    _functions('f2': Name@123) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@136
-    _functions('foo2': Name@124) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@136
-    _functions('fooPackageLocal': Name@125) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@136
-    _functions('privateFunction': Name@126) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@136
-    _functions('privateFunctionInner': Name@127) = EmptyList@121[empty] // through LazyPackageFragmentScopeForJavaPackage@136
     classes('f1': Name@120) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('f2': Name@123) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('foo2': Name@124) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('fooPackageLocal': Name@125) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('privateFunction': Name@126) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('privateFunctionInner': Name@127) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('privateProperty': Name@128) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('privatePropertyInner': Name@129) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    deserializedPackageScope = Empty@130 // through LazyPackageFragmentScopeForJavaPackage@136
+    classes('f2': Name@122) = null // through LazyPackageFragmentScopeForJavaPackage@136
+    classes('foo2': Name@123) = null // through LazyPackageFragmentScopeForJavaPackage@136
+    classes('fooPackageLocal': Name@124) = null // through LazyPackageFragmentScopeForJavaPackage@136
+    classes('privateFunction': Name@125) = null // through LazyPackageFragmentScopeForJavaPackage@136
+    classes('privateFunctionInner': Name@126) = null // through LazyPackageFragmentScopeForJavaPackage@136
+    classes('privateProperty': Name@127) = null // through LazyPackageFragmentScopeForJavaPackage@136
+    classes('privatePropertyInner': Name@128) = null // through LazyPackageFragmentScopeForJavaPackage@136
+    deserializedPackageScope = Empty@129 // through LazyPackageFragmentScopeForJavaPackage@136
+    functions('f1': Name@120) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@136
+    functions('f2': Name@122) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@136
+    functions('foo2': Name@123) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@136
+    functions('fooPackageLocal': Name@124) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@136
+    functions('privateFunction': Name@125) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@136
+    functions('privateFunctionInner': Name@126) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@136
     memberIndex = computeMemberIndex$1@137 // through LazyPackageFragmentScopeForJavaPackage@136
 }

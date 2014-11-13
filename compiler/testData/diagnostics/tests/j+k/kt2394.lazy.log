@@ -1,51 +1,51 @@
 LazyJavaPackageFragmentProvider@0 {
-    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
-    _packageFragments('Any': FqName@3) = null
-    _packageFragments('Collection': FqName@4) = null
-    _packageFragments('Comparable': FqName@5) = null
-    _packageFragments('Int': FqName@6) = null
-    _packageFragments('Iterable': FqName@7) = null
-    _packageFragments('Iterator': FqName@8) = null
-    _packageFragments('String': FqName@9) = null
-    _packageFragments('d': FqName@10) = null
-    _packageFragments('d.Any': FqName@11) = null
-    _packageFragments('d.Collection': FqName@12) = null
-    _packageFragments('d.Comparable': FqName@13) = null
-    _packageFragments('d.Int': FqName@14) = null
-    _packageFragments('d.Iterable': FqName@15) = null
-    _packageFragments('d.Iterator': FqName@16) = null
-    _packageFragments('d.String': FqName@17) = null
-    _packageFragments('java': FqName@18) = LazyJavaPackageFragment@19['java']
-    _packageFragments('java.lang': FqName@20) = LazyJavaPackageFragment@21['lang']
-    _packageFragments('java.lang.Any': FqName@22) = null
-    _packageFragments('java.lang.Collection': FqName@23) = null
-    _packageFragments('java.lang.Comparable': FqName@24) = null
-    _packageFragments('java.lang.Int': FqName@25) = null
-    _packageFragments('java.lang.Iterable': FqName@26) = null
-    _packageFragments('java.lang.Iterator': FqName@27) = null
-    _packageFragments('java.lang.String': FqName@28) = null
-    _packageFragments('kotlin': FqName@29) = null
-    _packageFragments('kotlin.Any': FqName@30) = null
-    _packageFragments('kotlin.Collection': FqName@31) = null
-    _packageFragments('kotlin.Comparable': FqName@32) = null
-    _packageFragments('kotlin.Int': FqName@33) = null
-    _packageFragments('kotlin.Iterable': FqName@34) = null
-    _packageFragments('kotlin.Iterator': FqName@35) = null
-    _packageFragments('kotlin.String': FqName@36) = null
-    _packageFragments('kotlin.io': FqName@37) = null
-    _packageFragments('kotlin.jvm': FqName@38) = null
+    packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    packageFragments('Any': FqName@3) = null
+    packageFragments('Collection': FqName@4) = null
+    packageFragments('Comparable': FqName@5) = null
+    packageFragments('Int': FqName@6) = null
+    packageFragments('Iterable': FqName@7) = null
+    packageFragments('Iterator': FqName@8) = null
+    packageFragments('String': FqName@9) = null
+    packageFragments('d': FqName@10) = null
+    packageFragments('d.Any': FqName@11) = null
+    packageFragments('d.Collection': FqName@12) = null
+    packageFragments('d.Comparable': FqName@13) = null
+    packageFragments('d.Int': FqName@14) = null
+    packageFragments('d.Iterable': FqName@15) = null
+    packageFragments('d.Iterator': FqName@16) = null
+    packageFragments('d.String': FqName@17) = null
+    packageFragments('java': FqName@18) = LazyJavaPackageFragment@19['java']
+    packageFragments('java.lang': FqName@20) = LazyJavaPackageFragment@21['lang']
+    packageFragments('java.lang.Any': FqName@22) = null
+    packageFragments('java.lang.Collection': FqName@23) = null
+    packageFragments('java.lang.Comparable': FqName@24) = null
+    packageFragments('java.lang.Int': FqName@25) = null
+    packageFragments('java.lang.Iterable': FqName@26) = null
+    packageFragments('java.lang.Iterator': FqName@27) = null
+    packageFragments('java.lang.String': FqName@28) = null
+    packageFragments('kotlin': FqName@29) = null
+    packageFragments('kotlin.Any': FqName@30) = null
+    packageFragments('kotlin.Collection': FqName@31) = null
+    packageFragments('kotlin.Comparable': FqName@32) = null
+    packageFragments('kotlin.Int': FqName@33) = null
+    packageFragments('kotlin.Iterable': FqName@34) = null
+    packageFragments('kotlin.Iterator': FqName@35) = null
+    packageFragments('kotlin.String': FqName@36) = null
+    packageFragments('kotlin.io': FqName@37) = null
+    packageFragments('kotlin.jvm': FqName@38) = null
 }
 
 LazyJavaPackageFragment@19['java'] {
-    _functions('lang': Name@39) = EmptyList@40[empty] // through LazyPackageFragmentScopeForJavaPackage@41
-    classes('lang': Name@42) = null // through LazyPackageFragmentScopeForJavaPackage@41
-    deserializedPackageScope = Empty@43 // through LazyPackageFragmentScopeForJavaPackage@41
-    memberIndex = computeMemberIndex$1@44 // through LazyPackageFragmentScopeForJavaPackage@41
+    classes('lang': Name@39) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    deserializedPackageScope = Empty@41 // through LazyPackageFragmentScopeForJavaPackage@40
+    functions('lang': Name@42) = EmptyList@43[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    memberIndex = computeMemberIndex$1@44 // through LazyPackageFragmentScopeForJavaPackage@40
 }
 
 LazyJavaPackageFragment@21['lang'] {
-    _functions('iterator': Name@45) = EmptyList@40[empty] // through LazyPackageFragmentScopeForJavaPackage@46
     classes('iterator': Name@45) = null // through LazyPackageFragmentScopeForJavaPackage@46
-    deserializedPackageScope = Empty@43 // through LazyPackageFragmentScopeForJavaPackage@46
+    deserializedPackageScope = Empty@41 // through LazyPackageFragmentScopeForJavaPackage@46
+    functions('iterator': Name@45) = EmptyList@43[empty] // through LazyPackageFragmentScopeForJavaPackage@46
     memberIndex = computeMemberIndex$1@47 // through LazyPackageFragmentScopeForJavaPackage@46
 }

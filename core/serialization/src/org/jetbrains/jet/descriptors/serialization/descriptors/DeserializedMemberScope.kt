@@ -26,6 +26,7 @@ import org.jetbrains.jet.utils.Printer
 
 import java.util.*
 import org.jetbrains.jet.utils.toReadOnlyList
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public abstract class DeserializedMemberScope protected(
         private val context: DeserializationContextWithTypes,
@@ -35,7 +36,6 @@ public abstract class DeserializedMemberScope protected(
     private val membersProtos = context.storageManager.createLazyValue { groupByName(filteredMemberProtos(membersList)) }
     private val functions = context.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
     private val properties = context.storageManager.createMemoizedFunction<Name, Collection<VariableDescriptor>> { computeProperties(it) }
-    private val allDescriptors = context.storageManager.createLazyValue { computeAllDescriptors() }
 
     protected open fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> = allMemberProtos
 
@@ -92,7 +92,7 @@ public abstract class DeserializedMemberScope protected(
 
     protected abstract fun getClassDescriptor(name: Name): ClassifierDescriptor?
 
-    protected abstract fun addAllClassDescriptors(result: MutableCollection<DeclarationDescriptor>)
+    protected abstract fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
@@ -102,24 +102,31 @@ public abstract class DeserializedMemberScope protected(
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
-    private fun computeAllDescriptors(): Collection<DeclarationDescriptor> {
+    protected fun computeDescriptors(kindFilter: DescriptorKindFilter,
+                                     nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>(0)
 
         for (name in membersProtos().keySet()) {
-            result.addAll(getFunctions(name))
-            result.addAll(getProperties(name))
+            if (nameFilter(name)) {
+                if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
+                    result.addAll(getFunctions(name))
+                }
+                if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
+                    result.addAll(getProperties(name))
+                }
+            }
         }
 
         addNonDeclaredDescriptors(result)
 
-        addAllClassDescriptors(result)
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
+            addClassDescriptors(result, nameFilter)
+        }
 
         return result.toReadOnlyList()
     }
 
     protected abstract fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>)
-
-    override fun getAllDescriptors(): Collection<DeclarationDescriptor> = allDescriptors.invoke()
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         val receiver = getImplicitReceiver()

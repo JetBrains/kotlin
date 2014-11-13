@@ -37,6 +37,8 @@ import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 
 class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bindingContext: BindingContext, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
@@ -52,6 +54,8 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
 
         val classifier = jetType.getConstructor().getDeclarationDescriptor()
         if (classifier !is ClassDescriptor) return
+
+        addSamConstructorItem(collection, classifier, tail)
 
         val isAbstract = classifier.getModality() == Modality.ABSTRACT
         val allConstructors = classifier.getConstructors()
@@ -134,5 +138,23 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
         }
 
         collection.add(lookupElement.addTail(tail))
+    }
+
+    private fun addSamConstructorItem(collection: MutableCollection<LookupElement>, `class`: ClassDescriptor, tail: Tail?) {
+        if (`class`.getKind() == ClassKind.TRAIT) {
+            val container = `class`.getContainingDeclaration()
+            val scope = when (container) {
+                is PackageFragmentDescriptor -> container.getMemberScope()
+                is ClassDescriptor -> container.getStaticScope()
+                else -> return
+            }
+            val samConstructor = scope.getFunctions(`class`.getName())
+                                         .filterIsInstance(javaClass<SamConstructorDescriptor>())
+                                         .singleOrNull() ?: return
+            val lookupElement = createLookupElement(samConstructor, resolveSession, bindingContext)
+                    .assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
+                    .addTail(tail)
+            collection.add(lookupElement)
+        }
     }
 }

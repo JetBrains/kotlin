@@ -30,6 +30,8 @@ import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
+import java.util.ArrayList
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -37,12 +39,32 @@ public class StubBasedPackageMemberDeclarationProvider(
         private val searchScope: GlobalSearchScope
 ) : PackageMemberDeclarationProvider {
 
-    override fun getAllDeclarations(): List<JetDeclaration> {
-        return TOP_LEVEL_DECLARATION_INDICES.flatMap {
-            index ->
-            val fqNames = index.getAllKeys(project).toSet().map { FqName(it) }.filter { !it.isRoot() && it.parent() == fqName }
-            fqNames.flatMap { index.get(it.asString(), project, searchScope) }
+    override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration> {
+        val result = ArrayList<JetDeclaration>()
+
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
+            result.addDeclarations(JetFullClassNameIndex.getInstance(), nameFilter)
         }
+
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
+            result.addDeclarations(JetTopLevelFunctionsFqnNameIndex.getInstance(), nameFilter)
+        }
+
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
+            result.addDeclarations(JetTopLevelPropertiesFqnNameIndex.getInstance(), nameFilter)
+        }
+
+        return result
+    }
+
+    private fun MutableCollection<JetDeclaration>.addDeclarations(index: StringStubIndexExtension<out JetNamedDeclaration>,
+                                                                  nameFilter: (Name) -> Boolean) {
+        index.getAllKeys(project)
+                .stream()
+                .map { FqName(it) }
+                .filter { !it.isRoot() && it.parent() == fqName && nameFilter(it.shortName()) }
+                .toSet()
+                .flatMapTo(this) { index[it.asString(), project, searchScope] }
     }
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<JetClassLikeInfo> {
@@ -70,9 +92,3 @@ public class StubBasedPackageMemberDeclarationProvider(
         return fqName.child(ResolveSessionUtils.safeNameForLazyResolve(name)).asString()
     }
 }
-
-private val TOP_LEVEL_DECLARATION_INDICES: List<StringStubIndexExtension<out JetNamedDeclaration>> = listOf(
-        JetFullClassNameIndex.getInstance(),
-        JetTopLevelFunctionsFqnNameIndex.getInstance(),
-        JetTopLevelPropertiesFqnNameIndex.getInstance()
-)

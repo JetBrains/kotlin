@@ -23,10 +23,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.utils.Printer
 
 import java.util.*
-import kotlin.Collection
-import kotlin.Map
-import kotlin.List
-import kotlin.Set
+import com.intellij.util.SmartList
 
 // Reads from:
 // 1. Maps
@@ -41,9 +38,8 @@ public class WritableScopeImpl(scope: JetScope,
                                debugName: String)
 : WritableScopeWithImports(scope, redeclarationHandler, debugName) {
 
-    private val allDescriptors = ArrayList<DeclarationDescriptor>()
+    private val explicitlyAddedDescriptors = SmartList<DeclarationDescriptor>()
     private val declaredDescriptorsAccessibleBySimpleName = HashMultimap.create<Name, DeclarationDescriptor>()
-    private var allDescriptorsDone = false
 
     private var functionGroups: SetMultimap<Name, FunctionDescriptor>? = null
 
@@ -67,14 +63,14 @@ public class WritableScopeImpl(scope: JetScope,
     override fun importClassifierAlias(importedClassifierName: Name, classifierDescriptor: ClassifierDescriptor) {
         checkMayWrite()
 
-        allDescriptors.add(classifierDescriptor)
+        explicitlyAddedDescriptors.add(classifierDescriptor)
         super.importClassifierAlias(importedClassifierName, classifierDescriptor)
     }
 
     override fun importPackageAlias(aliasName: Name, packageView: PackageViewDescriptor) {
         checkMayWrite()
 
-        allDescriptors.add(packageView)
+        explicitlyAddedDescriptors.add(packageView)
         super.importPackageAlias(aliasName, packageView)
     }
 
@@ -99,21 +95,16 @@ public class WritableScopeImpl(scope: JetScope,
         super.clearImports()
     }
 
-    override fun getAllDescriptors(): Collection<DeclarationDescriptor> {
+    override fun getDescriptors(kindFilter: DescriptorKindFilter,
+                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         checkMayRead()
+        changeLockLevel(WritableScope.LockLevel.READING)
 
-        if (!allDescriptorsDone) {
-            allDescriptorsDone = true
-
-            // make sure no descriptors added to allDescriptors collection
-            changeLockLevel(WritableScope.LockLevel.READING)
-
-            allDescriptors.addAll(workerScope.getAllDescriptors())
-            for (imported in getImports()) {
-                allDescriptors.addAll(imported.getAllDescriptors())
-            }
-        }
-        return allDescriptors
+        val result = ArrayList<DeclarationDescriptor>()
+        result.addAll(explicitlyAddedDescriptors)
+        result.addAll(workerScope.getDescriptors(kindFilter, nameFilter))
+        getImports().flatMapTo(result) { it.getDescriptors(kindFilter, nameFilter) }
+        return result
     }
 
     private fun getLabelsToDescriptors(): MutableMap<Name, MutableList<DeclarationDescriptor>> {
@@ -181,7 +172,7 @@ public class WritableScopeImpl(scope: JetScope,
             // TODO : Should this always happen?
             getVariableOrClassDescriptors().put(name, variableDescriptor)
         }
-        allDescriptors.add(variableDescriptor)
+        explicitlyAddedDescriptors.add(variableDescriptor)
         addToDeclared(variableDescriptor)
     }
 
@@ -226,7 +217,7 @@ public class WritableScopeImpl(scope: JetScope,
         checkMayWrite()
 
         getFunctionGroups().put(functionDescriptor.getName(), functionDescriptor)
-        allDescriptors.add(functionDescriptor)
+        explicitlyAddedDescriptors.add(functionDescriptor)
     }
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
@@ -258,7 +249,7 @@ public class WritableScopeImpl(scope: JetScope,
 
         checkForRedeclaration(name, classifierDescriptor)
         getVariableOrClassDescriptors().put(name, classifierDescriptor)
-        allDescriptors.add(classifierDescriptor)
+        explicitlyAddedDescriptors.add(classifierDescriptor)
         addToDeclared(classifierDescriptor)
     }
 
@@ -267,7 +258,7 @@ public class WritableScopeImpl(scope: JetScope,
 
         checkForRedeclaration(name, packageView)
         getPackageAliases().put(name, packageView)
-        allDescriptors.add(packageView)
+        explicitlyAddedDescriptors.add(packageView)
         addToDeclared(packageView)
     }
 
@@ -276,7 +267,7 @@ public class WritableScopeImpl(scope: JetScope,
 
         checkForRedeclaration(name, functionDescriptor)
         getFunctionGroups().put(name, functionDescriptor)
-        allDescriptors.add(functionDescriptor)
+        explicitlyAddedDescriptors.add(functionDescriptor)
     }
 
     override fun addVariableAlias(name: Name, variableDescriptor: VariableDescriptor) {
@@ -287,7 +278,7 @@ public class WritableScopeImpl(scope: JetScope,
         getVariableOrClassDescriptors().put(name, variableDescriptor)
         getPropertyGroups().put(name, variableDescriptor)
 
-        allDescriptors.add(variableDescriptor)
+        explicitlyAddedDescriptors.add(variableDescriptor)
         addToDeclared(variableDescriptor)
     }
 
@@ -354,6 +345,5 @@ public class WritableScopeImpl(scope: JetScope,
             = declaredDescriptorsAccessibleBySimpleName.values()
 
     override fun printAdditionalScopeStructure(p: Printer) {
-        p.println("allDescriptorsDone = ", allDescriptorsDone)
     }
 }

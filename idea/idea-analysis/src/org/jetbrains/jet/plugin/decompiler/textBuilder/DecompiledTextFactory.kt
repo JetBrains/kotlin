@@ -32,6 +32,19 @@ import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass
 import org.jetbrains.jet.lang.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.lang.types.isFlexible
+import org.jetbrains.jet.lang.resolve.java.JvmAbi
+import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
+
+private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
+private val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"
+
+public val INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT: String = "// This class file was compiled with different version of Kotlin compiler and can't be decompiled."
+public val INCOMPATIBLE_ABI_VERSION_COMMENT: String =
+        "$INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT\n" +
+        "//\n" +
+        "// Current compiler ABI version is $CURRENT_ABI_VERSION_MARKER\n" +
+        "// File ABI version is $FILE_ABI_VERSION_MARKER"
 
 public fun buildDecompiledText(
         classFile: VirtualFile,
@@ -40,17 +53,23 @@ public fun buildDecompiledText(
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
     assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
     val classId = kotlinClass!!.getClassId()
-    val kind = kotlinClass.getClassHeader().kind
+    val classHeader = kotlinClass.getClassHeader()
     val packageFqName = classId.getPackageFqName()
 
-    return if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
-        buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInPackage(packageFqName)))
-    }
-    else if (kind == KotlinClassHeader.Kind.CLASS) {
-        buildDecompiledText(packageFqName, listOf(resolver.resolveTopLevelClass(classId)).filterNotNull())
-    }
-    else {
-        throw UnsupportedOperationException("Unknown header kind: " + kind)
+    return when {
+        !classHeader.isCompatibleAbiVersion -> {
+            DecompiledText(
+                    INCOMPATIBLE_ABI_VERSION_COMMENT
+                            .replaceAll(CURRENT_ABI_VERSION_MARKER, JvmAbi.VERSION.toString())
+                            .replaceAll(FILE_ABI_VERSION_MARKER, classHeader.version.toString()),
+                    mapOf())
+        }
+        classHeader.isCompatiblePackageFacadeKind() ->
+            buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInPackage(packageFqName)))
+        classHeader.isCompatibleClassKind() ->
+            buildDecompiledText(packageFqName, listOf(resolver.resolveTopLevelClass(classId)).filterNotNull())
+        else ->
+            throw UnsupportedOperationException("Unknown header kind: ${classHeader.kind} ${classHeader.isCompatibleAbiVersion}")
     }
 }
 
@@ -83,7 +102,7 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
     }
 
     fun sortDeclarations(input: Collection<DeclarationDescriptor>): List<DeclarationDescriptor> {
-        val r = ArrayList<DeclarationDescriptor>(input)
+        val r = ArrayList(input)
         Collections.sort(r, MemberComparator.INSTANCE)
         return r
     }
@@ -134,7 +153,7 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                     builder.append(subindent)
                     appendDescriptor(classObject, subindent)
                 }
-                for (member in sortDeclarations(descriptor.getDefaultType().getMemberScope().getAllDescriptors())) {
+                for (member in sortDeclarations(descriptor.getDefaultType().getMemberScope().getDescriptors())) {
                     if (member.getContainingDeclaration() != descriptor) {
                         continue
                     }

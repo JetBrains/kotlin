@@ -1,32 +1,32 @@
 LazyJavaPackageFragmentProvider@0 {
-    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
-    _packageFragments('Bar': FqName@3) = null
-    _packageFragments('Baz': FqName@4) = null
-    _packageFragments('Foo': FqName@5) = null
-    _packageFragments('Int': FqName@6) = null
-    _packageFragments('List': FqName@7) = null
-    _packageFragments('Long': FqName@8) = null
-    _packageFragments('String': FqName@9) = null
-    _packageFragments('T': FqName@10) = null
-    _packageFragments('java': FqName@11) = LazyJavaPackageFragment@12['java']
-    _packageFragments('java.lang': FqName@13) = LazyJavaPackageFragment@14['lang']
-    _packageFragments('java.lang.Bar': FqName@15) = null
-    _packageFragments('java.lang.Foo': FqName@16) = null
-    _packageFragments('java.lang.Int': FqName@17) = null
-    _packageFragments('java.lang.List': FqName@18) = null
-    _packageFragments('java.lang.Long': FqName@19) = null
-    _packageFragments('java.lang.String': FqName@20) = null
-    _packageFragments('java.lang.T': FqName@21) = null
-    _packageFragments('kotlin': FqName@22) = null
-    _packageFragments('kotlin.Bar': FqName@23) = null
-    _packageFragments('kotlin.Foo': FqName@24) = null
-    _packageFragments('kotlin.Int': FqName@25) = null
-    _packageFragments('kotlin.List': FqName@26) = null
-    _packageFragments('kotlin.Long': FqName@27) = null
-    _packageFragments('kotlin.String': FqName@28) = null
-    _packageFragments('kotlin.T': FqName@29) = null
-    _packageFragments('kotlin.io': FqName@30) = null
-    _packageFragments('kotlin.jvm': FqName@31) = null
+    packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    packageFragments('Bar': FqName@3) = null
+    packageFragments('Baz': FqName@4) = null
+    packageFragments('Foo': FqName@5) = null
+    packageFragments('Int': FqName@6) = null
+    packageFragments('List': FqName@7) = null
+    packageFragments('Long': FqName@8) = null
+    packageFragments('String': FqName@9) = null
+    packageFragments('T': FqName@10) = null
+    packageFragments('java': FqName@11) = LazyJavaPackageFragment@12['java']
+    packageFragments('java.lang': FqName@13) = LazyJavaPackageFragment@14['lang']
+    packageFragments('java.lang.Bar': FqName@15) = null
+    packageFragments('java.lang.Foo': FqName@16) = null
+    packageFragments('java.lang.Int': FqName@17) = null
+    packageFragments('java.lang.List': FqName@18) = null
+    packageFragments('java.lang.Long': FqName@19) = null
+    packageFragments('java.lang.String': FqName@20) = null
+    packageFragments('java.lang.T': FqName@21) = null
+    packageFragments('kotlin': FqName@22) = null
+    packageFragments('kotlin.Bar': FqName@23) = null
+    packageFragments('kotlin.Foo': FqName@24) = null
+    packageFragments('kotlin.Int': FqName@25) = null
+    packageFragments('kotlin.List': FqName@26) = null
+    packageFragments('kotlin.Long': FqName@27) = null
+    packageFragments('kotlin.String': FqName@28) = null
+    packageFragments('kotlin.T': FqName@29) = null
+    packageFragments('kotlin.io': FqName@30) = null
+    packageFragments('kotlin.jvm': FqName@31) = null
 }
 
 LazyJavaPackageFragment@2['<root>'] {
@@ -37,8 +37,8 @@ LazyJavaPackageFragment@2['<root>'] {
 }
 
 LazyJavaPackageFragment@12['java'] {
-    _functions('lang': Name@37) = EmptyList@38[empty] // through LazyPackageFragmentScopeForJavaPackage@39
-    classes('lang': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@39
-    deserializedPackageScope = Empty@41 // through LazyPackageFragmentScopeForJavaPackage@39
-    memberIndex = computeMemberIndex$1@42 // through LazyPackageFragmentScopeForJavaPackage@39
+    classes('lang': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@38
+    deserializedPackageScope = Empty@39 // through LazyPackageFragmentScopeForJavaPackage@38
+    functions('lang': Name@40) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    memberIndex = computeMemberIndex$1@42 // through LazyPackageFragmentScopeForJavaPackage@38
 }

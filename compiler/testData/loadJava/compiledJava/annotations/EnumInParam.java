@@ -1,11 +1,13 @@
 package test;
 
-import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public interface EnumInParam {
+    public @interface MyRetention {
+        RetentionPolicy value();
+    }
 
-    @Retention(RetentionPolicy.RUNTIME)
+    @MyRetention(RetentionPolicy.RUNTIME)
     public @interface RetentionAnnotation {
         String value();
     }

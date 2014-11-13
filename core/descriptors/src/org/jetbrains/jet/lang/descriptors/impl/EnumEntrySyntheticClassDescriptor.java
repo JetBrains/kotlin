@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass;
@@ -256,7 +257,10 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
-        public Collection<DeclarationDescriptor> getAllDescriptors() {
+        public Collection<DeclarationDescriptor> getDescriptors(
+                @NotNull DescriptorKindFilter kindFilter,
+                @NotNull Function1<? super Name, ? extends Boolean> nameFilter
+        ) {
             return allDescriptors.invoke();
         }
 

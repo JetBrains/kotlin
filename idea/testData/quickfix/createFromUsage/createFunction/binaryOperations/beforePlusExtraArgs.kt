@@ -1,4 +1,4 @@
-// "Create function 'plus' from usage" "true"
+// "Create function 'plus'" "true"
 
 class A<T>(val n: T) {
     fun plus(): A<T> = throw Exception()

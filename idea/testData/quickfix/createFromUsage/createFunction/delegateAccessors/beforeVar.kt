@@ -1,4 +1,4 @@
-// "Create function 'get', function 'set' from usage" "true"
+// "Create function 'get', function 'set'" "true"
 class F {
 
 }

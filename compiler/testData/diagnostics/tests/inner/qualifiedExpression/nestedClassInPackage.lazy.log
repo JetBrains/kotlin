@@ -3,26 +3,26 @@ DescriptorResolver@0 {
 }
 
 LazyJavaPackageFragmentProvider@2 {
-    _packageFragments('<root>': FqName@3) = LazyJavaPackageFragment@4['<root>']
-    _packageFragments('A': FqName@5) = null
-    _packageFragments('A.A': FqName@6) = null
-    _packageFragments('A.B': FqName@7) = null
-    _packageFragments('A.a': FqName@8) = null
-    _packageFragments('java': FqName@9) = LazyJavaPackageFragment@10['java']
-    _packageFragments('java.lang': FqName@11) = LazyJavaPackageFragment@12['lang']
-    _packageFragments('kotlin': FqName@13) = null
-    _packageFragments('kotlin.io': FqName@14) = null
-    _packageFragments('kotlin.jvm': FqName@15) = null
+    packageFragments('<root>': FqName@3) = LazyJavaPackageFragment@4['<root>']
+    packageFragments('A': FqName@5) = null
+    packageFragments('A.A': FqName@6) = null
+    packageFragments('A.B': FqName@7) = null
+    packageFragments('A.a': FqName@8) = null
+    packageFragments('java': FqName@9) = LazyJavaPackageFragment@10['java']
+    packageFragments('java.lang': FqName@11) = LazyJavaPackageFragment@12['lang']
+    packageFragments('kotlin': FqName@13) = null
+    packageFragments('kotlin.io': FqName@14) = null
+    packageFragments('kotlin.jvm': FqName@15) = null
 }
 
 LazyJavaPackageFragment@10['java'] {
-    _functions('lang': Name@16) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@18
-    classes('lang': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@18
-    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@18
-    memberIndex = computeMemberIndex$1@21 // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('lang': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@17
+    deserializedPackageScope = Empty@18 // through LazyPackageFragmentScopeForJavaPackage@17
+    functions('lang': Name@19) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@17
+    memberIndex = computeMemberIndex$1@21 // through LazyPackageFragmentScopeForJavaPackage@17
 }
 
 LazyJavaPackageFragment@12['lang'] {
     classes('A': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@23
-    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@23
+    deserializedPackageScope = Empty@18 // through LazyPackageFragmentScopeForJavaPackage@23
 }

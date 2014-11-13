@@ -34,6 +34,8 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.jet.lang.psi.JetAnnotationEntry
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 
 private fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
@@ -83,10 +85,17 @@ fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
     return typeParameters
 }
 
-fun JetExpression.guessTypes(context: BindingContext, module: ModuleDescriptor?): Array<JetType> {
+fun JetExpression.guessTypes(
+        context: BindingContext,
+        module: ModuleDescriptor?,
+        coerceUnusedToUnit: Boolean = true
+): Array<JetType> {
     val builtIns = KotlinBuiltIns.getInstance()
 
-    if (this !is JetDeclaration && isUsedAsStatement(context)) return array(builtIns.getUnitType())
+    if (coerceUnusedToUnit
+        && this !is JetDeclaration
+        && isUsedAsStatement(context)
+        && getParentByType(javaClass<JetAnnotationEntry>()) == null) return array(builtIns.getUnitType())
 
     // if we know the actual type of the expression
     val theType1 = context[BindingContext.EXPRESSION_TYPE, this]

@@ -36,10 +36,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 //TODO: should use change signature to deal with cases of multiple overridden descriptors
-public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsFactory {
+public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFactory {
     @NotNull
     @Override
-    public List<IntentionAction> createActions(@NotNull Diagnostic diagnostic) {
+    protected List<IntentionAction> doCreateActions(@NotNull Diagnostic diagnostic) {
         List<IntentionAction> actions = new LinkedList<IntentionAction>();
 
         DiagnosticWithParameters2<JetExpression, JetType, JetType> diagnosticWithParameters = Errors.TYPE_MISMATCH.cast(diagnostic);

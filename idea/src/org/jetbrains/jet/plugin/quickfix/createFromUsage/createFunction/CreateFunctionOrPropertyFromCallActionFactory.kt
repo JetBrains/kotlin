@@ -24,11 +24,13 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetTypeReference
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.psi.JetAnnotationEntry
 
 object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val diagElement = diagnostic.getPsiElement()
-        if (diagElement.getParentByType(javaClass<JetTypeReference>()) != null) return null
+        if (PsiTreeUtil.getParentOfType(diagElement, javaClass<JetTypeReference>(), javaClass<JetAnnotationEntry>()) != null) return null
 
         val callExpr = when (diagnostic.getFactory()) {
             in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS, Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND -> {

@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.ClassId;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.*;
@@ -33,21 +32,28 @@ import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kin
 
 public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor {
     private static final Map<JvmClassName, KotlinClassHeader.Kind> HEADER_KINDS = new HashMap<JvmClassName, KotlinClassHeader.Kind>();
+    private static final Map<JvmClassName, KotlinClassHeader.Kind> OLD_DEPRECATED_ANNOTATIONS_KINDS = new HashMap<JvmClassName, KotlinClassHeader.Kind>();
 
+    private int version = AbiVersionUtil.INVALID_VERSION;
     static {
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_CLASS), CLASS);
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE), PACKAGE_FACADE);
         HEADER_KINDS.put(KotlinSyntheticClass.CLASS_NAME, SYNTHETIC_CLASS);
 
-        @SuppressWarnings("deprecation")
-        List<FqName> incompatible = Arrays.asList(OLD_JET_CLASS_ANNOTATION, OLD_JET_PACKAGE_CLASS_ANNOTATION, OLD_KOTLIN_CLASS,
-                                                  OLD_KOTLIN_PACKAGE, OLD_KOTLIN_PACKAGE_FRAGMENT, OLD_KOTLIN_TRAIT_IMPL);
-        for (FqName fqName : incompatible) {
-            HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(fqName), INCOMPATIBLE_ABI_VERSION);
-        }
+        initOldAnnotations();
     }
 
-    private int version = AbiVersionUtil.INVALID_VERSION;
+    @SuppressWarnings("deprecation")
+    private static void initOldAnnotations() {
+        OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_JET_CLASS_ANNOTATION), CLASS);
+        OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_JET_PACKAGE_CLASS_ANNOTATION),
+                                             KotlinClassHeader.Kind.PACKAGE_FACADE);
+        OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_KOTLIN_CLASS), CLASS);
+        OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_KOTLIN_PACKAGE), PACKAGE_FACADE);
+        OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_KOTLIN_PACKAGE_FRAGMENT), SYNTHETIC_CLASS);
+        OLD_DEPRECATED_ANNOTATIONS_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_KOTLIN_TRAIT_IMPL), SYNTHETIC_CLASS);
+    }
+
     private String[] annotationData = null;
     private KotlinClassHeader.Kind headerKind = null;
     private KotlinSyntheticClass.Kind syntheticClassKind = null;
@@ -59,7 +65,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         if (!AbiVersionUtil.isAbiVersionCompatible(version)) {
-            return new KotlinClassHeader(INCOMPATIBLE_ABI_VERSION, version, null, null);
+            return new KotlinClassHeader(headerKind, version, null, syntheticClassKind);
         }
 
         if ((headerKind == CLASS || headerKind == PACKAGE_FACADE) && annotationData == null) {
@@ -74,22 +80,32 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     @Nullable
     @Override
     public AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId) {
-        JvmClassName annotation = JvmClassName.byClassId(classId);
-        KotlinClassHeader.Kind newKind = HEADER_KINDS.get(annotation);
-        if (newKind == null) return null;
-
         if (headerKind != null) {
             // Ignore all Kotlin annotations except the first found
             return null;
         }
 
-        headerKind = newKind;
+        JvmClassName annotation = JvmClassName.byClassId(classId);
 
-        if (newKind == CLASS || newKind == PACKAGE_FACADE) {
-            return kotlinClassOrPackageVisitor(annotation);
+        KotlinClassHeader.Kind newKind = HEADER_KINDS.get(annotation);
+        if (newKind != null) {
+            headerKind = newKind;
+
+            switch (newKind) {
+                case CLASS:
+                    return kotlinClassOrPackageVisitor(annotation);
+                case PACKAGE_FACADE:
+                    return kotlinClassOrPackageVisitor(annotation);
+                case SYNTHETIC_CLASS:
+                    return syntheticClassAnnotationVisitor();
+                default:
+                    throw new IllegalStateException("Unknown kind: " + newKind);
+            }
         }
-        else if (newKind == SYNTHETIC_CLASS) {
-            return syntheticClassAnnotationVisitor();
+
+        KotlinClassHeader.Kind oldAnnotationKind = OLD_DEPRECATED_ANNOTATIONS_KINDS.get(annotation);
+        if (oldAnnotationKind != null) {
+            headerKind = oldAnnotationKind;
         }
 
         return null;
@@ -145,6 +161,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
                     @Override
                     public void visitEnd() {
+                        //noinspection SSBasedInspection
                         annotationData = strings.toArray(new String[strings.size()]);
                     }
                 };

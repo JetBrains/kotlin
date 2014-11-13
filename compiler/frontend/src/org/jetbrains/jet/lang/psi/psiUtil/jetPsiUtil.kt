@@ -376,3 +376,5 @@ public fun PsiElement.nextLeafSkipWhitespacesAndComments(): PsiElement? {
     return leaf
 }
 
+public fun JetExpression.isDotReceiver(): Boolean =
+        (getParent() as? JetDotQualifiedExpression)?.getReceiverExpression() == this

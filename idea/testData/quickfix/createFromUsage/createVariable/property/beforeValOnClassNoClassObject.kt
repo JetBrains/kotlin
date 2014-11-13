@@ -1,4 +1,4 @@
-// "Create property 'foo' from usage" "false"
+// "Create property 'foo'" "false"
 // ACTION: Split property declaration
 // ERROR: Unresolved reference: foo
 

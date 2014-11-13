@@ -18,73 +18,73 @@ EnumEntrySyntheticClassDescriptor@14['ENTRY'] {
 }
 
 LazyJavaClassDescriptor@16['A'] {
-    _properties('ANOTHER': Name@17) = EmptyList@18[empty] // through LazyJavaClassMemberScope@19
-    _properties('ANOTHER': Name@17) = EmptyList@18[empty] // through LazyJavaStaticClassScope@20
-    _properties('ENTRY': Name@21) = EmptyList@18[empty] // through LazyJavaClassMemberScope@19
-    _properties('ENTRY': Name@21) = EmptyList@18[empty] // through LazyJavaStaticClassScope@20
-    _properties('s': Name@22) = ArrayList@23[1] { JavaPropertyDescriptor@24['s'] } // through LazyJavaClassMemberScope@19
-    _typeConstructor = LazyJavaClassTypeConstructor@25['A']
-    defaultType = JetTypeImpl@26['A']
-    enumEntryIndex = LinkedHashMap@27 // through LazyJavaClassMemberScope@19
-    memberIndex = computeMemberIndex$1@28 // through LazyJavaClassMemberScope@19
-    memberIndex = computeMemberIndex$1@29 // through LazyJavaStaticClassScope@20
-    nestedClassIndex = LinkedHashMap@30 // through LazyJavaClassMemberScope@19
-    nestedClasses('ANOTHER': Name@17) = EnumEntrySyntheticClassDescriptor@9['ANOTHER'] // through LazyJavaClassMemberScope@19
-    nestedClasses('ENTRY': Name@21) = EnumEntrySyntheticClassDescriptor@14['ENTRY'] // through LazyJavaClassMemberScope@19
-    nestedClasses('s': Name@22) = null // through LazyJavaClassMemberScope@19
-    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@31['<this>']
+    defaultType = JetTypeImpl@17['A']
+    enumEntryIndex = LinkedHashMap@18 // through LazyJavaClassMemberScope@19
+    memberIndex = computeMemberIndex$1@20 // through LazyJavaClassMemberScope@19
+    memberIndex = computeMemberIndex$1@21 // through LazyJavaStaticClassScope@22
+    nestedClassIndex = LinkedHashMap@23 // through LazyJavaClassMemberScope@19
+    nestedClasses('ANOTHER': Name@24) = EnumEntrySyntheticClassDescriptor@9['ANOTHER'] // through LazyJavaClassMemberScope@19
+    nestedClasses('ENTRY': Name@25) = EnumEntrySyntheticClassDescriptor@14['ENTRY'] // through LazyJavaClassMemberScope@19
+    nestedClasses('s': Name@26) = null // through LazyJavaClassMemberScope@19
+    properties('ANOTHER': Name@24) = EmptyList@27[empty] // through LazyJavaClassMemberScope@19
+    properties('ANOTHER': Name@24) = EmptyList@27[empty] // through LazyJavaStaticClassScope@22
+    properties('ENTRY': Name@25) = EmptyList@27[empty] // through LazyJavaClassMemberScope@19
+    properties('ENTRY': Name@25) = EmptyList@27[empty] // through LazyJavaStaticClassScope@22
+    properties('s': Name@26) = ArrayList@28[1] { JavaPropertyDescriptor@29['s'] } // through LazyJavaClassMemberScope@19
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@30['<this>']
+    typeConstructor = LazyJavaClassTypeConstructor@31['A']
 }
 
-LazyJavaClassTypeConstructor@25['A'] {
-    _parameters = ArrayList@32[empty]
-    _supertypes = ArrayList@33[1] { LazyJavaClassifierType@34['Enum<A>'] }
+LazyJavaClassTypeConstructor@31['A'] {
+    parameters = ArrayList@32[empty]
+    supertypes = ArrayList@33[1] { LazyJavaClassifierType@34['Enum<A>'] }
 }
 
 LazyJavaClassifierType@35['A'] {
-    _arguments = ArrayList@36[empty]
-    _nullable = 'false': Boolean@37
-    _typeConstructor = LazyJavaClassTypeConstructor@25['A']
-    classifier = JavaClassImpl@38['A']
+    arguments = ArrayList@36[empty]
+    classifier = JavaClassImpl@37['A']
+    nullable = 'false': Boolean@38
+    typeConstructor = LazyJavaClassTypeConstructor@31['A']
 }
 
 LazyJavaClassifierType@39['A'] {
-    _arguments = ArrayList@40[empty]
-    _nullable = 'true': Boolean@41
-    _typeConstructor = LazyJavaClassTypeConstructor@25['A']
-    classifier = JavaClassImpl@38['A']
+    arguments = ArrayList@40[empty]
+    classifier = JavaClassImpl@37['A']
+    nullable = 'true': Boolean@41
+    typeConstructor = LazyJavaClassTypeConstructor@31['A']
 }
 
 LazyJavaClassifierType@34['Enum<A>'] {
-    _arguments = ArrayList@42[1] { TypeProjectionImpl@43 }
-    _memberScope = SubstitutingScope@44
-    _typeConstructor = DeserializedClassTypeConstructor@45
-    classifier = JavaClassImpl@46['Enum']
+    arguments = ArrayList@42[1] { TypeProjectionImpl@43 }
+    classifier = JavaClassImpl@44['Enum']
+    memberScope = SubstitutingScope@45
+    typeConstructor = DeserializedClassTypeConstructor@46
 }
 
 LazyJavaClassifierType@47['String'] {
-    _arguments = ArrayList@48[empty]
-    _nullable = 'false': Boolean@37
-    _typeConstructor = DeserializedClassTypeConstructor@49
-    classifier = JavaClassImpl@50['String']
+    arguments = ArrayList@48[empty]
+    classifier = JavaClassImpl@49['String']
+    nullable = 'false': Boolean@38
+    typeConstructor = DeserializedClassTypeConstructor@50
 }
 
 LazyJavaClassifierType@51['String'] {
-    _arguments = ArrayList@52[empty]
-    _nullable = 'true': Boolean@41
-    _typeConstructor = DeserializedClassTypeConstructor@49
-    classifier = JavaClassImpl@50['String']
+    arguments = ArrayList@52[empty]
+    classifier = JavaClassImpl@49['String']
+    nullable = 'true': Boolean@41
+    typeConstructor = DeserializedClassTypeConstructor@50
 }
 
 LazyJavaPackageFragmentProvider@53 {
-    _packageFragments('<root>': FqName@54) = LazyJavaPackageFragment@55['<root>']
-    _packageFragments('A': FqName@56) = null
-    _packageFragments('java': FqName@57) = LazyJavaPackageFragment@58['java']
-    _packageFragments('java.lang': FqName@59) = LazyJavaPackageFragment@60['lang']
-    _packageFragments('java.lang.A': FqName@61) = null
-    _packageFragments('kotlin': FqName@62) = null
-    _packageFragments('kotlin.A': FqName@63) = null
-    _packageFragments('kotlin.io': FqName@64) = null
-    _packageFragments('kotlin.jvm': FqName@65) = null
+    packageFragments('<root>': FqName@54) = LazyJavaPackageFragment@55['<root>']
+    packageFragments('A': FqName@56) = null
+    packageFragments('java': FqName@57) = LazyJavaPackageFragment@58['java']
+    packageFragments('java.lang': FqName@59) = LazyJavaPackageFragment@60['lang']
+    packageFragments('java.lang.A': FqName@61) = null
+    packageFragments('kotlin': FqName@62) = null
+    packageFragments('kotlin.A': FqName@63) = null
+    packageFragments('kotlin.io': FqName@64) = null
+    packageFragments('kotlin.jvm': FqName@65) = null
     topLevelClasses(JavaClassImpl@66['A']) = LazyJavaClassDescriptor@16['A']
 }
 
@@ -94,9 +94,9 @@ LazyJavaPackageFragment@55['<root>'] {
 }
 
 LazyJavaPackageFragment@58['java'] {
-    _functions('lang': Name@70) = EmptyList@18[empty] // through LazyPackageFragmentScopeForJavaPackage@71
-    classes('lang': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@71
+    classes('lang': Name@70) = null // through LazyPackageFragmentScopeForJavaPackage@71
     deserializedPackageScope = Empty@69 // through LazyPackageFragmentScopeForJavaPackage@71
+    functions('lang': Name@72) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@71
     memberIndex = computeMemberIndex$1@73 // through LazyPackageFragmentScopeForJavaPackage@71
 }
 

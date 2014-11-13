@@ -41,6 +41,7 @@
       <module fileurl="file://$PROJECT_DIR$/idea/kotlin-android-plugin/kotlin-android-plugin.iml" filepath="$PROJECT_DIR$/idea/kotlin-android-plugin/kotlin-android-plugin.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/preloader.iml" filepath="$PROJECT_DIR$/compiler/preloader/preloader.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/core/reflection/reflection.iml" filepath="$PROJECT_DIR$/core/reflection/reflection.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" filepath="$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" filepath="$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/serialization/serialization.iml" filepath="$PROJECT_DIR$/core/serialization/serialization.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/serialization.java/serialization.java.iml" filepath="$PROJECT_DIR$/core/serialization.java/serialization.java.iml" group="core" />

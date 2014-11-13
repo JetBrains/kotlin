@@ -3,64 +3,64 @@ DescriptorResolver@0 {
 }
 
 LazyJavaClassDescriptor@2['Exception'] {
-    _typeConstructor = LazyJavaClassTypeConstructor@3['Exception']
+    typeConstructor = LazyJavaClassTypeConstructor@3['Exception']
 }
 
 LazyJavaClassTypeConstructor@3['Exception'] {
-    _parameters = ArrayList@4[empty]
-    _supertypes = ArrayList@5[1] { LazyJavaClassifierType@6['Throwable'] }
+    parameters = ArrayList@4[empty]
+    supertypes = ArrayList@5[1] { LazyJavaClassifierType@6['Throwable'] }
 }
 
 LazyJavaClassifierType@6['Throwable'] {
-    _arguments = ArrayList@7[empty]
-    _typeConstructor = DeserializedClassTypeConstructor@8
-    classifier = JavaClassImpl@9['Throwable']
+    arguments = ArrayList@7[empty]
+    classifier = JavaClassImpl@8['Throwable']
+    typeConstructor = DeserializedClassTypeConstructor@9
 }
 
 LazyJavaPackageFragmentProvider@10 {
-    _packageFragments('<root>': FqName@11) = LazyJavaPackageFragment@12['<root>']
-    _packageFragments('Any': FqName@13) = null
-    _packageFragments('Exception': FqName@14) = null
-    _packageFragments('Int': FqName@15) = null
-    _packageFragments('String': FqName@16) = null
-    _packageFragments('java': FqName@17) = LazyJavaPackageFragment@18['java']
-    _packageFragments('java.lang': FqName@19) = LazyJavaPackageFragment@20['lang']
-    _packageFragments('java.lang.Any': FqName@21) = null
-    _packageFragments('java.lang.Exception': FqName@22) = null
-    _packageFragments('java.lang.Int': FqName@23) = null
-    _packageFragments('java.lang.String': FqName@24) = null
-    _packageFragments('kotlin': FqName@25) = null
-    _packageFragments('kotlin.Any': FqName@26) = null
-    _packageFragments('kotlin.Exception': FqName@27) = null
-    _packageFragments('kotlin.Int': FqName@28) = null
-    _packageFragments('kotlin.String': FqName@29) = null
-    _packageFragments('kotlin.io': FqName@30) = null
-    _packageFragments('kotlin.jvm': FqName@31) = null
+    packageFragments('<root>': FqName@11) = LazyJavaPackageFragment@12['<root>']
+    packageFragments('Any': FqName@13) = null
+    packageFragments('Exception': FqName@14) = null
+    packageFragments('Int': FqName@15) = null
+    packageFragments('String': FqName@16) = null
+    packageFragments('java': FqName@17) = LazyJavaPackageFragment@18['java']
+    packageFragments('java.lang': FqName@19) = LazyJavaPackageFragment@20['lang']
+    packageFragments('java.lang.Any': FqName@21) = null
+    packageFragments('java.lang.Exception': FqName@22) = null
+    packageFragments('java.lang.Int': FqName@23) = null
+    packageFragments('java.lang.String': FqName@24) = null
+    packageFragments('kotlin': FqName@25) = null
+    packageFragments('kotlin.Any': FqName@26) = null
+    packageFragments('kotlin.Exception': FqName@27) = null
+    packageFragments('kotlin.Int': FqName@28) = null
+    packageFragments('kotlin.String': FqName@29) = null
+    packageFragments('kotlin.io': FqName@30) = null
+    packageFragments('kotlin.jvm': FqName@31) = null
     topLevelClasses(JavaClassImpl@32['Exception']) = LazyJavaClassDescriptor@2['Exception']
 }
 
 LazyJavaPackageFragment@12['<root>'] {
-    _functions('doSmth': Name@33) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@35
-    classes('Any': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@35
-    classes('Exception': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@35
-    classes('Int': Name@38) = null // through LazyPackageFragmentScopeForJavaPackage@35
-    classes('String': Name@39) = null // through LazyPackageFragmentScopeForJavaPackage@35
-    classes('doSmth': Name@33) = null // through LazyPackageFragmentScopeForJavaPackage@35
-    deserializedPackageScope = Empty@40 // through LazyPackageFragmentScopeForJavaPackage@35
-    memberIndex = computeMemberIndex$1@41 // through LazyPackageFragmentScopeForJavaPackage@35
+    classes('Any': Name@33) = null // through LazyPackageFragmentScopeForJavaPackage@34
+    classes('Exception': Name@35) = null // through LazyPackageFragmentScopeForJavaPackage@34
+    classes('Int': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@34
+    classes('String': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@34
+    classes('doSmth': Name@38) = null // through LazyPackageFragmentScopeForJavaPackage@34
+    deserializedPackageScope = Empty@39 // through LazyPackageFragmentScopeForJavaPackage@34
+    functions('doSmth': Name@38) = EmptyList@40[empty] // through LazyPackageFragmentScopeForJavaPackage@34
+    memberIndex = computeMemberIndex$1@41 // through LazyPackageFragmentScopeForJavaPackage@34
 }
 
 LazyJavaPackageFragment@18['java'] {
-    _functions('lang': Name@42) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@43
-    classes('lang': Name@44) = null // through LazyPackageFragmentScopeForJavaPackage@43
-    deserializedPackageScope = Empty@40 // through LazyPackageFragmentScopeForJavaPackage@43
+    classes('lang': Name@42) = null // through LazyPackageFragmentScopeForJavaPackage@43
+    deserializedPackageScope = Empty@39 // through LazyPackageFragmentScopeForJavaPackage@43
+    functions('lang': Name@44) = EmptyList@40[empty] // through LazyPackageFragmentScopeForJavaPackage@43
     memberIndex = computeMemberIndex$1@45 // through LazyPackageFragmentScopeForJavaPackage@43
 }
 
 LazyJavaPackageFragment@20['lang'] {
-    _functions('doSmth': Name@33) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@46
-    classes('Exception': Name@37) = LazyJavaClassDescriptor@2['Exception'] // through LazyPackageFragmentScopeForJavaPackage@46
-    classes('doSmth': Name@33) = null // through LazyPackageFragmentScopeForJavaPackage@46
-    deserializedPackageScope = Empty@40 // through LazyPackageFragmentScopeForJavaPackage@46
+    classes('Exception': Name@35) = LazyJavaClassDescriptor@2['Exception'] // through LazyPackageFragmentScopeForJavaPackage@46
+    classes('doSmth': Name@38) = null // through LazyPackageFragmentScopeForJavaPackage@46
+    deserializedPackageScope = Empty@39 // through LazyPackageFragmentScopeForJavaPackage@46
+    functions('doSmth': Name@38) = EmptyList@40[empty] // through LazyPackageFragmentScopeForJavaPackage@46
     memberIndex = computeMemberIndex$1@47 // through LazyPackageFragmentScopeForJavaPackage@46
 }

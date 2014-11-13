@@ -42,6 +42,12 @@ public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCom
         doTest(fileName);
     }
 
+    @TestMetadata("classHeader.kt")
+    public void testClassHeader() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/codeFragments/classHeader.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("localVal.kt")
     public void testLocalVal() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/codeFragments/localVal.kt");

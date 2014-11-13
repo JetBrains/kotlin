@@ -1,4 +1,4 @@
-// "Create function 'foo' from usage" "true"
+// "Create function 'foo'" "true"
 
 fun test() {
     val a: Int = Unit.<caret>foo(2)

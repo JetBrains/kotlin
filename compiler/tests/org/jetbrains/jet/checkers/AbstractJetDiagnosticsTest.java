@@ -211,7 +211,8 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
                 @NotNull
                 @Override
-                public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
+                public Collection<FqName> getSubPackagesOf(
+                        @NotNull FqName fqName, @NotNull Function1<? super Name, ? extends Boolean> nameFilter) {
                     return Collections.emptyList();
                 }
             });

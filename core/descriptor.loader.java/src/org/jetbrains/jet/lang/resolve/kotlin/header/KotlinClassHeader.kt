@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.kotlin.header
 
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass
+import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil
 
 public class KotlinClassHeader(
         public val kind: KotlinClassHeader.Kind,
@@ -24,19 +25,24 @@ public class KotlinClassHeader(
         public val annotationData: Array<String>?,
         public val syntheticClassKind: KotlinSyntheticClass.Kind?
 ) {
+    public val isCompatibleAbiVersion: Boolean get() = AbiVersionUtil.isAbiVersionCompatible(version);
+
     {
-        assert((annotationData == null) == (kind != Kind.CLASS && kind != Kind.PACKAGE_FACADE)) {
+        assert(!isCompatibleAbiVersion || (annotationData == null) == (kind != Kind.CLASS && kind != Kind.PACKAGE_FACADE)) {
             "Annotation data should be not null only for CLASS and PACKAGE_FACADE (kind=" + kind + ")"
         }
-        assert((syntheticClassKind == null) == (kind != Kind.SYNTHETIC_CLASS)) {
+        assert(!isCompatibleAbiVersion || (syntheticClassKind == null) == (kind != Kind.SYNTHETIC_CLASS)) {
             "Synthetic class kind should be present for SYNTHETIC_CLASS (kind=" + kind + ")"
         }
     }
 
     public enum class Kind {
-        INCOMPATIBLE_ABI_VERSION
         CLASS
         PACKAGE_FACADE
         SYNTHETIC_CLASS
     }
 }
+
+public fun KotlinClassHeader.isCompatibleClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.CLASS
+public fun KotlinClassHeader.isCompatiblePackageFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.PACKAGE_FACADE
+public fun KotlinClassHeader.isCompatibleSyntheticClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS

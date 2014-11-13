@@ -4,23 +4,23 @@ DescriptorResolver@0 {
 }
 
 LazyJavaPackageFragmentProvider@3 {
-    _packageFragments('<root>': FqName@4) = LazyJavaPackageFragment@5['<root>']
-    _packageFragments('EnumImplementingTraitWithFun': FqName@6) = null
-    _packageFragments('EnumImplementingTraitWithVal': FqName@7) = null
-    _packageFragments('Int': FqName@8) = null
-    _packageFragments('T1': FqName@9) = null
-    _packageFragments('T2': FqName@10) = null
-    _packageFragments('java': FqName@11) = LazyJavaPackageFragment@12['java']
-    _packageFragments('java.lang': FqName@13) = LazyJavaPackageFragment@14['lang']
-    _packageFragments('java.lang.Int': FqName@15) = null
-    _packageFragments('java.lang.T1': FqName@16) = null
-    _packageFragments('java.lang.T2': FqName@17) = null
-    _packageFragments('kotlin': FqName@18) = null
-    _packageFragments('kotlin.Int': FqName@19) = null
-    _packageFragments('kotlin.T1': FqName@20) = null
-    _packageFragments('kotlin.T2': FqName@21) = null
-    _packageFragments('kotlin.io': FqName@22) = null
-    _packageFragments('kotlin.jvm': FqName@23) = null
+    packageFragments('<root>': FqName@4) = LazyJavaPackageFragment@5['<root>']
+    packageFragments('EnumImplementingTraitWithFun': FqName@6) = null
+    packageFragments('EnumImplementingTraitWithVal': FqName@7) = null
+    packageFragments('Int': FqName@8) = null
+    packageFragments('T1': FqName@9) = null
+    packageFragments('T2': FqName@10) = null
+    packageFragments('java': FqName@11) = LazyJavaPackageFragment@12['java']
+    packageFragments('java.lang': FqName@13) = LazyJavaPackageFragment@14['lang']
+    packageFragments('java.lang.Int': FqName@15) = null
+    packageFragments('java.lang.T1': FqName@16) = null
+    packageFragments('java.lang.T2': FqName@17) = null
+    packageFragments('kotlin': FqName@18) = null
+    packageFragments('kotlin.Int': FqName@19) = null
+    packageFragments('kotlin.T1': FqName@20) = null
+    packageFragments('kotlin.T2': FqName@21) = null
+    packageFragments('kotlin.io': FqName@22) = null
+    packageFragments('kotlin.jvm': FqName@23) = null
 }
 
 LazyJavaPackageFragment@5['<root>'] {
@@ -28,8 +28,8 @@ LazyJavaPackageFragment@5['<root>'] {
 }
 
 LazyJavaPackageFragment@12['java'] {
-    _functions('lang': Name@26) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@28
-    classes('lang': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@28
-    deserializedPackageScope = Empty@30 // through LazyPackageFragmentScopeForJavaPackage@28
-    memberIndex = computeMemberIndex$1@31 // through LazyPackageFragmentScopeForJavaPackage@28
+    classes('lang': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@27
+    deserializedPackageScope = Empty@28 // through LazyPackageFragmentScopeForJavaPackage@27
+    functions('lang': Name@29) = EmptyList@30[empty] // through LazyPackageFragmentScopeForJavaPackage@27
+    memberIndex = computeMemberIndex$1@31 // through LazyPackageFragmentScopeForJavaPackage@27
 }

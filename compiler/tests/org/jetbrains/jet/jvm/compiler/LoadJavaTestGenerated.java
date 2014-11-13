@@ -1524,6 +1524,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledJava(fileName);
                 }
 
+                @TestMetadata("PrivateSamAdapter.java")
+                public void testPrivateSamAdapter() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/adapters/PrivateSamAdapter.java");
+                    doTestCompiledJava(fileName);
+                }
+
                 @TestMetadata("SelfAsParameter.java")
                 public void testSelfAsParameter() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/adapters/SelfAsParameter.java");

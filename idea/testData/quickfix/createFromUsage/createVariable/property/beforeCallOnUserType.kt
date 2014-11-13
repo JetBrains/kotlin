@@ -1,5 +1,5 @@
-// "Create property 'foo' from usage" "false"
-// ACTION: Create function 'bar' from usage
+// "Create property 'foo'" "false"
+// ACTION: Create function 'bar'
 // ACTION: Replace with infix function call
 // ERROR: Unresolved reference: bar
 // ERROR: Unresolved reference: foo

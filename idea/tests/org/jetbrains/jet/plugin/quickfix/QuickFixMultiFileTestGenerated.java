@@ -221,11 +221,39 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
     @TestMetadata("idea/testData/quickfix/createFromUsage")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({CreateFromUsage.CreateFunction.class, CreateFromUsage.CreateVariable.class})
+    @InnerTestClasses({CreateFromUsage.CreateClass.class, CreateFromUsage.CreateFunction.class, CreateFromUsage.CreateVariable.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CreateFromUsage extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInCreateFromUsage() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+        }
+
+        @TestMetadata("idea/testData/quickfix/createFromUsage/createClass")
+        @TestDataPath("$PROJECT_ROOT")
+        @InnerTestClasses({CreateClass.CallExpression.class})
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CreateClass extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInCreateClass() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression")
+            @TestDataPath("$PROJECT_ROOT")
+            @InnerTestClasses({})
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CallExpression extends AbstractQuickFixMultiFileTest {
+                public void testAllFilesPresentInCallExpression() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/callExpression"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+                }
+
+                @TestMetadata("callWithJavaClassReceiver.before.Main.kt")
+                public void testCallWithJavaClassReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/callWithJavaClassReceiver.before.Main.kt");
+                    doTestWithExtraFile(fileName);
+                }
+
+            }
+
         }
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction")

@@ -42,7 +42,7 @@ public class JetConstructorCalleeExpression extends JetExpressionImplStub<Kotlin
     }
 
     @Nullable @IfNotParsed
-    public JetReferenceExpression getConstructorReferenceExpression() {
+    public JetSimpleNameExpression getConstructorReferenceExpression() {
         JetTypeReference typeReference = getTypeReference();
         if (typeReference == null) {
             return null;

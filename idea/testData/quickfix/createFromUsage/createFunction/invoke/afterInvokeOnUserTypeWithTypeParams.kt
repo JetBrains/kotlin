@@ -1,4 +1,4 @@
-// "Create function 'invoke' from usage" "true"
+// "Create function 'invoke'" "true"
 
 class A<T>(val n: T) {
     fun <V> invoke(u: T, s: String): B<V> {

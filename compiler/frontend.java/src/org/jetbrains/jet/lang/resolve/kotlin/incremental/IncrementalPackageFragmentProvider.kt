@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.descriptors.serialization.PackageData
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.cache.IncrementalCache
+import org.jetbrains.jet.lang.resolve.name.Name
 
 public class IncrementalPackageFragmentProvider(
         sourceFiles: Collection<JetFile>,
@@ -81,7 +82,7 @@ public class IncrementalPackageFragmentProvider(
         fqNamesToLoad.forEach { createPackageFragment(it) }
     }
 
-    override fun getSubPackagesOf(fqName: FqName): Collection<FqName> {
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         return fqNameToSubFqNames[fqName].orEmpty()
     }
 
@@ -94,7 +95,7 @@ public class IncrementalPackageFragmentProvider(
         public val moduleId: String
             get() = this@IncrementalPackageFragmentProvider.moduleId
 
-        val _memberScope: NotNullLazyValue<JetScope> = storageManager.createLazyValue {
+        val memberScope: NotNullLazyValue<JetScope> = storageManager.createLazyValue {
             if (fqName !in fqNamesToLoad) {
                 JetScope.Empty
             }
@@ -109,16 +110,14 @@ public class IncrementalPackageFragmentProvider(
             }
         }
 
-        override fun getMemberScope(): JetScope {
-            return _memberScope()
-        }
+        override fun getMemberScope(): JetScope = memberScope()
 
         private inner class IncrementalPackageScope(val packageData: PackageData) : DeserializedPackageMemberScope(
                 this@IncrementalPackageFragment,
                 packageData.getPackageProto(),
                 deserializationContext.withNameResolver(packageData.getNameResolver()),
-                { listOf() }) {
-
+                { listOf() }
+        ) {
             override fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> {
                 return allMemberProtos
                         .filter {

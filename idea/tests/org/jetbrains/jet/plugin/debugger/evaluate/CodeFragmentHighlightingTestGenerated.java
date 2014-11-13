@@ -57,6 +57,18 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
             doTest(fileName);
         }
 
+        @TestMetadata("classHeader.kt")
+        public void testClassHeader() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/classHeader.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("classHeaderWithTypeArguments.kt")
+        public void testClassHeaderWithTypeArguments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/classHeaderWithTypeArguments.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("contextElementAsStatement.kt")
         public void testContextElementAsStatement() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/contextElementAsStatement.kt");

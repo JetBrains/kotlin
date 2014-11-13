@@ -73,7 +73,7 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
         public Map<FqName, Void> map(@NotNull FileContent inputData) {
             try {
                 KotlinJvmBinaryClass kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(inputData.getFile());
-                if (kotlinClass != null && kotlinClass.getClassHeader().getKind() != KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION) {
+                if (kotlinClass != null && kotlinClass.getClassHeader().getIsCompatibleAbiVersion()) {
                     return Collections.singletonMap(kotlinClass.getClassId().asSingleFqName().toSafe(), null);
                 }
             }

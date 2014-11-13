@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 import org.jetbrains.jet.lang.resolve.java.resolver.*
+import org.jetbrains.jet.lang.resolve.java.sam.SamConversionResolverImpl
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory
@@ -121,6 +122,7 @@ private fun generatorForTopDownAnalyzerForJvm() =
                     javaClass<PsiBasedExternalAnnotationResolver>(),
                     javaClass<MutablePackageFragmentProvider>(),
                     javaClass<JavaPropertyInitializerEvaluatorImpl>(),
+                    javaClass<SamConversionResolverImpl>(),
                     javaClass<JavaSourceElementFactoryImpl>(),
                     javaClass<SingleModuleClassResolver>(),
                     javaClass<JavaFlexibleTypeCapabilitiesProvider>()
@@ -152,6 +154,7 @@ private fun generatorForJavaDescriptorResolver() =
                     javaClass<PsiBasedMethodSignatureChecker>(),
                     javaClass<PsiBasedExternalAnnotationResolver>(),
                     javaClass<JavaPropertyInitializerEvaluatorImpl>(),
+                    javaClass<SamConversionResolverImpl>(),
                     javaClass<JavaSourceElementFactoryImpl>(),
                     javaClass<SingleModuleClassResolver>()
             )
@@ -188,6 +191,7 @@ private fun generatorForLazyResolveWithJava() =
                     javaClass<PsiBasedMethodSignatureChecker>(),
                     javaClass<PsiBasedExternalAnnotationResolver>(),
                     javaClass<JavaPropertyInitializerEvaluatorImpl>(),
+                    javaClass<SamConversionResolverImpl>(),
                     javaClass<JavaSourceElementFactoryImpl>(),
                     javaClass<JavaFlexibleTypeCapabilitiesProvider>(),
                     javaClass<LazyResolveToken>()

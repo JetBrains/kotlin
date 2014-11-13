@@ -598,6 +598,24 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("NoEnumEntryType.kt")
+        public void testNoEnumEntryType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoEnumEntryType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoExtensionsAfterQualifier.kt")
+        public void testNoExtensionsAfterQualifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoExtensionsAfterQualifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoNestedClassAfterReceiver.kt")
+        public void testNoNestedClassAfterReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoNestedClassAfterReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoObjectInTypePosition.kt")
         public void testNoObjectInTypePosition() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/NoObjectInTypePosition.kt");

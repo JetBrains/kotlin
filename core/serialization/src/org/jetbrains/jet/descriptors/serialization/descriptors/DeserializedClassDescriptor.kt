@@ -39,6 +39,8 @@ import org.jetbrains.jet.descriptors.serialization
 import org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName
 import org.jetbrains.jet.descriptors.serialization.classKind
 import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public fun DeserializedClassDescriptor(globalContext: DeserializationGlobalContext, classData: ClassData): DeserializedClassDescriptor
         = DeserializedClassDescriptor(globalContext.withNameResolver(classData.getNameResolver()), classData.getClassProto())
@@ -71,7 +73,7 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
         if (classId.isTopLevelClass()) {
             val fragments = context.packageFragmentProvider.getPackageFragments(classId.getPackageFqName())
             assert(fragments.size() == 1) { "there should be exactly one package: $fragments, class id is $classId" }
-            return fragments.iterator().next()
+            return fragments.single()
         }
         else {
             return context.deserializeClass(classId.getOuterClassId()) ?: ErrorUtils.getErrorModule()
@@ -180,6 +182,10 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
 
     private inner class DeserializedClassMemberScope : DeserializedMemberScope(context, this@DeserializedClassDescriptor.classProto.getMemberList()) {
         private val classDescriptor: DeserializedClassDescriptor = this@DeserializedClassDescriptor
+        private val allDescriptors = context.storageManager.createLazyValue { computeDescriptors(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER) }
+
+        override fun getDescriptors(kindFilter: DescriptorKindFilter,
+                                    nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = allDescriptors()
 
         override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<FunctionDescriptor>) {
             val fromSupertypes = ArrayList<FunctionDescriptor>()
@@ -232,7 +238,7 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
 
         override fun getClassDescriptor(name: Name): ClassifierDescriptor? = classDescriptor.nestedClasses.findClass(name)
 
-        override fun addAllClassDescriptors(result: MutableCollection<DeclarationDescriptor>) {
+        override fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
             result.addAll(classDescriptor.nestedClasses.getAllDescriptors())
         }
     }

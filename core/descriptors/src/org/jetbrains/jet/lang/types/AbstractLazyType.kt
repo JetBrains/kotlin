@@ -22,18 +22,18 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 
 public abstract class AbstractLazyType(storageManager: StorageManager) : AbstractJetType(), LazyType {
 
-    private val _typeConstructor = storageManager.createLazyValue {computeTypeConstructor()}
-    override fun getConstructor(): TypeConstructor = _typeConstructor()
+    private val typeConstructor = storageManager.createLazyValue { computeTypeConstructor() }
+    override fun getConstructor(): TypeConstructor = typeConstructor()
 
     protected abstract fun computeTypeConstructor(): TypeConstructor
 
-    private val _arguments = storageManager.createLazyValue {computeArguments()}
-    override fun getArguments(): List<TypeProjection> = _arguments()
+    private val arguments = storageManager.createLazyValue { computeArguments() }
+    override fun getArguments(): List<TypeProjection> = arguments()
 
     protected abstract fun computeArguments(): List<TypeProjection>
 
-    private val _memberScope = storageManager.createLazyValue {computeMemberScope()}
-    override fun getMemberScope() = _memberScope()
+    private val memberScope = storageManager.createLazyValue { computeMemberScope() }
+    override fun getMemberScope() = memberScope()
 
     protected abstract fun computeMemberScope(): JetScope
 
@@ -44,10 +44,10 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
     override fun getAnnotations() = Annotations.EMPTY
 
     override fun toString(): String {
-        if (!_typeConstructor.isComputed()) {
+        if (!typeConstructor.isComputed()) {
             return "Type constructor is not computed"
         }
-        if (!_arguments.isComputed()) {
+        if (!arguments.isComputed()) {
             return "" + getConstructor() + "<arguments are not computed>"
         }
         return super<AbstractJetType>.toString()

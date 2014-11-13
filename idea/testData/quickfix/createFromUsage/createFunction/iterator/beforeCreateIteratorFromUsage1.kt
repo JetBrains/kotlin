@@ -1,4 +1,4 @@
-// "Create function 'iterator' from usage" "true"
+// "Create function 'iterator'" "true"
 class Foo<T>
 fun foo() {
     for (i: Int in Foo<caret><Int>()) { }

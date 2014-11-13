@@ -1,4 +1,4 @@
-// "Create property 'foo' from usage" "true"
+// "Create property 'foo'" "true"
 // ERROR: Property must be initialized
 
 class A<T>(val n: T)

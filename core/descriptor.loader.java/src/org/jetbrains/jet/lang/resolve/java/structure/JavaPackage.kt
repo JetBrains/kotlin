@@ -17,13 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java.structure
 
 import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.resolve.name.Name
 
 public trait JavaPackage : JavaElement {
-    /**
-     * NOTE: do not use this method directly
-     * @see org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils#getClassesInPackage(JavaPackage)
-     */
-    public fun getClasses(): Collection<JavaClass>
+    public fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass>
 
     public fun getSubPackages(): Collection<JavaPackage>
 

@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.*
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
+import org.jetbrains.jet.lang.resolve.name.Name
 
 public class LazyJavaPackageFragmentProvider(
         outerContext: GlobalJavaResolverContext,
@@ -43,11 +44,12 @@ public class LazyJavaPackageFragmentProvider(
             outerContext.methodSignatureChecker,
             outerContext.javaResolverCache,
             outerContext.javaPropertyInitializerEvaluator,
+            outerContext.samConversionResolver,
             outerContext.sourceElementFactory,
             outerContext.moduleClassResolver
     )
 
-    private val _packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
+    private val packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
             c.storageManager.createMemoizedFunctionWithNullableValues {
                 fqName ->
                 val jPackage = c.finder.findPackage(fqName)
@@ -73,11 +75,11 @@ public class LazyJavaPackageFragmentProvider(
         )
     }
 
-    fun getPackageFragment(fqName: FqName) = _packageFragments(fqName)
+    fun getPackageFragment(fqName: FqName) = packageFragments(fqName)
 
     override fun getPackageFragments(fqName: FqName) = getPackageFragment(fqName)?.let {listOf(it)}.orEmpty()
 
-    override fun getSubPackagesOf(fqName: FqName) = getPackageFragment(fqName)?.getMemberScope()?.getSubPackages().orEmpty()
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) = getPackageFragment(fqName)?.getMemberScope()?.getSubPackages().orEmpty()
 
     fun resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass) = c.deserializedDescriptorResolver.resolveClass(kotlinClass)
 

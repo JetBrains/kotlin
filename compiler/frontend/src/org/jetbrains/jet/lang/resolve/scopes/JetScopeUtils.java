@@ -19,11 +19,12 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -31,7 +32,6 @@ import org.jetbrains.jet.utils.Printer;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public final class JetScopeUtils {
     private JetScopeUtils() {}
@@ -49,28 +49,6 @@ public final class JetScopeUtils {
                            }
                        })
         );
-    }
-
-    /**
-     * Get all extension descriptors among visible descriptors for current scope.
-     *
-     * @param scope Scope for query extensions.
-     * @return extension descriptors.
-     */
-    @NotNull
-    public static Collection<CallableDescriptor> getAllExtensions(@NotNull JetScope scope) {
-        Set<CallableDescriptor> result = Sets.newHashSet();
-
-        for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
-            if (descriptor instanceof CallableDescriptor) {
-                CallableDescriptor callDescriptor = (CallableDescriptor) descriptor;
-                if (callDescriptor.getExtensionReceiverParameter() != null) {
-                    result.add(callDescriptor);
-                }
-            }
-        }
-
-        return result;
     }
 
     public static JetScope makeScopeForPropertyAccessor(

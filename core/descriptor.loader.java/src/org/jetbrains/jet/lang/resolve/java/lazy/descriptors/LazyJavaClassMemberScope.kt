@@ -31,13 +31,11 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaMemberScope.MethodSignatureData
-import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
@@ -48,23 +46,20 @@ public class LazyJavaClassMemberScope(
     override fun computeMemberIndex(): MemberIndex {
         return object : ClassMemberIndex(jClass, { !it.isStatic() }) {
             // For SAM-constructors
-            override fun getAllMethodNames(): Collection<Name> = super.getAllMethodNames() + getAllClassNames()
+            override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name>
+                    = super.getMethodNames(nameFilter) + getClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
         }
     }
 
-    internal val _constructors = c.storageManager.createLazyValue {
-        jClass.getConstructors().flatMap { ctor ->
-            val constructor = resolveConstructor(ctor, getContainingDeclaration())
-            val samAdapter = resolveSamAdapter(constructor)
-            if (samAdapter != null) {
-                samAdapter.setReturnType(containingDeclaration.getDefaultType())
-                listOf(constructor, samAdapter)
-            }
-            else
-                listOf(constructor)
-        } ifEmpty {
-            emptyOrSingletonList(createDefaultConstructor())
+    internal val constructors = c.storageManager.createLazyValue {
+        val constructors = jClass.getConstructors()
+        val result = ArrayList<JavaConstructorDescriptor>(constructors.size)
+        for (constructor in constructors) {
+            val descriptor = resolveConstructor(constructor)
+            result.add(descriptor)
+            result.addIfNotNull(c.samConversionResolver.resolveSamAdapter(descriptor))
         }
+        result ifEmpty { emptyOrSingletonList(createDefaultConstructor()) }
     }
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
@@ -85,8 +80,6 @@ public class LazyJavaClassMemberScope(
                                                                    c.errorReporter))
     }
 
-    override fun computeAdditionalFunctions(name: Name) = listOf<SimpleFunctionDescriptor>()
-
     private fun getPropertiesFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
         return descriptor.getTypeConstructor().getSupertypes().flatMap {
             it.getMemberScope().getProperties(name).map { p -> p as PropertyDescriptor }
@@ -105,16 +98,12 @@ public class LazyJavaClassMemberScope(
                 propagated.getReceiverType(), propagated.getValueParameters(), propagated.getTypeParameters(),
                 propagated.hasStableParameterNames())
 
-        return MethodSignatureData(effectiveSignature, superFunctions, propagated.getErrors() + effectiveSignature.getErrors())
+        return LazyJavaMemberScope.MethodSignatureData(effectiveSignature, superFunctions, propagated.getErrors() + effectiveSignature.getErrors())
     }
 
-    private fun resolveSamAdapter(original: JavaConstructorDescriptor): JavaConstructorDescriptor? {
-        return if (SingleAbstractMethodUtils.isSamAdapterNecessary(original))
-                   SingleAbstractMethodUtils.createSamAdapterConstructor(original) as JavaConstructorDescriptor
-               else null
-    }
+    private fun resolveConstructor(constructor: JavaConstructor): JavaConstructorDescriptor {
+        val classDescriptor = getContainingDeclaration()
 
-    private fun resolveConstructor(constructor: JavaConstructor, classDescriptor: ClassDescriptor): JavaConstructorDescriptor {
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
                 classDescriptor, Annotations.EMPTY, /* isPrimary = */ false, c.sourceElementFactory.source(constructor)
         )
@@ -227,7 +216,7 @@ public class LazyJavaClassMemberScope(
             if (field != null) {
                 EnumEntrySyntheticClassDescriptor.create(c.storageManager, getContainingDeclaration(), name,
                                                          c.storageManager.createLazyValue {
-                                                             memberIndex().getAllFieldNames() + memberIndex().getAllMethodNames()
+                                                             memberIndex().getAllFieldNames() + memberIndex().getMethodNames({true})
                                                          }, c.sourceElementFactory.source(field))
             }
             else null
@@ -243,7 +232,9 @@ public class LazyJavaClassMemberScope(
             DescriptorUtils.getDispatchReceiverParameterIfNeeded(getContainingDeclaration())
 
     override fun getClassifier(name: Name): ClassifierDescriptor? = nestedClasses(name)
-    override fun getAllClassNames(): Collection<Name> = nestedClassIndex().keySet() + enumEntryIndex().keySet()
+
+    override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
+            = nestedClassIndex().keySet() + enumEntryIndex().keySet()
 
     // TODO
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()

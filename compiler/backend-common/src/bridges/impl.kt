@@ -47,7 +47,7 @@ public fun <Signature> generateBridgesForFunctionDescriptor(
  * eases the process of determining what bridges are already generated in our supertypes and need to be inherited, not regenerated.
  */
 private data class DescriptorBasedFunctionHandle(val descriptor: FunctionDescriptor) : FunctionHandle {
-    private val _overridden = descriptor.getOverriddenDescriptors().map { DescriptorBasedFunctionHandle(it.getOriginal()) }
+    private val overridden = descriptor.getOverriddenDescriptors().map { DescriptorBasedFunctionHandle(it.getOriginal()) }
 
     override val isDeclaration: Boolean =
             descriptor.getKind().isReal() ||
@@ -57,7 +57,7 @@ private data class DescriptorBasedFunctionHandle(val descriptor: FunctionDescrip
             descriptor.getModality() == Modality.ABSTRACT ||
             DescriptorUtils.isTrait(descriptor.getContainingDeclaration())
 
-    override fun getOverridden() = _overridden
+    override fun getOverridden() = overridden
 }
 
 

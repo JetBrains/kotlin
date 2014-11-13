@@ -11,11 +11,15 @@ import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
 public interface TwoSuperclassesVarargAndNot {
     public interface Super1 {
         void foo(String... s);
+
+        void dummy(); // To make it not SAM
     }
 
     public interface Super2 {
         @KotlinSignature("fun foo(s : Array<out String?>?)")
         void foo(String[] s);
+
+        void dummy(); // To make it not SAM
     }
 
     public interface Sub extends Super1, Super2 {

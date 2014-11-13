@@ -36,6 +36,8 @@ import java.io.ByteArrayInputStream
 import org.jetbrains.jet.descriptors.serialization.DebugProtoBuf
 import java.util.Arrays
 import org.jetbrains.jet.jps.incremental.LocalFileKotlinClass
+import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatibleClassKind
+import org.jetbrains.jet.lang.resolve.kotlin.header.isCompatiblePackageFacadeKind
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
 val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
@@ -137,15 +139,16 @@ fun classFileToString(classFile: File): String {
         ByteArrayInputStream(BitEncoding.decodeBytes(annotationDataEncoded)).use {
             input ->
 
-        out.write("\n------ simpleNames proto -----\n${DebugProtoBuf.StringTable.parseDelimitedFrom(input)}")
-        out.write("\n------ qualifiedNames proto -----\n${DebugProtoBuf.QualifiedNameTable.parseDelimitedFrom(input)}")
+            out.write("\n------ simpleNames proto -----\n${DebugProtoBuf.StringTable.parseDelimitedFrom(input)}")
+            out.write("\n------ qualifiedNames proto -----\n${DebugProtoBuf.QualifiedNameTable.parseDelimitedFrom(input)}")
 
-        when (classHeader!!.kind) {
-            KotlinClassHeader.Kind.PACKAGE_FACADE ->
-                out.write("\n------ package proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
+            when {
+                classHeader!!.isCompatiblePackageFacadeKind() ->
+                    out.write("\n------ package proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
 
-                KotlinClassHeader.Kind.CLASS ->
+                classHeader.isCompatibleClassKind() ->
                     out.write("\n------ class proto -----\n${DebugProtoBuf.Class.parseFrom(input, getExtensionRegistry())}")
+
                 else -> throw IllegalStateException()
             }
         }

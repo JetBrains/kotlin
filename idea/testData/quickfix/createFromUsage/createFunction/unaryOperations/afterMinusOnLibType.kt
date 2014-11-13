@@ -1,4 +1,4 @@
-// "Create function 'minus' from usage" "true"
+// "Create function 'minus'" "true"
 
 fun test() {
     val a = -false

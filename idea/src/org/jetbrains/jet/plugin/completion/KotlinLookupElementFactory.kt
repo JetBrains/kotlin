@@ -27,16 +27,11 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider
-import org.jetbrains.jet.plugin.completion.handlers.CaretPosition
-import org.jetbrains.jet.plugin.completion.handlers.GenerateLambdaInfo
-import org.jetbrains.jet.plugin.completion.handlers.KotlinClassInsertHandler
-import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
+import org.jetbrains.jet.plugin.completion.handlers.*
 import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.plugin.completion.handlers.BaseDeclarationInsertHandler
-import org.jetbrains.jet.plugin.completion.handlers.JetPropertyInsertHandler
 import com.intellij.psi.PsiClass
 import org.jetbrains.jet.asJava.KotlinLightClass
-import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils
+import org.jetbrains.jet.lang.resolve.java.JavaResolverUtils
 import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement
 
 public object KotlinLookupElementFactory {
@@ -56,7 +51,7 @@ public object KotlinLookupElementFactory {
         if (descriptor is ClassifierDescriptor &&
             declaration is PsiClass &&
             declaration !is KotlinLightClass &&
-            !JavaResolverPsiUtils.isCompiledKotlinClass(declaration)) {
+            !JavaResolverUtils.isCompiledKotlinClass(declaration)) {
             // for java classes we create special lookup elements
             // because they must be equal to ones created in TypesCompletion
             // otherwise we may have duplicates

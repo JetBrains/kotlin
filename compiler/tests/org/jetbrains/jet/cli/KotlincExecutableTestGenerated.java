@@ -33,11 +33,10 @@ import java.util.regex.Pattern;
 public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTest {
     @TestMetadata("compiler/testData/cli/jvm")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({Jvm.WrongAbiVersionLib.class, Jvm.WrongKotlinSignatureLib.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Jvm extends AbstractKotlincExecutableTest {
         public void testAllFilesPresentInJvm() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), false);
         }
 
         @TestMetadata("classpath.args")
@@ -147,28 +146,6 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongScriptWithNoSource.args");
             doJvmTest(fileName);
         }
-
-        @TestMetadata("compiler/testData/cli/jvm/wrongAbiVersionLib")
-        @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({})
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class WrongAbiVersionLib extends AbstractKotlincExecutableTest {
-            public void testAllFilesPresentInWrongAbiVersionLib() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/jvm/wrongAbiVersionLib"), Pattern.compile("^(.+)\\.args$"), true);
-            }
-
-        }
-
-        @TestMetadata("compiler/testData/cli/jvm/wrongKotlinSignatureLib")
-        @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({})
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class WrongKotlinSignatureLib extends AbstractKotlincExecutableTest {
-            public void testAllFilesPresentInWrongKotlinSignatureLib() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/jvm/wrongKotlinSignatureLib"), Pattern.compile("^(.+)\\.args$"), true);
-            }
-
-        }
     }
 
     @TestMetadata("compiler/testData/cli/js")
@@ -176,7 +153,7 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Js extends AbstractKotlincExecutableTest {
         public void testAllFilesPresentInJs() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), false);
         }
 
         @TestMetadata("jsExtraHelp.args")

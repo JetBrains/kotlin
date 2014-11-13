@@ -1,0 +1,15 @@
+LineBreakpoint created at onObjectHeader.kt:5
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! onObjectHeader.OnObjectHeaderPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+onObjectHeader.kt:5
+onObjectHeader.kt:10
+onObjectHeader.kt:16
+onObjectHeader.kt:8
+onObjectHeader.kt:11
+onObjectHeader.kt:20
+onObjectHeader.kt:21
+onObjectHeader.kt:8
+Compile bytecode for 1 + 1
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

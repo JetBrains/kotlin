@@ -66,6 +66,18 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
         return null;
     }
 
+    @Nullable
+    @Override
+    public JetTypeParameterList getTypeParameterList() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public JetTypeConstraintList getTypeConstraintList() {
+        return null;
+    }
+
     @NotNull
     @Override
     public List<JetTypeConstraint> getTypeConstraints() {

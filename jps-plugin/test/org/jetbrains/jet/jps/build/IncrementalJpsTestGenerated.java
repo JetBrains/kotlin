@@ -129,6 +129,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("constantRemoved")
+        public void testConstantRemoved() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/constantRemoved/");
+            doTest(fileName);
+        }
+
         @TestMetadata("constantsUnchanged")
         public void testConstantsUnchanged() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/constantsUnchanged/");
@@ -162,6 +168,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("independentClasses")
         public void testIndependentClasses() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/independentClasses/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineFunctionRemoved")
+        public void testInlineFunctionRemoved() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineFunctionRemoved/");
             doTest(fileName);
         }
 

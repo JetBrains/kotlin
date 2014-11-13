@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 import org.jetbrains.jet.lang.resolve.java.lazy.types.JavaTypeFlexibility.*
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
-import org.jetbrains.jet.lang.resolve.name.FqName
 import kotlin.platform.platformStatic
 
 class LazyJavaTypeResolver(
@@ -248,11 +247,11 @@ class LazyJavaTypeResolver(
             return (descriptor as ClassDescriptor).getMemberScope(getArguments())
         }
 
-        private val _nullable = c.storageManager.createLazyValue @nullable{
+        private val nullable = c.storageManager.createLazyValue @l {
             (): Boolean ->
             when (attr.flexibility) {
-                FLEXIBLE_LOWER_BOUND -> return@nullable false
-                FLEXIBLE_UPPER_BOUND -> return@nullable true
+                FLEXIBLE_LOWER_BOUND -> return@l false
+                FLEXIBLE_UPPER_BOUND -> return@l true
             }
             !attr.isMarkedNotNull &&
             // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
@@ -269,7 +268,8 @@ class LazyJavaTypeResolver(
                 else -> error("Unknown classifier: ${classifier()}")
             }
         }
-        override fun isNullable(): Boolean = _nullable()
+
+        override fun isNullable(): Boolean = nullable()
 
         override fun getAnnotations() = attr.annotations
     }

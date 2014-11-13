@@ -1,4 +1,4 @@
-// "Create property 'foo' from usage" "false"
+// "Create property 'foo'" "false"
 // ACTION: Convert to expression body
 // ACTION: Disable 'Convert to Expression Body'
 // ACTION: Edit intention settings

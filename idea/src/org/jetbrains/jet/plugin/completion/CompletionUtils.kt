@@ -28,6 +28,8 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import com.intellij.codeInsight.completion.PrefixMatcher
+import org.jetbrains.jet.lang.resolve.name.Name
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -76,3 +78,5 @@ private fun qualifierName(descriptor: DeclarationDescriptor): String? = when (de
     is PackageFragmentDescriptor -> IdeDescriptorRenderers.SOURCE_CODE.renderFqName(descriptor.fqName)
     else -> null
 }
+
+fun PrefixMatcher.asNameFilter() = { (name: Name) -> !name.isSpecial() && prefixMatches(name.getIdentifier()) }

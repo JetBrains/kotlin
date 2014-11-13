@@ -77,10 +77,12 @@ import com.intellij.ui.ReferenceEditorComboWithBrowseButton;
 import com.intellij.usageView.UsageViewUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ui.UIUtil;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 import org.jetbrains.jet.plugin.refactoring.RefactoringPackage;
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.*;
@@ -195,9 +197,9 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private void initFileChooser(JetFile targetFile) {
-        FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
-        descriptor.setRoots(ProjectRootManager.getInstance(myProject).getContentRoots());
-        descriptor.setIsTreeRootVisible(true);
+        FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
+                .withRoots(ProjectRootManager.getInstance(myProject).getContentRoots())
+                .withTreeRootVisible(true);
 
         String title = JetRefactoringBundle.message("refactoring.move.top.level.declaration.file.title");
         fileChooser.addBrowseFolderListener(title, null, myProject, descriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
@@ -291,10 +293,30 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             return moveDestination != null ? new MoveDestinationKotlinMoveTarget(moveDestination) : null;
         }
 
-        JetFile jetFile = (JetFile) RefactoringPackage.toPsiFile(new File(getTargetFilePath()), myProject);
-        assert jetFile != null : "Non-Kotlin files must be filtered out before starting the refactoring";
+        final File targetFile = new File(getTargetFilePath());
+        JetFile jetFile = (JetFile) RefactoringPackage.toPsiFile(targetFile, myProject);
+        if (jetFile != null) return new JetFileKotlinMoveTarget(jetFile);
 
-        return new JetFileKotlinMoveTarget(jetFile);
+        File targetDir = targetFile.getParentFile();
+        final PsiDirectory psiDirectory = RefactoringPackage.toPsiDirectory(targetDir, myProject);
+        assert psiDirectory != null : "No directory found: " + targetDir.getPath();
+
+        PsiPackage psiPackage = JavaDirectoryService.getInstance().getPackage(psiDirectory);
+        if (psiPackage == null) {
+            setErrorText("Could not find package corresponding to " + targetDir.getPath());
+            return null;
+        }
+
+        return new DeferredJetFileKotlinMoveTarget(
+                myProject,
+                new FqName(psiPackage.getQualifiedName()),
+                new Function0<JetFile>() {
+                    @Override
+                    public JetFile invoke() {
+                        return RefactoringPackage.createKotlinFile(targetFile.getName(), psiDirectory);
+                    }
+                }
+        );
     }
 
     @Nullable
@@ -307,7 +329,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         }
         else {
             PsiFile targetFile = RefactoringPackage.toPsiFile(new File(getTargetFilePath()), myProject);
-            if (!(targetFile instanceof JetFile)) {
+            if (!(targetFile == null || targetFile instanceof JetFile)) {
                 return JetRefactoringBundle.message("refactoring.move.non.kotlin.file");
             }
         }

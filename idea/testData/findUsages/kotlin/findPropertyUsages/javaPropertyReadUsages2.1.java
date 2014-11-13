@@ -1,15 +1,15 @@
 package client;
 
-import server.*
+import server.*;
 
 class Client {
-    fun fooBar() {
+    void fooBar() {
         A<String> a = new A<String>("");
         a.setFoo("a");
-        println("a.foo = " + a.getFoo());
+        System.out.println("a.foo = " + a.getFoo());
 
         B b = new B();
         b.setFoo("b");
-        println("b.foo = " + b.getFoo());
+        System.out.println("b.foo = " + b.getFoo());
     }
 }

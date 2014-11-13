@@ -44,6 +44,8 @@ public class LibrarySourcesConfig extends Config {
     @NotNull
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.k2js.config.LibrarySourcesConfig");
     public static final String STDLIB_JS_MODULE_NAME = "stdlib";
+    public static final String BUILTINS_JS_MODULE_NAME = "builtins";
+    public static final String BUILTINS_JS_FILE_NAME = BUILTINS_JS_MODULE_NAME + ".js";
     public static final String STDLIB_JS_FILE_NAME = STDLIB_JS_MODULE_NAME + ".js";
 
     @NotNull

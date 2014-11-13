@@ -18,12 +18,14 @@ package org.jetbrains.jet.codegen.forTestCompile;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
+import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.utils.Profiler;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,9 +39,9 @@ import java.util.regex.Pattern;
  * @see #runtimeJarForTests
  */
 public class ForTestCompileRuntime {
-    private static final String BUILT_INS_SRC_PATH = "core/builtins/src";
-    private static final String RUNTIME_JVM_SRC_PATH = "core/runtime.jvm/src";
-    private static final String REFLECTION_SRC_PATH = "core/reflection/src";
+    private static final String[] PATHS = {
+            "core/builtins/src", "core/runtime.jvm/src", "core/reflection/src", "core/reflection.jvm/src"
+    };
 
     private ForTestCompileRuntime() {
     }
@@ -59,12 +61,10 @@ public class ForTestCompileRuntime {
     }
 
     public static void compileBuiltIns(@NotNull File destDir) throws IOException {
-        compileKotlinToJvm("built-ins", destDir,
-                           BUILT_INS_SRC_PATH + File.pathSeparator + RUNTIME_JVM_SRC_PATH + File.pathSeparator + REFLECTION_SRC_PATH,
-                           BUILT_INS_SRC_PATH, RUNTIME_JVM_SRC_PATH, REFLECTION_SRC_PATH);
+        compileKotlinToJvm("built-ins", destDir, UtilsPackage.join(Arrays.asList(PATHS), File.pathSeparator), PATHS);
 
         JetTestUtils.compileJavaFiles(
-                javaFilesUnder(RUNTIME_JVM_SRC_PATH),
+                javaFilesUnder(PATHS),
                 Arrays.asList(
                         "-classpath", destDir.getPath(),
                         "-d", destDir.getPath()
@@ -73,8 +73,13 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
-    private static List<File> javaFilesUnder(@NotNull String path) {
-        return FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), new File(path));
+    private static List<File> javaFilesUnder(@NotNull String... paths) {
+        return KotlinPackage.flatMap(Arrays.asList(paths), new Function1<String, List<File>>() {
+            @Override
+            public List<File> invoke(String path) {
+                return FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), new File(path));
+            }
+        });
     }
 
     private static void compileStdlib(@NotNull File destDir) throws IOException {

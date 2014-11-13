@@ -21,12 +21,17 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 public class LazyPackageMemberScope(
         resolveSession: ResolveSession,
         declarationProvider: PackageMemberDeclarationProvider,
         thisPackage: PackageFragmentDescriptor)
 : AbstractLazyMemberScope<PackageFragmentDescriptor, PackageMemberDeclarationProvider>(resolveSession, declarationProvider, thisPackage, resolveSession.getTrace()) {
+
+    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        return computeDescriptorsFromDeclaredElements(kindFilter, nameFilter)
+    }
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
@@ -40,8 +45,6 @@ public class LazyPackageMemberScope(
     override fun getNonDeclaredProperties(name: Name, result: MutableSet<VariableDescriptor>) {
         // No extra properties
     }
-
-    override fun computeExtraDescriptors(): Collection<DeclarationDescriptor> = listOf()
 
     // Do not add details here, they may compromise the laziness during debugging
     override fun toString() = "lazy scope for package " + thisDescriptor.getName()
