@@ -109,15 +109,14 @@ object DynamicCallableDescriptors {
     }
 
     private fun createValueParameters(owner: DeclarationDescriptor, call: Call): List<ValueParameterDescriptor> =
-            call.getValueArguments().indices.map {
-                index
-                ->
+            call.getValueArguments().withIndices().map { p ->
+                val (index, arg) = p
                 ValueParameterDescriptorImpl(
                         owner,
                         null,
                         index,
                         Annotations.EMPTY,
-                        Name.identifier("p$index"),
+                        arg.getArgumentName()?.getReferenceExpression()?.getReferencedNameAsName() ?: Name.identifier("p$index"),
                         DynamicType,
                         false,
                         null,
