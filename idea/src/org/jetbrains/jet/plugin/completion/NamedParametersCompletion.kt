@@ -88,8 +88,8 @@ object NamedParametersCompletion {
                 val name = parameter.getName()
                 val nameString = name.asString()
                 if (nameString !in usedArguments) {
-                    val text = "$nameString ="
-                    val lookupElement = LookupElementBuilder.create(text)
+                    val lookupElement = LookupElementBuilder.create(nameString)
+                            .withPresentableText("$nameString =")
                             .withTailText(" ${DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameter.getType())}")
                             .withIcon(JetIcons.PARAMETER)
                             .withInsertHandler(NamedParameterInsertHandler(name))

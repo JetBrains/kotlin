@@ -130,6 +130,7 @@ import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.jet.plugin.decompiler.textBuilder.AbstractDecompiledTextTest
 import org.jetbrains.jet.completion.AbstractMultiFileSmartCompletionTest
+import org.jetbrains.jet.completion.handlers.AbstractCompletionCharFilterTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -356,6 +357,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractSmartCompletionHandlerTest>()) {
             model("completion/handlers/smart")
+        }
+
+        testClass(javaClass<AbstractCompletionCharFilterTest>()) {
+            model("completion/handlers/charFilter")
         }
 
         testClass(javaClass<AbstractCodeFragmentCompletionTest>()) {

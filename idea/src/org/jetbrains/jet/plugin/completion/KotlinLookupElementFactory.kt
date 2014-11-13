@@ -88,13 +88,13 @@ public object KotlinLookupElementFactory {
         val insertHandler = getDefaultInsertHandler(descriptor)
         element = element.withInsertHandler(insertHandler)
 
-        if (insertHandler is JetFunctionInsertHandler && insertHandler.lambdaInfo != null) {
-            element.putUserData<Boolean>(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
-        }
-
         element = element.withTailText(tailText, true).withTypeText(typeText).withPresentableText(presentableText)
         element = element.withIcon(JetDescriptorIconProvider.getIcon(descriptor, declaration, Iconable.ICON_FLAG_VISIBILITY))
         element = element.withStrikeoutness(KotlinBuiltIns.getInstance().isDeprecated(descriptor))
+
+        if (insertHandler is JetFunctionInsertHandler && insertHandler.lambdaInfo != null) {
+            element.putUserData<Boolean>(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
+        }
 
         return element
     }

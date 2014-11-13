@@ -21,8 +21,20 @@ import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 
 public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
-    override val completionType: CompletionType = CompletionType.BASIC
     override val testDataRelativePath: String = "/completion/handlers"
+
+    private fun doTest() {
+        doTest(2, "*", null, null, '\n')
+    }
+
+    private fun doTest(time: Int, lookupString: String?, tailText: String?, completionChar: Char) {
+        doTest(time, lookupString, null, tailText, completionChar)
+    }
+
+    private fun doTest(time: Int, lookupString: String?, itemText: String?, tailText: String?, completionChar: Char) {
+        fixture.configureByFile(fileName())
+        doTestWithTextLoaded(CompletionType.BASIC, time, lookupString, itemText, tailText, completionChar)
+    }
 
     fun testClassCompletionImport() = doTest(2, "SortedSet", null, '\n')
 
@@ -48,9 +60,9 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testNamedParametersCompletion() = doTest()
 
-    fun testNamedParametersCompletionOnEqual() = doTest(0, "paramTest =", null, '=')
+    fun testNamedParametersCompletionOnEqual() = doTest(0, "paramTest", "paramTest =", null, '=')
 
-    fun testNamedParameterKeywordName() = doTest(1, "class =", null, '\n')
+    fun testNamedParameterKeywordName() = doTest(1, "class", "class =", null, '\n')
 
     fun testInsertJavaClassImport() = doTest()
 

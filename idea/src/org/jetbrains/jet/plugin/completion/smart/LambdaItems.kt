@@ -39,7 +39,6 @@ object LambdaItems {
                     .suppressAutoInsertion()
                     .assignSmartCompletionPriority(SmartCompletionItemPriority.LAMBDA_NO_PARAMS)
                     .addTailAndNameSimilarity(functionExpectedInfos)
-            lookupElement.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
             collection.add(lookupElement)
         }
 
@@ -56,7 +55,6 @@ object LambdaItems {
                         .suppressAutoInsertion()
                         .assignSmartCompletionPriority(SmartCompletionItemPriority.LAMBDA)
                         .addTailAndNameSimilarity(functionExpectedInfos.filter { it.type == functionType })
-                lookupElement.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
                 collection.add(lookupElement)
             }
         }

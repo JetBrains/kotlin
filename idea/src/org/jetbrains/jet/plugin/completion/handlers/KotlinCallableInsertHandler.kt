@@ -126,13 +126,13 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
     }
 
     private fun addBrackets(context : InsertionContext, offsetElement : PsiElement) {
-        if (context.getCompletionChar() == '(') { //TODO: more correct behavior related to braces type
+        val completionChar = context.getCompletionChar()
+        if (completionChar == '(') { //TODO: more correct behavior related to braces type
             context.setAddCompletionChar(false)
         }
 
         val offset = context.getTailOffset()
         val document = context.getDocument()
-        val completionChar = context.getCompletionChar()
 
         val forceParenthesis = lambdaInfo != null && completionChar == '\t' && document.getCharsSequence().charAt(offset) == '('
         val braces = lambdaInfo != null && completionChar != '(' && !forceParenthesis
@@ -168,7 +168,7 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
         val closeBracketOffset = indexOfSkippingSpace(document, closingBracket, openingBracketOffset + 1)
         val editor = context.getEditor()
 
-        var forcePlaceCaretIntoParentheses : Boolean = completionChar == '('
+        var forcePlaceCaretIntoParentheses = completionChar == '('
 
         if (caretPosition == CaretPosition.IN_BRACKETS || forcePlaceCaretIntoParentheses || closeBracketOffset == -1) {
             editor.getCaretModel().moveToOffset(openingBracketOffset + 1 + inBracketsShift)

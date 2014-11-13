@@ -25,17 +25,22 @@ import com.intellij.openapi.util.Key
 
 public class KotlinCompletionCharFilter() : CharFilter() {
     class object {
-        public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key<Boolean>("KotlinCompletionCharFilter.ACCEPT_OPENNING_BRACE")
-        public val ACCEPT_EQ: Key<Boolean> = Key<Boolean>("KotlinCompletionCharFilter.ACCEPT_EQ")
+        public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key("KotlinCompletionCharFilter.ACCEPT_OPENNING_BRACE")
+        public val ACCEPT_EQ: Key<Boolean> = Key("KotlinCompletionCharFilter.ACCEPT_EQ")
     }
 
     public override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
         if (lookup.getPsiFile() !is JetFile) return null
         if (!lookup.isCompletion()) return null
 
-        if (Character.isJavaIdentifierPart(c) || c == ':' /* used in '::xxx'*/) return CharFilter.Result.ADD_TO_PREFIX
+        if (Character.isJavaIdentifierPart(c) || c == ':' /* used in '::xxx'*/) {
+            return CharFilter.Result.ADD_TO_PREFIX
+        }
+
+        val currentItem = lookup.getCurrentItem()
         return when (c) {
             '.' -> {
+                //TODO: this heuristics better to be only used for auto-popup completion but I see no way to check this
                 if (prefixLength == 0 && !lookup.isSelectionTouched()) {
                     val caret = lookup.getEditor().getCaretModel().getOffset()
                     if (caret > 0 && lookup.getEditor().getDocument().getCharsSequence()[caret - 1] == '.') {
@@ -45,8 +50,7 @@ public class KotlinCompletionCharFilter() : CharFilter() {
                 Result.SELECT_ITEM_AND_FINISH_LOOKUP
             }
 
-            '(' -> {
-                val currentItem = lookup.getCurrentItem()
+            '{' -> {
                 if (currentItem != null && currentItem.getUserData(ACCEPT_OPENING_BRACE) ?: false)
                     Result.SELECT_ITEM_AND_FINISH_LOOKUP
                 else
@@ -54,14 +58,13 @@ public class KotlinCompletionCharFilter() : CharFilter() {
             }
 
             '=' -> {
-                val currentItem = lookup.getCurrentItem()
                 if (currentItem != null && currentItem.getUserData(ACCEPT_EQ) ?: false)
                     Result.SELECT_ITEM_AND_FINISH_LOOKUP
                 else
-                    Result.HIDE_LOOKUP
+                    Result.HIDE_LOOKUP //TODO: why not for others?
             }
 
-            ',', ' ' -> Result.SELECT_ITEM_AND_FINISH_LOOKUP
+            ',', ' ', '(' -> Result.SELECT_ITEM_AND_FINISH_LOOKUP
 
             else -> return CharFilter.Result.HIDE_LOOKUP
         }

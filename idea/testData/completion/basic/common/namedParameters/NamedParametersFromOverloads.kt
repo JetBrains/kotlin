@@ -10,11 +10,11 @@ fun other() {
     foo(n<caret>)
 }
 
-// EXIST: "nFirst ="
-// EXIST: "nSecond ="
-// EXIST: "nThird ="
+// EXIST: { lookupString:"nFirst", itemText:"nFirst =" }
+// EXIST: { lookupString:"nSecond", itemText:"nSecond =" }
+// EXIST: { lookupString:"nThird", itemText:"nThird =" }
 // EXIST: nLocal
 
 // todo - should exist
-// ABSENT: "nClassParam ="
-// ABSENT: "nClassField ="
+// ABSENT: nClassParam
+// ABSENT: nClassField

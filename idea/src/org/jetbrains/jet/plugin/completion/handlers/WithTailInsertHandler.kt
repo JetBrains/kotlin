@@ -30,9 +30,13 @@ class WithTailInsertHandler(val tailText: String,
                             val spaceAfter: Boolean,
                             val overwriteText: Boolean = true) : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        val document = context.getDocument()
-
         item.handleInsert(context)
+
+        if (tailText == context.getCompletionChar().toString() && context.shouldAddCompletionChar()) {
+            return
+        }
+
+        val document = context.getDocument()
         PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(document)
 
         var tailOffset = context.getTailOffset()

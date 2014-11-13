@@ -31,24 +31,19 @@ import com.intellij.openapi.application.Result
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 
 public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTestCase() {
-    protected abstract val completionType : CompletionType
     protected abstract val testDataRelativePath: String
 
     protected val fixture: JavaCodeInsightTestFixture
         get() = myFixture
 
-    protected fun doTest() : Unit = doTest(2, "*", null, null, '\n')
-
-    protected fun doTest(time: Int, lookupString: String?, tailText: String?, completionChar: Char) {
-        doTest(time, lookupString, null, tailText, completionChar)
-    }
-
-    protected fun doTest(time: Int, lookupString: String?, itemText: String?, tailText: String?, completionChar: Char) {
-        fixture.configureByFile(fileName())
-        doTestWithTextLoaded(time, lookupString, itemText, tailText, completionChar)
-    }
-
-    protected fun doTestWithTextLoaded(time: Int, lookupString: String?, itemText: String?, tailText: String?, completionChar: Char) {
+    protected fun doTestWithTextLoaded(
+            completionType: CompletionType,
+            time: Int,
+            lookupString: String?,
+            itemText: String?,
+            tailText: String?,
+            completionChar: Char
+    ) {
         fixture.complete(completionType, time)
 
         if (lookupString != null || itemText != null || tailText != null) {
@@ -126,7 +121,9 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
 
     protected fun selectItem(item: LookupElement?, completionChar: Char) {
         val lookup = (fixture.getLookup() as LookupImpl)
-        lookup.setCurrentItem(item)
+        if (lookup.getCurrentItem() != item) { // do not touch selection if not changed - important for char filter tests
+            lookup.setCurrentItem(item)
+        }
         if (LookupEvent.isSpecialCompletionChar(completionChar)) {
             (object : WriteCommandAction.Simple<Any>(getProject()) {
                 protected override fun run(result: Result<Any>) {
