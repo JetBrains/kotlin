@@ -104,6 +104,8 @@ public abstract class DeserializedMemberScope protected(
 
     protected fun computeDescriptors(kindFilter: DescriptorKindFilter,
                                      nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        //NOTE: descriptors should be in the same order they were serialized in
+        // see MemberComparator
         val result = LinkedHashSet<DeclarationDescriptor>(0)
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.SINGLETON_CLASSIFIERS_MASK)) {
