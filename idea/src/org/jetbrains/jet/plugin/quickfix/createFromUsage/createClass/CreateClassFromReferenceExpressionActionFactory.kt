@@ -23,6 +23,11 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression
 import java.util.Arrays
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.psi.psiUtil.isDotReceiver
+import com.intellij.codeInsight.daemon.quickFix.CreateClassOrPackageFix
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
+import org.jetbrains.jet.lang.resolve.name.FqName
+import java.util.ArrayList
+import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 
 public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
@@ -32,7 +37,6 @@ public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActi
         val file = refExpr.getContainingFile() as? JetFile ?: return Collections.emptyList()
 
         val name = refExpr.getReferencedName()
-        if (!name.checkClassName()) return Collections.emptyList()
 
         val exhaust = refExpr.getAnalysisResults()
         val context = exhaust.getBindingContext()
@@ -56,7 +60,10 @@ public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActi
                     getTargetParentByQualifier(refExpr.getContainingJetFile(), receiverSelector != null, qualifierDescriptor)
                     ?: return Collections.emptyList()
 
-            return ClassKind.values()
+            val createPackageAction = refExpr.getCreatePackageFixIfApplicable(targetParent)
+            if (createPackageAction != null) return Collections.singletonList(createPackageAction)
+
+            return (if (name.checkClassName()) ClassKind.values() else array())
                     .filter {
                         when (it) {
                             ClassKind.ANNOTATION_CLASS -> inImport

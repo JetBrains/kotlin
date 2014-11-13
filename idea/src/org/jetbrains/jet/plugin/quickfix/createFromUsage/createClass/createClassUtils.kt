@@ -6,9 +6,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.JavaPsiFacade
-import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.jet.lang.resolve.BindingContext
@@ -21,15 +19,22 @@ import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.psi.Call
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier
-import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.noSubstitutions
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
+import com.intellij.codeInsight.intention.IntentionAction
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import com.intellij.codeInsight.daemon.quickFix.CreateClassOrPackageFix
+import org.jetbrains.jet.plugin.quickfix.DelegatingIntentionAction
+import org.jetbrains.jet.plugin.JetBundle
 import com.intellij.psi.PsiPackage
-import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.canRefactor
 import com.intellij.psi.PsiDirectory
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 
 private fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUpperCase(first())
+
+private fun String.checkPackageName(): Boolean = isNotEmpty() && Character.isLowerCase(first())
 
 private fun getTargetParentByQualifier(
         file: JetFile,
@@ -98,5 +103,27 @@ private fun PsiElement.canRefactor(): Boolean {
             isWritable() && ProjectRootsUtil.isInSource(element = this, includeLibrarySources = false, includeTestSources = true)
         else ->
             false
+    }
+}
+
+private fun JetSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent: PsiElement): IntentionAction? {
+    val name = getReferencedName()
+    if (!name.checkPackageName()) return null
+
+    val basePackage: PsiPackage = when (targetParent) {
+                                      is JetFile -> JavaPsiFacade.getInstance(targetParent.getProject()).findPackage(targetParent.getPackageFqName().asString())
+                                      is PsiPackage -> targetParent : PsiPackage
+                                      else -> null
+                                  } ?: return null
+
+    val baseName = basePackage.getQualifiedName()
+    val fullName = if (baseName.isNotEmpty()) "$baseName.$name" else name
+
+    val javaFix = CreateClassOrPackageFix.createFix(fullName, getResolveScope(), this, basePackage, null, null, null) ?: return null
+
+    return object: DelegatingIntentionAction(javaFix) {
+        override fun getFamilyName(): String = JetBundle.message("create.from.usage.family")
+
+        override fun getText(): String = JetBundle.message("create.0.from.usage", "package '${fullName}'")
     }
 }
