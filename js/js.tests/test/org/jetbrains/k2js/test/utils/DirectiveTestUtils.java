@@ -94,10 +94,9 @@ public class DirectiveTestUtils {
     private static final DirectiveHandler COUNT_LABELS = new DirectiveHandler("CHECK_LABELS_COUNT") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            String functionName = arguments.findNamedArgument("function");
-            String labelName = arguments.findNamedArgument("name");
-            String countStr = arguments.findNamedArgument("count");
-            assert countStr != null;
+            String functionName = arguments.getNamedArgument("function");
+            String labelName = arguments.getNamedArgument("name");
+            String countStr = arguments.getNamedArgument("count");
             int expectedCount = Integer.valueOf(countStr);
 
             JsNode scope = AstSearchUtil.getFunction(ast, functionName);
@@ -195,6 +194,11 @@ public class DirectiveTestUtils {
         }
 
         abstract void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception;
+
+        @NotNull
+        String getName() {
+            return directive;
+        }
     }
 
     /**
