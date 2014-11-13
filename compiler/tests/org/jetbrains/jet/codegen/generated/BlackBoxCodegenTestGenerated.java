@@ -6008,6 +6008,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt6153.kt")
+        public void testKt6153() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt6153.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unjustifiedReferenceTarget.kt")
         public void testUnjustifiedReferenceTarget() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/unjustifiedReferenceTarget.kt");

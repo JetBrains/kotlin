@@ -16,14 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.calls.tasks
 
-import com.google.common.base.Predicate
-import com.google.common.collect.Collections2
-import com.google.common.collect.Lists
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetReferenceExpression
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.jet.storage.StorageManager
+import java.util.ArrayList
+import org.jetbrains.jet.utils.toReadOnlyList
 
 public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
         private val storageManager: StorageManager,
@@ -31,15 +29,10 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
         private val priorityProvider: ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>>,
         private val tracing: TracingStrategy
 ) {
-    private val isSafeCall: Boolean
+    private val isSafeCall = JetPsiUtil.isSafeCall(basicCallResolutionContext.call)
 
-    private val candidatesList = Lists.newArrayList<Collection<ResolutionCandidate<D>>>()
-
-    private var internalTasks: MutableList<ResolutionTask<D, F>>? = null
-
-    {
-        this.isSafeCall = JetPsiUtil.isSafeCall(basicCallResolutionContext.call)
-    }
+    private val candidatesList = ArrayList<() -> Collection<ResolutionCandidate<D>>>()
+    private var internalTasks: List<ResolutionTask<D, F>>? = null
 
     public fun setIsSafeCall(candidates: Collection<ResolutionCandidate<D>>): Collection<ResolutionCandidate<D>> {
         for (candidate in candidates) {
@@ -48,17 +41,17 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
         return candidates
     }
 
-    public fun addCandidates(candidates: Collection<ResolutionCandidate<D>>) {
+    public fun addCandidates(lazyCandidates: () -> Collection<ResolutionCandidate<D>>) {
         assertNotFinished()
-        if (!candidates.isEmpty()) {
-            candidatesList.add(setIsSafeCall(candidates))
-        }
+        candidatesList.add(storageManager.createLazyValue {
+                    setIsSafeCall(lazyCandidates()).toReadOnlyList()
+                })
     }
 
     public fun addCandidates(candidatesList: List<Collection<ResolutionCandidate<D>>>) {
         assertNotFinished()
         for (candidates in candidatesList) {
-            addCandidates(candidates)
+            addCandidates { candidates }
         }
     }
 
@@ -68,20 +61,17 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
 
     public fun getTasks(): List<ResolutionTask<D, F>> {
         if (internalTasks == null) {
-            internalTasks = Lists.newArrayList()
-
-            run {
-                var priority = priorityProvider.getMaxPriority()
-                while (priority >= 0) {
-                    for (candidates in candidatesList) {
-                        val filteredCandidates = candidates.filter { priority == priorityProvider.getPriority(it) }
-                        if (!filteredCandidates.isEmpty()) {
-                            internalTasks!!.add(ResolutionTask(filteredCandidates, basicCallResolutionContext, tracing))
-                        }
+            val tasks = ArrayList<ResolutionTask<D, F>>()
+            for (priority in (0..priorityProvider.getMaxPriority()).reversed()) {
+                for (candidateIndex in 0..candidatesList.size - 1) {
+                    val lazyCandidates = storageManager.createLazyValue {
+                        candidatesList[candidateIndex]().filter { priorityProvider.getPriority(it) == priority }.toReadOnlyList()
                     }
-                    priority--
+                    tasks.add(ResolutionTask(basicCallResolutionContext, tracing, lazyCandidates))
                 }
             }
+
+            internalTasks = tasks
         }
         return internalTasks!!
     }

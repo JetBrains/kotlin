@@ -427,7 +427,7 @@ public class CallResolver {
         TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
         OverloadResolutionResultsImpl<F> resultsForFirstNonemptyCandidateSet = null;
         for (ResolutionTask<D, F> task : prioritizedTasks) {
-            if (successfulResults != null && !context.collectAllCandidates) continue;
+            if (task.getCandidates().isEmpty()) continue;
 
             TemporaryBindingTrace taskTrace =
                     TemporaryBindingTrace.create(context.trace, "trace to resolve a task for", task.call.getCalleeExpression());
@@ -453,6 +453,8 @@ public class CallResolver {
                 traceForFirstNonemptyCandidateSet = taskTrace;
                 resultsForFirstNonemptyCandidateSet = results;
             }
+
+            if (successfulResults != null && !context.collectAllCandidates) break;
         }
         OverloadResolutionResultsImpl<F> results;
         if (successfulResults != null) {
@@ -517,7 +519,7 @@ public class CallResolver {
             };
             TemporaryBindingTrace temporaryTrace =
                     TemporaryBindingTrace.create(task.trace, "trace for resolution guarded for extra function literal arguments");
-            ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(task.getCandidates(), task.toBasic(), task.tracing).
+            ResolutionTask<D, F> newTask = task.replaceContext(task.toBasic()).
                     replaceBindingTrace(temporaryTrace).replaceCall(callWithoutFLArgs);
 
             OverloadResolutionResultsImpl<F> resultsWithFunctionLiteralsStripped = performResolution(newTask, callTransformer);

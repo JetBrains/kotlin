@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.tasks;
 
 import com.google.common.collect.Lists;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -37,13 +38,13 @@ import java.util.Collection;
  * Stores candidates for call resolution.
  */
 public class ResolutionTask<D extends CallableDescriptor, F extends D> extends CallResolutionContext<ResolutionTask<D, F>> {
-    private final Collection<ResolutionCandidate<D>> candidates;
+    private final Function0<Collection<ResolutionCandidate<D>>> lazyCandidates;
     private final Collection<MutableResolvedCall<F>> resolvedCalls;
     private DescriptorCheckStrategy checkingStrategy;
     public final TracingStrategy tracing;
 
     private ResolutionTask(
-            @NotNull Collection<ResolutionCandidate<D>> candidates,
+            @NotNull Function0<Collection<ResolutionCandidate<D>>> lazyCandidates,
             @NotNull TracingStrategy tracing,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
@@ -61,17 +62,17 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
               dataFlowInfoForArguments, callResolverExtension, isAnnotationContext, collectAllCandidates);
-        this.candidates = candidates;
+        this.lazyCandidates = lazyCandidates;
         this.resolvedCalls = resolvedCalls;
         this.tracing = tracing;
     }
 
     public ResolutionTask(
-            @NotNull Collection<ResolutionCandidate<D>> candidates,
             @NotNull BasicCallResolutionContext context,
-            @NotNull TracingStrategy tracing
+            @NotNull TracingStrategy tracing,
+            @NotNull Function0<Collection<ResolutionCandidate<D>>> lazyCandidates
     ) {
-        this(candidates, tracing,
+        this(lazyCandidates, tracing,
              context.trace, context.scope, context.call,
              context.expectedType, context.dataFlowInfo, context.contextDependency, context.checkArguments,
              context.resolutionResultsCache, context.dataFlowInfoForArguments,
@@ -79,16 +80,21 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     }
 
     public ResolutionTask(
-            @NotNull Collection<ResolutionCandidate<D>> candidates,
+            @NotNull final Collection<ResolutionCandidate<D>> candidates,
             @NotNull JetReferenceExpression reference,
             @NotNull BasicCallResolutionContext context
     ) {
-        this(candidates, context, TracingStrategyImpl.create(reference, context.call));
+        this(context, TracingStrategyImpl.create(reference, context.call), new Function0<Collection<ResolutionCandidate<D>>>() {
+            @Override
+            public Collection<ResolutionCandidate<D>> invoke() {
+                return candidates;
+            }
+        });
     }
 
     @NotNull
     public Collection<ResolutionCandidate<D>> getCandidates() {
-        return candidates;
+        return lazyCandidates.invoke();
     }
 
     public void addResolvedCall(@NotNull MutableResolvedCall<F> resolvedCall) {
@@ -122,16 +128,20 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             boolean collectAllCandidates
     ) {
         ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(
-                candidates, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
+                lazyCandidates, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, dataFlowInfoForArguments, callResolverExtension, resolvedCalls, isAnnotationContext,
                 collectAllCandidates);
         newTask.setCheckingStrategy(checkingStrategy);
         return newTask;
     }
 
+    public ResolutionTask<D, F> replaceContext(@NotNull BasicCallResolutionContext newContext) {
+        return new ResolutionTask<D, F>(newContext, tracing, lazyCandidates);
+    }
+
     public ResolutionTask<D, F> replaceCall(@NotNull Call newCall) {
         return new ResolutionTask<D, F>(
-                candidates, tracing, trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments,
+                lazyCandidates, tracing, trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, dataFlowInfoForArguments, callResolverExtension, resolvedCalls,
                 isAnnotationContext, collectAllCandidates);
     }
@@ -142,6 +152,6 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
 
     @Override
     public String toString() {
-        return candidates.toString();
+        return lazyCandidates.toString();
     }
 }
