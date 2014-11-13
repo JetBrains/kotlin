@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.resolve.name.ClassId
+import org.jetbrains.jet.lang.resolve.MemberComparator
 
 public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
 
@@ -76,6 +77,6 @@ class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompile
         val packageView = module.getPackage(packageFqName) ?: return listOf()
         return packageView.getMemberScope().getAllDescriptors() filter {
             it is CallableMemberDescriptor && DescriptorUtils.getContainingModule(it) != KotlinBuiltIns.getInstance().getBuiltInsModule()
-        }
+        } sortBy MemberComparator.INSTANCE
     }
 }
