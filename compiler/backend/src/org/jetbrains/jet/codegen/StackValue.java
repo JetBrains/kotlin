@@ -390,8 +390,8 @@ public abstract class StackValue {
         return new FieldForSharedVar(field.type, field.owner, field.name, newSharedVarReceiver);
     }
 
-    public static StackValue coercion(@NotNull StackValue receiver, @NotNull Type type) {
-        return CodegenPackage.coercion(receiver, type);
+    public static StackValue coercion(@NotNull StackValue value, @NotNull Type castType) {
+        return new CoercionValue(value, castType);
     }
 
     public static StackValue thisOrOuter(@NotNull ExpressionCodegen codegen, @NotNull ClassDescriptor descriptor, boolean isSuper, boolean isExplicit) {

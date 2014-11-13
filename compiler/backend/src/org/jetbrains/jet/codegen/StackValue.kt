@@ -21,17 +21,14 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.jet.codegen.StackValue.StackValueWithSimpleReceiver
 
-public fun coercion(value: StackValue, castType: Type): StackValue {
-    return CoercionValue(value, castType)
-}
-
 class CoercionValue(
         val value: StackValue,
         val castType: Type
 ) : StackValue(castType) {
 
     override fun putSelector(type: Type, v: InstructionAdapter) {
-        value.putSelector(type, v)
+        value.putSelector(castType, v)
+        StackValue.coerce(castType, type, v)
     }
 
     override fun storeSelector(topOfStackType: Type, v: InstructionAdapter) {
