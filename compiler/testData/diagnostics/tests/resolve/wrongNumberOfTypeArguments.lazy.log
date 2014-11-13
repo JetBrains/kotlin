@@ -49,3 +49,54 @@ LazyJavaPackageFragment@12['lang'] {
     functions('foo': Name@28) = EmptyList@30[empty] // through LazyPackageFragmentScopeForJavaPackage@36
     memberIndex = computeMemberIndex$1@37 // through LazyPackageFragmentScopeForJavaPackage@36
 }
+
+ResolutionTaskHolder@38 {
+    <name not found> = ArrayList@39[1] { ResolutionCandidate@40 }
+    <name not found> = ArrayList@41[1] { ResolutionCandidate@40 }
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+}
+
+ResolutionTaskHolder@42 {
+    <name not found> = ArrayList@43[1] { ResolutionCandidate@44 }
+    <name not found> = ArrayList@45[1] { ResolutionCandidate@44 }
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+    <name not found> = EmptyList@30[empty]
+}
+
+ResolutionTaskHolder@46 {
+    <name not found> = ArrayList@47[1] { ResolutionCandidate@48 }
+    <name not found> = ArrayList@49[1] { ResolutionCandidate@48 }
+}

@@ -170,7 +170,42 @@ LazyJavaTypeParameterResolver@104 {
     resolve(JavaTypeParameterImpl@105['T']) = LazyJavaTypeParameterDescriptor@33['T']
 }
 
-TypeDeserializer@106 {
-    classDescriptors('2': Integer@107) = DeserializedClassDescriptor@108['Any']
-    classDescriptors('54': Integer@109) = LazyJavaClassDescriptor@31['Class']
+ResolutionTaskHolder@106 {
+    <name not found> = ArrayList@107[1] { ResolutionCandidate@108 }
+    <name not found> = ArrayList@109[1] { ResolutionCandidate@108 }
+    <name not found> = EmptyList@71[empty]
+    <name not found> = EmptyList@71[empty]
+    <name not found> = EmptyList@71[empty]
+    <name not found> = EmptyList@71[empty]
+}
+
+ResolutionTaskHolder@110 {
+    <name not found> = ArrayList@111[1] { ResolutionCandidate@112 }
+    <name not found> = ArrayList@113[1] { ResolutionCandidate@112 }
+    <name not found> = EmptyList@71[empty]
+    <name not found> = EmptyList@71[empty]
+    <name not found> = EmptyList@71[empty]
+    <name not found> = EmptyList@71[empty]
+}
+
+ResolutionTaskHolder@114 {
+    <name not found> = ArrayList@115[1] { ResolutionCandidate@116 }
+    <name not found> = ArrayList@117[1] { ResolutionCandidate@116 }
+    <name not found> = EmptyList@71[empty]
+    <name not found> = EmptyList@71[empty]
+}
+
+ResolutionTaskHolder@118 {
+    <name not found> = ArrayList@119[1] { ResolutionCandidate@120 }
+    <name not found> = ArrayList@121[1] { ResolutionCandidate@120 }
+}
+
+ResolutionTaskHolder@122 {
+    <name not found> = ArrayList@123[1] { ResolutionCandidate@124 }
+    <name not found> = ArrayList@125[1] { ResolutionCandidate@124 }
+}
+
+TypeDeserializer@126 {
+    classDescriptors('34': Integer@127) = LazyJavaClassDescriptor@31['Class']
+    classDescriptors('9': Integer@128) = DeserializedClassDescriptor@129['Any']
 }

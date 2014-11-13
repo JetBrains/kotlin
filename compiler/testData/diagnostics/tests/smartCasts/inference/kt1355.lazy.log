@@ -73,42 +73,42 @@ LazyJavaClassifierType@55['K'] {
     arguments = ArrayList@56[empty]
     classifier = JavaTypeParameterImpl@57['K']
     nullable = 'false': Boolean@49
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@50
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@54
 }
 
 LazyJavaClassifierType@58['K'] {
     arguments = ArrayList@59[empty]
     classifier = JavaTypeParameterImpl@60['K']
     nullable = 'false': Boolean@49
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@50
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@54
 }
 
 LazyJavaClassifierType@61['K'] {
     arguments = ArrayList@62[empty]
-    classifier = JavaTypeParameterImpl@57['K']
+    classifier = JavaTypeParameterImpl@60['K']
     nullable = 'true': Boolean@63
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@50
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@54
 }
 
 LazyJavaClassifierType@64['K'] {
     arguments = ArrayList@65[empty]
-    classifier = JavaTypeParameterImpl@60['K']
+    classifier = JavaTypeParameterImpl@53['K']
     nullable = 'true': Boolean@63
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@50
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@54
 }
 
 LazyJavaClassifierType@66['K'] {
     arguments = ArrayList@67[empty]
-    classifier = JavaTypeParameterImpl@48['K']
+    classifier = JavaTypeParameterImpl@57['K']
     nullable = 'true': Boolean@63
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@50
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@54
 }
 
 LazyJavaClassifierType@68['K'] {
     arguments = ArrayList@69[empty]
-    classifier = JavaTypeParameterImpl@53['K']
+    classifier = JavaTypeParameterImpl@48['K']
     nullable = 'true': Boolean@63
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@54
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@50
 }
 
 LazyJavaClassifierType@70['Map<? extends K, ? extends V>'] {
@@ -173,21 +173,21 @@ LazyJavaClassifierType@101['String'] {
 
 LazyJavaClassifierType@104['String'] {
     arguments = ArrayList@105[empty]
-    classifier = JavaClassImpl@96['String']
+    classifier = JavaClassImpl@103['String']
     nullable = 'true': Boolean@63
     typeConstructor = DeserializedClassTypeConstructor@97
 }
 
 LazyJavaClassifierType@106['String'] {
     arguments = ArrayList@107[empty]
-    classifier = JavaClassImpl@100['String']
+    classifier = JavaClassImpl@96['String']
     nullable = 'true': Boolean@63
     typeConstructor = DeserializedClassTypeConstructor@97
 }
 
 LazyJavaClassifierType@108['String'] {
     arguments = ArrayList@109[empty]
-    classifier = JavaClassImpl@103['String']
+    classifier = JavaClassImpl@100['String']
     nullable = 'true': Boolean@63
     typeConstructor = DeserializedClassTypeConstructor@97
 }
@@ -215,14 +215,14 @@ LazyJavaClassifierType@117['Throwable'] {
 
 LazyJavaClassifierType@120['Throwable'] {
     arguments = ArrayList@121[empty]
-    classifier = JavaClassImpl@116['Throwable']
+    classifier = JavaClassImpl@119['Throwable']
     nullable = 'true': Boolean@63
     typeConstructor = DeserializedClassTypeConstructor@113
 }
 
 LazyJavaClassifierType@122['Throwable'] {
     arguments = ArrayList@123[empty]
-    classifier = JavaClassImpl@119['Throwable']
+    classifier = JavaClassImpl@116['Throwable']
     nullable = 'true': Boolean@63
     typeConstructor = DeserializedClassTypeConstructor@113
 }
@@ -258,19 +258,19 @@ LazyJavaClassifierType@135['V'] {
     arguments = ArrayList@136[empty]
     classifier = JavaTypeParameterImpl@137['V']
     nullable = 'false': Boolean@49
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@138
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@131
 }
 
-LazyJavaClassifierType@139['V'] {
-    arguments = ArrayList@140[empty]
-    classifier = JavaTypeParameterImpl@141['V']
+LazyJavaClassifierType@138['V'] {
+    arguments = ArrayList@139[empty]
+    classifier = JavaTypeParameterImpl@140['V']
     nullable = 'false': Boolean@49
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@131
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@141
 }
 
 LazyJavaClassifierType@142['V'] {
     arguments = ArrayList@143[empty]
-    classifier = JavaTypeParameterImpl@141['V']
+    classifier = JavaTypeParameterImpl@130['V']
     nullable = 'true': Boolean@63
     typeConstructor = AbstractLazyTypeParameterDescriptor$1@131
 }
@@ -279,21 +279,21 @@ LazyJavaClassifierType@144['V'] {
     arguments = ArrayList@145[empty]
     classifier = JavaTypeParameterImpl@137['V']
     nullable = 'true': Boolean@63
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@138
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@131
 }
 
 LazyJavaClassifierType@146['V'] {
     arguments = ArrayList@147[empty]
-    classifier = JavaTypeParameterImpl@130['V']
+    classifier = JavaTypeParameterImpl@134['V']
     nullable = 'true': Boolean@63
     typeConstructor = AbstractLazyTypeParameterDescriptor$1@131
 }
 
 LazyJavaClassifierType@148['V'] {
     arguments = ArrayList@149[empty]
-    classifier = JavaTypeParameterImpl@134['V']
+    classifier = JavaTypeParameterImpl@140['V']
     nullable = 'true': Boolean@63
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@131
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@141
 }
 
 LazyJavaPackageFragmentProvider@150 {
@@ -364,47 +364,46 @@ LazyJavaPackageFragment@177['lang'] {
     classes('arrayListOf': Name@215) = null // through LazyPackageFragmentScopeForJavaPackage@213
     classes('attributes': Name@216) = null // through LazyPackageFragmentScopeForJavaPackage@213
     classes('equals': Name@217) = null // through LazyPackageFragmentScopeForJavaPackage@213
-    classes('get': Name@218) = null // through LazyPackageFragmentScopeForJavaPackage@213
-    classes('put': Name@219) = null // through LazyPackageFragmentScopeForJavaPackage@213
-    classes('remove': Name@220) = null // through LazyPackageFragmentScopeForJavaPackage@213
-    classes('set': Name@221) = null // through LazyPackageFragmentScopeForJavaPackage@213
+    classes('set': Name@218) = null // through LazyPackageFragmentScopeForJavaPackage@213
     deserializedPackageScope = Empty@207 // through LazyPackageFragmentScopeForJavaPackage@213
     functions('Exception': Name@212) = EmptyList@209[empty] // through LazyPackageFragmentScopeForJavaPackage@213
     functions('HashMap': Name@214) = EmptyList@209[empty] // through LazyPackageFragmentScopeForJavaPackage@213
     functions('arrayListOf': Name@215) = EmptyList@209[empty] // through LazyPackageFragmentScopeForJavaPackage@213
     functions('equals': Name@217) = EmptyList@209[empty] // through LazyPackageFragmentScopeForJavaPackage@213
-    functions('get': Name@218) = EmptyList@209[empty] // through LazyPackageFragmentScopeForJavaPackage@213
-    functions('put': Name@219) = EmptyList@209[empty] // through LazyPackageFragmentScopeForJavaPackage@213
-    functions('remove': Name@220) = EmptyList@209[empty] // through LazyPackageFragmentScopeForJavaPackage@213
-    functions('set': Name@221) = EmptyList@209[empty] // through LazyPackageFragmentScopeForJavaPackage@213
-    memberIndex = computeMemberIndex$1@222 // through LazyPackageFragmentScopeForJavaPackage@213
+    functions('set': Name@218) = EmptyList@209[empty] // through LazyPackageFragmentScopeForJavaPackage@213
+    memberIndex = computeMemberIndex$1@219 // through LazyPackageFragmentScopeForJavaPackage@213
 }
 
 LazyJavaPackageFragment@188['util'] {
-    classes('HashMap': Name@223) = LazyJavaClassDescriptor@15['HashMap'] // through LazyPackageFragmentScopeForJavaPackage@224
-    deserializedPackageScope = Empty@207 // through LazyPackageFragmentScopeForJavaPackage@224
-    functions('HashMap': Name@225) = EmptyList@209[empty] // through LazyPackageFragmentScopeForJavaPackage@224
-    memberIndex = computeMemberIndex$1@226 // through LazyPackageFragmentScopeForJavaPackage@224
+    classes('HashMap': Name@220) = LazyJavaClassDescriptor@15['HashMap'] // through LazyPackageFragmentScopeForJavaPackage@221
+    deserializedPackageScope = Empty@207 // through LazyPackageFragmentScopeForJavaPackage@221
+    functions('HashMap': Name@222) = EmptyList@209[empty] // through LazyPackageFragmentScopeForJavaPackage@221
+    memberIndex = computeMemberIndex$1@223 // through LazyPackageFragmentScopeForJavaPackage@221
 }
 
 LazyJavaTypeParameterDescriptor@34['K'] {
-    defaultType = JetTypeImpl@227['K']
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@50
-    upperBounds = LinkedHashSet@228[1] { NullableType@229 }
+    defaultType = JetTypeImpl@224['K']
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@54
+    upperBounds = LinkedHashSet@225[1] { NullableType@226 }
 }
 
 LazyJavaTypeParameterDescriptor@26['K'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@54
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@50
 }
 
 LazyJavaTypeParameterDescriptor@35['V'] {
-    defaultType = JetTypeImpl@230['V']
+    defaultType = JetTypeImpl@227['V']
     typeConstructor = AbstractLazyTypeParameterDescriptor$1@131
-    upperBounds = LinkedHashSet@231[1] { NullableType@232 }
+    upperBounds = LinkedHashSet@228[1] { NullableType@229 }
 }
 
 LazyJavaTypeParameterDescriptor@27['V'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@138
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@141
+}
+
+LazyJavaTypeParameterResolver@230 {
+    resolve(JavaTypeParameterImpl@231['K']) = LazyJavaTypeParameterDescriptor@34['K']
+    resolve(JavaTypeParameterImpl@232['V']) = LazyJavaTypeParameterDescriptor@35['V']
 }
 
 LazyJavaTypeParameterResolver@233 {
@@ -412,7 +411,236 @@ LazyJavaTypeParameterResolver@233 {
     resolve(JavaTypeParameterImpl@235['V']) = LazyJavaTypeParameterDescriptor@27['V']
 }
 
-LazyJavaTypeParameterResolver@236 {
-    resolve(JavaTypeParameterImpl@237['K']) = LazyJavaTypeParameterDescriptor@34['K']
-    resolve(JavaTypeParameterImpl@238['V']) = LazyJavaTypeParameterDescriptor@35['V']
+ResolutionTaskHolder@236 {
+    <name not found> = ArrayList@237[1] { ResolutionCandidate@238 }
+    <name not found> = ArrayList@239[1] { ResolutionCandidate@238 }
+    <name not found> = ArrayList@240[1] { ResolutionCandidate@241 }
+    <name not found> = ArrayList@242[1] { ResolutionCandidate@241 }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+}
+
+ResolutionTaskHolder@243 {
+    <name not found> = ArrayList@244[1] { ResolutionCandidate@245 }
+    <name not found> = ArrayList@246[1] { ResolutionCandidate@245 }
+    <name not found> = ArrayList@247[1] { ResolutionCandidate@248 }
+    <name not found> = ArrayList@249[1] { ResolutionCandidate@248 }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+}
+
+ResolutionTaskHolder@250 {
+    <name not found> = ArrayList@251[1] { ResolutionCandidate@252 }
+    <name not found> = ArrayList@253[1] { ResolutionCandidate@252 }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+}
+
+ResolutionTaskHolder@254 {
+    <name not found> = ArrayList@255[1] { ResolutionCandidate@256 }
+    <name not found> = ArrayList@257[1] { ResolutionCandidate@256 }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+}
+
+ResolutionTaskHolder@258 {
+    <name not found> = ArrayList@259[1] { ResolutionCandidate@260 }
+    <name not found> = ArrayList@261[1] { ResolutionCandidate@260 }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+}
+
+ResolutionTaskHolder@262 {
+    <name not found> = ArrayList@263[1] { ResolutionCandidate@264 }
+    <name not found> = ArrayList@265[1] { ResolutionCandidate@264 }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+}
+
+ResolutionTaskHolder@266 {
+    <name not found> = ArrayList@267[1] { ResolutionCandidate@268 }
+    <name not found> = ArrayList@269[1] { ResolutionCandidate@268 }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+}
+
+ResolutionTaskHolder@270 {
+    <name not found> = ArrayList@271[1] { ResolutionCandidate@272 }
+    <name not found> = ArrayList@273[1] { ResolutionCandidate@272 }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+}
+
+ResolutionTaskHolder@274 {
+    <name not found> = ArrayList@275[1] { ResolutionCandidate@276 }
+    <name not found> = ArrayList@277[1] { ResolutionCandidate@276 }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+}
+
+ResolutionTaskHolder@278 {
+    <name not found> = ArrayList@279[1] { ResolutionCandidate@280 }
+    <name not found> = ArrayList@281[1] { ResolutionCandidate@280 }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+}
+
+ResolutionTaskHolder@282 {
+    <name not found> = ArrayList@283[1] { ResolutionCandidate@284 }
+    <name not found> = ArrayList@285[1] { ResolutionCandidate@284 }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+}
+
+ResolutionTaskHolder@286 {
+    <name not found> = ArrayList@287[1] { ResolutionCandidate@288 }
+    <name not found> = ArrayList@289[1] { ResolutionCandidate@288 }
+}
+
+ResolutionTaskHolder@290 {
+    <name not found> = ArrayList@291[1] { ResolutionCandidate@292 }
+    <name not found> = ArrayList@293[1] { ResolutionCandidate@292 }
+}
+
+ResolutionTaskHolder@294 {
+    <name not found> = ArrayList@295[1] { ResolutionCandidate@296 }
+    <name not found> = ArrayList@297[1] { ResolutionCandidate@296 }
+}
+
+ResolutionTaskHolder@298 {
+    <name not found> = ArrayList@299[1] { ResolutionCandidate@300 }
+    <name not found> = ArrayList@301[1] { ResolutionCandidate@300 }
+}
+
+ResolutionTaskHolder@302 {
+    <name not found> = ArrayList@303[1] { ResolutionCandidate@304 }
+    <name not found> = ArrayList@305[1] { ResolutionCandidate@304 }
+}
+
+ResolutionTaskHolder@306 {
+    <name not found> = ArrayList@307[1] { ResolutionCandidate@308 }
+    <name not found> = ArrayList@309[1] { ResolutionCandidate@308 }
+}
+
+ResolutionTaskHolder@310 {
+    <name not found> = ArrayList@311[1] { ResolutionCandidate@312 }
+    <name not found> = ArrayList@313[1] { ResolutionCandidate@312 }
+}
+
+ResolutionTaskHolder@314 {
+    <name not found> = ArrayList@315[1] { ResolutionCandidate@316 }
+    <name not found> = ArrayList@317[1] { ResolutionCandidate@316 }
+}
+
+ResolutionTaskHolder@318 {
+    <name not found> = ArrayList@319[1] { ResolutionCandidate@320 }
+    <name not found> = ArrayList@321[1] { ResolutionCandidate@320 }
+}
+
+ResolutionTaskHolder@322 {
+    <name not found> = ArrayList@323[1] { ResolutionCandidate@324 }
+    <name not found> = ArrayList@325[1] { ResolutionCandidate@324 }
+}
+
+ResolutionTaskHolder@326 {
+    <name not found> = ArrayList@327[1] { ResolutionCandidate@328 }
+    <name not found> = ArrayList@329[1] { ResolutionCandidate@328 }
+}
+
+ResolutionTaskHolder@330 {
+    <name not found> = ArrayList@331[1] { ResolutionCandidate@332 }
+    <name not found> = ArrayList@333[1] { ResolutionCandidate@332 }
+}
+
+ResolutionTaskHolder@334 {
+    <name not found> = ArrayList@335[1] { ResolutionCandidate@336 }
+    <name not found> = ArrayList@337[1] { ResolutionCandidate@336 }
+}
+
+ResolutionTaskHolder@338 {
+    <name not found> = ArrayList@339[1] { ResolutionCandidate@340 }
+    <name not found> = ArrayList@341[1] { ResolutionCandidate@340 }
+}
+
+ResolutionTaskHolder@342 {
+    <name not found> = ArrayList@343[1] { ResolutionCandidate@344 }
+    <name not found> = ArrayList@345[1] { ResolutionCandidate@344 }
+}
+
+ResolutionTaskHolder@346 {
+    <name not found> = ArrayList@347[1] { ResolutionCandidate@348 }
+    <name not found> = ArrayList@349[1] { ResolutionCandidate@348 }
+}
+
+ResolutionTaskHolder@350 {
+    <name not found> = ArrayList@351[1] { ResolutionCandidate@352 }
+    <name not found> = ArrayList@353[1] { ResolutionCandidate@352 }
+}
+
+ResolutionTaskHolder@354 {
+    <name not found> = ArrayList@355[1] { ResolutionCandidate@356 }
+    <name not found> = ArrayList@357[1] { ResolutionCandidate@356 }
+}
+
+ResolutionTaskHolder@358 {
+    <name not found> = ArrayList@359[1] { ResolutionCandidate@360 }
+    <name not found> = ArrayList@361[1] { ResolutionCandidate@360 }
+}
+
+ResolutionTaskHolder@362 {
+    <name not found> = ArrayList@363[4] { ResolutionCandidate@364, ResolutionCandidate@365, ResolutionCandidate@366, ... }
+    <name not found> = ArrayList@367[4] { ResolutionCandidate@364, ResolutionCandidate@365, ResolutionCandidate@366, ... }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+}
+
+ResolutionTaskHolder@368 {
+    <name not found> = ArrayList@369[4] { ResolutionCandidate@370, ResolutionCandidate@371, ResolutionCandidate@372, ... }
+    <name not found> = ArrayList@373[5] { ResolutionCandidate@370, ResolutionCandidate@371, ResolutionCandidate@372, ... }
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
+    <name not found> = EmptyList@209[empty]
 }

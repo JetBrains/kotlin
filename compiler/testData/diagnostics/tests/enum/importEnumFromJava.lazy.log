@@ -90,3 +90,10 @@ LazyJavaPackageFragment@39['util'] {
     functions('concurrent': Name@63) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@62
     memberIndex = computeMemberIndex$1@64 // through LazyPackageFragmentScopeForJavaPackage@62
 }
+
+ResolutionTaskHolder@65 {
+    <name not found> = ArrayList@66[1] { ResolutionCandidate@67 }
+    <name not found> = ArrayList@68[1] { ResolutionCandidate@67 }
+    <name not found> = EmptyList@14[empty]
+    <name not found> = EmptyList@14[empty]
+}

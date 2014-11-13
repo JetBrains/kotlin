@@ -1,18 +1,16 @@
 LazyJavaClassDescriptor@0['AutoCloseable'] {
     functions('getMetaData': Name@1) = EmptyList@2[empty] // through LazyJavaClassMemberScope@3
     memberIndex = computeMemberIndex$1@4 // through LazyJavaClassMemberScope@3
-    properties('getMetaData': Name@5) = EmptyList@2[empty] // through LazyJavaClassMemberScope@3
-    typeConstructor = LazyJavaClassTypeConstructor@6['AutoCloseable']
+    typeConstructor = LazyJavaClassTypeConstructor@5['AutoCloseable']
 }
 
-LazyJavaClassDescriptor@7['ResultSet'] {
-    defaultType = JetTypeImpl@8['ResultSet']
-    enumEntryIndex = LinkedHashMap@9 // through LazyJavaClassMemberScope@10
-    functions('getMetaData': Name@5) = ArrayList@11[1] { JavaMethodDescriptor@12['getMetaData'] } // through LazyJavaClassMemberScope@10
-    memberIndex = computeMemberIndex$1@13 // through LazyJavaClassMemberScope@10
-    nestedClassIndex = LinkedHashMap@14 // through LazyJavaClassMemberScope@10
-    nestedClasses('getMetaData': Name@5) = null // through LazyJavaClassMemberScope@10
-    properties('getMetaData': Name@5) = EmptyList@2[empty] // through LazyJavaClassMemberScope@10
+LazyJavaClassDescriptor@6['ResultSet'] {
+    defaultType = JetTypeImpl@7['ResultSet']
+    enumEntryIndex = LinkedHashMap@8 // through LazyJavaClassMemberScope@9
+    functions('getMetaData': Name@10) = ArrayList@11[1] { JavaMethodDescriptor@12['getMetaData'] } // through LazyJavaClassMemberScope@9
+    memberIndex = computeMemberIndex$1@13 // through LazyJavaClassMemberScope@9
+    nestedClassIndex = LinkedHashMap@14 // through LazyJavaClassMemberScope@9
+    nestedClasses('getMetaData': Name@10) = null // through LazyJavaClassMemberScope@9
     thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@15['<this>']
     typeConstructor = LazyJavaClassTypeConstructor@16['ResultSet']
 }
@@ -21,7 +19,7 @@ LazyJavaClassDescriptor@17['ResultSetMetaData'] {
     typeConstructor = LazyJavaClassTypeConstructor@18['ResultSetMetaData']
 }
 
-LazyJavaClassTypeConstructor@6['AutoCloseable'] {
+LazyJavaClassTypeConstructor@5['AutoCloseable'] {
     parameters = ArrayList@19[empty]
     supertypes = ArrayList@20[1] { JetTypeImpl@21['Any'] }
 }
@@ -40,7 +38,7 @@ LazyJavaClassifierType@24['AutoCloseable'] {
     arguments = ArrayList@27[empty]
     classifier = JavaClassImpl@28['AutoCloseable']
     memberScope = LazyJavaClassMemberScope@3
-    typeConstructor = LazyJavaClassTypeConstructor@6['AutoCloseable']
+    typeConstructor = LazyJavaClassTypeConstructor@5['AutoCloseable']
 }
 
 LazyJavaClassifierType@29['Object'] {
@@ -83,35 +81,37 @@ LazyJavaPackageFragmentProvider@43 {
     packageFragments('kotlin.io': FqName@55) = null
     packageFragments('kotlin.jvm': FqName@56) = null
     topLevelClasses(JavaClassImpl@28['AutoCloseable']) = LazyJavaClassDescriptor@0['AutoCloseable']
-    topLevelClasses(JavaClassImpl@57['ResultSet']) = LazyJavaClassDescriptor@7['ResultSet']
+    topLevelClasses(JavaClassImpl@57['ResultSet']) = LazyJavaClassDescriptor@6['ResultSet']
     topLevelClasses(JavaClassImpl@58['ResultSetMetaData']) = LazyJavaClassDescriptor@17['ResultSetMetaData']
 }
 
 LazyJavaPackageFragment@45['<root>'] {
-    classes('getMetaData': Name@5) = null // through LazyPackageFragmentScopeForJavaPackage@59
-    classes('java': Name@60) = null // through LazyPackageFragmentScopeForJavaPackage@59
-    deserializedPackageScope = Empty@61 // through LazyPackageFragmentScopeForJavaPackage@59
-    functions('getMetaData': Name@5) = EmptyList@2[empty] // through LazyPackageFragmentScopeForJavaPackage@59
-    memberIndex = computeMemberIndex$1@62 // through LazyPackageFragmentScopeForJavaPackage@59
+    classes('java': Name@59) = null // through LazyPackageFragmentScopeForJavaPackage@60
 }
 
 LazyJavaPackageFragment@47['java'] {
-    classes('lang': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@64
-    classes('sql': Name@65) = null // through LazyPackageFragmentScopeForJavaPackage@64
-    deserializedPackageScope = Empty@61 // through LazyPackageFragmentScopeForJavaPackage@64
-    functions('lang': Name@66) = EmptyList@2[empty] // through LazyPackageFragmentScopeForJavaPackage@64
-    memberIndex = computeMemberIndex$1@67 // through LazyPackageFragmentScopeForJavaPackage@64
+    classes('lang': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@62
+    classes('sql': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@62
+    deserializedPackageScope = Empty@64 // through LazyPackageFragmentScopeForJavaPackage@62
+    functions('lang': Name@65) = EmptyList@2[empty] // through LazyPackageFragmentScopeForJavaPackage@62
+    memberIndex = computeMemberIndex$1@66 // through LazyPackageFragmentScopeForJavaPackage@62
 }
 
 LazyJavaPackageFragment@49['lang'] {
-    classes('getMetaData': Name@5) = null // through LazyPackageFragmentScopeForJavaPackage@68
-    classes('java': Name@60) = null // through LazyPackageFragmentScopeForJavaPackage@68
-    deserializedPackageScope = Empty@61 // through LazyPackageFragmentScopeForJavaPackage@68
-    functions('getMetaData': Name@5) = EmptyList@2[empty] // through LazyPackageFragmentScopeForJavaPackage@68
-    memberIndex = computeMemberIndex$1@69 // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('java': Name@59) = null // through LazyPackageFragmentScopeForJavaPackage@67
 }
 
 LazyJavaPackageFragment@51['sql'] {
-    classes('ResultSet': Name@70) = LazyJavaClassDescriptor@7['ResultSet'] // through LazyPackageFragmentScopeForJavaPackage@71
-    classes('ResultSetMetaData': Name@72) = LazyJavaClassDescriptor@17['ResultSetMetaData'] // through LazyPackageFragmentScopeForJavaPackage@71
+    classes('ResultSet': Name@68) = LazyJavaClassDescriptor@6['ResultSet'] // through LazyPackageFragmentScopeForJavaPackage@69
+    classes('ResultSetMetaData': Name@70) = LazyJavaClassDescriptor@17['ResultSetMetaData'] // through LazyPackageFragmentScopeForJavaPackage@69
+}
+
+ResolutionTaskHolder@71 {
+    <name not found> = ArrayList@72[1] { ResolutionCandidate@73 }
+    <name not found> = ArrayList@74[1] { ResolutionCandidate@73 }
+}
+
+ResolutionTaskHolder@75 {
+    <name not found> = ArrayList@76[1] { ResolutionCandidate@77 }
+    <name not found> = ArrayList@78[1] { ResolutionCandidate@77 }
 }

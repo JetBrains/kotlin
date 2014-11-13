@@ -37,7 +37,7 @@ LazyJavaClassifierType@21['String'] {
 
 LazyJavaClassifierType@24['String'] {
     arguments = ArrayList@25[empty]
-    classifier = JavaClassImpl@23['String']
+    classifier = JavaClassImpl@15['String']
     nullable = 'true': Boolean@26
     typeConstructor = DeserializedClassTypeConstructor@17
 }
@@ -51,7 +51,7 @@ LazyJavaClassifierType@27['String'] {
 
 LazyJavaClassifierType@29['String'] {
     arguments = ArrayList@30[empty]
-    classifier = JavaClassImpl@15['String']
+    classifier = JavaClassImpl@23['String']
     nullable = 'true': Boolean@26
     typeConstructor = DeserializedClassTypeConstructor@17
 }
@@ -79,14 +79,14 @@ LazyJavaClassifierType@38['Throwable'] {
 
 LazyJavaClassifierType@41['Throwable'] {
     arguments = ArrayList@42[empty]
-    classifier = JavaClassImpl@40['Throwable']
+    classifier = JavaClassImpl@33['Throwable']
     nullable = 'true': Boolean@26
     typeConstructor = DeserializedClassTypeConstructor@34
 }
 
 LazyJavaClassifierType@43['Throwable'] {
     arguments = ArrayList@44[empty]
-    classifier = JavaClassImpl@33['Throwable']
+    classifier = JavaClassImpl@40['Throwable']
     nullable = 'true': Boolean@26
     typeConstructor = DeserializedClassTypeConstructor@34
 }
@@ -137,4 +137,22 @@ LazyJavaPackageFragment@55['lang'] {
     functions('Exception': Name@60) = EmptyList@64[empty] // through LazyPackageFragmentScopeForJavaPackage@70
     functions('todo': Name@62) = EmptyList@64[empty] // through LazyPackageFragmentScopeForJavaPackage@70
     memberIndex = computeMemberIndex$1@71 // through LazyPackageFragmentScopeForJavaPackage@70
+}
+
+ResolutionTaskHolder@72 {
+    <name not found> = ArrayList@73[1] { ResolutionCandidate@74 }
+    <name not found> = ArrayList@75[1] { ResolutionCandidate@74 }
+    <name not found> = EmptyList@64[empty]
+    <name not found> = EmptyList@64[empty]
+    <name not found> = EmptyList@64[empty]
+    <name not found> = EmptyList@64[empty]
+}
+
+ResolutionTaskHolder@76 {
+    <name not found> = ArrayList@77[4] { ResolutionCandidate@78, ResolutionCandidate@79, ResolutionCandidate@80, ... }
+    <name not found> = ArrayList@81[5] { ResolutionCandidate@78, ResolutionCandidate@79, ResolutionCandidate@80, ... }
+    <name not found> = EmptyList@64[empty]
+    <name not found> = EmptyList@64[empty]
+    <name not found> = EmptyList@64[empty]
+    <name not found> = EmptyList@64[empty]
 }

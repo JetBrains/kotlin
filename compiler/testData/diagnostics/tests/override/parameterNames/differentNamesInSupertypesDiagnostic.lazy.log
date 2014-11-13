@@ -146,3 +146,24 @@ LazyJavaPackageFragment@62['lang'] {
     functions('UnsupportedOperationException': Name@75) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@83
     memberIndex = computeMemberIndex$1@84 // through LazyPackageFragmentScopeForJavaPackage@83
 }
+
+ResolutionTaskHolder@85 {
+    <name not found> = ArrayList@86[4] { ResolutionCandidate@87, ResolutionCandidate@88, ResolutionCandidate@89, ... }
+    <name not found> = ArrayList@90[4] { ResolutionCandidate@87, ResolutionCandidate@88, ResolutionCandidate@89, ... }
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+}

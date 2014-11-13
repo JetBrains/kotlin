@@ -88,6 +88,11 @@ LazyJavaPackageFragment@3['platform'] {
     classes('platformName': Name@41) = DeserializedClassDescriptor@2['platformName'] // through LazyPackageFragmentScopeForJavaPackage@63
 }
 
-TypeDeserializer@64 {
-    classDescriptors('4': Integer@65) = DeserializedClassDescriptor@66['String']
+ResolutionTaskHolder@64 {
+    <name not found> = ArrayList@65[1] { ResolutionCandidate@66 }
+    <name not found> = ArrayList@67[1] { ResolutionCandidate@66 }
+}
+
+TypeDeserializer@68 {
+    classDescriptors('4': Integer@69) = DeserializedClassDescriptor@70['String']
 }

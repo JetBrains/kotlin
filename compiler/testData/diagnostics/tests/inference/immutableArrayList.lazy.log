@@ -150,22 +150,43 @@ LazyJavaPackageFragment@96['p'] {
     memberIndex = computeMemberIndex$1@114 // through LazyPackageFragmentScopeForJavaPackage@112
 }
 
-LazyJavaTypeParameterDescriptor@56['T'] {
+LazyJavaTypeParameterDescriptor@52['T'] {
     defaultType = JetTypeImpl@115['T']
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@116
-    upperBounds = LinkedHashSet@117[1] { NullableType@118 }
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@71
+    upperBounds = LinkedHashSet@116[1] { NullableType@117 }
 }
 
-LazyJavaTypeParameterDescriptor@52['T'] {
-    defaultType = JetTypeImpl@119['T']
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@71
+LazyJavaTypeParameterDescriptor@56['T'] {
+    defaultType = JetTypeImpl@118['T']
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@119
     upperBounds = LinkedHashSet@120[1] { NullableType@121 }
 }
 
 LazyJavaTypeParameterResolver@122 {
-    resolve(JavaTypeParameterImpl@123['T']) = LazyJavaTypeParameterDescriptor@52['T']
+    resolve(JavaTypeParameterImpl@123['T']) = LazyJavaTypeParameterDescriptor@56['T']
 }
 
 LazyJavaTypeParameterResolver@124 {
-    resolve(JavaTypeParameterImpl@125['T']) = LazyJavaTypeParameterDescriptor@56['T']
+    resolve(JavaTypeParameterImpl@125['T']) = LazyJavaTypeParameterDescriptor@52['T']
+}
+
+ResolutionTaskHolder@126 {
+    <name not found> = ArrayList@127[1] { ResolutionCandidate@128 }
+    <name not found> = ArrayList@129[1] { ResolutionCandidate@128 }
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
+    <name not found> = EmptyList@5[empty]
 }

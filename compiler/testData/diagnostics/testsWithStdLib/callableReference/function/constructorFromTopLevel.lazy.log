@@ -122,11 +122,25 @@ LazyJavaPackageFragment@6['reflect'] {
     memberIndex = computeMemberIndex$1@75 // through LazyPackageFragmentScopeForJavaPackage@73
 }
 
-TypeDeserializer@76 {
-    classDescriptors('2': Integer@77) = DeserializedClassDescriptor@78['Any']
+ResolutionTaskHolder@76 {
+    <name not found> = ArrayList@77[1] { ResolutionCandidate@78 }
+    <name not found> = ArrayList@79[1] { ResolutionCandidate@78 }
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
 }
 
-TypeDeserializer@79 {
-    classDescriptors('3': Integer@80) = DeserializedClassDescriptor@78['Any']
-    classDescriptors('4': Integer@81) = DeserializedClassDescriptor@2['Function0']
+ResolutionTaskHolder@80 {
+    <name not found> = ArrayList@81[1] { ResolutionCandidate@82 }
+    <name not found> = ArrayList@83[1] { ResolutionCandidate@82 }
+}
+
+TypeDeserializer@84 {
+    classDescriptors('2': Integer@85) = DeserializedClassDescriptor@86['Any']
+}
+
+TypeDeserializer@87 {
+    classDescriptors('3': Integer@88) = DeserializedClassDescriptor@86['Any']
+    classDescriptors('4': Integer@89) = DeserializedClassDescriptor@2['Function0']
 }

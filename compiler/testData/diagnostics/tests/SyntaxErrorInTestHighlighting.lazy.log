@@ -7,23 +7,14 @@ LazyJavaPackageFragmentProvider@0 {
     packageFragments('kotlin.jvm': FqName@9) = null
 }
 
-LazyJavaPackageFragment@2['<root>'] {
-    classes('plus': Name@10) = null // through LazyPackageFragmentScopeForJavaPackage@11
-    deserializedPackageScope = Empty@12 // through LazyPackageFragmentScopeForJavaPackage@11
-    functions('plus': Name@10) = EmptyList@13[empty] // through LazyPackageFragmentScopeForJavaPackage@11
-    memberIndex = computeMemberIndex$1@14 // through LazyPackageFragmentScopeForJavaPackage@11
-}
-
 LazyJavaPackageFragment@4['java'] {
-    classes('lang': Name@15) = null // through LazyPackageFragmentScopeForJavaPackage@16
-    deserializedPackageScope = Empty@12 // through LazyPackageFragmentScopeForJavaPackage@16
-    functions('lang': Name@17) = EmptyList@13[empty] // through LazyPackageFragmentScopeForJavaPackage@16
-    memberIndex = computeMemberIndex$1@18 // through LazyPackageFragmentScopeForJavaPackage@16
+    classes('lang': Name@10) = null // through LazyPackageFragmentScopeForJavaPackage@11
+    deserializedPackageScope = Empty@12 // through LazyPackageFragmentScopeForJavaPackage@11
+    functions('lang': Name@13) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@11
+    memberIndex = computeMemberIndex$1@15 // through LazyPackageFragmentScopeForJavaPackage@11
 }
 
-LazyJavaPackageFragment@6['lang'] {
-    classes('plus': Name@10) = null // through LazyPackageFragmentScopeForJavaPackage@19
-    deserializedPackageScope = Empty@12 // through LazyPackageFragmentScopeForJavaPackage@19
-    functions('plus': Name@10) = EmptyList@13[empty] // through LazyPackageFragmentScopeForJavaPackage@19
-    memberIndex = computeMemberIndex$1@20 // through LazyPackageFragmentScopeForJavaPackage@19
+ResolutionTaskHolder@16 {
+    <name not found> = ArrayList@17[8] { ResolutionCandidate@18, ResolutionCandidate@19, ResolutionCandidate@20, ... }
+    <name not found> = ArrayList@21[8] { ResolutionCandidate@18, ResolutionCandidate@19, ResolutionCandidate@20, ... }
 }

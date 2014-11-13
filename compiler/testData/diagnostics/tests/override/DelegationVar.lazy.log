@@ -23,3 +23,8 @@ LazyJavaPackageFragment@10['java'] {
     functions('lang': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@21
     memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@21
 }
+
+ResolutionTaskHolder@26 {
+    <name not found> = ArrayList@27[1] { ResolutionCandidate@28 }
+    <name not found> = ArrayList@29[1] { ResolutionCandidate@28 }
+}

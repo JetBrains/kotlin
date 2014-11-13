@@ -106,34 +106,72 @@ LazyJavaPackageFragment@48['java'] {
     classes('NullPointerException': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@69
     classes('equals': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@69
     classes('lang': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@69
-    classes('size': Name@74) = null // through LazyPackageFragmentScopeForJavaPackage@69
-    deserializedPackageScope = Empty@75 // through LazyPackageFragmentScopeForJavaPackage@69
-    functions('NullPointerException': Name@71) = EmptyList@76[empty] // through LazyPackageFragmentScopeForJavaPackage@69
-    functions('equals': Name@72) = EmptyList@76[empty] // through LazyPackageFragmentScopeForJavaPackage@69
-    functions('lang': Name@77) = EmptyList@76[empty] // through LazyPackageFragmentScopeForJavaPackage@69
-    functions('size': Name@74) = EmptyList@76[empty] // through LazyPackageFragmentScopeForJavaPackage@69
-    memberIndex = computeMemberIndex$1@78 // through LazyPackageFragmentScopeForJavaPackage@69
+    deserializedPackageScope = Empty@74 // through LazyPackageFragmentScopeForJavaPackage@69
+    functions('NullPointerException': Name@71) = EmptyList@75[empty] // through LazyPackageFragmentScopeForJavaPackage@69
+    functions('equals': Name@72) = EmptyList@75[empty] // through LazyPackageFragmentScopeForJavaPackage@69
+    functions('lang': Name@76) = EmptyList@75[empty] // through LazyPackageFragmentScopeForJavaPackage@69
+    memberIndex = computeMemberIndex$1@77 // through LazyPackageFragmentScopeForJavaPackage@69
 }
 
 LazyJavaPackageFragment@54['lang'] {
-    classes('Class': Name@79) = LazyJavaClassDescriptor@2['Class'] // through LazyPackageFragmentScopeForJavaPackage@80
-    classes('NullPointerException': Name@71) = LazyJavaClassDescriptor@6['NullPointerException'] // through LazyPackageFragmentScopeForJavaPackage@80
-    classes('equals': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@80
-    classes('lang': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@80
-    classes('size': Name@74) = null // through LazyPackageFragmentScopeForJavaPackage@80
-    deserializedPackageScope = Empty@75 // through LazyPackageFragmentScopeForJavaPackage@80
-    functions('NullPointerException': Name@71) = EmptyList@76[empty] // through LazyPackageFragmentScopeForJavaPackage@80
-    functions('equals': Name@72) = EmptyList@76[empty] // through LazyPackageFragmentScopeForJavaPackage@80
-    functions('size': Name@74) = EmptyList@76[empty] // through LazyPackageFragmentScopeForJavaPackage@80
-    memberIndex = computeMemberIndex$1@82 // through LazyPackageFragmentScopeForJavaPackage@80
+    classes('Class': Name@78) = LazyJavaClassDescriptor@2['Class'] // through LazyPackageFragmentScopeForJavaPackage@79
+    classes('NullPointerException': Name@71) = LazyJavaClassDescriptor@6['NullPointerException'] // through LazyPackageFragmentScopeForJavaPackage@79
+    classes('equals': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@79
+    classes('lang': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@79
+    deserializedPackageScope = Empty@74 // through LazyPackageFragmentScopeForJavaPackage@79
+    functions('NullPointerException': Name@71) = EmptyList@75[empty] // through LazyPackageFragmentScopeForJavaPackage@79
+    functions('equals': Name@72) = EmptyList@75[empty] // through LazyPackageFragmentScopeForJavaPackage@79
+    memberIndex = computeMemberIndex$1@81 // through LazyPackageFragmentScopeForJavaPackage@79
 }
 
 LazyJavaTypeParameterDescriptor@16['T'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@83
-    upperBounds = LinkedHashSet@84[1] { NullableType@85 }
-    upperBoundsAsType = NullableType@85
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@82
+    upperBounds = LinkedHashSet@83[1] { NullableType@84 }
+    upperBoundsAsType = NullableType@84
 }
 
-LazyJavaTypeParameterResolver@86 {
-    resolve(JavaTypeParameterImpl@87['T']) = LazyJavaTypeParameterDescriptor@16['T']
+LazyJavaTypeParameterResolver@85 {
+    resolve(JavaTypeParameterImpl@86['T']) = LazyJavaTypeParameterDescriptor@16['T']
+}
+
+ResolutionTaskHolder@87 {
+    <name not found> = ArrayList@88[1] { ResolutionCandidate@89 }
+    <name not found> = ArrayList@90[1] { ResolutionCandidate@89 }
+    <name not found> = ArrayList@91[1] { ResolutionCandidate@92 }
+    <name not found> = ArrayList@93[1] { ResolutionCandidate@92 }
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+}
+
+ResolutionTaskHolder@94 {
+    <name not found> = ArrayList@95[1] { ResolutionCandidate@96 }
+    <name not found> = ArrayList@97[1] { ResolutionCandidate@96 }
+}
+
+ResolutionTaskHolder@98 {
+    <name not found> = ArrayList@99[2] { ResolutionCandidate@100, ResolutionCandidate@101 }
+    <name not found> = ArrayList@102[2] { ResolutionCandidate@100, ResolutionCandidate@101 }
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+    <name not found> = EmptyList@75[empty]
+}
+
+ResolutionTaskHolder@103 {
+    <name not found> = ArrayList@104[2] { ResolutionCandidate@105, ResolutionCandidate@106 }
+    <name not found> = ArrayList@107[2] { ResolutionCandidate@105, ResolutionCandidate@106 }
 }

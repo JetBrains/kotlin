@@ -83,11 +83,11 @@ DeserializedTypeParameterDescriptor@42['R'] {
 }
 
 DeserializedType@44['R in kotlin.reflect.KMutableTopLevelVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@43
+    constructor = AbstractLazyTypeParameterDescriptor$1@39
 }
 
 DeserializedType@45['R in kotlin.reflect.KMutableTopLevelVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@43
+    constructor = AbstractLazyTypeParameterDescriptor$1@39
 }
 
 DeserializedType@46['R in kotlin.reflect.KMutableVariable'] {
@@ -95,18 +95,18 @@ DeserializedType@46['R in kotlin.reflect.KMutableVariable'] {
 }
 
 DeserializedType@47['R in kotlin.reflect.KTopLevelVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@39
-}
-
-DeserializedType@48['R in kotlin.reflect.KTopLevelVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@39
-}
-
-DeserializedType@49['R in kotlin.reflect.KVariable'] {
     constructor = AbstractLazyTypeParameterDescriptor$1@41
 }
 
-DeserializedType@35['kotlin.Any'] {
+DeserializedType@48['R in kotlin.reflect.KTopLevelVariable'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@41
+}
+
+DeserializedType@49['R in kotlin.reflect.KVariable'] {
+    constructor = AbstractLazyTypeParameterDescriptor$1@43
+}
+
+DeserializedType@23['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@50
     memberScope = DeserializedClassMemberScope@51
 }
@@ -116,12 +116,12 @@ DeserializedType@31['kotlin.Any'] {
     memberScope = DeserializedClassMemberScope@51
 }
 
-DeserializedType@27['kotlin.Any'] {
+DeserializedType@35['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@50
     memberScope = DeserializedClassMemberScope@51
 }
 
-DeserializedType@23['kotlin.Any'] {
+DeserializedType@27['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@50
     memberScope = DeserializedClassMemberScope@51
 }
@@ -569,45 +569,315 @@ LazyJavaPackageFragment@19['reflect'] {
     memberIndex = computeMemberIndex$1@257 // through LazyPackageFragmentScopeForJavaPackage@249
 }
 
-TypeDeserializer@258 {
-    classDescriptors('3': Integer@259) = DeserializedClassDescriptor@260['Any']
-    classDescriptors('4': Integer@261) = DeserializedClassDescriptor@2['KCallable']
+ResolutionTaskHolder@258 {
+    <name not found> = ArrayList@259[1] { ResolutionCandidate@260 }
+    <name not found> = ArrayList@261[1] { ResolutionCandidate@260 }
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
 }
 
-TypeDeserializer@262 {
-    classDescriptors('3': Integer@259) = DeserializedClassDescriptor@260['Any']
-    classDescriptors('4': Integer@261) = DeserializedClassDescriptor@12['KProperty']
+ResolutionTaskHolder@262 {
+    <name not found> = ArrayList@263[1] { ResolutionCandidate@264 }
+    <name not found> = ArrayList@265[1] { ResolutionCandidate@264 }
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
 }
 
-TypeDeserializer@263 {
-    classDescriptors('3': Integer@259) = DeserializedClassDescriptor@260['Any']
-    classDescriptors('4': Integer@261) = DeserializedClassDescriptor@12['KProperty']
+ResolutionTaskHolder@266 {
+    <name not found> = ArrayList@267[1] { ResolutionCandidate@268 }
+    <name not found> = ArrayList@269[1] { ResolutionCandidate@268 }
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
 }
 
-TypeDeserializer@264 {
-    classDescriptors('3': Integer@259) = DeserializedClassDescriptor@260['Any']
+ResolutionTaskHolder@270 {
+    <name not found> = ArrayList@271[1] { ResolutionCandidate@272 }
+    <name not found> = ArrayList@273[1] { ResolutionCandidate@272 }
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
 }
 
-TypeDeserializer@265 {
-    classDescriptors('3': Integer@259) = DeserializedClassDescriptor@260['Any']
+ResolutionTaskHolder@274 {
+    <name not found> = ArrayList@275[1] { ResolutionCandidate@276 }
+    <name not found> = ArrayList@277[1] { ResolutionCandidate@276 }
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
 }
 
-TypeDeserializer@266 {
-    classDescriptors('4': Integer@261) = DeserializedClassDescriptor@12['KProperty']
+ResolutionTaskHolder@278 {
+    <name not found> = ArrayList@279[1] { ResolutionCandidate@280 }
+    <name not found> = ArrayList@281[1] { ResolutionCandidate@280 }
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
 }
 
-TypeDeserializer@267 {
-    classDescriptors('4': Integer@261) = DeserializedClassDescriptor@16['KTopLevelVariable']
-    classDescriptors('5': Integer@268) = DeserializedClassDescriptor@10['KMutableVariable']
-    classDescriptors('6': Integer@269) = DeserializedClassDescriptor@6['KMutableTopLevelProperty']
+ResolutionTaskHolder@282 {
+    <name not found> = ArrayList@283[1] { ResolutionCandidate@284 }
+    <name not found> = ArrayList@285[1] { ResolutionCandidate@284 }
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
 }
 
-TypeDeserializer@270 {
-    classDescriptors('4': Integer@261) = DeserializedClassDescriptor@18['KVariable']
-    classDescriptors('5': Integer@268) = DeserializedClassDescriptor@4['KMutableProperty']
+ResolutionTaskHolder@286 {
+    <name not found> = ArrayList@287[1] { ResolutionCandidate@288 }
+    <name not found> = ArrayList@289[1] { ResolutionCandidate@288 }
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
 }
 
-TypeDeserializer@271 {
-    classDescriptors('4': Integer@261) = DeserializedClassDescriptor@18['KVariable']
-    classDescriptors('5': Integer@268) = DeserializedClassDescriptor@14['KTopLevelProperty']
+ResolutionTaskHolder@290 {
+    <name not found> = ArrayList@291[1] { ResolutionCandidate@292 }
+    <name not found> = ArrayList@293[1] { ResolutionCandidate@292 }
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+}
+
+ResolutionTaskHolder@294 {
+    <name not found> = ArrayList@295[1] { ResolutionCandidate@296 }
+    <name not found> = ArrayList@297[1] { ResolutionCandidate@296 }
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+}
+
+ResolutionTaskHolder@298 {
+    <name not found> = ArrayList@299[1] { ResolutionCandidate@300 }
+    <name not found> = ArrayList@301[1] { ResolutionCandidate@300 }
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+}
+
+ResolutionTaskHolder@302 {
+    <name not found> = ArrayList@303[1] { ResolutionCandidate@304 }
+    <name not found> = ArrayList@305[1] { ResolutionCandidate@304 }
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+}
+
+ResolutionTaskHolder@306 {
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+}
+
+ResolutionTaskHolder@307 {
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+}
+
+ResolutionTaskHolder@308 {
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+}
+
+ResolutionTaskHolder@309 {
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+}
+
+ResolutionTaskHolder@310 {
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+}
+
+ResolutionTaskHolder@311 {
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+    <name not found> = EmptyList@80[empty]
+}
+
+TypeDeserializer@312 {
+    classDescriptors('3': Integer@313) = DeserializedClassDescriptor@314['Any']
+    classDescriptors('4': Integer@315) = DeserializedClassDescriptor@2['KCallable']
+}
+
+TypeDeserializer@316 {
+    classDescriptors('3': Integer@313) = DeserializedClassDescriptor@314['Any']
+    classDescriptors('4': Integer@315) = DeserializedClassDescriptor@12['KProperty']
+}
+
+TypeDeserializer@317 {
+    classDescriptors('3': Integer@313) = DeserializedClassDescriptor@314['Any']
+    classDescriptors('4': Integer@315) = DeserializedClassDescriptor@12['KProperty']
+}
+
+TypeDeserializer@318 {
+    classDescriptors('3': Integer@313) = DeserializedClassDescriptor@314['Any']
+}
+
+TypeDeserializer@319 {
+    classDescriptors('3': Integer@313) = DeserializedClassDescriptor@314['Any']
+}
+
+TypeDeserializer@320 {
+    classDescriptors('4': Integer@315) = DeserializedClassDescriptor@12['KProperty']
+}
+
+TypeDeserializer@321 {
+    classDescriptors('4': Integer@315) = DeserializedClassDescriptor@16['KTopLevelVariable']
+    classDescriptors('5': Integer@322) = DeserializedClassDescriptor@10['KMutableVariable']
+    classDescriptors('6': Integer@323) = DeserializedClassDescriptor@6['KMutableTopLevelProperty']
+}
+
+TypeDeserializer@324 {
+    classDescriptors('4': Integer@315) = DeserializedClassDescriptor@18['KVariable']
+    classDescriptors('5': Integer@322) = DeserializedClassDescriptor@4['KMutableProperty']
+}
+
+TypeDeserializer@325 {
+    classDescriptors('4': Integer@315) = DeserializedClassDescriptor@18['KVariable']
+    classDescriptors('5': Integer@322) = DeserializedClassDescriptor@14['KTopLevelProperty']
 }

@@ -21,16 +21,16 @@ LazyJavaPackageFragmentProvider@3 {
 
 LazyJavaPackageFragment@5['<root>'] {
     classes('String': Name@20) = null // through LazyPackageFragmentScopeForJavaPackage@21
-    deserializedPackageScope = Empty@22 // through LazyPackageFragmentScopeForJavaPackage@21
 }
 
 LazyJavaPackageFragment@10['java'] {
-    classes('lang': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@24
-    deserializedPackageScope = Empty@22 // through LazyPackageFragmentScopeForJavaPackage@24
-    functions('lang': Name@25) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@24
-    memberIndex = computeMemberIndex$1@27 // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('lang': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    deserializedPackageScope = Empty@24 // through LazyPackageFragmentScopeForJavaPackage@23
+    functions('lang': Name@25) = EmptyList@26[empty] // through LazyPackageFragmentScopeForJavaPackage@23
+    memberIndex = computeMemberIndex$1@27 // through LazyPackageFragmentScopeForJavaPackage@23
 }
 
-LazyJavaPackageFragment@12['lang'] {
-    deserializedPackageScope = Empty@22 // through LazyPackageFragmentScopeForJavaPackage@28
+ResolutionTaskHolder@28 {
+    <name not found> = ArrayList@29[1] { ResolutionCandidate@30 }
+    <name not found> = ArrayList@31[1] { ResolutionCandidate@30 }
 }

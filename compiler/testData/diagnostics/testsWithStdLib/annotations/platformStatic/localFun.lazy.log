@@ -91,3 +91,8 @@ LazyJavaPackageFragment@3['platform'] {
     functions('platformStatic': Name@65) = EmptyList@45[empty] // through LazyPackageFragmentScopeForJavaPackage@64
     memberIndex = computeMemberIndex$1@66 // through LazyPackageFragmentScopeForJavaPackage@64
 }
+
+ResolutionTaskHolder@67 {
+    <name not found> = ArrayList@68[1] { ResolutionCandidate@69 }
+    <name not found> = ArrayList@70[1] { ResolutionCandidate@69 }
+}

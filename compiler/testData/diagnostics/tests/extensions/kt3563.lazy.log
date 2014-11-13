@@ -7,7 +7,6 @@ LazyJavaClassDescriptor@0['File'] {
     nestedClassIndex = LinkedHashMap@8 // through LazyJavaClassMemberScope@3
     nestedClasses('getName': Name@4) = null // through LazyJavaClassMemberScope@3
     nestedClasses('name': Name@9) = null // through LazyJavaClassMemberScope@3
-    properties('getName': Name@4) = EmptyList@10[empty] // through LazyJavaClassMemberScope@3
     properties('name': Name@9) = EmptyList@10[empty] // through LazyJavaClassMemberScope@3
     thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@11['<this>']
     typeConstructor = LazyJavaClassTypeConstructor@12['File']
@@ -16,7 +15,6 @@ LazyJavaClassDescriptor@0['File'] {
 LazyJavaClassDescriptor@13['Serializable'] {
     functions('getName': Name@14) = EmptyList@10[empty] // through LazyJavaClassMemberScope@15
     memberIndex = computeMemberIndex$1@16 // through LazyJavaClassMemberScope@15
-    properties('getName': Name@4) = EmptyList@10[empty] // through LazyJavaClassMemberScope@15
     properties('name': Name@9) = EmptyList@10[empty] // through LazyJavaClassMemberScope@15
     typeConstructor = LazyJavaClassTypeConstructor@17['Serializable']
 }
@@ -131,4 +129,48 @@ LazyJavaPackageFragment@67['lang'] {
     deserializedPackageScope = Empty@80 // through LazyPackageFragmentScopeForJavaPackage@89
     functions('getName': Name@4) = EmptyList@10[empty] // through LazyPackageFragmentScopeForJavaPackage@89
     memberIndex = computeMemberIndex$1@90 // through LazyPackageFragmentScopeForJavaPackage@89
+}
+
+ResolutionTaskHolder@91 {
+    <name not found> = ArrayList@92[1] { ResolutionCandidate@93 }
+    <name not found> = ArrayList@94[1] { ResolutionCandidate@93 }
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+}
+
+ResolutionTaskHolder@95 {
+    <name not found> = ArrayList@96[1] { ResolutionCandidate@97 }
+    <name not found> = ArrayList@98[1] { ResolutionCandidate@97 }
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+}
+
+ResolutionTaskHolder@99 {
+    <name not found> = ArrayList@100[1] { ResolutionCandidate@101 }
+    <name not found> = ArrayList@102[1] { ResolutionCandidate@101 }
+    <name not found> = EmptyList@10[empty]
+    <name not found> = EmptyList@10[empty]
+}
+
+ResolutionTaskHolder@103 {
+    <name not found> = ArrayList@104[1] { ResolutionCandidate@105 }
+    <name not found> = ArrayList@106[1] { ResolutionCandidate@105 }
+}
+
+ResolutionTaskHolder@107 {
+    <name not found> = ArrayList@108[1] { ResolutionCandidate@109 }
+    <name not found> = ArrayList@110[1] { ResolutionCandidate@109 }
 }

@@ -93,14 +93,14 @@ LazyJavaClassifierType@73['Runnable'] {
 
 LazyJavaClassifierType@76['Runnable'] {
     arguments = ArrayList@77[empty]
-    classifier = JavaClassImpl@75['Runnable']
+    classifier = JavaClassImpl@72['Runnable']
     nullable = 'true': Boolean@78
     typeConstructor = LazyJavaClassTypeConstructor@53['Runnable']
 }
 
 LazyJavaClassifierType@79['Runnable'] {
     arguments = ArrayList@80[empty]
-    classifier = JavaClassImpl@72['Runnable']
+    classifier = JavaClassImpl@75['Runnable']
     nullable = 'true': Boolean@78
     typeConstructor = LazyJavaClassTypeConstructor@53['Runnable']
 }

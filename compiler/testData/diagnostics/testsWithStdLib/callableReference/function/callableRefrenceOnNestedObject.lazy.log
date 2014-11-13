@@ -91,77 +91,170 @@ LazyJavaPackageFragmentProvider@43 {
 }
 
 LazyJavaPackageFragment@45['<root>'] {
-    classes('foo': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@62
-    deserializedPackageScope = Empty@63 // through LazyPackageFragmentScopeForJavaPackage@62
-    functions('foo': Name@61) = EmptyList@64[empty] // through LazyPackageFragmentScopeForJavaPackage@62
-    memberIndex = computeMemberIndex$1@65 // through LazyPackageFragmentScopeForJavaPackage@62
+    deserializedPackageScope = Empty@61 // through LazyPackageFragmentScopeForJavaPackage@62
 }
 
 LazyJavaPackageFragment@55['io'] {
-    classes('foo': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@66
-    deserializedPackageScope = DeserializedPackageMemberScope@67 // through LazyPackageFragmentScopeForJavaPackage@66
-    functions('foo': Name@61) = EmptyList@64[empty] // through DeserializedPackageMemberScope@67
-    functions('foo': Name@61) = EmptyList@64[empty] // through LazyPackageFragmentScopeForJavaPackage@66
-    memberIndex = computeMemberIndex$1@68 // through LazyPackageFragmentScopeForJavaPackage@66
-    membersProtos = LinkedHashMap@69 // through DeserializedPackageMemberScope@67
-    properties('A': Name@70) = EmptyList@64[empty] // through DeserializedPackageMemberScope@67
-    properties('foo': Name@61) = EmptyList@64[empty] // through DeserializedPackageMemberScope@67
+    deserializedPackageScope = DeserializedPackageMemberScope@63 // through LazyPackageFragmentScopeForJavaPackage@64
+    membersProtos = LinkedHashMap@65 // through DeserializedPackageMemberScope@63
+    properties('A': Name@66) = EmptyList@67[empty] // through DeserializedPackageMemberScope@63
 }
 
 LazyJavaPackageFragment@48['java'] {
-    classes('lang': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@72
-    deserializedPackageScope = Empty@63 // through LazyPackageFragmentScopeForJavaPackage@72
-    functions('lang': Name@73) = EmptyList@64[empty] // through LazyPackageFragmentScopeForJavaPackage@72
-    memberIndex = computeMemberIndex$1@74 // through LazyPackageFragmentScopeForJavaPackage@72
+    classes('lang': Name@68) = null // through LazyPackageFragmentScopeForJavaPackage@69
+    deserializedPackageScope = Empty@61 // through LazyPackageFragmentScopeForJavaPackage@69
+    functions('lang': Name@70) = EmptyList@67[empty] // through LazyPackageFragmentScopeForJavaPackage@69
+    memberIndex = computeMemberIndex$1@71 // through LazyPackageFragmentScopeForJavaPackage@69
 }
 
 LazyJavaPackageFragment@58['jvm'] {
-    classes('foo': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@75
-    deserializedPackageScope = Empty@63 // through LazyPackageFragmentScopeForJavaPackage@75
-    functions('foo': Name@61) = EmptyList@64[empty] // through LazyPackageFragmentScopeForJavaPackage@75
-    memberIndex = computeMemberIndex$1@76 // through LazyPackageFragmentScopeForJavaPackage@75
+    deserializedPackageScope = Empty@61 // through LazyPackageFragmentScopeForJavaPackage@72
 }
 
 LazyJavaPackageFragment@7['kotlin'] {
-    classes('Any': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@78
-    classes('ExtensionFunction0': Name@79) = DeserializedClassDescriptor@2['ExtensionFunction0'] // through LazyPackageFragmentScopeForJavaPackage@78
-    classes('foo': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@78
-    classes('io': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@78
-    classes('jvm': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@78
-    deserializedPackageScope = DeserializedPackageMemberScope@82 // through LazyPackageFragmentScopeForJavaPackage@78
-    functions('foo': Name@61) = EmptyList@64[empty] // through DeserializedPackageMemberScope@82
-    functions('foo': Name@61) = EmptyList@64[empty] // through LazyPackageFragmentScopeForJavaPackage@78
-    functions('io': Name@83) = EmptyList@64[empty] // through DeserializedPackageMemberScope@82
-    functions('io': Name@83) = EmptyList@64[empty] // through LazyPackageFragmentScopeForJavaPackage@78
-    functions('jvm': Name@84) = EmptyList@64[empty] // through DeserializedPackageMemberScope@82
-    functions('jvm': Name@84) = EmptyList@64[empty] // through LazyPackageFragmentScopeForJavaPackage@78
-    memberIndex = computeMemberIndex$1@85 // through LazyPackageFragmentScopeForJavaPackage@78
-    membersProtos = LinkedHashMap@86 // through DeserializedPackageMemberScope@82
-    properties('A': Name@70) = EmptyList@64[empty] // through DeserializedPackageMemberScope@82
-    properties('foo': Name@61) = EmptyList@64[empty] // through DeserializedPackageMemberScope@82
-    properties('io': Name@83) = EmptyList@64[empty] // through DeserializedPackageMemberScope@82
-    properties('jvm': Name@84) = EmptyList@64[empty] // through DeserializedPackageMemberScope@82
+    classes('Any': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('ExtensionFunction0': Name@75) = DeserializedClassDescriptor@2['ExtensionFunction0'] // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('io': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('jvm': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    deserializedPackageScope = DeserializedPackageMemberScope@78 // through LazyPackageFragmentScopeForJavaPackage@74
+    functions('io': Name@79) = EmptyList@67[empty] // through DeserializedPackageMemberScope@78
+    functions('io': Name@79) = EmptyList@67[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    functions('jvm': Name@80) = EmptyList@67[empty] // through DeserializedPackageMemberScope@78
+    functions('jvm': Name@80) = EmptyList@67[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    memberIndex = computeMemberIndex$1@81 // through LazyPackageFragmentScopeForJavaPackage@74
+    membersProtos = LinkedHashMap@82 // through DeserializedPackageMemberScope@78
+    properties('A': Name@66) = EmptyList@67[empty] // through DeserializedPackageMemberScope@78
+    properties('io': Name@79) = EmptyList@67[empty] // through DeserializedPackageMemberScope@78
+    properties('jvm': Name@80) = EmptyList@67[empty] // through DeserializedPackageMemberScope@78
 }
 
 LazyJavaPackageFragment@50['lang'] {
-    classes('foo': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@87
-    deserializedPackageScope = Empty@63 // through LazyPackageFragmentScopeForJavaPackage@87
-    functions('foo': Name@61) = EmptyList@64[empty] // through LazyPackageFragmentScopeForJavaPackage@87
-    memberIndex = computeMemberIndex$1@88 // through LazyPackageFragmentScopeForJavaPackage@87
+    deserializedPackageScope = Empty@61 // through LazyPackageFragmentScopeForJavaPackage@83
 }
 
 LazyJavaPackageFragment@15['reflect'] {
-    classes('KMemberFunction0': Name@89) = DeserializedClassDescriptor@4['KMemberFunction0'] // through LazyPackageFragmentScopeForJavaPackage@90
+    classes('KMemberFunction0': Name@84) = DeserializedClassDescriptor@4['KMemberFunction0'] // through LazyPackageFragmentScopeForJavaPackage@85
 }
 
-NestedClassDescriptors@91 {
+NestedClassDescriptors@86 {
     findNestedClass('invoke': Name@9) = null
 }
 
-TypeDeserializer@92 {
-    classDescriptors('2': Integer@93) = DeserializedClassDescriptor@94['Any']
+ResolutionTaskHolder@87 {
+    <name not found> = ArrayList@88[1] { ResolutionCandidate@89 }
+    <name not found> = ArrayList@90[1] { ResolutionCandidate@89 }
+    <name not found> = ArrayList@91[1] { ResolutionCandidate@92 }
+    <name not found> = ArrayList@93[1] { ResolutionCandidate@92 }
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
 }
 
-TypeDeserializer@95 {
-    classDescriptors('4': Integer@96) = DeserializedClassDescriptor@2['ExtensionFunction0']
+ResolutionTaskHolder@94 {
+    <name not found> = ArrayList@95[1] { ResolutionCandidate@96 }
+    <name not found> = ArrayList@97[1] { ResolutionCandidate@96 }
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+}
+
+ResolutionTaskHolder@98 {
+    <name not found> = ArrayList@99[1] { ResolutionCandidate@100 }
+    <name not found> = ArrayList@101[1] { ResolutionCandidate@100 }
+}
+
+ResolutionTaskHolder@102 {
+    <name not found> = ArrayList@103[1] { ResolutionCandidate@104 }
+    <name not found> = ArrayList@105[1] { ResolutionCandidate@104 }
+}
+
+ResolutionTaskHolder@106 {
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+}
+
+ResolutionTaskHolder@107 {
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+}
+
+ResolutionTaskHolder@108 {
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+}
+
+ResolutionTaskHolder@109 {
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+}
+
+ResolutionTaskHolder@110 {
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+    <name not found> = EmptyList@67[empty]
+}
+
+TypeDeserializer@111 {
+    classDescriptors('2': Integer@112) = DeserializedClassDescriptor@113['Any']
+}
+
+TypeDeserializer@114 {
+    classDescriptors('4': Integer@115) = DeserializedClassDescriptor@2['ExtensionFunction0']
 }

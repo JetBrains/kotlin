@@ -92,11 +92,61 @@ LazyJavaPackageFragment@6['reflect'] {
     memberIndex = computeMemberIndex$1@66 // through LazyPackageFragmentScopeForJavaPackage@64
 }
 
-TypeDeserializer@67 {
-    classDescriptors('2': Integer@68) = DeserializedClassDescriptor@69['Any']
+ResolutionTaskHolder@67 {
+    <name not found> = ArrayList@68[1] { ResolutionCandidate@69 }
+    <name not found> = ArrayList@70[1] { ResolutionCandidate@69 }
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
 }
 
-TypeDeserializer@70 {
-    classDescriptors('3': Integer@71) = DeserializedClassDescriptor@69['Any']
-    classDescriptors('4': Integer@72) = DeserializedClassDescriptor@2['Function0']
+ResolutionTaskHolder@71 {
+    <name not found> = ArrayList@72[1] { ResolutionCandidate@73 }
+    <name not found> = ArrayList@74[1] { ResolutionCandidate@73 }
+}
+
+ResolutionTaskHolder@75 {
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+}
+
+ResolutionTaskHolder@76 {
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+    <name not found> = EmptyList@45[empty]
+}
+
+TypeDeserializer@77 {
+    classDescriptors('2': Integer@78) = DeserializedClassDescriptor@79['Any']
+}
+
+TypeDeserializer@80 {
+    classDescriptors('3': Integer@81) = DeserializedClassDescriptor@79['Any']
+    classDescriptors('4': Integer@82) = DeserializedClassDescriptor@2['Function0']
 }

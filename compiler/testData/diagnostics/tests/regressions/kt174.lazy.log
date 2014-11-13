@@ -33,14 +33,14 @@ LazyJavaClassifierType@19['String'] {
 
 LazyJavaClassifierType@22['String'] {
     arguments = ArrayList@23[empty]
-    classifier = JavaClassImpl@13['String']
+    classifier = JavaClassImpl@18['String']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@15
 }
 
 LazyJavaClassifierType@25['String'] {
     arguments = ArrayList@26[empty]
-    classifier = JavaClassImpl@18['String']
+    classifier = JavaClassImpl@13['String']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@15
 }
@@ -75,7 +75,7 @@ LazyJavaClassifierType@36['Throwable'] {
 
 LazyJavaClassifierType@39['Throwable'] {
     arguments = ArrayList@40[empty]
-    classifier = JavaClassImpl@38['Throwable']
+    classifier = JavaClassImpl@35['Throwable']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@32
 }
@@ -89,7 +89,7 @@ LazyJavaClassifierType@41['Throwable'] {
 
 LazyJavaClassifierType@43['Throwable'] {
     arguments = ArrayList@44[empty]
-    classifier = JavaClassImpl@35['Throwable']
+    classifier = JavaClassImpl@38['Throwable']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@32
 }
@@ -136,4 +136,25 @@ LazyJavaPackageFragment@55['lang'] {
     deserializedPackageScope = Empty@67 // through LazyPackageFragmentScopeForJavaPackage@74
     functions('Exception': Name@66) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
     memberIndex = computeMemberIndex$1@75 // through LazyPackageFragmentScopeForJavaPackage@74
+}
+
+ResolutionTaskHolder@76 {
+    <name not found> = ArrayList@77[4] { ResolutionCandidate@78, ResolutionCandidate@79, ResolutionCandidate@80, ... }
+    <name not found> = ArrayList@81[5] { ResolutionCandidate@78, ResolutionCandidate@79, ResolutionCandidate@80, ... }
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
 }

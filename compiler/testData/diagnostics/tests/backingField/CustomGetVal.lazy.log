@@ -14,24 +14,30 @@ LazyJavaPackageFragmentProvider@3 {
 }
 
 LazyJavaPackageFragment@5['<root>'] {
-    classes('times': Name@14) = null // through LazyPackageFragmentScopeForJavaPackage@15
-    classes('zz': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@15
-    deserializedPackageScope = Empty@17 // through LazyPackageFragmentScopeForJavaPackage@15
-    functions('times': Name@14) = EmptyList@18[empty] // through LazyPackageFragmentScopeForJavaPackage@15
-    memberIndex = computeMemberIndex$1@19 // through LazyPackageFragmentScopeForJavaPackage@15
+    classes('zz': Name@14) = null // through LazyPackageFragmentScopeForJavaPackage@15
+    deserializedPackageScope = Empty@16 // through LazyPackageFragmentScopeForJavaPackage@15
 }
 
 LazyJavaPackageFragment@8['java'] {
-    classes('lang': Name@20) = null // through LazyPackageFragmentScopeForJavaPackage@21
-    deserializedPackageScope = Empty@17 // through LazyPackageFragmentScopeForJavaPackage@21
-    functions('lang': Name@22) = EmptyList@18[empty] // through LazyPackageFragmentScopeForJavaPackage@21
-    memberIndex = computeMemberIndex$1@23 // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('lang': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    deserializedPackageScope = Empty@16 // through LazyPackageFragmentScopeForJavaPackage@18
+    functions('lang': Name@19) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    memberIndex = computeMemberIndex$1@21 // through LazyPackageFragmentScopeForJavaPackage@18
 }
 
 LazyJavaPackageFragment@10['lang'] {
-    classes('times': Name@14) = null // through LazyPackageFragmentScopeForJavaPackage@24
-    classes('zz': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@24
-    deserializedPackageScope = Empty@17 // through LazyPackageFragmentScopeForJavaPackage@24
-    functions('times': Name@14) = EmptyList@18[empty] // through LazyPackageFragmentScopeForJavaPackage@24
-    memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('zz': Name@14) = null // through LazyPackageFragmentScopeForJavaPackage@22
+    deserializedPackageScope = Empty@16 // through LazyPackageFragmentScopeForJavaPackage@22
+}
+
+ResolutionTaskHolder@23 {
+    <name not found> = ArrayList@24[1] { ResolutionCandidate@25 }
+    <name not found> = ArrayList@26[1] { ResolutionCandidate@25 }
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+}
+
+ResolutionTaskHolder@27 {
+    <name not found> = ArrayList@28[7] { ResolutionCandidate@29, ResolutionCandidate@30, ResolutionCandidate@31, ... }
+    <name not found> = ArrayList@32[7] { ResolutionCandidate@29, ResolutionCandidate@30, ResolutionCandidate@31, ... }
 }

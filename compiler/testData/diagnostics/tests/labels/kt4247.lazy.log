@@ -17,25 +17,55 @@ LazyJavaPackageFragment@2['<root>'] {
     classes('Int': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@17
     classes('String': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@17
     classes('bar1': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@17
-    classes('invoke': Name@20) = null // through LazyPackageFragmentScopeForJavaPackage@17
-    deserializedPackageScope = Empty@21 // through LazyPackageFragmentScopeForJavaPackage@17
-    functions('bar1': Name@19) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@17
-    functions('invoke': Name@20) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@17
-    memberIndex = computeMemberIndex$1@23 // through LazyPackageFragmentScopeForJavaPackage@17
+    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@17
+    functions('bar1': Name@19) = EmptyList@21[empty] // through LazyPackageFragmentScopeForJavaPackage@17
+    memberIndex = computeMemberIndex$1@22 // through LazyPackageFragmentScopeForJavaPackage@17
 }
 
 LazyJavaPackageFragment@6['java'] {
-    classes('lang': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@25
-    deserializedPackageScope = Empty@21 // through LazyPackageFragmentScopeForJavaPackage@25
-    functions('lang': Name@26) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@25
-    memberIndex = computeMemberIndex$1@27 // through LazyPackageFragmentScopeForJavaPackage@25
+    classes('lang': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@24
+    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@24
+    functions('lang': Name@25) = EmptyList@21[empty] // through LazyPackageFragmentScopeForJavaPackage@24
+    memberIndex = computeMemberIndex$1@26 // through LazyPackageFragmentScopeForJavaPackage@24
 }
 
 LazyJavaPackageFragment@8['lang'] {
-    classes('bar1': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@28
-    classes('invoke': Name@20) = null // through LazyPackageFragmentScopeForJavaPackage@28
-    deserializedPackageScope = Empty@21 // through LazyPackageFragmentScopeForJavaPackage@28
-    functions('bar1': Name@19) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@28
-    functions('invoke': Name@20) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@28
-    memberIndex = computeMemberIndex$1@29 // through LazyPackageFragmentScopeForJavaPackage@28
+    classes('bar1': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@27
+    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@27
+    functions('bar1': Name@19) = EmptyList@21[empty] // through LazyPackageFragmentScopeForJavaPackage@27
+    memberIndex = computeMemberIndex$1@28 // through LazyPackageFragmentScopeForJavaPackage@27
+}
+
+ResolutionTaskHolder@29 {
+    <name not found> = ArrayList@30[1] { ResolutionCandidate@31 }
+    <name not found> = ArrayList@32[1] { ResolutionCandidate@31 }
+    <name not found> = EmptyList@21[empty]
+    <name not found> = EmptyList@21[empty]
+}
+
+ResolutionTaskHolder@33 {
+    <name not found> = ArrayList@34[1] { ResolutionCandidate@35 }
+    <name not found> = ArrayList@36[1] { ResolutionCandidate@35 }
+    <name not found> = EmptyList@21[empty]
+    <name not found> = EmptyList@21[empty]
+}
+
+ResolutionTaskHolder@37 {
+    <name not found> = ArrayList@38[1] { ResolutionCandidate@39 }
+    <name not found> = ArrayList@40[1] { ResolutionCandidate@39 }
+}
+
+ResolutionTaskHolder@41 {
+    <name not found> = ArrayList@42[1] { ResolutionCandidate@43 }
+    <name not found> = ArrayList@44[1] { ResolutionCandidate@43 }
+}
+
+ResolutionTaskHolder@45 {
+    <name not found> = ArrayList@46[1] { ResolutionCandidate@47 }
+    <name not found> = ArrayList@48[1] { ResolutionCandidate@47 }
+}
+
+ResolutionTaskHolder@49 {
+    <name not found> = ArrayList@50[1] { ResolutionCandidate@51 }
+    <name not found> = ArrayList@52[1] { ResolutionCandidate@51 }
 }

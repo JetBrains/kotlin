@@ -67,8 +67,14 @@ LazyJavaPackageFragment@45['java'] {
 
 LazyJavaPackageFragment@47['lang'] {
     classes('Runnable': Name@66) = LazyJavaClassDescriptor@4['Runnable'] // through LazyPackageFragmentScopeForJavaPackage@67
-    classes('foo': Name@68) = null // through LazyPackageFragmentScopeForJavaPackage@67
-    deserializedPackageScope = Empty@63 // through LazyPackageFragmentScopeForJavaPackage@67
-    functions('foo': Name@68) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@67
-    memberIndex = computeMemberIndex$1@69 // through LazyPackageFragmentScopeForJavaPackage@67
+}
+
+ResolutionTaskHolder@68 {
+    <name not found> = ArrayList@69[1] { ResolutionCandidate@70 }
+    <name not found> = ArrayList@71[1] { ResolutionCandidate@70 }
+}
+
+ResolutionTaskHolder@72 {
+    <name not found> = ArrayList@73[1] { ResolutionCandidate@74 }
+    <name not found> = ArrayList@75[1] { ResolutionCandidate@74 }
 }

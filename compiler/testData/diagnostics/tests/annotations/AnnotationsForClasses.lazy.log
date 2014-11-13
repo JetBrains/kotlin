@@ -49,3 +49,13 @@ LazyJavaPackageFragment@20['lang'] {
     classes('Deprecated': Name@38) = LazyJavaClassDescriptor@6['Deprecated'] // through LazyPackageFragmentScopeForJavaPackage@39
     classes('java': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@39
 }
+
+ResolutionTaskHolder@40 {
+    <name not found> = ArrayList@41[1] { ResolutionCandidate@42 }
+    <name not found> = ArrayList@43[1] { ResolutionCandidate@42 }
+}
+
+ResolutionTaskHolder@44 {
+    <name not found> = ArrayList@45[1] { ResolutionCandidate@46 }
+    <name not found> = ArrayList@47[1] { ResolutionCandidate@46 }
+}

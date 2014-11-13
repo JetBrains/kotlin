@@ -18,26 +18,63 @@ LazyJavaPackageFragmentProvider@2 {
 }
 
 LazyJavaPackageFragment@4['<root>'] {
-    classes('bar': Name@15) = null // through LazyPackageFragmentScopeForJavaPackage@16
-    classes('foo': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@16
-    deserializedPackageScope = Empty@18 // through LazyPackageFragmentScopeForJavaPackage@16
-    functions('bar': Name@15) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@16
-    functions('foo': Name@17) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@16
-    memberIndex = computeMemberIndex$1@20 // through LazyPackageFragmentScopeForJavaPackage@16
+    deserializedPackageScope = Empty@15 // through LazyPackageFragmentScopeForJavaPackage@16
 }
 
 LazyJavaPackageFragment@7['java'] {
-    classes('lang': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@22
-    deserializedPackageScope = Empty@18 // through LazyPackageFragmentScopeForJavaPackage@22
-    functions('lang': Name@23) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@22
-    memberIndex = computeMemberIndex$1@24 // through LazyPackageFragmentScopeForJavaPackage@22
+    classes('lang': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    deserializedPackageScope = Empty@15 // through LazyPackageFragmentScopeForJavaPackage@18
+    functions('lang': Name@19) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    memberIndex = computeMemberIndex$1@21 // through LazyPackageFragmentScopeForJavaPackage@18
 }
 
 LazyJavaPackageFragment@9['lang'] {
-    classes('bar': Name@15) = null // through LazyPackageFragmentScopeForJavaPackage@25
-    classes('foo': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@25
-    deserializedPackageScope = Empty@18 // through LazyPackageFragmentScopeForJavaPackage@25
-    functions('bar': Name@15) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@25
-    functions('foo': Name@17) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@25
-    memberIndex = computeMemberIndex$1@26 // through LazyPackageFragmentScopeForJavaPackage@25
+    deserializedPackageScope = Empty@15 // through LazyPackageFragmentScopeForJavaPackage@22
+}
+
+ResolutionTaskHolder@23 {
+    <name not found> = ArrayList@24[1] { ResolutionCandidate@25 }
+    <name not found> = ArrayList@26[1] { ResolutionCandidate@25 }
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+}
+
+ResolutionTaskHolder@27 {
+    <name not found> = ArrayList@28[1] { ResolutionCandidate@29 }
+    <name not found> = ArrayList@30[1] { ResolutionCandidate@29 }
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+}
+
+ResolutionTaskHolder@31 {
+    <name not found> = ArrayList@32[1] { ResolutionCandidate@33 }
+    <name not found> = ArrayList@34[1] { ResolutionCandidate@33 }
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+}
+
+ResolutionTaskHolder@35 {
+    <name not found> = ArrayList@36[1] { ResolutionCandidate@37 }
+    <name not found> = ArrayList@38[1] { ResolutionCandidate@37 }
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
+}
+
+ResolutionTaskHolder@39 {
+    <name not found> = ArrayList@40[1] { ResolutionCandidate@41 }
+    <name not found> = ArrayList@42[1] { ResolutionCandidate@41 }
+    <name not found> = EmptyList@20[empty]
+    <name not found> = EmptyList@20[empty]
 }

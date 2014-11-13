@@ -88,14 +88,14 @@ LazyJavaClassifierType@48['Void'] {
 
 LazyJavaClassifierType@51['Void'] {
     arguments = ArrayList@52[empty]
-    classifier = JavaClassImpl@50['Void']
+    classifier = JavaClassImpl@47['Void']
     nullable = 'true': Boolean@37
     typeConstructor = LazyJavaClassTypeConstructor@18['Void']
 }
 
 LazyJavaClassifierType@53['Void'] {
     arguments = ArrayList@54[empty]
-    classifier = JavaClassImpl@47['Void']
+    classifier = JavaClassImpl@50['Void']
     nullable = 'true': Boolean@37
     typeConstructor = LazyJavaClassTypeConstructor@18['Void']
 }
@@ -152,4 +152,31 @@ LazyJavaTypeParameterResolver@86 {
 
 LazyJavaTypeParameterResolver@88 {
     resolve(JavaTypeParameterImpl@32['R']) = null
+}
+
+ResolutionTaskHolder@89 {
+    <name not found> = ArrayList@90[1] { ResolutionCandidate@91 }
+    <name not found> = ArrayList@92[1] { ResolutionCandidate@93 }
+    <name not found> = ArrayList@94[2] { ResolutionCandidate@91, ResolutionCandidate@93 }
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+}
+
+ResolutionTaskHolder@95 {
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
+    <name not found> = EmptyList@12[empty]
 }

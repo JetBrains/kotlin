@@ -48,21 +48,21 @@ LazyJavaClassifierType@26['String'] {
 
 LazyJavaClassifierType@29['String'] {
     arguments = ArrayList@30[empty]
-    classifier = JavaClassImpl@20['String']
+    classifier = JavaClassImpl@25['String']
     nullable = 'true': Boolean@31
     typeConstructor = DeserializedClassTypeConstructor@22
 }
 
 LazyJavaClassifierType@32['String'] {
     arguments = ArrayList@33[empty]
-    classifier = JavaClassImpl@25['String']
+    classifier = JavaClassImpl@28['String']
     nullable = 'true': Boolean@31
     typeConstructor = DeserializedClassTypeConstructor@22
 }
 
 LazyJavaClassifierType@34['String'] {
     arguments = ArrayList@35[empty]
-    classifier = JavaClassImpl@28['String']
+    classifier = JavaClassImpl@20['String']
     nullable = 'true': Boolean@31
     typeConstructor = DeserializedClassTypeConstructor@22
 }
@@ -90,21 +90,21 @@ LazyJavaClassifierType@43['Throwable'] {
 
 LazyJavaClassifierType@46['Throwable'] {
     arguments = ArrayList@47[empty]
-    classifier = JavaClassImpl@42['Throwable']
+    classifier = JavaClassImpl@38['Throwable']
     nullable = 'true': Boolean@31
     typeConstructor = DeserializedClassTypeConstructor@39
 }
 
 LazyJavaClassifierType@48['Throwable'] {
     arguments = ArrayList@49[empty]
-    classifier = JavaClassImpl@38['Throwable']
+    classifier = JavaClassImpl@45['Throwable']
     nullable = 'true': Boolean@31
     typeConstructor = DeserializedClassTypeConstructor@39
 }
 
 LazyJavaClassifierType@50['Throwable'] {
     arguments = ArrayList@51[empty]
-    classifier = JavaClassImpl@45['Throwable']
+    classifier = JavaClassImpl@42['Throwable']
     nullable = 'true': Boolean@31
     typeConstructor = DeserializedClassTypeConstructor@39
 }
@@ -154,4 +154,18 @@ LazyJavaPackageFragment@62['lang'] {
     deserializedPackageScope = Empty@76 // through LazyPackageFragmentScopeForJavaPackage@83
     functions('RuntimeException': Name@74) = EmptyList@77[empty] // through LazyPackageFragmentScopeForJavaPackage@83
     memberIndex = computeMemberIndex$1@84 // through LazyPackageFragmentScopeForJavaPackage@83
+}
+
+ResolutionTaskHolder@85 {
+    <name not found> = ArrayList@86[1] { ResolutionCandidate@87 }
+    <name not found> = ArrayList@88[1] { ResolutionCandidate@87 }
+}
+
+ResolutionTaskHolder@89 {
+    <name not found> = ArrayList@90[4] { ResolutionCandidate@91, ResolutionCandidate@92, ResolutionCandidate@93, ... }
+    <name not found> = ArrayList@94[5] { ResolutionCandidate@91, ResolutionCandidate@92, ResolutionCandidate@93, ... }
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
 }

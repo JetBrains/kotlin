@@ -100,10 +100,15 @@ LazyJavaPackageFragment@8['reflect'] {
     classes('KFunction0': Name@55) = DeserializedClassDescriptor@4['KFunction0'] // through LazyPackageFragmentScopeForJavaPackage@56
 }
 
-TypeDeserializer@57 {
-    classDescriptors('2': Integer@58) = DeserializedClassDescriptor@59['Any']
+ResolutionTaskHolder@57 {
+    <name not found> = ArrayList@58[1] { ResolutionCandidate@59 }
+    <name not found> = ArrayList@60[1] { ResolutionCandidate@59 }
 }
 
-TypeDeserializer@60 {
-    classDescriptors('4': Integer@61) = DeserializedClassDescriptor@2['Function0']
+TypeDeserializer@61 {
+    classDescriptors('2': Integer@62) = DeserializedClassDescriptor@63['Any']
+}
+
+TypeDeserializer@64 {
+    classDescriptors('4': Integer@65) = DeserializedClassDescriptor@2['Function0']
 }

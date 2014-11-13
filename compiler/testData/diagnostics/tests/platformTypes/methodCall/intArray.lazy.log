@@ -7,70 +7,96 @@ LazyJavaClassDescriptor@0['J'] {
     memberIndex = computeMemberIndex$1@9 // through LazyJavaClassMemberScope@3
     nestedClassIndex = LinkedHashMap@10 // through LazyJavaClassMemberScope@3
     nestedClasses('intArr': Name@6) = null // through LazyJavaClassMemberScope@3
-    properties('intArr': Name@6) = EmptyList@11[empty] // through LazyJavaClassMemberScope@3
-    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@12['<this>']
-    typeConstructor = LazyJavaClassTypeConstructor@13['J']
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@11['<this>']
+    typeConstructor = LazyJavaClassTypeConstructor@12['J']
 }
 
-LazyJavaClassTypeConstructor@13['J'] {
-    parameters = ArrayList@14[empty]
-    supertypes = ArrayList@15[1] { JetTypeImpl@16['Any'] }
+LazyJavaClassTypeConstructor@12['J'] {
+    parameters = ArrayList@13[empty]
+    supertypes = ArrayList@14[1] { JetTypeImpl@15['Any'] }
 }
 
-LazyJavaClassifierType@17['Object'] {
-    classifier = JavaClassImpl@18['Object']
-    typeConstructor = DeserializedClassTypeConstructor@19
+LazyJavaClassifierType@16['Object'] {
+    classifier = JavaClassImpl@17['Object']
+    typeConstructor = DeserializedClassTypeConstructor@18
 }
 
-LazyJavaPackageFragmentProvider@20 {
-    packageFragments('<root>': FqName@21) = LazyJavaPackageFragment@22['<root>']
-    packageFragments('IntArray': FqName@23) = null
-    packageFragments('java': FqName@24) = LazyJavaPackageFragment@25['java']
-    packageFragments('java.lang': FqName@26) = LazyJavaPackageFragment@27['lang']
-    packageFragments('java.lang.IntArray': FqName@28) = null
-    packageFragments('kotlin': FqName@29) = null
-    packageFragments('kotlin.IntArray': FqName@30) = null
-    packageFragments('kotlin.io': FqName@31) = null
-    packageFragments('kotlin.jvm': FqName@32) = null
-    packageFragments('p': FqName@33) = LazyJavaPackageFragment@34['p']
-    packageFragments('p.IntArray': FqName@35) = null
-    topLevelClasses(JavaClassImpl@36['J']) = LazyJavaClassDescriptor@0['J']
+LazyJavaPackageFragmentProvider@19 {
+    packageFragments('<root>': FqName@20) = LazyJavaPackageFragment@21['<root>']
+    packageFragments('IntArray': FqName@22) = null
+    packageFragments('java': FqName@23) = LazyJavaPackageFragment@24['java']
+    packageFragments('java.lang': FqName@25) = LazyJavaPackageFragment@26['lang']
+    packageFragments('java.lang.IntArray': FqName@27) = null
+    packageFragments('kotlin': FqName@28) = null
+    packageFragments('kotlin.IntArray': FqName@29) = null
+    packageFragments('kotlin.io': FqName@30) = null
+    packageFragments('kotlin.jvm': FqName@31) = null
+    packageFragments('p': FqName@32) = LazyJavaPackageFragment@33['p']
+    packageFragments('p.IntArray': FqName@34) = null
+    topLevelClasses(JavaClassImpl@35['J']) = LazyJavaClassDescriptor@0['J']
 }
 
-LazyJavaPackageFragment@22['<root>'] {
-    classes('IntArray': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@38
-    classes('J': Name@39) = null // through LazyPackageFragmentScopeForJavaPackage@38
-    classes('intArr': Name@6) = null // through LazyPackageFragmentScopeForJavaPackage@38
-    classes('p': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@38
-    deserializedPackageScope = Empty@41 // through LazyPackageFragmentScopeForJavaPackage@38
-    functions('J': Name@39) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@38
-    functions('intArr': Name@6) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@38
-    functions('p': Name@42) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@38
-    memberIndex = computeMemberIndex$1@43 // through LazyPackageFragmentScopeForJavaPackage@38
+LazyJavaPackageFragment@21['<root>'] {
+    classes('IntArray': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@37
+    classes('J': Name@38) = null // through LazyPackageFragmentScopeForJavaPackage@37
+    classes('p': Name@39) = null // through LazyPackageFragmentScopeForJavaPackage@37
+    deserializedPackageScope = Empty@40 // through LazyPackageFragmentScopeForJavaPackage@37
+    functions('J': Name@38) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@37
+    functions('p': Name@42) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@37
+    memberIndex = computeMemberIndex$1@43 // through LazyPackageFragmentScopeForJavaPackage@37
 }
 
-LazyJavaPackageFragment@25['java'] {
+LazyJavaPackageFragment@24['java'] {
     classes('lang': Name@44) = null // through LazyPackageFragmentScopeForJavaPackage@45
-    deserializedPackageScope = Empty@41 // through LazyPackageFragmentScopeForJavaPackage@45
-    functions('lang': Name@46) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@45
+    deserializedPackageScope = Empty@40 // through LazyPackageFragmentScopeForJavaPackage@45
+    functions('lang': Name@46) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@45
     memberIndex = computeMemberIndex$1@47 // through LazyPackageFragmentScopeForJavaPackage@45
 }
 
-LazyJavaPackageFragment@27['lang'] {
-    classes('J': Name@39) = null // through LazyPackageFragmentScopeForJavaPackage@48
-    classes('intArr': Name@6) = null // through LazyPackageFragmentScopeForJavaPackage@48
-    deserializedPackageScope = Empty@41 // through LazyPackageFragmentScopeForJavaPackage@48
-    functions('J': Name@39) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@48
-    functions('intArr': Name@6) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@48
+LazyJavaPackageFragment@26['lang'] {
+    classes('J': Name@38) = null // through LazyPackageFragmentScopeForJavaPackage@48
+    deserializedPackageScope = Empty@40 // through LazyPackageFragmentScopeForJavaPackage@48
+    functions('J': Name@38) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@48
     memberIndex = computeMemberIndex$1@49 // through LazyPackageFragmentScopeForJavaPackage@48
 }
 
-LazyJavaPackageFragment@34['p'] {
-    classes('IntArray': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@50
-    classes('J': Name@39) = LazyJavaClassDescriptor@0['J'] // through LazyPackageFragmentScopeForJavaPackage@50
-    classes('intArr': Name@6) = null // through LazyPackageFragmentScopeForJavaPackage@50
-    deserializedPackageScope = Empty@41 // through LazyPackageFragmentScopeForJavaPackage@50
-    functions('J': Name@39) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@50
-    functions('intArr': Name@6) = EmptyList@11[empty] // through LazyPackageFragmentScopeForJavaPackage@50
+LazyJavaPackageFragment@33['p'] {
+    classes('IntArray': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@50
+    classes('J': Name@38) = LazyJavaClassDescriptor@0['J'] // through LazyPackageFragmentScopeForJavaPackage@50
+    deserializedPackageScope = Empty@40 // through LazyPackageFragmentScopeForJavaPackage@50
+    functions('J': Name@38) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@50
     memberIndex = computeMemberIndex$1@51 // through LazyPackageFragmentScopeForJavaPackage@50
+}
+
+ResolutionTaskHolder@52 {
+    <name not found> = ArrayList@53[1] { ResolutionCandidate@54 }
+    <name not found> = ArrayList@55[1] { ResolutionCandidate@54 }
+    <name not found> = EmptyList@41[empty]
+    <name not found> = EmptyList@41[empty]
+    <name not found> = EmptyList@41[empty]
+    <name not found> = EmptyList@41[empty]
+}
+
+ResolutionTaskHolder@56 {
+    <name not found> = ArrayList@57[1] { ResolutionCandidate@58 }
+    <name not found> = ArrayList@59[1] { ResolutionCandidate@58 }
+    <name not found> = EmptyList@41[empty]
+    <name not found> = EmptyList@41[empty]
+    <name not found> = EmptyList@41[empty]
+    <name not found> = EmptyList@41[empty]
+}
+
+ResolutionTaskHolder@60 {
+    <name not found> = ArrayList@61[1] { ResolutionCandidate@62 }
+    <name not found> = ArrayList@63[1] { ResolutionCandidate@62 }
+}
+
+ResolutionTaskHolder@64 {
+    <name not found> = ArrayList@65[1] { ResolutionCandidate@66 }
+    <name not found> = ArrayList@67[1] { ResolutionCandidate@66 }
+}
+
+ResolutionTaskHolder@68 {
+    <name not found> = ArrayList@69[1] { ResolutionCandidate@70 }
+    <name not found> = ArrayList@71[1] { ResolutionCandidate@70 }
 }

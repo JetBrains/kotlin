@@ -55,3 +55,8 @@ LazyJavaPackageFragment@20['java'] {
 LazyJavaPackageFragment@22['lang'] {
     classes('varargs': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@44
 }
+
+ResolutionTaskHolder@45 {
+    <name not found> = ArrayList@46[1] { ResolutionCandidate@47 }
+    <name not found> = ArrayList@48[1] { ResolutionCandidate@47 }
+}

@@ -140,7 +140,6 @@ LazyJavaPackageFragment@60['io'] {
     functions('foo': Name@80) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@86
     memberIndex = computeMemberIndex$1@88 // through LazyPackageFragmentScopeForJavaPackage@86
     membersProtos = LinkedHashMap@89 // through DeserializedPackageMemberScope@87
-    properties('foo': Name@80) = EmptyList@83[empty] // through DeserializedPackageMemberScope@87
 }
 
 LazyJavaPackageFragment@47['java'] {
@@ -177,7 +176,6 @@ LazyJavaPackageFragment@12['kotlin'] {
     functions('reflect': Name@105) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@97
     memberIndex = computeMemberIndex$1@106 // through LazyPackageFragmentScopeForJavaPackage@97
     membersProtos = LinkedHashMap@107 // through DeserializedPackageMemberScope@102
-    properties('foo': Name@80) = EmptyList@83[empty] // through DeserializedPackageMemberScope@102
     properties('io': Name@103) = EmptyList@83[empty] // through DeserializedPackageMemberScope@102
     properties('jvm': Name@104) = EmptyList@83[empty] // through DeserializedPackageMemberScope@102
     properties('reflect': Name@105) = EmptyList@83[empty] // through DeserializedPackageMemberScope@102
@@ -200,20 +198,178 @@ LazyJavaPackageFragment@13['reflect'] {
     memberIndex = computeMemberIndex$1@111 // through LazyPackageFragmentScopeForJavaPackage@110
 }
 
-TypeDeserializer@112 {
-    classDescriptors('2': Integer@113) = DeserializedClassDescriptor@114['Any']
+ResolutionTaskHolder@112 {
+    <name not found> = ArrayList@113[1] { ResolutionCandidate@114 }
+    <name not found> = ArrayList@115[1] { ResolutionCandidate@114 }
+    <name not found> = ArrayList@116[1] { ResolutionCandidate@117 }
+    <name not found> = ArrayList@118[1] { ResolutionCandidate@117 }
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
 }
 
-TypeDeserializer@115 {
-    classDescriptors('2': Integer@113) = DeserializedClassDescriptor@114['Any']
+ResolutionTaskHolder@119 {
+    <name not found> = ArrayList@120[1] { ResolutionCandidate@121 }
+    <name not found> = ArrayList@122[1] { ResolutionCandidate@121 }
 }
 
-TypeDeserializer@116 {
-    classDescriptors('3': Integer@117) = DeserializedClassDescriptor@114['Any']
-    classDescriptors('4': Integer@118) = DeserializedClassDescriptor@2['ExtensionFunction0']
+ResolutionTaskHolder@123 {
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
 }
 
-TypeDeserializer@119 {
-    classDescriptors('3': Integer@117) = DeserializedClassDescriptor@114['Any']
-    classDescriptors('4': Integer@118) = DeserializedClassDescriptor@2['ExtensionFunction0']
+ResolutionTaskHolder@124 {
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@125 {
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@126 {
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@127 {
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@128 {
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@129 {
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@130 {
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+TypeDeserializer@131 {
+    classDescriptors('2': Integer@132) = DeserializedClassDescriptor@133['Any']
+}
+
+TypeDeserializer@134 {
+    classDescriptors('2': Integer@132) = DeserializedClassDescriptor@133['Any']
+}
+
+TypeDeserializer@135 {
+    classDescriptors('3': Integer@136) = DeserializedClassDescriptor@133['Any']
+    classDescriptors('4': Integer@137) = DeserializedClassDescriptor@2['ExtensionFunction0']
+}
+
+TypeDeserializer@138 {
+    classDescriptors('3': Integer@136) = DeserializedClassDescriptor@133['Any']
+    classDescriptors('4': Integer@137) = DeserializedClassDescriptor@2['ExtensionFunction0']
 }
