@@ -264,7 +264,7 @@ class Converter private(private val elementToConvert: PsiElement,
                          annotations,
                          modifiers,
                          typeConverter.convertType(field.getType(), Nullability.NotNull),
-                         deferredElement { codeConverter -> ExpressionList(codeConverter.convertExpressions(argumentList?.getExpressions() ?: array())).assignPrototype(argumentList) })
+                         deferredElement { codeConverter -> ExpressionList(codeConverter.convertExpressions(argumentList?.getExpressions() ?: array<PsiExpression>())).assignPrototype(argumentList) })
         }
         else {
             val isVal = isVal(referenceSearcher, field)
