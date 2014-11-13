@@ -46,6 +46,7 @@ import org.jetbrains.jet.lang.resolve.java.PLATFORM_TYPES
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude.NonExtensions
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
@@ -79,6 +80,8 @@ public abstract class LazyJavaMemberScope(
         val result = LinkedHashSet<SimpleFunctionDescriptor>()
 
         for (method in memberIndex().findMethodsByName(name)) {
+            if (DescriptorResolverUtils.shouldBeInEnumClassObject(method)) continue
+
             val descriptor = resolveMethodToFunctionDescriptor(method, true)
             result.add(descriptor)
             result.addIfNotNull(c.samConversionResolver.resolveSamAdapter(descriptor))
