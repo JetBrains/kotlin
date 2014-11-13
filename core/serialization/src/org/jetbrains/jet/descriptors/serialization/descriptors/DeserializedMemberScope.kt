@@ -106,7 +106,7 @@ public abstract class DeserializedMemberScope protected(
                                      nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>(0)
 
-        if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.SINGLETON_CLASSIFIERS_MASK)) {
             addEnumEntryDescriptors(result, nameFilter)
         }
 
@@ -126,11 +126,17 @@ public abstract class DeserializedMemberScope protected(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ) {
+        val acceptsProperties = kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)
+        val acceptsFunctions = kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)
+        if (!(acceptsFunctions || acceptsProperties)) {
+            return
+        }
+
         val names = membersProtos().keySet().filter(nameFilter)
-        if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
+        if (acceptsProperties) {
             addMembers(names, result) { getProperties(it) }
         }
-        if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
+        if (acceptsFunctions) {
             addMembers(names, result) { getFunctions(it) }
         }
     }
