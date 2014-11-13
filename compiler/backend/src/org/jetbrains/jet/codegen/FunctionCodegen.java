@@ -53,10 +53,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.Approximation;
 import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
@@ -131,8 +128,9 @@ public class FunctionCodegen extends ParentCodegenAware {
         OwnerKind methodContextKind = methodContext.getContextKind();
         Method asmMethod = jvmSignature.getAsmMethod();
 
+        int flags = getMethodAsmFlags(functionDescriptor, methodContextKind);
         MethodVisitor mv = v.newMethod(origin,
-                                       getMethodAsmFlags(functionDescriptor, methodContextKind),
+                                       flags,
                                        asmMethod.getName(),
                                        asmMethod.getDescriptor(),
                                        jvmSignature.getGenericsSignature(),
@@ -177,7 +175,9 @@ public class FunctionCodegen extends ParentCodegenAware {
             return;
         }
 
-        generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, getParentCodegen());
+        if ((flags & Opcodes.ACC_NATIVE) == 0) {
+            generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, getParentCodegen());
+        }
 
         endVisit(mv, null, origin.getElement());
 

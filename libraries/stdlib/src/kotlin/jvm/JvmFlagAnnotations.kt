@@ -31,3 +31,6 @@ public annotation class strictfp
 Retention(RetentionPolicy.SOURCE)
 public annotation class synchronized
 
+Retention(RetentionPolicy.SOURCE)
+public annotation class native
+
