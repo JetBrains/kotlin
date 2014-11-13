@@ -24,38 +24,38 @@ public class LabelTest extends SingleFileTranslationWithDirectivesTest {
     }
 
     public void testSimpleLabel() throws Exception {
-        checkFooBoxIsOkWithInlineDirectives();
+        checkFooBoxIsOkWithDirectives();
     }
 
     public void testSiblingLabels() throws Exception {
-        checkFooBoxIsOkWithInlineDirectives();
+        checkFooBoxIsOkWithDirectives();
     }
 
     public void testNestedLabels() throws Exception {
-        checkFooBoxIsOkWithInlineDirectives();
+        checkFooBoxIsOkWithDirectives();
     }
 
     public void testSimpleLabelInlined() throws Exception {
-        checkFooBoxIsOkWithInlineDirectives();
+        checkFooBoxIsOkWithDirectives();
     }
 
     public void testSiblingLabelsInlined() throws Exception {
-        checkFooBoxIsOkWithInlineDirectives();
+        checkFooBoxIsOkWithDirectives();
     }
 
     public void testSiblingLabelsInlinedClashing() throws Exception {
-        checkFooBoxIsOkWithInlineDirectives();
+        checkFooBoxIsOkWithDirectives();
     }
 
     public void testNestedLabelsInlinedClashing() throws Exception {
-        checkFooBoxIsOkWithInlineDirectives();
+        checkFooBoxIsOkWithDirectives();
     }
 
     public void testLabelWithVariableClashing() throws Exception {
-        checkFooBoxIsOkWithInlineDirectives();
+        checkFooBoxIsOkWithDirectives();
     }
 
     public void testNestedLabelsInlinedClashingAtFunctionsWithClosure() throws Exception {
-        checkFooBoxIsOkWithInlineDirectives();
+        checkFooBoxIsOkWithDirectives();
     }
 }
