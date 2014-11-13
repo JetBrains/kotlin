@@ -9002,6 +9002,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/specialConstructions"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("constantsInIf.kt")
+                public void testConstantsInIf() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/specialConstructions/constantsInIf.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("elvisAsCall.kt")
                 public void testElvisAsCall() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/specialConstructions/elvisAsCall.kt");
@@ -9011,6 +9017,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("exclExclAsCall.kt")
                 public void testExclExclAsCall() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/specialConstructions/exclExclAsCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("multipleSuperClasses.kt")
+                public void testMultipleSuperClasses() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/specialConstructions/multipleSuperClasses.kt");
                     doTest(fileName);
                 }
 

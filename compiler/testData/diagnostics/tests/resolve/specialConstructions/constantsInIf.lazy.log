@@ -1,0 +1,37 @@
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1['String']
+}
+
+LazyJavaPackageFragmentProvider@2 {
+    packageFragments('<root>': FqName@3) = LazyJavaPackageFragment@4['<root>']
+    packageFragments('String': FqName@5) = null
+    packageFragments('java': FqName@6) = LazyJavaPackageFragment@7['java']
+    packageFragments('java.lang': FqName@8) = LazyJavaPackageFragment@9['lang']
+    packageFragments('java.lang.String': FqName@10) = null
+    packageFragments('kotlin': FqName@11) = null
+    packageFragments('kotlin.String': FqName@12) = null
+    packageFragments('kotlin.io': FqName@13) = null
+    packageFragments('kotlin.jvm': FqName@14) = null
+}
+
+LazyJavaPackageFragment@4['<root>'] {
+    classes('String': Name@15) = null // through LazyPackageFragmentScopeForJavaPackage@16
+    classes('bar': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@16
+    deserializedPackageScope = Empty@18 // through LazyPackageFragmentScopeForJavaPackage@16
+    functions('bar': Name@17) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@16
+    memberIndex = computeMemberIndex$1@20 // through LazyPackageFragmentScopeForJavaPackage@16
+}
+
+LazyJavaPackageFragment@7['java'] {
+    classes('lang': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@22
+    deserializedPackageScope = Empty@18 // through LazyPackageFragmentScopeForJavaPackage@22
+    functions('lang': Name@23) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@22
+    memberIndex = computeMemberIndex$1@24 // through LazyPackageFragmentScopeForJavaPackage@22
+}
+
+LazyJavaPackageFragment@9['lang'] {
+    classes('bar': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@25
+    deserializedPackageScope = Empty@18 // through LazyPackageFragmentScopeForJavaPackage@25
+    functions('bar': Name@17) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@25
+    memberIndex = computeMemberIndex$1@26 // through LazyPackageFragmentScopeForJavaPackage@25
+}

@@ -160,9 +160,21 @@ public class DataFlowUtils {
     }
 
     @Nullable
-    public static JetType checkType(@Nullable final JetType expressionType, @NotNull JetExpression expressionToCheck,
-            @NotNull JetType expectedType, @NotNull final DataFlowInfo dataFlowInfo, @NotNull final BindingTrace trace
+    public static JetType checkType(
+            @Nullable JetType expressionType, @NotNull JetExpression expressionToCheck,
+            @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace
     ) {
+        return checkType(expressionType, expressionToCheck, expectedType, dataFlowInfo, trace, null);
+    }
+
+    @Nullable
+    public static JetType checkType(
+            @Nullable final JetType expressionType, @NotNull JetExpression expressionToCheck,
+            @NotNull JetType expectedType, @NotNull final DataFlowInfo dataFlowInfo, @NotNull final BindingTrace trace,
+            @Nullable Ref<Boolean> hasError
+    ) {
+        if (hasError != null) hasError.set(false);
+
         final JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck, false);
         recordExpectedType(trace, expression, expectedType);
 
@@ -209,7 +221,9 @@ public class DataFlowUtils {
             if (value instanceof IntegerValueTypeConstant) {
                 value = EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) value, expectedType);
             }
-            new CompileTimeConstantChecker(trace, true).checkConstantExpressionType(value, (JetConstantExpression) expression, expectedType);
+            boolean error = new CompileTimeConstantChecker(trace, true)
+                    .checkConstantExpressionType(value, (JetConstantExpression) expression, expectedType);
+            if (hasError != null) hasError.set(error);
             return expressionType;
         }
 
@@ -222,6 +236,7 @@ public class DataFlowUtils {
             }
         }
         trace.report(TYPE_MISMATCH.on(expression, expectedType, expressionType));
+        if (hasError != null) hasError.set(true);
         return expressionType;
     }
 
