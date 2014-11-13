@@ -36,5 +36,6 @@
         <jarDirectory url="file://$MODULE_DIR$/../ideaSDK/plugins/gradle/lib" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="android-jps-plugin" scope="TEST" />
   </component>
 </module>
