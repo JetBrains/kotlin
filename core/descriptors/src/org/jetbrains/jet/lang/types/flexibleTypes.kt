@@ -90,6 +90,7 @@ public fun JetType.upperIfFlexible(): JetType = if (this.isFlexible()) this.flex
 
 public trait NullAwareness : TypeCapability {
     public fun makeNullableAsSpecified(nullable: Boolean): JetType
+    public fun computeIsNullable(): Boolean
 }
 
 public trait Approximation : TypeCapability {
@@ -124,12 +125,15 @@ public fun JetType.getApproximationTo(
         extras: Approximation.DataFlowExtras = Approximation.DataFlowExtras.EMPTY
 ): Approximation.Info? = this.getCapability(javaClass<Approximation>())?.approximateToExpectedType(expectedType, extras)
 
+trait FlexibleTypeDelegation : TypeCapability {
+    public val delegateType: JetType
+}
 
 public open class DelegatingFlexibleType protected (
         override val lowerBound: JetType,
         override val upperBound: JetType,
         override val extraCapabilities: FlexibleTypeCapabilities
-) : DelegatingType(), NullAwareness, Flexibility, Approximation {
+) : DelegatingType(), NullAwareness, Flexibility, FlexibleTypeDelegation, Approximation {
     class object {
         platformStatic fun create(lowerBound: JetType, upperBound: JetType, extraCapabilities: FlexibleTypeCapabilities): JetType {
             if (lowerBound == upperBound) return lowerBound
@@ -157,6 +161,10 @@ public open class DelegatingFlexibleType protected (
                 extraCapabilities)
     }
 
+    override fun computeIsNullable() = delegateType.isNullable()
+
+    override fun isNullable(): Boolean = getCapability(javaClass<NullAwareness>())!!.computeIsNullable()
+
     override fun approximateToExpectedType(expectedType: JetType, dataFlowExtras: Approximation.DataFlowExtras): Approximation.Info? {
         // val foo: Any? = foo() : Foo!
         if (JetTypeChecker.DEFAULT.isSubtypeOf(upperBound, expectedType)) return null
@@ -171,7 +179,9 @@ public open class DelegatingFlexibleType protected (
         return Approximation.Info(this, expectedType, dataFlowExtras.presentableText)
     }
 
-    override fun getDelegate() = lowerBound
+    override val delegateType: JetType = lowerBound
+
+    override fun getDelegate() = getCapability(javaClass<FlexibleTypeDelegation>())!!.delegateType
 
     override fun toString() = "('$lowerBound'..'$upperBound')"
 }

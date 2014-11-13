@@ -11,8 +11,8 @@ fun test(d: dynamic) {
     val v3 = d.foo(1, "")
     v3.isDynamic() // to check that anything is resolvable
 
-//    val v4 = d.foo<String>()
-//    v4.isDynamic() // to check that anything is resolvable
+    val v4 = d.foo<String>()
+    v4.isDynamic() // to check that anything is resolvable
 
     val v5 = d.foo
     v5.isDynamic() // to check that anything is resolvable

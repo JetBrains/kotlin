@@ -31,15 +31,13 @@ class DynamicTypesAllowed: DynamicTypesSettings() {
 
 trait Dynamicity : TypeCapability
 
+// Object is created only for convenience here. Dynamic types may occur in the form of DelegatingFlexibleTypes,
+// which are produced by substitutions
 object DynamicType : DelegatingFlexibleType(
         KotlinBuiltIns.getInstance().getNothingType(),
         KotlinBuiltIns.getInstance().getNullableAnyType(),
         DynamicTypeCapabilities
-) {
-    override fun getDelegate() = upperBound
-
-    override fun isNullable() = false
-}
+)
 
 fun JetType.isDynamic(): Boolean = this.getCapability(javaClass<Dynamicity>()) != null
 
@@ -49,12 +47,13 @@ public object DynamicTypeCapabilities : FlexibleTypeCapabilities {
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T? {
         if (capabilityClass.isAssignableFrom(javaClass<Impl>()))
             [suppress("UNCHECKED_CAST")]
-            return Impl as T
+            return Impl(flexibility) as T
         else return null
     }
 
 
-    private object Impl : Dynamicity, Specificity, NullAwareness {
+    private class Impl(flexibility: Flexibility) : Dynamicity, Specificity, NullAwareness, FlexibleTypeDelegation {
+        override val delegateType: JetType = flexibility.upperBound
 
         override fun getSpecificityRelationTo(otherType: JetType): Specificity.Relation {
             return if (!otherType.isDynamic()) Specificity.Relation.LESS_SPECIFIC else Specificity.Relation.DONT_KNOW
@@ -64,5 +63,7 @@ public object DynamicTypeCapabilities : FlexibleTypeCapabilities {
             // Nullability has no effect on dynamics
             return DynamicType
         }
+
+        override fun computeIsNullable() = false
     }
 }
