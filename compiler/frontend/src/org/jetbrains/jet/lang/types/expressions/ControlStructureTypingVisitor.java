@@ -133,21 +133,22 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         boolean jumpInThen = thenType != null && KotlinBuiltIns.getInstance().isNothing(thenType);
         boolean jumpInElse = elseType != null && KotlinBuiltIns.getInstance().isNothing(elseType);
 
-        JetTypeInfo result;
+        DataFlowInfo resultDataFlowInfo;
         if (thenType == null && elseType == null) {
-            result = JetTypeInfo.create(null, thenDataFlowInfo.or(elseDataFlowInfo));
+            resultDataFlowInfo = thenDataFlowInfo.or(elseDataFlowInfo);
         }
         else if (thenType == null || (jumpInThen && !jumpInElse)) {
-            result = elseTypeInfo;
+            resultDataFlowInfo = elseDataFlowInfo;
         }
         else if (elseType == null || (jumpInElse && !jumpInThen)) {
-            result = thenTypeInfo;
+            resultDataFlowInfo = thenDataFlowInfo;
         }
         else {
-            result = JetTypeInfo.create(resolvedCall.getResultingDescriptor().getReturnType(), thenDataFlowInfo.or(elseDataFlowInfo));
+            resultDataFlowInfo = thenDataFlowInfo.or(elseDataFlowInfo);
         }
 
-        return DataFlowUtils.checkImplicitCast(result.getType(), ifExpression, contextWithExpectedType, isStatement, result.getDataFlowInfo());
+        JetType resultType = resolvedCall.getResultingDescriptor().getReturnType();
+        return DataFlowUtils.checkImplicitCast(resultType, ifExpression, contextWithExpectedType, isStatement, resultDataFlowInfo);
     }
 
     @NotNull
