@@ -3728,6 +3728,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("dynamicCallsWithLambdas.kt")
+            public void testDynamicCallsWithLambdas() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/dynamicCallsWithLambdas.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("dynamicSafeCalls.kt")
             public void testDynamicSafeCalls() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/dynamicSafeCalls.kt");
