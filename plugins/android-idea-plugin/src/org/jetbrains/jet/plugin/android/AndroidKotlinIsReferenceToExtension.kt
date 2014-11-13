@@ -29,16 +29,13 @@ public class AndroidKotlinIsReferenceToExtension : KotlinIsReferenceToExtension 
     override fun isReferenceTo(reference: JetSimpleNameReference, element: PsiElement): Boolean? {
         val resolvedElement = reference.resolve()
         if (resolvedElement == null) {
-            return false
+            return null
         }
         if (isAndroidSyntheticElement(resolvedElement)) {
             if (element is ValueResourceElementWrapper) {
                 val resource = element.getValue()!!
                 return (resolvedElement as JetProperty).getName() == resource.substring(resource.indexOf('/') + 1)
             }
-        }
-        else if (resolvedElement is LightElement && element is JetProperty) {
-            return resolvedElement.getName() == element.getName()
         }
         return null
     }
