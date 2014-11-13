@@ -3746,6 +3746,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("extensions.kt")
+            public void testExtensions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/extensions.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("implicitDynamicReceiver.kt")
             public void testImplicitDynamicReceiver() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/implicitDynamicReceiver.kt");

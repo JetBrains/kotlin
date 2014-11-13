@@ -23,7 +23,9 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
@@ -32,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
@@ -55,6 +58,8 @@ public class DebugInfoUtil {
         public abstract void reportMissingUnresolved(@NotNull JetReferenceExpression expression);
 
         public abstract void reportUnresolvedWithTarget(@NotNull JetReferenceExpression expression, @NotNull String target);
+
+        public void reportDynamicCall(@NotNull JetReferenceExpression expression) { }
     }
 
     public static void markDebugAnnotations(
@@ -113,6 +118,14 @@ public class DebugInfoUtil {
                 DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, expression);
                 if (declarationDescriptor != null) {
                     target = declarationDescriptor.toString();
+
+                    if (declarationDescriptor instanceof CallableDescriptor) {
+                        CallableDescriptor callableDescriptor = (CallableDescriptor) declarationDescriptor;
+                        ReceiverParameterDescriptor dispatchReceiverParameter = callableDescriptor.getDispatchReceiverParameter();
+                        if (dispatchReceiverParameter != null && TypesPackage.isDynamic(dispatchReceiverParameter.getReturnType())) {
+                            debugInfoReporter.reportDynamicCall(expression);
+                        }
+                    }
                 }
                 if (target == null) {
                     PsiElement labelTarget = bindingContext.get(LABEL_TARGET, expression);

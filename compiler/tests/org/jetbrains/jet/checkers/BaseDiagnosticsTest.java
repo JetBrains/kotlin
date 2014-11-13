@@ -78,6 +78,8 @@ public abstract class BaseDiagnosticsTest extends
     public static final String CHECK_LAZY_LOG_DIRECTIVE = "CHECK_LAZY_LOG";
     public static final boolean CHECK_LAZY_LOG_DEFAULT = "true".equals(System.getProperty("check.lazy.logs", "false"));
 
+    public static final String MARK_DYNAMIC_CALLS_DIRECTIVE = "MARK_DYNAMIC_CALLS";
+
     @Override
     protected TestModule createTestModule(@NotNull String name) {
         return new TestModule(name);
@@ -240,6 +242,7 @@ public abstract class BaseDiagnosticsTest extends
         private final boolean declareCheckType;
         private final boolean declareFlexibleType;
         public final boolean checkLazyLog;
+        private final boolean markDynamicCalls;
 
         public TestFile(
                 @Nullable TestModule module,
@@ -252,6 +255,7 @@ public abstract class BaseDiagnosticsTest extends
             this.checkLazyLog = directives.containsKey(CHECK_LAZY_LOG_DIRECTIVE) || CHECK_LAZY_LOG_DEFAULT;
             this.declareCheckType = directives.containsKey(CHECK_TYPE_DIRECTIVE);
             this.declareFlexibleType = directives.containsKey(EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE);
+            this.markDynamicCalls = directives.containsKey(MARK_DYNAMIC_CALLS_DIRECTIVE);
             if (fileName.endsWith(".java")) {
                 PsiFileFactory.getInstance(getProject()).createFileFromText(fileName, JavaLanguage.INSTANCE, textWithMarkers);
                 // TODO: check there's not syntax errors
@@ -334,7 +338,7 @@ public abstract class BaseDiagnosticsTest extends
 
             final boolean[] ok = { true };
             List<Diagnostic> diagnostics = ContainerUtil.filter(
-                    KotlinPackage.plus(CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile),
+                    KotlinPackage.plus(CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile, markDynamicCalls),
                                        jvmSignatureDiagnostics),
                     whatDiagnosticsToConsider
             );
