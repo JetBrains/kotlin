@@ -533,6 +533,7 @@ public interface Errors {
     DiagnosticFactory0<JetSimpleNameExpression> USELESS_CAST_STATIC_ASSERT_IS_FINE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetSimpleNameExpression> USELESS_CAST = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetSimpleNameExpression> CAST_NEVER_SUCCEEDS = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetTypeReference> DYNAMIC_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<JetExpression, JetType> IMPLICIT_CAST_TO_UNIT_OR_ANY = DiagnosticFactory1.create(WARNING);
 

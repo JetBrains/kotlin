@@ -209,6 +209,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     ) {
         if (actualType == null || noExpectedType(targetType)) return;
 
+        if (TypesPackage.isDynamic(targetType)) {
+            JetTypeReference right = expression.getRight();
+            assert right != null : "We know target is dynamic, but RHS is missing";
+            context.trace.report(DYNAMIC_NOT_ALLOWED.on(right));
+            return;
+        }
+
         if (!CastDiagnosticsUtil.isCastPossible(actualType, targetType, components.platformToKotlinClassMap)) {
             context.trace.report(CAST_NEVER_SUCCEEDS.on(expression.getOperationReference()));
             return;

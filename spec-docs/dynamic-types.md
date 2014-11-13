@@ -79,3 +79,4 @@ but it's hard to be sure it's worth the while
 ## Notes
 
 - dynamic types are not supported on the JVM back-end
+- dynamic types are forbidden on the right-hand side of `is`, `!is`, `as` and `as?` (but not as generic arguments, e.g. `x is List<dynamic>` is allowed)
