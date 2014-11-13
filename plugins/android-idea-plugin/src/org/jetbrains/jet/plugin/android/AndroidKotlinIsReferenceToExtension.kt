@@ -37,9 +37,6 @@ public class AndroidKotlinIsReferenceToExtension : KotlinIsReferenceToExtension 
                 return (resolvedElement as JetProperty).getName() == resource.substring(resource.indexOf('/') + 1)
             }
         }
-        else if (resolvedElement is LightElement && element is JetProperty) {
-            return resolvedElement.getName() == element.getName()
-        }
         return null
     }
 
