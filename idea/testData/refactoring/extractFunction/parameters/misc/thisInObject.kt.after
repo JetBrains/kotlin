@@ -1,0 +1,13 @@
+package p
+
+// SIBLING:
+object O {
+    val a = 1
+    fun test() {
+        unit()
+    }
+}
+
+private fun unit() {
+    O.a
+}
