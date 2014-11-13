@@ -197,9 +197,9 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private void initFileChooser(JetFile targetFile) {
-        FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
-                .withRoots(ProjectRootManager.getInstance(myProject).getContentRoots())
-                .withTreeRootVisible(true);
+        FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
+        descriptor.setRoots(ProjectRootManager.getInstance(myProject).getContentRoots());
+        descriptor.setIsTreeRootVisible(true);
 
         String title = JetRefactoringBundle.message("refactoring.move.top.level.declaration.file.title");
         fileChooser.addBrowseFolderListener(title, null, myProject, descriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
