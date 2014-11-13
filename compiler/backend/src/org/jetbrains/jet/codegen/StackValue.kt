@@ -19,30 +19,31 @@ package org.jetbrains.jet.codegen
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.jet.codegen.StackValue.StackValueWithReceiver
 import org.jetbrains.jet.codegen.StackValue.StackValueWithSimpleReceiver
 
 public fun coercion(value: StackValue, castType: Type): StackValue {
-    return if (value is StackValueWithReceiver) CoercionValueWithReceiver(value, castType) else CoercionValue(value, castType)
+    return CoercionValue(value, castType)
 }
 
-class CoercionValue(val value: StackValue, val castType: Type) : StackValue(castType), IStackValue by value {
+class CoercionValue(
+        val value: StackValue,
+        val castType: Type
+) : StackValue(castType) {
+
     override fun putSelector(type: Type, v: InstructionAdapter) {
         value.putSelector(type, v)
     }
-}
 
-class CoercionValueWithReceiver(
-        val value: StackValueWithReceiver,
-        val castType: Type
-) : StackValueWithSimpleReceiver(castType, !value.hasReceiver(true), !value.hasReceiver(false), value.receiver), IStackValue by value {
+    override fun storeSelector(topOfStackType: Type, v: InstructionAdapter) {
+        value.storeSelector(topOfStackType, v)
+    }
 
     override fun putReceiver(v: InstructionAdapter, isRead: Boolean) {
         value.putReceiver(v, isRead)
     }
 
-    override fun putSelector(type: Type, v: InstructionAdapter) {
-        value.putSelector(type, v)
+    override fun condJump(label: Label, jumpIfFalse: Boolean, v: InstructionAdapter) {
+        value.condJump(label, jumpIfFalse, v)
     }
 
     override fun hasReceiver(isRead: Boolean): Boolean {
@@ -54,34 +55,26 @@ class CoercionValueWithReceiver(
 public class StackValueWithLeaveTask(
         val stackValue: StackValue,
         val leaveTasks: StackValueWithLeaveTask.() -> Unit
-) : StackValueWithReceiver(
-        stackValue.type,
-        if (stackValue is StackValueWithReceiver) stackValue.receiver else StackValue.none()
-), IStackValue by stackValue {
+) : StackValue(stackValue.type) {
 
-    override fun put(type: Type, v: InstructionAdapter) {
-        stackValue.put(type, v)
+    override fun put(type: Type, v: InstructionAdapter, skipReceiver: Boolean) {
+        stackValue.put(type, v, skipReceiver)
         leaveTasks()
     }
 
-    override fun condJump(label: Label, jumpIfFalse: Boolean, v: InstructionAdapter ) {
+    override fun condJump(label: Label, jumpIfFalse: Boolean, v: InstructionAdapter) {
         stackValue.condJump(label, jumpIfFalse, v)
         leaveTasks()
     }
 
     override fun putReceiver(v: InstructionAdapter, isRead: Boolean) {
-        if (stackValue is StackValueWithReceiver) {
-            stackValue.putReceiver(v, isRead)
-        }
+        stackValue.putReceiver(v, isRead)
     }
 
     override fun putSelector(type: Type, v: InstructionAdapter) {
         throw UnsupportedOperationException()
     }
 
-    override fun hasReceiver(isRead: Boolean): Boolean {
-        throw UnsupportedOperationException()
-    }
 
     override fun storeSelector(topOfStackType: Type, v: InstructionAdapter) {
         throw UnsupportedOperationException();

@@ -47,14 +47,11 @@ import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public abstract class StackValue implements IStackValue {
+public abstract class StackValue {
 
     private static final String NULLABLE_BYTE_TYPE_NAME = "java/lang/Byte";
     private static final String NULLABLE_SHORT_TYPE_NAME = "java/lang/Short";
     private static final String NULLABLE_LONG_TYPE_NAME = "java/lang/Long";
-
-    public static final int RECEIVER_READ = 0;
-    public static final int RECEIVER_WRITE = 1;
 
     public static final StackValue.Local LOCAL_0 = local(0, OBJECT_TYPE);
     private static final StackValue UNIT = operation(UNIT_TYPE, new Function1<InstructionAdapter, Unit>() {
@@ -80,7 +77,6 @@ public abstract class StackValue implements IStackValue {
      * @param v     the visitor used to genClassOrObject the instructions
      * @param depth the number of new values put onto the stack
      */
-    @Override
     public void moveToTopOfStack(@NotNull Type type, @NotNull InstructionAdapter v, int depth) {
         put(type, v);
     }
@@ -89,12 +85,21 @@ public abstract class StackValue implements IStackValue {
         put(type, v, false);
     }
 
-    @Override
     public void put(@NotNull Type type, @NotNull InstructionAdapter v, boolean skipReceiver) {
+        if (!skipReceiver) {
+            putReceiver(v, true);
+        }
         putSelector(type, v);
     }
 
-    @Override
+    public abstract void putSelector(@NotNull Type type, @NotNull InstructionAdapter v);
+
+    public boolean hasReceiver(boolean isRead) {
+        return false;
+    }
+
+    public void putReceiver(@NotNull InstructionAdapter v, boolean isRead) {}
+
     public void dup(@NotNull InstructionAdapter v, boolean withReceiver) {
         switch (type.getSize()) {
             case 0: break;
@@ -105,23 +110,22 @@ public abstract class StackValue implements IStackValue {
         }
     }
 
-    public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
-        throw new UnsupportedOperationException("cannot store to value " + this);
-    }
-
-    public abstract void putSelector(@NotNull Type type, @NotNull InstructionAdapter v);
-
-    @Override
-    public void store(@NotNull StackValue value, @NotNull InstructionAdapter v, boolean skipReceiver) {
-        value.put(value.type, v);
-        storeSelector(value.type, v);
-    }
-
     public void store(@NotNull StackValue value, @NotNull InstructionAdapter v) {
         store(value, v, false);
     }
 
-    @Override
+    public void store(@NotNull StackValue value, @NotNull InstructionAdapter v, boolean skipReceiver) {
+        if (!skipReceiver) {
+            putReceiver(v, false);
+        }
+        value.put(value.type, v);
+        storeSelector(value.type, v);
+    }
+
+    public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
+        throw new UnsupportedOperationException("cannot store to value " + this);
+    }
+
     public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
         put(this.type, v);
         coerceTo(Type.BOOLEAN_TYPE, v);
@@ -284,13 +288,11 @@ public abstract class StackValue implements IStackValue {
         }
     }
 
-    @Override
-    public void coerceTo(@NotNull Type toType, @NotNull InstructionAdapter v) {
+    protected void coerceTo(@NotNull Type toType, @NotNull InstructionAdapter v) {
         coerce(this.type, toType, v);
     }
 
-    @Override
-    public void coerceFrom(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
+    protected void coerceFrom(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
         coerce(topOfStackType, this.type, v);
     }
 
@@ -361,7 +363,6 @@ public abstract class StackValue implements IStackValue {
         return UNIT;
     }
 
-    @Override
     public void putAsBoolean(InstructionAdapter v) {
         Label ifTrue = new Label();
         Label end = new Label();
@@ -1321,7 +1322,7 @@ public abstract class StackValue implements IStackValue {
 
         @Override
         public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
-            value = StackValue.complexReceiver(value, RECEIVER_READ, RECEIVER_WRITE, RECEIVER_READ);
+            value = StackValue.complexReceiver(value, true, false, true);
             value.put(this.type, v);
 
             if (callable instanceof CallableMethod) {
@@ -1444,11 +1445,13 @@ public abstract class StackValue implements IStackValue {
         }
     }
 
-    public abstract static class StackValueWithSimpleReceiver extends StackValueWithReceiver {
+    public abstract static class StackValueWithSimpleReceiver extends StackValue {
 
         public final boolean isStaticPut;
 
         public final boolean isStaticStore;
+        @NotNull
+        public final StackValue receiver;
 
         public StackValueWithSimpleReceiver(
                 @NotNull Type type,
@@ -1456,18 +1459,10 @@ public abstract class StackValue implements IStackValue {
                 boolean isStaticStore,
                 @NotNull StackValue receiver
         ) {
-            super(type, receiver);
+            super(type);
+            this.receiver = receiver;
             this.isStaticPut = isStaticPut;
             this.isStaticStore = isStaticStore;
-        }
-
-
-        @Override
-        public void put(@NotNull Type type, @NotNull InstructionAdapter v, boolean skipReceiver) {
-            if (!skipReceiver) {
-                putReceiver(v, true);
-            }
-            putSelector(type, v);
         }
 
         @Override
@@ -1481,23 +1476,6 @@ public abstract class StackValue implements IStackValue {
         public boolean hasReceiver(boolean isRead) {
             return isRead ? !isStaticPut : !isStaticStore;
         }
-    }
-
-    public abstract static class StackValueWithReceiver extends StackValue {
-
-        @NotNull public final StackValue receiver;
-
-        protected StackValueWithReceiver(@NotNull Type type, @NotNull StackValue receiver) {
-            super(type);
-            this.receiver = receiver;
-        }
-
-        @Override
-        public abstract void put(@NotNull Type type, @NotNull InstructionAdapter v, boolean skipReceiver);
-
-        public abstract void putReceiver(@NotNull InstructionAdapter v, boolean isRead);
-
-        public abstract boolean hasReceiver(boolean isRead);
 
         public int receiverSize() {
             return receiver.type.getSize();
@@ -1506,7 +1484,7 @@ public abstract class StackValue implements IStackValue {
         @Override
         public void dup(@NotNull InstructionAdapter v, boolean withReceiver) {
             if (!withReceiver) {
-                super.dup(v, false);
+                super.dup(v, withReceiver);
             } else {
                 int receiverSize = hasReceiver(false) && hasReceiver(true) ? receiverSize() : 0;
                 switch (receiverSize) {
@@ -1552,13 +1530,13 @@ public abstract class StackValue implements IStackValue {
 
     static class ComplexReceiver extends StackValue {
 
-        private final StackValueWithReceiver originalValueWithReceiver;
-        private final int[] operations;
+        private final StackValueWithSimpleReceiver originalValueWithReceiver;
+        private final boolean [] isReadOperations;
 
-        public ComplexReceiver(StackValueWithReceiver value, int [] operations) {
+        public ComplexReceiver(StackValueWithSimpleReceiver value, boolean [] isReadOperations) {
             super(value.type);
             this.originalValueWithReceiver = value;
-            this.operations = operations;
+            this.isReadOperations = isReadOperations;
         }
 
         @Override
@@ -1566,8 +1544,8 @@ public abstract class StackValue implements IStackValue {
                 @NotNull Type type, @NotNull InstructionAdapter v
         ) {
             boolean wasPutted = false;
-            for (int operation : operations) {
-                if (originalValueWithReceiver.hasReceiver(operation == RECEIVER_READ)) {
+            for (boolean operation : isReadOperations) {
+                if (originalValueWithReceiver.hasReceiver(operation)) {
                     StackValue receiver = originalValueWithReceiver.receiver;
                     if (!wasPutted) {
                         receiver.put(receiver.type, v);
@@ -1601,11 +1579,11 @@ public abstract class StackValue implements IStackValue {
 
     public static class Delegated extends StackValueWithSimpleReceiver {
 
-        public final StackValueWithReceiver originalValue;
+        public final StackValueWithSimpleReceiver originalValue;
 
         public Delegated(
                 @NotNull Type type,
-                @NotNull StackValueWithReceiver originalValue,
+                @NotNull StackValueWithSimpleReceiver originalValue,
                 @NotNull StackValue receiver
         ) {
             super(type, !originalValue.hasReceiver(true), !originalValue.hasReceiver(false), receiver);
@@ -1633,13 +1611,13 @@ public abstract class StackValue implements IStackValue {
     }
 
     public static StackValue complexWriteReadReceiver(StackValue stackValue) {
-        return complexReceiver(stackValue, RECEIVER_WRITE, RECEIVER_READ);
+        return complexReceiver(stackValue, false, true);
     }
 
-    private static StackValue complexReceiver(StackValue stackValue, int ... operations) {
-        if (stackValue instanceof StackValueWithReceiver) {
-            return new Delegated(stackValue.type, (StackValueWithReceiver) stackValue,
-                                 new ComplexReceiver((StackValueWithSimpleReceiver) stackValue, operations));
+    private static StackValue complexReceiver(StackValue stackValue, boolean ... isReadOperations) {
+        if (stackValue instanceof StackValueWithSimpleReceiver) {
+            return new Delegated(stackValue.type, (StackValueWithSimpleReceiver) stackValue,
+                                 new ComplexReceiver((StackValueWithSimpleReceiver) stackValue, isReadOperations));
         } else {
             return stackValue;
         }
