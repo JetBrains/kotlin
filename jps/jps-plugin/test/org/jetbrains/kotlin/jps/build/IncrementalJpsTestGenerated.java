@@ -436,6 +436,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("javaAndKotlinChangedSimultaneously")
+            public void testJavaAndKotlinChangedSimultaneously() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaAndKotlinChangedSimultaneously/");
+                doTest(fileName);
+            }
+
             @TestMetadata("methodAddedInSuper")
             public void testMethodAddedInSuper() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/methodAddedInSuper/");
