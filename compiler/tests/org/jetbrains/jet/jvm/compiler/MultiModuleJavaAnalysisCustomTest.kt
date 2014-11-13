@@ -118,7 +118,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     }
 
     private fun checkClass(classDescriptor: ClassDescriptor) {
-        classDescriptor.getDefaultType().getMemberScope().getDescriptors().filterIsInstance(javaClass<CallableDescriptor>()).forEach {
+        classDescriptor.getDefaultType().getMemberScope().getDescriptors().filterIsInstance<CallableDescriptor>().forEach {
             checkCallable(it)
         }
 

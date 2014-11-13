@@ -106,7 +106,7 @@ fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: JetProper
     val renderer = DefaultPsiElementCellRenderer()
     val navigatingOverrides = elementProcessor.getResults()
             .sortBy(renderer.getComparator())
-            .filterIsInstance(javaClass<NavigatablePsiElement>())
+            .filterIsInstance<NavigatablePsiElement>()
 
     PsiElementListNavigator.openTargets(e,
                                         navigatingOverrides.copyToArray(),

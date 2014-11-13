@@ -235,7 +235,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                 if (classDescriptor != null && DescriptorUtils.isEnumClass(classDescriptor)) {
                     val conditions = whenExpression.getEntries()
                             .flatMap { it.getConditions().toList() }
-                            .filterIsInstance(javaClass<JetWhenConditionWithExpression>())
+                            .filterIsInstance<JetWhenConditionWithExpression>()
                     for (condition in conditions) {
                         val selectorExpr = (condition.getExpression() as? JetDotQualifiedExpression)
                                 ?.getSelectorExpression() as? JetReferenceExpression ?: continue

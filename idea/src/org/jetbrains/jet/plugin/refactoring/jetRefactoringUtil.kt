@@ -145,7 +145,7 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
     return when (parent) {
         is JetFile -> Collections.singletonList(parent)
         is JetClassBody -> {
-            getAllExtractionContainers(strict).filterIsInstance(javaClass<JetClassBody>())
+            getAllExtractionContainers(strict).filterIsInstance<JetClassBody>()
         }
         else -> {
             val enclosingDeclaration =

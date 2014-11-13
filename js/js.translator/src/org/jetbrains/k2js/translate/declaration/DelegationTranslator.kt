@@ -47,7 +47,7 @@ public class DelegationTranslator(
             BindingUtils.getClassDescriptor(context.bindingContext(), classDeclaration);
 
     private val delegationBySpecifiers =
-            classDeclaration.getDelegationSpecifiers().filterIsInstance(javaClass<JetDelegatorByExpressionSpecifier>());
+            classDeclaration.getDelegationSpecifiers().filterIsInstance<JetDelegatorByExpressionSpecifier>();
 
     private class Field (val name: String, val generateField: Boolean)
     private val fields = HashMap<JetDelegatorByExpressionSpecifier, Field>();

@@ -90,7 +90,7 @@ private fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModul
 
     //TODO: (module refactoring) include libraries that are not among dependencies of any module
     val ideaLibraries = ideaModules.flatMap {
-        ModuleRootManager.getInstance(it).getOrderEntries().filterIsInstance(javaClass<LibraryOrderEntry>()).map {
+        ModuleRootManager.getInstance(it).getOrderEntries().filterIsInstance<LibraryOrderEntry>().map {
             it.getLibrary()
         }
     }.filterNotNull().toSet()
@@ -98,7 +98,7 @@ private fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModul
     val librariesInfos = ideaLibraries.map { LibraryInfo(project, it) }
 
     val ideaSdks = ideaModules.flatMap {
-        ModuleRootManager.getInstance(it).getOrderEntries().filterIsInstance(javaClass<JdkOrderEntry>()).map {
+        ModuleRootManager.getInstance(it).getOrderEntries().filterIsInstance<JdkOrderEntry>().map {
             it.getJdk()
         }
     }.filterNotNull().toSet()

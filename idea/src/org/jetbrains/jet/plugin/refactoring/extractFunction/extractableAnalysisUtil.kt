@@ -85,7 +85,7 @@ private fun JetType.isDefault(): Boolean = KotlinBuiltIns.getInstance().isUnit(t
 
 private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingContext): Map<VariableDescriptor, List<JetExpression>> {
     val result = HashMap<VariableDescriptor, MutableList<JetExpression>>()
-    for (instruction in filterIsInstance(javaClass<WriteValueInstruction>())) {
+    for (instruction in filterIsInstance<WriteValueInstruction>()) {
         val expression = instruction.element as? JetExpression
         val descriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
         if (expression != null && descriptor != null) {

@@ -88,7 +88,7 @@ data class ExtractionData(
         it is JetDeclarationWithBody || it is JetClassInitializer
     } ?: false
 
-    fun getExpressions(): List<JetExpression> = originalElements.filterIsInstance(javaClass<JetExpression>())
+    fun getExpressions(): List<JetExpression> = originalElements.filterIsInstance<JetExpression>()
 
     fun getCodeFragmentTextRange(): TextRange? {
         val originalElements = originalElements

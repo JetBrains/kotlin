@@ -42,7 +42,7 @@ public object CodegenUtilKt {
         if (delegateExpressionType?.isDynamic() ?: false) return mapOf();
 
         return descriptor.getDefaultType().getMemberScope().getDescriptors().stream()
-            .filterIsInstance(javaClass<CallableMemberDescriptor>())
+            .filterIsInstance<CallableMemberDescriptor>()
             .filter { it.getKind() == CallableMemberDescriptor.Kind.DELEGATION }
             .toList()
             .sortBy(MemberComparator.INSTANCE as Comparator<CallableMemberDescriptor>) // Workaround for KT-6030
