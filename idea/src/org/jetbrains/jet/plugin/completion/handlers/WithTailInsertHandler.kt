@@ -35,7 +35,8 @@ class WithTailInsertHandler(val tailText: String,
     }
 
     fun postHandleInsert(context: InsertionContext, item: LookupElement) {
-        if (tailText == context.getCompletionChar().toString()) {
+        val completionChar = context.getCompletionChar()
+        if (completionChar == tailText.singleOrNull() || (spaceAfter && completionChar == ' ')) {
             context.setAddCompletionChar(false)
         }
         //TODO: what if completion char is different?
@@ -44,7 +45,7 @@ class WithTailInsertHandler(val tailText: String,
         PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(document)
 
         var tailOffset = context.getTailOffset()
-        if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR && item.getUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY) != null) {
+        if (completionChar == Lookup.REPLACE_SELECT_CHAR && item.getUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY) != null) {
             val offset = context.getOffsetMap().getOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET)
             if (offset != -1) tailOffset = offset
         }

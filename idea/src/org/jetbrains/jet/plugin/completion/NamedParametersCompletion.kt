@@ -108,9 +108,6 @@ object NamedParametersCompletion {
             editor.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
             editor.getCaretModel().moveToOffset(context.getStartOffset() + text.length)
 
-            if (context.getCompletionChar() == ' ') {
-                context.setAddCompletionChar(false)
-            }
             WithTailInsertHandler.eqTail().postHandleInsert(context, item)
         }
     }
