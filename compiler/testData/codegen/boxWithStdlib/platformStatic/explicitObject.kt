@@ -2,6 +2,8 @@ import kotlin.platform.platformStatic
 
 object AX {
 
+    platformStatic val c: String = "OK"
+
     platformStatic fun aStatic(): String {
         return AX.b()
     }
@@ -14,13 +16,19 @@ object AX {
         return "OK"
     }
 
+    fun getProperty(): String {
+        return AX.c
+    }
+
 }
 
 fun box() : String {
 
     if (AX.aStatic() != "OK") return "fail 1"
 
-    if (AX.aNonStatic() != "OK") return "fail 1"
+    if (AX.aNonStatic() != "OK") return "fail 2"
+
+    if (AX.getProperty() != "OK") return "fail 3"
 
     return "OK"
 }

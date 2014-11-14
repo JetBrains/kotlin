@@ -12,4 +12,8 @@ class Test {
         return A.test3("JAVA");
     }
 
+    public static String test4() {
+        return A.getC();
+    }
+
 }

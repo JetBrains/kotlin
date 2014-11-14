@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.annotations.hasIntrinsicAnnotation
+import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 
 public object JavaDeclarationCheckerProvider : AdditionalCheckerProvider {
 
@@ -68,18 +69,10 @@ public class PlatformStaticAnnotationChecker : AnnotationChecker {
 
     override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor.hasPlatformStaticAnnotation()) {
-            if (declaration is JetNamedFunction) {
-                val insideObject = DescriptorUtils.containerKindIs(descriptor, ClassKind.OBJECT)
-                val insideClassObject = DescriptorUtils.containerKindIs(descriptor, ClassKind.CLASS_OBJECT)
-
-                if (!insideObject && !(insideClassObject && DescriptorUtils.containerKindIs(descriptor.getContainingDeclaration()!!, ClassKind.CLASS))) {
-                    diagnosticHolder.report(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT.on(declaration, descriptor));
-                }
-
-                if (insideObject && declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
-                    diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration, descriptor));
-                }
-            } else {
+            if (declaration is JetNamedFunction || declaration is JetProperty) {
+                checkDeclaration(declaration, descriptor, diagnosticHolder, declaration)
+            }
+            else {
                 //TODO: there should be general mechanism
                 diagnosticHolder.report(ErrorsJvm.PLATFORM_STATIC_ILLEGAL_USAGE.on(declaration, descriptor));
             }
@@ -88,13 +81,43 @@ public class PlatformStaticAnnotationChecker : AnnotationChecker {
         if (declaration is JetProperty) {
             val getter = declaration.getGetter()
             if (getter != null) {
-                check(getter, (descriptor as PropertyDescriptor).getGetter()!!, diagnosticHolder)
+                val propertyGetterDescriptor = (descriptor as PropertyDescriptor).getGetter()!!
+                if (propertyGetterDescriptor.hasPlatformStaticAnnotation()) {
+                    checkDeclaration(declaration, descriptor, diagnosticHolder, getter)
+                }
             }
+
             val setter = declaration.getSetter()
             if (setter != null) {
-                check(setter, (descriptor as PropertyDescriptor).getSetter()!!, diagnosticHolder)
+                val propertySetterDescriptor = (descriptor as PropertyDescriptor).getSetter()!!
+                if (propertySetterDescriptor.hasPlatformStaticAnnotation()) {
+                    checkDeclaration(declaration, descriptor, diagnosticHolder, setter)
+                }
             }
         }
+    }
+
+    private fun checkDeclaration(
+            declaration: JetDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            reportDiagnosticOn: JetDeclaration
+    ) {
+        val insideObject = containerKindIs(descriptor, ClassKind.OBJECT)
+        val insideClassObject = containerKindIs(descriptor, ClassKind.CLASS_OBJECT)
+
+        if (!insideObject && !(insideClassObject && containerKindIs(descriptor.getContainingDeclaration()!!, ClassKind.CLASS))) {
+            diagnosticHolder.report(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT.on(reportDiagnosticOn));
+        }
+
+        if (insideObject && declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+            diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(reportDiagnosticOn));
+        }
+    }
+
+    private fun containerKindIs(descriptor: DeclarationDescriptor, kind: ClassKind): Boolean {
+        val parentDeclaration = descriptor.getContainingDeclaration()
+        return parentDeclaration != null && DescriptorUtils.isKindOf(parentDeclaration, kind)
     }
 }
 

@@ -1664,6 +1664,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("propertyAsDefault.kt")
+        public void testPropertyAsDefault() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/propertyAsDefault.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("propertyInc.kt")
+        public void testPropertyInc() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/propertyInc.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/simple.kt");

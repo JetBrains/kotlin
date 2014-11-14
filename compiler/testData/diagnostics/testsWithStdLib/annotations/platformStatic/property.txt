@@ -3,13 +3,15 @@ package
 internal final class A {
     public constructor A()
     internal final var p: kotlin.Int
-    kotlin.platform.platformStatic() internal final val z: kotlin.Int = 1
+    kotlin.platform.platformStatic() internal final val z2: kotlin.Int = 1
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal class object <class-object-for-A> {
+    internal class object <class-object-for-A> : B {
         private constructor <class-object-for-A>()
+        kotlin.platform.platformStatic() public open override /*1*/ val base1: kotlin.Int = 0
+        public open override /*1*/ val base2: kotlin.Int = 0
         internal final var p1: kotlin.Int
         kotlin.platform.platformStatic() internal final val z: kotlin.Int = 1
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -17,8 +19,10 @@ internal final class A {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal object A {
+    internal object A : B {
         private constructor A()
+        kotlin.platform.platformStatic() public open override /*1*/ val base1: kotlin.Int = 0
+        public open override /*1*/ val base2: kotlin.Int = 0
         internal final var p: kotlin.Int
         kotlin.platform.platformStatic() internal final val z: kotlin.Int = 1
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -27,6 +31,8 @@ internal final class A {
 
         public class object <class-object-for-A> : A.A {
             private constructor <class-object-for-A>()
+            kotlin.platform.platformStatic() public open override /*1*/ /*fake_override*/ val base1: kotlin.Int
+            public open override /*1*/ /*fake_override*/ val base2: kotlin.Int
             internal final override /*1*/ /*fake_override*/ var p: kotlin.Int
             kotlin.platform.platformStatic() internal final override /*1*/ /*fake_override*/ val z: kotlin.Int
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -34,4 +40,13 @@ internal final class A {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
+}
+
+internal open class B {
+    public constructor B()
+    public open val base1: kotlin.Int = 1
+    public open val base2: kotlin.Int = 1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

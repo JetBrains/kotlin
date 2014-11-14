@@ -21,6 +21,8 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassKind
 
 public fun DeclarationDescriptor.hasInlineAnnotation(): Boolean {
     return getAnnotations().findAnnotation(FqName("kotlin.inline")) != null
@@ -35,7 +37,17 @@ public fun DeclarationDescriptor.hasIntrinsicAnnotation(): Boolean {
 }
 
 public fun CallableDescriptor.isPlatformStaticInObject(): Boolean =
-        DescriptorUtils.isObject(getContainingDeclaration()) && hasPlatformStaticAnnotation()
+        isPlatformStaticIn(ClassKind.OBJECT)
 
 public fun CallableDescriptor.isPlatformStaticInClassObject(): Boolean =
-        DescriptorUtils.isClassObject(getContainingDeclaration()) && hasPlatformStaticAnnotation()
+        isPlatformStaticIn(ClassKind.CLASS_OBJECT)
+
+private fun CallableDescriptor.isPlatformStaticIn(kind: ClassKind): Boolean =
+        when (this) {
+            is PropertyAccessorDescriptor -> {
+                val propertyDescriptor = getCorrespondingProperty()
+                DescriptorUtils.isKindOf(propertyDescriptor.getContainingDeclaration(), kind) &&
+                (hasPlatformStaticAnnotation() || propertyDescriptor.hasPlatformStaticAnnotation())
+            }
+            else -> DescriptorUtils.isKindOf(getContainingDeclaration(), kind) && hasPlatformStaticAnnotation()
+        }

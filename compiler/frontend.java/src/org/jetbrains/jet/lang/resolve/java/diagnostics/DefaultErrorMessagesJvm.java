@@ -23,8 +23,6 @@ import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererM
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.Renderer;
 
-import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.DECLARATION_SIGNATURE;
-
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
     private static final Renderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA = new Renderer<ConflictingJvmDeclarationsData>() {
@@ -46,8 +44,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
     static {
         MAP.put(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ErrorsJvm.ACCIDENTAL_OVERRIDE, "Accidental override: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
-        MAP.put(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and class objects of classes can be annotated with ''platformStatic''", DescriptorRenderer.SHORT_NAMES_IN_TYPES);
-        MAP.put(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC, "Override cannot be ''platformStatic'' in object", DescriptorRenderer.SHORT_NAMES_IN_TYPES);
+        MAP.put(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and class objects of classes can be annotated with ''platformStatic''");
+        MAP.put(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC, "Override cannot be ''platformStatic'' in object");
         MAP.put(ErrorsJvm.PLATFORM_STATIC_ILLEGAL_USAGE, "This declaration does not support ''platformStatic''", DescriptorRenderer.SHORT_NAMES_IN_TYPES);
     }
 
