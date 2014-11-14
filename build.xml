@@ -218,6 +218,8 @@
     </target>
 
     <target name="jslib">
+        <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${kotlin-home}/lib/kotlin-ant.jar"/>
+
         <property name="compiled.builtins.js" value="builtins.js" />
         <property name="compiled.stdlib.js" value="stdlib.js" />
         <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData" />
