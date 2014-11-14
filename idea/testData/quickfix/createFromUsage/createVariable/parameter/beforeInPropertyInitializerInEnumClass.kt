@@ -1,7 +1,7 @@
 // "Create parameter 'foo'" "true"
-// ERROR: Missing delegation specifier 'E'
-// ERROR: Missing delegation specifier 'E'
-// ERROR: Missing delegation specifier 'E'
+// ERROR: No value passed for parameter foo
+// ERROR: No value passed for parameter foo
+// ERROR: No value passed for parameter foo
 
 enum class E {
     A

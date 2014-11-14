@@ -42,10 +42,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionCallUsage;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetParameterUsage;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetUsageInfo;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
@@ -120,6 +117,14 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                             !(element.getParent() instanceof JetValueArgumentName)) // Usages in named arguments of the calls usage will be changed when the function call is changed
                             result.add(new JetParameterUsage((JetSimpleNameExpression) element, parameterInfo, functionPsi, isInherited));
                     }
+                }
+            }
+        }
+
+        if (functionPsi instanceof JetClass && ((JetClass) functionPsi).isEnum()) {
+            for (JetDeclaration declaration : ((JetClass) functionPsi).getDeclarations()) {
+                if (declaration instanceof JetEnumEntry && ((JetEnumEntry) declaration).getDelegationSpecifierList() == null) {
+                    result.add(new JetEnumEntryWithoutSuperCallUsage((JetEnumEntry) declaration));
                 }
             }
         }

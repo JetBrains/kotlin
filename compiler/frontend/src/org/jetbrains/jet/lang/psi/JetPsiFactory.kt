@@ -332,6 +332,10 @@ public class JetPsiFactory(private val project: Project) {
         return createArgumentWithName(null, argumentExpression)
     }
 
+    public fun createDelegatorToSuperCall(text: String): JetDelegatorToSuperCall {
+        return createClass("class A: $text").getDelegationSpecifiers().first() as JetDelegatorToSuperCall
+    }
+
     public inner class IfChainBuilder() {
         private val sb = StringBuilder()
         private var first = true
