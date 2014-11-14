@@ -131,8 +131,8 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     val srcDirsSources = HashSet<SourceDirectorySet>()
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
-        args.androidRes = resPath
-        args.androidManifest = manifestPath
+        args.pluginClasspaths = kotlinOptions.pluginClasspaths
+        args.pluginOptions = kotlinOptions.pluginOptions
 
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
             val existingClasspathEntries = getClasspath().filter({ it != null && it.exists() })
