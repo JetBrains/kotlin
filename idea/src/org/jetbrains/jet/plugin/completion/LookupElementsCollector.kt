@@ -29,8 +29,13 @@ import java.util.ArrayList
 import com.intellij.codeInsight.completion.CompletionResultSet
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import com.intellij.openapi.util.TextRange
+import com.intellij.codeInsight.completion.CompletionParameters
 
-class LookupElementsCollector(private val prefixMatcher: PrefixMatcher, private val resolveSession: ResolveSessionForBodies) {
+class LookupElementsCollector(
+        private val prefixMatcher: PrefixMatcher,
+        private val completionParameters: CompletionParameters,
+        private val resolveSession: ResolveSessionForBodies
+) {
     private val elements = ArrayList<LookupElement>()
 
     public fun flushToResultSet(resultSet: CompletionResultSet) {
@@ -109,8 +114,9 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher, private 
 
     // used to avoid insertion of spaces before/after ',', '=' on just typing
     private fun isJustTyping(context: InsertionContext, element: LookupElement): Boolean {
+        if (!completionParameters.isAutoPopup()) return false
         val insertedText = context.getDocument().getText(TextRange(context.getStartOffset(), context.getTailOffset()))
-        return insertedText == element.getUserData(KotlinCompletionCharFilter.SELECTED_ITEM_PREFIX)
+        return insertedText == element.getUserData(KotlinCompletionCharFilter.JUST_TYPING_PREFIX)
     }
 
     public fun addElementWithAutoInsertionSuppressed(element: LookupElement) {

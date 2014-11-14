@@ -27,7 +27,7 @@ public class KotlinCompletionCharFilter() : CharFilter() {
     class object {
         public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key("KotlinCompletionCharFilter.ACCEPT_OPENNING_BRACE")
 
-        public val SELECTED_ITEM_PREFIX: Key<String> = Key("KotlinCompletionCharFilter.SELECTED_ITEM_PREFIX")
+        public val JUST_TYPING_PREFIX: Key<String> = Key("KotlinCompletionCharFilter.JUST_TYPING_PREFIX")
     }
 
     override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
@@ -39,7 +39,9 @@ public class KotlinCompletionCharFilter() : CharFilter() {
         }
 
         val currentItem = lookup.getCurrentItem()
-        currentItem?.putUserData(SELECTED_ITEM_PREFIX, lookup.itemPattern(currentItem))
+        if (!lookup.isSelectionTouched()) {
+            currentItem?.putUserData(JUST_TYPING_PREFIX, lookup.itemPattern(currentItem))
+        }
 
         return when (c) {
             '.' -> {

@@ -62,7 +62,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession)
+    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolveSession)
 
     protected val project: Project = position.getProject()
 
