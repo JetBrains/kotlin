@@ -36,18 +36,22 @@ import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
 
 public object TipsManager{
 
-    public fun getReferenceVariants(expression: JetSimpleNameExpression,
-                                    context: BindingContext,
-                                    kindFilter: DescriptorKindFilter,
-                                    nameFilter: (Name) -> Boolean,
-                                    visibilityFilter: (DeclarationDescriptor) -> Boolean): Collection<DeclarationDescriptor> {
+    public fun getReferenceVariants(
+            expression: JetSimpleNameExpression,
+            context: BindingContext,
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean,
+            visibilityFilter: (DeclarationDescriptor) -> Boolean
+    ): Collection<DeclarationDescriptor> {
         return getReferenceVariants(expression, context, kindFilter, nameFilter).filter(visibilityFilter)
     }
 
-    private fun getReferenceVariants(expression: JetSimpleNameExpression,
-                                     context: BindingContext,
-                                     kindFilter: DescriptorKindFilter,
-                                     nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    private fun getReferenceVariants(
+            expression: JetSimpleNameExpression,
+            context: BindingContext,
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> {
         val receiverExpression = expression.getReceiverExpression()
         val parent = expression.getParent()
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
