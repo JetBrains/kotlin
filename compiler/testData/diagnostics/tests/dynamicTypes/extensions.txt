@@ -1,9 +1,10 @@
 package
 
 internal fun test(/*0*/ d: dynamic): kotlin.Unit
-internal fun kotlin.Any?.bar(): kotlin.Unit
-internal fun kotlin.String.baz(): kotlin.Unit
-internal fun kotlin.Any.foo(): kotlin.Unit
+internal fun kotlin.Any.onAny(): kotlin.Unit
+internal fun dynamic.onDynamic(): kotlin.Unit
+internal fun kotlin.Any?.onNullableAny(): kotlin.Unit
+internal fun kotlin.String.onString(): kotlin.Unit
 
 internal final class C {
     public constructor C()

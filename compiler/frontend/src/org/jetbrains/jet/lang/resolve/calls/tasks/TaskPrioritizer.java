@@ -131,7 +131,6 @@ public class TaskPrioritizer {
         if (receiver.exists()) {
             addCandidatesForExplicitReceiver(receiver, implicitReceivers, c, /*isExplicit=*/true);
             addMembers(receiver, c, /*static=*/true, /*isExplicit=*/true);
-            addCandidatesForDynamicReceiver(receiver, c);
             return;
         }
         addCandidatesForNoReceiver(implicitReceivers, c);
@@ -144,6 +143,8 @@ public class TaskPrioritizer {
             final boolean isExplicit
     ) {
         addMembers(explicitReceiver, c, /*static=*/false, isExplicit);
+
+        addCandidatesForDynamicReceiver(explicitReceiver, c);
 
         for (final CallableDescriptorCollector<D> callableDescriptorCollector : c.callableDescriptorCollectors) {
             //member extensions
@@ -190,25 +191,33 @@ public class TaskPrioritizer {
     }
 
     private static <D extends CallableDescriptor, F extends D> void addCandidatesForDynamicReceiver(
-            @NotNull ReceiverValue receiver,
-            @NotNull TaskPrioritizerContext<D, F> c
+            @NotNull final ReceiverValue receiver,
+            @NotNull final TaskPrioritizerContext<D, F> c
     ) {
-        if (!TypesPackage.isDynamic(receiver.getType())) return;
+        c.result.addCandidates(
+                new Function0<Collection<? extends ResolutionCandidate<D>>>() {
+                    @Override
+                    public Collection<? extends ResolutionCandidate<D>> invoke() {
+                        if (!TypesPackage.isDynamic(receiver.getType())) return Collections.emptyList();
 
-        //noinspection unchecked
-        D dynamicDescriptor = (D) DynamicCallableDescriptors.createCallableDescriptorForDynamicCall(
-                c.context.call,
-                c.scope.getContainingDeclaration()
-        );
-        if (dynamicDescriptor == null) return;
+                        //noinspection unchecked
+                        D dynamicDescriptor = (D) DynamicCallableDescriptors.createCallableDescriptorForDynamicCall(
+                                c.context.call,
+                                c.scope.getContainingDeclaration()
+                        );
+                        if (dynamicDescriptor == null) return Collections.emptyList();
 
-        ResolutionCandidate<D> dynamicCandidate = ResolutionCandidate.create(
-                c.context.call,
-                dynamicDescriptor
+                        ResolutionCandidate<D> dynamicCandidate = ResolutionCandidate.create(
+                                c.context.call,
+                                dynamicDescriptor
+                        );
+                        dynamicCandidate.setDispatchReceiver(receiver);
+                        dynamicCandidate.setExplicitReceiverKind(DISPATCH_RECEIVER);
+
+                        return Collections.singletonList(dynamicCandidate);
+                    }
+                }
         );
-        dynamicCandidate.setDispatchReceiver(receiver);
-        dynamicCandidate.setExplicitReceiverKind(DISPATCH_RECEIVER);
-        c.result.addCandidates(Collections.singletonList(dynamicCandidate));
     }
 
     private static ExplicitReceiverKind createKind(ExplicitReceiverKind kind, boolean isExplicit) {
@@ -260,7 +269,6 @@ public class TaskPrioritizer {
         //try all implicit receivers as explicit
         for (ReceiverValue implicitReceiver : implicitReceivers) {
             addCandidatesForExplicitReceiver(implicitReceiver, implicitReceivers, c, /*isExplicit=*/false);
-            addCandidatesForDynamicReceiver(implicitReceiver, c);
         }
 
         //nonlocals

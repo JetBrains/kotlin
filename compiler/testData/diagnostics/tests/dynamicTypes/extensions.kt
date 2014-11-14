@@ -4,33 +4,33 @@
 // FILE: k.kt
 
 fun test(d: dynamic) {
-    d.foo()
-    d.<!DEBUG_INFO_DYNAMIC!>foo<!>(1)
+    d.<!DEBUG_INFO_DYNAMIC!>onAny<!>()
+    d?.<!DEBUG_INFO_DYNAMIC!>onAny<!>()
+    d!!.<!DEBUG_INFO_DYNAMIC!>onAny<!>()
 
-    d.bar()
-    d.baz()
+    d.<!DEBUG_INFO_DYNAMIC!>onAny<!>(1)
 
-    d == 1
+    d.<!DEBUG_INFO_DYNAMIC!>onNullableAny<!>()
+    d.<!DEBUG_INFO_DYNAMIC!>onString<!>()
 
-    d.equals(1)
-    d?.equals(1)
+    d.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
+    d?.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
 
-    d.hashCode()
-    d?.hashCode()
-
-    d.toString()
-    d?.toString()
+    (d: String).onString()
+    (d: Any).onAny()
+    (d: Any?).onNullableAny()
+    (d: Any).onDynamic()
 }
 
-fun Any.foo() {}
-fun Any?.bar() {}
-
-fun String.baz() {}
+fun Any.onAny() {}
+fun Any?.onNullableAny() {}
+fun String.onString() {}
+fun dynamic.onDynamic() {}
 
 class C {
     fun test(d: dynamic) {
         d.<!DEBUG_INFO_DYNAMIC!>member<!>()
-        d.memberExtension()
+        d.<!DEBUG_INFO_DYNAMIC!>memberExtension<!>()
     }
 
     fun member() {}
