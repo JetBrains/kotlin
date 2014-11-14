@@ -129,18 +129,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("indices.kt")
-        public void testIndices() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/indices.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("indicesChar.kt")
-        public void testIndicesChar() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/indicesChar.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("iterator.kt")
         public void testIterator() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/iterator.kt");
@@ -1902,12 +1890,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("forIntRange.kt")
-        public void testForIntRange() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forIntRange.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("forLoopMemberExtensionAll.kt")
         public void testForLoopMemberExtensionAll() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/forLoopMemberExtensionAll.kt");
@@ -2121,12 +2103,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt958.kt")
         public void testKt958() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/kt958.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("kt998.kt")
-        public void testKt998() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/kt998.kt");
             doTest(fileName);
         }
 

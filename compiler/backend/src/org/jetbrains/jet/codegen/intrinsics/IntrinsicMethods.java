@@ -48,7 +48,6 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod HASH_CODE = new HashCode();
 
     private static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
-    private static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
     private static final Equals EQUALS = new Equals();
     private static final IdentityEquals IDENTITY_EQUALS = new IdentityEquals();
     private static final IteratorNext ITERATOR_NEXT = new IteratorNext();
@@ -143,7 +142,6 @@ public class IntrinsicMethods {
         }
 
         declareIntrinsicFunction("Array", "size", 0, ARRAY_SIZE);
-        declareIntrinsicProperty("Array", "indices", ARRAY_INDICES);
         declareIntrinsicFunction("Array", "set", 2, ARRAY_SET);
         declareIntrinsicFunction("Array", "get", 1, ARRAY_GET);
         declareIntrinsicFunction("Array", "clone", 0, CLONE);
@@ -153,7 +151,6 @@ public class IntrinsicMethods {
     private void declareArrayMethodsForPrimitive(@NotNull JvmPrimitiveType jvmPrimitiveType) {
         String arrayTypeName = jvmPrimitiveType.getPrimitiveType().getArrayTypeName().asString();
         declareIntrinsicFunction(arrayTypeName, "size", 0, ARRAY_SIZE);
-        declareIntrinsicProperty(arrayTypeName, "indices", ARRAY_INDICES);
         declareIntrinsicFunction(arrayTypeName, "set", 2, ARRAY_SET);
         declareIntrinsicFunction(arrayTypeName, "get", 1, ARRAY_GET);
         declareIntrinsicFunction(arrayTypeName, "clone", 0, CLONE);

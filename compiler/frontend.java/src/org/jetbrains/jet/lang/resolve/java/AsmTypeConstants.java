@@ -33,7 +33,6 @@ public class AsmTypeConstants {
 
     public static final Type UNIT_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/Unit");
     public static final Type FUNCTION1_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/Function1");
-    public static final Type INT_RANGE_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/IntRange");
     public static final Type PROPERTY_METADATA_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/PropertyMetadata");
     public static final Type PROPERTY_METADATA_IMPL_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/PropertyMetadataImpl");
 

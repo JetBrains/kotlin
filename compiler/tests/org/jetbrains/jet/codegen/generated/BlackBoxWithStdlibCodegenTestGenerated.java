@@ -120,6 +120,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("indices.kt")
+        public void testIndices() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/indices.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("indicesChar.kt")
+        public void testIndicesChar() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/indicesChar.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("kt3771.kt")
         public void testKt3771() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/kt3771.kt");
@@ -1626,6 +1638,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("forIntRange.kt")
+        public void testForIntRange() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/forIntRange.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("multiAssignmentIterationOverIntRange.kt")
         public void testMultiAssignmentIterationOverIntRange() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/multiAssignmentIterationOverIntRange.kt");
@@ -2423,6 +2441,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("kt864.kt")
         public void testKt864() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/regressions/kt864.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("kt998.kt")
+        public void testKt998() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/regressions/kt998.kt");
             doTestWithStdlib(fileName);
         }
 

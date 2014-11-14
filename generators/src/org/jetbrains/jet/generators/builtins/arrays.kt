@@ -34,8 +34,6 @@ class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             out.println()
             out.println("    public fun iterator(): ${s}Iterator")
             out.println()
-            out.println("    public val indices: IntRange")
-            out.println()
             out.println("    public override fun clone(): ${s}Array")
             out.println("}")
             out.println()

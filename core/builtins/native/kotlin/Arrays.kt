@@ -26,8 +26,6 @@ public class ByteArray(size: Int) : Cloneable {
 
     public fun iterator(): ByteIterator
 
-    public val indices: IntRange
-
     public override fun clone(): ByteArray
 }
 
@@ -38,8 +36,6 @@ public class CharArray(size: Int) : Cloneable {
     public fun size(): Int
 
     public fun iterator(): CharIterator
-
-    public val indices: IntRange
 
     public override fun clone(): CharArray
 }
@@ -52,8 +48,6 @@ public class ShortArray(size: Int) : Cloneable {
 
     public fun iterator(): ShortIterator
 
-    public val indices: IntRange
-
     public override fun clone(): ShortArray
 }
 
@@ -64,8 +58,6 @@ public class IntArray(size: Int) : Cloneable {
     public fun size(): Int
 
     public fun iterator(): IntIterator
-
-    public val indices: IntRange
 
     public override fun clone(): IntArray
 }
@@ -78,8 +70,6 @@ public class LongArray(size: Int) : Cloneable {
 
     public fun iterator(): LongIterator
 
-    public val indices: IntRange
-
     public override fun clone(): LongArray
 }
 
@@ -90,8 +80,6 @@ public class FloatArray(size: Int) : Cloneable {
     public fun size(): Int
 
     public fun iterator(): FloatIterator
-
-    public val indices: IntRange
 
     public override fun clone(): FloatArray
 }
@@ -104,8 +92,6 @@ public class DoubleArray(size: Int) : Cloneable {
 
     public fun iterator(): DoubleIterator
 
-    public val indices: IntRange
-
     public override fun clone(): DoubleArray
 }
 
@@ -116,8 +102,6 @@ public class BooleanArray(size: Int) : Cloneable {
     public fun size(): Int
 
     public fun iterator(): BooleanIterator
-
-    public val indices: IntRange
 
     public override fun clone(): BooleanArray
 }
