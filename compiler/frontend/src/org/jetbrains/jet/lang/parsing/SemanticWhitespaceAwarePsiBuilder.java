@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
 
 public interface SemanticWhitespaceAwarePsiBuilder extends PsiBuilder {
     // TODO: comments go to wrong place when an empty element is created, see IElementType.isLeftBound()
@@ -29,4 +31,6 @@ public interface SemanticWhitespaceAwarePsiBuilder extends PsiBuilder {
     void restoreJoiningComplexTokensState();
     void enableJoiningComplexTokens();
     void disableJoiningComplexTokens();
+
+    boolean isWhitespaceOrComment(@NotNull IElementType elementType);
 }

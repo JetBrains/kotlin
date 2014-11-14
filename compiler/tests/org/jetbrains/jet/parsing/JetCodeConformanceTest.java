@@ -54,7 +54,7 @@ public class JetCodeConformanceTest extends TestCase {
         for (File sourceFile : FileUtil.findFilesByMask(JAVA_FILE_PATTERN, new File("compiler/frontend/src/org/jetbrains/jet/lang/parsing"))) {
             String source = FileUtil.loadFile(sourceFile, true);
 
-            Pattern atPattern = Pattern.compile("assert.*?[^_]at.*?$", Pattern.MULTILINE);
+            Pattern atPattern = Pattern.compile("assert.*?\\b[^_]at.*?$", Pattern.MULTILINE);
             Matcher matcher = atPattern.matcher(source);
 
             if (matcher.find()) {

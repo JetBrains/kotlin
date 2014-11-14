@@ -1,7 +1,7 @@
 // MODULE[js]: m1
 // FILE: k.kt
 
-fun (dynamic).test() {
+fun dynamic.test() {
     val v1 = foo()
     v1.isDynamic() // to check that anything is resolvable
 

@@ -1527,7 +1527,8 @@ public class JetParsing extends AbstractJetParsing {
         parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
 
         IElementType lookahead = lookahead(1);
-        if (at(IDENTIFIER) && lookahead(1) != DOT && lookahead != LT && lookahead != LPAR && at(DYNAMIC_KEYWORD)) {
+        IElementType lookahead2 = lookahead(2);
+        if (at(IDENTIFIER) && !(lookahead == DOT && lookahead2 == IDENTIFIER) && lookahead != LT && at(DYNAMIC_KEYWORD)) {
             PsiBuilder.Marker dynamicType = mark();
             advance(); // DYNAMIC_KEYWORD
             dynamicType.done(DYNAMIC_TYPE);

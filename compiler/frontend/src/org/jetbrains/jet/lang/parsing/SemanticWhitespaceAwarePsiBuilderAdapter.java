@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.lang.impl.PsiBuilderAdapter;
+import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
 
 public class SemanticWhitespaceAwarePsiBuilderAdapter extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
 
@@ -61,5 +63,10 @@ public class SemanticWhitespaceAwarePsiBuilderAdapter extends PsiBuilderAdapter 
     @Override
     public void disableJoiningComplexTokens() {
         myBuilder.disableJoiningComplexTokens();
+    }
+
+    @Override
+    public boolean isWhitespaceOrComment(@NotNull IElementType elementType) {
+        return myBuilder.isWhitespaceOrComment(elementType);
     }
 }
