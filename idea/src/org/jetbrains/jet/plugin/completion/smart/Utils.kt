@@ -71,19 +71,19 @@ fun LookupElement.addTail(tail: Tail?): LookupElement {
 
         Tail.COMMA -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler(",", spaceBefore = false, spaceAfter = true /*TODO: use code style option*/).handleInsert(context, getDelegate())
+                WithTailInsertHandler.commaTail().handleInsert(context, getDelegate())
             }
         }
 
         Tail.RPARENTH -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                handlers.WithTailInsertHandler(")", spaceBefore = false, spaceAfter = false).handleInsert(context, getDelegate())
+                WithTailInsertHandler.rparenthTail().handleInsert(context, getDelegate())
             }
         }
 
         Tail.ELSE -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                handlers.WithTailInsertHandler("else", spaceBefore = true, spaceAfter = true).handleInsert(context, getDelegate())
+                WithTailInsertHandler.elseTail().handleInsert(context, getDelegate())
             }
         }
     }

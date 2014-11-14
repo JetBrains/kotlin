@@ -20,16 +20,18 @@ import com.intellij.codeInsight.lookup.CharFilter
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.CharFilter.Result
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
 import com.intellij.openapi.util.Key
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 
 public class KotlinCompletionCharFilter() : CharFilter() {
     class object {
         public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key("KotlinCompletionCharFilter.ACCEPT_OPENNING_BRACE")
         public val ACCEPT_EQ: Key<Boolean> = Key("KotlinCompletionCharFilter.ACCEPT_EQ")
+
+        public val SELECTED_ITEM_PREFIX: Key<String> = Key("KotlinCompletionCharFilter.SELECTED_ITEM_PREFIX")
     }
 
-    public override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
+    override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
         if (lookup.getPsiFile() !is JetFile) return null
         if (!lookup.isCompletion()) return null
 
@@ -38,6 +40,8 @@ public class KotlinCompletionCharFilter() : CharFilter() {
         }
 
         val currentItem = lookup.getCurrentItem()
+        currentItem?.putUserData(SELECTED_ITEM_PREFIX, lookup.itemPattern(currentItem))
+
         return when (c) {
             '.' -> {
                 //TODO: this heuristics better to be only used for auto-popup completion but I see no way to check this
@@ -66,7 +70,7 @@ public class KotlinCompletionCharFilter() : CharFilter() {
 
             ',', ' ', '(' -> Result.SELECT_ITEM_AND_FINISH_LOOKUP
 
-            else -> return CharFilter.Result.HIDE_LOOKUP
+            else -> CharFilter.Result.HIDE_LOOKUP
         }
     }
 }

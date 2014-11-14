@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion.handlers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -51,6 +50,24 @@ public class CompletionCharFilterTestGenerated extends AbstractCompletionCharFil
     @TestMetadata("Comma2.kt")
     public void testComma2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/Comma2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Comma3.kt")
+    public void testComma3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/Comma3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Comma4.kt")
+    public void testComma4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/Comma4.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Comma5.kt")
+    public void testComma5() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/Comma5.kt");
         doTest(fileName);
     }
 

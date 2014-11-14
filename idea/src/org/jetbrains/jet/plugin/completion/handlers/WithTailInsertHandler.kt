@@ -31,10 +31,14 @@ class WithTailInsertHandler(val tailText: String,
                             val overwriteText: Boolean = true) : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         item.handleInsert(context)
+        postHandleInsert(context, item)
+    }
 
-        if (tailText == context.getCompletionChar().toString() && context.shouldAddCompletionChar()) {
-            return
+    fun postHandleInsert(context: InsertionContext, item: LookupElement) {
+        if (tailText == context.getCompletionChar().toString()) {
+            context.setAddCompletionChar(false)
         }
+        //TODO: what if completion char is different?
 
         val document = context.getDocument()
         PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(document)
@@ -47,10 +51,10 @@ class WithTailInsertHandler(val tailText: String,
 
         val moveCaret = context.getEditor().getCaretModel().getOffset() == tailOffset
 
-        fun isCharAt(offset: Int, c: Char) = offset < document.getTextLength() && document.getCharsSequence().charAt(offset) == c
-        fun isTextAt(offset: Int, text: String) = offset + text.length <= document.getTextLength() && document.getText(TextRange(offset, offset + text.length)) == text
-
         if (overwriteText) {
+            fun isCharAt(offset: Int, c: Char) = offset < document.getTextLength() && document.getCharsSequence().charAt(offset) == c
+            fun isTextAt(offset: Int, text: String) = offset + text.length <= document.getTextLength() && document.getText(TextRange(offset, offset + text.length)) == text
+
             if (spaceBefore && isCharAt(tailOffset, ' ')) {
                 document.deleteString(tailOffset, tailOffset + 1)
             }
@@ -78,5 +82,11 @@ class WithTailInsertHandler(val tailText: String,
                 AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(context.getEditor(), null)
             }
         }
+    }
+
+    class object {
+        fun commaTail() = WithTailInsertHandler(",", spaceBefore = false, spaceAfter = true /*TODO: use code style option*/)
+        fun rparenthTail() = WithTailInsertHandler(")", spaceBefore = false, spaceAfter = false)
+        fun elseTail() = WithTailInsertHandler("else", spaceBefore = true, spaceAfter = true)
     }
 }

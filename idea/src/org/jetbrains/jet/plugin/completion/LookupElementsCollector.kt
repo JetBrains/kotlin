@@ -28,6 +28,7 @@ import com.intellij.codeInsight.completion.PrefixMatcher
 import java.util.ArrayList
 import com.intellij.codeInsight.completion.CompletionResultSet
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import com.intellij.openapi.util.TextRange
 
 class LookupElementsCollector(private val prefixMatcher: PrefixMatcher, private val resolveSession: ResolveSessionForBodies) {
     private val elements = ArrayList<LookupElement>()
@@ -89,7 +90,18 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher, private 
 
     public fun addElement(element: LookupElement) {
         if (prefixMatcher.prefixMatches(element)) {
-            elements.add(element)
+            elements.add(object: LookupElementDecorator<LookupElement>(element) {
+                override fun handleInsert(context: InsertionContext) {
+                    getDelegate().handleInsert(context)
+
+                    if (context.getCompletionChar() == ',' && context.shouldAddCompletionChar()) {
+                        val insertedText = context.getDocument().getText(TextRange(context.getStartOffset(), context.getTailOffset()))
+                        if (insertedText != getUserData(KotlinCompletionCharFilter.SELECTED_ITEM_PREFIX)) { // avoid insertion of space after comma if we have typed the whole text to insert already
+                            WithTailInsertHandler.commaTail().postHandleInsert(context, getDelegate())
+                        }
+                    }
+                }
+            })
         }
     }
 
