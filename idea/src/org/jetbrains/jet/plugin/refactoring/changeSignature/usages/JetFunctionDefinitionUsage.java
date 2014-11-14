@@ -37,6 +37,10 @@ public class JetFunctionDefinitionUsage extends JetUsageInfo<PsiElement> {
         this.isInherited = isInherited;
     }
 
+    public final boolean isInherited() {
+        return isInherited;
+    }
+
     @Override
     public boolean processUsage(JetChangeInfo changeInfo, PsiElement element) {
         JetParameterList parameterList;

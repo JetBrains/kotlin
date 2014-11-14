@@ -173,14 +173,16 @@ public class JetParameterInfo implements ParameterInfo {
         StringBuilder buffer = new StringBuilder();
         JetValVar valVar = getValOrVar();
 
-        if (valVar != JetValVar.None)
+        if (valVar != JetValVar.None) {
             buffer.append(valVar.toString()).append(' ');
+        }
 
         buffer.append(getInheritedName(isInherited, inheritedFunction, baseFunction));
         buffer.append(": ").append(getTypeText());
 
-        if (defaultValue != null)
+        if (defaultValue != null && !isInherited) {
             buffer.append(" = ").append(defaultValue.getText());
+        }
 
         return buffer.toString();
     }

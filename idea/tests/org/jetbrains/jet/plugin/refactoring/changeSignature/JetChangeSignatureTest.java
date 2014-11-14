@@ -37,10 +37,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.getChangeSignatureDialog;
@@ -273,6 +270,14 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         changeInfo.getNewParameters()[1].setName("_y");
         changeInfo.getNewParameters()[2].setName("_z");
         doTestConflict(changeInfo);
+    }
+
+    public void testNoDefaultValuesInOverrides() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
+        changeInfo.setNewParameter(0, newParameters[1]);
+        changeInfo.setNewParameter(1, newParameters[0]);
+        doTest(changeInfo);
     }
 
     public void testOverridesInEnumEntries() throws Exception {

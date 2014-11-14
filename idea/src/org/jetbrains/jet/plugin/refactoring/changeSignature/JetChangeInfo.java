@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -262,7 +263,7 @@ public class JetChangeInfo implements ChangeInfo {
     }
 
     @NotNull
-    public Collection<PsiElement> getAffectedFunctions() {
+    public Collection<JetFunctionDefinitionUsage> getAffectedFunctions() {
         return oldDescriptor.getAffectedFunctions();
     }
 }

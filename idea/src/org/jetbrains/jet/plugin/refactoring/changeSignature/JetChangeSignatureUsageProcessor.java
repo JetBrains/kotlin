@@ -64,14 +64,22 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     }
 
     private static void findAllMethodUsages(JetChangeInfo changeInfo, Set<UsageInfo> result) {
-        for (PsiElement affectedFunction : changeInfo.getAffectedFunctions()) {
-            findOneMethodUsages(affectedFunction, changeInfo, result, false);
+        for (JetFunctionDefinitionUsage functionUsageInfo : changeInfo.getAffectedFunctions()) {
+            findOneMethodUsages(functionUsageInfo, changeInfo, result);
         }
     }
 
-    private static void findOneMethodUsages(@NotNull PsiElement functionPsi, JetChangeInfo changeInfo,
-                                            Set<UsageInfo> result, boolean isInherited) {
-        result.add(new JetFunctionDefinitionUsage(functionPsi, isInherited));
+    private static void findOneMethodUsages(
+            @NotNull JetFunctionDefinitionUsage functionUsageInfo,
+            JetChangeInfo changeInfo,
+            Set<UsageInfo> result
+    ) {
+        result.add(functionUsageInfo);
+
+        PsiElement functionPsi = functionUsageInfo.getElement();
+        if (functionPsi == null) return;
+
+        boolean isInherited = functionUsageInfo.isInherited();
 
         for (PsiReference reference : ReferencesSearch.search(functionPsi, functionPsi.getUseScope())) {
             PsiElement element = reference.getElement();
