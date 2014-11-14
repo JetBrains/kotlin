@@ -27,47 +27,60 @@ import org.jetbrains.jet.utils.Printer
 import java.util.*
 import org.jetbrains.jet.utils.toReadOnlyList
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.CallableKind
 
 public abstract class DeserializedMemberScope protected(
         private val context: DeserializationContextWithTypes,
         membersList: Collection<ProtoBuf.Callable>)
 : JetScope {
 
-    private val membersProtos = context.storageManager.createLazyValue { groupByName(filteredMemberProtos(membersList)) }
+    private data class ProtoKey(val name: Name, val kind: Kind, val isExtension: Boolean)
+    private enum class Kind { FUNCTION PROPERTY }
+
+    private fun CallableKind.toKind(): Kind {
+        return when (this) {
+            CallableKind.FUN -> Kind.FUNCTION
+            CallableKind.VAL, CallableKind.VAR -> Kind.PROPERTY
+            else -> throw IllegalStateException("Unexpected CallableKind $this")
+        }
+    }
+
+    private val membersProtos = context.storageManager.createLazyValue { groupByKey(filteredMemberProtos(membersList)) }
     private val functions = context.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
     private val properties = context.storageManager.createMemoizedFunction<Name, Collection<VariableDescriptor>> { computeProperties(it) }
 
     protected open fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> = allMemberProtos
 
-    private fun groupByName(membersList: Collection<ProtoBuf.Callable>): Map<Name, List<ProtoBuf.Callable>> {
-        val map = LinkedHashMap<Name, MutableList<ProtoBuf.Callable>>()
+    private fun groupByKey(membersList: Collection<ProtoBuf.Callable>): Map<ProtoKey, List<ProtoBuf.Callable>> {
+        val map = LinkedHashMap<ProtoKey, MutableList<ProtoBuf.Callable>>()
         for (memberProto in membersList) {
-            val name = context.nameResolver.getName(memberProto.getName())
-            var protos = map[name]
+            val key = ProtoKey(
+                    context.nameResolver.getName(memberProto.getName()),
+                    Flags.CALLABLE_KIND[memberProto.getFlags()].toKind(),
+                    memberProto.hasReceiverType()
+            )
+            var protos = map[key]
             if (protos == null) {
                 protos = ArrayList(1)
-                map.put(name, protos)
+                map.put(key, protos)
             }
             protos!!.add(memberProto)
         }
         return map
     }
 
-    private fun <D : CallableMemberDescriptor> computeMembersByName(name: Name, callableKind: (ProtoBuf.Callable.CallableKind) -> Boolean): LinkedHashSet<D> {
-        val memberProtos = membersProtos()[name] ?: return LinkedHashSet()
+    private fun <D : CallableMemberDescriptor> computeMembers(name: Name, kind: Kind): LinkedHashSet<D> {
+        val memberProtos = membersProtos()[ProtoKey(name, kind, isExtension = false)].orEmpty() +
+                           membersProtos()[ProtoKey(name, kind, isExtension = true)].orEmpty()
 
-        val descriptors = LinkedHashSet<D>(memberProtos.size())
-        for (memberProto in memberProtos) {
-            if (callableKind(Flags.CALLABLE_KIND[memberProto.getFlags()])) {
-                [suppress("UNCHECKED_CAST")]
-                descriptors.add(context.deserializer.loadCallable(memberProto) as D)
-            }
+        [suppress("UNCHECKED_CAST")]
+        return memberProtos.mapTo(LinkedHashSet<D>()) { memberProto ->
+            context.deserializer.loadCallable(memberProto) as D
         }
-        return descriptors
     }
 
     private fun computeFunctions(name: Name): Collection<FunctionDescriptor> {
-        val descriptors = computeMembersByName<FunctionDescriptor>(name) { it == ProtoBuf.Callable.CallableKind.FUN }
+        val descriptors = computeMembers<FunctionDescriptor>(name, Kind.FUNCTION)
         computeNonDeclaredFunctions(name, descriptors)
         return descriptors.toReadOnlyList()
     }
@@ -78,7 +91,7 @@ public abstract class DeserializedMemberScope protected(
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> = functions(name)
 
     private fun computeProperties(name: Name): Collection<VariableDescriptor> {
-        val descriptors = computeMembersByName<PropertyDescriptor>(name) { it == ProtoBuf.Callable.CallableKind.VAL || it == ProtoBuf.Callable.CallableKind.VAR }
+        val descriptors = computeMembers<PropertyDescriptor>(name, Kind.PROPERTY)
         computeNonDeclaredProperties(name, descriptors)
         return descriptors.toReadOnlyList()
     }
@@ -134,33 +147,27 @@ public abstract class DeserializedMemberScope protected(
             return
         }
 
-        val names = membersProtos().keySet().filter(nameFilter)
+        val keys = membersProtos().keySet().filter { nameFilter(it.name) }
         if (acceptsProperties) {
-            addMembers(names, result) { getProperties(it) }
+            addMembers(result, keys, Kind.PROPERTY) { getProperties(it) }
         }
         if (acceptsFunctions) {
-            addMembers(names, result) { getFunctions(it) }
+            addMembers(result, keys, Kind.FUNCTION) { getFunctions(it) }
         }
     }
 
     private fun addMembers(
-            names: List<Name>,
             result: MutableCollection<DeclarationDescriptor>,
-            getMembers: (Name) -> Collection<CallableDescriptor>) {
-        val extensions = ArrayList<DeclarationDescriptor>()
-        val nonExtensions = ArrayList<DeclarationDescriptor>()
-        names.forEach { name ->
-            getMembers(name).forEach { member ->
-                if (member.getExtensionReceiverParameter() == null) {
-                    nonExtensions.add(member)
-                }
-                else {
-                    extensions.add(member)
-                }
-            }
+            keys: Collection<ProtoKey>,
+            kind: Kind,
+            getMembers: (Name) -> Collection<CallableDescriptor>
+    ) {
+        val filteredByKind = keys.filter { it.kind == kind }
+        listOf(false, true).forEach { isExtension ->
+            filteredByKind.filter { it.isExtension == isExtension }
+                    .flatMap { getMembers(it.name) }
+                    .filterTo(result) { (it.getExtensionReceiverParameter() != null) == isExtension }
         }
-        result.addAll(nonExtensions)
-        result.addAll(extensions)
     }
 
     protected abstract fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>)

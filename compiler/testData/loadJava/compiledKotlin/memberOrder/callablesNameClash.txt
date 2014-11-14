@@ -1,0 +1,20 @@
+package test
+
+internal val a: kotlin.Int = 0
+    internal fun <get-a>(): kotlin.Int
+internal val c: kotlin.Int = 0
+    internal fun <get-c>(): kotlin.Int
+internal fun a(): kotlin.Int
+internal fun b(): kotlin.Int
+internal fun c(): kotlin.Int
+
+internal final class A {
+    /*primary*/ public constructor A()
+    internal final val a: kotlin.Int = 0
+        internal final fun <get-a>(): kotlin.Int
+    internal final val c: kotlin.Int = 0
+        internal final fun <get-c>(): kotlin.Int
+    internal final fun a(): kotlin.Int
+    internal final fun b(): kotlin.Int
+    internal final fun c(): kotlin.Int
+}

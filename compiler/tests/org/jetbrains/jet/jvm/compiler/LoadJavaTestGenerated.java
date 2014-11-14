@@ -4139,6 +4139,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("callablesNameClash.kt")
+            public void testCallablesNameClash() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/callablesNameClash.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("enumEntries.kt")
             public void testEnumEntries() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/enumEntries.kt");
@@ -4148,6 +4154,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("extensionMembers.kt")
             public void testExtensionMembers() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionMembers.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
+            @TestMetadata("extensionPropertiesNameClash.kt")
+            public void testExtensionPropertiesNameClash() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionPropertiesNameClash.kt");
                 doTestCompiledKotlin(fileName);
             }
 

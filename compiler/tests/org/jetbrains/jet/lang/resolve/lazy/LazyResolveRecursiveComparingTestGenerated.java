@@ -2371,6 +2371,12 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("callablesNameClash.kt")
+            public void testCallablesNameClash() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/callablesNameClash.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("enumEntries.kt")
             public void testEnumEntries() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/enumEntries.kt");
@@ -2380,6 +2386,12 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("extensionMembers.kt")
             public void testExtensionMembers() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionMembers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("extensionPropertiesNameClash.kt")
+            public void testExtensionPropertiesNameClash() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionPropertiesNameClash.kt");
                 doTest(fileName);
             }
 
