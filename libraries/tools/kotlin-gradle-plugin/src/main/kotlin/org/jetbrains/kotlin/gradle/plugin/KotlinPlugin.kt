@@ -37,6 +37,8 @@ import kotlin.properties.Delegates
 import org.gradle.api.tasks.Delete
 import groovy.lang.Closure
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.compiler.plugin.CliOption
+import org.jetbrains.kotlin.android.AndroidCommandLineProcessor
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -302,6 +304,10 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
         project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler, project).resolveKotlinPluginDependency("kotlin-android-sdk-annotations"))
     }
 
+    private fun makePluginOption(option: CliOption, value: String): String {
+        return "plugin:${AndroidCommandLineProcessor.ANDROID_COMPILER_PLUGIN_ID}:${option.name}=$value"
+    }
+
     private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project, androidExt: BaseExtension): Unit {
         val logger = project.getLogger()
         val kotlinOptions = getExtension<Any?>(androidExt, "kotlinOptions")
@@ -324,6 +330,17 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                 val javaTask = variant.getJavaCompile()!!
                 val variantName = variant.getName()
 
+                val resourceDir = AndroidGradleWrapper.getResourceDirs(mainSourceSet).firstOrNull()
+                val manifestFile = AndroidGradleWrapper.getManifestFile(mainSourceSet)
+
+                if (resourceDir != null) {
+                    val layoutDir = File(resourceDir, "layout")
+                    kotlinOptions.pluginOptions = array(
+                            makePluginOption("androidRes", layoutDir.getAbsolutePath()),
+                            makePluginOption("androidManifest", manifestFile.getAbsolutePath())
+                    )
+                }
+
                 val kotlinTaskName = "compile${variantName.capitalize()}Kotlin"
                 val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
                 if (kotlinOptions != null) {
@@ -337,9 +354,6 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                 kotlinTask.setDescription("Compiles the ${variantName} kotlin.")
                 kotlinTask.setClasspath(javaTask.getClasspath())
                 kotlinTask.setDependsOn(javaTask.getDependsOn())
-
-                kotlinTask.resPath = File(variant.getMergeResources()?.getOutputDir()!!.canonicalPath + "/layout").canonicalPath
-                kotlinTask.manifestPath = variant.getProcessResources().getManifestFile()!!.canonicalPath
 
                 val javaSourceList = ArrayList<Any?>()
 
