@@ -32,6 +32,7 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.List;
 
@@ -104,6 +105,9 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
         return myInnersCache.findInnerClassByName(name, checkBases);
     }
 
+    /**
+     * @see org.jetbrains.jet.codegen.binding.CodegenBinding#ENUM_ENTRY_CLASS_NEED_SUBCLASS
+      */
     @NotNull
     @Override
     public List<PsiField> getOwnFields() {
@@ -114,8 +118,14 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
                 if (declaration instanceof JetEnumEntry) {
                     assert field instanceof PsiEnumConstant : "Field delegate should be an enum constant (" + field.getName() + "):\n" +
                                                               JetPsiUtil.getElementTextWithContext(declaration);
-                    return new KotlinLightEnumConstant(myManager, (JetEnumEntry) declaration, ((PsiEnumConstant) field),
-                                                       KotlinWrappingLightClass.this);
+                    JetEnumEntry enumEntry = (JetEnumEntry) declaration;
+                    PsiEnumConstant enumConstant = (PsiEnumConstant) field;
+                    FqName enumConstantFqName = new FqName(getFqName().asString() + "." + enumEntry.getName());
+                    KotlinLightClassForEnumEntry initializingClass =
+                            enumEntry.getDeclarations().isEmpty()
+                            ? null
+                            : new KotlinLightClassForEnumEntry(myManager, enumConstantFqName, enumEntry, enumConstant);
+                    return new KotlinLightEnumConstant(myManager, enumEntry, enumConstant, KotlinWrappingLightClass.this, initializingClass);
                 }
                 if (declaration != null) {
                     return new KotlinLightFieldForDeclaration(myManager, declaration, field, KotlinWrappingLightClass.this);

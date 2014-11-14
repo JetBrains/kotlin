@@ -23,15 +23,17 @@ class KotlinLightEnumConstant(
         manager: PsiManager,
         origin: JetEnumEntry,
         enumConstant: PsiEnumConstant,
-        containingClass: PsiClass
+        containingClass: PsiClass,
+        private val initializingClass: PsiEnumConstantInitializer?
 ) : KotlinLightField<JetEnumEntry, PsiEnumConstant>(manager, origin, enumConstant, containingClass), PsiEnumConstant {
-    override fun copy() = KotlinLightEnumConstant(getManager()!!, getOrigin(), getDelegate(), getContainingClass()!!)
+    override fun copy() = KotlinLightEnumConstant(getManager()!!, getOrigin(), getDelegate(), getContainingClass()!!, initializingClass)
 
     // NOTE: we don't use "delegation by" because the compiler would generate method calls to ALL of PsiEnumConstant members,
     // but we need only members whose implementations are not present in KotlinLightField
     override fun getArgumentList(): PsiExpressionList? = getDelegate().getArgumentList()
-    override fun getInitializingClass(): PsiEnumConstantInitializer? = getDelegate().getInitializingClass()
-    override fun getOrCreateInitializingClass(): PsiEnumConstantInitializer = getDelegate().getOrCreateInitializingClass()
+    override fun getInitializingClass(): PsiEnumConstantInitializer? = initializingClass
+    override fun getOrCreateInitializingClass(): PsiEnumConstantInitializer =
+            initializingClass ?: throw UnsupportedOperationException("Can't create enum constant body: ${getDelegate().getName()}")
     override fun resolveConstructor(): PsiMethod? = getDelegate().resolveConstructor()
     override fun resolveMethod(): PsiMethod? = getDelegate().resolveMethod()
     override fun resolveMethodGenerics(): JavaResolveResult = getDelegate().resolveMethodGenerics()
