@@ -46,7 +46,7 @@ public class ReifiedTypeParameterSubstitutionCheck implements CallResolverExtens
                     !((TypeParameterDescriptor) argumentDeclarationDescription).isReified()
                 ) {
                     context.trace.report(
-                            Errors.TYPE_PARAMETER_AS_REIFIED.on(getCallElement(context), typeArguments.keySet().iterator().next())
+                            Errors.TYPE_PARAMETER_AS_REIFIED.on(getCallElement(context), parameter)
                     );
                 }
                 else if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(argument)) {
