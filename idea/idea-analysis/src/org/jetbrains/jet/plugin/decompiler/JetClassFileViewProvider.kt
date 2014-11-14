@@ -37,7 +37,7 @@ public class JetClassFileViewProvider(
     }
 
     override fun getContents(): CharSequence {
-        return if (!isInternal) jetClsFile!!.getText() else ""
+        return jetClsFile?.getText() ?: ""
     }
 
     override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? = jetClsFile
