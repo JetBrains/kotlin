@@ -275,6 +275,13 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTestConflict(changeInfo);
     }
 
+    public void testOverridesInEnumEntries() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo("s", KotlinBuiltIns.getInstance().getStringType());
+        changeInfo.addParameter(newParameter);
+        doTest(changeInfo);
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {
