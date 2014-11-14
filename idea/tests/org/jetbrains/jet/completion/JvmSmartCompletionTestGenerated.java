@@ -186,6 +186,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("ConstructorWithParameters.kt")
+    public void testConstructorWithParameters() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ConstructorWithParameters.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("EmptyPrefix.kt")
     public void testEmptyPrefix() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/EmptyPrefix.kt");

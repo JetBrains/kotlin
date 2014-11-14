@@ -99,14 +99,18 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
         }
         else {
             //TODO: when constructor has one parameter of lambda type with more than one parameter, generate special additional item
-            itemText += "()"
-            val baseInsertHandler =
-                    (if (visibleConstructors.size == 0)
-                        KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
-                    else if (visibleConstructors.size == 1)
-                        KotlinLookupElementFactory.getDefaultInsertHandler(visibleConstructors.single())
-                    else
-                        KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER) as KotlinFunctionInsertHandler
+            itemText += when (visibleConstructors.size) {
+                0 -> "()"
+                1 -> DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(visibleConstructors.single())
+                else -> "(...)"
+            }
+
+            val baseInsertHandler = when (visibleConstructors.size) {
+                0 -> KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
+                1 -> KotlinLookupElementFactory.getDefaultInsertHandler(visibleConstructors.single()) as KotlinFunctionInsertHandler
+                else -> KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
+            }
+
             insertHandler = object : InsertHandler<LookupElement> {
                 override fun handleInsert(context: InsertionContext, item: LookupElement) {
                     context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)

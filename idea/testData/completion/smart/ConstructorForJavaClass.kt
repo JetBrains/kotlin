@@ -2,4 +2,4 @@ import java.util.Date
 
 var a : Date = <caret>
 
-// EXIST: { lookupString:"Date", itemText:"Date()" }
+// EXIST: { lookupString:"Date", itemText:"Date(...)" }
