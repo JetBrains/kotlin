@@ -142,7 +142,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             if (!jetClass.hasModifier(JetTokens.OPEN_KEYWORD) && !isAbstract) {
-                isFinal = true;
+                // Light-class mode: Do not make enum classes final since PsiClass corresponding to enum is expected to be inheritable from
+                isFinal = !(jetClass.isEnum() && state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES);
             }
             isStatic = !jetClass.isInner();
         }

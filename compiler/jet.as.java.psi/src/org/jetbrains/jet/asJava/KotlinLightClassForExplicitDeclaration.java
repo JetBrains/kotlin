@@ -431,7 +431,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         if (isAbstract(classOrObject)) {
             psiModifiers.add(PsiModifier.ABSTRACT);
         }
-        else if (!classOrObject.hasModifier(OPEN_KEYWORD)) {
+        else if (!(classOrObject.hasModifier(OPEN_KEYWORD) || (classOrObject instanceof JetClass && ((JetClass) classOrObject).isEnum()))) {
             psiModifiers.add(PsiModifier.FINAL);
         }
 
