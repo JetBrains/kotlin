@@ -322,11 +322,11 @@ LazyJavaPackageFragment@85['lang'] {
 }
 
 TypeDeserializer@170 {
-    classDescriptors('22': Integer@171) = DeserializedClassDescriptor@172['Int']
-    classDescriptors('35': Integer@173) = DeserializedClassDescriptor@174['IntArray']
+    classDescriptors('2': Integer@171) = DeserializedClassDescriptor@172['Any']
+    classDescriptors('3': Integer@173) = DeserializedClassDescriptor@174['Array']
 }
 
 TypeDeserializer@175 {
-    classDescriptors('8': Integer@176) = DeserializedClassDescriptor@177['Array']
-    classDescriptors('9': Integer@178) = DeserializedClassDescriptor@179['Any']
+    classDescriptors('20': Integer@176) = DeserializedClassDescriptor@177['Int']
+    classDescriptors('45': Integer@178) = DeserializedClassDescriptor@179['IntArray']
 }

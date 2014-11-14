@@ -171,6 +171,6 @@ LazyJavaTypeParameterResolver@104 {
 }
 
 TypeDeserializer@106 {
-    classDescriptors('27': Integer@107) = LazyJavaClassDescriptor@31['Class']
-    classDescriptors('9': Integer@108) = DeserializedClassDescriptor@109['Any']
+    classDescriptors('2': Integer@107) = DeserializedClassDescriptor@108['Any']
+    classDescriptors('54': Integer@109) = LazyJavaClassDescriptor@31['Class']
 }

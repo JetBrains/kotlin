@@ -34,11 +34,11 @@ DeserializedType@21['T in kotlin'] {
 }
 
 DeserializedType@22['T in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@14
+    constructor = AbstractLazyTypeParameterDescriptor$1@18
 }
 
 DeserializedType@23['T in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@18
+    constructor = AbstractLazyTypeParameterDescriptor$1@14
 }
 
 DeserializedType@24['java.lang.Class'] {
@@ -294,11 +294,11 @@ LazyJavaTypeParameterResolver@164 {
 }
 
 TypeDeserializer@166 {
-    classDescriptors('27': Integer@167) = LazyJavaClassDescriptor@42['Class']
-    classDescriptors('9': Integer@168) = DeserializedClassDescriptor@169['Any']
+    classDescriptors('2': Integer@167) = DeserializedClassDescriptor@168['Any']
+    classDescriptors('54': Integer@169) = LazyJavaClassDescriptor@42['Class']
 }
 
 TypeDeserializer@170 {
-    classDescriptors('27': Integer@167) = LazyJavaClassDescriptor@42['Class']
-    classDescriptors('9': Integer@168) = DeserializedClassDescriptor@169['Any']
+    classDescriptors('2': Integer@167) = DeserializedClassDescriptor@168['Any']
+    classDescriptors('54': Integer@169) = LazyJavaClassDescriptor@42['Class']
 }

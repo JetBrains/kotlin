@@ -198,7 +198,22 @@ DeserializedType@108['java.util.HashMap'] {
     memberScope = SubstitutingScope@110
 }
 
-DeserializedType@50['kotlin.Any'] {
+DeserializedType@54['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
+}
+
+DeserializedType@71['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
+}
+
+DeserializedType@113['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
+}
+
+DeserializedType@59['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@111
     memberScope = DeserializedClassMemberScope@112
 }
@@ -208,7 +223,22 @@ DeserializedType@83['kotlin.Any'] {
     memberScope = DeserializedClassMemberScope@112
 }
 
+DeserializedType@79['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
+}
+
 DeserializedType@67['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
+}
+
+DeserializedType@50['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@111
+    memberScope = DeserializedClassMemberScope@112
+}
+
+DeserializedType@87['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@111
     memberScope = DeserializedClassMemberScope@112
 }
@@ -223,42 +253,12 @@ DeserializedType@75['kotlin.Any'] {
     memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@113['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@111
-    memberScope = DeserializedClassMemberScope@112
-}
-
-DeserializedType@71['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@111
-    memberScope = DeserializedClassMemberScope@112
-}
-
-DeserializedType@87['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@111
-    memberScope = DeserializedClassMemberScope@112
-}
-
-DeserializedType@63['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@111
-    memberScope = DeserializedClassMemberScope@112
-}
-
 DeserializedType@114['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@111
     memberScope = DeserializedClassMemberScope@112
 }
 
-DeserializedType@59['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@111
-    memberScope = DeserializedClassMemberScope@112
-}
-
-DeserializedType@79['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@111
-    memberScope = DeserializedClassMemberScope@112
-}
-
-DeserializedType@54['kotlin.Any'] {
+DeserializedType@63['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@111
     memberScope = DeserializedClassMemberScope@112
 }
@@ -1205,26 +1205,26 @@ TypeDeserializer@431 {
 }
 
 TypeDeserializer@433 {
-    classDescriptors('2': Integer@434) = DeserializedClassDescriptor@435['Any']
-    classDescriptors('5': Integer@436) = LazyJavaClassDescriptor@140['Serializable']
+    classDescriptors('117': Integer@434) = DeserializedClassDescriptor@8['Pair']
+    classDescriptors('118': Integer@435) = LazyJavaClassDescriptor@139['HashMap']
+    classDescriptors('2': Integer@436) = DeserializedClassDescriptor@437['Any']
+    classDescriptors('3': Integer@438) = DeserializedClassDescriptor@439['Array']
 }
 
-TypeDeserializer@437 {
-    classDescriptors('2': Integer@434) = DeserializedClassDescriptor@435['Any']
+TypeDeserializer@440 {
+    classDescriptors('117': Integer@434) = DeserializedClassDescriptor@8['Pair']
+    classDescriptors('2': Integer@436) = DeserializedClassDescriptor@437['Any']
 }
 
-TypeDeserializer@438 {
-    classDescriptors('2': Integer@434) = DeserializedClassDescriptor@435['Any']
+TypeDeserializer@441 {
+    classDescriptors('2': Integer@436) = DeserializedClassDescriptor@437['Any']
+    classDescriptors('5': Integer@442) = LazyJavaClassDescriptor@140['Serializable']
 }
 
-TypeDeserializer@439 {
-    classDescriptors('8': Integer@440) = DeserializedClassDescriptor@441['Array']
-    classDescriptors('80': Integer@442) = DeserializedClassDescriptor@8['Pair']
-    classDescriptors('81': Integer@443) = LazyJavaClassDescriptor@139['HashMap']
-    classDescriptors('9': Integer@444) = DeserializedClassDescriptor@435['Any']
+TypeDeserializer@443 {
+    classDescriptors('2': Integer@436) = DeserializedClassDescriptor@437['Any']
 }
 
-TypeDeserializer@445 {
-    classDescriptors('80': Integer@442) = DeserializedClassDescriptor@8['Pair']
-    classDescriptors('9': Integer@444) = DeserializedClassDescriptor@435['Any']
+TypeDeserializer@444 {
+    classDescriptors('2': Integer@436) = DeserializedClassDescriptor@437['Any']
 }

@@ -31,7 +31,7 @@ DeserializedTypeParameterDescriptor@20['T'] {
 }
 
 DeserializedType@24['T in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@21
+    constructor = AbstractLazyTypeParameterDescriptor$1@17
 }
 
 DeserializedType@25['T in kotlin'] {
@@ -39,7 +39,7 @@ DeserializedType@25['T in kotlin'] {
 }
 
 DeserializedType@26['T in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@21
+    constructor = AbstractLazyTypeParameterDescriptor$1@17
 }
 
 DeserializedType@27['T in kotlin'] {
@@ -51,12 +51,12 @@ DeserializedType@28['java.lang.Class'] {
     memberScope = SubstitutingScope@30
 }
 
-DeserializedType@23['kotlin.Any'] {
+DeserializedType@19['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@31
     memberScope = DeserializedClassMemberScope@32
 }
 
-DeserializedType@19['kotlin.Any'] {
+DeserializedType@23['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@31
     memberScope = DeserializedClassMemberScope@32
 }
@@ -287,11 +287,11 @@ LazyJavaTypeParameterResolver@135 {
 }
 
 TypeDeserializer@137 {
-    classDescriptors('27': Integer@138) = LazyJavaClassDescriptor@42['Class']
-    classDescriptors('9': Integer@139) = DeserializedClassDescriptor@140['Any']
+    classDescriptors('2': Integer@138) = DeserializedClassDescriptor@139['Any']
+    classDescriptors('3': Integer@140) = DeserializedClassDescriptor@141['Array']
 }
 
-TypeDeserializer@141 {
-    classDescriptors('8': Integer@142) = DeserializedClassDescriptor@143['Array']
-    classDescriptors('9': Integer@139) = DeserializedClassDescriptor@140['Any']
+TypeDeserializer@142 {
+    classDescriptors('2': Integer@138) = DeserializedClassDescriptor@139['Any']
+    classDescriptors('54': Integer@143) = LazyJavaClassDescriptor@42['Class']
 }

@@ -142,7 +142,7 @@ public class IntrinsicMethods {
             declareArrayMethodsForPrimitive(jvmPrimitiveType);
         }
 
-        declareIntrinsicProperty("Array", "size", ARRAY_SIZE);
+        declareIntrinsicFunction("Array", "size", 0, ARRAY_SIZE);
         declareIntrinsicProperty("Array", "indices", ARRAY_INDICES);
         declareIntrinsicFunction("Array", "set", 2, ARRAY_SET);
         declareIntrinsicFunction("Array", "get", 1, ARRAY_GET);
@@ -152,7 +152,7 @@ public class IntrinsicMethods {
 
     private void declareArrayMethodsForPrimitive(@NotNull JvmPrimitiveType jvmPrimitiveType) {
         String arrayTypeName = jvmPrimitiveType.getPrimitiveType().getArrayTypeName().asString();
-        declareIntrinsicProperty(arrayTypeName, "size", ARRAY_SIZE);
+        declareIntrinsicFunction(arrayTypeName, "size", 0, ARRAY_SIZE);
         declareIntrinsicProperty(arrayTypeName, "indices", ARRAY_INDICES);
         declareIntrinsicFunction(arrayTypeName, "set", 2, ARRAY_SET);
         declareIntrinsicFunction(arrayTypeName, "get", 1, ARRAY_GET);

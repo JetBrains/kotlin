@@ -179,27 +179,27 @@ DeserializedType@129['K in kotlin'] {
 }
 
 DeserializedType@130['R in kotlin.reflect.KMutableProperty'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@109
+    constructor = AbstractLazyTypeParameterDescriptor$1@121
 }
 
 DeserializedType@131['R in kotlin.reflect.KMutableTopLevelProperty'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@105
+    constructor = AbstractLazyTypeParameterDescriptor$1@117
 }
 
 DeserializedType@132['R in kotlin.reflect.KMutableTopLevelProperty'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@105
+    constructor = AbstractLazyTypeParameterDescriptor$1@117
 }
 
 DeserializedType@133['R in kotlin.reflect.KMutableTopLevelVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@121
+    constructor = AbstractLazyTypeParameterDescriptor$1@113
 }
 
 DeserializedType@134['R in kotlin.reflect.KMutableTopLevelVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@121
+    constructor = AbstractLazyTypeParameterDescriptor$1@113
 }
 
 DeserializedType@135['R in kotlin.reflect.KMutableTopLevelVariable'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@121
+    constructor = AbstractLazyTypeParameterDescriptor$1@113
 }
 
 DeserializedType@136['R in kotlin.reflect.KMutableVariable'] {
@@ -215,11 +215,11 @@ DeserializedType@138['R in kotlin.reflect.KMutableVariable'] {
 }
 
 DeserializedType@139['R in kotlin.reflect.KProperty'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@117
+    constructor = AbstractLazyTypeParameterDescriptor$1@109
 }
 
 DeserializedType@140['R in kotlin.reflect.KTopLevelProperty'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@113
+    constructor = AbstractLazyTypeParameterDescriptor$1@105
 }
 
 DeserializedType@141['R in kotlin.reflect.KTopLevelVariable'] {
@@ -250,47 +250,7 @@ DeserializedType@147['V in kotlin'] {
     constructor = AbstractLazyTypeParameterDescriptor$1@125
 }
 
-DeserializedType@85['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
-DeserializedType@115['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
-DeserializedType@90['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
-DeserializedType@123['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
 DeserializedType@111['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
-DeserializedType@150['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
-DeserializedType@107['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
-DeserializedType@95['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@148
-    memberScope = DeserializedClassMemberScope@149
-}
-
-DeserializedType@100['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@148
     memberScope = DeserializedClassMemberScope@149
 }
@@ -300,7 +260,47 @@ DeserializedType@127['kotlin.Any'] {
     memberScope = DeserializedClassMemberScope@149
 }
 
+DeserializedType@100['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
+DeserializedType@150['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
+DeserializedType@95['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
+DeserializedType@107['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
 DeserializedType@119['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
+DeserializedType@123['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
+DeserializedType@115['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
+DeserializedType@85['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@148
+    memberScope = DeserializedClassMemberScope@149
+}
+
+DeserializedType@90['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@148
     memberScope = DeserializedClassMemberScope@149
 }
@@ -386,15 +386,15 @@ DeserializedType@192['kotlin.reflect.KVariable'] {
 }
 
 EnumEntryClassDescriptors@194 {
-    findEnumEntry('get': Name@195) = null
-    findEnumEntry('name': Name@196) = null
-    findEnumEntry('set': Name@197) = null
-}
-
-EnumEntryClassDescriptors@198 {
     findEnumEntry('get': Name@23) = null
     findEnumEntry('name': Name@28) = null
     findEnumEntry('set': Name@26) = null
+}
+
+EnumEntryClassDescriptors@195 {
+    findEnumEntry('get': Name@196) = null
+    findEnumEntry('name': Name@197) = null
+    findEnumEntry('set': Name@198) = null
 }
 
 LazyJavaPackageFragmentProvider@199 {
@@ -639,14 +639,14 @@ NestedClassDescriptors@334 {
 }
 
 NestedClassDescriptors@335 {
-    findNestedClass('get': Name@195) = null
-    findNestedClass('name': Name@196) = null
-    findNestedClass('set': Name@197) = null
+    findNestedClass('get': Name@196) = null
+    findNestedClass('name': Name@197) = null
+    findNestedClass('set': Name@198) = null
 }
 
 TypeDeserializer@336 {
-    classDescriptors('129': Integer@337) = DeserializedClassDescriptor@338['MutableMap']
-    classDescriptors('9': Integer@339) = DeserializedClassDescriptor@340['Any']
+    classDescriptors('102': Integer@337) = DeserializedClassDescriptor@338['MutableMap']
+    classDescriptors('2': Integer@339) = DeserializedClassDescriptor@340['Any']
 }
 
 TypeDeserializer@341 {

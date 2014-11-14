@@ -51,3 +51,31 @@ public fun <T> Iterable<T>.containsItem(item : T) : Boolean = contains(item)
 
 deprecated("Use sortBy() instead")
 public fun <T> Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> = sortBy(comparator)
+
+
+deprecated("Use size() instead")
+public val Array<*>.size: Int get() = size()
+
+deprecated("Use size() instead")
+public val ByteArray.size: Int get() = size()
+
+deprecated("Use size() instead")
+public val CharArray.size: Int get() = size()
+
+deprecated("Use size() instead")
+public val ShortArray.size: Int get() = size()
+
+deprecated("Use size() instead")
+public val IntArray.size: Int get() = size()
+
+deprecated("Use size() instead")
+public val LongArray.size: Int get() = size()
+
+deprecated("Use size() instead")
+public val FloatArray.size: Int get() = size()
+
+deprecated("Use size() instead")
+public val DoubleArray.size: Int get() = size()
+
+deprecated("Use size() instead")
+public val BooleanArray.size: Int get() = size()

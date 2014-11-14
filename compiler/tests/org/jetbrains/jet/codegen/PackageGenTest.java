@@ -396,7 +396,7 @@ public class PackageGenTest extends CodegenTestCase {
     }
 
     public void testArraySize() throws Exception {
-        loadText("fun foo(a: Array<Int>) = a.size");
+        loadText("fun foo(a: Array<Int>) = a.size()");
         Method main = generateFunction();
         Object[] args = new Object[] { new Integer[4] };
         int result = (Integer) main.invoke(null, args);
@@ -404,7 +404,7 @@ public class PackageGenTest extends CodegenTestCase {
     }
 
     public void testIntArraySize() throws Exception {
-        loadText("fun foo(a: IntArray) = a.size");
+        loadText("fun foo(a: IntArray) = a.size()");
         Method main = generateFunction();
         Object[] args = new Object[] { new int[4] };
         int result = (Integer) main.invoke(null, args);

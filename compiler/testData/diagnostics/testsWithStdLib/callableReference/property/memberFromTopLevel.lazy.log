@@ -154,22 +154,12 @@ DeserializedType@86['V in kotlin'] {
     constructor = AbstractLazyTypeParameterDescriptor$1@73
 }
 
-DeserializedType@45['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@87
-    memberScope = DeserializedClassMemberScope@88
-}
-
 DeserializedType@71['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@87
     memberScope = DeserializedClassMemberScope@88
 }
 
-DeserializedType@66['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@87
-    memberScope = DeserializedClassMemberScope@88
-}
-
-DeserializedType@55['kotlin.Any'] {
+DeserializedType@45['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@87
     memberScope = DeserializedClassMemberScope@88
 }
@@ -179,12 +169,22 @@ DeserializedType@50['kotlin.Any'] {
     memberScope = DeserializedClassMemberScope@88
 }
 
-DeserializedType@75['kotlin.Any'] {
+DeserializedType@66['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@87
     memberScope = DeserializedClassMemberScope@88
 }
 
 DeserializedType@89['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@87
+    memberScope = DeserializedClassMemberScope@88
+}
+
+DeserializedType@75['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@87
+    memberScope = DeserializedClassMemberScope@88
+}
+
+DeserializedType@55['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@87
     memberScope = DeserializedClassMemberScope@88
 }
@@ -461,8 +461,8 @@ NestedClassDescriptors@209 {
 }
 
 TypeDeserializer@210 {
-    classDescriptors('129': Integer@211) = DeserializedClassDescriptor@212['MutableMap']
-    classDescriptors('9': Integer@213) = DeserializedClassDescriptor@214['Any']
+    classDescriptors('102': Integer@211) = DeserializedClassDescriptor@212['MutableMap']
+    classDescriptors('2': Integer@213) = DeserializedClassDescriptor@214['Any']
 }
 
 TypeDeserializer@215 {
@@ -489,11 +489,11 @@ TypeDeserializer@222 {
 }
 
 TypeDeserializer@223 {
-    classDescriptors('40': Integer@224) = DeserializedClassDescriptor@225['CharSequence']
+    classDescriptors('59': Integer@224) = DeserializedClassDescriptor@225['CharSequence']
 }
 
 TypeDeserializer@226 {
-    classDescriptors('40': Integer@224) = DeserializedClassDescriptor@225['CharSequence']
+    classDescriptors('59': Integer@224) = DeserializedClassDescriptor@225['CharSequence']
 }
 
 TypeDeserializer@227 {

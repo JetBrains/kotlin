@@ -44,7 +44,7 @@ DeserializedType@29['T in kotlin'] {
 }
 
 DeserializedType@30['T in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@22
+    constructor = AbstractLazyTypeParameterDescriptor$1@26
 }
 
 DeserializedType@31['T in kotlin'] {
@@ -52,7 +52,7 @@ DeserializedType@31['T in kotlin'] {
 }
 
 DeserializedType@32['T in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@22
+    constructor = AbstractLazyTypeParameterDescriptor$1@26
 }
 
 DeserializedType@33['java.lang.Class'] {
@@ -60,12 +60,12 @@ DeserializedType@33['java.lang.Class'] {
     memberScope = SubstitutingScope@35
 }
 
-DeserializedType@28['kotlin.Any'] {
+DeserializedType@24['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@36
     memberScope = DeserializedClassMemberScope@37
 }
 
-DeserializedType@24['kotlin.Any'] {
+DeserializedType@28['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@36
     memberScope = DeserializedClassMemberScope@37
 }
@@ -475,16 +475,16 @@ LazyJavaTypeParameterResolver@241 {
 }
 
 TypeDeserializer@243 {
-    classDescriptors('22': Integer@244) = DeserializedClassDescriptor@245['Int']
-    classDescriptors('35': Integer@246) = DeserializedClassDescriptor@247['IntArray']
+    classDescriptors('2': Integer@244) = DeserializedClassDescriptor@245['Any']
+    classDescriptors('3': Integer@246) = DeserializedClassDescriptor@247['Array']
 }
 
 TypeDeserializer@248 {
-    classDescriptors('27': Integer@249) = LazyJavaClassDescriptor@88['Class']
-    classDescriptors('9': Integer@250) = DeserializedClassDescriptor@251['Any']
+    classDescriptors('2': Integer@244) = DeserializedClassDescriptor@245['Any']
+    classDescriptors('54': Integer@249) = LazyJavaClassDescriptor@88['Class']
 }
 
-TypeDeserializer@252 {
-    classDescriptors('8': Integer@253) = DeserializedClassDescriptor@254['Array']
-    classDescriptors('9': Integer@250) = DeserializedClassDescriptor@251['Any']
+TypeDeserializer@250 {
+    classDescriptors('20': Integer@251) = DeserializedClassDescriptor@252['Int']
+    classDescriptors('45': Integer@253) = DeserializedClassDescriptor@254['IntArray']
 }

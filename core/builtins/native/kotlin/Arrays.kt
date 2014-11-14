@@ -18,9 +18,11 @@
 
 package kotlin
 
-public class ByteArray(public val size: Int) : Cloneable {
+public class ByteArray(size: Int) : Cloneable {
     public fun get(index: Int): Byte
     public fun set(index: Int, value: Byte): Unit
+
+    public fun size(): Int
 
     public fun iterator(): ByteIterator
 
@@ -29,9 +31,11 @@ public class ByteArray(public val size: Int) : Cloneable {
     public override fun clone(): ByteArray
 }
 
-public class CharArray(public val size: Int) : Cloneable {
+public class CharArray(size: Int) : Cloneable {
     public fun get(index: Int): Char
     public fun set(index: Int, value: Char): Unit
+
+    public fun size(): Int
 
     public fun iterator(): CharIterator
 
@@ -40,9 +44,11 @@ public class CharArray(public val size: Int) : Cloneable {
     public override fun clone(): CharArray
 }
 
-public class ShortArray(public val size: Int) : Cloneable {
+public class ShortArray(size: Int) : Cloneable {
     public fun get(index: Int): Short
     public fun set(index: Int, value: Short): Unit
+
+    public fun size(): Int
 
     public fun iterator(): ShortIterator
 
@@ -51,9 +57,11 @@ public class ShortArray(public val size: Int) : Cloneable {
     public override fun clone(): ShortArray
 }
 
-public class IntArray(public val size: Int) : Cloneable {
+public class IntArray(size: Int) : Cloneable {
     public fun get(index: Int): Int
     public fun set(index: Int, value: Int): Unit
+
+    public fun size(): Int
 
     public fun iterator(): IntIterator
 
@@ -62,9 +70,11 @@ public class IntArray(public val size: Int) : Cloneable {
     public override fun clone(): IntArray
 }
 
-public class LongArray(public val size: Int) : Cloneable {
+public class LongArray(size: Int) : Cloneable {
     public fun get(index: Int): Long
     public fun set(index: Int, value: Long): Unit
+
+    public fun size(): Int
 
     public fun iterator(): LongIterator
 
@@ -73,9 +83,11 @@ public class LongArray(public val size: Int) : Cloneable {
     public override fun clone(): LongArray
 }
 
-public class FloatArray(public val size: Int) : Cloneable {
+public class FloatArray(size: Int) : Cloneable {
     public fun get(index: Int): Float
     public fun set(index: Int, value: Float): Unit
+
+    public fun size(): Int
 
     public fun iterator(): FloatIterator
 
@@ -84,9 +96,11 @@ public class FloatArray(public val size: Int) : Cloneable {
     public override fun clone(): FloatArray
 }
 
-public class DoubleArray(public val size: Int) : Cloneable {
+public class DoubleArray(size: Int) : Cloneable {
     public fun get(index: Int): Double
     public fun set(index: Int, value: Double): Unit
+
+    public fun size(): Int
 
     public fun iterator(): DoubleIterator
 
@@ -95,9 +109,11 @@ public class DoubleArray(public val size: Int) : Cloneable {
     public override fun clone(): DoubleArray
 }
 
-public class BooleanArray(public val size: Int) : Cloneable {
+public class BooleanArray(size: Int) : Cloneable {
     public fun get(index: Int): Boolean
     public fun set(index: Int, value: Boolean): Unit
+
+    public fun size(): Int
 
     public fun iterator(): BooleanIterator
 

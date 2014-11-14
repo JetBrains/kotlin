@@ -61,19 +61,19 @@ DeserializedType@39['T in kotlin.reflect.KMemberProperty'] {
     constructor = AbstractLazyTypeParameterDescriptor$1@35
 }
 
-DeserializedType@28['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@40
-    memberScope = DeserializedClassMemberScope@41
-}
-
-DeserializedType@42['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@40
-    memberScope = DeserializedClassMemberScope@41
+DeserializedType@40['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@41
+    memberScope = DeserializedClassMemberScope@42
 }
 
 DeserializedType@37['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@40
-    memberScope = DeserializedClassMemberScope@41
+    constructor = DeserializedClassTypeConstructor@41
+    memberScope = DeserializedClassMemberScope@42
+}
+
+DeserializedType@28['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@41
+    memberScope = DeserializedClassMemberScope@42
 }
 
 DeserializedType@43['kotlin.CharSequence'] {
@@ -320,13 +320,13 @@ NestedClassDescriptors@159 {
 }
 
 TypeDeserializer@160 {
-    classDescriptors('22': Integer@161) = DeserializedClassDescriptor@162['Int']
-    classDescriptors('40': Integer@163) = DeserializedClassDescriptor@164['CharSequence']
+    classDescriptors('20': Integer@161) = DeserializedClassDescriptor@162['Int']
+    classDescriptors('59': Integer@163) = DeserializedClassDescriptor@164['CharSequence']
 }
 
 TypeDeserializer@165 {
-    classDescriptors('22': Integer@161) = DeserializedClassDescriptor@162['Int']
-    classDescriptors('40': Integer@163) = DeserializedClassDescriptor@164['CharSequence']
+    classDescriptors('20': Integer@161) = DeserializedClassDescriptor@162['Int']
+    classDescriptors('59': Integer@163) = DeserializedClassDescriptor@164['CharSequence']
 }
 
 TypeDeserializer@166 {

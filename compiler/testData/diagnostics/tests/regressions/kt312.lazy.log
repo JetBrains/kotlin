@@ -41,6 +41,7 @@ LazyJavaPackageFragment@3['<root>'] {
     functions('compareTo': Name@31) = EmptyList@37[empty] // through LazyPackageFragmentScopeForJavaPackage@27
     functions('get': Name@32) = EmptyList@37[empty] // through LazyPackageFragmentScopeForJavaPackage@27
     functions('safeGet': Name@33) = EmptyList@37[empty] // through LazyPackageFragmentScopeForJavaPackage@27
+    functions('size': Name@34) = EmptyList@37[empty] // through LazyPackageFragmentScopeForJavaPackage@27
     memberIndex = computeMemberIndex$1@38 // through LazyPackageFragmentScopeForJavaPackage@27
 }
 
@@ -63,5 +64,6 @@ LazyJavaPackageFragment@12['lang'] {
     functions('compareTo': Name@31) = EmptyList@37[empty] // through LazyPackageFragmentScopeForJavaPackage@43
     functions('get': Name@32) = EmptyList@37[empty] // through LazyPackageFragmentScopeForJavaPackage@43
     functions('safeGet': Name@33) = EmptyList@37[empty] // through LazyPackageFragmentScopeForJavaPackage@43
+    functions('size': Name@34) = EmptyList@37[empty] // through LazyPackageFragmentScopeForJavaPackage@43
     memberIndex = computeMemberIndex$1@44 // through LazyPackageFragmentScopeForJavaPackage@43
 }

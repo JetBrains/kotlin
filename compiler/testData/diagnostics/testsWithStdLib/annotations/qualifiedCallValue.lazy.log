@@ -42,7 +42,7 @@ DeserializedTypeParameterDescriptor@25['T'] {
 }
 
 DeserializedType@29['T in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@22
+    constructor = AbstractLazyTypeParameterDescriptor$1@26
 }
 
 DeserializedType@30['T in kotlin'] {
@@ -50,7 +50,7 @@ DeserializedType@30['T in kotlin'] {
 }
 
 DeserializedType@31['T in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@26
+    constructor = AbstractLazyTypeParameterDescriptor$1@22
 }
 
 DeserializedType@32['T in kotlin'] {
@@ -328,11 +328,11 @@ TypeDeserializer@219 {
 }
 
 TypeDeserializer@223 {
-    classDescriptors('27': Integer@224) = LazyJavaClassDescriptor@91['Class']
-    classDescriptors('9': Integer@225) = DeserializedClassDescriptor@226['Any']
+    classDescriptors('2': Integer@224) = DeserializedClassDescriptor@225['Any']
+    classDescriptors('3': Integer@221) = DeserializedClassDescriptor@226['Array']
 }
 
 TypeDeserializer@227 {
-    classDescriptors('8': Integer@228) = DeserializedClassDescriptor@229['Array']
-    classDescriptors('9': Integer@225) = DeserializedClassDescriptor@226['Any']
+    classDescriptors('2': Integer@224) = DeserializedClassDescriptor@225['Any']
+    classDescriptors('54': Integer@228) = LazyJavaClassDescriptor@91['Class']
 }

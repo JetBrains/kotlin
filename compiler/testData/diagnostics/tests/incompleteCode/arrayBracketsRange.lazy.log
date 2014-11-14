@@ -35,6 +35,7 @@ LazyJavaPackageFragment@13['lang'] {
     classes('next': Name@34) = null // through LazyPackageFragmentScopeForJavaPackage@30
     classes('rangeTo': Name@35) = null // through LazyPackageFragmentScopeForJavaPackage@30
     classes('set': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@30
+    classes('size': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@30
     deserializedPackageScope = Empty@25 // through LazyPackageFragmentScopeForJavaPackage@30
     functions('arrayOfNulls': Name@29) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@30
     functions('get': Name@31) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@30
@@ -43,5 +44,6 @@ LazyJavaPackageFragment@13['lang'] {
     functions('next': Name@34) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@30
     functions('rangeTo': Name@35) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@30
     functions('set': Name@36) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@30
-    memberIndex = computeMemberIndex$1@37 // through LazyPackageFragmentScopeForJavaPackage@30
+    functions('size': Name@37) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@30
+    memberIndex = computeMemberIndex$1@38 // through LazyPackageFragmentScopeForJavaPackage@30
 }

@@ -26,9 +26,11 @@ class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun generateBody() {
         for (kind in PrimitiveType.values()) {
             val s = kind.capitalized
-            out.println("public class ${s}Array(public val size: Int) : Cloneable {")
+            out.println("public class ${s}Array(size: Int) : Cloneable {")
             out.println("    public fun get(index: Int): $s")
             out.println("    public fun set(index: Int, value: $s): Unit")
+            out.println()
+            out.println("    public fun size(): Int")
             out.println()
             out.println("    public fun iterator(): ${s}Iterator")
             out.println()
