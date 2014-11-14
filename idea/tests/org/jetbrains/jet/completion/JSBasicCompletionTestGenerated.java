@@ -304,6 +304,36 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("ImmediateMembers1.kt")
+        public void testImmediateMembers1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateMembers1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateMembers2.kt")
+        public void testImmediateMembers2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateMembers2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateMembers3.kt")
+        public void testImmediateMembers3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateMembers3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateMembers4.kt")
+        public void testImmediateMembers4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateMembers4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateMembers5.kt")
+        public void testImmediateMembers5() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateMembers5.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ImportedEnumMembers.kt")
         public void testImportedEnumMembers() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImportedEnumMembers.kt");

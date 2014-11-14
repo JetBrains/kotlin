@@ -18,6 +18,8 @@ package org.jetbrains.jet.lang.resolve.calls.smartcasts;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -63,6 +65,26 @@ public class SmartCastUtils {
         variants.add(receiverToCast.getType());
         variants.addAll(getSmartCastVariantsExcludingReceiver(bindingContext, dataFlowInfo, receiverToCast));
         return variants;
+    }
+
+    @NotNull
+    public static List<JetType> getSmartCastVariantsWithLessSpecificExcluded(
+            @NotNull ReceiverValue receiverToCast,
+            @NotNull BindingContext bindingContext,
+            @NotNull DataFlowInfo dataFlowInfo
+    ) {
+        final List<JetType> variants = getSmartCastVariants(receiverToCast, bindingContext, dataFlowInfo);
+        return KotlinPackage.filter(variants, new Function1<JetType, Boolean>() {
+            @Override
+            public Boolean invoke(final JetType type) {
+                return !KotlinPackage.any(variants, new Function1<JetType, Boolean>() {
+                    @Override
+                    public Boolean invoke(JetType another) {
+                        return another != type && JetTypeChecker.DEFAULT.isSubtypeOf(another, type);
+                    }
+                });
+            }
+        });
     }
 
     /**

@@ -105,7 +105,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
     }
 
     private fun createLookupElement(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): LookupElement {
-        val lookupElement = createLookupElement(memberDescriptor, resolveSession, bindingContext)
+        val lookupElement = createLookupElement(memberDescriptor, resolveSession, bindingContext, false)
         val qualifierPresentation = classDescriptor.getName().asString()
         val qualifierText = qualifiedNameForSourceCode(classDescriptor)
 

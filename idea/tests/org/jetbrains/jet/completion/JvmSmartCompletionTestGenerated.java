@@ -300,6 +300,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("ImmediateMembers.kt")
+    public void testImmediateMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ImmediateMembers.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ImplicitlyTypedFunBody.kt")
     public void testImplicitlyTypedFunBody() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ImplicitlyTypedFunBody.kt");

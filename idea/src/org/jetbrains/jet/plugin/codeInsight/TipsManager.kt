@@ -80,7 +80,7 @@ public object TipsManager{
                     val dataFlowInfo = context.getDataFlowInfo(expression)
 
                     val mask = kindFilter.withoutKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK).exclude(DescriptorKindExclude.Extensions)
-                    for (variant in SmartCastUtils.getSmartCastVariants(receiverValue, context, dataFlowInfo)) {
+                    for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, dataFlowInfo)) {
                         variant.getMemberScope().getDescriptorsFiltered(mask, nameFilter).filterTo(descriptors, ::filterIfInfix)
                     }
 

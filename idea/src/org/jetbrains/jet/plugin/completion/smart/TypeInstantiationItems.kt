@@ -67,7 +67,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
         }
         if (allConstructors.isNotEmpty() && visibleConstructors.isEmpty()) return
 
-        var lookupElement = createLookupElement(classifier, resolveSession, bindingContext)
+        var lookupElement = createLookupElement(classifier, resolveSession, bindingContext, false)
 
         var lookupString = lookupElement.getLookupString()
         var allLookupStrings = setOf(lookupString)
@@ -164,7 +164,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
             val samConstructor = scope.getFunctions(`class`.getName())
                                          .filterIsInstance(javaClass<SamConstructorDescriptor>())
                                          .singleOrNull() ?: return
-            val lookupElement = createLookupElement(samConstructor, resolveSession, bindingContext)
+            val lookupElement = createLookupElement(samConstructor, resolveSession, bindingContext, false)
                     .assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
                     .addTail(tail)
             collection.add(lookupElement)

@@ -35,19 +35,25 @@ import org.jetbrains.jet.lang.resolve.java.JavaResolverUtils
 import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement
 
 public object KotlinLookupElementFactory {
-    public fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): LookupElement {
+    public fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor, boldImmediateMembers: Boolean): LookupElement {
         val _descriptor = if (descriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(descriptor)
         else
             descriptor
-        return createLookupElement(analyzer, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
+        val bold = boldImmediateMembers && descriptor is CallableMemberDescriptor && descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION
+        return createLookupElement(analyzer, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor), bold)
     }
 
     public fun createLookupElementForJavaClass(psiClass: PsiClass): LookupElement {
         return JavaPsiClassReferenceElement(psiClass).setInsertHandler(KotlinClassInsertHandler)
     }
 
-    private fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor, declaration: PsiElement?): LookupElement {
+    private fun createLookupElement(
+            analyzer: KotlinCodeAnalyzer,
+            descriptor: DeclarationDescriptor,
+            declaration: PsiElement?,
+            bold: Boolean
+    ): LookupElement {
         if (descriptor is ClassifierDescriptor &&
             declaration is PsiClass &&
             declaration !is KotlinLightClass &&
@@ -90,6 +96,10 @@ public object KotlinLookupElementFactory {
 
         if (KotlinBuiltIns.getInstance().isDeprecated(descriptor)) {
             element = element.withStrikeoutness(true)
+        }
+
+        if (bold) {
+            element = element.withBoldness(true)
         }
 
         val insertHandler = getDefaultInsertHandler(descriptor)

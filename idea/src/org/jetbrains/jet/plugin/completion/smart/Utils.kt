@@ -186,8 +186,13 @@ fun functionType(function: FunctionDescriptor): JetType? {
                                                         function.getReturnType() ?: return null)
 }
 
-fun createLookupElement(descriptor: DeclarationDescriptor, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): LookupElement {
-    var element = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
+fun createLookupElement(
+        descriptor: DeclarationDescriptor,
+        resolveSession: ResolveSessionForBodies,
+        bindingContext: BindingContext,
+        boldImmediateMembers: Boolean
+): LookupElement {
+    var element = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor, boldImmediateMembers)
 
     if (descriptor is FunctionDescriptor && descriptor.getValueParameters().isNotEmpty()) {
         element = element.keepOldArgumentListOnTab()
