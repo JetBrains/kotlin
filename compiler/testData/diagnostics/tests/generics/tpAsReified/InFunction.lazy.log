@@ -136,27 +136,31 @@ LazyJavaPackageFragment@57['<root>'] {
     classes('Int': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@79
     classes('UnsupportedOperationException': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@79
     classes('f': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@79
-    classes('inline': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@79
-    deserializedPackageScope = Empty@83 // through LazyPackageFragmentScopeForJavaPackage@79
-    functions('UnsupportedOperationException': Name@80) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@79
-    functions('f': Name@81) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@79
-    memberIndex = computeMemberIndex$1@85 // through LazyPackageFragmentScopeForJavaPackage@79
+    classes('id': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@79
+    classes('inline': Name@83) = null // through LazyPackageFragmentScopeForJavaPackage@79
+    deserializedPackageScope = Empty@84 // through LazyPackageFragmentScopeForJavaPackage@79
+    functions('UnsupportedOperationException': Name@80) = EmptyList@85[empty] // through LazyPackageFragmentScopeForJavaPackage@79
+    functions('f': Name@81) = EmptyList@85[empty] // through LazyPackageFragmentScopeForJavaPackage@79
+    functions('id': Name@82) = EmptyList@85[empty] // through LazyPackageFragmentScopeForJavaPackage@79
+    memberIndex = computeMemberIndex$1@86 // through LazyPackageFragmentScopeForJavaPackage@79
 }
 
 LazyJavaPackageFragment@63['java'] {
-    classes('lang': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@87
-    deserializedPackageScope = Empty@83 // through LazyPackageFragmentScopeForJavaPackage@87
-    functions('lang': Name@88) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@87
-    memberIndex = computeMemberIndex$1@89 // through LazyPackageFragmentScopeForJavaPackage@87
+    classes('lang': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@88
+    deserializedPackageScope = Empty@84 // through LazyPackageFragmentScopeForJavaPackage@88
+    functions('lang': Name@89) = EmptyList@85[empty] // through LazyPackageFragmentScopeForJavaPackage@88
+    memberIndex = computeMemberIndex$1@90 // through LazyPackageFragmentScopeForJavaPackage@88
 }
 
 LazyJavaPackageFragment@65['lang'] {
-    classes('UnsupportedOperationException': Name@80) = LazyJavaClassDescriptor@8['UnsupportedOperationException'] // through LazyPackageFragmentScopeForJavaPackage@90
-    classes('f': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@90
-    deserializedPackageScope = Empty@83 // through LazyPackageFragmentScopeForJavaPackage@90
-    functions('UnsupportedOperationException': Name@80) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@90
-    functions('f': Name@81) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@90
-    memberIndex = computeMemberIndex$1@91 // through LazyPackageFragmentScopeForJavaPackage@90
+    classes('UnsupportedOperationException': Name@80) = LazyJavaClassDescriptor@8['UnsupportedOperationException'] // through LazyPackageFragmentScopeForJavaPackage@91
+    classes('f': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@91
+    classes('id': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@91
+    deserializedPackageScope = Empty@84 // through LazyPackageFragmentScopeForJavaPackage@91
+    functions('UnsupportedOperationException': Name@80) = EmptyList@85[empty] // through LazyPackageFragmentScopeForJavaPackage@91
+    functions('f': Name@81) = EmptyList@85[empty] // through LazyPackageFragmentScopeForJavaPackage@91
+    functions('id': Name@82) = EmptyList@85[empty] // through LazyPackageFragmentScopeForJavaPackage@91
+    memberIndex = computeMemberIndex$1@92 // through LazyPackageFragmentScopeForJavaPackage@91
 }
 
 ResolutionTaskHolder@92 {
