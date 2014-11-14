@@ -163,14 +163,12 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
         }
 
         openingBracketOffset = indexOfSkippingSpace(document, openingBracket, offset)
-        assert (openingBracketOffset != -1) { "If there wasn't open bracket it should already have been inserted" }
+        assert(openingBracketOffset != -1, "If there wasn't open bracket it should already have been inserted")
 
         val closeBracketOffset = indexOfSkippingSpace(document, closingBracket, openingBracketOffset + 1)
         val editor = context.getEditor()
 
-        var forcePlaceCaretIntoParentheses = completionChar == '('
-
-        if (caretPosition == CaretPosition.IN_BRACKETS || forcePlaceCaretIntoParentheses || closeBracketOffset == -1) {
+        if (shouldPlaceCaretInBrackets(completionChar) || closeBracketOffset == -1) {
             editor.getCaretModel().moveToOffset(openingBracketOffset + 1 + inBracketsShift)
             AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(editor, offsetElement)
         }
@@ -178,11 +176,17 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
             editor.getCaretModel().moveToOffset(closeBracketOffset + 1)
         }
 
-        PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument())
+        PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
 
         if (lambdaInfo != null && lambdaInfo.explicitParameters) {
             insertLambdaTemplate(context, TextRange(openingBracketOffset, closeBracketOffset + 1), lambdaInfo.lambdaType)
         }
+    }
+
+    private fun shouldPlaceCaretInBrackets(completionChar: Char): Boolean {
+        if (completionChar == ',' || completionChar == '.') return false
+        if (completionChar == '(') return true
+        return caretPosition == CaretPosition.IN_BRACKETS
     }
 
     class object {

@@ -19,6 +19,7 @@ package org.jetbrains.jet.completion.handlers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -71,6 +72,18 @@ public class CompletionCharFilterTestGenerated extends AbstractCompletionCharFil
         doTest(fileName);
     }
 
+    @TestMetadata("CommaForFunction1.kt")
+    public void testCommaForFunction1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/CommaForFunction1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("CommaForFunction2.kt")
+    public void testCommaForFunction2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/CommaForFunction2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ConstructorWithLambdaArg1.kt")
     public void testConstructorWithLambdaArg1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/ConstructorWithLambdaArg1.kt");
@@ -86,6 +99,18 @@ public class CompletionCharFilterTestGenerated extends AbstractCompletionCharFil
     @TestMetadata("Dot.kt")
     public void testDot() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/Dot.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DotAfterFun1.kt")
+    public void testDotAfterFun1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/DotAfterFun1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("DotAfterFun2.kt")
+    public void testDotAfterFun2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/DotAfterFun2.kt");
         doTest(fileName);
     }
 
