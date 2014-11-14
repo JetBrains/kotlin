@@ -49,8 +49,10 @@ public class ExpectedCompletionUtils {
         public static final String PRESENTATION_ITEM_TEXT = "itemText";
         public static final String PRESENTATION_TYPE_TEXT = "typeText";
         public static final String PRESENTATION_TAIL_TEXT = "tailText";
+        public static final String PRESENTATION_TEXT_ATTRIBUTES = "attributes";
         public static final Set<String> validKeys = new HashSet<String>(
-                Arrays.asList(LOOKUP_STRING, PRESENTATION_ITEM_TEXT, PRESENTATION_TYPE_TEXT, PRESENTATION_TAIL_TEXT)
+                Arrays.asList(LOOKUP_STRING, PRESENTATION_ITEM_TEXT, PRESENTATION_TYPE_TEXT, PRESENTATION_TAIL_TEXT,
+                              PRESENTATION_TEXT_ATTRIBUTES)
         );
 
         private final Map<String, String> map;
@@ -292,6 +294,7 @@ public class ExpectedCompletionUtils {
                 map.put(CompletionProposal.LOOKUP_STRING, item.getLookupString());
                 if (presentation.getItemText() != null){
                     map.put(CompletionProposal.PRESENTATION_ITEM_TEXT, presentation.getItemText());
+                    map.put(CompletionProposal.PRESENTATION_TEXT_ATTRIBUTES, textAttributes(presentation));
                 }
                 if (presentation.getTypeText() != null){
                     map.put(CompletionProposal.PRESENTATION_TYPE_TEXT, presentation.getTypeText());
@@ -304,6 +307,22 @@ public class ExpectedCompletionUtils {
         }
 
         return result;
+    }
+
+    private static String textAttributes(LookupElementPresentation presentation) {
+        StringBuilder builder = new StringBuilder();
+        if (presentation.isItemTextBold()) {
+            builder.append("bold");
+        }
+        if (presentation.isItemTextUnderlined()) {
+            if (builder.length() > 0) builder.append(" ");
+            builder.append("underlined");
+        }
+        if (presentation.isStrikeout()) {
+            if (builder.length() > 0) builder.append(" ");
+            builder.append("strikeout");
+        }
+        return builder.toString();
     }
 
     public static String listToString(Collection<CompletionProposal> items) {

@@ -4,4 +4,4 @@ fun bar() {
     foo(<caret>)
 }
 
-// EXIST: null
+// EXIST: { itemText: "null", attributes: "bold" }
