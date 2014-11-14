@@ -16,12 +16,9 @@
 
 package org.jetbrains.jet.plugin.completion.handlers
 
-import com.google.common.collect.Sets
-import com.intellij.codeInsight.TailType
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetFunction
 import org.jetbrains.jet.lang.psi.JetPsiUtil
@@ -54,7 +51,6 @@ public object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
         }
 
         // Add space after keyword
-        context.setAddCompletionChar(false)
-        TailType.SPACE.processTail(context.getEditor(), context.getTailOffset())
+        WithTailInsertHandler.spaceTail().postHandleInsert(context, item)
     }
 }
