@@ -13,7 +13,7 @@ import org.gradle.api.file.SourceDirectorySet
 import java.util.ArrayList
 import org.apache.commons.io.FilenameUtils
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler
-import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.jet.cli.common.messages.MessageCollector
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation
@@ -33,7 +33,7 @@ public open class KotlinCompile(): AbstractCompile() {
     private val logger = Logging.getLogger(this.javaClass)
     override fun getLogger() = logger
 
-    public var kotlinOptions: K2JVMCompilerArguments = K2JVMCompilerArguments();
+    public var kotlinOptions: K2JVMCompilerArguments = K2JVMCompilerArguments()
 
     public var kotlinDestinationDir : File? = getDestinationDir()
 
@@ -103,7 +103,7 @@ public open class KotlinCompile(): AbstractCompile() {
         args.freeArgs = sources.map { it.getAbsolutePath() }
 
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
-            val existingClasspathEntries =  getClasspath().filter(KSpec<File?>({ it != null && it.exists() }))
+            val existingClasspathEntries = getClasspath().filter({ it != null && it.exists() })
             val effectiveClassPath = (javaSrcRoots + existingClasspathEntries).makeString(File.pathSeparator)
             args.classpath = effectiveClassPath
         }
@@ -148,7 +148,7 @@ public open class KDoc(): SourceTask() {
 
     public var kdocArgs: KDocArguments = KDocArguments()
 
-    public var destinationDir: File? = null;
+    public var destinationDir: File? = null
 
     {
         // by default, output dir is not defined in options
@@ -190,7 +190,7 @@ public open class KDoc(): SourceTask() {
         val compiler = KDocCompiler()
 
         val messageCollector = GradleMessageCollector(getLogger())
-        val exitCode = compiler.exec(messageCollector, Services.EMPTY, args);
+        val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
 
         when (exitCode) {
             ExitCode.COMPILATION_ERROR -> throw GradleException("Failed to generate kdoc. See log for more details")
