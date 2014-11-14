@@ -74,6 +74,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
 
         val typeArgs = jetType.getArguments()
         var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgs)
+        var signatureText: String? = null
 
         val insertHandler: InsertHandler<LookupElement>
         val typeText = qualifiedNameForSourceCode(classifier) + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgs)
@@ -99,7 +100,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
         }
         else {
             //TODO: when constructor has one parameter of lambda type with more than one parameter, generate special additional item
-            itemText += when (visibleConstructors.size) {
+            signatureText = when (visibleConstructors.size) {
                 0 -> "()"
                 1 -> DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(visibleConstructors.single())
                 else -> "(...)"
@@ -138,6 +139,10 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
             override fun renderElement(presentation: LookupElementPresentation) {
                 getDelegate().renderElement(presentation)
                 presentation.setItemText(itemText)
+
+                if (signatureText != null) {
+                    presentation.prependTailText(signatureText!!, false)
+                }
             }
 
             override fun handleInsert(context: InsertionContext) {

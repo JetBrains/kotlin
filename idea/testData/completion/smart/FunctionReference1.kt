@@ -7,7 +7,7 @@ fun bar() {
 fun f1(){}
 fun f2(i: Int){}
 
-// EXIST: { lookupString:"::f1", itemText:"::f1", tailText:"", typeText:"" }
+// EXIST: { lookupString:"::f1", itemText:"::f1", tailText:null, typeText:null }
 // ABSENT: ::f2
 // ABSENT: ::Unit
 // ABSENT: ::Nothing

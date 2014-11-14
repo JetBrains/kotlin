@@ -298,6 +298,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("HigherOrderFunction2.kt")
+        public void testHigherOrderFunction2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/HigherOrderFunction2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ImportedEnumMembers.kt")
         public void testImportedEnumMembers() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImportedEnumMembers.kt");

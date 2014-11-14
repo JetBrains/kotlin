@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import com.intellij.codeInsight.completion.PrefixMatcher
 import org.jetbrains.jet.lang.resolve.name.Name
+import com.intellij.codeInsight.lookup.LookupElementPresentation
 
 enum class ItemPriority {
     MULTIPLE_ARGUMENTS_ITEM
@@ -80,3 +81,10 @@ private fun qualifierName(descriptor: DeclarationDescriptor): String? = when (de
 }
 
 fun PrefixMatcher.asNameFilter() = { (name: Name) -> !name.isSpecial() && prefixMatches(name.getIdentifier()) }
+
+fun LookupElementPresentation.prependTailText(text: String, grayed: Boolean) {
+    val tails = getTailFragments()
+    clearTail()
+    appendTailText(text, grayed)
+    tails.forEach { appendTailText(it.text, it.isGrayed()) }
+}

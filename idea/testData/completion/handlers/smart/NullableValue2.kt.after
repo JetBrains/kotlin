@@ -6,4 +6,5 @@ fun bar() {
     foo(getString(<caret>) ?: )
 }
 
-// ELEMENT_TEXT: "?: getString(i: Int)"
+// ELEMENT_TEXT: "?: getString"
+// TAIL_TEXT: "(i: Int)"

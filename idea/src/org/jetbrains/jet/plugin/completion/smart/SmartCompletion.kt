@@ -246,7 +246,8 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                 override fun renderElement(presentation: LookupElementPresentation) {
                     super.renderElement(presentation)
                     presentation.setItemText(text)
-                    presentation.setTypeText("")
+                    presentation.clearTail()
+                    presentation.setTypeText(null)
                 }
 
                 override fun handleInsert(context: InsertionContext) {

@@ -80,7 +80,11 @@ class LookupElementsCollector(
                         addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
                             override fun renderElement(presentation: LookupElementPresentation) {
                                 super.renderElement(presentation)
-                                presentation.setItemText(getLookupString() + " " + buildLambdaPresentation(parameterType))
+
+                                val tails = presentation.getTailFragments()
+                                presentation.clearTail()
+                                presentation.appendTailText(" " + buildLambdaPresentation(parameterType), false)
+                                tails.drop(1)/*drop old function signature*/.forEach { presentation.appendTailText(it.text, it.isGrayed()) }
                             }
 
                             override fun handleInsert(context: InsertionContext) {

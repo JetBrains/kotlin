@@ -20,6 +20,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -75,7 +76,10 @@ public class ExpectedCompletionUtils {
                 if (!validKeys.contains(key)) {
                     throw new RuntimeException("Invalid json property '" + key + "'");
                 }
-                map.put(key, entry.getValue().getAsString());
+                JsonElement value = entry.getValue();
+                if (!(value instanceof JsonNull)) {
+                    map.put(key, value.getAsString());
+                }
             }
         }
 

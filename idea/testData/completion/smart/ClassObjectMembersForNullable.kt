@@ -14,6 +14,6 @@ fun foo(){
 }
 
 // EXIST: { lookupString:"foo", itemText:"K.foo", tailText:" (sample)", typeText:"K" }
-// EXIST: { lookupString:"bar", itemText:"K.bar()", tailText:" (sample)", typeText:"K" }
+// EXIST: { lookupString:"bar", itemText:"K.bar", tailText:"() (sample)", typeText:"K" }
 // ABSENT: { itemText: "K.x" }
 // EXIST: { lookupString:"kk", itemText:"K.kk", tailText:" (sample)", typeText:"K?" }

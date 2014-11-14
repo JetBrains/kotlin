@@ -58,39 +58,42 @@ public object KotlinLookupElementFactory {
             return createLookupElementForJavaClass(declaration)
         }
 
-        val name = descriptor.getName().asString()
-        var element = LookupElementBuilder.create(DeclarationDescriptorLookupObject(descriptor, analyzer, declaration), name)
 
-        var presentableText = name
-        var typeText = ""
-        var tailText = ""
+        var element = LookupElementBuilder.create(DeclarationDescriptorLookupObject(descriptor, analyzer, declaration), descriptor.getName().asString())
+                .withIcon(JetDescriptorIconProvider.getIcon(descriptor, declaration, Iconable.ICON_FLAG_VISIBILITY))
 
-        if (descriptor is FunctionDescriptor) {
-            val returnType = descriptor.getReturnType()
-            typeText = if (returnType != null) DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(returnType) else ""
-            presentableText += DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(descriptor)
+        when (descriptor) {
+            is FunctionDescriptor -> {
+                val returnType = descriptor.getReturnType()
+                element = element.withTypeText(if (returnType != null) DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(returnType) else "")
+                element = element.appendTailText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(descriptor), false)
 
-            if (descriptor.getExtensionReceiverParameter() != null) {
-                tailText += " for " + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.getExtensionReceiverParameter()!!.getType())
-                tailText += " in " + DescriptorUtils.getFqName(descriptor.getContainingDeclaration())
+                if (descriptor.getExtensionReceiverParameter() != null) {
+                    val tail = " for " + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.getExtensionReceiverParameter()!!.getType()) +
+                               " in " + DescriptorUtils.getFqName(descriptor.getContainingDeclaration())
+                    element = element.appendTailText(tail, true)
+                }
+            }
+
+            is VariableDescriptor -> {
+                element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.getType()))
+            }
+
+            is ClassDescriptor -> {
+                element = element.appendTailText(" (" + DescriptorUtils.getFqName(descriptor.getContainingDeclaration()) + ")", true)
+            }
+
+            else -> {
+                element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor))
             }
         }
-        else if (descriptor is VariableDescriptor) {
-            typeText = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.getType())
-        }
-        else if (descriptor is ClassDescriptor) {
-            tailText = " (" + DescriptorUtils.getFqName(descriptor.getContainingDeclaration()) + ")"
-        }
-        else {
-            typeText = DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor)
+
+        if (KotlinBuiltIns.getInstance().isDeprecated(descriptor)) {
+            element = element.withStrikeoutness(true)
         }
 
         val insertHandler = getDefaultInsertHandler(descriptor)
         element = element.withInsertHandler(insertHandler)
-
-        element = element.withTailText(tailText, true).withTypeText(typeText).withPresentableText(presentableText)
-        element = element.withIcon(JetDescriptorIconProvider.getIcon(descriptor, declaration, Iconable.ICON_FLAG_VISIBILITY))
-        element = element.withStrikeoutness(KotlinBuiltIns.getInstance().isDeprecated(descriptor))
 
         if (insertHandler is KotlinFunctionInsertHandler && insertHandler.lambdaInfo != null) {
             element.putUserData<Boolean>(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
