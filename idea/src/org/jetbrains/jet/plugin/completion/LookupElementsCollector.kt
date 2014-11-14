@@ -79,7 +79,7 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher, private 
                             }
 
                             override fun handleInsert(context: InsertionContext) {
-                                JetFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, true)).handleInsert(context, this)
+                                KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, true)).handleInsert(context, this)
                             }
                         })
                     }

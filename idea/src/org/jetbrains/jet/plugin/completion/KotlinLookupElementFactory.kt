@@ -92,7 +92,7 @@ public object KotlinLookupElementFactory {
         element = element.withIcon(JetDescriptorIconProvider.getIcon(descriptor, declaration, Iconable.ICON_FLAG_VISIBILITY))
         element = element.withStrikeoutness(KotlinBuiltIns.getInstance().isDeprecated(descriptor))
 
-        if (insertHandler is JetFunctionInsertHandler && insertHandler.lambdaInfo != null) {
+        if (insertHandler is KotlinFunctionInsertHandler && insertHandler.lambdaInfo != null) {
             element.putUserData<Boolean>(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
         }
 
@@ -104,7 +104,7 @@ public object KotlinLookupElementFactory {
             is FunctionDescriptor -> {
                 val parameters = descriptor.getValueParameters()
                 when (parameters.size) {
-                    0 ->  JetFunctionInsertHandler.NO_PARAMETERS_HANDLER
+                    0 ->  KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
 
                     1 -> {
                         val parameterType = parameters.single().getType()
@@ -112,17 +112,17 @@ public object KotlinLookupElementFactory {
                             val parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size()
                             if (parameterCount <= 1) {
                                 // otherwise additional item with lambda template is to be added
-                                return JetFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, false))
+                                return KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, false))
                             }
                         }
-                        JetFunctionInsertHandler.WITH_PARAMETERS_HANDLER
+                        KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
                     }
 
-                    else -> JetFunctionInsertHandler.WITH_PARAMETERS_HANDLER
+                    else -> KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
                 }
             }
 
-            is PropertyDescriptor -> JetPropertyInsertHandler
+            is PropertyDescriptor -> KotlinPropertyInsertHandler
 
             is ClassDescriptor -> KotlinClassInsertHandler
 

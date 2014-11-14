@@ -29,7 +29,7 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
-import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
+import org.jetbrains.jet.plugin.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.plugin.completion.handlers.CaretPosition
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
@@ -102,11 +102,11 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
             itemText += "()"
             val baseInsertHandler =
                     (if (visibleConstructors.size == 0)
-                        JetFunctionInsertHandler.NO_PARAMETERS_HANDLER
+                        KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
                     else if (visibleConstructors.size == 1)
                         KotlinLookupElementFactory.getDefaultInsertHandler(visibleConstructors.single())
                     else
-                        JetFunctionInsertHandler.WITH_PARAMETERS_HANDLER) as JetFunctionInsertHandler
+                        KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER) as KotlinFunctionInsertHandler
             insertHandler = object : InsertHandler<LookupElement> {
                 override fun handleInsert(context: InsertionContext, item: LookupElement) {
                     context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)

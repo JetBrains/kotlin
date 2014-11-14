@@ -39,7 +39,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 
-public abstract class JetCallableInsertHandler : BaseDeclarationInsertHandler() {
+public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler() {
     public override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 
@@ -76,7 +76,7 @@ public abstract class JetCallableInsertHandler : BaseDeclarationInsertHandler() 
     }
 }
 
-public object JetPropertyInsertHandler : JetCallableInsertHandler()
+public object KotlinPropertyInsertHandler : KotlinCallableInsertHandler()
 
 public enum class CaretPosition {
     IN_BRACKETS
@@ -85,7 +85,7 @@ public enum class CaretPosition {
 
 public data class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
 
-public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lambdaInfo: GenerateLambdaInfo?) : JetCallableInsertHandler() {
+public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val lambdaInfo: GenerateLambdaInfo?) : KotlinCallableInsertHandler() {
     {
         if (caretPosition == CaretPosition.AFTER_BRACKETS && lambdaInfo != null) {
             throw IllegalArgumentException("CaretPosition.AFTER_BRACKETS with lambdaInfo != null combination is not supported")
@@ -190,8 +190,8 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lam
     }
 
     class object {
-        public val NO_PARAMETERS_HANDLER: JetFunctionInsertHandler = JetFunctionInsertHandler(CaretPosition.AFTER_BRACKETS, null)
-        public val WITH_PARAMETERS_HANDLER: JetFunctionInsertHandler = JetFunctionInsertHandler(CaretPosition.IN_BRACKETS, null)
+        public val NO_PARAMETERS_HANDLER: KotlinFunctionInsertHandler = KotlinFunctionInsertHandler(CaretPosition.AFTER_BRACKETS, null)
+        public val WITH_PARAMETERS_HANDLER: KotlinFunctionInsertHandler = KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, null)
 
         private fun shouldAddBrackets(element : PsiElement) : Boolean {
             return PsiTreeUtil.getParentOfType(element, javaClass<JetImportDirective>()) == null
