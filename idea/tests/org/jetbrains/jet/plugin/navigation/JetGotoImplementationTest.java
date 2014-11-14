@@ -53,6 +53,14 @@ public class JetGotoImplementationTest extends LightCodeInsightTestCase {
         doTest();
     }
 
+    public void testOverridesInEnumEntries() {
+        doTest();
+    }
+
+    public void testEnumEntriesInheritance() {
+        doTest();
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {
