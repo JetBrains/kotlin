@@ -16,23 +16,23 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>kotlin-android-compiler-plugin</artifactId>
+    <artifactId>kotlin-gradle-plugin-api</artifactId>
     <packaging>jar</packaging>
 
-    <description>Android compiler plugin for Kotlin</description>
+    <description>Gradle plugin API for Kotlin</description>
+
+    <repositories>
+        <repository>
+            <id>jetbrains-utils</id>
+            <url>http://repository.jetbrains.com/utils</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-gradle-plugin-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -51,13 +51,6 @@
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
 
-        <resources>
-            <resource>
-                <directory>${project.basedir}/src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -74,11 +67,6 @@
                         <id>compile</id>
                         <phase>compile</phase>
                         <goals> <goal>compile</goal> </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                            </sourceDirs>
-                        </configuration>
                     </execution>
 
                     <execution>
@@ -88,33 +76,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>prepare</id>
-                        <phase>compile</phase>
-                        <configuration>
-                            <tasks>
-                                <unzip src="${kotlin-sdk}/lib/android-compiler-plugin.jar" dest="target/classes/" />
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>jetbrains-utils</id>
-            <url>http://repository.jetbrains.com/utils</url>
-        </repository>
-    </repositories>
 </project>

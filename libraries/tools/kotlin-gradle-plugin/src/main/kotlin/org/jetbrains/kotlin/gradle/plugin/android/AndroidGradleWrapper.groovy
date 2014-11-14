@@ -47,16 +47,6 @@ class AndroidGradleWrapper {
   }
 
   @NotNull
-  static def Set<File> getResourceDirs(Object androidSourceSet) {
-    return androidSourceSet.getRes().getSrcDirs()
-  }
-
-  @NotNull
-  static def File getManifestFile(Object androidSourceSet) {
-    return androidSourceSet.getManifest().getSrcFile()
-  }
-
-  @NotNull
   static def List<String> getProductFlavorsNames(ApkVariant variant) {
       return variant.getProductFlavors().iterator().collect { it.getName() }
   }

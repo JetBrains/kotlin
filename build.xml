@@ -568,6 +568,10 @@
                         public protected *;
                     }
 
+                    -keepclassmembers class com.intellij.openapi.vfs.VirtualFile {
+                        public InputStream getInputStream();
+                    }
+
                     -keep class jet.** {
                         public protected *;
                     }

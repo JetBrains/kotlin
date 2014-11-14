@@ -39,6 +39,8 @@ import groovy.lang.Closure
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.android.AndroidCommandLineProcessor
+import java.util.ServiceLoader
+import org.jetbrains.kotlin.compiler.plugin.getPluginOptionString
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -144,6 +146,8 @@ class Kotlin2JvmSourceSetProcessor(
                 }
             }
         }
+
+        loadSubplugins(project).addSubpluginArguments(project, kotlinTask)
     }
 }
 
@@ -304,10 +308,6 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
         project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler, project).resolveKotlinPluginDependency("kotlin-android-sdk-annotations"))
     }
 
-    private fun makePluginOption(option: CliOption, value: String): String {
-        return "plugin:${AndroidCommandLineProcessor.ANDROID_COMPILER_PLUGIN_ID}:${option.name}=$value"
-    }
-
     private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project, androidExt: BaseExtension): Unit {
         val logger = project.getLogger()
         val kotlinOptions = getExtension<Any?>(androidExt, "kotlinOptions")
@@ -320,6 +320,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
             sourceSets.getByName("androidTest")
         }
 
+        val subpluginEnvironment = loadSubplugins(project)
+
         for (variant in variants) {
             if (variant is LibraryVariant || variant is ApkVariant) {
                 val buildTypeSourceSetName = AndroidGradleWrapper.getVariantName(variant)
@@ -329,17 +331,6 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
                 val javaTask = variant.getJavaCompile()!!
                 val variantName = variant.getName()
-
-                val resourceDir = AndroidGradleWrapper.getResourceDirs(mainSourceSet).firstOrNull()
-                val manifestFile = AndroidGradleWrapper.getManifestFile(mainSourceSet)
-
-                if (resourceDir != null) {
-                    val layoutDir = File(resourceDir, "layout")
-                    kotlinOptions.pluginOptions = array(
-                            makePluginOption("androidRes", layoutDir.getAbsolutePath()),
-                            makePluginOption("androidManifest", manifestFile.getAbsolutePath())
-                    )
-                }
 
                 val kotlinTaskName = "compile${variantName.capitalize()}Kotlin"
                 val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
@@ -400,6 +391,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                     }
                 }
 
+                subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
+
                 kotlinTask doFirst {
                     var plugin = project.getPlugins().findPlugin("android")
                     if (null == plugin) {
@@ -429,9 +422,57 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
         val result = (obj as HasConvention).getConvention().getPlugins()[extensionName]
         return result as T
     }
-
 }
 
+private fun loadSubplugins(project: Project): SubpluginEnvironment {
+    try {
+        val subplugins = ServiceLoader.load(
+            javaClass<KotlinGradleSubplugin>(), project.getBuildscript().getClassLoader()).toList()
+        val subpluginDependencyNames =
+            subplugins.mapTo(hashSetOf<String>()) { it.getGroupName() + ":" + it.getArtifactName() }
+
+        val classpath = project.getBuildscript().getConfigurations().getByName("classpath")
+        val subpluginClasspaths = hashMapOf<KotlinGradleSubplugin, List<String>>()
+
+        for (subplugin in subplugins) {
+            val files = classpath.getDependencies()
+                    .filter { subpluginDependencyNames.contains(it.getGroup() + ":" + it.getName()) }
+                    .flatMap { classpath.files(it).map { it.getAbsolutePath() } }
+            subpluginClasspaths.put(subplugin, files)
+        }
+
+        return SubpluginEnvironment(subpluginClasspaths, subplugins)
+    } catch (e: NoClassDefFoundError) {
+        // Skip plugin loading if KotlinGradleSubplugin is not defined.
+        // It is true now for tests in kotlin-gradle-plugin-core.
+        return SubpluginEnvironment(mapOf(), listOf())
+    }
+}
+
+private class SubpluginEnvironment(
+    val subpluginClasspaths: Map<KotlinGradleSubplugin, List<String>>,
+    val subplugins: List<KotlinGradleSubplugin>
+) {
+
+    fun addSubpluginArguments(project: Project, compileTask: KotlinCompile) {
+        val realPluginClasspaths = arrayListOf<String>()
+        val pluginArguments = arrayListOf<String>()
+
+        subplugins.forEach { subplugin ->
+            val args = subplugin.getExtraArguments(project, compileTask)
+            if (args != null) {
+                realPluginClasspaths.addAll(subpluginClasspaths[subplugin])
+                for (arg in args) {
+                    val option = getPluginOptionString(subplugin.getPluginName(), arg.key, arg.value)
+                    pluginArguments.add(option)
+                }
+            }
+        }
+
+        compileTask.compilerPluginClasspaths = realPluginClasspaths.copyToArray()
+        compileTask.compilerPluginArguments = pluginArguments.copyToArray()
+    }
+}
 
 open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInternal) {
     public fun resolveDependencies(vararg coordinates: String): Collection<File> {
