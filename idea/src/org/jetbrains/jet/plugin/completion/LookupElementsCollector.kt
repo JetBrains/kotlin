@@ -94,15 +94,23 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher, private 
                 override fun handleInsert(context: InsertionContext) {
                     getDelegate().handleInsert(context)
 
-                    if (context.getCompletionChar() == ',' && context.shouldAddCompletionChar()) {
-                        val insertedText = context.getDocument().getText(TextRange(context.getStartOffset(), context.getTailOffset()))
-                        if (insertedText != getUserData(KotlinCompletionCharFilter.SELECTED_ITEM_PREFIX)) { // avoid insertion of space after comma if we have typed the whole text to insert already
-                            WithTailInsertHandler.commaTail().postHandleInsert(context, getDelegate())
+                    if (context.shouldAddCompletionChar() && !isJustTyping(context, this)) {
+                        val handler = when (context.getCompletionChar()) {
+                            ',' -> WithTailInsertHandler.commaTail()
+                            '=' -> WithTailInsertHandler.eqTail()
+                            else -> null
                         }
+                        handler?.postHandleInsert(context, getDelegate())
                     }
                 }
             })
         }
+    }
+
+    // used to avoid insertion of spaces before/after ',', '=' on just typing
+    private fun isJustTyping(context: InsertionContext, element: LookupElement): Boolean {
+        val insertedText = context.getDocument().getText(TextRange(context.getStartOffset(), context.getTailOffset()))
+        return insertedText == element.getUserData(KotlinCompletionCharFilter.SELECTED_ITEM_PREFIX)
     }
 
     public fun addElementWithAutoInsertionSuppressed(element: LookupElement) {

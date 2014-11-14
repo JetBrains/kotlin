@@ -184,7 +184,7 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
     }
 
     private fun shouldPlaceCaretInBrackets(completionChar: Char): Boolean {
-        if (completionChar == ',' || completionChar == '.') return false
+        if (completionChar == ',' || completionChar == '.' || completionChar == '=') return false
         if (completionChar == '(') return true
         return caretPosition == CaretPosition.IN_BRACKETS
     }

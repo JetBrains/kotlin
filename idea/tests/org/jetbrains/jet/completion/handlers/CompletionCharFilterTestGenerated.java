@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion.handlers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -111,6 +110,18 @@ public class CompletionCharFilterTestGenerated extends AbstractCompletionCharFil
     @TestMetadata("DotAfterFun2.kt")
     public void testDotAfterFun2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/DotAfterFun2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Eq1.kt")
+    public void testEq1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/Eq1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Eq2.kt")
+    public void testEq2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/handlers/charFilter/Eq2.kt");
         doTest(fileName);
     }
 

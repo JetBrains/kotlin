@@ -39,6 +39,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.codeInsight.completion.InsertHandler
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
 
 object NamedParametersCompletion {
     private val positionFilter = AndFilter(
@@ -94,8 +95,6 @@ object NamedParametersCompletion {
                             .withIcon(JetIcons.PARAMETER)
                             .withInsertHandler(NamedParameterInsertHandler(name))
                             .assignPriority(ItemPriority.NAMED_PARAMETER)
-                    lookupElement.putUserData(KotlinCompletionCharFilter.ACCEPT_EQ, true);
-
                     collector.addElement(lookupElement)
                 }
             }
@@ -104,15 +103,15 @@ object NamedParametersCompletion {
 
     private class NamedParameterInsertHandler(val parameterName: Name) : InsertHandler<LookupElement> {
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
-            val ch = context.getCompletionChar()
-            if (ch == '=' || ch == ' ') {
-                context.setAddCompletionChar(false)
-            }
-
             val editor = context.getEditor()
-            val text = IdeDescriptorRenderers.SOURCE_CODE.renderName(parameterName) + " = "
+            val text = IdeDescriptorRenderers.SOURCE_CODE.renderName(parameterName)
             editor.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
             editor.getCaretModel().moveToOffset(context.getStartOffset() + text.length)
+
+            if (context.getCompletionChar() == ' ') {
+                context.setAddCompletionChar(false)
+            }
+            WithTailInsertHandler.eqTail().postHandleInsert(context, item)
         }
     }
 }

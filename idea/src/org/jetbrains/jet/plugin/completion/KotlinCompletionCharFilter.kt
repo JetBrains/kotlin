@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 public class KotlinCompletionCharFilter() : CharFilter() {
     class object {
         public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key("KotlinCompletionCharFilter.ACCEPT_OPENNING_BRACE")
-        public val ACCEPT_EQ: Key<Boolean> = Key("KotlinCompletionCharFilter.ACCEPT_EQ")
 
         public val SELECTED_ITEM_PREFIX: Key<String> = Key("KotlinCompletionCharFilter.SELECTED_ITEM_PREFIX")
     }
@@ -61,14 +60,7 @@ public class KotlinCompletionCharFilter() : CharFilter() {
                     Result.HIDE_LOOKUP
             }
 
-            '=' -> {
-                if (currentItem != null && currentItem.getUserData(ACCEPT_EQ) ?: false)
-                    Result.SELECT_ITEM_AND_FINISH_LOOKUP
-                else
-                    Result.HIDE_LOOKUP //TODO: why not for others?
-            }
-
-            ',', ' ', '(' -> Result.SELECT_ITEM_AND_FINISH_LOOKUP
+            ',', ' ', '(', '=' -> Result.SELECT_ITEM_AND_FINISH_LOOKUP
 
             else -> CharFilter.Result.HIDE_LOOKUP
         }

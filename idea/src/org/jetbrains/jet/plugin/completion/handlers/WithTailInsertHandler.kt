@@ -88,5 +88,6 @@ class WithTailInsertHandler(val tailText: String,
         fun commaTail() = WithTailInsertHandler(",", spaceBefore = false, spaceAfter = true /*TODO: use code style option*/)
         fun rparenthTail() = WithTailInsertHandler(")", spaceBefore = false, spaceAfter = false)
         fun elseTail() = WithTailInsertHandler("else", spaceBefore = true, spaceAfter = true)
+        fun eqTail() = WithTailInsertHandler("=", spaceBefore = true, spaceAfter = true) /*TODO: use code style options*/
     }
 }
