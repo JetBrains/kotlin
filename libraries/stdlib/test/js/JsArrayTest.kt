@@ -11,9 +11,9 @@ class JsArrayTest {
         val a2 = array("foo")
         val a3 = array("foo", "bar")
 
-        assertEquals(0, a1.size)
-        assertEquals(1, a2.size)
-        assertEquals(2, a3.size)
+        assertEquals(0, a1.size())
+        assertEquals(1, a2.size())
+        assertEquals(2, a3.size())
 
         assertEquals("[]", a1.toList().toString())
         assertEquals("[foo]", a2.toList().toString())
@@ -25,7 +25,7 @@ class JsArrayTest {
         var c: Collection<String>  = array("A", "B", "C").toList()
         var a = ArrayList(c)
 
-        assertEquals(3, a.size)
+        assertEquals(3, a.size())
         assertEquals("A", a[0])
         assertEquals("B", a[1])
         assertEquals("C", a[2])

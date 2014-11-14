@@ -86,7 +86,7 @@ class DomBuilderTest() {
             }
 
         }
-        val grandChild = doc["grandChild"].first
+        val grandChild = doc["grandChild"].firstOrNull()
         if (grandChild != null) {
             assertEquals("Hello World!", grandChild.text)
             assertEquals(" bar tiny", grandChild.attribute("class"))
@@ -96,7 +96,7 @@ class DomBuilderTest() {
 
             assertTrue(classSet.contains("bar"))
             assertTrue(classSet.contains("tiny"))
-            assertTrue(classSet.size == 2 )
+            assertTrue(classSet.size() == 2 )
             assertFalse(classSet.contains("doesNotExist"))
 
             // lets add a new class and some existing classes
@@ -114,12 +114,12 @@ class DomBuilderTest() {
         } else {
             fail("Not an Element $grandChild")
         }
-        val child = doc["child"].first
+        val child = doc["child"].firstOrNull()
         if (child != null) {
             val gc1 = child.childElements("grandChild")
-            assertEquals(1, gc1.size, "Expected a single child but found $gc1")
+            assertEquals(1, gc1.size(), "Expected a single child but found $gc1")
             val gc2 = child.childElements("grandChild2")
-            assertEquals(1, gc2.size, "Expected a single child but found $gc2")
+            assertEquals(1, gc2.size(), "Expected a single child but found $gc2")
         } else {
             fail("No child found!")
         }

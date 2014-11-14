@@ -19,7 +19,7 @@ class ImmutableArrayListTest() : TestCase() {
     fun testGet() {
         for (length in 0 .. 55) {
             val list = buildIntArray(length, 19)
-            assertEquals(length, list.size)
+            assertEquals(length, list.size())
             checkList(list, length, 19)
         }
     }
@@ -34,7 +34,7 @@ class ImmutableArrayListTest() : TestCase() {
 
 
     private fun checkList(list: List<Int>, expectedLength: Int, expectedFirstValue: Int) {
-        assertEquals(expectedLength, list.size)
+        assertEquals(expectedLength, list.size())
         for (i in 0 .. expectedLength - 1) {
             assertEquals(expectedFirstValue + i, list[i])
         }

@@ -10,13 +10,13 @@ import org.junit.Test as test
 class OldStdlibTest() {
     test fun testCollectionEmpty() {
         assertNot {
-            listOf(0, 1, 2).empty
+            listOf(0, 1, 2).isEmpty()
         }
     }
 
     test fun testCollectionSize() {
         assertTrue {
-            listOf(0, 1, 2).size == 3
+            listOf(0, 1, 2).size() == 3
         }
     }
 

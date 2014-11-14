@@ -70,6 +70,12 @@ public val CharSequence.length: Int
 public fun CharSequence.get(index: Int): Char = this.charAt(index)
 
 /**
+ * Returns the index of the last character in the String or -1 if the String is empty
+ */
+public val String.lastIndex: Int
+    get() = this.length() - 1
+
+/**
  * Returns a subsequence specified by given set of indices.
  */
 public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {

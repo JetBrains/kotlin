@@ -10,7 +10,7 @@ fun arrays(): List<GenericFunction> {
         doc { "Returns true if the array is empty" }
         returns("Boolean")
         body {
-            "return size == 0"
+            "return size() == 0"
         }
     }
 

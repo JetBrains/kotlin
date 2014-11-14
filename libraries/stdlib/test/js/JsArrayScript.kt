@@ -5,7 +5,7 @@ fun testSize(): Int {
     val a2 = array("foo")
     val a3 = array("foo", "bar")
 
-    return a1.size + a2.size + a3.size
+    return a1.size() + a2.size() + a3.size()
 }
 
 fun testToListToString(): String {

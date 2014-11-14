@@ -11,10 +11,10 @@ import java.util.*
  * Returns a list containing all elements except first *n* elements
  */
 public fun <T> Array<out T>.drop(n: Int): List<T> {
-    if (n >= size)
+    if (n >= size())
         return ArrayList<T>()
     var count = 0
-    val list = ArrayList<T>(size - n)
+    val list = ArrayList<T>(size() - n)
     for (item in this) {
         if (count++ >= n) list.add(item)
     }
@@ -25,10 +25,10 @@ public fun <T> Array<out T>.drop(n: Int): List<T> {
  * Returns a list containing all elements except first *n* elements
  */
 public fun BooleanArray.drop(n: Int): List<Boolean> {
-    if (n >= size)
+    if (n >= size())
         return ArrayList<Boolean>()
     var count = 0
-    val list = ArrayList<Boolean>(size - n)
+    val list = ArrayList<Boolean>(size() - n)
     for (item in this) {
         if (count++ >= n) list.add(item)
     }
@@ -39,10 +39,10 @@ public fun BooleanArray.drop(n: Int): List<Boolean> {
  * Returns a list containing all elements except first *n* elements
  */
 public fun ByteArray.drop(n: Int): List<Byte> {
-    if (n >= size)
+    if (n >= size())
         return ArrayList<Byte>()
     var count = 0
-    val list = ArrayList<Byte>(size - n)
+    val list = ArrayList<Byte>(size() - n)
     for (item in this) {
         if (count++ >= n) list.add(item)
     }
@@ -53,10 +53,10 @@ public fun ByteArray.drop(n: Int): List<Byte> {
  * Returns a list containing all elements except first *n* elements
  */
 public fun CharArray.drop(n: Int): List<Char> {
-    if (n >= size)
+    if (n >= size())
         return ArrayList<Char>()
     var count = 0
-    val list = ArrayList<Char>(size - n)
+    val list = ArrayList<Char>(size() - n)
     for (item in this) {
         if (count++ >= n) list.add(item)
     }
@@ -67,10 +67,10 @@ public fun CharArray.drop(n: Int): List<Char> {
  * Returns a list containing all elements except first *n* elements
  */
 public fun DoubleArray.drop(n: Int): List<Double> {
-    if (n >= size)
+    if (n >= size())
         return ArrayList<Double>()
     var count = 0
-    val list = ArrayList<Double>(size - n)
+    val list = ArrayList<Double>(size() - n)
     for (item in this) {
         if (count++ >= n) list.add(item)
     }
@@ -81,10 +81,10 @@ public fun DoubleArray.drop(n: Int): List<Double> {
  * Returns a list containing all elements except first *n* elements
  */
 public fun FloatArray.drop(n: Int): List<Float> {
-    if (n >= size)
+    if (n >= size())
         return ArrayList<Float>()
     var count = 0
-    val list = ArrayList<Float>(size - n)
+    val list = ArrayList<Float>(size() - n)
     for (item in this) {
         if (count++ >= n) list.add(item)
     }
@@ -95,10 +95,10 @@ public fun FloatArray.drop(n: Int): List<Float> {
  * Returns a list containing all elements except first *n* elements
  */
 public fun IntArray.drop(n: Int): List<Int> {
-    if (n >= size)
+    if (n >= size())
         return ArrayList<Int>()
     var count = 0
-    val list = ArrayList<Int>(size - n)
+    val list = ArrayList<Int>(size() - n)
     for (item in this) {
         if (count++ >= n) list.add(item)
     }
@@ -109,10 +109,10 @@ public fun IntArray.drop(n: Int): List<Int> {
  * Returns a list containing all elements except first *n* elements
  */
 public fun LongArray.drop(n: Int): List<Long> {
-    if (n >= size)
+    if (n >= size())
         return ArrayList<Long>()
     var count = 0
-    val list = ArrayList<Long>(size - n)
+    val list = ArrayList<Long>(size() - n)
     for (item in this) {
         if (count++ >= n) list.add(item)
     }
@@ -123,10 +123,10 @@ public fun LongArray.drop(n: Int): List<Long> {
  * Returns a list containing all elements except first *n* elements
  */
 public fun ShortArray.drop(n: Int): List<Short> {
-    if (n >= size)
+    if (n >= size())
         return ArrayList<Short>()
     var count = 0
-    val list = ArrayList<Short>(size - n)
+    val list = ArrayList<Short>(size() - n)
     for (item in this) {
         if (count++ >= n) list.add(item)
     }
@@ -137,10 +137,10 @@ public fun ShortArray.drop(n: Int): List<Short> {
  * Returns a list containing all elements except first *n* elements
  */
 public fun <T> Collection<T>.drop(n: Int): List<T> {
-    if (n >= size)
+    if (n >= size())
         return ArrayList<T>()
     var count = 0
-    val list = ArrayList<T>(size - n)
+    val list = ArrayList<T>(size() - n)
     for (item in this) {
         if (count++ >= n) list.add(item)
     }
@@ -170,7 +170,7 @@ public fun <T> Stream<T>.drop(n: Int): Stream<T> {
  * Returns a list containing all elements except first *n* elements
  */
 public fun String.drop(n: Int): String {
-    return substring(Math.min(n, size))
+    return substring(Math.min(n, length()))
 }
 
 /**
@@ -885,7 +885,7 @@ public fun String.slice(indices: Iterable<Int>): String {
  */
 public fun <T> Array<out T>.take(n: Int): List<T> {
     var count = 0
-    val realN = if (n > size) size else n
+    val realN = if (n > size()) size() else n
     val list = ArrayList<T>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -900,7 +900,7 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
  */
 public fun BooleanArray.take(n: Int): List<Boolean> {
     var count = 0
-    val realN = if (n > size) size else n
+    val realN = if (n > size()) size() else n
     val list = ArrayList<Boolean>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -915,7 +915,7 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
  */
 public fun ByteArray.take(n: Int): List<Byte> {
     var count = 0
-    val realN = if (n > size) size else n
+    val realN = if (n > size()) size() else n
     val list = ArrayList<Byte>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -930,7 +930,7 @@ public fun ByteArray.take(n: Int): List<Byte> {
  */
 public fun CharArray.take(n: Int): List<Char> {
     var count = 0
-    val realN = if (n > size) size else n
+    val realN = if (n > size()) size() else n
     val list = ArrayList<Char>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -945,7 +945,7 @@ public fun CharArray.take(n: Int): List<Char> {
  */
 public fun DoubleArray.take(n: Int): List<Double> {
     var count = 0
-    val realN = if (n > size) size else n
+    val realN = if (n > size()) size() else n
     val list = ArrayList<Double>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -960,7 +960,7 @@ public fun DoubleArray.take(n: Int): List<Double> {
  */
 public fun FloatArray.take(n: Int): List<Float> {
     var count = 0
-    val realN = if (n > size) size else n
+    val realN = if (n > size()) size() else n
     val list = ArrayList<Float>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -975,7 +975,7 @@ public fun FloatArray.take(n: Int): List<Float> {
  */
 public fun IntArray.take(n: Int): List<Int> {
     var count = 0
-    val realN = if (n > size) size else n
+    val realN = if (n > size()) size() else n
     val list = ArrayList<Int>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -990,7 +990,7 @@ public fun IntArray.take(n: Int): List<Int> {
  */
 public fun LongArray.take(n: Int): List<Long> {
     var count = 0
-    val realN = if (n > size) size else n
+    val realN = if (n > size()) size() else n
     val list = ArrayList<Long>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -1005,7 +1005,7 @@ public fun LongArray.take(n: Int): List<Long> {
  */
 public fun ShortArray.take(n: Int): List<Short> {
     var count = 0
-    val realN = if (n > size) size else n
+    val realN = if (n > size()) size() else n
     val list = ArrayList<Short>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -1020,7 +1020,7 @@ public fun ShortArray.take(n: Int): List<Short> {
  */
 public fun <T> Collection<T>.take(n: Int): List<T> {
     var count = 0
-    val realN = if (n > size) size else n
+    val realN = if (n > size()) size() else n
     val list = ArrayList<T>(realN)
     for (item in this) {
         if (count++ == realN)
@@ -1055,7 +1055,7 @@ public fun <T> Stream<T>.take(n: Int): Stream<T> {
  * Returns a list containing first *n* elements
  */
 public fun String.take(n: Int): String {
-    return substring(0, Math.min(n, size))
+    return substring(0, Math.min(n, length()))
 }
 
 /**

@@ -22,7 +22,7 @@ import java.util.Comparator
  * Compares two values using the sequence of functions to calculate a result of comparison.
  */
 public fun <T : Any> compareValuesBy(a: T?, b: T?, vararg functions: (T) -> Comparable<*>?): Int {
-    require(functions.size > 0)
+    require(functions.size() > 0)
     if (a identityEquals b) return 0
     if (a == null) return -1
     if (b == null) return 1

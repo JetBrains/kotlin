@@ -79,3 +79,68 @@ public val BooleanArray.size: Int get() = size()
 
 deprecated("Use compareValuesBy() instead")
 public fun <T : Any> compareBy(a: T?, b: T?, vararg functions: (T) -> Comparable<*>?): Int = compareValuesBy(a, b, *functions)
+
+
+/**
+ * Returns the first item in the list or null if the list is empty
+ *
+ * @includeFunctionBody ../../test/collections/ListSpecificTest.kt first
+ */
+deprecated("Use firstOrNull() function instead")
+public val <T> List<T>.first: T?
+    get() = this.firstOrNull()
+
+
+/**
+ * Returns the last item in the list or null if the list is empty
+ *
+ * @includeFunctionBody ../../test/collections/ListSpecificTest.kt last
+ */
+deprecated("Use lastOrNull() function instead")
+public val <T> List<T>.last: T?
+    get() {
+        val s = this.size()
+        return if (s > 0) this[s - 1] else null
+    }
+
+
+/**
+ * Returns the first item in the list or null if the list is empty
+ *
+ * @includeFunctionBody ../../test/collections/ListSpecificTest.kt head
+ */
+deprecated("Use firstOrNull() function instead")
+public val <T> List<T>.head: T?
+    get() = firstOrNull()
+
+/**
+ * Returns all elements in this collection apart from the first one
+ *
+ * @includeFunctionBody ../../test/collections/ListSpecificTest.kt tail
+ */
+deprecated("Use drop(1) function call instead")
+public val <T> List<T>.tail: List<T>
+    get() {
+        return drop(1)
+    }
+
+/** Returns true if this collection is empty */
+deprecated("Use isEmpty() function call instead")
+public val Collection<*>.empty: Boolean
+    get() = isEmpty()
+
+/** Returns the size of the collection */
+deprecated("Use size() function call instead")
+public val Collection<*>.size: Int
+    get() = size()
+
+
+/** Returns the size of the map */
+deprecated("Use size() function call instead")
+public val Map<*, *>.size: Int
+    get() = size()
+
+/** Returns true if this map is empty */
+deprecated("Use isEmpty() function call instead")
+public val Map<*, *>.empty: Boolean
+    get() = isEmpty()

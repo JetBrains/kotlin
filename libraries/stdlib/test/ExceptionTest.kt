@@ -40,6 +40,6 @@ class ExceptionTest {
         }
 
         val bytes = assertNotNull(byteBuffer.toByteArray())
-        assertTrue(bytes.size > 10)
+        assertTrue(bytes.size() > 10)
     }
 }

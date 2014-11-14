@@ -37,3 +37,8 @@ public /*inline*/ fun <T> callable(action: () -> T): Callable<T> {
         public override fun call() = action()
     }
 }
+
+deprecated("Use length() instead")
+public val String.size: Int
+    get() = length()
+

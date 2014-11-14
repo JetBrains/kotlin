@@ -17,8 +17,8 @@ private class ImmutableArrayList<T>(
             throw IllegalArgumentException("Negative length ($length)")
         }
         // possible when builder is used from different threads
-        if (offset + length > array.size) {
-            throw IllegalArgumentException("offset ($offset) + length ($length) > array.length (${array.size})")
+        if (offset + length > array.size()) {
+            throw IllegalArgumentException("offset ($offset) + length ($length) > array.length (${array.size()})")
         }
     }
 
@@ -79,8 +79,8 @@ public class ImmutableArrayListBuilder<T>() {
     }
 
     public fun ensureCapacity(capacity: Int) {
-        if (array.size < capacity) {
-            val newSize = Math.max(capacity, Math.max(array.size * 2, 11))
+        if (array.size() < capacity) {
+            val newSize = Math.max(capacity, Math.max(array.size() * 2, 11))
             array = array.copyOf(newSize)
         }
     }

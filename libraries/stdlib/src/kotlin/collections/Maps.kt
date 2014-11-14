@@ -4,14 +4,6 @@ import java.util.*
 
 // Map APIs
 
-/** Returns the size of the map */
-public val Map<*, *>.size: Int
-    get() = size()
-
-/** Returns true if this map is empty */
-public val Map<*, *>.empty: Boolean
-    get() = isEmpty()
-
 /** Returns the [[Map]] if its not null otherwise it returns the empty [[Map]] */
 public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
        = if (this != null) this else stdlib_emptyMap()

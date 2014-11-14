@@ -11,7 +11,7 @@ import java.util.*
  * Returns an ArrayList of all elements
  */
 public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
-    val list = ArrayList<T>(size)
+    val list = ArrayList<T>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -20,7 +20,7 @@ public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
  * Returns an ArrayList of all elements
  */
 public fun BooleanArray.toArrayList(): ArrayList<Boolean> {
-    val list = ArrayList<Boolean>(size)
+    val list = ArrayList<Boolean>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -29,7 +29,7 @@ public fun BooleanArray.toArrayList(): ArrayList<Boolean> {
  * Returns an ArrayList of all elements
  */
 public fun ByteArray.toArrayList(): ArrayList<Byte> {
-    val list = ArrayList<Byte>(size)
+    val list = ArrayList<Byte>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -38,7 +38,7 @@ public fun ByteArray.toArrayList(): ArrayList<Byte> {
  * Returns an ArrayList of all elements
  */
 public fun CharArray.toArrayList(): ArrayList<Char> {
-    val list = ArrayList<Char>(size)
+    val list = ArrayList<Char>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -47,7 +47,7 @@ public fun CharArray.toArrayList(): ArrayList<Char> {
  * Returns an ArrayList of all elements
  */
 public fun DoubleArray.toArrayList(): ArrayList<Double> {
-    val list = ArrayList<Double>(size)
+    val list = ArrayList<Double>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -56,7 +56,7 @@ public fun DoubleArray.toArrayList(): ArrayList<Double> {
  * Returns an ArrayList of all elements
  */
 public fun FloatArray.toArrayList(): ArrayList<Float> {
-    val list = ArrayList<Float>(size)
+    val list = ArrayList<Float>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -65,7 +65,7 @@ public fun FloatArray.toArrayList(): ArrayList<Float> {
  * Returns an ArrayList of all elements
  */
 public fun IntArray.toArrayList(): ArrayList<Int> {
-    val list = ArrayList<Int>(size)
+    val list = ArrayList<Int>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -74,7 +74,7 @@ public fun IntArray.toArrayList(): ArrayList<Int> {
  * Returns an ArrayList of all elements
  */
 public fun LongArray.toArrayList(): ArrayList<Long> {
-    val list = ArrayList<Long>(size)
+    val list = ArrayList<Long>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -83,7 +83,7 @@ public fun LongArray.toArrayList(): ArrayList<Long> {
  * Returns an ArrayList of all elements
  */
 public fun ShortArray.toArrayList(): ArrayList<Short> {
-    val list = ArrayList<Short>(size)
+    val list = ArrayList<Short>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -401,7 +401,7 @@ public fun String.toLinkedList(): LinkedList<Char> {
  * Returns a List containing all key-value pairs
  */
 public fun <K, V> Map<K, V>.toList(): List<Pair<K, V>> {
-    val result = ArrayList<Pair<K, V>>(size)
+    val result = ArrayList<Pair<K, V>>(size())
     for (item in this)
         result.add(item.key to item.value)
     return result
@@ -418,7 +418,7 @@ public fun <T> Array<out T>.toList(): List<T> {
  * Returns a List containing all elements
  */
 public fun BooleanArray.toList(): List<Boolean> {
-    val list = ArrayList<Boolean>(size)
+    val list = ArrayList<Boolean>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -427,7 +427,7 @@ public fun BooleanArray.toList(): List<Boolean> {
  * Returns a List containing all elements
  */
 public fun ByteArray.toList(): List<Byte> {
-    val list = ArrayList<Byte>(size)
+    val list = ArrayList<Byte>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -436,7 +436,7 @@ public fun ByteArray.toList(): List<Byte> {
  * Returns a List containing all elements
  */
 public fun CharArray.toList(): List<Char> {
-    val list = ArrayList<Char>(size)
+    val list = ArrayList<Char>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -445,7 +445,7 @@ public fun CharArray.toList(): List<Char> {
  * Returns a List containing all elements
  */
 public fun DoubleArray.toList(): List<Double> {
-    val list = ArrayList<Double>(size)
+    val list = ArrayList<Double>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -454,7 +454,7 @@ public fun DoubleArray.toList(): List<Double> {
  * Returns a List containing all elements
  */
 public fun FloatArray.toList(): List<Float> {
-    val list = ArrayList<Float>(size)
+    val list = ArrayList<Float>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -463,7 +463,7 @@ public fun FloatArray.toList(): List<Float> {
  * Returns a List containing all elements
  */
 public fun IntArray.toList(): List<Int> {
-    val list = ArrayList<Int>(size)
+    val list = ArrayList<Int>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -472,7 +472,7 @@ public fun IntArray.toList(): List<Int> {
  * Returns a List containing all elements
  */
 public fun LongArray.toList(): List<Long> {
-    val list = ArrayList<Long>(size)
+    val list = ArrayList<Long>(size())
     for (item in this) list.add(item)
     return list
 }
@@ -481,7 +481,7 @@ public fun LongArray.toList(): List<Long> {
  * Returns a List containing all elements
  */
 public fun ShortArray.toList(): List<Short> {
-    val list = ArrayList<Short>(size)
+    val list = ArrayList<Short>(size())
     for (item in this) list.add(item)
     return list
 }

@@ -59,8 +59,8 @@ public fun File.relativePath(descendant: File): String {
     val prefix = directory.canonicalPath
     val answer = descendant.canonicalPath
     return if (answer.startsWith(prefix)) {
-        val prefixSize = prefix.size
-        if (answer.size > prefixSize) {
+        val prefixSize = prefix.length()
+        if (answer.length() > prefixSize) {
             answer.substring(prefixSize + 1)
         } else ""
     } else {

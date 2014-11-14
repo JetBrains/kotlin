@@ -18,14 +18,14 @@ class CollectionJVMTest {
     }
 
 
-    test fun filterIntolinkedListOf() {
+    test fun filterIntoLinkedList() {
         val data = arrayListOf("foo", "bar")
         val foo = data.filterTo(linkedListOf<String>()) { it.startsWith("f") }
 
         assertTrue {
             foo.all { it.startsWith("f") }
         }
-        assertEquals(1, foo.size)
+        assertEquals(1, foo.size())
         assertEquals(linkedListOf("foo"), foo)
 
         assertTrue {
@@ -40,7 +40,7 @@ class CollectionJVMTest {
         assertTrue {
             foo.all { !it.startsWith("f") }
         }
-        assertEquals(1, foo.size)
+        assertEquals(1, foo.size())
         assertEquals(linkedListOf("bar"), foo)
 
         assertTrue {
@@ -52,7 +52,7 @@ class CollectionJVMTest {
         val data = arrayListOf(null, "foo", null, "bar")
         val foo = data.filterNotNullTo(linkedListOf<String>())
 
-        assertEquals(2, foo.size)
+        assertEquals(2, foo.size())
         assertEquals(linkedListOf("foo", "bar"), foo)
 
         assertTrue {
@@ -63,7 +63,7 @@ class CollectionJVMTest {
     test fun filterIntoSortedSet() {
         val data = arrayListOf("foo", "bar")
         val sorted = data.filterTo(sortedSetOf<String>()) { it.length == 3 }
-        assertEquals(2, sorted.size)
+        assertEquals(2, sorted.size())
         assertEquals(sortedSetOf("bar", "foo"), sorted)
         assertTrue {
             sorted is TreeSet<String>
@@ -93,7 +93,7 @@ class CollectionJVMTest {
         val data = arrayListOf("foo", "bar")
         val arr = data.toArray()
         println("Got array ${arr}")
-        assertEquals(2, arr.size)
+        assertEquals(2, arr.size())
         todo {
             assertTrue {
                 arr is Array<String>
