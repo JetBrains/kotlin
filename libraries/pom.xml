@@ -84,6 +84,7 @@
         <module>tools/kotlin-js-library</module>
         <module>tools/kotlin-gradle-plugin</module>
         <module>tools/kotlin-gradle-plugin-core</module>
+        <module>tools/kotlin-gradle-plugin-api</module>
         <module>tools/kotlin-android-compiler-plugin</module>
         <module>tools/kotlin-maven-plugin</module>
         <module>tools/kotlin-maven-plugin-test</module>
