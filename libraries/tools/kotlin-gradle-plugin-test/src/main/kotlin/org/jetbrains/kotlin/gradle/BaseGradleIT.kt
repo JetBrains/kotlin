@@ -11,6 +11,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertEquals
 import kotlin.test.fail
 import org.gradle.api.logging.LogLevel
+import kotlin.test.assertFalse
 
 open class BaseGradleIT(resourcesRoot: String = "src/test/resources") {
 
@@ -59,8 +60,28 @@ open class BaseGradleIT(resourcesRoot: String = "src/test/resources") {
         return this
     }
 
+    fun CompiledProject.fileInWorkingDir(path: String) = File(File(workingDir, project.projectName), path)
+
     fun CompiledProject.assertReportExists(pathToReport: String = ""): CompiledProject {
-        assertTrue(File(File(workingDir, project.projectName), pathToReport).exists(), "The report [$pathToReport] does not exist.")
+        assertTrue(fileInWorkingDir(pathToReport).exists(), "The report [$pathToReport] does not exist.")
+        return this
+    }
+
+    fun CompiledProject.assertFileExists(path: String = ""): CompiledProject {
+        assertTrue(fileInWorkingDir(path).exists(), "The file [$path] does not exist.")
+        return this
+    }
+
+    fun CompiledProject.assertNoSuchFile(path: String = ""): CompiledProject {
+        assertFalse(fileInWorkingDir(path).exists(), "The file [$path] exists.")
+        return this
+    }
+
+    fun CompiledProject.assertFileContains(path: String, vararg expected: String): CompiledProject {
+        val text = fileInWorkingDir(path).readText()
+        expected.forEach {
+            assertTrue(text.contains(it), "$path should contain '$it', actual file contents:\n$text")
+        }
         return this
     }
 

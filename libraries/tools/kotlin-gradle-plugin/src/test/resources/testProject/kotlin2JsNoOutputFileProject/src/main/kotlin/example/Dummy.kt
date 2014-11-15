@@ -1,0 +1,4 @@
+package example
+
+class Dummy {}
+
