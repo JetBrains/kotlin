@@ -93,6 +93,7 @@
                     <extraArtifacts>
                         <extraArtifact>org.jetbrains.kotlin:kotlin-gradle-plugin-core:${project.version}</extraArtifact>
                         <extraArtifact>org.jetbrains.kotlin:kotlin-jdk-annotations:${project.version}</extraArtifact>
+                        <extraArtifact>org.jetbrains.kotlin:kotlin-js-library:${project.version}</extraArtifact>
                         <extraArtifact>org.jetbrains.kotlin:kotlin-android-sdk-annotations:${project.version}</extraArtifact>
                     </extraArtifacts>
                 </configuration>

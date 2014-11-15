@@ -112,3 +112,10 @@ open class KotlinAndriodPluginWrapper: KotlinBasePluginWrapper() {
         return "org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin"
     }
 }
+
+open class Kotlin2JsPluginWrapper : KotlinBasePluginWrapper() {
+    public override fun getPluginClassName():String {
+        return "org.jetbrains.kotlin.gradle.plugin.Kotlin2JsPlugin"
+    }
+}
+
