@@ -18,6 +18,7 @@
           file="${basedir}/js/js.translator/testData/kotlin_lib.js"/>
     <copy tofile="${project.build.directory}/generated-js-library/kotlin-lib-ecma5.js"
           file="${basedir}/js/js.translator/testData/kotlin_lib_ecma5.js"/>
-
+    <copy tofile="${project.build.directory}/generated-js-library/kotlin.js"
+		  file="${basedir}/dist/kotlinc/lib/kotlin.js"/>
 </target>
 </project>
