@@ -105,7 +105,8 @@ class DeserializationContextWithTypes(
     ): DeserializationContextWithTypes {
         val childTypeParameterResolver = object : TypeDeserializer.TypeParameterResolver {
             override fun getTypeParameters(typeDeserializer: TypeDeserializer): List<DeserializedTypeParameterDescriptor> {
-                val descriptors = deserializer.typeParameters(typeParameterProtos, typeDeserializer)
+                val childDeserializer = MemberDeserializer(withTypes(descriptor, typeDeserializer))
+                val descriptors = childDeserializer.typeParameters(typeParameterProtos, typeDeserializer)
                 typeParameters.addAll(descriptors)
                 return descriptors
             }
