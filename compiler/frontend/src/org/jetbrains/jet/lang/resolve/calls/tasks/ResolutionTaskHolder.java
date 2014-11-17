@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,94 +14,79 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls.tasks;
+package org.jetbrains.jet.lang.resolve.calls.tasks
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
+import com.google.common.base.Predicate
+import com.google.common.collect.Collections2
+import com.google.common.collect.Lists
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.jet.lang.psi.JetReferenceExpression
+import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 
-import java.util.Collection;
-import java.util.List;
+public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
+        private val basicCallResolutionContext: BasicCallResolutionContext,
+        private val priorityProvider: ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>>,
+        private val tracing: TracingStrategy
+) {
+    private val isSafeCall: Boolean
 
-public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
-    private final BasicCallResolutionContext basicCallResolutionContext;
-    private final PriorityProvider<ResolutionCandidate<D>> priorityProvider;
-    private final TracingStrategy tracing;
-    private final boolean isSafeCall;
+    private val candidatesList = Lists.newArrayList<Collection<ResolutionCandidate<D>>>()
 
-    private final Collection<Collection<ResolutionCandidate<D>>> candidatesList = Lists.newArrayList();
+    private var internalTasks: MutableList<ResolutionTask<D, F>>? = null
 
-    private List<ResolutionTask<D, F>> tasks = null;
-
-    public ResolutionTaskHolder(
-            @NotNull BasicCallResolutionContext basicCallResolutionContext,
-            @NotNull PriorityProvider<ResolutionCandidate<D>> priorityProvider,
-            @NotNull TracingStrategy tracing
-    ) {
-        this.basicCallResolutionContext = basicCallResolutionContext;
-        this.priorityProvider = priorityProvider;
-        this.tracing = tracing;
-        this.isSafeCall = JetPsiUtil.isSafeCall(basicCallResolutionContext.call);
+    {
+        this.isSafeCall = JetPsiUtil.isSafeCall(basicCallResolutionContext.call)
     }
 
-    public Collection<ResolutionCandidate<D>> setIsSafeCall(@NotNull Collection<ResolutionCandidate<D>> candidates) {
-        for (ResolutionCandidate<D> candidate : candidates) {
-            candidate.setSafeCall(isSafeCall);
+    public fun setIsSafeCall(candidates: Collection<ResolutionCandidate<D>>): Collection<ResolutionCandidate<D>> {
+        for (candidate in candidates) {
+            candidate.setSafeCall(isSafeCall)
         }
-        return candidates;
+        return candidates
     }
 
-    public void addCandidates(@NotNull Collection<ResolutionCandidate<D>> candidates) {
-        assertNotFinished();
+    public fun addCandidates(candidates: Collection<ResolutionCandidate<D>>) {
+        assertNotFinished()
         if (!candidates.isEmpty()) {
-            candidatesList.add(setIsSafeCall(candidates));
+            candidatesList.add(setIsSafeCall(candidates))
         }
     }
 
-    public void addCandidates(@NotNull List<Collection<ResolutionCandidate<D>>> candidatesList) {
-        assertNotFinished();
-        for (Collection<ResolutionCandidate<D>> candidates : candidatesList) {
-            addCandidates(candidates);
+    public fun addCandidates(candidatesList: List<Collection<ResolutionCandidate<D>>>) {
+        assertNotFinished()
+        for (candidates in candidatesList) {
+            addCandidates(candidates)
         }
     }
 
-    private void assertNotFinished() {
-        assert tasks == null : "Can't add candidates after the resulting tasks were computed.";
+    private fun assertNotFinished() {
+        assert(internalTasks == null, "Can't add candidates after the resulting tasks were computed.")
     }
 
-    public List<ResolutionTask<D, F>> getTasks() {
-        if (tasks == null) {
-            tasks = Lists.newArrayList();
+    public fun getTasks(): List<ResolutionTask<D, F>> {
+        if (internalTasks == null) {
+            internalTasks = Lists.newArrayList()
 
-            for (int priority = priorityProvider.getMaxPriority(); priority >= 0; priority--) {
-                final int finalPriority = priority;
-                for (Collection<ResolutionCandidate<D>> candidates : candidatesList) {
-                    Collection<ResolutionCandidate<D>> filteredCandidates = Collections2.filter(
-                            candidates, new Predicate<ResolutionCandidate<D>>() {
-                                @Override
-                                public boolean apply(@Nullable ResolutionCandidate<D> input) {
-                                    return finalPriority == priorityProvider.getPriority(input);
-                                }
-                            }
-                    );
-                    if (!filteredCandidates.isEmpty()) {
-                        tasks.add(new ResolutionTask<D, F>(filteredCandidates, basicCallResolutionContext, tracing));
+            run {
+                var priority = priorityProvider.getMaxPriority()
+                while (priority >= 0) {
+                    for (candidates in candidatesList) {
+                        val filteredCandidates = candidates.filter { priority == priorityProvider.getPriority(it) }
+                        if (!filteredCandidates.isEmpty()) {
+                            internalTasks!!.add(ResolutionTask(filteredCandidates, basicCallResolutionContext, tracing))
+                        }
                     }
+                    priority--
                 }
             }
         }
-        return tasks;
+        return internalTasks!!
     }
 
-    public interface PriorityProvider<D> {
-        int getPriority(D candidate);
+    public trait PriorityProvider<D> {
+        public fun getPriority(candidate: D): Int
 
-        int getMaxPriority();
+        public fun getMaxPriority(): Int
     }
 }
