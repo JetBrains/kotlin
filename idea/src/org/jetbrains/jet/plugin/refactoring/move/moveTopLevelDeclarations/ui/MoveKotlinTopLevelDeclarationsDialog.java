@@ -297,6 +297,14 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         JetFile jetFile = (JetFile) RefactoringPackage.toPsiFile(targetFile, myProject);
         if (jetFile != null) return new JetFileKotlinMoveTarget(jetFile);
 
+        int ret = Messages.showYesNoDialog(
+                myProject,
+                JetRefactoringBundle.message("file.does.not.exist", targetFile.getName()),
+                RefactoringBundle.message("move.title"),
+                Messages.getQuestionIcon()
+        );
+        if (ret != Messages.YES) return null;
+
         File targetDir = targetFile.getParentFile();
         final PsiDirectory psiDirectory = RefactoringPackage.toPsiDirectory(targetDir, myProject);
         assert psiDirectory != null : "No directory found: " + targetDir.getPath();
