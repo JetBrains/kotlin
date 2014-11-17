@@ -295,6 +295,14 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testParameterChangeInOverrides() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo parameterInfo = changeInfo.getNewParameters()[0];
+        parameterInfo.setName("n");
+        parameterInfo.setTypeText("Int");
+        doTest(changeInfo);
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {
