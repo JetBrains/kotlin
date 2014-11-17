@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.types.expressions;
 import com.google.common.base.Function;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzerPackage;
@@ -73,6 +75,8 @@ public class ExpressionTypingServices {
     private AnnotationResolver annotationResolver;
     @NotNull
     private CallResolverExtensionProvider extensionProvider;
+    @Nullable
+    private Function1<JetElement, Boolean> filter;
 
     @NotNull
     public Project getProject() {
@@ -137,6 +141,15 @@ public class ExpressionTypingServices {
     @Inject
     public void setExtensionProvider(@NotNull CallResolverExtensionProvider extensionProvider) {
         this.extensionProvider = extensionProvider;
+    }
+
+    @Nullable
+    public Function1<JetElement, Boolean> getFilter() {
+        return filter;
+    }
+
+    public void setFilter(@Nullable Function1<JetElement, Boolean> filter) {
+        this.filter = filter;
     }
 
     public ExpressionTypingServices(@NotNull ExpressionTypingComponents components) {
@@ -205,6 +218,10 @@ public class ExpressionTypingServices {
             @NotNull ExpressionTypingContext context
     ) {
         List<JetElement> block = expression.getStatements();
+
+        if (filter != null && !(expression instanceof JetPsiUtil.JetExpressionWrapper)) {
+            block = KotlinPackage.filter(block, filter);
+        }
 
         // SCRIPT: get code descriptor for script declaration
         DeclarationDescriptor containingDescriptor = context.scope.getContainingDeclaration();

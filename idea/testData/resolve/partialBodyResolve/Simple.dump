@@ -1,0 +1,4 @@
+Resolve target: value-parameter val p: kotlin.Int
+Skipped statements:
+x()
+z()

@@ -53,6 +53,10 @@ public class KotlinCacheService(val project: Project) {
                 return cache.getLazyResolveSession(element).resolveToElement(element)
             }
 
+            override fun analyzeWithPartialBodyResolve(element: JetElement): BindingContext {
+                return cache.getLazyResolveSession(element).resolveToElementWithPartialBodyResolve(element)
+            }
+
             override fun findModuleDescriptor(element: JetElement): ModuleDescriptor {
                 return cache.getLazyResolveSession(element).getModuleDescriptor()
             }

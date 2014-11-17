@@ -1,0 +1,6 @@
+Resolve target: val v2: kotlin.Int
+Skipped statements:
+x()
+run { val v2 = 1 println(v2) }
+run { val v2 = 2 println(v2) }
+z()

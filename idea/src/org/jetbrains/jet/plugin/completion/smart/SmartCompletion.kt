@@ -37,10 +37,10 @@ import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolutionFacade: ResolutionFacade,
+                      val bindingContext: BindingContext,
                       val visibilityFilter: (DeclarationDescriptor) -> Boolean,
                       val originalFile: JetFile,
                       val boldImmediateLookupElementFactory: LookupElementFactory) {
-    private val bindingContext = resolutionFacade.analyze(expression)
     private val project = expression.getProject()
 
     public data class Result(val declarationFilter: ((DeclarationDescriptor) -> Collection<LookupElement>)?,
@@ -175,7 +175,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             is JetProperty -> {
                 //TODO: this can be filtered out by ordinary completion
                 if (expression == parent.getInitializer()) {
-                    return resolutionFacade.resolveToDescriptor(parent).toSet()
+                    return bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent].toSet()
                 }
             }
 
@@ -185,7 +185,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                     if (operationToken == JetTokens.EQ || operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ) {
                         val left = parent.getLeft()
                         if (left is JetReferenceExpression) {
-                            return resolutionFacade.analyze(left)[BindingContext.REFERENCE_TARGET, left].toSet()
+                            return bindingContext[BindingContext.REFERENCE_TARGET, left].toSet()
                         }
                     }
                 }

@@ -30,11 +30,16 @@ import org.jetbrains.jet.plugin.project.ProjectStructureUtil
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 
 class AllClassesCompletion(val parameters: CompletionParameters,
                            val resolutionFacade: ResolutionFacade,
+                           val bindingContext: BindingContext,
                            val moduleDescriptor: ModuleDescriptor,
                            val scope: GlobalSearchScope,
                            val prefixMatcher: PrefixMatcher,
@@ -44,7 +49,7 @@ class AllClassesCompletion(val parameters: CompletionParameters,
         val builtIns = KotlinBuiltIns.getInstance().getNonPhysicalClasses().filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) }
         result.addDescriptorElements(builtIns, suppressAutoInsertion = true)
 
-        val helper = KotlinIndicesHelper(scope.getProject(), resolutionFacade, scope, moduleDescriptor, visibilityFilter)
+        val helper = KotlinIndicesHelper(scope.getProject(), resolutionFacade, bindingContext, scope, moduleDescriptor, visibilityFilter)
         result.addDescriptorElements(helper.getClassDescriptors({ prefixMatcher.prefixMatches(it) }, kindFilter),
                                      suppressAutoInsertion = true)
 

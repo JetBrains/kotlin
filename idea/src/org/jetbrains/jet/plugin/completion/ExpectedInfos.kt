@@ -295,14 +295,14 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: Re
     private fun calculateForInitializer(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val property = expressionWithType.getParent() as? JetProperty ?: return null
         if (expressionWithType != property.getInitializer()) return null
-        val propertyDescriptor = resolutionFacade.resolveToDescriptor(property) as? VariableDescriptor ?: return null
+        val propertyDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptor ?: return null
         return listOf(ExpectedInfo(propertyDescriptor.getType(), propertyDescriptor.getName().asString(), null))
     }
 
     private fun calculateForExpressionBody(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val declaration = expressionWithType.getParent() as? JetDeclarationWithBody ?: return null
         if (expressionWithType != declaration.getBodyExpression() || declaration.hasBlockBody()) return null
-        val descriptor = resolutionFacade.resolveToDescriptor(declaration) as? FunctionDescriptor ?: return null
+        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? FunctionDescriptor ?: return null
         return functionReturnValueExpectedInfo(descriptor).toList()
     }
 

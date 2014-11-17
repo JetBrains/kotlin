@@ -1,0 +1,5 @@
+Resolve target: value-parameter val p: kotlin.String? smart-casted to kotlin.String
+Skipped statements:
+y(f()!!)
+p1!!
+z(p1!!)

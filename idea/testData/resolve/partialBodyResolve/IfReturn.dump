@@ -1,0 +1,3 @@
+Resolve target: val kotlin.String.size: kotlin.Int
+Skipped statements:
+if (x()) return

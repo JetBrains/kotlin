@@ -40,6 +40,7 @@ import org.jetbrains.jet.plugin.util.extensionsUtils.isExtensionCallable
 public class KotlinIndicesHelper(
         private val project: Project,
         private val resolutionFacade: ResolutionFacade,
+        private val bindingContext: BindingContext,
         private val scope: GlobalSearchScope,
         private val moduleDescriptor: ModuleDescriptor,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean
@@ -73,7 +74,7 @@ public class KotlinIndicesHelper(
     }
 
     public fun getTopLevelCallablesByName(name: String, context: JetExpression /*TODO: to be dropped*/): Collection<CallableDescriptor> {
-        val jetScope = resolutionFacade.analyze(context).get(BindingContext.RESOLUTION_SCOPE, context) ?: return listOf()
+        val jetScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return listOf()
 
         val result = HashSet<CallableDescriptor>()
 
@@ -127,7 +128,7 @@ public class KotlinIndicesHelper(
         val sourceNames = JetTopLevelFunctionsFqnNameIndex.getInstance().getAllKeys(project).stream() + JetTopLevelPropertiesFqnNameIndex.getInstance().getAllKeys(project).stream()
         val allFqNames = sourceNames.map { FqName(it) } + JetFromJavaDescriptorHelper.getTopLevelCallableFqNames(project, scope, false).stream()
 
-        val jetScope = resolutionFacade.analyze(context).get(BindingContext.RESOLUTION_SCOPE, context) ?: return listOf()
+        val jetScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return listOf()
 
         return allFqNames.filter { nameFilter(it.shortName().asString()) }
                 .toSet()
@@ -135,7 +136,6 @@ public class KotlinIndicesHelper(
     }
 
     public fun getCallableExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression): Collection<CallableDescriptor> {
-        val bindingContext = resolutionFacade.analyze(expression)
         val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
 
         val functionsIndex = JetTopLevelFunctionsFqnNameIndex.getInstance()

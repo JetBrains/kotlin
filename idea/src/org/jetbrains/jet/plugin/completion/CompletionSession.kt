@@ -53,7 +53,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     private val file = position.getContainingFile() as JetFile
     protected val resolutionFacade: ResolutionFacade = file.getResolutionFacade()
     protected val moduleDescriptor: ModuleDescriptor = resolutionFacade.findModuleDescriptor(file)
-    protected val bindingContext: BindingContext? = jetReference?.let { resolutionFacade.analyze(it.expression) }
+    protected val bindingContext: BindingContext? = jetReference?.let { resolutionFacade.analyzeWithPartialBodyResolve(it.expression) }
     protected val inDescriptor: DeclarationDescriptor? = jetReference?.let { bindingContext!!.get(BindingContext.RESOLUTION_SCOPE, it.expression)?.getContainingDeclaration() }
 
     // set prefix matcher here to override default one which relies on CompletionUtil.findReferencePrefix()
@@ -92,7 +92,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     }
 
     protected val indicesHelper: KotlinIndicesHelper
-            = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor) { isVisibleDescriptor(it) }
+        get() = KotlinIndicesHelper(project, resolutionFacade, bindingContext!!, searchScope, moduleDescriptor) { isVisibleDescriptor(it) }
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (configuration.completeNonAccessibleDeclarations) return true
@@ -141,7 +141,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
         AllClassesCompletion(
-                parameters, resolutionFacade, moduleDescriptor,
+                parameters, resolutionFacade, bindingContext!!, moduleDescriptor,
                 searchScope, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }
         ).collect(collector)
     }
@@ -228,7 +228,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     override fun doComplete() {
         if (jetReference != null) {
-            val completion = SmartCompletion(jetReference.expression, resolutionFacade, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile, boldImmediateLookupElementFactory)
+            val completion = SmartCompletion(jetReference.expression, resolutionFacade, bindingContext!!, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile, boldImmediateLookupElementFactory)
             val result = completion.execute()
             if (result != null) {
                 collector.addElements(result.additionalItems)

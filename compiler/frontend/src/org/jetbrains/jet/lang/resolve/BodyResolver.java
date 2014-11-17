@@ -75,6 +75,11 @@ public class BodyResolver {
         this.expressionTypingServices = expressionTypingServices;
     }
 
+    @NotNull
+    public ExpressionTypingServices getExpressionTypingServices() {
+        return expressionTypingServices;
+    }
+
     @Inject
     public void setCallResolver(@NotNull CallResolver callResolver) {
         this.callResolver = callResolver;

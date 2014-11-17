@@ -131,6 +131,7 @@ import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.jet.plugin.decompiler.textBuilder.AbstractDecompiledTextTest
 import org.jetbrains.jet.completion.AbstractMultiFileSmartCompletionTest
 import org.jetbrains.jet.completion.handlers.AbstractCompletionCharFilterTest
+import org.jetbrains.jet.resolve.AbstractPartialBodyResolveTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -304,6 +305,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractAdditionalLazyResolveDescriptorRendererTest>()) {
             model("resolve/additionalLazyResolve")
+        }
+
+        testClass(javaClass<AbstractPartialBodyResolveTest>()) {
+            model("resolve/partialBodyResolve")
         }
 
         testClass(javaClass<AbstractJetPsiCheckerTest>()) {

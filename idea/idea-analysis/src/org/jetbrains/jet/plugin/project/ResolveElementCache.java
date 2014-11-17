@@ -52,7 +52,7 @@ public class ResolveElementCache extends ElementResolver {
                                         manager.createWeaklyRetainedMemoizedFunction(new Function1<JetElement, BindingContext>() {
                                             @Override
                                             public BindingContext invoke(JetElement jetElement) {
-                                                return elementAdditionalResolve(jetElement);
+                                                return elementAdditionalResolve(jetElement, null);
                                             }
                                         });
 

@@ -27,6 +27,8 @@ public trait ResolutionFacade {
 
     public fun analyze(element: JetElement): BindingContext
 
+    public fun analyzeWithPartialBodyResolve(element: JetElement): BindingContext
+
     public fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult
 
     public fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor
