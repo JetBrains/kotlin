@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/testsWithStdLib")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({JetDiagnosticsTestWithStdLibGenerated.Annotations.class, JetDiagnosticsTestWithStdLibGenerated.CallableReference.class, JetDiagnosticsTestWithStdLibGenerated.DuplicateJvmSignature.class, JetDiagnosticsTestWithStdLibGenerated.FunctionLiterals.class, JetDiagnosticsTestWithStdLibGenerated.KotlinSignature.class, JetDiagnosticsTestWithStdLibGenerated.Reified.class})
+@InnerTestClasses({JetDiagnosticsTestWithStdLibGenerated.Annotations.class, JetDiagnosticsTestWithStdLibGenerated.CallableReference.class, JetDiagnosticsTestWithStdLibGenerated.DuplicateJvmSignature.class, JetDiagnosticsTestWithStdLibGenerated.FunctionLiterals.class, JetDiagnosticsTestWithStdLibGenerated.KotlinSignature.class, JetDiagnosticsTestWithStdLibGenerated.Reified.class, JetDiagnosticsTestWithStdLibGenerated.Resolve.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnosticsTestWithStdLib {
     public void testAllFilesPresentInTestsWithStdLib() throws Exception {
@@ -650,6 +650,21 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         @TestMetadata("reifiedNothingSubstitution.kt")
         public void testReifiedNothingSubstitution() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/reified/reifiedNothingSubstitution.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Resolve extends AbstractJetDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInResolve() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("kt4711.kt")
+        public void testKt4711() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/kt4711.kt");
             doTest(fileName);
         }
     }
