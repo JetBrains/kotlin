@@ -19,6 +19,7 @@ package org.jetbrains.jet.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -146,6 +147,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     @TestMetadata("IfNullDoWhileWithBreak.kt")
     public void testIfNullDoWhileWithBreak() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullDoWhileWithBreak.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfNullElvisReturn.kt")
+    public void testIfNullElvisReturn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullElvisReturn.kt");
         doTest(fileName);
     }
 

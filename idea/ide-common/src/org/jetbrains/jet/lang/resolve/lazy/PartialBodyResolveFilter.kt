@@ -274,6 +274,16 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
                     result.add(expression)
                 }
             }
+
+            override fun visitBinaryExpression(expression: JetBinaryExpression) {
+                if (expression.getOperationToken() == JetTokens.ELVIS) {
+                    // do not search exits after "?:"
+                    expression.getLeft()?.accept(this)
+                }
+                else {
+                    super.visitBinaryExpression(expression)
+                }
+            }
         })
         return result
     }
