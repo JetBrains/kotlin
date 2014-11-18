@@ -20,15 +20,13 @@ import org.jetbrains.jet.descriptors.serialization.*
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationAndConstantLoader
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
+import org.jetbrains.jet.lang.descriptors.PackageFragmentProviderImpl
 import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.resolve.name.ClassId
-import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.storage.StorageManager
 import java.io.DataInputStream
-import java.io.IOException
 import java.io.InputStream
 import java.util.ArrayList
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
@@ -38,7 +36,7 @@ class BuiltinsPackageFragment(storageManager: StorageManager, module: ModuleDesc
 
     private val nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(fqName)))
 
-    public val provider: PackageFragmentProvider = BuiltinsPackageFragmentProvider()
+    public val provider: PackageFragmentProvider = PackageFragmentProviderImpl(listOf(this))
 
     private val members: DeserializedPackageMemberScope =
         DeserializedPackageMemberScope(
@@ -53,46 +51,27 @@ class BuiltinsPackageFragment(storageManager: StorageManager, module: ModuleDesc
         )
 
     private fun loadPackage(): ProtoBuf.Package {
-        val packageFilePath = BuiltInsSerializationUtil.getPackageFilePath(fqName)
-        val stream = getStream(packageFilePath)
-        try {
-            return ProtoBuf.Package.parseFrom(stream)
-        }
-        catch (e: IOException) {
-            throw IllegalStateException(e)
-        }
-
+        val stream = getStream(BuiltInsSerializationUtil.getPackageFilePath(fqName))
+        return ProtoBuf.Package.parseFrom(stream)
     }
 
     private fun readClassNames(): List<Name> {
-        val `in` = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(fqName))
-        val data = DataInputStream(`in`)
-        try {
+        val stream = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(fqName))
+        return DataInputStream(stream).use { data ->
             val size = data.readInt()
             val result = ArrayList<Name>(size)
-            for (i in 0..size - 1) {
+            size.times {
                 result.add(nameResolver.getName(data.readInt()))
             }
-            return result
-        }
-        finally {
-            data.close()
+            result
         }
     }
 
     override fun getMemberScope() = members
 
-    private fun getStream(path: String) = getStreamNullable(path) ?: throw IllegalStateException("Resource not found in classpath: " + path)
+    private fun getStream(path: String) = getStreamNullable(path) ?: throw IllegalStateException("Resource not found in classpath: $path")
 
     private fun getStreamNullable(path: String): InputStream? = javaClass<KotlinBuiltIns>().getClassLoader().getResourceAsStream(path)
-
-    private inner class BuiltinsPackageFragmentProvider : PackageFragmentProvider {
-        override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor>
-                = if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME == fqName) listOf(this@BuiltinsPackageFragment) else listOf()
-
-        override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
-                = if (fqName.isRoot()) setOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) else listOf()
-    }
 
     private inner class BuiltInsClassDataFinder : ClassDataFinder {
         override fun findClassData(classId: ClassId): ClassData? {
