@@ -19,7 +19,6 @@ package org.jetbrains.jet.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -51,6 +50,18 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     @TestMetadata("DeclarationsBefore.kt")
     public void testDeclarationsBefore() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/DeclarationsBefore.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfBranchesAutoCasts.kt")
+    public void testIfBranchesAutoCasts() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfBranchesAutoCasts.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfBranchesAutoCasts2.kt")
+    public void testIfBranchesAutoCasts2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfBranchesAutoCasts2.kt");
         doTest(fileName);
     }
 

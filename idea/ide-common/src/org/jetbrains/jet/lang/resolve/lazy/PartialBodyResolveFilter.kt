@@ -83,15 +83,30 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
     private fun potentialSmartCastPlaces(expression: JetExpression, filter: (String) -> Boolean = { true }): Map<String, List<JetExpression>> {
         val map = HashMap<String, ArrayList<JetExpression>>(0)
 
-        fun addIfCanBeSmartCasted(expression: JetExpression) {
-            val name = expression.smartCastedExpressionName() ?: return
-            if (!filter(name)) return
+        fun addPlace(name: String, place: JetExpression) {
             var list = map[name]
             if (list == null) {
                 list = ArrayList(1)
                 map[name] = list
             }
-            list!!.add(expression)
+            list!!.add(place)
+        }
+
+        fun addPlaces(name: String, places: Collection<JetExpression>) {
+            assert(!places.isEmpty())
+            var list = map[name]
+            if (list == null) {
+                list = ArrayList(places.size)
+                map[name] = list
+            }
+            list!!.addAll(places)
+        }
+
+        fun addIfCanBeSmartCasted(expression: JetExpression) {
+            val name = expression.smartCastedExpressionName() ?: return
+            if (filter(name)) {
+                addPlace(name, expression)
+            }
         }
 
         expression.accept(object : ControlFlowVisitor(){
@@ -121,21 +136,29 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
                     val exits = collectAlwaysExitPoints(thenBranch) + collectAlwaysExitPoints(elseBranch)
                     if (exits.isNotEmpty()) {
                         for (name in smartCastedNames) {
-                            var list = map[name]
-                            if (list == null) {
-                                list = ArrayList(exits.size)
-                                map[name] = list
-                            }
-                            list!!.addAll(exits)
+                            addPlaces(name, exits)
                         }
                     }
                 }
 
                 condition.acceptChildren(this)
+
                 if (thenBranch != null && elseBranch != null) {
-                    //TODO: merge casts!
-                    thenBranch.acceptChildren(this)
-                    elseBranch.acceptChildren(this)
+                    val thenCasts = potentialSmartCastPlaces(thenBranch, filter)
+                    if (!thenCasts.isEmpty()) {
+                        val elseCasts = potentialSmartCastPlaces(elseBranch) { filter(it) && thenCasts.containsKey(it) }
+                        if (!elseCasts.isEmpty()) {
+                            for ((name, places) in thenCasts) {
+                                if (elseCasts.containsKey(name)) { // need filtering by cast names in else-branch
+                                    addPlaces(name, places)
+                                }
+                            }
+
+                            for ((name, places) in elseCasts) { // already filtered by cast names in then-branch
+                                addPlaces(name, places)
+                            }
+                        }
+                    }
                 }
             }
 

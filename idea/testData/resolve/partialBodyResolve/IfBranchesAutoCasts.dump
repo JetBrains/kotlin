@@ -1,0 +1,3 @@
+Resolve target: null
+Skipped statements:
+if (x()) { y(p!!) } else { z(p1!!) }
