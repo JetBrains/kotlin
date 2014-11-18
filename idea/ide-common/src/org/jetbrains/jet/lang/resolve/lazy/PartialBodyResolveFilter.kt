@@ -141,7 +141,7 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
                     }
                 }
 
-                condition.acceptChildren(this)
+                condition.accept(this)
 
                 if (thenBranch != null && elseBranch != null) {
                     val thenCasts = potentialSmartCastPlaces(thenBranch, filter)

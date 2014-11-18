@@ -48,6 +48,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("BangBangInIfCondition.kt")
+    public void testBangBangInIfCondition() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/BangBangInIfCondition.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DeclarationsBefore.kt")
     public void testDeclarationsBefore() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/DeclarationsBefore.kt");

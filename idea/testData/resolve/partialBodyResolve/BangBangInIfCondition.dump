@@ -1,0 +1,3 @@
+Resolve target: value-parameter val p: kotlin.Boolean? smart-casted to kotlin.Boolean
+Skipped statements:
+print(p1!!.hashCode())
