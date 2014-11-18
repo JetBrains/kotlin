@@ -27,12 +27,12 @@ DeserializedTypeParameterDescriptor@13['T'] {
     upperBoundsAsType = DeserializedType@16['kotlin.Any']
 }
 
-DeserializedType@12['kotlin.Any'] {
+DeserializedType@16['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@17
     memberScope = DeserializedClassMemberScope@18
 }
 
-DeserializedType@16['kotlin.Any'] {
+DeserializedType@12['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@17
     memberScope = DeserializedClassMemberScope@18
 }
@@ -153,27 +153,30 @@ LazyJavaPackageFragment@8['reflect'] {
 
 ResolutionTaskHolder@89 {
     <name not found> = ArrayList@90[1] { ResolutionCandidate@91 }
-    <name not found> = ArrayList@92[1] { ResolutionCandidate@91 }
-    <name not found> = EmptyList@58[empty]
-    <name not found> = EmptyList@58[empty]
     <name not found> = EmptyList@58[empty]
     <name not found> = EmptyList@58[empty]
 }
 
-ResolutionTaskHolder@93 {
-    <name not found> = ArrayList@94[1] { ResolutionCandidate@95 }
-    <name not found> = ArrayList@96[1] { ResolutionCandidate@95 }
+ResolutionTaskHolder@92 {
+    <name not found> = ArrayList@93[1] { ResolutionCandidate@94 }
 }
 
-TypeDeserializer@97 {
-    classDescriptors('2': Integer@98) = DeserializedClassDescriptor@99['Any']
+TypeDeserializer@95 {
+    classDescriptors('2': Integer@96) = DeserializedClassDescriptor@97['Any']
 }
 
-TypeDeserializer@100 {
-    classDescriptors('2': Integer@98) = DeserializedClassDescriptor@99['Any']
+TypeDeserializer@98 {
+    classDescriptors('2': Integer@96) = DeserializedClassDescriptor@97['Any']
 }
 
-TypeDeserializer@101 {
-    classDescriptors('3': Integer@102) = DeserializedClassDescriptor@99['Any']
-    classDescriptors('4': Integer@103) = DeserializedClassDescriptor@2['ExtensionFunction0']
+TypeDeserializer@99 {
+    classDescriptors('3': Integer@100) = DeserializedClassDescriptor@97['Any']
+    classDescriptors('4': Integer@101) = DeserializedClassDescriptor@2['ExtensionFunction0']
+}
+
+null {
+    <name not found> = ArrayList@102[1] { ResolutionCandidate@91 }
+    <name not found> = ArrayList@103[1] { ResolutionCandidate@94 }
+    <name not found> = EmptyList@58[empty]
+    <name not found> = EmptyList@58[empty]
 }

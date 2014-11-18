@@ -41,15 +41,18 @@ LazyJavaPackageFragment@10['java'] {
 
 ResolutionTaskHolder@39 {
     <name not found> = ArrayList@40[1] { ResolutionCandidate@41 }
-    <name not found> = ArrayList@42[1] { ResolutionCandidate@41 }
 }
 
-ResolutionTaskHolder@43 {
-    <name not found> = ArrayList@44[8] { ResolutionCandidate@45, ResolutionCandidate@46, ResolutionCandidate@47, ... }
-    <name not found> = ArrayList@48[8] { ResolutionCandidate@45, ResolutionCandidate@46, ResolutionCandidate@47, ... }
+ResolutionTaskHolder@42 {
+    <name not found> = ArrayList@43[8] { ResolutionCandidate@44, ResolutionCandidate@45, ResolutionCandidate@46, ... }
 }
 
-ResolutionTaskHolder@49 {
-    <name not found> = ArrayList@50[8] { ResolutionCandidate@51, ResolutionCandidate@52, ResolutionCandidate@53, ... }
-    <name not found> = ArrayList@54[8] { ResolutionCandidate@51, ResolutionCandidate@52, ResolutionCandidate@53, ... }
+ResolutionTaskHolder@47 {
+    <name not found> = ArrayList@48[8] { ResolutionCandidate@49, ResolutionCandidate@50, ResolutionCandidate@51, ... }
+}
+
+null {
+    <name not found> = ArrayList@52[1] { ResolutionCandidate@41 }
+    <name not found> = ArrayList@53[8] { ResolutionCandidate@44, ResolutionCandidate@45, ResolutionCandidate@46, ... }
+    <name not found> = ArrayList@54[8] { ResolutionCandidate@49, ResolutionCandidate@50, ResolutionCandidate@51, ... }
 }

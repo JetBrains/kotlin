@@ -37,14 +37,14 @@ LazyJavaClassifierType@26['B'] {
 
 LazyJavaClassifierType@29['B'] {
     arguments = ArrayList@30[empty]
-    classifier = JavaTypeParameterImpl@28['B']
+    classifier = JavaTypeParameterImpl@23['B']
     nullable = 'true': Boolean@31
     typeConstructor = AbstractLazyTypeParameterDescriptor$1@25
 }
 
 LazyJavaClassifierType@32['B'] {
     arguments = ArrayList@33[empty]
-    classifier = JavaTypeParameterImpl@23['B']
+    classifier = JavaTypeParameterImpl@28['B']
     nullable = 'true': Boolean@31
     typeConstructor = AbstractLazyTypeParameterDescriptor$1@25
 }
@@ -149,25 +149,28 @@ LazyJavaTypeParameterResolver@95 {
 
 ResolutionTaskHolder@97 {
     <name not found> = ArrayList@98[1] { ResolutionCandidate@99 }
-    <name not found> = ArrayList@100[1] { ResolutionCandidate@99 }
+    <name not found> = EmptyList@8[empty]
+    <name not found> = EmptyList@8[empty]
+}
+
+ResolutionTaskHolder@100 {
+    <name not found> = ArrayList@101[1] { ResolutionCandidate@102 }
+}
+
+ResolutionTaskHolder@103 {
+    <name not found> = EmptyList@8[empty]
+    <name not found> = EmptyList@8[empty]
+    <name not found> = EmptyList@8[empty]
+    <name not found> = EmptyList@8[empty]
     <name not found> = EmptyList@8[empty]
     <name not found> = EmptyList@8[empty]
     <name not found> = EmptyList@8[empty]
     <name not found> = EmptyList@8[empty]
 }
 
-ResolutionTaskHolder@101 {
-    <name not found> = ArrayList@102[1] { ResolutionCandidate@103 }
-    <name not found> = ArrayList@104[1] { ResolutionCandidate@103 }
-}
-
-ResolutionTaskHolder@105 {
-    <name not found> = EmptyList@8[empty]
-    <name not found> = EmptyList@8[empty]
-    <name not found> = EmptyList@8[empty]
-    <name not found> = EmptyList@8[empty]
-    <name not found> = EmptyList@8[empty]
-    <name not found> = EmptyList@8[empty]
+null {
+    <name not found> = ArrayList@104[1] { ResolutionCandidate@99 }
+    <name not found> = ArrayList@105[1] { ResolutionCandidate@102 }
     <name not found> = EmptyList@8[empty]
     <name not found> = EmptyList@8[empty]
     <name not found> = EmptyList@8[empty]

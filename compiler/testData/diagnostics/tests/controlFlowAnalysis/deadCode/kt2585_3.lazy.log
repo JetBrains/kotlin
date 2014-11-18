@@ -73,14 +73,14 @@ LazyJavaClassifierType@41['String'] {
 
 LazyJavaClassifierType@44['String'] {
     arguments = ArrayList@45[empty]
-    classifier = JavaClassImpl@40['String']
+    classifier = JavaClassImpl@43['String']
     nullable = 'true': Boolean@46
     typeConstructor = DeserializedClassTypeConstructor@34
 }
 
 LazyJavaClassifierType@47['String'] {
     arguments = ArrayList@48[empty]
-    classifier = JavaClassImpl@43['String']
+    classifier = JavaClassImpl@32['String']
     nullable = 'true': Boolean@46
     typeConstructor = DeserializedClassTypeConstructor@34
 }
@@ -94,7 +94,7 @@ LazyJavaClassifierType@49['String'] {
 
 LazyJavaClassifierType@51['String'] {
     arguments = ArrayList@52[empty]
-    classifier = JavaClassImpl@32['String']
+    classifier = JavaClassImpl@40['String']
     nullable = 'true': Boolean@46
     typeConstructor = DeserializedClassTypeConstructor@34
 }
@@ -122,21 +122,21 @@ LazyJavaClassifierType@60['Throwable'] {
 
 LazyJavaClassifierType@63['Throwable'] {
     arguments = ArrayList@64[empty]
-    classifier = JavaClassImpl@62['Throwable']
+    classifier = JavaClassImpl@55['Throwable']
     nullable = 'true': Boolean@46
     typeConstructor = DeserializedClassTypeConstructor@56
 }
 
 LazyJavaClassifierType@65['Throwable'] {
     arguments = ArrayList@66[empty]
-    classifier = JavaClassImpl@55['Throwable']
+    classifier = JavaClassImpl@59['Throwable']
     nullable = 'true': Boolean@46
     typeConstructor = DeserializedClassTypeConstructor@56
 }
 
 LazyJavaClassifierType@67['Throwable'] {
     arguments = ArrayList@68[empty]
-    classifier = JavaClassImpl@59['Throwable']
+    classifier = JavaClassImpl@62['Throwable']
     nullable = 'true': Boolean@46
     typeConstructor = DeserializedClassTypeConstructor@56
 }
@@ -190,16 +190,19 @@ LazyJavaPackageFragment@78['lang'] {
 
 ResolutionTaskHolder@98 {
     <name not found> = ArrayList@99[2] { ResolutionCandidate@100, ResolutionCandidate@101 }
-    <name not found> = ArrayList@102[2] { ResolutionCandidate@100, ResolutionCandidate@101 }
-    <name not found> = EmptyList@90[empty]
-    <name not found> = EmptyList@90[empty]
     <name not found> = EmptyList@90[empty]
     <name not found> = EmptyList@90[empty]
 }
 
-ResolutionTaskHolder@103 {
-    <name not found> = ArrayList@104[4] { ResolutionCandidate@105, ResolutionCandidate@106, ResolutionCandidate@107, ... }
-    <name not found> = ArrayList@108[5] { ResolutionCandidate@105, ResolutionCandidate@106, ResolutionCandidate@107, ... }
+ResolutionTaskHolder@102 {
+    <name not found> = ArrayList@103[4] { ResolutionCandidate@104, ResolutionCandidate@105, ResolutionCandidate@106, ... }
+    <name not found> = EmptyList@90[empty]
+    <name not found> = EmptyList@90[empty]
+}
+
+null {
+    <name not found> = ArrayList@107[2] { ResolutionCandidate@100, ResolutionCandidate@101 }
+    <name not found> = ArrayList@108[5] { ResolutionCandidate@104, ResolutionCandidate@105, ResolutionCandidate@106, ... }
     <name not found> = EmptyList@90[empty]
     <name not found> = EmptyList@90[empty]
     <name not found> = EmptyList@90[empty]

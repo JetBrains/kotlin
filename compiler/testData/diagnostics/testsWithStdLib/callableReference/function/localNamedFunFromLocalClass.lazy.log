@@ -57,12 +57,12 @@ DeserializedType@30['kotlin.Any'] {
     memberScope = DeserializedClassMemberScope@32
 }
 
-DeserializedType@22['kotlin.Any'] {
+DeserializedType@26['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@31
     memberScope = DeserializedClassMemberScope@32
 }
 
-DeserializedType@26['kotlin.Any'] {
+DeserializedType@22['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@31
     memberScope = DeserializedClassMemberScope@32
 }
@@ -276,58 +276,61 @@ LazyJavaPackageFragment@18['reflect'] {
 
 ResolutionTaskHolder@129 {
     <name not found> = ArrayList@130[1] { ResolutionCandidate@131 }
-    <name not found> = ArrayList@132[1] { ResolutionCandidate@131 }
-    <name not found> = EmptyList@97[empty]
     <name not found> = EmptyList@97[empty]
 }
 
-ResolutionTaskHolder@133 {
-    <name not found> = ArrayList@134[1] { ResolutionCandidate@135 }
-    <name not found> = ArrayList@136[1] { ResolutionCandidate@135 }
-    <name not found> = EmptyList@97[empty]
+ResolutionTaskHolder@132 {
+    <name not found> = ArrayList@133[1] { ResolutionCandidate@134 }
     <name not found> = EmptyList@97[empty]
 }
 
-ResolutionTaskHolder@137 {
-    <name not found> = ArrayList@138[1] { ResolutionCandidate@139 }
-    <name not found> = ArrayList@140[1] { ResolutionCandidate@139 }
+ResolutionTaskHolder@135 {
+    <name not found> = ArrayList@136[1] { ResolutionCandidate@137 }
     <name not found> = EmptyList@97[empty]
-    <name not found> = EmptyList@97[empty]
+}
+
+ResolutionTaskHolder@138 {
+    <name not found> = ArrayList@139[1] { ResolutionCandidate@140 }
 }
 
 ResolutionTaskHolder@141 {
     <name not found> = ArrayList@142[1] { ResolutionCandidate@143 }
-    <name not found> = ArrayList@144[1] { ResolutionCandidate@143 }
 }
 
-ResolutionTaskHolder@145 {
-    <name not found> = ArrayList@146[1] { ResolutionCandidate@147 }
-    <name not found> = ArrayList@148[1] { ResolutionCandidate@147 }
+ResolutionTaskHolder@144 {
+    <name not found> = ArrayList@145[1] { ResolutionCandidate@146 }
 }
 
-ResolutionTaskHolder@149 {
-    <name not found> = ArrayList@150[1] { ResolutionCandidate@151 }
-    <name not found> = ArrayList@152[1] { ResolutionCandidate@151 }
+TypeDeserializer@147 {
+    classDescriptors('2': Integer@148) = DeserializedClassDescriptor@149['Any']
 }
 
-TypeDeserializer@153 {
-    classDescriptors('2': Integer@154) = DeserializedClassDescriptor@155['Any']
+TypeDeserializer@150 {
+    classDescriptors('2': Integer@148) = DeserializedClassDescriptor@149['Any']
 }
 
-TypeDeserializer@156 {
-    classDescriptors('2': Integer@154) = DeserializedClassDescriptor@155['Any']
+TypeDeserializer@151 {
+    classDescriptors('2': Integer@148) = DeserializedClassDescriptor@149['Any']
 }
 
-TypeDeserializer@157 {
-    classDescriptors('2': Integer@154) = DeserializedClassDescriptor@155['Any']
+TypeDeserializer@152 {
+    classDescriptors('3': Integer@153) = DeserializedClassDescriptor@149['Any']
+    classDescriptors('4': Integer@154) = DeserializedClassDescriptor@2['Function0']
 }
 
-TypeDeserializer@158 {
-    classDescriptors('3': Integer@159) = DeserializedClassDescriptor@155['Any']
-    classDescriptors('4': Integer@160) = DeserializedClassDescriptor@2['Function0']
+TypeDeserializer@155 {
+    classDescriptors('3': Integer@153) = DeserializedClassDescriptor@149['Any']
+    classDescriptors('4': Integer@154) = DeserializedClassDescriptor@4['Function1']
 }
 
-TypeDeserializer@161 {
-    classDescriptors('3': Integer@159) = DeserializedClassDescriptor@155['Any']
-    classDescriptors('4': Integer@160) = DeserializedClassDescriptor@4['Function1']
+null {
+    <name not found> = ArrayList@156[1] { ResolutionCandidate@146 }
+    <name not found> = ArrayList@157[1] { ResolutionCandidate@140 }
+    <name not found> = ArrayList@158[1] { ResolutionCandidate@143 }
+    <name not found> = ArrayList@159[1] { ResolutionCandidate@131 }
+    <name not found> = ArrayList@160[1] { ResolutionCandidate@137 }
+    <name not found> = ArrayList@161[1] { ResolutionCandidate@134 }
+    <name not found> = EmptyList@97[empty]
+    <name not found> = EmptyList@97[empty]
+    <name not found> = EmptyList@97[empty]
 }

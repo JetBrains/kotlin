@@ -93,7 +93,7 @@ LazyJavaPackageFragmentProvider@66 {
     packageFragments('kotlin.jvm': FqName@89) = null
     packageFragments('p': FqName@90) = null
     packageFragments('p.B': FqName@91) = null
-    packageFragments('p.C': FqName@30) = null
+    packageFragments('p.C': FqName@61) = null
     packageFragments('p.G1': FqName@92) = null
     packageFragments('p.G2': FqName@93) = null
     packageFragments('p.Int': FqName@94) = null
@@ -127,7 +127,7 @@ LazyJavaPackageFragmentProvider@96 {
     packageFragments('kotlin.jvm': FqName@119) = null
     packageFragments('p': FqName@120) = null
     packageFragments('p.B': FqName@121) = null
-    packageFragments('p.C': FqName@61) = null
+    packageFragments('p.C': FqName@30) = null
     packageFragments('p.G1': FqName@122) = null
     packageFragments('p.G2': FqName@123) = null
     packageFragments('p.Int': FqName@124) = null
@@ -158,7 +158,7 @@ LazyJavaPackageFragmentProvider@126 {
     packageFragments('kotlin.jvm': FqName@134) = null
     packageFragments('p': FqName@135) = null
     packageFragments('p.B': FqName@121) = null
-    packageFragments('p.C': FqName@61) = null
+    packageFragments('p.C': FqName@30) = null
     packageFragments('p.G1': FqName@136) = null
     packageFragments('p.G2': FqName@137) = null
     packageFragments('p.Int': FqName@124) = null
@@ -217,7 +217,7 @@ LazyJavaPackageFragment@97['<root>'] {
     memberIndex = computeMemberIndex$1@155 // through LazyPackageFragmentScopeForJavaPackage@154
 }
 
-LazyJavaPackageFragment@129['java'] {
+LazyJavaPackageFragment@10['java'] {
     classes('lang': Name@156) = null // through LazyPackageFragmentScopeForJavaPackage@157
     deserializedPackageScope = Empty@146 // through LazyPackageFragmentScopeForJavaPackage@157
     functions('lang': Name@158) = EmptyList@148[empty] // through LazyPackageFragmentScopeForJavaPackage@157
@@ -231,21 +231,21 @@ LazyJavaPackageFragment@43['java'] {
     memberIndex = computeMemberIndex$1@163 // through LazyPackageFragmentScopeForJavaPackage@161
 }
 
-LazyJavaPackageFragment@104['java'] {
+LazyJavaPackageFragment@129['java'] {
     classes('lang': Name@164) = null // through LazyPackageFragmentScopeForJavaPackage@165
     deserializedPackageScope = Empty@146 // through LazyPackageFragmentScopeForJavaPackage@165
     functions('lang': Name@166) = EmptyList@148[empty] // through LazyPackageFragmentScopeForJavaPackage@165
     memberIndex = computeMemberIndex$1@167 // through LazyPackageFragmentScopeForJavaPackage@165
 }
 
-LazyJavaPackageFragment@74['java'] {
+LazyJavaPackageFragment@104['java'] {
     classes('lang': Name@168) = null // through LazyPackageFragmentScopeForJavaPackage@169
     deserializedPackageScope = Empty@146 // through LazyPackageFragmentScopeForJavaPackage@169
     functions('lang': Name@170) = EmptyList@148[empty] // through LazyPackageFragmentScopeForJavaPackage@169
     memberIndex = computeMemberIndex$1@171 // through LazyPackageFragmentScopeForJavaPackage@169
 }
 
-LazyJavaPackageFragment@10['java'] {
+LazyJavaPackageFragment@74['java'] {
     classes('lang': Name@172) = null // through LazyPackageFragmentScopeForJavaPackage@173
     deserializedPackageScope = Empty@146 // through LazyPackageFragmentScopeForJavaPackage@173
     functions('lang': Name@174) = EmptyList@148[empty] // through LazyPackageFragmentScopeForJavaPackage@173
@@ -254,25 +254,28 @@ LazyJavaPackageFragment@10['java'] {
 
 ResolutionTaskHolder@176 {
     <name not found> = ArrayList@177[1] { ResolutionCandidate@178 }
-    <name not found> = ArrayList@179[1] { ResolutionCandidate@178 }
 }
 
-ResolutionTaskHolder@180 {
-    <name not found> = ArrayList@181[1] { ResolutionCandidate@182 }
-    <name not found> = ArrayList@183[1] { ResolutionCandidate@182 }
+ResolutionTaskHolder@179 {
+    <name not found> = ArrayList@180[1] { ResolutionCandidate@181 }
 }
 
-ResolutionTaskHolder@184 {
-    <name not found> = ArrayList@185[1] { ResolutionCandidate@186 }
-    <name not found> = ArrayList@187[1] { ResolutionCandidate@186 }
+ResolutionTaskHolder@182 {
+    <name not found> = ArrayList@183[1] { ResolutionCandidate@184 }
+}
+
+ResolutionTaskHolder@185 {
+    <name not found> = ArrayList@186[1] { ResolutionCandidate@187 }
 }
 
 ResolutionTaskHolder@188 {
-    <name not found> = ArrayList@189[1] { ResolutionCandidate@190 }
-    <name not found> = ArrayList@191[1] { ResolutionCandidate@190 }
+    <name not found> = ArrayList@189[3] { ResolutionCandidate@190, ResolutionCandidate@191, ResolutionCandidate@192 }
 }
 
-ResolutionTaskHolder@192 {
-    <name not found> = ArrayList@193[3] { ResolutionCandidate@194, ResolutionCandidate@195, ResolutionCandidate@196 }
-    <name not found> = ArrayList@197[3] { ResolutionCandidate@194, ResolutionCandidate@195, ResolutionCandidate@196 }
+null {
+    <name not found> = ArrayList@193[1] { ResolutionCandidate@184 }
+    <name not found> = ArrayList@194[1] { ResolutionCandidate@187 }
+    <name not found> = ArrayList@195[1] { ResolutionCandidate@178 }
+    <name not found> = ArrayList@196[1] { ResolutionCandidate@181 }
+    <name not found> = ArrayList@197[3] { ResolutionCandidate@190, ResolutionCandidate@191, ResolutionCandidate@192 }
 }

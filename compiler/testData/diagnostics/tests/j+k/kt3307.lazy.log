@@ -140,33 +140,36 @@ LazyJavaTypeParameterResolver@85 {
 
 ResolutionTaskHolder@87 {
     <name not found> = ArrayList@88[1] { ResolutionCandidate@89 }
-    <name not found> = ArrayList@90[1] { ResolutionCandidate@89 }
-    <name not found> = EmptyList@74[empty]
-    <name not found> = EmptyList@74[empty]
     <name not found> = EmptyList@74[empty]
     <name not found> = EmptyList@74[empty]
 }
 
-ResolutionTaskHolder@91 {
-    <name not found> = ArrayList@92[1] { ResolutionCandidate@93 }
-    <name not found> = ArrayList@94[1] { ResolutionCandidate@93 }
-    <name not found> = EmptyList@74[empty]
-    <name not found> = EmptyList@74[empty]
+ResolutionTaskHolder@90 {
+    <name not found> = ArrayList@91[1] { ResolutionCandidate@92 }
     <name not found> = EmptyList@74[empty]
     <name not found> = EmptyList@74[empty]
 }
 
-ResolutionTaskHolder@95 {
-    <name not found> = ArrayList@96[1] { ResolutionCandidate@97 }
-    <name not found> = ArrayList@98[1] { ResolutionCandidate@97 }
+ResolutionTaskHolder@93 {
+    <name not found> = ArrayList@94[1] { ResolutionCandidate@95 }
+}
+
+ResolutionTaskHolder@96 {
+    <name not found> = ArrayList@97[1] { ResolutionCandidate@98 }
 }
 
 ResolutionTaskHolder@99 {
     <name not found> = ArrayList@100[1] { ResolutionCandidate@101 }
-    <name not found> = ArrayList@102[1] { ResolutionCandidate@101 }
 }
 
-ResolutionTaskHolder@103 {
-    <name not found> = ArrayList@104[1] { ResolutionCandidate@105 }
-    <name not found> = ArrayList@106[1] { ResolutionCandidate@105 }
+null {
+    <name not found> = ArrayList@102[1] { ResolutionCandidate@92 }
+    <name not found> = ArrayList@103[1] { ResolutionCandidate@101 }
+    <name not found> = ArrayList@104[1] { ResolutionCandidate@89 }
+    <name not found> = ArrayList@105[1] { ResolutionCandidate@95 }
+    <name not found> = ArrayList@106[1] { ResolutionCandidate@98 }
+    <name not found> = EmptyList@74[empty]
+    <name not found> = EmptyList@74[empty]
+    <name not found> = EmptyList@74[empty]
+    <name not found> = EmptyList@74[empty]
 }

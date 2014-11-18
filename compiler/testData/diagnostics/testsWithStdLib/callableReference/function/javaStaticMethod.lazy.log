@@ -61,6 +61,11 @@ DeserializedType@39['R in kotlin.reflect.KFunction1'] {
     constructor = AbstractLazyTypeParameterDescriptor$1@33
 }
 
+DeserializedType@28['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@40
+    memberScope = DeserializedClassMemberScope@41
+}
+
 DeserializedType@35['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@40
     memberScope = DeserializedClassMemberScope@41
@@ -71,16 +76,11 @@ DeserializedType@42['kotlin.Any'] {
     memberScope = DeserializedClassMemberScope@41
 }
 
-DeserializedType@28['kotlin.Any'] {
+DeserializedType@43['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@40
-    memberScope = DeserializedClassMemberScope@41
 }
 
 DeserializedType@24['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@40
-}
-
-DeserializedType@43['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@40
 }
 
@@ -267,63 +267,66 @@ NestedClassDescriptors@159 {
 
 ResolutionTaskHolder@160 {
     <name not found> = ArrayList@161[1] { ResolutionCandidate@162 }
-    <name not found> = ArrayList@163[1] { ResolutionCandidate@162 }
-    <name not found> = EmptyList@57[empty]
-    <name not found> = EmptyList@57[empty]
     <name not found> = EmptyList@57[empty]
     <name not found> = EmptyList@57[empty]
 }
 
-ResolutionTaskHolder@164 {
-    <name not found> = ArrayList@165[1] { ResolutionCandidate@166 }
-    <name not found> = ArrayList@167[1] { ResolutionCandidate@166 }
-    <name not found> = EmptyList@57[empty]
-    <name not found> = EmptyList@57[empty]
+ResolutionTaskHolder@163 {
+    <name not found> = ArrayList@164[1] { ResolutionCandidate@165 }
     <name not found> = EmptyList@57[empty]
     <name not found> = EmptyList@57[empty]
 }
 
-ResolutionTaskHolder@168 {
-    <name not found> = ArrayList@169[1] { ResolutionCandidate@170 }
-    <name not found> = ArrayList@171[1] { ResolutionCandidate@170 }
+ResolutionTaskHolder@166 {
+    <name not found> = ArrayList@167[1] { ResolutionCandidate@168 }
     <name not found> = EmptyList@57[empty]
-    <name not found> = EmptyList@57[empty]
+}
+
+ResolutionTaskHolder@169 {
+    <name not found> = ArrayList@170[1] { ResolutionCandidate@171 }
 }
 
 ResolutionTaskHolder@172 {
     <name not found> = ArrayList@173[1] { ResolutionCandidate@174 }
-    <name not found> = ArrayList@175[1] { ResolutionCandidate@174 }
 }
 
-ResolutionTaskHolder@176 {
-    <name not found> = ArrayList@177[1] { ResolutionCandidate@178 }
-    <name not found> = ArrayList@179[1] { ResolutionCandidate@178 }
+ResolutionTaskHolder@175 {
+    <name not found> = ArrayList@176[1] { ResolutionCandidate@177 }
 }
 
-ResolutionTaskHolder@180 {
-    <name not found> = ArrayList@181[1] { ResolutionCandidate@182 }
-    <name not found> = ArrayList@183[1] { ResolutionCandidate@182 }
+ResolutionTaskHolder@178 {
+    <name not found> = ArrayList@179[1] { ResolutionCandidate@180 }
 }
 
-ResolutionTaskHolder@184 {
-    <name not found> = ArrayList@185[1] { ResolutionCandidate@186 }
-    <name not found> = ArrayList@187[1] { ResolutionCandidate@186 }
+ResolutionTaskHolder@181 {
+    <name not found> = ArrayList@182[1] { ResolutionCandidate@183 }
 }
 
-ResolutionTaskHolder@188 {
-    <name not found> = ArrayList@189[1] { ResolutionCandidate@190 }
-    <name not found> = ArrayList@191[1] { ResolutionCandidate@190 }
+TypeDeserializer@184 {
+    classDescriptors('2': Integer@185) = DeserializedClassDescriptor@186['Any']
 }
 
-TypeDeserializer@192 {
-    classDescriptors('2': Integer@193) = DeserializedClassDescriptor@194['Any']
+TypeDeserializer@187 {
+    classDescriptors('2': Integer@185) = DeserializedClassDescriptor@186['Any']
 }
 
-TypeDeserializer@195 {
-    classDescriptors('2': Integer@193) = DeserializedClassDescriptor@194['Any']
+TypeDeserializer@188 {
+    classDescriptors('3': Integer@189) = DeserializedClassDescriptor@186['Any']
+    classDescriptors('4': Integer@190) = DeserializedClassDescriptor@2['Function1']
 }
 
-TypeDeserializer@196 {
-    classDescriptors('3': Integer@197) = DeserializedClassDescriptor@194['Any']
-    classDescriptors('4': Integer@198) = DeserializedClassDescriptor@2['Function1']
+null {
+    <name not found> = ArrayList@191[1] { ResolutionCandidate@162 }
+    <name not found> = ArrayList@192[1] { ResolutionCandidate@174 }
+    <name not found> = ArrayList@193[1] { ResolutionCandidate@183 }
+    <name not found> = ArrayList@194[1] { ResolutionCandidate@168 }
+    <name not found> = ArrayList@195[1] { ResolutionCandidate@180 }
+    <name not found> = ArrayList@196[1] { ResolutionCandidate@165 }
+    <name not found> = ArrayList@197[1] { ResolutionCandidate@171 }
+    <name not found> = ArrayList@198[1] { ResolutionCandidate@177 }
+    <name not found> = EmptyList@57[empty]
+    <name not found> = EmptyList@57[empty]
+    <name not found> = EmptyList@57[empty]
+    <name not found> = EmptyList@57[empty]
+    <name not found> = EmptyList@57[empty]
 }

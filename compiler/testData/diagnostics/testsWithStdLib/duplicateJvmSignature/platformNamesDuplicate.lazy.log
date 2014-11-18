@@ -90,9 +90,12 @@ LazyJavaPackageFragment@3['platform'] {
 
 ResolutionTaskHolder@64 {
     <name not found> = ArrayList@65[1] { ResolutionCandidate@66 }
-    <name not found> = ArrayList@67[1] { ResolutionCandidate@66 }
 }
 
-TypeDeserializer@68 {
-    classDescriptors('4': Integer@69) = DeserializedClassDescriptor@70['String']
+TypeDeserializer@67 {
+    classDescriptors('4': Integer@68) = DeserializedClassDescriptor@69['String']
+}
+
+null {
+    <name not found> = ArrayList@70[1] { ResolutionCandidate@66 }
 }

@@ -56,14 +56,14 @@ LazyJavaClassifierType@30['String'] {
 
 LazyJavaClassifierType@33['String'] {
     arguments = ArrayList@34[empty]
-    classifier = JavaClassImpl@32['String']
+    classifier = JavaClassImpl@27['String']
     nullable = 'true': Boolean@35
     typeConstructor = DeserializedClassTypeConstructor@29
 }
 
 LazyJavaClassifierType@36['String'] {
     arguments = ArrayList@37[empty]
-    classifier = JavaClassImpl@27['String']
+    classifier = JavaClassImpl@32['String']
     nullable = 'true': Boolean@35
     typeConstructor = DeserializedClassTypeConstructor@29
 }
@@ -84,14 +84,14 @@ LazyJavaClassifierType@42['Throwable'] {
 
 LazyJavaClassifierType@45['Throwable'] {
     arguments = ArrayList@46[empty]
-    classifier = JavaClassImpl@40['Throwable']
+    classifier = JavaClassImpl@44['Throwable']
     nullable = 'true': Boolean@35
     typeConstructor = DeserializedClassTypeConstructor@41
 }
 
 LazyJavaClassifierType@47['Throwable'] {
     arguments = ArrayList@48[empty]
-    classifier = JavaClassImpl@44['Throwable']
+    classifier = JavaClassImpl@40['Throwable']
     nullable = 'true': Boolean@35
     typeConstructor = DeserializedClassTypeConstructor@41
 }
@@ -149,15 +149,18 @@ LazyJavaPackageFragment@62['lang'] {
 
 ResolutionTaskHolder@85 {
     <name not found> = ArrayList@86[4] { ResolutionCandidate@87, ResolutionCandidate@88, ResolutionCandidate@89, ... }
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+    <name not found> = EmptyList@77[empty]
+}
+
+null {
     <name not found> = ArrayList@90[4] { ResolutionCandidate@87, ResolutionCandidate@88, ResolutionCandidate@89, ... }
-    <name not found> = EmptyList@77[empty]
-    <name not found> = EmptyList@77[empty]
-    <name not found> = EmptyList@77[empty]
-    <name not found> = EmptyList@77[empty]
-    <name not found> = EmptyList@77[empty]
-    <name not found> = EmptyList@77[empty]
-    <name not found> = EmptyList@77[empty]
-    <name not found> = EmptyList@77[empty]
     <name not found> = EmptyList@77[empty]
     <name not found> = EmptyList@77[empty]
     <name not found> = EmptyList@77[empty]

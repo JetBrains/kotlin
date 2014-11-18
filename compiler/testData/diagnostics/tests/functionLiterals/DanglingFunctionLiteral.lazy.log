@@ -91,10 +91,6 @@ LazyJavaPackageFragment@37['lang'] {
 
 ResolutionTaskHolder@60 {
     <name not found> = ArrayList@61[3] { ResolutionCandidate@62, ResolutionCandidate@63, ResolutionCandidate@64 }
-    <name not found> = ArrayList@65[3] { ResolutionCandidate@62, ResolutionCandidate@63, ResolutionCandidate@64 }
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
     <name not found> = EmptyList@52[empty]
     <name not found> = EmptyList@52[empty]
     <name not found> = EmptyList@52[empty]
@@ -112,29 +108,14 @@ ResolutionTaskHolder@60 {
     <name not found> = EmptyList@52[empty]
 }
 
-ResolutionTaskHolder@66 {
-    <name not found> = ArrayList@67[3] { ResolutionCandidate@68, ResolutionCandidate@69, ResolutionCandidate@70 }
-    <name not found> = ArrayList@71[3] { ResolutionCandidate@68, ResolutionCandidate@69, ResolutionCandidate@70 }
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
+ResolutionTaskHolder@65 {
+    <name not found> = ArrayList@66[3] { ResolutionCandidate@67, ResolutionCandidate@68, ResolutionCandidate@69 }
     <name not found> = EmptyList@52[empty]
     <name not found> = EmptyList@52[empty]
 }
 
-ResolutionTaskHolder@72 {
-    <name not found> = ArrayList@73[4] { ResolutionCandidate@74, ResolutionCandidate@75, ResolutionCandidate@76, ... }
-    <name not found> = ArrayList@77[4] { ResolutionCandidate@74, ResolutionCandidate@75, ResolutionCandidate@76, ... }
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
-    <name not found> = EmptyList@52[empty]
+ResolutionTaskHolder@70 {
+    <name not found> = ArrayList@71[4] { ResolutionCandidate@72, ResolutionCandidate@73, ResolutionCandidate@74, ... }
     <name not found> = EmptyList@52[empty]
     <name not found> = EmptyList@52[empty]
     <name not found> = EmptyList@52[empty]
@@ -184,9 +165,31 @@ ResolutionTaskHolder@72 {
     <name not found> = EmptyList@52[empty]
 }
 
-ResolutionTaskHolder@78 {
-    <name not found> = ArrayList@79[4] { ResolutionCandidate@80, ResolutionCandidate@81, ResolutionCandidate@82, ... }
-    <name not found> = ArrayList@83[4] { ResolutionCandidate@80, ResolutionCandidate@81, ResolutionCandidate@82, ... }
+ResolutionTaskHolder@75 {
+    <name not found> = ArrayList@76[4] { ResolutionCandidate@77, ResolutionCandidate@78, ResolutionCandidate@79, ... }
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+}
+
+null {
+    <name not found> = ArrayList@80[3] { ResolutionCandidate@62, ResolutionCandidate@63, ResolutionCandidate@64 }
+    <name not found> = ArrayList@81[3] { ResolutionCandidate@67, ResolutionCandidate@68, ResolutionCandidate@69 }
+    <name not found> = ArrayList@82[4] { ResolutionCandidate@77, ResolutionCandidate@78, ResolutionCandidate@79, ... }
+    <name not found> = ArrayList@83[4] { ResolutionCandidate@72, ResolutionCandidate@73, ResolutionCandidate@74, ... }
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
+    <name not found> = EmptyList@52[empty]
     <name not found> = EmptyList@52[empty]
     <name not found> = EmptyList@52[empty]
     <name not found> = EmptyList@52[empty]

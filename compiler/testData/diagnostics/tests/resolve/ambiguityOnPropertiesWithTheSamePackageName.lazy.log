@@ -39,10 +39,13 @@ LazyJavaPackageFragment@20['lang'] {
 
 ResolutionTaskHolder@36 {
     <name not found> = ArrayList@37[2] { ResolutionCandidate@38, ResolutionCandidate@39 }
+    <name not found> = EmptyList@32[empty]
+    <name not found> = EmptyList@32[empty]
+    <name not found> = EmptyList@32[empty]
+}
+
+null {
     <name not found> = ArrayList@40[2] { ResolutionCandidate@38, ResolutionCandidate@39 }
-    <name not found> = EmptyList@32[empty]
-    <name not found> = EmptyList@32[empty]
-    <name not found> = EmptyList@32[empty]
     <name not found> = EmptyList@32[empty]
     <name not found> = EmptyList@32[empty]
     <name not found> = EmptyList@32[empty]

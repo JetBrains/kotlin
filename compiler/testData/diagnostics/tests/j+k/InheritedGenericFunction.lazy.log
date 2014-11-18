@@ -67,7 +67,7 @@ LazyJavaClassTypeConstructor@57['C'] {
     supertypes = ArrayList@65[2] { LazyJavaClassifierType@66['B'], LazyJavaClassifierType@67['A'] }
 }
 
-LazyJavaClassifierType@63['A'] {
+LazyJavaClassifierType@67['A'] {
     arguments = ArrayList@68[empty]
     classifier = JavaClassImpl@69['A']
     memberScope = LazyJavaClassMemberScope@4
@@ -75,7 +75,7 @@ LazyJavaClassifierType@63['A'] {
     typeConstructor = LazyJavaClassTypeConstructor@24['A']
 }
 
-LazyJavaClassifierType@67['A'] {
+LazyJavaClassifierType@63['A'] {
     arguments = ArrayList@71[empty]
     classifier = JavaClassImpl@72['A']
     memberScope = LazyJavaClassMemberScope@4
@@ -142,7 +142,7 @@ LazyJavaPackageFragmentProvider@93 {
     packageFragments('kotlin.jvm': FqName@106) = null
     packageFragments('p': FqName@107) = LazyJavaPackageFragment@108['p']
     packageFragments('p.C': FqName@109) = null
-    topLevelClasses(JavaClassImpl@72['A']) = LazyJavaClassDescriptor@0['A']
+    topLevelClasses(JavaClassImpl@69['A']) = LazyJavaClassDescriptor@0['A']
     topLevelClasses(JavaClassImpl@74['B']) = LazyJavaClassDescriptor@25['B']
     topLevelClasses(JavaClassImpl@110['C']) = LazyJavaClassDescriptor@40['C']
 }
@@ -189,5 +189,8 @@ LazyJavaTypeParameterResolver@131 {
 
 ResolutionTaskHolder@133 {
     <name not found> = ArrayList@134[1] { ResolutionCandidate@135 }
+}
+
+null {
     <name not found> = ArrayList@136[1] { ResolutionCandidate@135 }
 }

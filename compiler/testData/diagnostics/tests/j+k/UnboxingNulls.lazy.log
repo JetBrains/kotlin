@@ -88,30 +88,33 @@ LazyJavaTypeParameterResolver@63 {
 
 ResolutionTaskHolder@64 {
     <name not found> = ArrayList@65[1] { ResolutionCandidate@66 }
-    <name not found> = ArrayList@67[1] { ResolutionCandidate@66 }
+    <name not found> = EmptyList@51[empty]
+    <name not found> = EmptyList@51[empty]
+}
+
+ResolutionTaskHolder@67 {
+    <name not found> = ArrayList@68[1] { ResolutionCandidate@69 }
+}
+
+ResolutionTaskHolder@70 {
+    <name not found> = ArrayList@71[8] { ResolutionCandidate@72, ResolutionCandidate@73, ResolutionCandidate@74, ... }
+}
+
+ResolutionTaskHolder@75 {
+    <name not found> = EmptyList@51[empty]
+    <name not found> = EmptyList@51[empty]
+    <name not found> = EmptyList@51[empty]
+    <name not found> = EmptyList@51[empty]
     <name not found> = EmptyList@51[empty]
     <name not found> = EmptyList@51[empty]
     <name not found> = EmptyList@51[empty]
     <name not found> = EmptyList@51[empty]
 }
 
-ResolutionTaskHolder@68 {
-    <name not found> = ArrayList@69[1] { ResolutionCandidate@70 }
-    <name not found> = ArrayList@71[1] { ResolutionCandidate@70 }
-}
-
-ResolutionTaskHolder@72 {
-    <name not found> = ArrayList@73[8] { ResolutionCandidate@74, ResolutionCandidate@75, ResolutionCandidate@76, ... }
-    <name not found> = ArrayList@77[8] { ResolutionCandidate@74, ResolutionCandidate@75, ResolutionCandidate@76, ... }
-}
-
-ResolutionTaskHolder@78 {
-    <name not found> = EmptyList@51[empty]
-    <name not found> = EmptyList@51[empty]
-    <name not found> = EmptyList@51[empty]
-    <name not found> = EmptyList@51[empty]
-    <name not found> = EmptyList@51[empty]
-    <name not found> = EmptyList@51[empty]
+null {
+    <name not found> = ArrayList@76[1] { ResolutionCandidate@66 }
+    <name not found> = ArrayList@77[1] { ResolutionCandidate@69 }
+    <name not found> = ArrayList@78[8] { ResolutionCandidate@72, ResolutionCandidate@73, ResolutionCandidate@74, ... }
     <name not found> = EmptyList@51[empty]
     <name not found> = EmptyList@51[empty]
     <name not found> = EmptyList@51[empty]

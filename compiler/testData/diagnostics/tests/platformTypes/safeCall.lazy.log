@@ -114,34 +114,37 @@ LazyJavaPackageFragment@54['p'] {
 
 ResolutionTaskHolder@86 {
     <name not found> = ArrayList@87[1] { ResolutionCandidate@88 }
-    <name not found> = ArrayList@89[1] { ResolutionCandidate@88 }
-    <name not found> = EmptyList@74[empty]
-    <name not found> = EmptyList@74[empty]
     <name not found> = EmptyList@74[empty]
     <name not found> = EmptyList@74[empty]
 }
 
-ResolutionTaskHolder@90 {
-    <name not found> = ArrayList@91[1] { ResolutionCandidate@92 }
-    <name not found> = ArrayList@93[1] { ResolutionCandidate@92 }
+ResolutionTaskHolder@89 {
+    <name not found> = ArrayList@90[1] { ResolutionCandidate@91 }
 }
 
-ResolutionTaskHolder@94 {
-    <name not found> = ArrayList@95[1] { ResolutionCandidate@96 }
-    <name not found> = ArrayList@97[1] { ResolutionCandidate@96 }
+ResolutionTaskHolder@92 {
+    <name not found> = ArrayList@93[1] { ResolutionCandidate@94 }
+}
+
+ResolutionTaskHolder@95 {
+    <name not found> = ArrayList@96[1] { ResolutionCandidate@97 }
 }
 
 ResolutionTaskHolder@98 {
     <name not found> = ArrayList@99[1] { ResolutionCandidate@100 }
-    <name not found> = ArrayList@101[1] { ResolutionCandidate@100 }
 }
 
-ResolutionTaskHolder@102 {
-    <name not found> = ArrayList@103[1] { ResolutionCandidate@104 }
-    <name not found> = ArrayList@105[1] { ResolutionCandidate@104 }
+ResolutionTaskHolder@101 {
+    <name not found> = ArrayList@102[1] { ResolutionCandidate@103 }
 }
 
-ResolutionTaskHolder@106 {
-    <name not found> = ArrayList@107[1] { ResolutionCandidate@108 }
-    <name not found> = ArrayList@109[1] { ResolutionCandidate@108 }
+null {
+    <name not found> = ArrayList@104[1] { ResolutionCandidate@97 }
+    <name not found> = ArrayList@105[1] { ResolutionCandidate@91 }
+    <name not found> = ArrayList@106[1] { ResolutionCandidate@94 }
+    <name not found> = ArrayList@107[1] { ResolutionCandidate@103 }
+    <name not found> = ArrayList@108[1] { ResolutionCandidate@88 }
+    <name not found> = ArrayList@109[1] { ResolutionCandidate@100 }
+    <name not found> = EmptyList@74[empty]
+    <name not found> = EmptyList@74[empty]
 }

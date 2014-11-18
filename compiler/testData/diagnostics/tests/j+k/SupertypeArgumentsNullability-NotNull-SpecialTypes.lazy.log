@@ -66,14 +66,14 @@ LazyJavaClassifierType@47['T'] {
 
 LazyJavaClassifierType@50['T'] {
     arguments = ArrayList@51[empty]
-    classifier = JavaTypeParameterImpl@45['T']
+    classifier = JavaTypeParameterImpl@49['T']
     nullable = 'true': Boolean@42
     typeConstructor = AbstractLazyTypeParameterDescriptor$1@46
 }
 
 LazyJavaClassifierType@52['T'] {
     arguments = ArrayList@53[empty]
-    classifier = JavaTypeParameterImpl@49['T']
+    classifier = JavaTypeParameterImpl@45['T']
     nullable = 'true': Boolean@42
     typeConstructor = AbstractLazyTypeParameterDescriptor$1@46
 }
@@ -141,28 +141,31 @@ LazyJavaTypeParameterResolver@90 {
 
 ResolutionTaskHolder@91 {
     <name not found> = ArrayList@92[1] { ResolutionCandidate@93 }
-    <name not found> = ArrayList@94[1] { ResolutionCandidate@93 }
-    <name not found> = EmptyList@76[empty]
-    <name not found> = EmptyList@76[empty]
     <name not found> = EmptyList@76[empty]
     <name not found> = EmptyList@76[empty]
 }
 
-ResolutionTaskHolder@95 {
-    <name not found> = ArrayList@96[1] { ResolutionCandidate@97 }
-    <name not found> = ArrayList@98[1] { ResolutionCandidate@97 }
-    <name not found> = EmptyList@76[empty]
-    <name not found> = EmptyList@76[empty]
+ResolutionTaskHolder@94 {
+    <name not found> = ArrayList@95[1] { ResolutionCandidate@96 }
     <name not found> = EmptyList@76[empty]
     <name not found> = EmptyList@76[empty]
 }
 
-ResolutionTaskHolder@99 {
-    <name not found> = ArrayList@100[1] { ResolutionCandidate@101 }
-    <name not found> = ArrayList@102[1] { ResolutionCandidate@101 }
+ResolutionTaskHolder@97 {
+    <name not found> = ArrayList@98[1] { ResolutionCandidate@99 }
 }
 
-ResolutionTaskHolder@103 {
-    <name not found> = ArrayList@104[1] { ResolutionCandidate@105 }
-    <name not found> = ArrayList@106[1] { ResolutionCandidate@105 }
+ResolutionTaskHolder@100 {
+    <name not found> = ArrayList@101[1] { ResolutionCandidate@102 }
+}
+
+null {
+    <name not found> = ArrayList@103[1] { ResolutionCandidate@93 }
+    <name not found> = ArrayList@104[1] { ResolutionCandidate@102 }
+    <name not found> = ArrayList@105[1] { ResolutionCandidate@96 }
+    <name not found> = ArrayList@106[1] { ResolutionCandidate@99 }
+    <name not found> = EmptyList@76[empty]
+    <name not found> = EmptyList@76[empty]
+    <name not found> = EmptyList@76[empty]
+    <name not found> = EmptyList@76[empty]
 }

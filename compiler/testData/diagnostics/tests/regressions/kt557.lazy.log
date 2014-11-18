@@ -53,12 +53,6 @@ LazyJavaPackageFragment@11['lang'] {
 
 ResolutionTaskHolder@41 {
     <name not found> = ArrayList@42[1] { ResolutionCandidate@43 }
-    <name not found> = ArrayList@44[1] { ResolutionCandidate@43 }
-    <name not found> = EmptyList@33[empty]
-    <name not found> = EmptyList@33[empty]
-    <name not found> = EmptyList@33[empty]
-    <name not found> = EmptyList@33[empty]
-    <name not found> = EmptyList@33[empty]
     <name not found> = EmptyList@33[empty]
     <name not found> = EmptyList@33[empty]
     <name not found> = EmptyList@33[empty]
@@ -84,21 +78,30 @@ ResolutionTaskHolder@41 {
     <name not found> = EmptyList@33[empty]
 }
 
-ResolutionTaskHolder@45 {
-    <name not found> = ArrayList@46[1] { ResolutionCandidate@47 }
-    <name not found> = ArrayList@48[1] { ResolutionCandidate@47 }
-    <name not found> = EmptyList@33[empty]
-    <name not found> = EmptyList@33[empty]
+ResolutionTaskHolder@44 {
+    <name not found> = ArrayList@45[1] { ResolutionCandidate@46 }
     <name not found> = EmptyList@33[empty]
     <name not found> = EmptyList@33[empty]
 }
 
-ResolutionTaskHolder@49 {
-    <name not found> = ArrayList@50[1] { ResolutionCandidate@51 }
-    <name not found> = ArrayList@52[1] { ResolutionCandidate@51 }
+ResolutionTaskHolder@47 {
+    <name not found> = ArrayList@48[1] { ResolutionCandidate@49 }
 }
 
-ResolutionTaskHolder@53 {
-    <name not found> = ArrayList@54[1] { ResolutionCandidate@55 }
-    <name not found> = ArrayList@56[1] { ResolutionCandidate@55 }
+ResolutionTaskHolder@50 {
+    <name not found> = ArrayList@51[1] { ResolutionCandidate@52 }
+}
+
+null {
+    <name not found> = ArrayList@53[1] { ResolutionCandidate@52 }
+    <name not found> = ArrayList@54[1] { ResolutionCandidate@49 }
+    <name not found> = ArrayList@55[1] { ResolutionCandidate@46 }
+    <name not found> = ArrayList@56[1] { ResolutionCandidate@43 }
+    <name not found> = EmptyList@33[empty]
+    <name not found> = EmptyList@33[empty]
+    <name not found> = EmptyList@33[empty]
+    <name not found> = EmptyList@33[empty]
+    <name not found> = EmptyList@33[empty]
+    <name not found> = EmptyList@33[empty]
+    <name not found> = EmptyList@33[empty]
 }

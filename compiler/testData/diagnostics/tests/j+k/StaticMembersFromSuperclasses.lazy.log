@@ -83,19 +83,22 @@ LazyJavaTypeAttributes@55 {
 
 ResolutionTaskHolder@57 {
     <name not found> = ArrayList@58[1] { ResolutionCandidate@59 }
-    <name not found> = ArrayList@60[1] { ResolutionCandidate@59 }
+    <name not found> = EmptyList@6[empty]
+}
+
+ResolutionTaskHolder@60 {
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
     <name not found> = EmptyList@6[empty]
     <name not found> = EmptyList@6[empty]
 }
 
-ResolutionTaskHolder@61 {
-    <name not found> = EmptyList@6[empty]
-    <name not found> = EmptyList@6[empty]
-    <name not found> = EmptyList@6[empty]
-    <name not found> = EmptyList@6[empty]
-    <name not found> = EmptyList@6[empty]
-    <name not found> = EmptyList@6[empty]
-    <name not found> = EmptyList@6[empty]
+null {
+    <name not found> = ArrayList@61[1] { ResolutionCandidate@59 }
     <name not found> = EmptyList@6[empty]
     <name not found> = EmptyList@6[empty]
     <name not found> = EmptyList@6[empty]

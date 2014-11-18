@@ -17,5 +17,8 @@ LazyJavaPackageFragment@5['java'] {
 
 ResolutionTaskHolder@17 {
     <name not found> = ArrayList@18[1] { ResolutionCandidate@19 }
+}
+
+null {
     <name not found> = ArrayList@20[1] { ResolutionCandidate@19 }
 }

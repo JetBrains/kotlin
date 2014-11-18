@@ -35,11 +35,11 @@ DeserializedType@24['T in kotlin'] {
 }
 
 DeserializedType@25['T in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@21
+    constructor = AbstractLazyTypeParameterDescriptor$1@17
 }
 
 DeserializedType@26['T in kotlin'] {
-    constructor = AbstractLazyTypeParameterDescriptor$1@17
+    constructor = AbstractLazyTypeParameterDescriptor$1@21
 }
 
 DeserializedType@27['T in kotlin'] {
@@ -51,12 +51,12 @@ DeserializedType@28['java.lang.Class'] {
     memberScope = SubstitutingScope@30
 }
 
-DeserializedType@19['kotlin.Any'] {
+DeserializedType@23['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@31
     memberScope = DeserializedClassMemberScope@32
 }
 
-DeserializedType@23['kotlin.Any'] {
+DeserializedType@19['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@31
     memberScope = DeserializedClassMemberScope@32
 }
@@ -262,115 +262,118 @@ LazyJavaTypeParameterResolver@129 {
 
 ResolutionTaskHolder@131 {
     <name not found> = ArrayList@132[1] { ResolutionCandidate@133 }
-    <name not found> = ArrayList@134[1] { ResolutionCandidate@133 }
-    <name not found> = EmptyList@95[empty]
-    <name not found> = EmptyList@95[empty]
     <name not found> = EmptyList@95[empty]
     <name not found> = EmptyList@95[empty]
 }
 
-ResolutionTaskHolder@135 {
-    <name not found> = ArrayList@136[1] { ResolutionCandidate@137 }
-    <name not found> = ArrayList@138[1] { ResolutionCandidate@137 }
-    <name not found> = EmptyList@95[empty]
-    <name not found> = EmptyList@95[empty]
+ResolutionTaskHolder@134 {
+    <name not found> = ArrayList@135[1] { ResolutionCandidate@136 }
     <name not found> = EmptyList@95[empty]
     <name not found> = EmptyList@95[empty]
 }
 
-ResolutionTaskHolder@139 {
-    <name not found> = ArrayList@140[1] { ResolutionCandidate@141 }
-    <name not found> = ArrayList@142[1] { ResolutionCandidate@141 }
+ResolutionTaskHolder@137 {
+    <name not found> = ArrayList@138[1] { ResolutionCandidate@139 }
     <name not found> = EmptyList@95[empty]
     <name not found> = EmptyList@95[empty]
+}
+
+ResolutionTaskHolder@140 {
+    <name not found> = ArrayList@141[1] { ResolutionCandidate@142 }
     <name not found> = EmptyList@95[empty]
     <name not found> = EmptyList@95[empty]
 }
 
 ResolutionTaskHolder@143 {
     <name not found> = ArrayList@144[1] { ResolutionCandidate@145 }
-    <name not found> = ArrayList@146[1] { ResolutionCandidate@145 }
-    <name not found> = EmptyList@95[empty]
-    <name not found> = EmptyList@95[empty]
     <name not found> = EmptyList@95[empty]
     <name not found> = EmptyList@95[empty]
 }
 
-ResolutionTaskHolder@147 {
-    <name not found> = ArrayList@148[1] { ResolutionCandidate@149 }
-    <name not found> = ArrayList@150[1] { ResolutionCandidate@149 }
-    <name not found> = EmptyList@95[empty]
-    <name not found> = EmptyList@95[empty]
+ResolutionTaskHolder@146 {
+    <name not found> = ArrayList@147[1] { ResolutionCandidate@148 }
     <name not found> = EmptyList@95[empty]
     <name not found> = EmptyList@95[empty]
 }
 
-ResolutionTaskHolder@151 {
-    <name not found> = ArrayList@152[1] { ResolutionCandidate@153 }
-    <name not found> = ArrayList@154[1] { ResolutionCandidate@153 }
+ResolutionTaskHolder@149 {
+    <name not found> = ArrayList@150[1] { ResolutionCandidate@151 }
     <name not found> = EmptyList@95[empty]
     <name not found> = EmptyList@95[empty]
-    <name not found> = EmptyList@95[empty]
+}
+
+ResolutionTaskHolder@152 {
+    <name not found> = ArrayList@153[1] { ResolutionCandidate@154 }
     <name not found> = EmptyList@95[empty]
 }
 
 ResolutionTaskHolder@155 {
     <name not found> = ArrayList@156[1] { ResolutionCandidate@157 }
-    <name not found> = ArrayList@158[1] { ResolutionCandidate@157 }
-    <name not found> = EmptyList@95[empty]
-    <name not found> = EmptyList@95[empty]
-    <name not found> = EmptyList@95[empty]
-    <name not found> = EmptyList@95[empty]
 }
 
-ResolutionTaskHolder@159 {
-    <name not found> = ArrayList@160[1] { ResolutionCandidate@161 }
-    <name not found> = ArrayList@162[1] { ResolutionCandidate@161 }
-    <name not found> = EmptyList@95[empty]
-    <name not found> = EmptyList@95[empty]
+ResolutionTaskHolder@158 {
+    <name not found> = ArrayList@159[1] { ResolutionCandidate@160 }
 }
 
-ResolutionTaskHolder@163 {
-    <name not found> = ArrayList@164[1] { ResolutionCandidate@165 }
-    <name not found> = ArrayList@166[1] { ResolutionCandidate@165 }
+ResolutionTaskHolder@161 {
+    <name not found> = ArrayList@162[1] { ResolutionCandidate@163 }
+}
+
+ResolutionTaskHolder@164 {
+    <name not found> = ArrayList@165[1] { ResolutionCandidate@166 }
 }
 
 ResolutionTaskHolder@167 {
     <name not found> = ArrayList@168[1] { ResolutionCandidate@169 }
-    <name not found> = ArrayList@170[1] { ResolutionCandidate@169 }
 }
 
-ResolutionTaskHolder@171 {
-    <name not found> = ArrayList@172[1] { ResolutionCandidate@173 }
-    <name not found> = ArrayList@174[1] { ResolutionCandidate@173 }
+ResolutionTaskHolder@170 {
+    <name not found> = ArrayList@171[1] { ResolutionCandidate@172 }
 }
 
-ResolutionTaskHolder@175 {
-    <name not found> = ArrayList@176[1] { ResolutionCandidate@177 }
-    <name not found> = ArrayList@178[1] { ResolutionCandidate@177 }
+ResolutionTaskHolder@173 {
+    <name not found> = ArrayList@174[1] { ResolutionCandidate@175 }
 }
 
-ResolutionTaskHolder@179 {
-    <name not found> = ArrayList@180[1] { ResolutionCandidate@181 }
-    <name not found> = ArrayList@182[1] { ResolutionCandidate@181 }
+TypeDeserializer@176 {
+    classDescriptors('34': Integer@177) = LazyJavaClassDescriptor@42['Class']
+    classDescriptors('9': Integer@178) = DeserializedClassDescriptor@179['Any']
 }
 
-ResolutionTaskHolder@183 {
-    <name not found> = ArrayList@184[1] { ResolutionCandidate@185 }
-    <name not found> = ArrayList@186[1] { ResolutionCandidate@185 }
+TypeDeserializer@180 {
+    classDescriptors('8': Integer@181) = DeserializedClassDescriptor@182['Array']
+    classDescriptors('9': Integer@178) = DeserializedClassDescriptor@179['Any']
 }
 
-ResolutionTaskHolder@187 {
-    <name not found> = ArrayList@188[1] { ResolutionCandidate@189 }
-    <name not found> = ArrayList@190[1] { ResolutionCandidate@189 }
-}
-
-TypeDeserializer@191 {
-    classDescriptors('34': Integer@192) = LazyJavaClassDescriptor@42['Class']
-    classDescriptors('9': Integer@193) = DeserializedClassDescriptor@194['Any']
-}
-
-TypeDeserializer@195 {
-    classDescriptors('8': Integer@196) = DeserializedClassDescriptor@197['Array']
-    classDescriptors('9': Integer@193) = DeserializedClassDescriptor@194['Any']
+null {
+    <name not found> = ArrayList@183[1] { ResolutionCandidate@163 }
+    <name not found> = ArrayList@184[1] { ResolutionCandidate@154 }
+    <name not found> = ArrayList@185[1] { ResolutionCandidate@172 }
+    <name not found> = ArrayList@186[1] { ResolutionCandidate@160 }
+    <name not found> = ArrayList@187[1] { ResolutionCandidate@157 }
+    <name not found> = ArrayList@188[1] { ResolutionCandidate@142 }
+    <name not found> = ArrayList@189[1] { ResolutionCandidate@133 }
+    <name not found> = ArrayList@190[1] { ResolutionCandidate@175 }
+    <name not found> = ArrayList@191[1] { ResolutionCandidate@151 }
+    <name not found> = ArrayList@192[1] { ResolutionCandidate@169 }
+    <name not found> = ArrayList@193[1] { ResolutionCandidate@139 }
+    <name not found> = ArrayList@194[1] { ResolutionCandidate@166 }
+    <name not found> = ArrayList@195[1] { ResolutionCandidate@148 }
+    <name not found> = ArrayList@196[1] { ResolutionCandidate@136 }
+    <name not found> = ArrayList@197[1] { ResolutionCandidate@145 }
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
+    <name not found> = EmptyList@95[empty]
 }

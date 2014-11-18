@@ -108,24 +108,27 @@ LazyJavaPackageFragment@3['platform'] {
 
 ResolutionTaskHolder@76 {
     <name not found> = ArrayList@77[1] { ResolutionCandidate@78 }
-    <name not found> = ArrayList@79[1] { ResolutionCandidate@78 }
 }
 
-ResolutionTaskHolder@80 {
-    <name not found> = ArrayList@81[1] { ResolutionCandidate@82 }
-    <name not found> = ArrayList@83[1] { ResolutionCandidate@82 }
+ResolutionTaskHolder@79 {
+    <name not found> = ArrayList@80[1] { ResolutionCandidate@81 }
 }
 
-ResolutionTaskHolder@84 {
-    <name not found> = ArrayList@85[1] { ResolutionCandidate@86 }
-    <name not found> = ArrayList@87[1] { ResolutionCandidate@86 }
+ResolutionTaskHolder@82 {
+    <name not found> = ArrayList@83[1] { ResolutionCandidate@84 }
 }
 
-ResolutionTaskHolder@88 {
-    <name not found> = ArrayList@89[1] { ResolutionCandidate@90 }
-    <name not found> = ArrayList@91[1] { ResolutionCandidate@90 }
+ResolutionTaskHolder@85 {
+    <name not found> = ArrayList@86[1] { ResolutionCandidate@87 }
 }
 
-TypeDeserializer@92 {
-    classDescriptors('4': Integer@93) = DeserializedClassDescriptor@94['String']
+TypeDeserializer@88 {
+    classDescriptors('4': Integer@89) = DeserializedClassDescriptor@90['String']
+}
+
+null {
+    <name not found> = ArrayList@91[1] { ResolutionCandidate@87 }
+    <name not found> = ArrayList@92[1] { ResolutionCandidate@78 }
+    <name not found> = ArrayList@93[1] { ResolutionCandidate@81 }
+    <name not found> = ArrayList@94[1] { ResolutionCandidate@84 }
 }

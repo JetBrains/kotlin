@@ -47,107 +47,110 @@ LazyJavaPackageFragment@11['lang'] {
 
 ResolutionTaskHolder@36 {
     <name not found> = ArrayList@37[1] { ResolutionCandidate@38 }
-    <name not found> = ArrayList@39[1] { ResolutionCandidate@38 }
-    <name not found> = EmptyList@28[empty]
-    <name not found> = EmptyList@28[empty]
     <name not found> = EmptyList@28[empty]
     <name not found> = EmptyList@28[empty]
 }
 
-ResolutionTaskHolder@40 {
-    <name not found> = ArrayList@41[1] { ResolutionCandidate@42 }
-    <name not found> = ArrayList@43[1] { ResolutionCandidate@42 }
-    <name not found> = EmptyList@28[empty]
-    <name not found> = EmptyList@28[empty]
+ResolutionTaskHolder@39 {
+    <name not found> = ArrayList@40[1] { ResolutionCandidate@41 }
     <name not found> = EmptyList@28[empty]
     <name not found> = EmptyList@28[empty]
 }
 
-ResolutionTaskHolder@44 {
-    <name not found> = ArrayList@45[1] { ResolutionCandidate@46 }
-    <name not found> = ArrayList@47[1] { ResolutionCandidate@46 }
+ResolutionTaskHolder@42 {
+    <name not found> = ArrayList@43[1] { ResolutionCandidate@44 }
     <name not found> = EmptyList@28[empty]
     <name not found> = EmptyList@28[empty]
-    <name not found> = EmptyList@28[empty]
-    <name not found> = EmptyList@28[empty]
+}
+
+ResolutionTaskHolder@45 {
+    <name not found> = ArrayList@46[1] { ResolutionCandidate@47 }
 }
 
 ResolutionTaskHolder@48 {
     <name not found> = ArrayList@49[1] { ResolutionCandidate@50 }
-    <name not found> = ArrayList@51[1] { ResolutionCandidate@50 }
 }
 
-ResolutionTaskHolder@52 {
-    <name not found> = ArrayList@53[1] { ResolutionCandidate@54 }
-    <name not found> = ArrayList@55[1] { ResolutionCandidate@54 }
+ResolutionTaskHolder@51 {
+    <name not found> = ArrayList@52[1] { ResolutionCandidate@53 }
 }
 
-ResolutionTaskHolder@56 {
-    <name not found> = ArrayList@57[1] { ResolutionCandidate@58 }
-    <name not found> = ArrayList@59[1] { ResolutionCandidate@58 }
+ResolutionTaskHolder@54 {
+    <name not found> = ArrayList@55[1] { ResolutionCandidate@56 }
+}
+
+ResolutionTaskHolder@57 {
+    <name not found> = ArrayList@58[1] { ResolutionCandidate@59 }
 }
 
 ResolutionTaskHolder@60 {
     <name not found> = ArrayList@61[1] { ResolutionCandidate@62 }
-    <name not found> = ArrayList@63[1] { ResolutionCandidate@62 }
 }
 
-ResolutionTaskHolder@64 {
-    <name not found> = ArrayList@65[1] { ResolutionCandidate@66 }
-    <name not found> = ArrayList@67[1] { ResolutionCandidate@66 }
+ResolutionTaskHolder@63 {
+    <name not found> = ArrayList@64[1] { ResolutionCandidate@65 }
 }
 
-ResolutionTaskHolder@68 {
-    <name not found> = ArrayList@69[1] { ResolutionCandidate@70 }
-    <name not found> = ArrayList@71[1] { ResolutionCandidate@70 }
+ResolutionTaskHolder@66 {
+    <name not found> = ArrayList@67[1] { ResolutionCandidate@68 }
+}
+
+ResolutionTaskHolder@69 {
+    <name not found> = ArrayList@70[1] { ResolutionCandidate@71 }
 }
 
 ResolutionTaskHolder@72 {
     <name not found> = ArrayList@73[1] { ResolutionCandidate@74 }
-    <name not found> = ArrayList@75[1] { ResolutionCandidate@74 }
 }
 
-ResolutionTaskHolder@76 {
-    <name not found> = ArrayList@77[1] { ResolutionCandidate@78 }
-    <name not found> = ArrayList@79[1] { ResolutionCandidate@78 }
+ResolutionTaskHolder@75 {
+    <name not found> = ArrayList@76[1] { ResolutionCandidate@77 }
 }
 
-ResolutionTaskHolder@80 {
-    <name not found> = ArrayList@81[1] { ResolutionCandidate@82 }
-    <name not found> = ArrayList@83[1] { ResolutionCandidate@82 }
+ResolutionTaskHolder@78 {
+    <name not found> = ArrayList@79[7] { ResolutionCandidate@80, ResolutionCandidate@81, ResolutionCandidate@82, ... }
 }
 
-ResolutionTaskHolder@84 {
-    <name not found> = ArrayList@85[1] { ResolutionCandidate@86 }
-    <name not found> = ArrayList@87[1] { ResolutionCandidate@86 }
+ResolutionTaskHolder@83 {
+    <name not found> = ArrayList@84[7] { ResolutionCandidate@85, ResolutionCandidate@86, ResolutionCandidate@87, ... }
 }
 
 ResolutionTaskHolder@88 {
-    <name not found> = ArrayList@89[1] { ResolutionCandidate@90 }
-    <name not found> = ArrayList@91[1] { ResolutionCandidate@90 }
+    <name not found> = ArrayList@89[7] { ResolutionCandidate@90, ResolutionCandidate@91, ResolutionCandidate@92, ... }
 }
 
-ResolutionTaskHolder@92 {
-    <name not found> = ArrayList@93[7] { ResolutionCandidate@94, ResolutionCandidate@95, ResolutionCandidate@96, ... }
-    <name not found> = ArrayList@97[7] { ResolutionCandidate@94, ResolutionCandidate@95, ResolutionCandidate@96, ... }
+ResolutionTaskHolder@93 {
+    <name not found> = ArrayList@94[8] { ResolutionCandidate@95, ResolutionCandidate@96, ResolutionCandidate@97, ... }
 }
 
 ResolutionTaskHolder@98 {
-    <name not found> = ArrayList@99[7] { ResolutionCandidate@100, ResolutionCandidate@101, ResolutionCandidate@102, ... }
-    <name not found> = ArrayList@103[7] { ResolutionCandidate@100, ResolutionCandidate@101, ResolutionCandidate@102, ... }
+    <name not found> = ArrayList@99[8] { ResolutionCandidate@100, ResolutionCandidate@101, ResolutionCandidate@102, ... }
 }
 
-ResolutionTaskHolder@104 {
-    <name not found> = ArrayList@105[7] { ResolutionCandidate@106, ResolutionCandidate@107, ResolutionCandidate@108, ... }
-    <name not found> = ArrayList@109[7] { ResolutionCandidate@106, ResolutionCandidate@107, ResolutionCandidate@108, ... }
-}
-
-ResolutionTaskHolder@110 {
-    <name not found> = ArrayList@111[8] { ResolutionCandidate@112, ResolutionCandidate@113, ResolutionCandidate@114, ... }
-    <name not found> = ArrayList@115[8] { ResolutionCandidate@112, ResolutionCandidate@113, ResolutionCandidate@114, ... }
-}
-
-ResolutionTaskHolder@116 {
-    <name not found> = ArrayList@117[8] { ResolutionCandidate@118, ResolutionCandidate@119, ResolutionCandidate@120, ... }
-    <name not found> = ArrayList@121[8] { ResolutionCandidate@118, ResolutionCandidate@119, ResolutionCandidate@120, ... }
+null {
+    <name not found> = ArrayList@103[1] { ResolutionCandidate@65 }
+    <name not found> = ArrayList@104[1] { ResolutionCandidate@59 }
+    <name not found> = ArrayList@105[1] { ResolutionCandidate@68 }
+    <name not found> = ArrayList@106[1] { ResolutionCandidate@56 }
+    <name not found> = ArrayList@107[1] { ResolutionCandidate@47 }
+    <name not found> = ArrayList@108[1] { ResolutionCandidate@50 }
+    <name not found> = ArrayList@109[1] { ResolutionCandidate@77 }
+    <name not found> = ArrayList@110[1] { ResolutionCandidate@38 }
+    <name not found> = ArrayList@111[1] { ResolutionCandidate@41 }
+    <name not found> = ArrayList@112[1] { ResolutionCandidate@71 }
+    <name not found> = ArrayList@113[1] { ResolutionCandidate@74 }
+    <name not found> = ArrayList@114[1] { ResolutionCandidate@44 }
+    <name not found> = ArrayList@115[1] { ResolutionCandidate@53 }
+    <name not found> = ArrayList@116[1] { ResolutionCandidate@62 }
+    <name not found> = ArrayList@117[7] { ResolutionCandidate@85, ResolutionCandidate@86, ResolutionCandidate@87, ... }
+    <name not found> = ArrayList@118[7] { ResolutionCandidate@80, ResolutionCandidate@81, ResolutionCandidate@82, ... }
+    <name not found> = ArrayList@119[7] { ResolutionCandidate@90, ResolutionCandidate@91, ResolutionCandidate@92, ... }
+    <name not found> = ArrayList@120[8] { ResolutionCandidate@100, ResolutionCandidate@101, ResolutionCandidate@102, ... }
+    <name not found> = ArrayList@121[8] { ResolutionCandidate@95, ResolutionCandidate@96, ResolutionCandidate@97, ... }
+    <name not found> = EmptyList@28[empty]
+    <name not found> = EmptyList@28[empty]
+    <name not found> = EmptyList@28[empty]
+    <name not found> = EmptyList@28[empty]
+    <name not found> = EmptyList@28[empty]
+    <name not found> = EmptyList@28[empty]
 }

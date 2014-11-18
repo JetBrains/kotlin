@@ -43,10 +43,6 @@ ResolutionTaskHolder@25 {
     <name not found> = EmptyList@19[empty]
     <name not found> = EmptyList@19[empty]
     <name not found> = EmptyList@19[empty]
-    <name not found> = EmptyList@19[empty]
-    <name not found> = EmptyList@19[empty]
-    <name not found> = EmptyList@19[empty]
-    <name not found> = EmptyList@19[empty]
 }
 
 ResolutionTaskHolder@26 {
@@ -54,6 +50,13 @@ ResolutionTaskHolder@26 {
     <name not found> = EmptyList@19[empty]
     <name not found> = EmptyList@19[empty]
     <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+}
+
+null {
     <name not found> = EmptyList@19[empty]
     <name not found> = EmptyList@19[empty]
     <name not found> = EmptyList@19[empty]

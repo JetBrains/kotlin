@@ -193,12 +193,12 @@ LazyJavaPackageFragment@87['util'] {
 }
 
 LazyJavaTypeParameterDescriptor@18['E'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@39
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@43
     upperBounds = LinkedHashSet@118[1] { NullableType@119 }
 }
 
 LazyJavaTypeParameterDescriptor@13['E'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@43
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@39
 }
 
 LazyJavaTypeParameterResolver@120 {
@@ -206,28 +206,31 @@ LazyJavaTypeParameterResolver@120 {
 }
 
 LazyJavaTypeParameterResolver@122 {
-    resolve(JavaTypeParameterImpl@42['E']) = LazyJavaTypeParameterDescriptor@13['E']
+    resolve(JavaTypeParameterImpl@37['E']) = LazyJavaTypeParameterDescriptor@13['E']
 }
 
 ResolutionTaskHolder@123 {
     <name not found> = ArrayList@124[1] { ResolutionCandidate@125 }
-    <name not found> = ArrayList@126[1] { ResolutionCandidate@125 }
-    <name not found> = EmptyList@107[empty]
-    <name not found> = EmptyList@107[empty]
     <name not found> = EmptyList@107[empty]
     <name not found> = EmptyList@107[empty]
 }
 
-ResolutionTaskHolder@127 {
-    <name not found> = ArrayList@128[1] { ResolutionCandidate@129 }
-    <name not found> = ArrayList@130[1] { ResolutionCandidate@129 }
-    <name not found> = EmptyList@107[empty]
-    <name not found> = EmptyList@107[empty]
+ResolutionTaskHolder@126 {
+    <name not found> = ArrayList@127[1] { ResolutionCandidate@128 }
     <name not found> = EmptyList@107[empty]
     <name not found> = EmptyList@107[empty]
 }
 
-ResolutionTaskHolder@131 {
-    <name not found> = ArrayList@132[1] { ResolutionCandidate@133 }
-    <name not found> = ArrayList@134[1] { ResolutionCandidate@133 }
+ResolutionTaskHolder@129 {
+    <name not found> = ArrayList@130[1] { ResolutionCandidate@131 }
+}
+
+null {
+    <name not found> = ArrayList@132[1] { ResolutionCandidate@131 }
+    <name not found> = ArrayList@133[1] { ResolutionCandidate@128 }
+    <name not found> = ArrayList@134[1] { ResolutionCandidate@125 }
+    <name not found> = EmptyList@107[empty]
+    <name not found> = EmptyList@107[empty]
+    <name not found> = EmptyList@107[empty]
+    <name not found> = EmptyList@107[empty]
 }

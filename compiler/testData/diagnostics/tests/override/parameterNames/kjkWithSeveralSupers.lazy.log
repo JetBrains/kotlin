@@ -144,7 +144,7 @@ LazyJavaClassifierType@120['JSuper1'] {
     typeConstructor = LazyJavaClassTypeConstructor@24['JSuper1']
 }
 
-LazyJavaClassifierType@121['JSuper2'] {
+LazyJavaClassifierType@130['JSuper2'] {
     arguments = ArrayList@139[empty]
     classifier = JavaClassImpl@140['JSuper2']
     memberScope = LazyJavaClassMemberScope@27
@@ -152,7 +152,7 @@ LazyJavaClassifierType@121['JSuper2'] {
     typeConstructor = LazyJavaClassTypeConstructor@38['JSuper2']
 }
 
-LazyJavaClassifierType@126['JSuper2'] {
+LazyJavaClassifierType@121['JSuper2'] {
     arguments = ArrayList@141[empty]
     classifier = JavaClassImpl@142['JSuper2']
     memberScope = LazyJavaClassMemberScope@27
@@ -160,7 +160,7 @@ LazyJavaClassifierType@126['JSuper2'] {
     typeConstructor = LazyJavaClassTypeConstructor@38['JSuper2']
 }
 
-LazyJavaClassifierType@130['JSuper2'] {
+LazyJavaClassifierType@126['JSuper2'] {
     arguments = ArrayList@143[empty]
     classifier = JavaClassImpl@144['JSuper2']
     memberScope = LazyJavaClassMemberScope@27
@@ -168,7 +168,7 @@ LazyJavaClassifierType@130['JSuper2'] {
     typeConstructor = LazyJavaClassTypeConstructor@38['JSuper2']
 }
 
-LazyJavaClassifierType@125['KSuper'] {
+LazyJavaClassifierType@119['KSuper'] {
     arguments = ArrayList@145[empty]
     classifier = JavaClassImpl@146['KSuper']
     memberScope = WritableScopeImpl@147
@@ -176,7 +176,7 @@ LazyJavaClassifierType@125['KSuper'] {
     typeConstructor = TypeConstructorImpl$1@148
 }
 
-LazyJavaClassifierType@131['KSuper'] {
+LazyJavaClassifierType@125['KSuper'] {
     arguments = ArrayList@149[empty]
     classifier = JavaClassImpl@150['KSuper']
     memberScope = WritableScopeImpl@147
@@ -184,7 +184,7 @@ LazyJavaClassifierType@131['KSuper'] {
     typeConstructor = TypeConstructorImpl$1@148
 }
 
-LazyJavaClassifierType@119['KSuper'] {
+LazyJavaClassifierType@131['KSuper'] {
     arguments = ArrayList@151[empty]
     classifier = JavaClassImpl@152['KSuper']
     memberScope = WritableScopeImpl@147
@@ -226,7 +226,7 @@ LazyJavaPackageFragmentProvider@158 {
     packageFragments('kotlin.io': FqName@182) = null
     packageFragments('kotlin.jvm': FqName@183) = null
     topLevelClasses(JavaClassImpl@138['JSuper1']) = LazyJavaClassDescriptor@0['JSuper1']
-    topLevelClasses(JavaClassImpl@140['JSuper2']) = LazyJavaClassDescriptor@25['JSuper2']
+    topLevelClasses(JavaClassImpl@142['JSuper2']) = LazyJavaClassDescriptor@25['JSuper2']
     topLevelClasses(JavaClassImpl@184['Sub1']) = LazyJavaClassDescriptor@39['Sub1']
     topLevelClasses(JavaClassImpl@185['Sub2']) = LazyJavaClassDescriptor@58['Sub2']
     topLevelClasses(JavaClassImpl@186['Sub3']) = LazyJavaClassDescriptor@85['Sub3']

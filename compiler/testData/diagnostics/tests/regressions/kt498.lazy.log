@@ -178,14 +178,14 @@ LazyJavaClassifierType@124['String'] {
 
 LazyJavaClassifierType@127['String'] {
     arguments = ArrayList@128[empty]
-    classifier = JavaClassImpl@119['String']
+    classifier = JavaClassImpl@123['String']
     nullable = 'true': Boolean@103
     typeConstructor = DeserializedClassTypeConstructor@120
 }
 
 LazyJavaClassifierType@129['String'] {
     arguments = ArrayList@130[empty]
-    classifier = JavaClassImpl@123['String']
+    classifier = JavaClassImpl@119['String']
     nullable = 'true': Boolean@103
     typeConstructor = DeserializedClassTypeConstructor@120
 }
@@ -228,7 +228,7 @@ LazyJavaClassifierType@143['Throwable'] {
 
 LazyJavaClassifierType@146['Throwable'] {
     arguments = ArrayList@147[empty]
-    classifier = JavaClassImpl@139['Throwable']
+    classifier = JavaClassImpl@145['Throwable']
     nullable = 'true': Boolean@103
     typeConstructor = DeserializedClassTypeConstructor@136
 }
@@ -242,7 +242,7 @@ LazyJavaClassifierType@148['Throwable'] {
 
 LazyJavaClassifierType@150['Throwable'] {
     arguments = ArrayList@151[empty]
-    classifier = JavaClassImpl@145['Throwable']
+    classifier = JavaClassImpl@139['Throwable']
     nullable = 'true': Boolean@103
     typeConstructor = DeserializedClassTypeConstructor@136
 }
@@ -319,10 +319,13 @@ LazyJavaTypeParameterResolver@201 {
 
 ResolutionTaskHolder@203 {
     <name not found> = ArrayList@204[1] { ResolutionCandidate@205 }
-    <name not found> = ArrayList@206[1] { ResolutionCandidate@205 }
 }
 
-ResolutionTaskHolder@207 {
-    <name not found> = ArrayList@208[5] { ResolutionCandidate@209, ResolutionCandidate@210, ResolutionCandidate@211, ... }
-    <name not found> = ArrayList@212[5] { ResolutionCandidate@209, ResolutionCandidate@210, ResolutionCandidate@211, ... }
+ResolutionTaskHolder@206 {
+    <name not found> = ArrayList@207[5] { ResolutionCandidate@208, ResolutionCandidate@209, ResolutionCandidate@210, ... }
+}
+
+null {
+    <name not found> = ArrayList@211[1] { ResolutionCandidate@205 }
+    <name not found> = ArrayList@212[5] { ResolutionCandidate@208, ResolutionCandidate@209, ResolutionCandidate@210, ... }
 }

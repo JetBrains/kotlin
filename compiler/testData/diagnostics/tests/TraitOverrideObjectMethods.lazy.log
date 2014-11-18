@@ -60,14 +60,14 @@ LazyJavaClassifierType@58['Object'] {
 
 LazyJavaClassifierType@61['Object'] {
     arguments = ArrayList@62[empty]
-    classifier = JavaClassImpl@56['Object']
+    classifier = JavaClassImpl@60['Object']
     nullable = 'true': Boolean@53
     typeConstructor = DeserializedClassTypeConstructor@57
 }
 
 LazyJavaClassifierType@63['Object'] {
     arguments = ArrayList@64[empty]
-    classifier = JavaClassImpl@60['Object']
+    classifier = JavaClassImpl@56['Object']
     nullable = 'true': Boolean@53
     typeConstructor = DeserializedClassTypeConstructor@57
 }

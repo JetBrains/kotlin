@@ -135,15 +135,6 @@ LazyJavaPackageFragment@8['reflect'] {
 
 ResolutionTaskHolder@79 {
     <name not found> = ArrayList@80[1] { ResolutionCandidate@81 }
-    <name not found> = ArrayList@82[1] { ResolutionCandidate@81 }
-    <name not found> = EmptyList@48[empty]
-    <name not found> = EmptyList@48[empty]
-    <name not found> = EmptyList@48[empty]
-    <name not found> = EmptyList@48[empty]
-    <name not found> = EmptyList@48[empty]
-    <name not found> = EmptyList@48[empty]
-    <name not found> = EmptyList@48[empty]
-    <name not found> = EmptyList@48[empty]
     <name not found> = EmptyList@48[empty]
     <name not found> = EmptyList@48[empty]
     <name not found> = EmptyList@48[empty]
@@ -154,18 +145,30 @@ ResolutionTaskHolder@79 {
     <name not found> = EmptyList@48[empty]
 }
 
-ResolutionTaskHolder@83 {
-    <name not found> = ArrayList@84[1] { ResolutionCandidate@85 }
-    <name not found> = ArrayList@86[1] { ResolutionCandidate@85 }
-    <name not found> = EmptyList@48[empty]
+ResolutionTaskHolder@82 {
+    <name not found> = ArrayList@83[1] { ResolutionCandidate@84 }
     <name not found> = EmptyList@48[empty]
 }
 
-TypeDeserializer@87 {
-    classDescriptors('2': Integer@88) = DeserializedClassDescriptor@89['Any']
+TypeDeserializer@85 {
+    classDescriptors('2': Integer@86) = DeserializedClassDescriptor@87['Any']
 }
 
-TypeDeserializer@90 {
-    classDescriptors('3': Integer@91) = DeserializedClassDescriptor@89['Any']
-    classDescriptors('4': Integer@92) = DeserializedClassDescriptor@2['Function0']
+TypeDeserializer@88 {
+    classDescriptors('3': Integer@89) = DeserializedClassDescriptor@87['Any']
+    classDescriptors('4': Integer@90) = DeserializedClassDescriptor@2['Function0']
+}
+
+null {
+    <name not found> = ArrayList@91[1] { ResolutionCandidate@81 }
+    <name not found> = ArrayList@92[1] { ResolutionCandidate@84 }
+    <name not found> = EmptyList@48[empty]
+    <name not found> = EmptyList@48[empty]
+    <name not found> = EmptyList@48[empty]
+    <name not found> = EmptyList@48[empty]
+    <name not found> = EmptyList@48[empty]
+    <name not found> = EmptyList@48[empty]
+    <name not found> = EmptyList@48[empty]
+    <name not found> = EmptyList@48[empty]
+    <name not found> = EmptyList@48[empty]
 }

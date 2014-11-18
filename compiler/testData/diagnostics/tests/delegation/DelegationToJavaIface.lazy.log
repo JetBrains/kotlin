@@ -85,14 +85,14 @@ LazyJavaClassifierType@88['Object'] {
 
 LazyJavaClassifierType@91['Object'] {
     arguments = ArrayList@92[empty]
-    classifier = JavaClassImpl@90['Object']
+    classifier = JavaClassImpl@86['Object']
     nullable = 'true': Boolean@83
     typeConstructor = DeserializedClassTypeConstructor@87
 }
 
 LazyJavaClassifierType@93['Object'] {
     arguments = ArrayList@94[empty]
-    classifier = JavaClassImpl@86['Object']
+    classifier = JavaClassImpl@90['Object']
     nullable = 'true': Boolean@83
     typeConstructor = DeserializedClassTypeConstructor@87
 }
@@ -164,10 +164,13 @@ LazyJavaTypeParameterResolver@134 {
 
 ResolutionTaskHolder@136 {
     <name not found> = ArrayList@137[1] { ResolutionCandidate@138 }
-    <name not found> = ArrayList@139[1] { ResolutionCandidate@138 }
 }
 
-ResolutionTaskHolder@140 {
-    <name not found> = ArrayList@141[1] { ResolutionCandidate@142 }
-    <name not found> = ArrayList@143[1] { ResolutionCandidate@142 }
+ResolutionTaskHolder@139 {
+    <name not found> = ArrayList@140[1] { ResolutionCandidate@141 }
+}
+
+null {
+    <name not found> = ArrayList@142[1] { ResolutionCandidate@138 }
+    <name not found> = ArrayList@143[1] { ResolutionCandidate@141 }
 }

@@ -135,43 +135,56 @@ LazyJavaTypeParameterResolver@95 {
 
 ResolutionTaskHolder@97 {
     <name not found> = ArrayList@98[1] { ResolutionCandidate@99 }
-    <name not found> = ArrayList@100[1] { ResolutionCandidate@99 }
-    <name not found> = EmptyList@7[empty]
-    <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
 }
 
-ResolutionTaskHolder@101 {
-    <name not found> = ArrayList@102[1] { ResolutionCandidate@103 }
-    <name not found> = ArrayList@104[1] { ResolutionCandidate@103 }
-    <name not found> = EmptyList@7[empty]
-    <name not found> = EmptyList@7[empty]
+ResolutionTaskHolder@100 {
+    <name not found> = ArrayList@101[1] { ResolutionCandidate@102 }
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
 }
 
-ResolutionTaskHolder@105 {
-    <name not found> = ArrayList@106[1] { ResolutionCandidate@107 }
-    <name not found> = ArrayList@108[1] { ResolutionCandidate@107 }
+ResolutionTaskHolder@103 {
+    <name not found> = ArrayList@104[1] { ResolutionCandidate@105 }
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
+}
+
+ResolutionTaskHolder@106 {
+    <name not found> = ArrayList@107[1] { ResolutionCandidate@108 }
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
 }
 
 ResolutionTaskHolder@109 {
     <name not found> = ArrayList@110[1] { ResolutionCandidate@111 }
-    <name not found> = ArrayList@112[1] { ResolutionCandidate@111 }
+    <name not found> = EmptyList@7[empty]
+    <name not found> = EmptyList@7[empty]
+}
+
+ResolutionTaskHolder@112 {
+    <name not found> = ArrayList@113[1] { ResolutionCandidate@114 }
+    <name not found> = EmptyList@7[empty]
+    <name not found> = EmptyList@7[empty]
+}
+
+ResolutionTaskHolder@115 {
+    <name not found> = EmptyList@7[empty]
+    <name not found> = EmptyList@7[empty]
+    <name not found> = EmptyList@7[empty]
+    <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
 }
 
-ResolutionTaskHolder@113 {
-    <name not found> = ArrayList@114[1] { ResolutionCandidate@115 }
-    <name not found> = ArrayList@116[1] { ResolutionCandidate@115 }
+ResolutionTaskHolder@116 {
+    <name not found> = EmptyList@7[empty]
+    <name not found> = EmptyList@7[empty]
+    <name not found> = EmptyList@7[empty]
+    <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
@@ -179,17 +192,6 @@ ResolutionTaskHolder@113 {
 }
 
 ResolutionTaskHolder@117 {
-    <name not found> = ArrayList@118[1] { ResolutionCandidate@119 }
-    <name not found> = ArrayList@120[1] { ResolutionCandidate@119 }
-    <name not found> = EmptyList@7[empty]
-    <name not found> = EmptyList@7[empty]
-    <name not found> = EmptyList@7[empty]
-    <name not found> = EmptyList@7[empty]
-}
-
-ResolutionTaskHolder@121 {
-    <name not found> = EmptyList@7[empty]
-    <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
@@ -200,7 +202,13 @@ ResolutionTaskHolder@121 {
     <name not found> = EmptyList@7[empty]
 }
 
-ResolutionTaskHolder@122 {
+null {
+    <name not found> = ArrayList@118[1] { ResolutionCandidate@114 }
+    <name not found> = ArrayList@119[1] { ResolutionCandidate@102 }
+    <name not found> = ArrayList@120[1] { ResolutionCandidate@108 }
+    <name not found> = ArrayList@121[1] { ResolutionCandidate@99 }
+    <name not found> = ArrayList@122[1] { ResolutionCandidate@111 }
+    <name not found> = ArrayList@123[1] { ResolutionCandidate@105 }
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
@@ -209,11 +217,6 @@ ResolutionTaskHolder@122 {
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
-    <name not found> = EmptyList@7[empty]
-    <name not found> = EmptyList@7[empty]
-}
-
-ResolutionTaskHolder@123 {
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]
     <name not found> = EmptyList@7[empty]

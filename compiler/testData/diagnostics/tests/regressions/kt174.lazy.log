@@ -75,14 +75,14 @@ LazyJavaClassifierType@36['Throwable'] {
 
 LazyJavaClassifierType@39['Throwable'] {
     arguments = ArrayList@40[empty]
-    classifier = JavaClassImpl@35['Throwable']
+    classifier = JavaClassImpl@31['Throwable']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@32
 }
 
 LazyJavaClassifierType@41['Throwable'] {
     arguments = ArrayList@42[empty]
-    classifier = JavaClassImpl@31['Throwable']
+    classifier = JavaClassImpl@35['Throwable']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@32
 }
@@ -140,15 +140,18 @@ LazyJavaPackageFragment@55['lang'] {
 
 ResolutionTaskHolder@76 {
     <name not found> = ArrayList@77[4] { ResolutionCandidate@78, ResolutionCandidate@79, ResolutionCandidate@80, ... }
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+    <name not found> = EmptyList@68[empty]
+}
+
+null {
     <name not found> = ArrayList@81[5] { ResolutionCandidate@78, ResolutionCandidate@79, ResolutionCandidate@80, ... }
-    <name not found> = EmptyList@68[empty]
-    <name not found> = EmptyList@68[empty]
-    <name not found> = EmptyList@68[empty]
-    <name not found> = EmptyList@68[empty]
-    <name not found> = EmptyList@68[empty]
-    <name not found> = EmptyList@68[empty]
-    <name not found> = EmptyList@68[empty]
-    <name not found> = EmptyList@68[empty]
     <name not found> = EmptyList@68[empty]
     <name not found> = EmptyList@68[empty]
     <name not found> = EmptyList@68[empty]

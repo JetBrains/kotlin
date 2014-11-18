@@ -122,94 +122,94 @@ LazyJavaClassifierType@90['E'] {
     arguments = ArrayList@91[empty]
     classifier = JavaTypeParameterImpl@92['E']
     nullable = 'false': Boolean@71
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@93
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@86
 }
 
-LazyJavaClassifierType@94['E'] {
-    arguments = ArrayList@95[empty]
-    classifier = JavaTypeParameterImpl@96['E']
+LazyJavaClassifierType@93['E'] {
+    arguments = ArrayList@94[empty]
+    classifier = JavaTypeParameterImpl@95['E']
     nullable = 'false': Boolean@71
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@93
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@96
 }
 
 LazyJavaClassifierType@97['E'] {
     arguments = ArrayList@98[empty]
     classifier = JavaTypeParameterImpl@99['E']
     nullable = 'false': Boolean@71
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@100
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@86
 }
 
-LazyJavaClassifierType@101['E'] {
-    arguments = ArrayList@102[empty]
-    classifier = JavaTypeParameterImpl@103['E']
+LazyJavaClassifierType@100['E'] {
+    arguments = ArrayList@101[empty]
+    classifier = JavaTypeParameterImpl@102['E']
     nullable = 'false': Boolean@71
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@86
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@103
 }
 
 LazyJavaClassifierType@104['E'] {
     arguments = ArrayList@105[empty]
     classifier = JavaTypeParameterImpl@106['E']
     nullable = 'false': Boolean@71
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@86
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@96
 }
 
 LazyJavaClassifierType@107['E'] {
     arguments = ArrayList@108[empty]
-    classifier = JavaTypeParameterImpl@96['E']
+    classifier = JavaTypeParameterImpl@85['E']
     nullable = 'true': Boolean@77
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@93
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@86
 }
 
 LazyJavaClassifierType@109['E'] {
     arguments = ArrayList@110[empty]
-    classifier = JavaTypeParameterImpl@85['E']
+    classifier = JavaTypeParameterImpl@89['E']
     nullable = 'true': Boolean@77
     typeConstructor = AbstractLazyTypeParameterDescriptor$1@86
 }
 
 LazyJavaClassifierType@111['E'] {
     arguments = ArrayList@112[empty]
-    classifier = JavaTypeParameterImpl@106['E']
+    classifier = JavaTypeParameterImpl@102['E']
     nullable = 'true': Boolean@77
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@86
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@103
 }
 
 LazyJavaClassifierType@113['E'] {
     arguments = ArrayList@114[empty]
     classifier = JavaTypeParameterImpl@92['E']
     nullable = 'true': Boolean@77
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@93
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@86
 }
 
 LazyJavaClassifierType@115['E'] {
     arguments = ArrayList@116[empty]
-    classifier = JavaTypeParameterImpl@103['E']
+    classifier = JavaTypeParameterImpl@106['E']
     nullable = 'true': Boolean@77
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@86
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@96
 }
 
 LazyJavaClassifierType@117['E'] {
     arguments = ArrayList@118[empty]
-    classifier = JavaTypeParameterImpl@89['E']
+    classifier = JavaTypeParameterImpl@99['E']
     nullable = 'true': Boolean@77
     typeConstructor = AbstractLazyTypeParameterDescriptor$1@86
 }
 
 LazyJavaClassifierType@119['E'] {
     arguments = ArrayList@120[empty]
-    classifier = JavaTypeParameterImpl@99['E']
+    classifier = JavaTypeParameterImpl@95['E']
     nullable = 'true': Boolean@77
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@100
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@96
 }
 
-LazyJavaClassifierType@41['List<E>'] {
+LazyJavaClassifierType@46['List<E>'] {
     arguments = ArrayList@121[1] { TypeProjectionImpl@122 }
     classifier = JavaClassImpl@123['List']
     memberScope = SubstitutingScope@124
     typeConstructor = DeserializedClassTypeConstructor@125
 }
 
-LazyJavaClassifierType@46['List<E>'] {
+LazyJavaClassifierType@41['List<E>'] {
     arguments = ArrayList@126[1] { TypeProjectionImpl@127 }
     classifier = JavaClassImpl@128['List']
     memberScope = SubstitutingScope@129
@@ -336,20 +336,20 @@ LazyJavaTypeParameterDescriptor@43['E'] {
     upperBounds = LinkedHashSet@207[1] { NullableType@208 }
 }
 
-LazyJavaTypeParameterDescriptor@34['E'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@100
+LazyJavaTypeParameterDescriptor@38['E'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@96
 }
 
-LazyJavaTypeParameterDescriptor@38['E'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@93
+LazyJavaTypeParameterDescriptor@34['E'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@103
 }
 
 LazyJavaTypeParameterResolver@209 {
-    resolve(JavaTypeParameterImpl@210['E']) = LazyJavaTypeParameterDescriptor@34['E']
+    resolve(JavaTypeParameterImpl@210['E']) = LazyJavaTypeParameterDescriptor@38['E']
 }
 
 LazyJavaTypeParameterResolver@211 {
-    resolve(JavaTypeParameterImpl@212['E']) = LazyJavaTypeParameterDescriptor@38['E']
+    resolve(JavaTypeParameterImpl@212['E']) = LazyJavaTypeParameterDescriptor@34['E']
 }
 
 LazyJavaTypeParameterResolver@213 {
@@ -358,19 +358,22 @@ LazyJavaTypeParameterResolver@213 {
 
 ResolutionTaskHolder@215 {
     <name not found> = ArrayList@216[1] { ResolutionCandidate@217 }
-    <name not found> = ArrayList@218[1] { ResolutionCandidate@217 }
 }
 
-ResolutionTaskHolder@219 {
-    <name not found> = ArrayList@220[1] { ResolutionCandidate@221 }
-    <name not found> = ArrayList@222[1] { ResolutionCandidate@221 }
+ResolutionTaskHolder@218 {
+    <name not found> = ArrayList@219[1] { ResolutionCandidate@220 }
 }
 
-ResolutionTaskHolder@223 {
-    <name not found> = ArrayList@224[3] { ResolutionCandidate@225, ResolutionCandidate@226, ResolutionCandidate@227 }
-    <name not found> = ArrayList@228[3] { ResolutionCandidate@225, ResolutionCandidate@226, ResolutionCandidate@227 }
+ResolutionTaskHolder@221 {
+    <name not found> = ArrayList@222[3] { ResolutionCandidate@223, ResolutionCandidate@224, ResolutionCandidate@225 }
     <name not found> = EmptyList@2[empty]
     <name not found> = EmptyList@2[empty]
+}
+
+null {
+    <name not found> = ArrayList@226[1] { ResolutionCandidate@220 }
+    <name not found> = ArrayList@227[1] { ResolutionCandidate@217 }
+    <name not found> = ArrayList@228[3] { ResolutionCandidate@223, ResolutionCandidate@224, ResolutionCandidate@225 }
     <name not found> = EmptyList@2[empty]
     <name not found> = EmptyList@2[empty]
 }

@@ -47,14 +47,14 @@ LazyJavaClassifierType@27['D'] {
 
 LazyJavaClassifierType@30['D'] {
     arguments = ArrayList@31[empty]
-    classifier = JavaTypeParameterImpl@29['D']
+    classifier = JavaTypeParameterImpl@21['D']
     nullable = 'true': Boolean@32
     typeConstructor = AbstractLazyTypeParameterDescriptor$1@23
 }
 
 LazyJavaClassifierType@33['D'] {
     arguments = ArrayList@34[empty]
-    classifier = JavaTypeParameterImpl@21['D']
+    classifier = JavaTypeParameterImpl@29['D']
     nullable = 'true': Boolean@32
     typeConstructor = AbstractLazyTypeParameterDescriptor$1@23
 }
@@ -152,13 +152,13 @@ LazyJavaPackageFragment@76['p'] {
     classes('Visitor': Name@85) = LazyJavaClassDescriptor@11['Visitor'] // through LazyPackageFragmentScopeForJavaPackage@95
 }
 
-LazyJavaTypeParameterDescriptor@17['D'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@96
+LazyJavaTypeParameterDescriptor@96['D'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@23
     upperBounds = LinkedHashSet@97[1] { NullableType@98 }
 }
 
-LazyJavaTypeParameterDescriptor@99['D'] {
-    typeConstructor = AbstractLazyTypeParameterDescriptor$1@23
+LazyJavaTypeParameterDescriptor@17['D'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@99
     upperBounds = LinkedHashSet@100[1] { NullableType@101 }
 }
 
@@ -167,20 +167,23 @@ LazyJavaTypeParameterResolver@102 {
 }
 
 LazyJavaTypeParameterResolver@104 {
-    resolve(JavaTypeParameterImpl@105['D']) = LazyJavaTypeParameterDescriptor@99['D']
+    resolve(JavaTypeParameterImpl@105['D']) = LazyJavaTypeParameterDescriptor@96['D']
 }
 
 ResolutionTaskHolder@106 {
     <name not found> = ArrayList@107[1] { ResolutionCandidate@108 }
-    <name not found> = ArrayList@109[1] { ResolutionCandidate@108 }
 }
 
-ResolutionTaskHolder@110 {
-    <name not found> = ArrayList@111[1] { ResolutionCandidate@112 }
-    <name not found> = ArrayList@113[1] { ResolutionCandidate@112 }
+ResolutionTaskHolder@109 {
+    <name not found> = ArrayList@110[1] { ResolutionCandidate@111 }
 }
 
-ResolutionTaskHolder@114 {
-    <name not found> = ArrayList@115[1] { ResolutionCandidate@116 }
-    <name not found> = ArrayList@117[1] { ResolutionCandidate@116 }
+ResolutionTaskHolder@112 {
+    <name not found> = ArrayList@113[1] { ResolutionCandidate@114 }
+}
+
+null {
+    <name not found> = ArrayList@115[1] { ResolutionCandidate@111 }
+    <name not found> = ArrayList@116[1] { ResolutionCandidate@114 }
+    <name not found> = ArrayList@117[1] { ResolutionCandidate@108 }
 }
