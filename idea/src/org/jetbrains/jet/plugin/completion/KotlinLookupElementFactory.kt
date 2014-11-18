@@ -76,12 +76,6 @@ public object KotlinLookupElementFactory {
                 val returnType = descriptor.getReturnType()
                 element = element.withTypeText(if (returnType != null) DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(returnType) else "")
                 element = element.appendTailText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(descriptor), false)
-
-                if (descriptor.getExtensionReceiverParameter() != null) {
-                    val tail = " for " + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.getExtensionReceiverParameter()!!.getType()) +
-                               " in " + DescriptorUtils.getFqName(descriptor.getContainingDeclaration())
-                    element = element.appendTailText(tail, true)
-                }
             }
 
             is VariableDescriptor -> {
@@ -94,6 +88,15 @@ public object KotlinLookupElementFactory {
 
             else -> {
                 element = element.withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor))
+            }
+        }
+
+        if (descriptor is CallableDescriptor) {
+            val receiver = descriptor.getExtensionReceiverParameter()
+            if (receiver != null) {
+                val tail = " for " + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(receiver.getType()) +
+                           " in " + DescriptorUtils.getFqName(descriptor.getContainingDeclaration())
+                element = element.appendTailText(tail, true)
             }
         }
 

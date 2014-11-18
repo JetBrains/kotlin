@@ -816,6 +816,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("Extensions.kt")
+            public void testExtensions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/Extensions.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("InvalidTypeParameters.kt")
             public void testInvalidTypeParameters() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/InvalidTypeParameters.kt");
