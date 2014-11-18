@@ -1,0 +1,3 @@
+Resolve target: value-parameter val p: kotlin.Any?
+Skipped statements:
+while(2 * 2 == 4) { print(p!!) if (x()) break }

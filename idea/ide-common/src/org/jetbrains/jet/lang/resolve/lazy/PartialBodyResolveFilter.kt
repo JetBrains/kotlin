@@ -175,7 +175,6 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
             override fun visitWhileExpression(expression: JetWhileExpression) {
                 val condition = expression.getCondition()
                 // we need to enter the body only for "while(true)"
-                //TODO: what about e.g. "1 == 1"
                 if (condition.isTrueConstant()) {
                     expression.acceptChildren(this)
                 }

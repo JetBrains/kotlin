@@ -19,7 +19,6 @@ package org.jetbrains.jet.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -225,6 +224,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     @TestMetadata("WhileTrue.kt")
     public void testWhileTrue() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/WhileTrue.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("WhileTrueCondition.kt")
+    public void testWhileTrueCondition() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/WhileTrueCondition.kt");
         doTest(fileName);
     }
 }
