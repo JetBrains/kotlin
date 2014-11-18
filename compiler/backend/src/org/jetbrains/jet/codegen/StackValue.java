@@ -28,7 +28,6 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -428,9 +427,30 @@ public abstract class StackValue {
             @Nullable CallableMethod callableMethod
     ) {
         if (resolvedCall.getDispatchReceiver().exists() || resolvedCall.getExtensionReceiver().exists() || isLocalFunCall(callableMethod)) {
-            return new CallReceiver(resolvedCall, receiver, codegen, callableMethod, true);
+            boolean hasExtensionReceiver = resolvedCall.getExtensionReceiver().exists();
+            StackValue extensionReceiver = genReceiver(receiver, codegen, resolvedCall, callableMethod, true);
+            StackValue dispatchReceiver = genReceiver(hasExtensionReceiver ? none() : receiver, codegen, resolvedCall, callableMethod, false);
+            return new CallReceiver(dispatchReceiver, extensionReceiver,
+                                    CallReceiver.calcType(resolvedCall, codegen.typeMapper, callableMethod));
         }
         return receiver;
+    }
+
+    private static StackValue genReceiver(@NotNull StackValue receiver, @NotNull ExpressionCodegen codegen, ResolvedCall resolvedCall, @Nullable CallableMethod callableMethod, boolean isExtension) {
+        ReceiverValue receiverValue = isExtension ? resolvedCall.getExtensionReceiver() : resolvedCall.getDispatchReceiver();
+        if (receiver == none()) {
+            if (receiverValue.exists()) {
+                return codegen.generateReceiverValue(receiverValue);
+            } else if (isLocalFunCall(callableMethod) && !isExtension) {
+                CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+                StackValue value = codegen.findLocalOrCapturedValue(descriptor.getOriginal());
+                assert value != null : "Local fun should be found in locals or in captured params: " + resolvedCall;
+                return value;
+            }
+        } else if (receiverValue.exists()) {
+            return receiver;
+        }
+        return none();
     }
 
     @Contract("null -> false")
@@ -441,8 +461,7 @@ public abstract class StackValue {
     public static StackValue receiverWithoutReceiverArgument(StackValue receiverWithParameter) {
         if (receiverWithParameter instanceof CallReceiver) {
             CallReceiver callReceiver = (CallReceiver) receiverWithParameter;
-            return new CallReceiver(callReceiver.resolvedCall, callReceiver.receiver,
-                                    callReceiver.codegen, callReceiver.callableMethod, false);
+            return new CallReceiver(callReceiver.dispatchReceiver, none(), callReceiver.type);
         }
         return receiverWithParameter;
     }
@@ -1339,28 +1358,20 @@ public abstract class StackValue {
     }
 
     public static class CallReceiver extends StackValue {
-        private final ResolvedCall<?> resolvedCall;
-        private final StackValue receiver;
-        private final ExpressionCodegen codegen;
-        private final CallableMethod callableMethod;
-        private final boolean putReceiverArgumentOnStack;
+        private final StackValue dispatchReceiver;
+        private final StackValue extensionReceiver;
 
         public CallReceiver(
-                @NotNull ResolvedCall<?> resolvedCall,
-                @NotNull StackValue receiver,
-                @NotNull ExpressionCodegen codegen,
-                @Nullable CallableMethod callableMethod,
-                boolean putReceiverArgumentOnStack
+                @NotNull StackValue dispatchReceiver,
+                @NotNull StackValue extensionReceiver,
+                @NotNull Type type
         ) {
-            super(calcType(resolvedCall, codegen.typeMapper, callableMethod));
-            this.resolvedCall = resolvedCall;
-            this.receiver = receiver;
-            this.codegen = codegen;
-            this.callableMethod = callableMethod;
-            this.putReceiverArgumentOnStack = putReceiverArgumentOnStack;
+            super(type);
+            this.dispatchReceiver = dispatchReceiver;
+            this.extensionReceiver = extensionReceiver;
         }
 
-        private static Type calcType(
+        public static Type calcType(
                 @NotNull ResolvedCall<?> resolvedCall,
                 @NotNull JetTypeMapper typeMapper,
                 @Nullable CallableMethod callableMethod
@@ -1383,65 +1394,20 @@ public abstract class StackValue {
             return Type.VOID_TYPE;
         }
 
+
         @Override
         public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
-            CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-
-            ReceiverValue dispatchReceiver = resolvedCall.getDispatchReceiver();
-            ReceiverValue extensionReceiver = resolvedCall.getExtensionReceiver();
-            int depth = 0;
-
-            StackValue currentReceiver = receiver;
-            if (putReceiverArgumentOnStack && extensionReceiver.exists() && receiver instanceof SafeCall) {
-                currentReceiver.put(currentReceiver.type, v);
-                currentReceiver = StackValue.onStack(currentReceiver.type);
+            StackValue currentExtensionReceiver = extensionReceiver;
+            boolean hasExtensionReceiver = extensionReceiver != none();
+            if (extensionReceiver instanceof StackValue.SafeCall) {
+                currentExtensionReceiver.put(currentExtensionReceiver.type, v);
+                currentExtensionReceiver = StackValue.onStack(currentExtensionReceiver.type);
             }
 
-            if (dispatchReceiver.exists()) {
-                if (!AnnotationsPackage.isPlatformStaticInObject(descriptor)) {
-                    if (extensionReceiver.exists()) {
-                        //noinspection ConstantConditions
-                        Type resultType =
-                                callableMethod != null ?
-                                callableMethod.getOwner() :
-                                codegen.typeMapper.mapType(descriptor.getDispatchReceiverParameter().getType());
+            dispatchReceiver.put(hasExtensionReceiver ? dispatchReceiver.type : type, v);
 
-                        codegen.generateReceiverValue(dispatchReceiver).put(resultType, v);
-                    }
-                    else {
-                        genReceiver(v, dispatchReceiver, type, 0, receiver);
-                    }
-                    depth = 1;
-                }
-            }
-            else if (isLocalFunCall(callableMethod)) {
-                assert receiver == none() || extensionReceiver.exists() :
-                        "Receiver should be present only for local extension function: " + callableMethod;
-                StackValue value = codegen.findLocalOrCapturedValue(descriptor.getOriginal());
-                assert value != null : "Local fun should be found in locals or in captured params: " + resolvedCall;
-                value.put(callableMethod.getGenerateCalleeType(), v);
-
-                depth = 1;
-            }
-
-            if (putReceiverArgumentOnStack && extensionReceiver.exists()) {
-                genReceiver(v, extensionReceiver, type, depth, currentReceiver);
-            }
-        }
-
-        private void genReceiver(
-                @NotNull InstructionAdapter v,
-                @NotNull ReceiverValue receiverArgument,
-                @NotNull Type type,
-                int depth,
-                @NotNull StackValue receiver
-        ) {
-            if (receiver == StackValue.none()) {
-                codegen.generateReceiverValue(receiverArgument).put(type, v);
-            }
-            else {
-                receiver.moveToTopOfStack(type, v, depth);
-            }
+            currentExtensionReceiver
+                    .moveToTopOfStack(hasExtensionReceiver ? type : currentExtensionReceiver.type, v, dispatchReceiver.type.getSize());
         }
     }
 

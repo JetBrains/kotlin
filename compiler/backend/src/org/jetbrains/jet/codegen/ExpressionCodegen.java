@@ -24,7 +24,10 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
-import kotlin.*;
+import kotlin.ExtensionFunction0;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.backend.common.CodegenUtil;
@@ -2337,6 +2340,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         );
     }
 
+    @NotNull
     public StackValue generateReceiverValue(@NotNull ReceiverValue receiverValue) {
         if (receiverValue instanceof ClassReceiver) {
             ClassDescriptor receiverDescriptor = ((ClassReceiver) receiverValue).getDeclarationDescriptor();
