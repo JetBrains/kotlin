@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.stubindex.resolve
+package org.jetbrains.jet.lang.resolve.lazy.declarations
 
-import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
