@@ -132,6 +132,18 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("IfNullDoWhileWithBreak.kt")
+    public void testIfNullDoWhileWithBreak() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullDoWhileWithBreak.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfNullForWithReturn.kt")
+    public void testIfNullForWithReturn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullForWithReturn.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("IfNullPrint.kt")
     public void testIfNullPrint() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullPrint.kt");
@@ -141,6 +153,18 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     @TestMetadata("IfNullReturn.kt")
     public void testIfNullReturn() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullReturn.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfNullWhileTrueWithBreak.kt")
+    public void testIfNullWhileTrueWithBreak() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullWhileTrueWithBreak.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfNullWhileWithReturn.kt")
+    public void testIfNullWhileWithReturn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullWhileWithReturn.kt");
         doTest(fileName);
     }
 

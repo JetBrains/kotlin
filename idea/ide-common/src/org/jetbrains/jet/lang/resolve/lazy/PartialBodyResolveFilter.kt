@@ -212,6 +212,8 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
     private fun collectAlwaysExitPoints(expression: JetExpression?): Collection<JetExpression> {
         val result = ArrayList<JetExpression>()
         expression?.accept(object : ControlFlowVisitor() {
+            var insideLoop = false
+
             override fun visitReturnExpression(expression: JetReturnExpression) {
                 result.add(expression)
             }
@@ -220,13 +222,41 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
                 result.add(expression)
             }
 
-            //TODO: check loop entrance
+            override fun visitForExpression(loop: JetForExpression) {
+                loop.getLoopRange()?.accept(this)
+                // do not make sense to search exits inside for as not necessary enter it at all
+            }
+
+            override fun visitWhileExpression(loop: JetWhileExpression) {
+                val condition = loop.getCondition()
+                if (condition.isTrueConstant()) {
+                    insideLoop = true
+                    loop.getBody()?.accept(this)
+                    insideLoop = false
+                }
+                else {
+                    // do not make sense to search exits inside for as not necessary enter it at all
+                    condition?.accept(this)
+                }
+            }
+
+            override fun visitDoWhileExpression(loop: JetDoWhileExpression) {
+                loop.getCondition()?.accept(this)
+                insideLoop = true
+                loop.getBody()?.accept(this)
+                insideLoop = false
+            }
+
             override fun visitBreakExpression(expression: JetBreakExpression) {
-                result.add(expression)
+                if (!insideLoop || expression.getLabelName() != null) {
+                    result.add(expression)
+                }
             }
 
             override fun visitContinueExpression(expression: JetContinueExpression) {
-                result.add(expression)
+                if (!insideLoop || expression.getLabelName() != null) {
+                    result.add(expression)
+                }
             }
         })
         return result

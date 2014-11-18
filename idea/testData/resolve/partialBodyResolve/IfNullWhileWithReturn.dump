@@ -1,0 +1,3 @@
+Resolve target: val x: kotlin.Any?
+Skipped statements:
+if (x == null) { while (f()) { print(1) return } }
