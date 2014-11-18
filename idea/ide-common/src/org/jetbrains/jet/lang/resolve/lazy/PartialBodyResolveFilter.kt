@@ -162,6 +162,11 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
                 }
             }
 
+            override fun visitForExpression(expression: JetForExpression) {
+                // analyze only the loop-range expression, do not enter the loop body
+                expression.getLoopRange()?.accept(this)
+            }
+
             //TODO: when
         })
 
