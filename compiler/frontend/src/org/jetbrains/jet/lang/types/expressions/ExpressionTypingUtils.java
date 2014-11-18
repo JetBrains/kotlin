@@ -207,10 +207,6 @@ public class ExpressionTypingUtils {
 
         for (JetType type : types) {
             if (checkReceiverResolution(receiverArgument, type, callableDescriptor)) return true;
-            if (type.isNullable()) {
-                JetType notNullableType = TypeUtils.makeNotNullable(type);
-                if (checkReceiverResolution(receiverArgument, notNullableType, callableDescriptor)) return true;
-            }
         }
 
         return false;
