@@ -1658,21 +1658,39 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("funAccess.kt")
+        public void testFunAccess() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/funAccess.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("inline.kt")
         public void testInline() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/inline.kt");
             doTestWithStdlib(fileName);
         }
 
-        @TestMetadata("propertyAsDefault.kt")
-        public void testPropertyAsDefault() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/propertyAsDefault.kt");
+        @TestMetadata("postfixInc.kt")
+        public void testPostfixInc() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/postfixInc.kt");
             doTestWithStdlib(fileName);
         }
 
-        @TestMetadata("propertyInc.kt")
-        public void testPropertyInc() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/propertyInc.kt");
+        @TestMetadata("prefixInc.kt")
+        public void testPrefixInc() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/prefixInc.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("propertyAccess.kt")
+        public void testPropertyAccess() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/propertyAccess.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("propertyAsDefault.kt")
+        public void testPropertyAsDefault() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/propertyAsDefault.kt");
             doTestWithStdlib(fileName);
         }
 

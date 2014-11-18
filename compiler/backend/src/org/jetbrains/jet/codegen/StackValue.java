@@ -100,7 +100,7 @@ public abstract class StackValue {
 
     public abstract void putSelector(@NotNull Type type, @NotNull InstructionAdapter v);
 
-    public boolean hasReceiver(boolean isRead) {
+    public boolean isNonStaticAccess(boolean isRead) {
         return false;
     }
 
@@ -1073,7 +1073,7 @@ public abstract class StackValue {
         public final String name;
 
         public Field(Type type, Type owner, String name, boolean isStatic, StackValue receiver) {
-            super(type, isStatic, isStatic, receiver, false);
+            super(type, isStatic, isStatic, receiver, receiver.hasSideEffects());
             this.owner = owner;
             this.name = name;
         }
@@ -1464,13 +1464,14 @@ public abstract class StackValue {
 
         @Override
         public void putReceiver(@NotNull InstructionAdapter v, boolean isRead) {
-            if (hasReceiver(isRead)) {
-                receiver.put(receiver.type, v);
+            boolean hasReceiver = isNonStaticAccess(isRead);
+            if (hasReceiver || receiver.hasSideEffects()) {
+                receiver.put(hasReceiver ? receiver.type : Type.VOID_TYPE, v);
             }
         }
 
         @Override
-        public boolean hasReceiver(boolean isRead) {
+        public boolean isNonStaticAccess(boolean isRead) {
             return isRead ? !isStaticPut : !isStaticStore;
         }
 
@@ -1483,7 +1484,7 @@ public abstract class StackValue {
             if (!withWriteReceiver) {
                 super.dup(v, withWriteReceiver);
             } else {
-                int receiverSize = hasReceiver(false) ? receiverSize() : 0;
+                int receiverSize = isNonStaticAccess(false) ? receiverSize() : 0;
                 switch (receiverSize) {
                     case 0:
                         AsmUtil.dup(v, type);
@@ -1531,7 +1532,7 @@ public abstract class StackValue {
         private final boolean [] isReadOperations;
 
         public ComplexReceiver(StackValueWithSimpleReceiver value, boolean [] isReadOperations) {
-            super(value.type);
+            super(value.type, value.receiver.hasSideEffects());
             this.originalValueWithReceiver = value;
             this.isReadOperations = isReadOperations;
         }
@@ -1541,9 +1542,9 @@ public abstract class StackValue {
                 @NotNull Type type, @NotNull InstructionAdapter v
         ) {
             boolean wasPutted = false;
+            StackValue receiver = originalValueWithReceiver.receiver;
             for (boolean operation : isReadOperations) {
-                if (originalValueWithReceiver.hasReceiver(operation)) {
-                    StackValue receiver = originalValueWithReceiver.receiver;
+                if (originalValueWithReceiver.isNonStaticAccess(operation)) {
                     if (!wasPutted) {
                         receiver.put(receiver.type, v);
                         wasPutted = true;
@@ -1551,6 +1552,10 @@ public abstract class StackValue {
                         receiver.dup(v, false);
                     }
                 }
+            }
+
+            if (!wasPutted && receiver.hasSideEffects()) {
+                receiver.put(Type.VOID_TYPE, v);
             }
         }
     }
@@ -1588,7 +1593,7 @@ public abstract class StackValue {
         }
 
         private static boolean bothReceiverStatic(StackValueWithSimpleReceiver originalValue) {
-            return !(originalValue.hasReceiver(true) || originalValue.hasReceiver(false));
+            return !(originalValue.isNonStaticAccess(true) || originalValue.isNonStaticAccess(false));
         }
 
         @Override

@@ -43,8 +43,8 @@ class CoercionValue(
         value.condJump(label, jumpIfFalse, v)
     }
 
-    override fun hasReceiver(isRead: Boolean): Boolean {
-        return value.hasReceiver(isRead)
+    override fun isNonStaticAccess(isRead: Boolean): Boolean {
+        return value.isNonStaticAccess(isRead)
     }
 }
 
