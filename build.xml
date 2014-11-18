@@ -365,6 +365,11 @@
                 <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/resources" includes="manifest.properties"/>
 
+                <fileset dir="idea/src">
+                    <include name="META-INF/extensions/common.xml"/>
+                    <include name="META-INF/extensions/kotlin2js.xml"/>
+                </fileset>
+
                 <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
                 <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
                 <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
@@ -451,7 +456,7 @@
                     !org/mozilla/javascript/xml/impl/xmlbeans/**,
                     !META-INF/maven**,
                     **.class,**.properties,**.kt,**.kotlin_*,
-                    META-INF/services/**,META-INF/native/**,META-INF/MANIFEST.MF,
+                    META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
                     messages/**)
 
                     -outjars '${kotlin-home}/lib/kotlin-compiler.jar'
@@ -733,7 +738,7 @@
         <fileset dir="${basedir}/idea/idea-analysis/src" excludes="**/*.java, **/*.kt"/>
       </copy>
 
-        <jar jarfile="${output}/kotlin-for-upsource0.jar">
+      <jar jarfile="${output}/kotlin-for-upsource0.jar">
             <fileset dir="${output}/classes/idea-analysis"/>
             <fileset dir="${output}/classes/compiler"/>
             <fileset dir="${output}/classes/runtime"/>

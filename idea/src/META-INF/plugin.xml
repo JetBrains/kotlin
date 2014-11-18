@@ -1,5 +1,5 @@
-<idea-plugin version="2" url="http://kotlin.jetbrains.org">
-  <id>org.jetbrains.kotlin</id>
+<idea-plugin version="2" url="http://kotlin.jetbrains.org" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <id>org.jetbrains.kotlin</id>
 
   <name>Kotlin</name>
   <description>Kotlin language support</description>
@@ -820,18 +820,14 @@
 
   </extensions>
 
-    <extensionPoints>
-        <extensionPoint name="updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
-        <extensionPoint name="projectConfigurator" interface="org.jetbrains.jet.plugin.configuration.KotlinProjectConfigurator"/>
-        <extensionPoint name="suppressStringProvider" interface="org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression$SuppressStringProvider"/>
-        <extensionPoint name="diagnosticSuppressor" interface="org.jetbrains.jet.lang.resolve.DiagnosticsWithSuppression$DiagnosticSuppressor"/>
-    </extensionPoints>
+  <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
-    <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator"/>
-        <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator"/>
-        <suppressStringProvider implementation="org.jetbrains.k2js.analyze.SuppressUnusedParameterForJsNative"/>
-        <diagnosticSuppressor implementation="org.jetbrains.k2js.analyze.SuppressWarningsFromExternalModules"/>
-        <diagnosticSuppressor implementation="org.jetbrains.jet.plugin.debugger.DiagnosticSuppressorForDebugger"/>
-    </extensions>
+  <extensionPoints>
+    <xi:include href="extensions/common.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+      <xi:include href="extensions/kotlin2js.xml" xpointer="xpointer(/idea-plugin/extensions/*)"/>
+  </extensions>
+
 </idea-plugin>

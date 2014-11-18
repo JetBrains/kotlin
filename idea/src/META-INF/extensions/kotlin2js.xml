@@ -1,0 +1,8 @@
+<idea-plugin>
+    <id>org.jetbrains.kotlin</id>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <suppressStringProvider implementation="org.jetbrains.k2js.analyze.SuppressUnusedParameterForJsNative"/>
+        <diagnosticSuppressor implementation="org.jetbrains.k2js.analyze.SuppressWarningsFromExternalModules"/>
+    </extensions>
+</idea-plugin>
