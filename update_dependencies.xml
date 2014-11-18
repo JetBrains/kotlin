@@ -22,25 +22,19 @@
     <property name="idea.sdk.fetch.needed" value="true"/>
 
     <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
-        <execute_update
-            base.url="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/id:${public.buildserver.build.id}"
-            ic.marker.in.jps.files="-IC"
-        />
+        <execute_update base.url="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/id:${public.buildserver.build.id}"/>
     </target>
 
     <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from internal server">
-        <execute_update
-            base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/id:${jb.buildserver.build.id}"
-            ic.marker.in.jps.files="-IC"
-        />
+        <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/id:${jb.buildserver.build.id}"/>
     </target>
 
     <target name="jb_update_continuous_139" depends="fetch-third-party,fetch-annotations">
-        <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:ijplatform_IjPlatformMaster_IdeaTrunk_Installers,status:SUCCESS"/>
+        <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:ijplatform_IjPlatformMaster_IdeaTrunk_CommunityDist,status:SUCCESS"/>
     </target>
 
     <target name="jb_update_continuous_140" depends="fetch-third-party,fetch-annotations">
-        <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:IDEA_Trunk_Installers,status:SUCCESS"/>
+        <execute_update base.url="http://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:bt662,status:SUCCESS"/>
     </target>
 
     <macrodef name="get-maven-library">
@@ -235,10 +229,6 @@
     <macrodef name="execute_update">
         <attribute name="base.url"/>
 
-        <!-- JPS files are named with different convention when build by dist.gant script in IDEA CE repo, and release.gant in IDEA UE repo:
-             'standalone-jps-IC-139.SNAPSHOT.zip' and 'standalone-jps-140.508.zip', respectively. This may change, but it is so yet. -->
-        <attribute name="ic.marker.in.jps.files" default=""/>
-
         <sequential>
             <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
@@ -287,7 +277,7 @@
                     <get src="${content.base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
                     <!--<get src="${content.base.url}/core/snappy-java-1.0.5.jar" dest="${core}/snappy-java-1.0.5.jar" usetimestamp="true"/>-->
 
-                    <get src="${content.base.url}/jps/standalone-jps@{ic.marker.in.jps.files}-${idea.build.number}.zip"
+                    <get src="${content.base.url}/jps/standalone-jps-IC-${idea.build.number}.zip"
                          dest="dependencies/download/standalone-jps.zip"
                          usetimestamp="true"/>
 
@@ -312,7 +302,7 @@
                         </resources>
                     </copy>
 
-                    <get src="${content.base.url}/jps/jps-build-test@{ic.marker.in.jps.files}-${idea.build.number}.jar" dest="${jps-test}/jps-build-test.jar"
+                    <get src="${content.base.url}/jps/jps-build-test-IC-${idea.build.number}.jar" dest="${jps-test}/jps-build-test.jar"
                          usetimestamp="true"/>
 
                     <get src="${content.base.url}/${idea.archive.name}" dest="dependencies/download/${idea.archive.name}" usetimestamp="true"/>
