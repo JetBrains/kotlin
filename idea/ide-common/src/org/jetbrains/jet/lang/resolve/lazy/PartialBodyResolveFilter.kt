@@ -25,6 +25,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.JetNodeTypes
+import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 
 class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: JetExpression) : (JetElement) -> Boolean {
 
@@ -32,6 +33,8 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
     private val processedBlocks = HashSet<JetBlockExpression>()
 
     ;{
+        assert(body.isAncestor(elementToResolve, strict = false))
+
         addStatementsToResolve(elementToResolve)
     }
 
@@ -45,7 +48,8 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
 
     private fun addStatementsToResolve(element: JetElement) {
         if (element == body) return
-        val parent = element.getParent() as JetElement
+        val parent = element.getParent() as? JetElement
+                     ?: return
 
         if (parent is JetBlockExpression) {
             processBlock(parent)
