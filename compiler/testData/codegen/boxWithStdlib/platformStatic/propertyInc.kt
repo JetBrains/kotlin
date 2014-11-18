@@ -12,20 +12,16 @@ object A {
 
 }
 
-
-
 fun box(): String {
-    if (A.test1() != "OK") return "fail 1"
 
-    if (A.test2() != "OK") return "fail 2"
+    A.a++
+    if (A.a != 2) return "fail 1"
 
-    if (A.test3() != "1OK") return "fail 3"
+    A.b++
+    if (A.b != 2) return "fail 2"
 
-    if (A.test4() != "1OK") return "fail 4"
-
-    if (with(A) {"1".test5()} != "1OK") return "fail 5"
-
-    if (A.c != "OK") return "fail 6"
+    A.c++
+    if (A.c != 2) return "fail 3"
 
     return "OK"
 }

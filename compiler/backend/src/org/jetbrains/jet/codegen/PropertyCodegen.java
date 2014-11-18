@@ -43,6 +43,8 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
+import java.util.List;
+
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.getParentBodyCodegen;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
@@ -388,16 +390,15 @@ public class PropertyCodegen {
                 v.areturn(type);
             }
             else if (callableDescriptor instanceof PropertySetterDescriptor) {
-                ReceiverParameterDescriptor receiverParameter = propertyDescriptor.getExtensionReceiverParameter();
-                int paramCode = codegen.getContext().getContextKind() != OwnerKind.PACKAGE ? 1 : 0;
-                if (receiverParameter != null) {
-                    paramCode += codegen.typeMapper.mapType(receiverParameter.getType()).getSize();
-                }
+                List<ValueParameterDescriptor> valueParameters = callableDescriptor.getValueParameters();
+                assert valueParameters.size() == 1 : "Property setter should have only one value parameter but has " + callableDescriptor;
+                int parameterIndex = codegen.lookupLocalIndex(valueParameters.get(0));
+                assert parameterIndex >= 0 : "Local index for setter parameter should be positive or zero: " + callableDescriptor;
                 Type type = codegen.typeMapper.mapType(propertyDescriptor);
-                StackValue.Local value = StackValue.local(paramCode, type);
-                property.store(value, codegen.v);
+                property.store(StackValue.local(parameterIndex, type), codegen.v);
                 v.visitInsn(RETURN);
-            } else {
+            }
+            else {
                 throw new IllegalStateException("Unknown property accessor: " + callableDescriptor);
             }
         }
