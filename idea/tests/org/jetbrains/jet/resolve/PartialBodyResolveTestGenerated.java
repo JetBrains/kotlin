@@ -210,6 +210,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("ThisQualifiedAutoCast.kt")
+    public void testThisQualifiedAutoCast() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ThisQualifiedAutoCast.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("While.kt")
     public void testWhile() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/While.kt");

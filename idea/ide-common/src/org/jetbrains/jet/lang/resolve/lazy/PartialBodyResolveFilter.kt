@@ -316,14 +316,15 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
 
     private fun PsiElement.isStatement() = this is JetExpression && getParent() is JetBlockExpression
 
-    //TODO: this.a
     private fun JetExpression.smartCastedExpressionName(): String? {
         return when (this) {
             is JetSimpleNameExpression -> this.getReferencedName()
 
             is JetQualifiedExpression -> {
                 val selectorName = getSelectorExpression().smartCastedExpressionName() ?: return null
-                val receiverName = getReceiverExpression().smartCastedExpressionName() ?: return null
+                val receiver = getReceiverExpression()
+                if (receiver is JetThisExpression) return selectorName
+                val receiverName = receiver.smartCastedExpressionName() ?: return null
                 return selectorName + "." + receiverName
             }
 
