@@ -131,15 +131,20 @@ class LazyOperationsLog(
 
         val aClass = o.javaClass
         sb.append(if (aClass.isAnonymousClass()) aClass.getName().substringAfterLast('.') else aClass.getSimpleName()).append("@$id")
+
+        fun Any.appendQuoted() {
+            sb.append("['").append(this).append("']")
+        }
+
         when {
-            o is Named -> sb.append("['${o.getName()}']")
+            o is Named -> o.getName().appendQuoted()
             o.javaClass.getSimpleName() == "LazyJavaClassifierType" -> {
                 val javaType = o.field<JavaTypeImpl<*>>("javaType")
-                sb.append("['${javaType.getPsi().getPresentableText()}']")
+                javaType.getPsi().getPresentableText().appendQuoted()
             }
             o.javaClass.getSimpleName() == "LazyJavaClassTypeConstructor" -> {
                 val javaClass = o.field<Any>("this\$0").field<JavaClassImpl>("jClass")
-                sb.append("['${javaClass.getPsi().getName()}']")
+                javaClass.getPsi().getName().appendQuoted()
             }
             o.javaClass.getSimpleName() == "DeserializedType" -> {
                 val typeDeserializer = o.field<TypeDeserializer>("this\$0")
@@ -153,13 +158,13 @@ class LazyOperationsLog(
                     }
                     else -> "???"
                 }
-                sb.append("['$text']")
+                text.appendQuoted()
             }
             o is JavaNamedElement -> {
-                sb.append("['${o.getName()}']")
+                o.getName().appendQuoted()
             }
             o is JavaTypeImpl<*> -> {
-                sb.append("['${o.getPsi().getPresentableText()}']")
+                o.getPsi().getPresentableText().appendQuoted()
             }
             o is Collection<*> -> {
                 if (o.isEmpty()) {
@@ -173,11 +178,12 @@ class LazyOperationsLog(
                 }
             }
             o is JetTypeImpl -> {
-                sb.append("['").append(o.getConstructor())
-                if (!o.getArguments().isEmpty()) {
-                    sb.append("<${o.getArguments().size()}>")
-                }
-                sb.append("']")
+                StringBuilder {
+                    append(o.getConstructor())
+                    if (!o.getArguments().isEmpty()) {
+                        append("<${o.getArguments().size()}>")
+                    }
+                }.appendQuoted()
             }
         }
         return sb.toString()
