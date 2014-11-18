@@ -93,7 +93,7 @@ public class CandidateResolver {
 
 
         DeclarationDescriptorWithVisibility invisibleMember =
-                Visibilities.findInvisibleMember(candidate, context.scope.getContainingDeclaration());
+                Visibilities.findInvisibleMember(ReceiverValue.IRRELEVANT_RECEIVER, candidate, context.scope.getContainingDeclaration());
         if (invisibleMember != null) {
             candidateCall.addStatus(OTHER_ERROR);
             context.tracing.invisibleMember(context.trace, invisibleMember);

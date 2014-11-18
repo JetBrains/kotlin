@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 public abstract class Visibility {
     private final boolean isPublicAPI;
@@ -48,5 +49,5 @@ public abstract class Visibility {
         return this;
     }
 
-    protected abstract boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from);
+    protected abstract boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from);
 }
