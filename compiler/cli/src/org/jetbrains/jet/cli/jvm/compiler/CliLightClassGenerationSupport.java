@@ -258,7 +258,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
             V value = super.get(slice, key);
 
-            if (value == null) {
+            if (value == null && TopDownAnalysisParameters.LAZY) {
                 if (BindingContext.FUNCTION == slice || BindingContext.VARIABLE == slice) {
                     if (key instanceof JetDeclaration) {
                         JetDeclaration jetDeclaration = (JetDeclaration) key;

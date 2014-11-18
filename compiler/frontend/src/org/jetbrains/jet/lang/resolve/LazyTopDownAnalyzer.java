@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.KotlinPackage;
@@ -72,6 +71,10 @@ public class LazyTopDownAnalyzer {
     @NotNull
     private BodyResolver bodyResolver = null;
 
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
+    private TopDownAnalyzer topDownAnalyzer = null;
+
     @Inject
     public void setKotlinCodeAnalyzer(@NotNull KotlinCodeAnalyzer kotlinCodeAnalyzer) {
         this.resolveSession = kotlinCodeAnalyzer;
@@ -107,12 +110,23 @@ public class LazyTopDownAnalyzer {
         this.bodyResolver = bodyResolver;
     }
 
+    @Inject
+    public void setTopDownAnalyzer(@NotNull TopDownAnalyzer topDownAnalyzer) {
+        this.topDownAnalyzer = topDownAnalyzer;
+    }
+
     @NotNull
     public TopDownAnalysisContext analyzeFiles(
             @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull Collection<JetFile> files,
             @NotNull List<? extends PackageFragmentProvider> additionalProviders
     ) {
+        if (!topDownAnalysisParameters.isLazy()) {
+            return topDownAnalyzer.analyzeFiles(
+                    topDownAnalysisParameters, files,
+                    additionalProviders.toArray(new PackageFragmentProvider[additionalProviders.size()]));
+        }
+        
         PackageFragmentProvider provider;
         if (additionalProviders.isEmpty()) {
             provider = resolveSession.getPackageFragmentProvider();
