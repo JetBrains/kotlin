@@ -52,48 +52,43 @@ public object TipsManager{
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
-        val receiverExpression = expression.getReceiverExpression()
         val parent = expression.getParent()
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
-
-        if (receiverExpression != null) {
-            val inPositionForCompletionWithReceiver = parent is JetCallExpression
-                                                      || parent is JetQualifiedExpression
-                                                      || parent is JetBinaryExpression
-            if (inPositionForCompletionWithReceiver) {
-                val isInfixCall = parent is JetBinaryExpression
-                fun filterIfInfix(descriptor: DeclarationDescriptor)
-                        = if (isInfixCall) descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size == 1 else true
-
-                // Process as call expression
-                val descriptors = HashSet<DeclarationDescriptor>()
-
-                val qualifier = context[BindingContext.QUALIFIER, receiverExpression]
-                if (qualifier != null) {
-                    // It's impossible to add extension function for package or class (if it's class object, expression type is not null)
-                    qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter).filterTo(descriptors, ::filterIfInfix)
-                }
-
-                val expressionType = context[BindingContext.EXPRESSION_TYPE, receiverExpression]
-                if (expressionType != null && !expressionType.isError()) {
-                    val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
-                    val dataFlowInfo = context.getDataFlowInfo(expression)
-
-                    val mask = kindFilter.withoutKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK).exclude(DescriptorKindExclude.Extensions)
-                    for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, dataFlowInfo)) {
-                        variant.getMemberScope().getDescriptorsFiltered(mask, nameFilter).filterTo(descriptors, ::filterIfInfix)
-                    }
-
-                    descriptors.addCallableExtensions(resolutionScope, receiverValue, context, dataFlowInfo, isInfixCall, kindFilter, nameFilter)
-                }
-
-                return descriptors
-            }
-        }
 
         if (parent is JetImportDirective || parent is JetPackageDirective) {
             val restrictedFilter = kindFilter.restrictedToKinds(DescriptorKindFilter.PACKAGES_MASK) ?: return listOf()
             return resolutionScope.getDescriptorsFiltered(restrictedFilter, nameFilter)
+        }
+
+        val receiverExpression = getReferenceVariantsReceiver(expression)
+        if (receiverExpression != null) {
+            val isInfixCall = parent is JetBinaryExpression
+            fun filterIfInfix(descriptor: DeclarationDescriptor)
+                    = if (isInfixCall) descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size == 1 else true
+
+            // Process as call expression
+            val descriptors = HashSet<DeclarationDescriptor>()
+
+            val qualifier = context[BindingContext.QUALIFIER, receiverExpression]
+            if (qualifier != null) {
+                // It's impossible to add extension function for package or class (if it's class object, expression type is not null)
+                qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter).filterTo(descriptors, ::filterIfInfix)
+            }
+
+            val expressionType = context[BindingContext.EXPRESSION_TYPE, receiverExpression]
+            if (expressionType != null && !expressionType.isError()) {
+                val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
+                val dataFlowInfo = context.getDataFlowInfo(expression)
+
+                val mask = kindFilter.withoutKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK).exclude(DescriptorKindExclude.Extensions)
+                for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, dataFlowInfo)) {
+                    variant.getMemberScope().getDescriptorsFiltered(mask, nameFilter).filterTo(descriptors, ::filterIfInfix)
+                }
+
+                descriptors.addCallableExtensions(resolutionScope, receiverValue, context, dataFlowInfo, isInfixCall, kindFilter, nameFilter)
+            }
+
+            return descriptors
         }
         else {
             val descriptorsSet = HashSet<DeclarationDescriptor>()
@@ -115,6 +110,29 @@ public object TipsManager{
 
             return descriptorsSet
         }
+    }
+
+    public fun getReferenceVariantsReceivers(expression: JetSimpleNameExpression, context: BindingContext): Collection<ReceiverValue> {
+        val receiverExpression = getReferenceVariantsReceiver(expression)
+        if (receiverExpression != null) {
+            val expressionType = context[BindingContext.EXPRESSION_TYPE, receiverExpression] ?: return listOf()
+            return listOf(ExpressionReceiver(receiverExpression, expressionType))
+        }
+        else {
+            val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
+            return resolutionScope.getImplicitReceiversHierarchy().map { it.getValue() }
+        }
+    }
+
+    private fun getReferenceVariantsReceiver(expression: JetSimpleNameExpression): JetExpression? {
+        val parent = expression.getParent()
+        val inPositionForCompletionWithReceiver = parent is JetCallExpression
+                                                  || parent is JetQualifiedExpression
+                                                  || parent is JetBinaryExpression
+        return if (inPositionForCompletionWithReceiver)
+            expression.getReceiverExpression()
+        else
+            null
     }
 
     private fun MutableCollection<DeclarationDescriptor>.addCallableExtensions(

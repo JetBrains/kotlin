@@ -55,7 +55,7 @@ object PackageDirectiveCompletion {
 
             val variants = TipsManager.getPackageReferenceVariants(ref.expression, bindingContext, prefixMatcher.asNameFilter())
             for (variant in variants) {
-                val lookupElement = KotlinLookupElementFactory.createLookupElement(resolveSession, variant, false)
+                val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(resolveSession, variant)
                 if (!lookupElement.getLookupString().contains(DUMMY_IDENTIFIER)) {
                     result.addElement(lookupElement)
                 }

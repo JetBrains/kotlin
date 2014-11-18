@@ -68,7 +68,7 @@ class AllClassesCompletion(val parameters: CompletionParameters,
                         else -> ClassKind.CLASS
                     }
                     if (kindFilter(kind)) {
-                        collector.addElementWithAutoInsertionSuppressed(KotlinLookupElementFactory.createLookupElementForJavaClass(psiClass))
+                        collector.addElementWithAutoInsertionSuppressed(LookupElementFactory.DEFAULT.createLookupElementForJavaClass(psiClass))
                     }
                 }
             }

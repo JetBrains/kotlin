@@ -33,18 +33,17 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.jet.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.resolve.java.JavaResolverUtils
 import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement
+import com.intellij.codeInsight.lookup.LookupElementDecorator
+import com.intellij.codeInsight.lookup.LookupElementPresentation
+import org.jetbrains.jet.lang.types.JetType
 
-public object KotlinLookupElementFactory {
-    public fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor, boldImmediateMembers: Boolean): LookupElement {
+public open class LookupElementFactory protected() {
+    public open fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): LookupElement {
         val _descriptor = if (descriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(descriptor)
         else
             descriptor
-        val bold = boldImmediateMembers
-                   && descriptor is CallableMemberDescriptor
-                   && descriptor.getContainingDeclaration() is ClassifierDescriptor
-                   && descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION
-        return createLookupElement(analyzer, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor), bold)
+        return createLookupElement(analyzer, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
     }
 
     public fun createLookupElementForJavaClass(psiClass: PsiClass): LookupElement {
@@ -54,8 +53,7 @@ public object KotlinLookupElementFactory {
     private fun createLookupElement(
             analyzer: KotlinCodeAnalyzer,
             descriptor: DeclarationDescriptor,
-            declaration: PsiElement?,
-            bold: Boolean
+            declaration: PsiElement?
     ): LookupElement {
         if (descriptor is ClassifierDescriptor &&
             declaration is PsiClass &&
@@ -104,10 +102,6 @@ public object KotlinLookupElementFactory {
             element = element.withStrikeoutness(true)
         }
 
-        if (bold) {
-            element = element.withBoldness(true)
-        }
-
         val insertHandler = getDefaultInsertHandler(descriptor)
         element = element.withInsertHandler(insertHandler)
 
@@ -118,34 +112,65 @@ public object KotlinLookupElementFactory {
         return element
     }
 
-    public fun getDefaultInsertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
-        return when (descriptor) {
-            is FunctionDescriptor -> {
-                val parameters = descriptor.getValueParameters()
-                when (parameters.size) {
-                    0 ->  KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
+    class object {
+        public val DEFAULT: LookupElementFactory = LookupElementFactory()
 
-                    1 -> {
-                        val parameterType = parameters.single().getType()
-                        if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
-                            val parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size()
-                            if (parameterCount <= 1) {
-                                // otherwise additional item with lambda template is to be added
-                                return KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, false))
+        public fun getDefaultInsertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
+            return when (descriptor) {
+                is FunctionDescriptor -> {
+                    val parameters = descriptor.getValueParameters()
+                    when (parameters.size) {
+                        0 ->  KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
+
+                        1 -> {
+                            val parameterType = parameters.single().getType()
+                            if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
+                                val parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size()
+                                if (parameterCount <= 1) {
+                                    // otherwise additional item with lambda template is to be added
+                                    return KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, false))
+                                }
                             }
+                            KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
                         }
-                        KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
-                    }
 
-                    else -> KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
+                        else -> KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
+                    }
+                }
+
+                is PropertyDescriptor -> KotlinPropertyInsertHandler
+
+                is ClassDescriptor -> KotlinClassInsertHandler
+
+                else -> BaseDeclarationInsertHandler()
+            }
+        }
+    }
+}
+
+public class BoldImmediateLookupElementFactory(private val receiverTypes: Collection<JetType>) : LookupElementFactory() {
+    override fun createLookupElement(analyzer: KotlinCodeAnalyzer, descriptor: DeclarationDescriptor): LookupElement {
+        val element = super.createLookupElement(analyzer, descriptor)
+
+        if (descriptor !is CallableMemberDescriptor) return element
+        val receiverParameter = descriptor.getExtensionReceiverParameter()
+        val bold = if (receiverParameter != null) {
+            receiverTypes.any { it == receiverParameter.getType() }
+        }
+        else {
+            descriptor.getContainingDeclaration() is ClassifierDescriptor && descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION
+        }
+
+        return if (bold) {
+            object : LookupElementDecorator<LookupElement>(element) {
+                override fun renderElement(presentation: LookupElementPresentation) {
+                    super.renderElement(presentation)
+                    presentation.setItemTextBold(true)
                 }
             }
-
-            is PropertyDescriptor -> KotlinPropertyInsertHandler
-
-            is ClassDescriptor -> KotlinClassInsertHandler
-
-            else -> BaseDeclarationInsertHandler()
+        }
+        else {
+            element
         }
     }
 }

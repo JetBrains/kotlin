@@ -33,6 +33,7 @@ import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.plugin.completion.LookupElementFactory
 
 // adds java static members, enum members and members from class object
 class StaticMembers(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
@@ -105,7 +106,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
     }
 
     private fun createLookupElement(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): LookupElement {
-        val lookupElement = createLookupElement(memberDescriptor, resolveSession, bindingContext, false)
+        val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(memberDescriptor, resolveSession, bindingContext)
         val qualifierPresentation = classDescriptor.getName().asString()
         val qualifierText = qualifiedNameForSourceCode(classDescriptor)
 

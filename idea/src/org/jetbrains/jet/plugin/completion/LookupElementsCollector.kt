@@ -34,7 +34,8 @@ import com.intellij.codeInsight.completion.CompletionParameters
 class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
-        private val resolveSession: ResolveSessionForBodies
+        private val resolveSession: ResolveSessionForBodies,
+        private val boldImmediateLookupElementFactory: LookupElementFactory
 ) {
     private val elements = ArrayList<LookupElement>()
 
@@ -59,7 +60,7 @@ class LookupElementsCollector(
 
     public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean) {
         run {
-            val lookupElement = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor, true)
+            val lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolveSession, descriptor)
             if (suppressAutoInsertion) {
                 addElementWithAutoInsertionSuppressed(lookupElement)
             }
@@ -76,7 +77,7 @@ class LookupElementsCollector(
                 if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
                     val parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size()
                     if (parameterCount > 1) {
-                        val lookupElement = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor, true)
+                        val lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolveSession, descriptor)
                         addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
                             override fun renderElement(presentation: LookupElementPresentation) {
                                 super.renderElement(presentation)

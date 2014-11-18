@@ -67,7 +67,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
         }
         if (allConstructors.isNotEmpty() && visibleConstructors.isEmpty()) return
 
-        var lookupElement = createLookupElement(classifier, resolveSession, bindingContext, false)
+        var lookupElement = LookupElementFactory.DEFAULT.createLookupElement(classifier, resolveSession, bindingContext)
 
         var lookupString = lookupElement.getLookupString()
         var allLookupStrings = setOf(lookupString)
@@ -108,7 +108,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
 
             val baseInsertHandler = when (visibleConstructors.size) {
                 0 -> KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
-                1 -> KotlinLookupElementFactory.getDefaultInsertHandler(visibleConstructors.single()) as KotlinFunctionInsertHandler
+                1 -> LookupElementFactory.getDefaultInsertHandler(visibleConstructors.single()) as KotlinFunctionInsertHandler
                 else -> KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
             }
 
@@ -164,7 +164,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
             val samConstructor = scope.getFunctions(`class`.getName())
                                          .filterIsInstance(javaClass<SamConstructorDescriptor>())
                                          .singleOrNull() ?: return
-            val lookupElement = createLookupElement(samConstructor, resolveSession, bindingContext, false)
+            val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(samConstructor, resolveSession, bindingContext)
                     .assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
                     .addTail(tail)
             collection.add(lookupElement)

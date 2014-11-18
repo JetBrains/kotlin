@@ -304,6 +304,30 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("ImmediateExtensionMembers1.kt")
+        public void testImmediateExtensionMembers1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateExtensionMembers1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateExtensionMembers2.kt")
+        public void testImmediateExtensionMembers2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateExtensionMembers2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateExtensionMembers3.kt")
+        public void testImmediateExtensionMembers3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateExtensionMembers3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateExtensionMembers4.kt")
+        public void testImmediateExtensionMembers4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateExtensionMembers4.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ImmediateMembers1.kt")
         public void testImmediateMembers1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateMembers1.kt");
