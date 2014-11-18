@@ -1,0 +1,3 @@
+Resolve target: val x: kotlin.Any?
+Skipped statements:
+if (x == null) { print(1) if (f()) { return } else { print(2) } }

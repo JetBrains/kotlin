@@ -208,7 +208,6 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
         return result
     }
 
-    //TODO: more precise analysis
     private fun collectAlwaysExitPoints(expression: JetExpression?): Collection<JetExpression> {
         val result = ArrayList<JetExpression>()
         expression?.accept(object : ControlFlowVisitor() {
@@ -220,6 +219,23 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
 
             override fun visitThrowExpression(expression: JetThrowExpression) {
                 result.add(expression)
+            }
+
+            override fun visitIfExpression(expression: JetIfExpression) {
+                expression.getCondition().accept(this)
+
+                val thenBranch = expression.getThen()
+                val elseBranch = expression.getElse()
+                if (thenBranch != null && elseBranch != null) { // if we have only one branch it makes no sense to search exits in it
+                    val thenExits = collectAlwaysExitPoints(thenBranch)
+                    if (thenExits.isNotEmpty()) {
+                        val elseExits = collectAlwaysExitPoints(elseBranch)
+                        if (elseExits.isNotEmpty()) {
+                            result.addAll(thenExits)
+                            result.addAll(elseExits)
+                        }
+                    }
+                }
             }
 
             override fun visitForExpression(loop: JetForExpression) {

@@ -19,7 +19,6 @@ package org.jetbrains.jet.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -123,6 +122,18 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     @TestMetadata("IfNullBreak.kt")
     public void testIfNullBreak() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullBreak.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfNullConditionalReturn.kt")
+    public void testIfNullConditionalReturn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullConditionalReturn.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfNullConditionalReturnWithElse.kt")
+    public void testIfNullConditionalReturnWithElse() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullConditionalReturnWithElse.kt");
         doTest(fileName);
     }
 
