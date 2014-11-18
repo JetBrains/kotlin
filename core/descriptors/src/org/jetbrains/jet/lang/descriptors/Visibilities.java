@@ -57,6 +57,8 @@ public class Visibilities {
         }
     };
 
+    public static final Visibility PRIVATE_TO_THIS = PRIVATE;
+
     public static final Visibility PROTECTED = new Visibility("protected", true) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
@@ -173,5 +175,9 @@ public class Visibilities {
             return -oppositeResult;
         }
         return null;
+    }
+
+    public static boolean isPrivate(@NotNull Visibility visibility) {
+        return visibility == PRIVATE || visibility == PRIVATE_TO_THIS;
     }
 }

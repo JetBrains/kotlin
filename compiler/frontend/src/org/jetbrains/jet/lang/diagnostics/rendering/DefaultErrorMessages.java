@@ -28,9 +28,11 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetTypeConstraint;
+import org.jetbrains.jet.lang.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
+import org.jetbrains.jet.renderer.MultiRenderer;
 import org.jetbrains.jet.renderer.Renderer;
 
 import java.lang.reflect.Field;
@@ -388,6 +390,20 @@ public class DefaultErrorMessages {
                 "Smart cast to ''{0}'' is impossible, because ''{1}'' could have changed since the is-check", RENDER_TYPE, STRING);
 
         MAP.put(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY, "Variance annotations are only allowed for type parameters of classes and traits");
+        MAP.put(TYPE_VARIANCE_CONFLICT, "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
+                new MultiRenderer<VarianceConflictDiagnosticData>() {
+                    @NotNull
+                    @Override
+                    public String[] render(@NotNull VarianceConflictDiagnosticData data) {
+                        return new String[] {
+                            NAME.render(data.getTypeParameter()),
+                            RENDER_POSITION_VARIANCE.render(data.getTypeParameter().getVariance()),
+                            RENDER_POSITION_VARIANCE.render(data.getOccurrencePosition()),
+                            RENDER_TYPE.render(data.getContainingType())
+                        };
+                    }
+                });
+
         MAP.put(REDUNDANT_PROJECTION, "Projection is redundant: the corresponding type parameter of {0} has the same variance", NAME);
         MAP.put(CONFLICTING_PROJECTION, "Projection is conflicting with variance of the corresponding type parameter of {0}. Remove the projection or replace it with ''*''", NAME);
 

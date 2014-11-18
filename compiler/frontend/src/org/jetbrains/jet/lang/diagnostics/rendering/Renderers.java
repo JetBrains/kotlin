@@ -131,6 +131,19 @@ public class Renderers {
         }
     };
 
+    public static final Renderer<Variance> RENDER_POSITION_VARIANCE = new Renderer<Variance>() {
+        @NotNull
+        @Override
+        public String render(@NotNull Variance variance) {
+            switch (variance) {
+                case INVARIANT: return "invariant";
+                case IN_VARIANCE: return "in";
+                case OUT_VARIANCE: return "out";
+            }
+            throw new IllegalArgumentException("Unknown variance: " + variance);
+        }
+    };
+
     public static final Renderer<Collection<? extends ResolvedCall<?>>> AMBIGUOUS_CALLS =
             new Renderer<Collection<? extends ResolvedCall<?>>>() {
                 @NotNull

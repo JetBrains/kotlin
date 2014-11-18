@@ -51,7 +51,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions = Maps.newLinkedHashMap();
     private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Map<JetParameter, PropertyDescriptor> primaryConstructorParameterProperties = Maps.newHashMap();
-    private Map<JetDeclaration, CallableMemberDescriptor> members = null;
+    private Map<JetCallableDeclaration, CallableMemberDescriptor> members = null;
 
     // File scopes - package scope extended with imports
     protected final Map<JetFile, WritableScope> fileScopes = Maps.newHashMap();
@@ -173,7 +173,8 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
         return functions;
     }
 
-    public Map<JetDeclaration, CallableMemberDescriptor> getMembers() {
+    @NotNull
+    public Map<JetCallableDeclaration, CallableMemberDescriptor> getMembers() {
         if (members == null) {
             members = Maps.newHashMap();
             members.putAll(functions);
