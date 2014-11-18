@@ -167,4 +167,16 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/Simple.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("While.kt")
+    public void testWhile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/While.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("WhileTrue.kt")
+    public void testWhileTrue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/WhileTrue.kt");
+        doTest(fileName);
+    }
 }

@@ -1,0 +1,3 @@
+Resolve target: value-parameter val p: kotlin.Any? smart-casted to kotlin.Any
+Skipped statements:
+print(p1!!)

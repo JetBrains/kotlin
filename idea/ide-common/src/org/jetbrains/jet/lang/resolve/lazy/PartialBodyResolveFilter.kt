@@ -24,6 +24,7 @@ import org.jetbrains.jet.utils.addIfNotNull
 import java.util.ArrayList
 import java.util.HashMap
 import com.intellij.psi.PsiElement
+import org.jetbrains.jet.JetNodeTypes
 
 class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: JetExpression) : (JetElement) -> Boolean {
 
@@ -167,6 +168,18 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
                 expression.getLoopRange()?.accept(this)
             }
 
+            override fun visitWhileExpression(expression: JetWhileExpression) {
+                val condition = expression.getCondition()
+                // we need to enter the body only for "while(true)"
+                //TODO: what about e.g. "1 == 1"
+                if (condition.isTrueConstant()) {
+                    expression.acceptChildren(this)
+                }
+                else {
+                    condition?.accept(this)
+                }
+            }
+
             //TODO: when
         })
 
@@ -259,6 +272,9 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
     }
 
 //    private fun JetExpression?.isNullLiteral() = this?.getNode()?.getElementType() == JetNodeTypes.NULL
+
+    private fun JetExpression?.isTrueConstant()
+            = this != null && getNode()?.getElementType() == JetNodeTypes.BOOLEAN_CONSTANT && getText() == "true"
 
     //TODO: review logic
     private fun isValueNeeded(expression: JetExpression): Boolean {
