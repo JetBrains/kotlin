@@ -47,9 +47,9 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.awt.*;
@@ -58,7 +58,7 @@ import java.util.List;
 
 public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWithTabActionSupport<
         JetValueArgumentList,
-        Pair<? extends FunctionDescriptor, ResolveSessionForBodies>,
+        Pair<? extends FunctionDescriptor, ResolutionFacade>,
         JetValueArgument>
 {
     public final static Color GREEN_BACKGROUND = new JBColor(new Color(231, 254, 234), Gray._100);
@@ -112,7 +112,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
 
     @Nullable
     @Override
-    public Object[] getParametersForDocumentation(Pair<? extends FunctionDescriptor, ResolveSessionForBodies> p, ParameterInfoContext context) {
+    public Object[] getParametersForDocumentation(Pair<? extends FunctionDescriptor, ResolutionFacade> p, ParameterInfoContext context) {
         return ArrayUtil.EMPTY_OBJECT_ARRAY; //todo: ?
     }
 
@@ -200,7 +200,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
     }
 
     @Override
-    public void updateUI(Pair<? extends FunctionDescriptor, ResolveSessionForBodies> itemToShow, ParameterInfoUIContext context) {
+    public void updateUI(Pair<? extends FunctionDescriptor, ResolutionFacade> itemToShow, ParameterInfoUIContext context) {
         //todo: when we will have ability to pass Array as vararg, implement such feature here too?
         if (context == null || context.getParameterOwner() == null || !context.getParameterOwner().isValid()) {
             context.setUIComponentEnabled(false);
@@ -216,7 +216,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         JetValueArgumentList argumentList = (JetValueArgumentList) parameterOwner;
 
         FunctionDescriptor functionDescriptor = itemToShow.first;
-        ResolveSessionForBodies resolveSession = itemToShow.second;
+        ResolutionFacade resolveSession = itemToShow.second;
 
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
         List<JetValueArgument> valueArguments = argumentList.getArguments();
@@ -382,8 +382,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             return null;
         }
 
-        ResolveSessionForBodies resolveSession =
-                ResolvePackage.getLazyResolveSession(callNameExpression.getContainingJetFile());
+        ResolutionFacade resolveSession = ResolvePackage.getLazyResolveSession(callNameExpression.getContainingJetFile());
         BindingContext bindingContext = resolveSession.resolveToElement(callNameExpression);
 
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
@@ -412,7 +411,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         Collection<DeclarationDescriptor> variants = new ReferenceVariantsHelper(bindingContext, visibilityFilter).getReferenceVariants(
                 callNameExpression, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK, Collections.<DescriptorKindExclude>emptyList()), nameFilter);
 
-        Collection<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>>();
+        Collection<Pair<? extends DeclarationDescriptor, ResolutionFacade>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolutionFacade>>();
         for (DeclarationDescriptor variant : variants) {
             if (variant instanceof FunctionDescriptor) {
                 //todo: renamed functions?

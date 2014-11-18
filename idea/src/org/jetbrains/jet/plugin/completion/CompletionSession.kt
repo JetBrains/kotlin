@@ -28,7 +28,6 @@ import org.jetbrains.jet.plugin.caches.resolve.*
 import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -51,7 +50,9 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
                                      resultSet: CompletionResultSet) {
     protected val position: PsiElement = parameters.getPosition()
     protected val jetReference: JetSimpleNameReference? = position.getParent()?.getReferences()?.filterIsInstance(javaClass<JetSimpleNameReference>())?.firstOrNull()
-    protected val resolveSession: ResolveSessionForBodies = (position.getContainingFile() as JetFile).getLazyResolveSession()
+    private val file = position.getContainingFile() as JetFile
+    protected val resolveSession: ResolutionFacade = file.getLazyResolveSession()
+    protected val moduleDescriptor: ModuleDescriptor = resolveSession.getModuleDescriptorForElement(file)
     protected val bindingContext: BindingContext? = jetReference?.let { resolveSession.resolveToElement(it.expression) }
     protected val inDescriptor: DeclarationDescriptor? = jetReference?.let { bindingContext!!.get(BindingContext.RESOLUTION_SCOPE, it.expression)?.getContainingDeclaration() }
 
@@ -90,7 +91,8 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         override fun contains(file: VirtualFile) = super.contains(file) && file != parameters.getOriginalFile().getVirtualFile()
     }
 
-    protected val indicesHelper: KotlinIndicesHelper = KotlinIndicesHelper(project, resolveSession, searchScope) { isVisibleDescriptor(it) }
+    protected val indicesHelper: KotlinIndicesHelper
+            = KotlinIndicesHelper(project, resolveSession, searchScope, moduleDescriptor) { isVisibleDescriptor(it) }
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (configuration.completeNonAccessibleDeclarations) return true
@@ -138,7 +140,10 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
             = indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
-        AllClassesCompletion(parameters, resolveSession, searchScope, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }).collect(collector)
+        AllClassesCompletion(
+                parameters, resolveSession, moduleDescriptor,
+                searchScope, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }
+        ).collect(collector)
     }
 }
 

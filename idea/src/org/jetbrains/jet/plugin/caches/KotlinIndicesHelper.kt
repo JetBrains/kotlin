@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.caches
 
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.plugin.stubindex.*
@@ -35,14 +34,16 @@ import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.stubs.StringStubIndexExtension
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.util.extensionsUtils.isExtensionCallable
 
-public class KotlinIndicesHelper(private val project: Project,
-                                 private val resolveSession: ResolveSessionForBodies,
-                                 private val scope: GlobalSearchScope,
-                                 private val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
-    private val moduleDescriptor = resolveSession.getModuleDescriptor()
-
+public class KotlinIndicesHelper(
+        private val project: Project,
+        private val resolveSession: ResolutionFacade,
+        private val scope: GlobalSearchScope,
+        private val moduleDescriptor: ModuleDescriptor,
+        private val visibilityFilter: (DeclarationDescriptor) -> Boolean
+) {
     public fun getTopLevelObjects(nameFilter: (String) -> Boolean): Collection<ClassDescriptor> {
         val allObjectNames = JetTopLevelObjectShortNameIndex.getInstance().getAllKeys(project).stream() +
                 JetFromJavaDescriptorHelper.getPossiblePackageDeclarationsNames(project, scope).stream()

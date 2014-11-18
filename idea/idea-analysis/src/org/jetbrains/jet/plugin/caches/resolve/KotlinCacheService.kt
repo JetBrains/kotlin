@@ -35,11 +35,14 @@ import org.jetbrains.jet.lang.psi.JetCodeFragment
 import org.jetbrains.jet.utils.keysToMap
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
-public fun JetElement.getLazyResolveSession(): ResolveSessionForBodies {
-    return KotlinCacheService.getInstance(getProject()).getLazyResolveSession(this)
+public fun JetElement.getLazyResolveSession(): ResolutionFacade {
+    return KotlinCacheService.getInstance(getProject()).getAnalysisFacade(listOf(this))
 }
 
 public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalyzeExhaust {
@@ -59,6 +62,23 @@ public fun getAnalysisResultsForElements(elements: Collection<JetElement>): Anal
 public class KotlinCacheService(val project: Project) {
     class object {
         public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
+    }
+
+    public fun getResolutionFacade(elements: List<JetElement>): ResolutionFacade {
+        val cache = getCacheToAnalyzeFiles(elements.map { it.getContainingJetFile() })
+        return object : ResolutionFacade {
+            override fun resolveToElement(element: JetElement): BindingContext {
+                return cache.getLazyResolveSession(element).resolveToElement(element)
+            }
+
+            override fun getModuleDescriptorForElement(element: JetElement): ModuleDescriptor {
+                return cache.getLazyResolveSession(element).getModuleDescriptor()
+            }
+
+            override fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor {
+                return cache.getLazyResolveSession(declaration).resolveToDescriptor(declaration)
+            }
+        }
     }
 
     fun globalResolveSessionProvider(

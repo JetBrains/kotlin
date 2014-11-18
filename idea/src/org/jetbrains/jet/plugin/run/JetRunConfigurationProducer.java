@@ -35,10 +35,10 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
-import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 
 import java.util.List;
 
@@ -84,7 +84,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         if (!(psiFile instanceof JetFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null;
 
         JetFile jetFile = (JetFile) psiFile;
-        final ResolveSessionForBodies session = ResolvePackage.getLazyResolveSession(jetFile);
+        final ResolutionFacade session = ResolvePackage.getLazyResolveSession(jetFile);
         MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(
                 new NotNullFunction<JetNamedFunction, FunctionDescriptor>() {
                     @NotNull

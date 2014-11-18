@@ -697,11 +697,12 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val modifiedVarDescriptorsForControlFlow = HashMap(modifiedVarDescriptorsWithExpressions)
     modifiedVarDescriptorsForControlFlow.keySet().retainAll(localInstructions.getVarDescriptorsAccessedAfterwards(bindingContext))
+    val moduleDescriptor = originalFile.getLazyResolveSession().getModuleDescriptorForElement(originalFile)
     val (controlFlow, controlFlowMessage) =
             analyzeControlFlow(
                     localInstructions,
                     pseudocode,
-                    originalFile.getLazyResolveSession().getModuleDescriptor(),
+                    moduleDescriptor,
                     bindingContext,
                     modifiedVarDescriptorsForControlFlow,
                     options,

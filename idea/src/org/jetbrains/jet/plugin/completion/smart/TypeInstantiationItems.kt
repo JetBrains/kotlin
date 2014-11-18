@@ -28,7 +28,6 @@ import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.completion.InsertionContext
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.plugin.completion.handlers.CaretPosition
@@ -39,8 +38,9 @@ import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
-class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bindingContext: BindingContext, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
+class TypeInstantiationItems(val resolveSession: ResolutionFacade, val bindingContext: BindingContext, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
         val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.type.makeNotNullable() }
         for ((jetType, infos) in expectedInfosGrouped) {

@@ -23,18 +23,18 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.completion.handlers.*
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import com.intellij.codeInsight.completion.PrefixMatcher
 import java.util.ArrayList
 import com.intellij.codeInsight.completion.CompletionResultSet
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import com.intellij.openapi.util.TextRange
 import com.intellij.codeInsight.completion.CompletionParameters
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
 class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
-        private val resolveSession: ResolveSessionForBodies,
+        private val resolveSession: ResolutionFacade,
         private val boldImmediateLookupElementFactory: LookupElementFactory
 ) {
     private val elements = ArrayList<LookupElement>()

@@ -65,11 +65,9 @@ import org.jetbrains.jet.lang.resolve.bindingContextUtil.getTargetFunctionDescri
 import org.jetbrains.jet.plugin.completion.smart.toList
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus
-import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier
-import org.jetbrains.jet.lang.resolve.scopes.receivers.QualifierReceiver
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
 enum class Tail {
     COMMA
@@ -89,7 +87,7 @@ class PositionalArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, 
             = function.hashCode()
 }
 
-class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
+class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: ResolutionFacade) {
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         return calculateForArgument(expressionWithType)
             ?: calculateForFunctionLiteralArgument(expressionWithType)
@@ -174,7 +172,10 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: Reso
                 CheckValueArgumentsMode.ENABLED,
                 CompositeExtension(listOf()),
                 false).replaceCollectAllCandidates(true)
-        val callResolver = InjectorForMacros(callElement.getProject(), resolveSession.getModuleDescriptor()).getCallResolver()!!
+        val callResolver = InjectorForMacros(
+                callElement.getProject(),
+                resolveSession.getModuleDescriptorForElement(callElement)
+        ).getCallResolver()
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
         val expectedInfos = HashSet<ExpectedInfo>()

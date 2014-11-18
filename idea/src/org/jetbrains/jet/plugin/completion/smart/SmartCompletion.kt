@@ -20,7 +20,6 @@ import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.lang.types.*
 import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInsight.completion.*
@@ -34,9 +33,10 @@ import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
-                      val resolveSession: ResolveSessionForBodies,
+                      val resolveSession: ResolutionFacade,
                       val visibilityFilter: (DeclarationDescriptor) -> Boolean,
                       val originalFile: JetFile,
                       val boldImmediateLookupElementFactory: LookupElementFactory) {

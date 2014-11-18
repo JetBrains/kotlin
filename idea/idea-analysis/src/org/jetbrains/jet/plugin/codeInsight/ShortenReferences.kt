@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.HashSet;
@@ -35,8 +34,8 @@ import org.jetbrains.jet.lang.resolve.calls.callUtil.getCalleeExpressionIfAny
 import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElement
-import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -154,7 +153,7 @@ public object ShortenReferences {
             val elementFilter: (PsiElement) -> FilterResult,
             val resolveMap: Map<JetReferenceExpression, BindingContext>,
             val importInserter: ImportInserter) : JetVisitorVoid() {
-        protected val resolveSession: ResolveSessionForBodies
+        protected val resolveSession: ResolutionFacade
             get() = file.getLazyResolveSession()
 
         protected val elementsToShorten: MutableSet<T> = LinkedHashSet()

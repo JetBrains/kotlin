@@ -39,8 +39,8 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.util.extensionsUtils.ExtensionsUtilsPackage;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         JetExpression contextExpression = findContextExpression(psiFile, context.getStartOffset());
         if (contextExpression == null) return null;
 
-        ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession((JetFile) psiFile);
+        ResolutionFacade resolveSession = ResolvePackage.getLazyResolveSession((JetFile) psiFile);
 
         BindingContext bindingContext = resolveSession.resolveToElement(contextExpression);
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
@@ -73,7 +73,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         }
 
         ExpressionTypingComponents components =
-                new InjectorForMacros(project, resolveSession.getModuleDescriptor()).getExpressionTypingComponents();
+                new InjectorForMacros(project, resolveSession.getModuleDescriptorForElement(contextExpression)).getExpressionTypingComponents();
 
         DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
 

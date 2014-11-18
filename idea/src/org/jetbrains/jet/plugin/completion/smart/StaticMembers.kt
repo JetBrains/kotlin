@@ -25,7 +25,6 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.codeInsight.completion.InsertionContext
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
@@ -33,10 +32,11 @@ import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.completion.LookupElementFactory
 
 // adds java static members, enum members and members from class object
-class StaticMembers(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
+class StaticMembers(val bindingContext: BindingContext, val resolveSession: ResolutionFacade) {
     public fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
                                context: JetExpression,

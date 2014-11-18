@@ -32,13 +32,13 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import java.util.ArrayList
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
 import com.intellij.openapi.util.Key
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -188,7 +188,7 @@ fun functionType(function: FunctionDescriptor): JetType? {
 
 fun LookupElementFactory.createLookupElement(
         descriptor: DeclarationDescriptor,
-        resolveSession: ResolveSessionForBodies,
+        resolveSession: ResolutionFacade,
         bindingContext: BindingContext
 ): LookupElement {
     var element = createLookupElement(resolveSession, descriptor)

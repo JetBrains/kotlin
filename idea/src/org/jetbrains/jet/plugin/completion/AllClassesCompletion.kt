@@ -27,13 +27,16 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 
 class AllClassesCompletion(val parameters: CompletionParameters,
-                           val resolveSession: ResolveSessionForBodies,
+                           val resolveSession: ResolutionFacade,
+                           val moduleDescriptor: ModuleDescriptor,
                            val scope: GlobalSearchScope,
                            val prefixMatcher: PrefixMatcher,
                            val kindFilter: (ClassKind) -> Boolean,
@@ -42,7 +45,7 @@ class AllClassesCompletion(val parameters: CompletionParameters,
         val builtIns = KotlinBuiltIns.getInstance().getNonPhysicalClasses().filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) }
         result.addDescriptorElements(builtIns, suppressAutoInsertion = true)
 
-        val helper = KotlinIndicesHelper(scope.getProject(), resolveSession, scope, visibilityFilter)
+        val helper = KotlinIndicesHelper(scope.getProject(), resolveSession, scope, moduleDescriptor, visibilityFilter)
         result.addDescriptorElements(helper.getClassDescriptors({ prefixMatcher.prefixMatches(it) }, kindFilter),
                                      suppressAutoInsertion = true)
 
@@ -79,7 +82,7 @@ class AllClassesCompletion(val parameters: CompletionParameters,
         if (kindFilter(JetFromJavaDescriptorHelper.getCompiledClassKind(aClass))) {
             val qualifiedName = aClass.getQualifiedName()
             if (qualifiedName != null) {
-                val descriptors = ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession.getModuleDescriptor(), FqName(qualifiedName)).filter(visibilityFilter)
+                val descriptors = ResolveSessionUtils.getClassDescriptorsByFqName(moduleDescriptor, FqName(qualifiedName)).filter(visibilityFilter)
                 collector.addDescriptorElements(descriptors, suppressAutoInsertion = true)
             }
         }
