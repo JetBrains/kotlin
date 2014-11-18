@@ -304,6 +304,28 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testConstructorJavaUsages() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo("s", KotlinBuiltIns.getInstance().getStringType());
+        newParameter.setDefaultValueText("\"abc\"");
+        changeInfo.addParameter(newParameter);
+        doTest(changeInfo);
+    }
+
+    public void testFunctionJavaUsagesAndOverrides() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo("s", KotlinBuiltIns.getInstance().getStringType());
+        newParameter.setDefaultValueText("\"abc\"");
+        changeInfo.addParameter(newParameter);
+        doTest(changeInfo);
+    }
+
+    public void testFunctionRenameJavaUsages() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setNewName("bar");
+        doTest(changeInfo);
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {

@@ -21,15 +21,19 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.changeSignature.ChangeSignatureProcessorBase;
-import com.intellij.refactoring.changeSignature.ChangeSignatureUsageProcessor;
+import com.intellij.refactoring.changeSignature.*;
 import com.intellij.refactoring.rename.RenameUtil;
 import com.intellij.refactoring.ui.ConflictsDialog;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewDescriptor;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.containers.MultiMap;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetUsageInfo;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos;
 
 import java.util.*;
 
@@ -51,6 +55,43 @@ public class JetChangeSignatureProcessor extends ChangeSignatureProcessorBase {
     @Override
     public JetChangeInfo getChangeInfo() {
         return (JetChangeInfo) super.getChangeInfo();
+    }
+
+    @NotNull
+    @Override
+    protected UsageInfo[] findUsages() {
+        UsageInfo[] kotlinUsages = super.findUsages();
+
+        JavaChangeInfo javaChangeInfo = getChangeInfo().getOrCreateJavaChangeInfo();
+        if (javaChangeInfo == null) return kotlinUsages;
+
+        List<UsageInfo> javaUsages = new ArrayList<UsageInfo>();
+        KotlinPackage.filterNotTo(
+                new JavaChangeSignatureUsageProcessor().findUsages(javaChangeInfo),
+                javaUsages,
+                new Function1<UsageInfo, Boolean>() {
+                    @Override
+                    public Boolean invoke(UsageInfo info) {
+                        // Filter overriding declarations since they are already found by our usage processor
+                        return info instanceof OverriderUsageInfo;
+                    }
+                }
+        );
+        Pair<List<? extends UsageInfo>, List<? extends UsageInfo>> usagesByKotlinProcessor = KotlinPackage.partition(
+                kotlinUsages,
+                new Function1<UsageInfo, Boolean>() {
+                    @Override
+                    public Boolean invoke(UsageInfo info) {
+                        return info instanceof JetUsageInfo;
+                    }
+                }
+        );
+        javaUsages.addAll(usagesByKotlinProcessor.getSecond());
+
+        List<UsageInfo> allUsages = new ArrayList<UsageInfo>();
+        allUsages.add(new KotlinWrapperForJavaUsageInfos(javaUsages.toArray(new UsageInfo[javaUsages.size()]), getChangeInfo().getMethod()));
+        allUsages.addAll(usagesByKotlinProcessor.getFirst());
+        return allUsages.toArray(new UsageInfo[allUsages.size()]);
     }
 
     @Override

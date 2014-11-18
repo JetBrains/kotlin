@@ -21,6 +21,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.refactoring.changeSignature.MethodDescriptor;
+import com.intellij.refactoring.changeSignature.OverriderUsageInfo;
+import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
@@ -48,7 +50,7 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
     private final List<JetParameterInfo> parameters;
     @NotNull
     private final Collection<FunctionDescriptor> descriptorsForSignatureChange;
-    private Collection<JetFunctionDefinitionUsage> affectedFunctions = null;
+    private Collection<UsageInfo> affectedFunctions = null;
 
     public JetChangeSignatureData(
             @NotNull FunctionDescriptor baseDescriptor,
@@ -92,46 +94,44 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
 
     @Override
     @NotNull
-    public Collection<JetFunctionDefinitionUsage> getAffectedFunctions() {
+    public Collection<UsageInfo> getAffectedFunctions() {
         if (affectedFunctions == null) {
             affectedFunctions = KotlinPackage.flatMapTo(
                     descriptorsForSignatureChange,
-                    new HashSet<JetFunctionDefinitionUsage>(),
-                    new Function1<FunctionDescriptor, Iterable<? extends JetFunctionDefinitionUsage>>() {
-                        @NotNull
-                        private Collection<JetFunctionDefinitionUsage> computeHierarchyFrom(@NotNull FunctionDescriptor baseDescriptor) {
-                            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(baseDeclaration.getProject(), baseDescriptor);
-                            assert declaration != null : "No declaration found for " + baseDescriptor;
+                    new HashSet<UsageInfo>(),
+                    new Function1<FunctionDescriptor, Iterable<? extends UsageInfo>>() {
+                        @Override
+                        public Iterable<? extends UsageInfo> invoke(FunctionDescriptor descriptor) {
+                            PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(baseDeclaration.getProject(),
+                                                                                                          descriptor);
+                            assert declaration != null : "No declaration found for " + descriptor;
 
-                            Set<JetFunctionDefinitionUsage> result = Sets.newHashSet();
+                            Set<UsageInfo> result = Sets.newHashSet();
                             result.add(new JetFunctionDefinitionUsage(declaration, false));
 
                             if (!(declaration instanceof JetNamedFunction)) return result;
 
-                            PsiMethod lightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) declaration);
+                            final PsiMethod baseLightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) declaration);
                             // there are valid situations when light method is null: local functions and literals
-                            if (lightMethod == null) return result;
+                            if (baseLightMethod == null) return result;
 
                             return KotlinPackage.filterNotNullTo(
                                     KotlinPackage.map(
-                                            OverridingMethodsSearch.search(lightMethod).findAll(),
-                                            new Function1<PsiMethod, JetFunctionDefinitionUsage>() {
+                                            OverridingMethodsSearch.search(baseLightMethod).findAll(),
+                                            new Function1<PsiMethod, UsageInfo>() {
                                                 @Override
-                                                public JetFunctionDefinitionUsage invoke(PsiMethod method) {
-                                                    JetDeclaration declaration = (method instanceof KotlinLightMethod)
-                                                                                 ? ((KotlinLightMethod) method).getOrigin()
-                                                                                 : null;
-                                                    return declaration != null ? new JetFunctionDefinitionUsage(declaration, true) : null;
+                                                public UsageInfo invoke(PsiMethod method) {
+                                                    if (method instanceof KotlinLightMethod) {
+                                                        JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
+                                                        return declaration != null ? new JetFunctionDefinitionUsage(declaration, true) : null;
+                                                    }
+
+                                                    return new OverriderUsageInfo(method, baseLightMethod, true, true, true);
                                                 }
                                             }
                                     ),
                                     result
                             );
-                        }
-
-                        @Override
-                        public Iterable<? extends JetFunctionDefinitionUsage> invoke(FunctionDescriptor descriptor) {
-                            return computeHierarchyFrom(descriptor);
                         }
                     }
             );

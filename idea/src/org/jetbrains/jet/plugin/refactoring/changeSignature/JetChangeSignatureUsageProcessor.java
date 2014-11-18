@@ -21,9 +21,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.refactoring.changeSignature.ChangeInfo;
-import com.intellij.refactoring.changeSignature.ChangeSignatureUsageProcessor;
-import com.intellij.refactoring.changeSignature.ParameterInfo;
+import com.intellij.refactoring.changeSignature.*;
 import com.intellij.refactoring.rename.ResolveSnapshotProvider;
 import com.intellij.refactoring.util.TextOccurrencesUtil;
 import com.intellij.usageView.UsageInfo;
@@ -61,8 +59,13 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     }
 
     private static void findAllMethodUsages(JetChangeInfo changeInfo, Set<UsageInfo> result) {
-        for (JetFunctionDefinitionUsage functionUsageInfo : changeInfo.getAffectedFunctions()) {
-            findOneMethodUsages(functionUsageInfo, changeInfo, result);
+        for (UsageInfo functionUsageInfo : changeInfo.getAffectedFunctions()) {
+            if (functionUsageInfo instanceof JetFunctionDefinitionUsage) {
+                findOneMethodUsages((JetFunctionDefinitionUsage) functionUsageInfo, changeInfo, result);
+            }
+            else {
+                result.add(functionUsageInfo);
+            }
         }
     }
 
@@ -237,11 +240,26 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
     @Override
     public boolean processUsage(ChangeInfo changeInfo, UsageInfo usageInfo, boolean beforeMethodChange, UsageInfo[] usages) {
-        if (beforeMethodChange)
-            return true;
+        if (usageInfo instanceof KotlinWrapperForJavaUsageInfos) {
+            JavaChangeInfo javaChangeInfo = ((JetChangeInfo) changeInfo).getOrCreateJavaChangeInfo();
+            assert javaChangeInfo != null : "JavaChangeInfo not found: " + changeInfo.getMethod().getText();
+            UsageInfo[] javaUsageInfos = ((KotlinWrapperForJavaUsageInfos) usageInfo).getJavaUsageInfos();
+            ChangeSignatureUsageProcessor[] processors = ChangeSignatureUsageProcessor.EP_NAME.getExtensions();
+
+            for (UsageInfo usage : javaUsageInfos) {
+                if (usage instanceof OverriderUsageInfo && beforeMethodChange) continue;
+                for (ChangeSignatureUsageProcessor processor : processors) {
+                    if (usage instanceof OverriderUsageInfo) {
+                        processor.processUsage(javaChangeInfo, usage, true, javaUsageInfos);
+                    }
+                    if (processor.processUsage(javaChangeInfo, usage, beforeMethodChange, javaUsageInfos)) break;
+                }
+            }
+        }
+
+        if (beforeMethodChange) return true;
 
         PsiElement element = usageInfo.getElement();
-
         if (element != null)
             return usageInfo instanceof JetUsageInfo ? ((JetUsageInfo) usageInfo).processUsage((JetChangeInfo) changeInfo, element) : true;
         else
@@ -250,6 +268,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
     @Override
     public boolean processPrimaryMethod(ChangeInfo changeInfo) {
+        ((JetChangeInfo)changeInfo).primaryMethodUpdated();
         return true;
     }
 

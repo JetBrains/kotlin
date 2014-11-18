@@ -22,6 +22,7 @@ import java.util.Collections
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 
 public fun JetClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.getPsiClass(this) as KotlinLightClass?
 
@@ -43,10 +44,11 @@ public fun JetDeclaration.toLightElements(): List<PsiNamedElement> =
 
 public fun PsiElement.toLightMethods(): List<PsiMethod> =
         when (this) {
-            is JetNamedFunction -> Collections.singletonList(LightClassUtil.getLightClassMethod(this))
+            is JetNamedFunction -> LightClassUtil.getLightClassMethod(this).singletonOrEmptyList()
             is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is JetParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
-            is JetPropertyAccessor -> Collections.singletonList(LightClassUtil.getLightClassAccessorMethod(this))
+            is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this).singletonOrEmptyList()
+            is JetClass -> Collections.singletonList(LightClassUtil.getPsiClass(this).getConstructors()[0])
             is PsiMethod -> Collections.singletonList(this)
             else -> listOf()
         }
