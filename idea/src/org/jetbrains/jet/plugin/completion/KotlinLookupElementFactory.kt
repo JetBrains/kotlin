@@ -40,7 +40,10 @@ public object KotlinLookupElementFactory {
             DescriptorUtils.unwrapFakeOverride(descriptor)
         else
             descriptor
-        val bold = boldImmediateMembers && descriptor is CallableMemberDescriptor && descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION
+        val bold = boldImmediateMembers
+                   && descriptor is CallableMemberDescriptor
+                   && descriptor.getContainingDeclaration() is ClassifierDescriptor
+                   && descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION
         return createLookupElement(analyzer, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor), bold)
     }
 

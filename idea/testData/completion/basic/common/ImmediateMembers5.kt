@@ -1,3 +1,5 @@
+fun globalFun(){}
+
 trait T {
     fun fromTrait(){}
 }
@@ -22,3 +24,4 @@ class Derived : Base() {
 // EXIST: { itemText: "fromBase", attributes: "" }
 // EXIST: { itemText: "hashCode", attributes: "" }
 // EXIST: { itemText: "equals", attributes: "" }
+// EXIST: { itemText: "globalFun", attributes: "" }
