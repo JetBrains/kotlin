@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -297,6 +296,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("IfValueInBlock2.kt")
     public void testIfValueInBlock2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/IfValueInBlock2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImmediateExtensionMembers.kt")
+    public void testImmediateExtensionMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ImmediateExtensionMembers.kt");
         doTest(fileName);
     }
 

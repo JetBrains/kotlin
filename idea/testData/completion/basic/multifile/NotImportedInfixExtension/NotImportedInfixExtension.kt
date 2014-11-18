@@ -8,6 +8,6 @@ fun f() {
 
 // INVOCATION_COUNT: 2
 // ABSENT: "xxx"
-// EXIST: "yyy"
+// EXIST: { lookupString: "yyy", attributes: "bold" }
 // ABSENT: "zzz"
 // ABSENT: "extensionProp"

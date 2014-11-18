@@ -5,8 +5,8 @@ fun firstFun() {
     a.hello<caret>
 }
 
-// EXIST: helloProp1
-// EXIST: helloProp2
+// EXIST: { lookupString: "helloProp1", attributes: "bold" }
+// EXIST: { lookupString: "helloProp2", attributes: "bold" }
 // ABSENT: helloProp3
 // ABSENT: helloProp4
 // NUMBER: 2
