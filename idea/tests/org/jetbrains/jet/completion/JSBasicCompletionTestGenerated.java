@@ -846,6 +846,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("NoDuplicatedMethodForSmartCast.kt")
+            public void testNoDuplicatedMethodForSmartCast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/NoDuplicatedMethodForSmartCast.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("WrongExplicitReceiver.kt")
             public void testWrongExplicitReceiver() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/WrongExplicitReceiver.kt");
