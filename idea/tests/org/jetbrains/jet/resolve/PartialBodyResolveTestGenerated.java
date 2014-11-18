@@ -60,6 +60,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("DoWhile.kt")
+    public void testDoWhile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/DoWhile.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("For.kt")
     public void testFor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/For.kt");
