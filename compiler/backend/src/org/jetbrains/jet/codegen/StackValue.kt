@@ -24,7 +24,7 @@ import org.jetbrains.jet.codegen.StackValue.StackValueWithSimpleReceiver
 class CoercionValue(
         val value: StackValue,
         val castType: Type
-) : StackValue(castType) {
+) : StackValue(castType, value.hasSideEffects()) {
 
     override fun putSelector(type: Type, v: InstructionAdapter) {
         value.putSelector(castType, v)
@@ -87,3 +87,4 @@ open class OperationStackValue(val resultType: Type, val lambda: (v: Instruction
 }
 
 class FunctionCallStackValue(resultType: Type, lambda: (v: InstructionAdapter)-> Unit) : OperationStackValue(resultType, lambda)
+

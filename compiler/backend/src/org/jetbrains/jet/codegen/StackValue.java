@@ -28,6 +28,7 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -63,9 +64,15 @@ public abstract class StackValue {
 
     @NotNull
     public final Type type;
+    private final boolean hasSideEffects;
 
     protected StackValue(@NotNull Type type) {
+        this(type, true);
+    }
+
+    protected StackValue(@NotNull Type type, boolean hasSideEffects) {
         this.type = type;
+        this.hasSideEffects = hasSideEffects;
     }
 
     /**
@@ -111,6 +118,10 @@ public abstract class StackValue {
 
     public void store(@NotNull StackValue value, @NotNull InstructionAdapter v) {
         store(value, v, false);
+    }
+
+    public boolean hasSideEffects() {
+        return hasSideEffects;
     }
 
     public void store(@NotNull StackValue value, @NotNull InstructionAdapter v, boolean skipReceiver) {
@@ -429,7 +440,10 @@ public abstract class StackValue {
         if (resolvedCall.getDispatchReceiver().exists() || resolvedCall.getExtensionReceiver().exists() || isLocalFunCall(callableMethod)) {
             boolean hasExtensionReceiver = resolvedCall.getExtensionReceiver().exists();
             StackValue extensionReceiver = genReceiver(receiver, codegen, resolvedCall, callableMethod, true);
-            StackValue dispatchReceiver = genReceiver(hasExtensionReceiver ? none() : receiver, codegen, resolvedCall, callableMethod, false);
+            StackValue dispatchReceiver = platformStaticCallIfPresent(
+                    genReceiver(hasExtensionReceiver ? none() : receiver, codegen, resolvedCall, callableMethod, false),
+                    resolvedCall.getResultingDescriptor()
+            );
             return new CallReceiver(dispatchReceiver, extensionReceiver,
                                     CallReceiver.calcType(resolvedCall, codegen.typeMapper, callableMethod));
         }
@@ -451,6 +465,18 @@ public abstract class StackValue {
             return receiver;
         }
         return none();
+    }
+
+    private static StackValue platformStaticCallIfPresent(@NotNull StackValue resultReceiver, @NotNull CallableDescriptor descriptor) {
+        if (AnnotationsPackage.isPlatformStaticInObject(descriptor)) {
+            //dispatch receiver
+            if (resultReceiver.hasSideEffects()) {
+                resultReceiver = coercion(resultReceiver, Type.VOID_TYPE);
+            } else {
+                resultReceiver = none();
+            }
+        }
+        return resultReceiver;
     }
 
     @Contract("null -> false")
@@ -487,7 +513,7 @@ public abstract class StackValue {
         public static final None INSTANCE = new None();
 
         private None() {
-            super(Type.VOID_TYPE);
+            super(Type.VOID_TYPE, false);
         }
 
         @Override
@@ -500,7 +526,7 @@ public abstract class StackValue {
         public final int index;
 
         private Local(int index, Type type) {
-            super(type);
+            super(type, false);
             this.index = index;
 
             if (index < 0) {
@@ -561,7 +587,7 @@ public abstract class StackValue {
         private final Object value;
 
         public Constant(@Nullable Object value, Type type) {
-            super(type);
+            super(type, false);
             this.value = value;
         }
 
@@ -1047,7 +1073,7 @@ public abstract class StackValue {
         public final String name;
 
         public Field(Type type, Type owner, String name, boolean isStatic, StackValue receiver) {
-            super(type, isStatic, isStatic, receiver);
+            super(type, isStatic, isStatic, receiver, false);
             this.owner = owner;
             this.name = name;
         }
@@ -1157,15 +1183,10 @@ public abstract class StackValue {
 
     public static class Shared extends StackValueWithSimpleReceiver {
         private final int index;
-        private boolean isReleaseOnPut = false;
 
         public Shared(int index, Type type) {
-            super(type, false, false, local(index, OBJECT_TYPE));
+            super(type, false, false, local(index, OBJECT_TYPE), false);
             this.index = index;
-        }
-
-        public void releaseOnPut() {
-            isReleaseOnPut = true;
         }
 
         public int getIndex() {
@@ -1179,10 +1200,6 @@ public abstract class StackValue {
             v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "element", refType.getDescriptor());
             coerceFrom(refType, v);
             coerceTo(type, v);
-            if (isReleaseOnPut) {
-                v.aconst(null);
-                v.store(index, OBJECT_TYPE);
-            }
         }
 
         @Override
@@ -1234,7 +1251,7 @@ public abstract class StackValue {
         final String name;
 
         public FieldForSharedVar(Type type, Type owner, String name, StackValue.Field receiver) {
-            super(type, false, false, receiver);
+            super(type, false, false, receiver, false);
             this.owner = owner;
             this.name = name;
         }
@@ -1262,7 +1279,7 @@ public abstract class StackValue {
         private final boolean coerceType;
 
         public ThisOuter(ExpressionCodegen codegen, ClassDescriptor descriptor, boolean isSuper, boolean coerceType) {
-            super(OBJECT_TYPE);
+            super(OBJECT_TYPE, false);
             this.codegen = codegen;
             this.descriptor = descriptor;
             this.isSuper = isSuper;
@@ -1366,7 +1383,7 @@ public abstract class StackValue {
                 @NotNull StackValue extensionReceiver,
                 @NotNull Type type
         ) {
-            super(type);
+            super(type, dispatchReceiver.hasSideEffects() || extensionReceiver.hasSideEffects());
             this.dispatchReceiver = dispatchReceiver;
             this.extensionReceiver = extensionReceiver;
         }
@@ -1385,7 +1402,11 @@ public abstract class StackValue {
                 return callableMethod != null ? callableMethod.getReceiverClass() : typeMapper.mapType(extensionReceiver.getType());
             }
             else if (dispatchReceiver != null) {
-                return callableMethod != null ? callableMethod.getThisType() : typeMapper.mapType(dispatchReceiver.getType());
+                if (AnnotationsPackage.isPlatformStaticInObject(descriptor)) {
+                    return Type.VOID_TYPE;
+                } else {
+                    return callableMethod != null ? callableMethod.getThisType() : typeMapper.mapType(dispatchReceiver.getType());
+                }
             }
             else if (isLocalFunCall(callableMethod)) {
                 return callableMethod.getGenerateCalleeType();
@@ -1423,12 +1444,22 @@ public abstract class StackValue {
                 @NotNull Type type,
                 boolean isStaticPut,
                 boolean isStaticStore,
-                @NotNull StackValue receiver
+                @NotNull StackValue receiver,
+                boolean hasSideEffects
         ) {
-            super(type);
+            super(type, hasSideEffects);
             this.receiver = receiver;
             this.isStaticPut = isStaticPut;
             this.isStaticStore = isStaticStore;
+        }
+
+        public StackValueWithSimpleReceiver(
+                @NotNull Type type,
+                boolean isStaticPut,
+                boolean isStaticStore,
+                @NotNull StackValue receiver
+        ) {
+            this(type, isStaticPut, isStaticStore, receiver, true);
         }
 
         @Override
@@ -1552,7 +1583,7 @@ public abstract class StackValue {
                 @NotNull StackValueWithSimpleReceiver originalValue,
                 @NotNull StackValue receiver
         ) {
-            super(type, bothReceiverStatic(originalValue), bothReceiverStatic(originalValue), receiver);
+            super(type, bothReceiverStatic(originalValue), bothReceiverStatic(originalValue), receiver, originalValue.hasSideEffects());
             this.originalValue = originalValue;
         }
 
@@ -1656,3 +1687,4 @@ public abstract class StackValue {
         }
     }
 }
+
