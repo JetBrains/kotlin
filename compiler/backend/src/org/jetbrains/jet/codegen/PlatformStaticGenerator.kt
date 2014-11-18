@@ -33,9 +33,10 @@ class PlatformStaticGenerator(
     override fun invoke(codegen: ImplementationBodyCodegen, classBuilder: ClassBuilder) {
         val typeMapper = state.getTypeMapper()
         val asmMethod = typeMapper.mapSignature(descriptor).getAsmMethod()
+        val flags = Opcodes.ACC_STATIC or AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION)
         val methodVisitor = classBuilder.newMethod(
                 Synthetic(declarationOrigin.element, descriptor),
-                Opcodes.ACC_STATIC or AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION),
+                flags,
                 asmMethod.getName()!!,
                 asmMethod.getDescriptor()!!,
                 typeMapper.mapSignature(descriptor).getGenericsSignature(),
@@ -43,7 +44,7 @@ class PlatformStaticGenerator(
 
         AnnotationCodegen.forMethod(methodVisitor, typeMapper)!!.genAnnotations(descriptor, asmMethod.getReturnType())
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL && flags and Opcodes.ACC_NATIVE == 0) {
             methodVisitor.visitCode();
             val iv = InstructionAdapter(methodVisitor)
             val classDescriptor = descriptor.getContainingDeclaration() as ClassDescriptor
