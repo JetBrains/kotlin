@@ -74,7 +74,7 @@ public class CheckerTestUtil {
     };
 
     private static final String IGNORE_DIAGNOSTIC_PARAMETER = "IGNORE";
-    private static final String DIAGNOSTIC_PARAMETER = "[^\\)\\(\\s;]+";
+    private static final String DIAGNOSTIC_PARAMETER = "[^\\)\\(;]+";
     private static final String INDIVIDUAL_DIAGNOSTIC = "(\\w+)(\\(" + DIAGNOSTIC_PARAMETER + "(;\\s*" + DIAGNOSTIC_PARAMETER + ")*\\))?";
     private static final Pattern RANGE_START_OR_END_PATTERN = Pattern.compile("(<!"+
                                                                               INDIVIDUAL_DIAGNOSTIC +"(,\\s*"+
@@ -586,7 +586,7 @@ public class CheckerTestUtil {
             List<String> parsedParameters = new SmartList<String>();
             Matcher parametersMatcher = INDIVIDUAL_PARAMETER_PATTERN.matcher(parameters);
             while (parametersMatcher.find())
-                parsedParameters.add(parametersMatcher.group());
+                parsedParameters.add(parametersMatcher.group().trim());
             return new TextDiagnostic(name, parsedParameters);
         }
 
