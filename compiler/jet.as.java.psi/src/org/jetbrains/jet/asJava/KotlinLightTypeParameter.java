@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.intellij.lang.Language;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import org.jetbrains.annotations.NotNull;
@@ -126,5 +127,11 @@ public class KotlinLightTypeParameter
     @Override
     public PsiElement getNavigationElement() {
         return getOrigin();
+    }
+
+    @NotNull
+    @Override
+    public Language getLanguage() {
+        return JetLanguage.INSTANCE;
     }
 }

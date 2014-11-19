@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.intellij.lang.Language;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -27,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 /**
  * This class serves as a workaround for usages of {@link JavaElementFinder#findClasses} which eventually only need names of files
@@ -87,5 +89,11 @@ public class FakeLightClassForFileOfPackage extends AbstractLightClass implement
     @Override
     public String getText() {
         return null;
+    }
+
+    @NotNull
+    @Override
+    public Language getLanguage() {
+        return JetLanguage.INSTANCE;
     }
 }

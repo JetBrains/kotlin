@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import com.intellij.psi.search.SearchScope
+import com.intellij.lang.Language
 
 open public class KotlinLightMethodForDeclaration(
         manager: PsiManager,
@@ -102,6 +103,8 @@ open public class KotlinLightMethodForDeclaration(
     }
 
     override fun getUseScope(): SearchScope = origin.getUseScope()
+
+    override fun getLanguage(): Language = JetLanguage.INSTANCE
 
     override fun equals(other: Any?): Boolean =
             other is KotlinLightMethodForDeclaration &&

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.intellij.lang.Language;
 import com.intellij.psi.PsiAnnotationOwner;
 import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.PsiParameter;
@@ -97,5 +98,11 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
         }
 
         return setter != null ? setter.getParameter() : null;
+    }
+
+    @NotNull
+    @Override
+    public Language getLanguage() {
+        return JetLanguage.INSTANCE;
     }
 }
