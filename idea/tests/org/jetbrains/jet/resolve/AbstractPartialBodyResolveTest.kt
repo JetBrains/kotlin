@@ -30,12 +30,12 @@ import java.io.File
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.junit.Assert
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.psi.psiUtil.parents
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.jet.lang.psi.psiUtil.parents
 
 public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = JetTestCaseBuilder.getHomeDirectory()
@@ -76,7 +76,13 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         Assert.assertEquals(target2.presentation(type2), target1.presentation(type1))
     }
 
-    private fun doResolve(refExpression: JetSimpleNameExpression, bindingContext: BindingContext): Triple<DeclarationDescriptor?, JetType?, Collection<JetExpression>> {
+    private data class ResolveData(
+            val target: DeclarationDescriptor?,
+            val type: JetType?,
+            val processedStatements: Collection<JetExpression>
+    )
+
+    private fun doResolve(refExpression: JetSimpleNameExpression, bindingContext: BindingContext): ResolveData {
         val target = bindingContext[BindingContext.REFERENCE_TARGET, refExpression]
 
         val processedStatements = bindingContext.getSliceContents(BindingContext.PROCESSED)
@@ -93,7 +99,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         }
         val type = bindingContext[BindingContext.EXPRESSION_TYPE, expressionWithType]
 
-        return Triple(target, type, processedStatements)
+        return ResolveData(target, type, processedStatements)
     }
 
     private fun DeclarationDescriptor?.presentation(type: JetType?): String {

@@ -70,6 +70,7 @@ class PartialBodyResolveFilter(
         return statement in statementsToResolve
     }
 
+    tailRecursive
     private fun addStatementsToResolve(element: JetElement) {
         if (element == body) return
         val parent = element.getParent() as? JetElement ?: return
@@ -89,7 +90,7 @@ class PartialBodyResolveFilter(
                 val smartCastPlaces = potentialSmartCastPlaces(statement)
                 if (!smartCastPlaces.isEmpty()) {
                     statementsToResolve.add(statement)
-                    statementsToResolve.addStatementsForPlaces(statement, smartCastPlaces.values().flatMap { it })
+                    statementsToResolve.addStatementsForPlaces(smartCastPlaces.values().flatMap { it })
                 }
                 else if (statement is JetDeclaration) {
                     statementsToResolve.add(statement)
@@ -113,22 +114,12 @@ class PartialBodyResolveFilter(
         val map = HashMap<String, ArrayList<JetExpression>>(0)
 
         fun addPlace(name: String, place: JetExpression) {
-            var list = map[name]
-            if (list == null) {
-                list = ArrayList(1)
-                map[name] = list
-            }
-            list!!.add(place)
+            map.getOrPut(name, { ArrayList(1) }).add(place)
         }
 
         fun addPlaces(name: String, places: Collection<JetExpression>) {
             assert(!places.isEmpty())
-            var list = map[name]
-            if (list == null) {
-                list = ArrayList(places.size)
-                map[name] = list
-            }
-            list!!.addAll(places)
+            map.getOrPut(name, { ArrayList(places.size) }).addAll(places)
         }
 
         fun addIfCanBeSmartCasted(expression: JetExpression) {
@@ -138,7 +129,7 @@ class PartialBodyResolveFilter(
             }
         }
 
-        expression.accept(object : ControlFlowVisitor(){
+        expression.accept(object : ControlFlowVisitor() {
             override fun visitPostfixExpression(expression: JetPostfixExpression) {
                 expression.acceptChildren(this)
 
@@ -339,14 +330,11 @@ class PartialBodyResolveFilter(
 
     private fun JetElement.noControlFlowInside() = this is JetFunction || this is JetClass || this is JetClassBody
 
-    private fun MutableSet<JetExpression>.addStatementsForPlaces(thisStatement: JetExpression, places: Collection<JetExpression>) {
-        @PlacesLoop
+    private fun MutableSet<JetExpression>.addStatementsForPlaces(places: Collection<JetExpression>) {
         for (place in places) {
             var parent: PsiElement = place
-            while (parent != thisStatement) {
-                if (parent.isStatement()) {
-                    if (!add(parent as JetExpression)) continue@PlacesLoop
-                }
+            while (true) {
+                if (parent.isStatement() && !add(parent as JetExpression)) break
                 parent = parent.getParent()
             }
         }
@@ -398,6 +386,6 @@ class PartialBodyResolveFilter(
     }
 
     private fun JetBlockExpression.lastStatement(): JetExpression?
-            = getLastChild().siblings(forward = false).filterIsInstance<JetExpression>().firstOrNull()
+            = getLastChild()?.siblings(forward = false)?.filterIsInstance<JetExpression>()?.firstOrNull()
 }
 
