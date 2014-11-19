@@ -110,7 +110,12 @@ class PartialBodyResolveFilter(
         }
     }
 
-    private fun potentialSmartCastPlaces(expression: JetExpression, filter: (String) -> Boolean = { true }): Map<String, List<JetExpression>> {
+    /**
+     * Finds places within the given statement that may affect smart-casts after it.
+     * That is, such places whose containing statements must be left in code to keep the smart-casts.
+     * Returns map from smart-cast expression names (variable name or qualified variable name) to places.
+     */
+    private fun potentialSmartCastPlaces(statement: JetExpression, filter: (String) -> Boolean = { true }): Map<String, List<JetExpression>> {
         val map = HashMap<String, ArrayList<JetExpression>>(0)
 
         fun addPlace(name: String, place: JetExpression) {
@@ -129,7 +134,7 @@ class PartialBodyResolveFilter(
             }
         }
 
-        expression.accept(object : ControlFlowVisitor() {
+        statement.accept(object : ControlFlowVisitor() {
             override fun visitPostfixExpression(expression: JetPostfixExpression) {
                 expression.acceptChildren(this)
 
@@ -204,6 +209,10 @@ class PartialBodyResolveFilter(
         return map
     }
 
+    /**
+     * Returns names of expressions that would possibly be smart cast after
+     * either a statement "if (condition) return" or "if (!condition) return"
+     */
     private fun collectPossiblySmartCastInCondition(condition: JetExpression?): Set<String> {
         val result = HashSet<String>()
         condition?.accept(object : ControlFlowVisitor() {
@@ -226,9 +235,13 @@ class PartialBodyResolveFilter(
         return result
     }
 
-    private fun collectAlwaysExitPoints(expression: JetExpression?): Collection<JetExpression> {
+    /**
+     * If it's possible that the given statement never passes the execution to the next statement (that is, always exits somewhere)
+     * then this function returns a collection of all places in code that are necessary to be kept to preserve this behaviour.
+     */
+    private fun collectAlwaysExitPoints(statement: JetExpression?): Collection<JetExpression> {
         val result = ArrayList<JetExpression>()
-        expression?.accept(object : ControlFlowVisitor() {
+        statement?.accept(object : ControlFlowVisitor() {
             var insideLoop = false
 
             override fun visitReturnExpression(expression: JetReturnExpression) {
@@ -321,6 +334,9 @@ class PartialBodyResolveFilter(
         return result
     }
 
+    /**
+     * Recursively visits code but does not enter constructs that may not affect smart casts/control flow
+     */
     private inner abstract class ControlFlowVisitor : JetVisitorVoid() {
         override fun visitJetElement(element: JetElement) {
             if (element.noControlFlowInside()) return
