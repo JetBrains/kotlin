@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -309,8 +310,35 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/refactoring/changeSignature").getPath() + File.separator;
     }
 
-    private JetChangeInfo getChangeInfo() throws Exception {
+    private final List<Editor> editors = new ArrayList<Editor>();
+
+    private static final String[] EXTENSIONS = {".kt", ".java"};
+
+    private void configureFiles() throws Exception {
+        editors.clear();
+
         configureByFile(getTestName(false) + "Before.kt");
+        editors.add(getEditor());
+
+        indexLoop:
+        for (int i = 0; ; i++) {
+            for (String extension : EXTENSIONS) {
+                String extraFileName = getTestName(false) + "Before." + i + extension;
+                File extraFile = new File(getTestDataPath() + extraFileName);
+                if (extraFile.exists()) {
+                    configureByFile(extraFileName);
+                    editors.add(getEditor());
+                    continue indexLoop;
+                }
+            }
+            break;
+        }
+
+        setActiveEditor(editors.get(0));
+    }
+
+    private JetChangeInfo getChangeInfo() throws Exception {
+        configureFiles();
 
         Editor editor = getEditor();
         PsiFile file = getFile();
@@ -337,7 +365,11 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
 
     private void doTest(JetChangeInfo changeInfo) throws Exception {
         new JetChangeSignatureProcessor(getProject(), changeInfo, "Change signature").run();
-        checkResultByFile(getTestName(false) + "After.kt");
+
+        for (Editor editor : editors) {
+            setActiveEditor(editor);
+            checkResultByFile(getFile().getName().replace("Before.", "After."));
+        }
     }
 
     private void doTestConflict(JetChangeInfo changeInfo) throws Exception {
@@ -353,5 +385,10 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         }
 
         fail("No conflicts found");
+    }
+
+    @Override
+    protected Sdk getTestProjectJdk() {
+        return PluginTestCaseBase.jdkFromIdeaHome();
     }
 }
