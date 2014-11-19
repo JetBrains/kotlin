@@ -32,10 +32,8 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.asJava.AsJavaPackage;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
@@ -157,7 +155,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
         if (elements.length != 1) return;
         Editor editor = dataContext != null ? PlatformDataKeys.EDITOR.getData(dataContext) : null;
 
-        PsiElement element = elements[0];
+        PsiElement element = AsJavaPackage.getUnwrapped(elements[0]);
         assert element instanceof JetElement : "This handler must be invoked for elements of JetLanguage : " + element.getText();
 
         invokeChangeSignature((JetElement) element, element, project, editor);
