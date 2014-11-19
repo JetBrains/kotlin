@@ -70,7 +70,7 @@ public abstract class ElementResolver {
     }
 
     @NotNull
-    protected PossiblyNothingCallableNamesService possiblyNothingCallableNamesService() {
+    protected ProbablyNothingCallableNamesService probablyNothingCallableNamesService() {
         return DefaultNothingCallableNamesService.INSTANCE$;
     }
 
@@ -101,7 +101,7 @@ public abstract class ElementResolver {
                 boolean inBody = body != null && PsiTreeUtil.isAncestor(body, jetElement, false);
                 Function1<JetElement, Boolean> filter;
                 if (inBody) {
-                    filter = new PartialBodyResolveFilter(jetElement, body, possiblyNothingCallableNamesService());
+                    filter = new PartialBodyResolveFilter(jetElement, body, probablyNothingCallableNamesService());
                 }
                 else { // do as less as possible body-resolve
                     filter = new Function1<JetElement, Boolean>() {

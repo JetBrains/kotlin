@@ -25,16 +25,16 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 
 import java.util.Collection;
 
-public class JetPossiblyNothingPropertyShortNameIndex extends StringStubIndexExtension<JetProperty> {
-    private static final StubIndexKey<String, JetProperty> KEY = KotlinIndexUtil.createIndexKey(JetPossiblyNothingPropertyShortNameIndex.class);
+public class JetProbablyNothingPropertyShortNameIndex extends StringStubIndexExtension<JetProperty> {
+    private static final StubIndexKey<String, JetProperty> KEY = KotlinIndexUtil.createIndexKey(JetProbablyNothingPropertyShortNameIndex.class);
 
-    private static final JetPossiblyNothingPropertyShortNameIndex ourInstance = new JetPossiblyNothingPropertyShortNameIndex();
+    private static final JetProbablyNothingPropertyShortNameIndex ourInstance = new JetProbablyNothingPropertyShortNameIndex();
 
-    public static JetPossiblyNothingPropertyShortNameIndex getInstance() {
+    public static JetProbablyNothingPropertyShortNameIndex getInstance() {
         return ourInstance;
     }
 
-    private JetPossiblyNothingPropertyShortNameIndex() {}
+    private JetProbablyNothingPropertyShortNameIndex() {}
 
     @NotNull
     @Override

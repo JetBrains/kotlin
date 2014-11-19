@@ -30,13 +30,13 @@ import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 class PartialBodyResolveFilter(
         elementToResolve: JetElement,
         private val body: JetExpression,
-        possiblyNothingCallableNamesService: PossiblyNothingCallableNamesService
+        probablyNothingCallableNamesService: ProbablyNothingCallableNamesService
 ) : (JetElement) -> Boolean {
 
     private val statementsToResolve = HashSet<JetExpression>()
     private val processedBlocks = HashSet<JetBlockExpression>()
-    private val possiblyNothingFunctionNames = possiblyNothingCallableNamesService.functionNames()
-    private val possiblyNothingPropertyNames = possiblyNothingCallableNamesService.propertyNames()
+    private val nothingFunctionNames = probablyNothingCallableNamesService.functionNames()
+    private val nothingPropertyNames = probablyNothingCallableNamesService.propertyNames()
 
     ;{
         assert(body.isAncestor(elementToResolve, strict = false))
@@ -286,7 +286,7 @@ class PartialBodyResolveFilter(
 
             override fun visitCallExpression(expression: JetCallExpression) {
                 val name = (expression.getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedName()
-                if (name != null && name in possiblyNothingFunctionNames) {
+                if (name != null && name in nothingFunctionNames) {
                     result.add(expression)
                 }
                 super.visitCallExpression(expression)
@@ -294,7 +294,7 @@ class PartialBodyResolveFilter(
 
             override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
                 val name = expression.getReferencedName()
-                if (name in possiblyNothingPropertyNames) {
+                if (name in nothingPropertyNames) {
                     result.add(expression)
                 }
             }

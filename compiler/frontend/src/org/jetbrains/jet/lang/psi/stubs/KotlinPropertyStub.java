@@ -27,5 +27,5 @@ public interface KotlinPropertyStub extends KotlinStubWithFqName<JetProperty> {
     boolean hasReceiverTypeRef();
     boolean hasReturnTypeRef();
 
-    boolean isPossiblyNothingType();
+    boolean isProbablyNothingType();
 }

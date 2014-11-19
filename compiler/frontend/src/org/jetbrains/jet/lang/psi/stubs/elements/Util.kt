@@ -19,5 +19,5 @@ package org.jetbrains.jet.lang.psi.stubs.elements
 import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.psi.JetTypeReference
 
-fun JetTypeReference?.isPossiblyNothing()
+fun JetTypeReference?.isProbablyNothing()
         = (this?.getTypeElement() as? JetUserType)?.getReferencedName() == "Nothing"

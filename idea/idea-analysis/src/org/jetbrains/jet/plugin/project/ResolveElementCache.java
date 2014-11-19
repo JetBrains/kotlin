@@ -30,10 +30,10 @@ import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.DefaultNothingCallableNamesService;
 import org.jetbrains.jet.lang.resolve.lazy.ElementResolver;
-import org.jetbrains.jet.lang.resolve.lazy.PossiblyNothingCallableNamesService;
+import org.jetbrains.jet.lang.resolve.lazy.ProbablyNothingCallableNamesService;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.plugin.stubindex.JetPossiblyNothingFunctionShortNameIndex;
-import org.jetbrains.jet.plugin.stubindex.JetPossiblyNothingPropertyShortNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetProbablyNothingFunctionShortNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetProbablyNothingPropertyShortNameIndex;
 import org.jetbrains.jet.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 
@@ -87,14 +87,14 @@ public class ResolveElementCache extends ElementResolver {
 
     @NotNull
     @Override
-    protected PossiblyNothingCallableNamesService possiblyNothingCallableNamesService() {
-        return new PossiblyNothingCallableNamesService() {
+    protected ProbablyNothingCallableNamesService probablyNothingCallableNamesService() {
+        return new ProbablyNothingCallableNamesService() {
             @NotNull
             @Override
             public Set<String> functionNames() {
                 // we have to add hardcoded-names until we have Kotlin compiled classes in caches
                 Set<String> hardcodedNames = DefaultNothingCallableNamesService.INSTANCE$.functionNames();
-                Collection<String> indexedNames = JetPossiblyNothingFunctionShortNameIndex.getInstance().getAllKeys(project);
+                Collection<String> indexedNames = JetProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project);
                 Set<String> set = new HashSet<String>(hardcodedNames.size() + indexedNames.size());
                 set.addAll(hardcodedNames);
                 set.addAll(indexedNames);
@@ -105,7 +105,7 @@ public class ResolveElementCache extends ElementResolver {
             @NotNull
             @Override
             public Set<String> propertyNames() {
-                return new HashSet<String>(JetPossiblyNothingPropertyShortNameIndex.getInstance().getAllKeys(project));
+                return new HashSet<String>(JetProbablyNothingPropertyShortNameIndex.getInstance().getAllKeys(project));
             }
         };
     }

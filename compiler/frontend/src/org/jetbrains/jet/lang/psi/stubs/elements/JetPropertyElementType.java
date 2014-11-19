@@ -47,7 +47,7 @@ public class JetPropertyElementType extends JetStubElementType<KotlinPropertyStu
                 psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
                 psi.hasDelegateExpression(), psi.hasInitializer(),
                 psi.getReceiverTypeReference() != null, psi.getTypeReference() != null,
-                ElementsPackage.isPossiblyNothing(psi.getTypeReference()),
+                ElementsPackage.isProbablyNothing(psi.getTypeReference()),
                 ResolveSessionUtils.safeFqNameForLazyResolve(psi)
         );
     }
@@ -62,7 +62,7 @@ public class JetPropertyElementType extends JetStubElementType<KotlinPropertyStu
         dataStream.writeBoolean(stub.hasInitializer());
         dataStream.writeBoolean(stub.hasReceiverTypeRef());
         dataStream.writeBoolean(stub.hasReturnTypeRef());
-        dataStream.writeBoolean(stub.isPossiblyNothingType());
+        dataStream.writeBoolean(stub.isProbablyNothingType());
 
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName != null ? fqName.asString() : null);
@@ -79,13 +79,13 @@ public class JetPropertyElementType extends JetStubElementType<KotlinPropertyStu
         boolean hasInitializer = dataStream.readBoolean();
         boolean hasReceiverTypeRef = dataStream.readBoolean();
         boolean hasReturnTypeRef = dataStream.readBoolean();
-        boolean possiblyNothing = dataStream.readBoolean();
+        boolean probablyNothing = dataStream.readBoolean();
 
         StringRef fqNameAsString = dataStream.readName();
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
         return new KotlinPropertyStubImpl(parentStub, name, isVar, isTopLevel, hasDelegate,
-                                          hasDelegateExpression, hasInitializer, hasReceiverTypeRef, hasReturnTypeRef, possiblyNothing,
+                                          hasDelegateExpression, hasInitializer, hasReceiverTypeRef, hasReturnTypeRef, probablyNothing,
                                           fqName);
     }
 

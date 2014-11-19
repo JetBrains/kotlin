@@ -395,8 +395,8 @@
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetAnnotationsIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelObjectShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetPossiblyNothingFunctionShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetPossiblyNothingPropertyShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetProbablyNothingFunctionShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetProbablyNothingPropertyShortNameIndex"/>
 
     <psi.classFileDecompiler implementation="org.jetbrains.jet.plugin.decompiler.JetClassFileDecompiler"/>
     
