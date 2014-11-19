@@ -220,7 +220,7 @@ class PartialBodyResolveFilter(
                 expression.acceptChildren(this)
 
                 val operation = expression.getOperationToken()
-                if (operation == JetTokens.EQEQ || operation == JetTokens.EXCLEQ) {
+                if (operation == JetTokens.EQEQ || operation == JetTokens.EXCLEQ || operation == JetTokens.EQEQEQ || operation == JetTokens.EXCLEQEQEQ) {
                     result.addIfNotNull(expression.getLeft()?.smartCastExpressionName())
                     result.addIfNotNull(expression.getRight()?.smartCastExpressionName())
                 }

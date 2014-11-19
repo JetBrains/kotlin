@@ -212,7 +212,8 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolutionFacade: Re
         val binaryExpression = expressionWithType.getParent() as? JetBinaryExpression
         if (binaryExpression != null) {
             val operationToken = binaryExpression.getOperationToken()
-            if (operationToken == JetTokens.EQ || operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ) {
+            if (operationToken == JetTokens.EQ || operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ
+                || operationToken == JetTokens.EQEQEQ || operationToken == JetTokens.EXCLEQEQEQ) {
                 val otherOperand = if (expressionWithType == binaryExpression.getRight()) binaryExpression.getLeft() else binaryExpression.getRight()
                 if (otherOperand != null) {
                     val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, otherOperand] ?: return null
