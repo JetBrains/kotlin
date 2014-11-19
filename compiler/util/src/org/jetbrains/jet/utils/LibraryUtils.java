@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -34,6 +35,8 @@ public class LibraryUtils {
     public static final String TITLE_KOTLIN_JVM_RUNTIME_AND_STDLIB;
     public static final String TITLE_KOTLIN_JAVASCRIPT_STDLIB;
     public static final String TITLE_KOTLIN_JAVASCRIPT_LIB;
+    private static final String MANIFEST_PATH = "META-INF/MANIFEST.MF";
+    private static final Attributes.Name KOTLIN_JS_MODULE_NAME = new Attributes.Name("Kotlin-JS-Module-Name");
 
     static {
         String jsStdLib = "";
@@ -83,13 +86,36 @@ public class LibraryUtils {
     }
 
     @Nullable
-    public static Attributes getManifestMainAttributesFromJar(@NotNull File library) {
-        Manifest manifest = getManifestFromJar(library);
+    public static Manifest getManifestFromDirectory(@NotNull File library) {
+        if (!library.canRead() || !library.isDirectory()) return null;
+
+        try {
+            InputStream inputStream = new FileInputStream(new File(library, MANIFEST_PATH));
+            try {
+                return new Manifest(inputStream);
+            }
+            finally {
+                inputStream.close();
+            }
+        }
+        catch (IOException ignored) {
+            LOG.warn("IOException " + ignored);
+            return null;
+        }
+    }
+
+    private static Manifest getManifestFromJarOrDirectory(@NotNull File library) {
+        return library.isDirectory() ? getManifestFromDirectory(library) : getManifestFromJar(library);
+    }
+
+    @Nullable
+    public static Attributes getManifestMainAttributesFromJarOrDirectory(@NotNull File library) {
+        Manifest manifest = getManifestFromJarOrDirectory(library);
         return manifest != null ? manifest.getMainAttributes() : null;
     }
 
     private static boolean checkImplTitle(@NotNull File library, String expected) {
-        Attributes attributes = getManifestMainAttributesFromJar(library);
+        Attributes attributes = getManifestMainAttributesFromJarOrDirectory(library);
         if (attributes == null) return false;
 
         String title = attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE);
@@ -97,11 +123,17 @@ public class LibraryUtils {
     }
 
     private static boolean checkSpecTitle(@NotNull File library, String expected) {
-        Attributes attributes = getManifestMainAttributesFromJar(library);
+        Attributes attributes = getManifestMainAttributesFromJarOrDirectory(library);
         if (attributes == null) return false;
 
         String title = attributes.getValue(Attributes.Name.SPECIFICATION_TITLE);
         return title != null && title.equals(expected);
+    }
+
+    @Nullable
+    public static String getKotlinJsModuleName(@NotNull File library) {
+        Attributes attributes = getManifestMainAttributesFromJarOrDirectory(library);
+        return attributes != null ? attributes.getValue(KOTLIN_JS_MODULE_NAME) : null;
     }
 
     public static boolean isKotlinJavascriptLibrary(@NotNull File library) {

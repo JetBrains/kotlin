@@ -28,13 +28,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.k2js.JavaScript;
+import org.jetbrains.jet.utils.LibraryUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.utils.LibraryUtils.isKotlinJavascriptStdLibrary;
+import static org.jetbrains.jet.utils.LibraryUtils.isKotlinJavascriptLibrary;
 
 public class LibrarySourcesConfig extends Config {
     @NotNull
@@ -72,27 +73,22 @@ public class LibrarySourcesConfig extends Config {
         }
 
         List<JetFile> jetFiles = new ArrayList<JetFile>();
-        String moduleName = UNKNOWN_EXTERNAL_MODULE_NAME;
         VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
         VirtualFileSystem jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL);
 
         PsiManager psiManager = PsiManager.getInstance(getProject());
+        String moduleName = null;
 
         for (String path : files) {
+            VirtualFile file;
+            String actualModuleName = moduleName;
             if (path.charAt(0) == '@') {
                 moduleName = path.substring(1);
                 continue;
             }
 
-            VirtualFile file;
-            String actualModuleName = moduleName;
-
             if (path.endsWith(".jar") || path.endsWith(".zip")) {
                 file = jarFileSystem.findFileByPath(path + URLUtil.JAR_SEPARATOR);
-
-                if (isKotlinJavascriptStdLibrary(new File(path))) {
-                    actualModuleName = STDLIB_JS_MODULE_NAME;
-                }
             }
             else {
                 file = fileSystem.findFileByPath(path);
@@ -102,9 +98,17 @@ public class LibrarySourcesConfig extends Config {
                 LOG.error("File '" + path + "' not found.'");
             }
             else {
+                File filePath = new File(path);
+                if (isKotlinJavascriptLibrary(filePath)) {
+                    actualModuleName = LibraryUtils.getKotlinJsModuleName(filePath);
+                }
+                if (actualModuleName == null) {
+                    LOG.error("Could not find Kotlin-JS-Module-Name for " + filePath);
+                }
                 JetFileCollector jetFileCollector = new JetFileCollector(jetFiles, actualModuleName, psiManager);
                 VfsUtilCore.visitChildrenRecursively(file, jetFileCollector);
             }
+            moduleName = null;
         }
 
         return jetFiles;
