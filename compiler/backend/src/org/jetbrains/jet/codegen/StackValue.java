@@ -748,7 +748,7 @@ public abstract class StackValue {
         private final Type type;
 
         public ArrayElement(Type type, StackValue array, StackValue index) {
-            super(type, false, false, new Receiver(Type.LONG_TYPE, array, index));
+            super(type, false, false, new Receiver(Type.LONG_TYPE, array, index), true);
             this.type = type;
         }
 
@@ -984,7 +984,7 @@ public abstract class StackValue {
                 ExpressionCodegen codegen,
                 GenerationState state
         ) {
-            super(type, false, false, collectionElementReceiver);
+            super(type, false, false, collectionElementReceiver, true);
             this.resolvedGetCall = resolvedGetCall;
             this.resolvedSetCall = resolvedSetCall;
             this.state = state;
@@ -1115,7 +1115,7 @@ public abstract class StackValue {
                 @Nullable String fieldName, @NotNull Type type, @NotNull GenerationState state,
                 @NotNull StackValue receiver
         ) {
-            super(type, isStatic(isStaticBackingField, getter), isStatic(isStaticBackingField, setter), receiver);
+            super(type, isStatic(isStaticBackingField, getter), isStatic(isStaticBackingField, setter), receiver, true);
             this.backingFieldOwner = backingFieldOwner;
             this.getter = getter;
             this.setter = setter;
@@ -1462,15 +1462,6 @@ public abstract class StackValue {
             this.isStaticStore = isStaticStore;
         }
 
-        public StackValueWithSimpleReceiver(
-                @NotNull Type type,
-                boolean isStaticPut,
-                boolean isStaticStore,
-                @NotNull StackValue receiver
-        ) {
-            this(type, isStaticPut, isStaticStore, receiver, true);
-        }
-
         @Override
         public void putReceiver(@NotNull InstructionAdapter v, boolean isRead) {
             boolean hasReceiver = isNonStaticAccess(isRead);
@@ -1536,7 +1527,7 @@ public abstract class StackValue {
         }
     }
 
-    static class ComplexReceiver extends StackValue {
+    private static class ComplexReceiver extends StackValue {
 
         private final StackValueWithSimpleReceiver originalValueWithReceiver;
         private final boolean[] isReadOperations;
@@ -1671,7 +1662,7 @@ public abstract class StackValue {
         @Nullable private final Label ifNull;
 
         public SafeFallback(@NotNull Type type, @Nullable Label ifNull, StackValue receiver) {
-            super(type, false, false, receiver);
+            super(type, false, false, receiver, true);
             this.ifNull = ifNull;
         }
 
