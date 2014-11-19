@@ -16,12 +16,10 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
-import gnu.trove.TIntObjectHashMap;
 import kotlin.Function0;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -33,53 +31,27 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.descriptors.serialization.SerializationPackage.variance;
 
 public class TypeDeserializer {
-
-    public interface TypeParameterResolver {
-        TypeParameterResolver NONE = new TypeParameterResolver() {
-            @NotNull
-            @Override
-            public List<DeserializedTypeParameterDescriptor> getTypeParameters(@NotNull TypeDeserializer typeDeserializer) {
-                return Collections.emptyList();
-            }
-        };
-
-        @NotNull
-        @ReadOnly
-        List<DeserializedTypeParameterDescriptor> getTypeParameters(@NotNull TypeDeserializer typeDeserializer);
-    }
-
+    private final DeserializationContext context;
     private final TypeDeserializer parent;
-
-    // never written to after constructor returns
-    private final TIntObjectHashMap<TypeParameterDescriptor> typeParameterDescriptors = new TIntObjectHashMap<TypeParameterDescriptor>();
-
+    private final Map<Integer, TypeParameterDescriptor> typeParameterDescriptors = new LinkedHashMap<Integer, TypeParameterDescriptor>();
     private final MemoizedFunctionToNullable<Integer, ClassDescriptor> classDescriptors;
 
     private final String debugName;
 
-    private final DeserializationContext context;
-
-    public TypeDeserializer(
-            @NotNull DeserializationContext context,
-            @Nullable TypeDeserializer parent,
-            @NotNull String debugName,
-            @NotNull TypeParameterResolver typeParameterResolver
-    ) {
+    public TypeDeserializer(@NotNull DeserializationContext context, @Nullable TypeDeserializer parent, @NotNull String debugName) {
         this.parent = parent;
         this.debugName = debugName + (parent == null ? "" : ". Child of " + parent.debugName);
         this.context = context;
-
-        for (DeserializedTypeParameterDescriptor typeParameterDescriptor : typeParameterResolver.getTypeParameters(this)) {
-            typeParameterDescriptors.put(typeParameterDescriptor.getProtoId(), typeParameterDescriptor);
-        }
 
         this.classDescriptors = context.getStorageManager().createMemoizedFunctionWithNullableValues(
                 new Function1<Integer, ClassDescriptor>() {
@@ -88,6 +60,15 @@ public class TypeDeserializer {
                         return computeClassDescriptor(fqNameIndex);
                     }
                 });
+    }
+
+    public void addTypeParameter(@NotNull DeserializedTypeParameterDescriptor typeParameterDescriptor) {
+        typeParameterDescriptors.put(typeParameterDescriptor.getProtoId(), typeParameterDescriptor);
+    }
+
+    @NotNull
+    public List<TypeParameterDescriptor> getOwnTypeParameters() {
+        return UtilsPackage.toReadOnlyList(typeParameterDescriptors.values());
     }
 
     @Nullable

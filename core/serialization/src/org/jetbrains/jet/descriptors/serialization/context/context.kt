@@ -25,8 +25,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.descriptors.serialization.TypeDeserializer
 import org.jetbrains.jet.descriptors.serialization.MemberDeserializer
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
@@ -68,8 +66,7 @@ public open class DeserializationContext(
 ) : DeserializationGlobalContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
                                  constantLoader, packageFragmentProvider, flexibleTypeCapabilitiesDeserializer, classDeserializer) {
     fun withTypes(containingDeclaration: DeclarationDescriptor): DeserializationContextWithTypes {
-        val typeDeserializer = TypeDeserializer(this, null, "Deserializer for ${containingDeclaration.getName()}",
-                                                TypeDeserializer.TypeParameterResolver.NONE)
+        val typeDeserializer = TypeDeserializer(this, null, "Deserializer for ${containingDeclaration.getName()}")
         return withTypes(containingDeclaration, typeDeserializer)
     }
 
@@ -98,24 +95,16 @@ class DeserializationContextWithTypes(
                            constantLoader, packageFragmentProvider, flexibleTypeCapabilitiesDeserializer, classDeserializer, nameResolver) {
     val deserializer: MemberDeserializer = MemberDeserializer(this)
 
-    public fun childContext(
-            descriptor: DeclarationDescriptor,
-            typeParameterProtos: List<TypeParameter>,
-            typeParameters: MutableList<TypeParameterDescriptor>
-    ): DeserializationContextWithTypes {
-        val childTypeParameterResolver = object : TypeDeserializer.TypeParameterResolver {
-            override fun getTypeParameters(typeDeserializer: TypeDeserializer): List<DeserializedTypeParameterDescriptor> {
-                val childDeserializer = MemberDeserializer(withTypes(descriptor, typeDeserializer))
-                val descriptors = childDeserializer.typeParameters(typeParameterProtos, typeDeserializer)
-                typeParameters.addAll(descriptors)
-                return descriptors
-            }
-        }
-        val childTypeDeserializer = TypeDeserializer(this, typeDeserializer, "Child deserializer for " + descriptor.getName(),
-                                                     childTypeParameterResolver)
-        return withTypes(descriptor, childTypeDeserializer)
-    }
+    public fun childContext(descriptor: DeclarationDescriptor, typeParameterProtos: List<TypeParameter>): DeserializationContextWithTypes {
+        val childTypeDeserializer = TypeDeserializer(this, typeDeserializer, "Child deserializer for ${descriptor.getName()}")
+        val childContext = withTypes(descriptor, childTypeDeserializer)
 
+        for (typeParameter in childContext.deserializer.typeParameters(typeParameterProtos, childTypeDeserializer)) {
+            childTypeDeserializer.addTypeParameter(typeParameter)
+        }
+
+        return childContext
+    }
 }
 
 fun DeserializationGlobalContext.deserializeClass(classId: ClassId): ClassDescriptor? {

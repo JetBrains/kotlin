@@ -51,16 +51,15 @@ public class DeserializedClassDescriptor(
     private val isInner = Flags.INNER.get(classProto.getFlags())
 
     private val classId = outerContext.nameResolver.getClassId(classProto.getFqName())
-    private val typeParameters = ArrayList<TypeParameterDescriptor>(classProto.getTypeParameterCount())
-    val context = outerContext.withTypes(this).childContext(this, classProto.getTypeParameterList(), typeParameters)
+    val context = outerContext.withTypes(this).childContext(this, classProto.getTypeParameterList())
 
     private val staticScope = StaticScopeForKotlinClass(this)
-    private val typeConstructor = DeserializedClassTypeConstructor(typeParameters)
+    private val typeConstructor = DeserializedClassTypeConstructor()
     private val memberScope = DeserializedClassMemberScope()
     private val nestedClasses = NestedClassDescriptors()
     private val enumEntries = EnumEntryClassDescriptors()
 
-    private val containingDeclaration = outerContext.storageManager.createLazyValue { computeContainingDeclaration() }
+    private val containingDeclaration = context.storageManager.createLazyValue { computeContainingDeclaration() }
     private val annotations = context.storageManager.createLazyValue { computeAnnotations() }
     private val primaryConstructor = context.storageManager.createNullableLazyValue { computePrimaryConstructor() }
     private val classObjectDescriptor = context.storageManager.createNullableLazyValue { computeClassObjectDescriptor() }
@@ -151,10 +150,10 @@ public class DeserializedClassDescriptor(
 
     override fun getSource() = SourceElement.NO_SOURCE
 
-    private inner class DeserializedClassTypeConstructor(private val parameters: List<TypeParameterDescriptor>) : AbstractClassTypeConstructor() {
+    private inner class DeserializedClassTypeConstructor : AbstractClassTypeConstructor() {
         private val supertypes = computeSuperTypes()
 
-        override fun getParameters() = parameters
+        override fun getParameters() = context.typeDeserializer.getOwnTypeParameters()
 
         override fun getSupertypes(): Collection<JetType> {
             // We cannot have error supertypes because subclasses inherit error functions from them
