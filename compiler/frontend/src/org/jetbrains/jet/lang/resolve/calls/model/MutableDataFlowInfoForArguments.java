@@ -35,9 +35,7 @@ public interface MutableDataFlowInfoForArguments extends DataFlowInfoForArgument
         }
 
         @Override
-        public void updateInfo(
-                @NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo
-        ) {
+        public void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo) {
             throw new IllegalStateException();
         }
 
