@@ -1843,25 +1843,12 @@ public class JetParsing extends AbstractJetParsing {
         assert _at(LPAR) : tt();
         PsiBuilder.Marker functionType = mark();
 
-//        advance(); // LPAR
-//
-//        int lastLPar = findLastBefore(TokenSet.create(LPAR), TokenSet.create(COLON), false);
-//        if (lastLPar >= 0 && lastLPar > myBuilder.getCurrentOffset()) {
-//            TODO : -1 is a hack?
-//            createTruncatedBuilder(lastLPar - 1).parseTypeRef();
-//            advance(); // DOT
-//        }
-
         parseValueParameterList(true, TokenSet.EMPTY);
-
-//        if (at(COLON)) {
-//            advance(); // COLON // expect(COLON, "Expecting ':' followed by a return type", TYPE_REF_FIRST);
 
         expect(ARROW, "Expecting '->' to specify return type of a function type", TYPE_REF_FIRST);
         parseTypeRef();
-//        }
 
-        return functionType;//.done(FUNCTION_TYPE);
+        return functionType;
     }
 
     /*
