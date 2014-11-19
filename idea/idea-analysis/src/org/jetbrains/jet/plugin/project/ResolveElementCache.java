@@ -99,7 +99,6 @@ public class ResolveElementCache extends ElementResolver {
                 set.addAll(hardcodedNames);
                 set.addAll(indexedNames);
                 return set;
-                //TODO: what about local declarations?
             }
 
             @NotNull

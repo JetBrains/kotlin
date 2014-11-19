@@ -391,3 +391,6 @@ public fun Call.isSafeCall(): Boolean {
 }
 
 public fun Call.isExplicitSafeCall(): Boolean = getCallOperationNode()?.getElementType() == JetTokens.SAFE_ACCESS
+
+public fun JetTypeReference?.isProbablyNothing(): Boolean
+        = (this?.getTypeElement() as? JetUserType)?.getReferencedName() == "Nothing"

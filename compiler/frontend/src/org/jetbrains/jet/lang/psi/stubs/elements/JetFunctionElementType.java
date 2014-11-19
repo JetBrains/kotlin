@@ -24,6 +24,7 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.psi.stubs.KotlinFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinFunctionStubImpl;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
@@ -46,7 +47,7 @@ public class JetFunctionElementType extends JetStubElementType<KotlinFunctionStu
         boolean hasBody = psi.hasBody();
         return new KotlinFunctionStubImpl(parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
                                           isExtension, hasBlockBody, hasBody, psi.hasTypeParameterListBeforeFunctionName(),
-                                          ElementsPackage.isProbablyNothing(psi.getTypeReference()));
+                                          PsiUtilPackage.isProbablyNothing(psi.getTypeReference()));
     }
 
     @Override

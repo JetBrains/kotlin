@@ -1,0 +1,5 @@
+Resolve target: value-parameter val p: kotlin.String?
+Skipped statements:
+if (p == null) return null
+print(p.size)
+return ""

@@ -26,6 +26,9 @@ import java.util.HashMap
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
+import org.jetbrains.jet.lang.psi.psiUtil.isProbablyNothing
+
+//TODO: do resolve anonymous object's body
 
 class PartialBodyResolveFilter(
         elementToResolve: JetElement,
@@ -35,11 +38,26 @@ class PartialBodyResolveFilter(
 
     private val statementsToResolve = HashSet<JetExpression>()
     private val processedBlocks = HashSet<JetBlockExpression>()
-    private val nothingFunctionNames = probablyNothingCallableNamesService.functionNames()
+
+    private val nothingFunctionNames = HashSet(probablyNothingCallableNamesService.functionNames())
     private val nothingPropertyNames = probablyNothingCallableNamesService.propertyNames()
 
     ;{
         assert(body.isAncestor(elementToResolve, strict = false))
+
+        body.accept(object : JetVisitorVoid(){
+            override fun visitNamedFunction(function: JetNamedFunction) {
+                super.visitNamedFunction(function)
+
+                if (function.getTypeReference().isProbablyNothing()) {
+                    nothingFunctionNames.add(function.getName())
+                }
+            }
+
+            override fun visitElement(element: PsiElement) {
+                element.acceptChildren(this)
+            }
+        })
 
         addStatementsToResolve(elementToResolve)
     }
@@ -54,8 +72,7 @@ class PartialBodyResolveFilter(
 
     private fun addStatementsToResolve(element: JetElement) {
         if (element == body) return
-        val parent = element.getParent() as? JetElement
-                     ?: return
+        val parent = element.getParent() as? JetElement ?: return
 
         if (parent is JetBlockExpression) {
             processBlock(parent)
@@ -67,6 +84,7 @@ class PartialBodyResolveFilter(
 
             for (statement in element.siblings(forward = false, withItself = false)) {
                 if (statement !is JetExpression) continue
+                if (statement is JetClassBody) continue
 
                 val smartCastPlaces = potentialSmartCastPlaces(statement)
                 if (!smartCastPlaces.isEmpty()) {
@@ -312,14 +330,14 @@ class PartialBodyResolveFilter(
         return result
     }
 
-    private abstract class ControlFlowVisitor : JetVisitorVoid() {
+    private inner abstract class ControlFlowVisitor : JetVisitorVoid() {
         override fun visitJetElement(element: JetElement) {
             if (element.noControlFlowInside()) return
             element.acceptChildren(this)
         }
-
-        private fun JetElement.noControlFlowInside() = this is JetFunction || this is JetClass || this is JetClassBody
     }
+
+    private fun JetElement.noControlFlowInside() = this is JetFunction || this is JetClass || this is JetClassBody
 
     private fun MutableSet<JetExpression>.addStatementsForPlaces(thisStatement: JetExpression, places: Collection<JetExpression>) {
         @PlacesLoop

@@ -24,6 +24,7 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.psi.stubs.KotlinPropertyStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinPropertyStubImpl;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
@@ -47,7 +48,7 @@ public class JetPropertyElementType extends JetStubElementType<KotlinPropertyStu
                 psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
                 psi.hasDelegateExpression(), psi.hasInitializer(),
                 psi.getReceiverTypeReference() != null, psi.getTypeReference() != null,
-                ElementsPackage.isProbablyNothing(psi.getTypeReference()),
+                PsiUtilPackage.isProbablyNothing(psi.getTypeReference()),
                 ResolveSessionUtils.safeFqNameForLazyResolve(psi)
         );
     }

@@ -19,7 +19,6 @@ package org.jetbrains.jet.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,6 +33,12 @@ import java.util.regex.Pattern;
 public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveTest {
     public void testAllFilesPresentInPartialBodyResolve() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/partialBodyResolve"), Pattern.compile("^(.+)\\.kt$"), true);
+    }
+
+    @TestMetadata("AnonymousObjects.kt")
+    public void testAnonymousObjects() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/AnonymousObjects.kt");
+        doTest(fileName);
     }
 
     @TestMetadata("As.kt")
@@ -231,6 +236,24 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     @TestMetadata("Lambda.kt")
     public void testLambda() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/Lambda.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("LocalClass.kt")
+    public void testLocalClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LocalClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("LocalFun.kt")
+    public void testLocalFun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LocalFun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("LocalNothingFun.kt")
+    public void testLocalNothingFun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LocalNothingFun.kt");
         doTest(fileName);
     }
 
