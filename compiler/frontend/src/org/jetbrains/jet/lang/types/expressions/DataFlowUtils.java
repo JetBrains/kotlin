@@ -269,7 +269,8 @@ public class DataFlowUtils {
     @Nullable
     public static JetType checkImplicitCast(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ExpressionTypingContext context, boolean isStatement) {
         if (expressionType != null && context.expectedType == NO_EXPECTED_TYPE && context.contextDependency == INDEPENDENT && !isStatement
-                && (KotlinBuiltIns.getInstance().isUnit(expressionType) || KotlinBuiltIns.getInstance().isAnyOrNullableAny(expressionType))) {
+                && (KotlinBuiltIns.getInstance().isUnit(expressionType) || KotlinBuiltIns.getInstance().isAnyOrNullableAny(expressionType))
+                && !TypesPackage.isDynamic(expressionType)) {
             context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
         }
         return expressionType;

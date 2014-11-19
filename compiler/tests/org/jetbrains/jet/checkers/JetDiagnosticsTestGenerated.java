@@ -3758,6 +3758,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("inference.kt")
+            public void testInference() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/inference.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("membersOfAny.kt")
             public void testMembersOfAny() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/membersOfAny.kt");
