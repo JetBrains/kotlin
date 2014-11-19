@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptorKi
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.jet.utils.addToStdlib.firstOrNullIsInstance
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,

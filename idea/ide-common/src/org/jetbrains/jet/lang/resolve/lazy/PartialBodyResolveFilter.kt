@@ -27,6 +27,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.psi.psiUtil.isProbablyNothing
+import org.jetbrains.jet.utils.addToStdlib.firstOrNullIsInstance
 
 //TODO: do resolve anonymous object's body
 
@@ -402,6 +403,6 @@ class PartialBodyResolveFilter(
     }
 
     private fun JetBlockExpression.lastStatement(): JetExpression?
-            = getLastChild()?.siblings(forward = false)?.filterIsInstance<JetExpression>()?.firstOrNull()
+            = getLastChild()?.siblings(forward = false)?.firstOrNullIsInstance<JetExpression>()
 }
 
