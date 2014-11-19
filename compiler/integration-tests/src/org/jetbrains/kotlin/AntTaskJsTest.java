@@ -19,7 +19,6 @@ package org.jetbrains.kotlin;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.utils.fileUtils.FileUtilsPackage;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.k2js.test.rhino.RhinoUtils;
 import org.junit.Rule;
@@ -126,6 +125,11 @@ public class AntTaskJsTest extends AntTaskBaseTest {
         doJsAntTest();
     }
 
+
+    @Test
+    public void outputWithoutDirectory() throws Exception {
+        doJsAntTest();
+    }
 
     @Test
     public void noSrcParam() throws Exception {
