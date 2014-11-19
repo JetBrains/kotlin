@@ -39,6 +39,9 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.jet.lang.psi.debugText.getDebugText
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate
+import java.lang.reflect.GenericDeclaration
+import java.lang.reflect.Method
+import java.lang.reflect.Constructor
 
 class LazyOperationsLog(
         val stringSanitizer: (String) -> String
@@ -109,7 +112,7 @@ class LazyOperationsLog(
         val data = record.data
         val sb = StringBuilder()
 
-        sb.append(data.field?.getName() ?: "<name not found>")
+        sb.append(data.field?.getName() ?: "in ${data.lambdaCreatedIn.getDeclarationName()}")
 
         if (!data.arguments.isEmpty()) {
             sb.append(data.arguments.map { render(it) }.join(", ", "(", ")"))
@@ -209,4 +212,13 @@ private fun Printer.indent(body: Printer.() -> Unit): Printer {
     body()
     popIndent()
     return this
+}
+
+private fun GenericDeclaration?.getDeclarationName(): String? {
+    return when (this) {
+        is Class<*> -> getName().substringAfterLast(".")
+        is Method -> getDeclaringClass().getDeclarationName() + "::" + getName() + "()"
+        is Constructor<*> -> getDeclaringClass().getDeclarationName() + "::" + getName() + "()"
+        else -> "<no name>"
+    }
 }
