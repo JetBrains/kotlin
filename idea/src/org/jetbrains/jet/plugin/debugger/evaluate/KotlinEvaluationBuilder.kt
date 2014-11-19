@@ -220,7 +220,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         private fun JetNamedFunction.getParametersForDebugger(): ParametersDescriptor {
             return runReadAction {
                 val parameters = ParametersDescriptor()
-                val bindingContext = getAnalysisResults().getBindingContext()
+                val bindingContext = getAnalysisResults().bindingContext
                 val descriptor = bindingContext[BindingContext.FUNCTION, this]
                 if (descriptor != null) {
                     val receiver = descriptor.getExtensionReceiverParameter()
@@ -245,13 +245,13 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             return runReadAction {
                 val file = createFileForDebugger(codeFragment, extractedFunction)
 
-                val analyzeExhaust = file.checkForErrors()
+                val (bindingContext, moduleDescriptor) = file.checkForErrors()
 
                 val state = GenerationState(
                         file.getProject(),
                         ClassBuilderFactories.BINARIES,
-                        analyzeExhaust.getModuleDescriptor(),
-                        analyzeExhaust.getBindingContext(),
+                        moduleDescriptor,
+                        bindingContext,
                         listOf(file)
                 )
 
@@ -282,10 +282,10 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
                 val analyzeExhaust = this.getAnalysisResults(createFlexibleTypesFile())
                 if (analyzeExhaust.isError()) {
-                    throw EvaluateExceptionUtil.createEvaluateException(analyzeExhaust.getError())
+                    throw EvaluateExceptionUtil.createEvaluateException(analyzeExhaust.error)
                 }
 
-                val bindingContext = analyzeExhaust.getBindingContext()
+                val bindingContext = analyzeExhaust.bindingContext
                 bindingContext.getDiagnostics().firstOrNull { it.getSeverity() == Severity.ERROR }?.let {
                     throw EvaluateExceptionUtil.createEvaluateException(DefaultErrorMessages.RENDERER.render(it))
                 }

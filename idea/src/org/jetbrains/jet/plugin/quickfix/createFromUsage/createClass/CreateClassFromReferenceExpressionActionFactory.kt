@@ -38,8 +38,7 @@ public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActi
 
         val name = refExpr.getReferencedName()
 
-        val exhaust = refExpr.getAnalysisResults()
-        val context = exhaust.getBindingContext()
+        val (context, moduleDescriptor) = refExpr.getAnalysisResults()
 
         val fullCallExpr = refExpr.getParent()?.let {
             when {
@@ -88,7 +87,7 @@ public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActi
         val targetParent = getTargetParentByCall(call, file) ?: return Collections.emptyList()
         if (isInnerClassExpected(call)) return Collections.emptyList()
 
-        val (expectedTypeInfo, filter) = fullCallExpr.getInheritableTypeInfo(context, exhaust.getModuleDescriptor(), targetParent)
+        val (expectedTypeInfo, filter) = fullCallExpr.getInheritableTypeInfo(context, moduleDescriptor, targetParent)
 
         return Arrays.asList(ClassKind.OBJECT, ClassKind.ENUM_ENTRY)
                 .filter {

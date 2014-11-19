@@ -66,7 +66,7 @@ class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompile
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 project, listOf(), BindingTraceContext(), { false },
                 module, null, null
-        ).getModuleDescriptor()
+        ).moduleDescriptor
     }
 
     override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? {

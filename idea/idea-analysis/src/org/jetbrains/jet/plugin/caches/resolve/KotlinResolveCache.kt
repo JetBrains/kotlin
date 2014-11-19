@@ -110,10 +110,10 @@ private class KotlinResolveCache(
             }
             perFileCache.getAnalysisResults(it)
         }
-        val error = results.firstOrNull { it.isError() }
-        val bindingContext = CompositeBindingContext.create(results.map { it.getBindingContext() })
-        return if (error != null)
-                   AnalyzeExhaust.error(bindingContext, error.getError())
+        val withError = results.firstOrNull { it.isError() }
+        val bindingContext = CompositeBindingContext.create(results.map { it.bindingContext })
+        return if (withError != null)
+                   AnalyzeExhaust.error(bindingContext, withError.error)
                else
                     //TODO: (module refactoring) several elements are passed here in debugger
                    AnalyzeExhaust.success(bindingContext, getLazyResolveSession(elements.first()).getModuleDescriptor())

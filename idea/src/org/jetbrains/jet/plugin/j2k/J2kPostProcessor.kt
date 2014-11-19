@@ -26,7 +26,7 @@ import com.intellij.psi.PsiElement
 
 public class J2kPostProcessor(override val contextToAnalyzeIn: PsiElement) : PostProcessor {
     override fun analyzeFile(file: JetFile): BindingContext {
-        return file.getAnalysisResults().getBindingContext()
+        return file.getAnalysisResults().bindingContext
     }
 
     override fun doAdditionalProcessing(file: JetFile) {

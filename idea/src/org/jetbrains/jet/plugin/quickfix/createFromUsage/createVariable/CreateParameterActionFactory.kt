@@ -67,14 +67,14 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
 
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val exhaust = (diagnostic.getPsiFile() as? JetFile)?.getAnalysisResults() ?: return null
-        val context = exhaust.getBindingContext()
+        val context = exhaust.bindingContext
 
         val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetSimpleNameExpression>()) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
 
         val varExpected = refExpr.getAssignmentByLHS() != null
 
-        val paramType = refExpr.getExpressionForTypeGuess().guessTypes(context, exhaust.getModuleDescriptor()).let {
+        val paramType = refExpr.getExpressionForTypeGuess().guessTypes(context, exhaust.moduleDescriptor).let {
             when (it.size) {
                 0 -> KotlinBuiltIns.getInstance().getAnyType()
                 1 -> it.first()

@@ -39,8 +39,7 @@ public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionAct
 
         val file = fullCallExpr.getContainingFile() as? JetFile ?: return null
 
-        val exhaust = callExpr.getAnalysisResults()
-        val context = exhaust.getBindingContext()
+        val (context, moduleDescriptor) = callExpr.getAnalysisResults()
 
         val call = callExpr.getCall(context) ?: return null
         val targetParent = getTargetParentByCall(call, file) ?: return null
@@ -58,7 +57,7 @@ public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionAct
 
         val classKind = if (inAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS
 
-        val (expectedTypeInfo, filter) = fullCallExpr.getInheritableTypeInfo(context, exhaust.getModuleDescriptor(), targetParent)
+        val (expectedTypeInfo, filter) = fullCallExpr.getInheritableTypeInfo(context, moduleDescriptor, targetParent)
         if (!filter(classKind)) return null
 
         val typeArgumentInfos = if (inAnnotationEntry) {

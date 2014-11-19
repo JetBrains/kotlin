@@ -47,7 +47,7 @@ public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalyzeExh
 }
 
 public fun JetElement.getBindingContext(): BindingContext {
-    return getAnalysisResults().getBindingContext()
+    return getAnalysisResults().bindingContext
 }
 
 public fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExhaust {

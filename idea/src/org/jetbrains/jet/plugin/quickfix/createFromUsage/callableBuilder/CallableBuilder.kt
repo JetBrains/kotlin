@@ -145,8 +145,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
     {
         val exhaust = config.currentFile.getAnalysisResults()
-        currentFileContext = exhaust.getBindingContext()
-        currentFileModule = exhaust.getModuleDescriptor()
+        currentFileContext = exhaust.bindingContext
+        currentFileModule = exhaust.moduleDescriptor
     }
 
     public var placement: CallablePlacement by Delegates.notNull()

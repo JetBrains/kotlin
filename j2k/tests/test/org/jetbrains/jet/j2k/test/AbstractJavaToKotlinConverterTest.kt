@@ -74,7 +74,7 @@ public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtur
     }
 
     protected fun addErrorsDump(jetFile: JetFile): String {
-        val diagnostics = jetFile.getAnalysisResults().getBindingContext().getDiagnostics()
+        val diagnostics = jetFile.getAnalysisResults().bindingContext.getDiagnostics()
         val errors = diagnostics.filter { it.getSeverity() == Severity.ERROR }
         if (errors.isEmpty()) return jetFile.getText()
         val header = errors.map { "// ERROR: " + DefaultErrorMessages.RENDERER.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
