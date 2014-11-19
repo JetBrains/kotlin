@@ -4,15 +4,6 @@ import java.io.*
 import java.util.*
 
 /**
- * Recursively process this file and all children with the given block.
- * Note that if this file doesn't exist, then the block will be executed on it anyway.
- */
-public fun File.recurse(block: (File) -> Unit): Unit {
-    block(this)
-    listFiles()?.forEach { it.recurse(block) }
-}
-
-/**
  * Create an empty directory in the specified directory, using the given prefix and suffix to generate its name.
  * Prefix shouldn't be shorter than 3 symbols or IllegalArgumentException will be thrown.
  *
