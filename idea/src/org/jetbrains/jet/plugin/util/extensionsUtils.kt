@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil
 import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.utils.addIfNotNull
 import java.util.HashSet
 
 public fun CallableDescriptor.isExtensionCallable(receivers: Collection<ReceiverValue>,
@@ -52,13 +53,8 @@ public fun CallableDescriptor.isExtensionCallable(
         return false
     }
 
-    val types = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo)
-
-    for (type in types) {
-        if (checkReceiverResolution(receiver, type, this)) return true
-    }
-
-    return false
+    return SmartCastUtils.getSmartCastVariants(receiver, bindingContext, dataFlowInfo)
+            .any { checkReceiverResolution(receiver, it, this) }
 }
 
 private fun checkReceiverResolution(receiverArgument: ReceiverValue, receiverType: JetType, callableDescriptor: CallableDescriptor): Boolean {
@@ -73,7 +69,8 @@ private fun checkReceiverResolution(receiverArgument: ReceiverValue, receiverTyp
         return false
     }
 
-    val typeNamesInReceiver = collectUsedTypeNames(receiverParameter.getType())
+    val typeNamesInReceiver = HashSet<Name>()
+    typeNamesInReceiver.addUsedTypeNames(receiverParameter.getType())
 
     val constraintSystem = ConstraintSystemImpl()
     val typeVariables = LinkedHashMap<TypeParameterDescriptor, Variance>()
@@ -88,18 +85,12 @@ private fun checkReceiverResolution(receiverArgument: ReceiverValue, receiverTyp
     return constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true)
 }
 
-private fun collectUsedTypeNames(jetType: JetType): Set<Name> {
-    val typeNames = HashSet<Name>()
-
+private fun MutableSet<Name>.addUsedTypeNames(jetType: JetType) {
     val descriptor = jetType.getConstructor().getDeclarationDescriptor()
-    if (descriptor != null) {
-        typeNames.add(descriptor.getName())
-    }
+    addIfNotNull(descriptor?.getName())
 
     for (argument in jetType.getArguments()) {
-        typeNames.addAll(collectUsedTypeNames(argument.getType()))
+        addUsedTypeNames(argument.getType())
     }
-
-    return typeNames
 }
 
