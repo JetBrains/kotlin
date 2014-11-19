@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.stubs.StringStubIndexExtension
-import org.jetbrains.jet.plugin.codeInsight.TipsManager
+import org.jetbrains.jet.plugin.util.extensionsUtils.isExtensionCallable
 
 public class KotlinIndicesHelper(private val project: Project,
                                  private val resolveSession: ResolveSessionForBodies,
@@ -211,8 +211,9 @@ public class KotlinIndicesHelper(private val project: Project,
                     .filter { it.getExtensionReceiverParameter() != null }
         }
 
-        return descriptors.filter { visibilityFilter(it) &&
-                    TipsManager.checkIsExtensionCallable(receiverValue, it, isInfixCall, bindingContext, dataFlowInfo) }
+        return descriptors.filter {
+            visibilityFilter(it) && it.isExtensionCallable(receiverValue, isInfixCall, bindingContext, dataFlowInfo)
+        }
     }
 
     public fun getClassDescriptors(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
