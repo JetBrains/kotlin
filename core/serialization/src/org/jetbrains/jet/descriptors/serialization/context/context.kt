@@ -45,7 +45,7 @@ public open class DeserializationGlobalContext(
         public val classDeserializer: ClassDeserializer = ClassDeserializer(storageManager, classDataFinder)
 ) {
     {
-        classDeserializer.context = this
+        classDeserializer.globalContext = this
     }
 
     public fun withNameResolver(nameResolver: NameResolver): DeserializationContext {

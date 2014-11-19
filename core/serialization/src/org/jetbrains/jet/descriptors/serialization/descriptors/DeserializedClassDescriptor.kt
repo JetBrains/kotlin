@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.descriptors.serialization.descriptors
 
-import org.jetbrains.jet.descriptors.serialization.ClassData
 import org.jetbrains.jet.descriptors.serialization.Flags
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
 import org.jetbrains.jet.descriptors.serialization.context.*
@@ -31,23 +30,21 @@ import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.storage.MemoizedFunctionToNullable
-
-import java.util.*
-
 import org.jetbrains.jet.descriptors.serialization
 import org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName
 import org.jetbrains.jet.descriptors.serialization.classKind
 import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import java.util.*
 
-public fun DeserializedClassDescriptor(globalContext: DeserializationGlobalContext, classData: ClassData): DeserializedClassDescriptor
-        = DeserializedClassDescriptor(globalContext.withNameResolver(classData.getNameResolver()), classData.getClassProto())
-
-public class DeserializedClassDescriptor(outerContext: DeserializationContext, private val classProto: ProtoBuf.Class)
-: AbstractClassDescriptor(outerContext.storageManager, outerContext.nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName()), ClassDescriptor {
-
+public class DeserializedClassDescriptor(
+        outerContext: DeserializationContext,
+        private val classProto: ProtoBuf.Class
+) : ClassDescriptor, AbstractClassDescriptor(
+        outerContext.storageManager,
+        outerContext.nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName()
+) {
     private val modality = serialization.modality(Flags.MODALITY.get(classProto.getFlags()))
     private val visibility = serialization.visibility(Flags.VISIBILITY.get(classProto.getFlags()))
     private val kind = classKind(Flags.CLASS_KIND.get(classProto.getFlags()))
@@ -55,7 +52,7 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
 
     private val classId = outerContext.nameResolver.getClassId(classProto.getFqName())
     private val typeParameters = ArrayList<TypeParameterDescriptor>(classProto.getTypeParameterCount())
-    private val context = outerContext.withTypes(this).childContext(this, classProto.getTypeParameterList(), typeParameters)
+    val context = outerContext.withTypes(this).childContext(this, classProto.getTypeParameterList(), typeParameters)
 
     private val staticScope = StaticScopeForKotlinClass(this)
     private val typeConstructor = DeserializedClassTypeConstructor(typeParameters)

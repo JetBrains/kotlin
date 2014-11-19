@@ -24,35 +24,30 @@ import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.resolve.name.ClassId
 
 public class ClassDeserializer(val storageManager: StorageManager, val classDataFinder: ClassDataFinder) {
-    private val classes = storageManager.createMemoizedFunctionWithNullableValues {
+    var globalContext: DeserializationGlobalContext by Delegates.notNull()
+
+    private val classes: (ClassKey) -> DeserializedClassDescriptor? = storageManager.createMemoizedFunctionWithNullableValues {
         (key: ClassKey) ->
-        val classData = key.classData ?: classDataFinder.findClassData(key.classId)
+        val classId = key.classId
+        val classData = key.classData ?: classDataFinder.findClassData(classId)
         if (classData != null) {
-            DeserializedClassDescriptor(context, classData)
+            val outerClassContext =
+                    if (classId.isTopLevelClass()) null
+                    else classes(ClassKey(classId.getOuterClassId(), null))?.context
+            val context = outerClassContext ?: globalContext
+            DeserializedClassDescriptor(context.withNameResolver(classData.getNameResolver()), classData.getClassProto())
         }
         else {
             null
         }
     }
 
-    var context: DeserializationGlobalContext by Delegates.notNull()
-
-    public fun deserializeClass(classId: ClassId): ClassDescriptor? = classes(ClassKey(classId, null))
-
-    //needed to avoid calling ClassDataFinder#findClassData() if it is already computed at call site
-    public fun deserializeClass(classData: ClassData): ClassDescriptor? = classes(ClassKey(classData.readId(), classData))
+    // Additional ClassData parameter is needed to avoid calling ClassDataFinder#findClassData() if it is already computed at call site
+    public fun deserializeClass(classId: ClassId, classData: ClassData? = null): ClassDescriptor? = classes(ClassKey(classId, classData))
 
     private inner class ClassKey(val classId: ClassId, val classData: ClassData?) {
-        override fun equals(other: Any?): Boolean {
-            return other is ClassKey && classId == other.classId
-        }
-
-        override fun hashCode(): Int {
-            return classId.hashCode()
-        }
-    }
-
-    private fun ClassData.readId(): ClassId {
-        return getNameResolver().getClassId(getClassProto().getFqName())
+        override fun equals(other: Any?): Boolean = other is ClassKey && classId == other.classId
+        override fun hashCode(): Int = classId.hashCode()
+        override fun toString(): String = classId.toString()
     }
 }
