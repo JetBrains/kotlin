@@ -63,11 +63,14 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
 
+    protected val referenceVariantsHelper: ReferenceVariantsHelper?
+            = if (bindingContext != null) ReferenceVariantsHelper(bindingContext) { isVisibleDescriptor(it) } else null
+
     protected val boldImmediateLookupElementFactory: LookupElementFactory = run {
         if (jetReference != null) {
             val expression = jetReference.expression
-            val receivers = ReferenceVariantsHelper.getReferenceVariantsReceivers(expression, bindingContext!!)
-            val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
+            val receivers = referenceVariantsHelper!!.getReferenceVariantsReceivers(expression)
+            val dataFlowInfo = bindingContext!!.getDataFlowInfo(expression)
             val receiverTypes = receivers.flatMap {
                 SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(it, bindingContext, dataFlowInfo)
             }
@@ -111,13 +114,8 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected abstract fun doComplete()
 
-    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter): Collection<DeclarationDescriptor> {
-        return ReferenceVariantsHelper.getReferenceVariants(jetReference!!.expression,
-                                                bindingContext!!,
-                                                kindFilter,
-                                                prefixMatcher.asNameFilter(),
-                                                { isVisibleDescriptor(it) })
-    }
+    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter): Collection<DeclarationDescriptor>
+            = referenceVariantsHelper!!.getReferenceVariants(jetReference!!.expression, kindFilter, prefixMatcher.asNameFilter())
 
     protected fun shouldRunTopLevelCompletion(): Boolean
             = configuration.completeNonImportedDeclarations && isNoQualifierContext()

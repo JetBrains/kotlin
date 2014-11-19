@@ -34,21 +34,21 @@ import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.jet.plugin.util.extensionsUtils.isExtensionCallable
 
-public object ReferenceVariantsHelper {
+public class ReferenceVariantsHelper(
+        private val context: BindingContext,
+        private val visibilityFilter: (DeclarationDescriptor) -> Boolean
+) {
 
     public fun getReferenceVariants(
             expression: JetSimpleNameExpression,
-            context: BindingContext,
             kindFilter: DescriptorKindFilter,
-            nameFilter: (Name) -> Boolean,
-            visibilityFilter: (DeclarationDescriptor) -> Boolean
+            nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
-        return getReferenceVariants(expression, context, kindFilter, nameFilter).filter(visibilityFilter)
+        return getReferenceVariantsNoVisibilityFilter(expression, kindFilter, nameFilter).filter(visibilityFilter)
     }
 
-    private fun getReferenceVariants(
+    private fun getReferenceVariantsNoVisibilityFilter(
             expression: JetSimpleNameExpression,
-            context: BindingContext,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
@@ -85,7 +85,7 @@ public object ReferenceVariantsHelper {
                     variant.getMemberScope().getDescriptorsFiltered(mask, nameFilter).filterTo(descriptors, ::filterIfInfix)
                 }
 
-                descriptors.addCallableExtensions(resolutionScope, receiverValue, context, dataFlowInfo, isInfixCall, kindFilter, nameFilter)
+                descriptors.addCallableExtensions(resolutionScope, receiverValue, dataFlowInfo, isInfixCall, kindFilter, nameFilter)
             }
 
             return descriptors
@@ -112,7 +112,7 @@ public object ReferenceVariantsHelper {
         }
     }
 
-    public fun getReferenceVariantsReceivers(expression: JetSimpleNameExpression, context: BindingContext): Collection<ReceiverValue> {
+    public fun getReferenceVariantsReceivers(expression: JetSimpleNameExpression): Collection<ReceiverValue> {
         val receiverExpression = getReferenceVariantsReceiver(expression)
         if (receiverExpression != null) {
             val expressionType = context[BindingContext.EXPRESSION_TYPE, receiverExpression] ?: return listOf()
@@ -138,7 +138,6 @@ public object ReferenceVariantsHelper {
     private fun MutableCollection<DeclarationDescriptor>.addCallableExtensions(
             resolutionScope: JetScope,
             receiver: ReceiverValue,
-            context: BindingContext,
             dataFlowInfo: DataFlowInfo,
             isInfixCall: Boolean,
             kindFilter: DescriptorKindFilter,
@@ -152,10 +151,11 @@ public object ReferenceVariantsHelper {
         }
     }
 
-    public fun getPackageReferenceVariants(expression: JetSimpleNameExpression,
-                                           context: BindingContext,
-                                           nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    public fun getPackageReferenceVariants(
+            expression: JetSimpleNameExpression,
+            nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> {
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
-        return resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter)
+        return resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter).filter(visibilityFilter)
     }
 }

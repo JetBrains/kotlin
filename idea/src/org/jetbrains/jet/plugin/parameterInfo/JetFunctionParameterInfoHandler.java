@@ -409,8 +409,8 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                 return name.equals(refName);
             }
         };
-        Collection<DeclarationDescriptor> variants = ReferenceVariantsHelper.INSTANCE$.getReferenceVariants(
-                callNameExpression, bindingContext, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK, Collections.<DescriptorKindExclude>emptyList()), nameFilter, visibilityFilter);
+        Collection<DeclarationDescriptor> variants = new ReferenceVariantsHelper(bindingContext, visibilityFilter).getReferenceVariants(
+                callNameExpression, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK, Collections.<DescriptorKindExclude>emptyList()), nameFilter);
 
         Collection<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>>();
         for (DeclarationDescriptor variant : variants) {
