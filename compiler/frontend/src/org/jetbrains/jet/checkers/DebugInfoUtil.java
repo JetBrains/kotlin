@@ -23,18 +23,16 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
@@ -119,12 +117,8 @@ public class DebugInfoUtil {
                 if (declarationDescriptor != null) {
                     target = declarationDescriptor.toString();
 
-                    if (declarationDescriptor instanceof CallableDescriptor) {
-                        CallableDescriptor callableDescriptor = (CallableDescriptor) declarationDescriptor;
-                        ReceiverParameterDescriptor dispatchReceiverParameter = callableDescriptor.getDispatchReceiverParameter();
-                        if (dispatchReceiverParameter != null && TypesPackage.isDynamic(dispatchReceiverParameter.getReturnType())) {
-                            debugInfoReporter.reportDynamicCall(expression);
-                        }
+                    if (TasksPackage.isDynamic(declarationDescriptor)) {
+                        debugInfoReporter.reportDynamicCall(expression);
                     }
                 }
                 if (target == null) {

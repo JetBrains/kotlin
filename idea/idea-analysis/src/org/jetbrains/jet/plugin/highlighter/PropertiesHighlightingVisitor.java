@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetThisExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.jet.lexer.JetTokens;
 
 class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
@@ -82,6 +83,11 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             @NotNull PropertyDescriptor descriptor,
             boolean withBackingField
     ) {
+        if (TasksPackage.isDynamic(descriptor)) {
+            JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.DYNAMIC_PROPERTY_CALL);
+            return;
+        }
+
         boolean isStatic = DescriptorUtils.isStaticDeclaration(descriptor);
         JetPsiChecker.highlightName(
                 holder, elementToHighlight,

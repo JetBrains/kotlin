@@ -58,7 +58,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
                " */\n" +
                "[<ANNOTATION>Deprecated</ANNOTATION>]\n" +
                "<BUILTIN_ANNOTATION>public</BUILTIN_ANNOTATION> class <CLASS>MyClass</CLASS><<BUILTIN_ANNOTATION>out</BUILTIN_ANNOTATION> <TYPE_PARAMETER>T</TYPE_PARAMETER> : <TRAIT>Iterable</TRAIT><<TYPE_PARAMETER>T</TYPE_PARAMETER>>>(var <INSTANCE_PROPERTY><MUTABLE_VARIABLE>prop1</MUTABLE_VARIABLE></INSTANCE_PROPERTY> : Int) {\n" +
-               "    fun <FUNCTION_DECLARATION>foo</FUNCTION_DECLARATION>(<PARAMETER>nullable</PARAMETER> : String?, <PARAMETER>r</PARAMETER> : <TRAIT>Runnable</TRAIT>, <PARAMETER>f</PARAMETER> : () -> Int, <PARAMETER>fl</PARAMETER> : <TRAIT>FunctionLike</TRAIT>) {\n" +
+               "    fun <FUNCTION_DECLARATION>foo</FUNCTION_DECLARATION>(<PARAMETER>nullable</PARAMETER> : String?, <PARAMETER>r</PARAMETER> : <TRAIT>Runnable</TRAIT>, <PARAMETER>f</PARAMETER> : () -> Int, <PARAMETER>fl</PARAMETER> : <TRAIT>FunctionLike</TRAIT>, dyn: dynamic) {\n" +
                "        <FUNCTION_CALL><PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL></FUNCTION_CALL>(\"length\\nis ${<PARAMETER>nullable</PARAMETER><SAFE_ACCESS>?.</SAFE_ACCESS><INSTANCE_PROPERTY>length</INSTANCE_PROPERTY>} <INVALID_STRING_ESCAPE><STRING_ESCAPE>\\e</STRING_ESCAPE></INVALID_STRING_ESCAPE>\")\n" +
                "        val <LOCAL_VARIABLE>ints</LOCAL_VARIABLE> = java.util.<CONSTRUCTOR_CALL>ArrayList</CONSTRUCTOR_CALL><Int?>(2)\n" +
                "        <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>[0] = 102 + <PARAMETER><VARIABLE_AS_FUNCTION_CALL>f</VARIABLE_AS_FUNCTION_CALL></PARAMETER>() + <PARAMETER><VARIABLE_AS_FUNCTION_LIKE_CALL>fl</VARIABLE_AS_FUNCTION_LIKE_CALL></PARAMETER>()\n" +
@@ -70,6 +70,8 @@ public class JetColorSettingsPage implements ColorSettingsPage {
                "                <FUNCTION_CALL><PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL></FUNCTION_CALL>(<FUNCTION_LITERAL_DEFAULT_PARAMETER><SMART_CAST_VALUE>it</SMART_CAST_VALUE></FUNCTION_LITERAL_DEFAULT_PARAMETER> + <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE>)\n" +
                "            <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>\n" +
                "        }\n" +
+               "        dyn.<DYNAMIC_FUNCTION_CALL>dynamicCall</DYNAMIC_FUNCTION_CALL>()\n" +
+               "        dyn.<DYNAMIC_PROPERTY_CALL>dynamicProp</DYNAMIC_PROPERTY_CALL> = 5\n" +
                "    }\n" +
                "}\n" +
                "\n" +
@@ -147,10 +149,12 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.property.with.backing"), JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD),
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.backing.field.access"), JetHighlightingColors.BACKING_FIELD_ACCESS),
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.extension.property"), JetHighlightingColors.EXTENSION_PROPERTY),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.dynamic.property"), JetHighlightingColors.DYNAMIC_PROPERTY_CALL),
 
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.it"), JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER),
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.fun"), JetHighlightingColors.FUNCTION_DECLARATION),
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.fun.call"), JetHighlightingColors.FUNCTION_CALL),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.dynamic.fun.call"), JetHighlightingColors.DYNAMIC_FUNCTION_CALL),
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.package.fun.call"), JetHighlightingColors.PACKAGE_FUNCTION_CALL),
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.extension.fun.call"), JetHighlightingColors.EXTENSION_FUNCTION_CALL),
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.constructor.call"), JetHighlightingColors.CONSTRUCTOR_CALL),

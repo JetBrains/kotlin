@@ -81,6 +81,11 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         super.visitClass(klass);
     }
 
+    @Override
+    public void visitDynamicType(@NotNull JetDynamicType type) {
+        // Do nothing: 'dynamic' is highlighted as a keyword
+    }
+
     private void highlightName(@NotNull PsiElement whatToHighlight, @NotNull TextAttributesKey textAttributesKey) {
         JetPsiChecker.highlightName(holder, whatToHighlight, textAttributesKey);
     }

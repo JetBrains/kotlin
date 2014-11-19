@@ -37,6 +37,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("Dynamic.kt")
+    public void testDynamic() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Dynamic.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Enums.kt")
     public void testEnums() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Enums.kt");

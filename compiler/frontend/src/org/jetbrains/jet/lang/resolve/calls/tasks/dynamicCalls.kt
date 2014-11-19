@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.jet.lang.types.JetType
 import kotlin.platform.platformStatic
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.jet.lang.types.isDynamic
 
 object DynamicCallableDescriptors {
 
@@ -124,3 +125,10 @@ object DynamicCallableDescriptors {
                 )
             }
 }
+
+fun DeclarationDescriptor.isDynamic(): Boolean {
+    if (this !is CallableDescriptor) return false
+    val dispatchReceiverParameter = getDispatchReceiverParameter()
+    return dispatchReceiverParameter != null && dispatchReceiverParameter.getType().isDynamic()
+}
+
