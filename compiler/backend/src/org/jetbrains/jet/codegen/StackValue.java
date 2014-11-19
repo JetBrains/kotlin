@@ -64,15 +64,15 @@ public abstract class StackValue {
 
     @NotNull
     public final Type type;
-    private final boolean hasSideEffects;
+    private final boolean canHaveSideEffects;
 
     protected StackValue(@NotNull Type type) {
         this(type, true);
     }
 
-    protected StackValue(@NotNull Type type, boolean hasSideEffects) {
+    protected StackValue(@NotNull Type type, boolean canHaveSideEffects) {
         this.type = type;
-        this.hasSideEffects = hasSideEffects;
+        this.canHaveSideEffects = canHaveSideEffects;
     }
 
     /**
@@ -120,8 +120,8 @@ public abstract class StackValue {
         store(value, v, false);
     }
 
-    public boolean hasSideEffects() {
-        return hasSideEffects;
+    public boolean canHaveSideEffects() {
+        return canHaveSideEffects;
     }
 
     public void store(@NotNull StackValue value, @NotNull InstructionAdapter v, boolean skipReceiver) {
@@ -439,29 +439,37 @@ public abstract class StackValue {
     ) {
         if (resolvedCall.getDispatchReceiver().exists() || resolvedCall.getExtensionReceiver().exists() || isLocalFunCall(callableMethod)) {
             boolean hasExtensionReceiver = resolvedCall.getExtensionReceiver().exists();
-            StackValue extensionReceiver = genReceiver(receiver, codegen, resolvedCall, callableMethod, true);
             StackValue dispatchReceiver = platformStaticCallIfPresent(
                     genReceiver(hasExtensionReceiver ? none() : receiver, codegen, resolvedCall, callableMethod, false),
                     resolvedCall.getResultingDescriptor()
             );
+            StackValue extensionReceiver = genReceiver(receiver, codegen, resolvedCall, callableMethod, true);
             return new CallReceiver(dispatchReceiver, extensionReceiver,
                                     CallReceiver.calcType(resolvedCall, codegen.typeMapper, callableMethod));
         }
         return receiver;
     }
 
-    private static StackValue genReceiver(@NotNull StackValue receiver, @NotNull ExpressionCodegen codegen, ResolvedCall resolvedCall, @Nullable CallableMethod callableMethod, boolean isExtension) {
+    private static StackValue genReceiver(
+            @NotNull StackValue receiver,
+            @NotNull ExpressionCodegen codegen,
+            @NotNull ResolvedCall resolvedCall,
+            @Nullable CallableMethod callableMethod,
+            boolean isExtension
+    ) {
         ReceiverValue receiverValue = isExtension ? resolvedCall.getExtensionReceiver() : resolvedCall.getDispatchReceiver();
         if (receiver == none()) {
             if (receiverValue.exists()) {
                 return codegen.generateReceiverValue(receiverValue);
-            } else if (isLocalFunCall(callableMethod) && !isExtension) {
+            }
+            else if (isLocalFunCall(callableMethod) && !isExtension) {
                 CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
                 StackValue value = codegen.findLocalOrCapturedValue(descriptor.getOriginal());
                 assert value != null : "Local fun should be found in locals or in captured params: " + resolvedCall;
                 return value;
             }
-        } else if (receiverValue.exists()) {
+        }
+        else if (receiverValue.exists()) {
             return receiver;
         }
         return none();
@@ -469,11 +477,11 @@ public abstract class StackValue {
 
     private static StackValue platformStaticCallIfPresent(@NotNull StackValue resultReceiver, @NotNull CallableDescriptor descriptor) {
         if (AnnotationsPackage.isPlatformStaticInObject(descriptor)) {
-            //dispatch receiver
-            if (resultReceiver.hasSideEffects()) {
-                resultReceiver = coercion(resultReceiver, Type.VOID_TYPE);
-            } else {
-                resultReceiver = none();
+            if (resultReceiver.canHaveSideEffects()) {
+                return coercion(resultReceiver, Type.VOID_TYPE);
+            }
+            else {
+                return none();
             }
         }
         return resultReceiver;
@@ -1073,7 +1081,7 @@ public abstract class StackValue {
         public final String name;
 
         public Field(Type type, Type owner, String name, boolean isStatic, StackValue receiver) {
-            super(type, isStatic, isStatic, receiver, receiver.hasSideEffects());
+            super(type, isStatic, isStatic, receiver, receiver.canHaveSideEffects());
             this.owner = owner;
             this.name = name;
         }
@@ -1251,7 +1259,7 @@ public abstract class StackValue {
         final String name;
 
         public FieldForSharedVar(Type type, Type owner, String name, StackValue.Field receiver) {
-            super(type, false, false, receiver, false);
+            super(type, false, false, receiver, receiver.canHaveSideEffects());
             this.owner = owner;
             this.name = name;
         }
@@ -1383,7 +1391,7 @@ public abstract class StackValue {
                 @NotNull StackValue extensionReceiver,
                 @NotNull Type type
         ) {
-            super(type, dispatchReceiver.hasSideEffects() || extensionReceiver.hasSideEffects());
+            super(type, dispatchReceiver.canHaveSideEffects() || extensionReceiver.canHaveSideEffects());
             this.dispatchReceiver = dispatchReceiver;
             this.extensionReceiver = extensionReceiver;
         }
@@ -1404,7 +1412,8 @@ public abstract class StackValue {
             else if (dispatchReceiver != null) {
                 if (AnnotationsPackage.isPlatformStaticInObject(descriptor)) {
                     return Type.VOID_TYPE;
-                } else {
+                }
+                else {
                     return callableMethod != null ? callableMethod.getThisType() : typeMapper.mapType(dispatchReceiver.getType());
                 }
             }
@@ -1445,9 +1454,9 @@ public abstract class StackValue {
                 boolean isStaticPut,
                 boolean isStaticStore,
                 @NotNull StackValue receiver,
-                boolean hasSideEffects
+                boolean canHaveSideEffects
         ) {
-            super(type, hasSideEffects);
+            super(type, canHaveSideEffects);
             this.receiver = receiver;
             this.isStaticPut = isStaticPut;
             this.isStaticStore = isStaticStore;
@@ -1465,7 +1474,7 @@ public abstract class StackValue {
         @Override
         public void putReceiver(@NotNull InstructionAdapter v, boolean isRead) {
             boolean hasReceiver = isNonStaticAccess(isRead);
-            if (hasReceiver || receiver.hasSideEffects()) {
+            if (hasReceiver || receiver.canHaveSideEffects()) {
                 receiver.put(hasReceiver ? receiver.type : Type.VOID_TYPE, v);
             }
         }
@@ -1533,7 +1542,7 @@ public abstract class StackValue {
         private final boolean[] isReadOperations;
 
         public ComplexReceiver(StackValueWithSimpleReceiver value, boolean[] isReadOperations) {
-            super(value.type, value.receiver.hasSideEffects());
+            super(value.type, value.receiver.canHaveSideEffects());
             this.originalValueWithReceiver = value;
             this.isReadOperations = isReadOperations;
         }
@@ -1556,7 +1565,7 @@ public abstract class StackValue {
                 }
             }
 
-            if (!wasPut && receiver.hasSideEffects()) {
+            if (!wasPut && receiver.canHaveSideEffects()) {
                 receiver.put(Type.VOID_TYPE, v);
             }
         }
@@ -1590,7 +1599,7 @@ public abstract class StackValue {
                 @NotNull StackValueWithSimpleReceiver originalValue,
                 @NotNull ComplexReceiver receiver
         ) {
-            super(type, bothReceiverStatic(originalValue), bothReceiverStatic(originalValue), receiver, originalValue.hasSideEffects());
+            super(type, bothReceiverStatic(originalValue), bothReceiverStatic(originalValue), receiver, originalValue.canHaveSideEffects());
             this.originalValue = originalValue;
         }
 
