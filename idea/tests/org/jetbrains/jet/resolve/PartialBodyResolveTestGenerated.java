@@ -19,6 +19,7 @@ package org.jetbrains.jet.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -104,6 +105,24 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     @TestMetadata("IfNotIsErrorQualifier.kt")
     public void testIfNotIsErrorQualifier() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsErrorQualifier.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfNotIsErrorVariable.kt")
+    public void testIfNotIsErrorVariable() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsErrorVariable.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfNotIsMyError.kt")
+    public void testIfNotIsMyError() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsMyError.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfNotIsNothingProp.kt")
+    public void testIfNotIsNothingProp() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsNothingProp.kt");
         doTest(fileName);
     }
 

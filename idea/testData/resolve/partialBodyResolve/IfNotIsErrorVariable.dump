@@ -1,0 +1,3 @@
+Resolve target: value-parameter val p: kotlin.Any
+Skipped statements:
+if (p !is String) { print(error) }

@@ -28,16 +28,26 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.lazy.DefaultNothingCallableNamesService;
 import org.jetbrains.jet.lang.resolve.lazy.ElementResolver;
+import org.jetbrains.jet.lang.resolve.lazy.PossiblyNothingCallableNamesService;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.plugin.stubindex.JetPossiblyNothingFunctionShortNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetPossiblyNothingPropertyShortNameIndex;
 import org.jetbrains.jet.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 public class ResolveElementCache extends ElementResolver {
+    private final Project project;
     private final CachedValue<MemoizedFunctionToNotNull<JetElement, BindingContext>> additionalResolveCache;
 
     public ResolveElementCache(ResolveSession resolveSession, Project project) {
         super(resolveSession);
+        this.project = project;
 
         // Recreate internal cache after change of modification count
         this.additionalResolveCache =
@@ -73,5 +83,30 @@ public class ResolveElementCache extends ElementResolver {
     @Override
     public AdditionalCheckerProvider getAdditionalCheckerProvider(@NotNull JetFile jetFile) {
         return TargetPlatformDetector.getPlatform(jetFile).getAdditionalCheckerProvider();
+    }
+
+    @NotNull
+    @Override
+    protected PossiblyNothingCallableNamesService possiblyNothingCallableNamesService() {
+        return new PossiblyNothingCallableNamesService() {
+            @NotNull
+            @Override
+            public Set<String> functionNames() {
+                // we have to add hardcoded-names until we have Kotlin compiled classes in caches
+                Set<String> hardcodedNames = DefaultNothingCallableNamesService.INSTANCE$.functionNames();
+                Collection<String> indexedNames = JetPossiblyNothingFunctionShortNameIndex.getInstance().getAllKeys(project);
+                Set<String> set = new HashSet<String>(hardcodedNames.size() + indexedNames.size());
+                set.addAll(hardcodedNames);
+                set.addAll(indexedNames);
+                return set;
+                //TODO: what about local declarations?
+            }
+
+            @NotNull
+            @Override
+            public Set<String> propertyNames() {
+                return new HashSet<String>(JetPossiblyNothingPropertyShortNameIndex.getInstance().getAllKeys(project));
+            }
+        };
     }
 }

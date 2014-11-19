@@ -70,6 +70,11 @@ public abstract class ElementResolver {
     }
 
     @NotNull
+    protected PossiblyNothingCallableNamesService possiblyNothingCallableNamesService() {
+        return DefaultNothingCallableNamesService.INSTANCE$;
+    }
+
+    @NotNull
     public BindingContext resolveToElement(@NotNull JetElement jetElement, boolean partialBodyResolve) {
         @SuppressWarnings("unchecked") JetElement elementOfAdditionalResolve = (JetElement) JetPsiUtil.getTopmostParentOfTypes(
                 jetElement,
@@ -96,7 +101,7 @@ public abstract class ElementResolver {
                 boolean inBody = body != null && PsiTreeUtil.isAncestor(body, jetElement, false);
                 Function1<JetElement, Boolean> filter;
                 if (inBody) {
-                    filter = new PartialBodyResolveFilter(jetElement, body);
+                    filter = new PartialBodyResolveFilter(jetElement, body, possiblyNothingCallableNamesService());
                 }
                 else { // do as less as possible body-resolve
                     filter = new Function1<JetElement, Boolean>() {

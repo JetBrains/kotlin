@@ -27,10 +27,16 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 
-class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: JetExpression) : (JetElement) -> Boolean {
+class PartialBodyResolveFilter(
+        elementToResolve: JetElement,
+        private val body: JetExpression,
+        possiblyNothingCallableNamesService: PossiblyNothingCallableNamesService
+) : (JetElement) -> Boolean {
 
     private val statementsToResolve = HashSet<JetExpression>()
     private val processedBlocks = HashSet<JetBlockExpression>()
+    private val possiblyNothingFunctionNames = possiblyNothingCallableNamesService.functionNames()
+    private val possiblyNothingPropertyNames = possiblyNothingCallableNamesService.propertyNames()
 
     ;{
         assert(body.isAncestor(elementToResolve, strict = false))
@@ -286,6 +292,13 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
                 super.visitCallExpression(expression)
             }
 
+            override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                val name = expression.getReferencedName()
+                if (name in possiblyNothingPropertyNames) {
+                    result.add(expression)
+                }
+            }
+
             override fun visitBinaryExpression(expression: JetBinaryExpression) {
                 if (expression.getOperationToken() == JetTokens.ELVIS) {
                     // do not search exits after "?:"
@@ -368,9 +381,5 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
 
     private fun JetBlockExpression.lastStatement(): JetExpression?
             = getLastChild().siblings(forward = false).filterIsInstance<JetExpression>().firstOrNull()
-
-    class object {
-        private val possiblyNothingFunctionNames = setOf("error") // currently hard-coded
-    }
 }
 

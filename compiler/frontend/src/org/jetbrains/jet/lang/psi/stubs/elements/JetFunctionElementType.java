@@ -23,8 +23,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.stubs.KotlinFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.KotlinFunctionStubImpl;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
@@ -45,8 +44,10 @@ public class JetFunctionElementType extends JetStubElementType<KotlinFunctionStu
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         boolean hasBlockBody = psi.hasBlockBody();
         boolean hasBody = psi.hasBody();
+        boolean isNothing = ElementsPackage.isPossiblyNothing(psi.getTypeReference());
         return new KotlinFunctionStubImpl(parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
-                                          isExtension, hasBlockBody, hasBody, psi.hasTypeParameterListBeforeFunctionName());
+                                          isExtension, hasBlockBody, hasBody, psi.hasTypeParameterListBeforeFunctionName(),
+                                          isNothing);
     }
 
     @Override
@@ -61,6 +62,7 @@ public class JetFunctionElementType extends JetStubElementType<KotlinFunctionStu
         dataStream.writeBoolean(stub.hasBlockBody());
         dataStream.writeBoolean(stub.hasBody());
         dataStream.writeBoolean(stub.hasTypeParameterListBeforeFunctionName());
+        dataStream.writeBoolean(stub.isPossiblyNothingType());
     }
 
     @NotNull
@@ -76,9 +78,10 @@ public class JetFunctionElementType extends JetStubElementType<KotlinFunctionStu
         boolean hasBlockBody = dataStream.readBoolean();
         boolean hasBody = dataStream.readBoolean();
         boolean hasTypeParameterListBeforeFunctionName = dataStream.readBoolean();
+        boolean possiblyNothingType = dataStream.readBoolean();
 
         return new KotlinFunctionStubImpl(parentStub, name, isTopLevel, fqName, isExtension, hasBlockBody, hasBody,
-                                          hasTypeParameterListBeforeFunctionName);
+                                          hasTypeParameterListBeforeFunctionName, possiblyNothingType);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.psi.stubs;
+package org.jetbrains.jet.lang.resolve.lazy
 
-import org.jetbrains.jet.lang.psi.JetProperty;
+public trait PossiblyNothingCallableNamesService {
+    public fun functionNames(): Set<String>
+    public fun propertyNames(): Set<String>
+}
 
-public interface KotlinPropertyStub extends KotlinStubWithFqName<JetProperty> {
-    boolean isVar();
-    boolean isTopLevel();
-    boolean hasDelegate();
-    boolean hasDelegateExpression();
-    boolean hasInitializer();
-    boolean hasReceiverTypeRef();
-    boolean hasReturnTypeRef();
+public object DefaultNothingCallableNamesService : PossiblyNothingCallableNamesService {
+    private val hardcodedNames = setOf("error")
 
-    boolean isPossiblyNothingType();
+    override fun functionNames() = hardcodedNames
+    override fun propertyNames(): Set<String> = setOf()
 }
