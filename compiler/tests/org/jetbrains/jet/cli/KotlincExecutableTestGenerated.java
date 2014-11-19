@@ -203,5 +203,17 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/suppressAllWarningsJS.args");
             doJsTest(fileName);
         }
+
+        @TestMetadata("withFolderAsLib.args")
+        public void testWithFolderAsLib() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/withFolderAsLib.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("withLib.args")
+        public void testWithLib() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/withLib.args");
+            doJsTest(fileName);
+        }
     }
 }
