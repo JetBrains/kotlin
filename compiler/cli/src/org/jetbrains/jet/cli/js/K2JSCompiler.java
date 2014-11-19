@@ -153,7 +153,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         OutputFileCollection outputFiles = translate(mainCallParameters, config, sourcesFiles, outputFile, outputPrefixFile, outputPostfixFile);
 
-        OutputUtilsPackage.writeAll(outputFiles, outputFile.getParentFile(), messageCollector);
+        File outputDir = outputFile.getParentFile();
+        if (outputDir == null) {
+            outputDir = outputFile.getAbsoluteFile().getParentFile();
+        }
+        OutputUtilsPackage.writeAll(outputFiles, outputDir, messageCollector);
 
         return OK;
     }
