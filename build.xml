@@ -233,19 +233,6 @@
             </src>
         </kotlin2js>
 
-        <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar">
-            <resources refid="js.lib.files" />
-            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.javascript.stdlib}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
-
         <taskdef name="closure-compiler"
                  classname="com.google.javascript.jscomp.ant.CompileTask"
                  classpath="${dependencies.dir}/closure-compiler.jar"/>
@@ -260,7 +247,7 @@
             prettyprint="true"
             languagein="ECMASCRIPT5_STRICT"
             warning="${warningLevel}"
-            output="${kotlin-home}/lib/kotlin.js" >
+            output="${output}/kotlin.js" >
 
             <sources dir="${stdlib.js.dir}">
                 <file name="kotlin_lib_ecma5.js"/>
@@ -285,6 +272,39 @@
                 <file name="externs.js"/>
             </externs>
         </closure-compiler>
+
+        <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar">
+            <resources refid="js.lib.files" />
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+            <zipfileset file="${output}/kotlin.js" prefix=""/>
+
+            <manifest>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.javascript.stdlib}"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+                <attribute name="Specification-Title" value="${manifest.spec.title.kotlin.javascript.lib}"/>
+                <attribute name="Kotlin-JS-Module-Name" value="stdlib"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="jslib_sources">
+        <jar destfile="${kotlin-home}/lib/kotlin-jslib-sources.jar">
+            <resources refid="js.lib.files" />
+            <fileset refid="kotlin.builtin.files" />
+
+            <manifest>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jvm.runtime.sources}"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+                <attribute name="Specification-Title" value="${manifest.spec.title.kotlin.javascript.lib}"/>
+                <attribute name="Kotlin-JS-Module-Name" value="stdlib"/>
+            </manifest>
+        </jar>
     </target>
 
     <target name="preloader">
@@ -728,12 +748,12 @@
     <target name="runtime" depends="builtins,stdlib,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,jslib"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,jslib,jslib_sources"
             description="Builds redistributables from sources"/>
 
     <!-- builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc -->
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,jslib"/>
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,jslib,jslib_sources"/>
 
     <target name="dist-quick-compiler-only"
             depends="init,prepare-dist,preloader,serialize-builtins,compiler-quick"
