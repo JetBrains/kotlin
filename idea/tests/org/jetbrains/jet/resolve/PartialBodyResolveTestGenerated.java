@@ -95,6 +95,18 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("IfNotIsError.kt")
+    public void testIfNotIsError() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsError.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("IfNotIsErrorQualifier.kt")
+    public void testIfNotIsErrorQualifier() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsErrorQualifier.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("IfNotIsReturn.kt")
     public void testIfNotIsReturn() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsReturn.kt");

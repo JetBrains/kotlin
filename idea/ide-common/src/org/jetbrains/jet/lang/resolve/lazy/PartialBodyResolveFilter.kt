@@ -278,6 +278,14 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
                 }
             }
 
+            override fun visitCallExpression(expression: JetCallExpression) {
+                val name = (expression.getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedName()
+                if (name != null && name in possiblyNothingFunctionNames) {
+                    result.add(expression)
+                }
+                super.visitCallExpression(expression)
+            }
+
             override fun visitBinaryExpression(expression: JetBinaryExpression) {
                 if (expression.getOperationToken() == JetTokens.ELVIS) {
                     // do not search exits after "?:"
@@ -360,5 +368,9 @@ class PartialBodyResolveFilter(elementToResolve: JetElement, private val body: J
 
     private fun JetBlockExpression.lastStatement(): JetExpression?
             = getLastChild().siblings(forward = false).filterIsInstance<JetExpression>().firstOrNull()
+
+    class object {
+        private val possiblyNothingFunctionNames = setOf("error") // currently hard-coded
+    }
 }
 
