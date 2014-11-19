@@ -36,6 +36,11 @@ import org.jetbrains.jps.incremental.messages.BuildMessage
 import kotlin.test.assertFalse
 import java.util.regex.Pattern
 import kotlin.test.assertEquals
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
+import org.jetbrains.jps.cmdline.ProjectDescriptor
+import junit.framework.TestCase
+import org.jetbrains.jet.utils.Printer
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     class object {
@@ -59,7 +64,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     protected open val customTest: Boolean
         get() = false
 
-    fun buildGetLog(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all()): String {
+    fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all()): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.getAbsolutePath())
         val logger = MyLogger(workDirPath)
         val descriptor = createProjectDescriptor(BuildLoggingManager(logger))
@@ -73,10 +78,10 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
                                 .replace(File.separatorChar, '/')
                                 .replace("/" + workDirPath, "\$PROJECT") // Sometimes path is rendered as "/C:/foo/bar" on Windows
                                 .replace(workDirPath, "\$PROJECT")
-                return logger.log + "$COMPILATION_FAILED\n" + errorMessages + "\n"
+                return MakeResult(logger.log + "$COMPILATION_FAILED\n" + errorMessages + "\n", true, null)
             }
             else {
-                return logger.log
+                return MakeResult(logger.log, false, createMappingsDump(descriptor))
             }
         } finally {
             descriptor.release()
@@ -84,16 +89,16 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     }
 
     private fun initialMake() {
-        val log = buildGetLog()
-        assertFalse(COMPILATION_FAILED in log, "Initial make failed:\n$log")
+        val makeResult = build()
+        assertFalse(makeResult.makeFailed, "Initial make failed:\n$makeResult")
     }
 
-    private fun make(): String {
-        return buildGetLog()
+    private fun make(): MakeResult {
+        return build()
     }
 
-    private fun rebuild(): String {
-        return buildGetLog(CompileScopeTestBuilder.rebuild().allModules())
+    private fun rebuild(): MakeResult {
+        return build(CompileScopeTestBuilder.rebuild().allModules())
     }
 
     private fun getModificationsToPerform(moduleNames: Collection<String>?): List<List<Modification>> {
@@ -155,24 +160,28 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         }
     }
 
-    private fun rebuildAndCheckOutput(lastMakeFailed: Boolean) {
+    private fun rebuildAndCheckOutput(makeOverallResult: MakeResult) {
         val outDir = File(getAbsolutePath("out"))
         val outAfterMake = File(getAbsolutePath("out-after-make"))
         FileUtil.copyDir(outDir, outAfterMake)
 
-        val rebuildLog = rebuild()
-        val rebuildFailed = rebuildLog.contains(COMPILATION_FAILED)
-        assertEquals(rebuildFailed, lastMakeFailed, "Rebuild failed: $rebuildFailed, last make failed: $lastMakeFailed. Rebuild log: $rebuildLog")
+        val rebuildResult = rebuild()
+        assertEquals(rebuildResult.makeFailed, makeOverallResult.makeFailed,
+                     "Rebuild failed: ${rebuildResult.makeFailed}, last make failed: ${makeOverallResult.makeFailed}. Rebuild log: $rebuildResult")
 
-        assertEqualDirectories(outDir, outAfterMake, lastMakeFailed)
+        assertEqualDirectories(outDir, outAfterMake, makeOverallResult.makeFailed)
+
+        if (!makeOverallResult.makeFailed) {
+            TestCase.assertEquals(rebuildResult.mappingsDump, makeOverallResult.mappingsDump)
+        }
 
         FileUtil.delete(outAfterMake)
     }
 
-    private fun clearCachesRebuildAndCheckOutput(lastMakeFailed: Boolean) {
+    private fun clearCachesRebuildAndCheckOutput(makeOverallResult: MakeResult) {
         FileUtil.delete(BuildDataPathsImpl(myDataStorageRoot).getDataStorageRoot()!!)
 
-        rebuildAndCheckOutput(lastMakeFailed)
+        rebuildAndCheckOutput(makeOverallResult)
     }
 
     private fun readModuleDependencies(): Map<String, List<String>>? {
@@ -202,31 +211,68 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         val moduleNames = configureModules()
         initialMake()
 
-        val (log, lastMakeFailed) = performModificationsAndMake(moduleNames)
-        UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), log)
+        val makeOverallResult = performModificationsAndMake(moduleNames)
+        UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), makeOverallResult.log)
 
-        rebuildAndCheckOutput(lastMakeFailed)
-        clearCachesRebuildAndCheckOutput(lastMakeFailed)
+        rebuildAndCheckOutput(makeOverallResult)
+        clearCachesRebuildAndCheckOutput(makeOverallResult)
     }
 
+    private fun createMappingsDump(project: ProjectDescriptor) =
+            createCommonMappingsDump(project) + "\n\n\n" + createJavaMappingsDump(project)
 
-    private data class MakeLogAndFailureFlag(val log: String, val makeFailed: Boolean)
+    private fun createJavaMappingsDump(project: ProjectDescriptor): String {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        PrintStream(byteArrayOutputStream).use {
+            project.dataManager.getMappings().toStream(it)
+        }
+        return byteArrayOutputStream.toString()
+    }
 
-    private fun performModificationsAndMake(moduleNames: Set<String>?): MakeLogAndFailureFlag {
+    private fun createCommonMappingsDump(project: ProjectDescriptor): String {
+        val resultBuf = StringBuilder()
+        val result = Printer(resultBuf)
+
+        result.println("Begin of SourceToOutputMap")
+        result.pushIndent()
+
+        for (target in project.getBuildTargetIndex().getAllTargets()) {
+            result.println(target)
+            result.pushIndent()
+
+            val mapping = project.dataManager.getSourceToOutputMap(target)
+            mapping.getSources().forEach {
+                result.println("source $it -> " + mapping.getOutputs(it).sort() )
+            }
+
+            result.popIndent()
+        }
+
+        result.popIndent()
+        result.println("End of SourceToOutputMap")
+
+        return resultBuf.toString()
+    }
+
+    private data class MakeResult(val log: String, val makeFailed: Boolean, val mappingsDump: String?)
+
+    private fun performModificationsAndMake(moduleNames: Set<String>?): MakeResult {
         val logs = ArrayList<String>()
 
         val modifications = getModificationsToPerform(moduleNames)
         var lastCompilationFailed = false
+        var lastMappingsDump: String? = null
         for (step in modifications) {
             step.forEach { it.perform(workDir) }
             performAdditionalModifications()
 
-            val log = make()
-            lastCompilationFailed = log.contains(COMPILATION_FAILED)
-            logs.add(log)
+            val makeResult = make()
+            logs.add(makeResult.log)
+            lastCompilationFailed = makeResult.makeFailed
+            lastMappingsDump = makeResult.mappingsDump
         }
 
-        return MakeLogAndFailureFlag(logs.join("\n\n"), lastCompilationFailed)
+        return MakeResult(logs.join("\n\n"), lastCompilationFailed, lastMappingsDump)
     }
 
     protected open fun performAdditionalModifications() {
