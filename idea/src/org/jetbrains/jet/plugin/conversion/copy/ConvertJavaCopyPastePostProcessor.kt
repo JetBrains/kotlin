@@ -34,7 +34,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.lang.java.JavaLanguage
 import org.jetbrains.jet.plugin.j2k.J2kPostProcessor
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.plugin.j2k.IdeaResolverForConverter
 
 public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData>() {
 
@@ -87,11 +87,13 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
     }
 
     private fun convertCopiedCodeToKotlin(code: CopiedCode, fileCopiedFrom: PsiJavaFile, fileCopiedTo: JetFile): String {
-        val converter = JavaToKotlinConverter(fileCopiedFrom.getProject(),
-                                         ConverterSettings.defaultSettings,
-                                         FilesConversionScope(listOf(fileCopiedFrom)),
-                                         IdeaReferenceSearcher,
-                                         { it.getLazyResolveSession() })
+        val converter = JavaToKotlinConverter(
+                fileCopiedFrom.getProject(),
+                ConverterSettings.defaultSettings,
+                FilesConversionScope(listOf(fileCopiedFrom)),
+                IdeaReferenceSearcher,
+                IdeaResolverForConverter
+        )
         val startOffsets = code.startOffsets
         val endOffsets = code.endOffsets
         assert(startOffsets.size == endOffsets.size) { "Must have the same size" }

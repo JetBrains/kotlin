@@ -38,9 +38,9 @@ import org.jetbrains.jet.plugin.j2k.J2kPostProcessor
 import com.intellij.openapi.vfs.CharsetToolkit
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.utils.addIfNotNull
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileVisitor
+import org.jetbrains.jet.plugin.j2k.IdeaResolverForConverter
 
 public class JavaToKotlinAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -104,7 +104,7 @@ public class JavaToKotlinAction : AnAction() {
     }
 
     private fun convertFiles(javaFiles: List<PsiJavaFile>, project: Project): List<VirtualFile> {
-        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, FilesConversionScope(javaFiles), IdeaReferenceSearcher, { it.getLazyResolveSession() })
+        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, FilesConversionScope(javaFiles), IdeaReferenceSearcher, IdeaResolverForConverter)
 
         val convertedTexts = converter.elementsToKotlin(javaFiles.map { it to J2kPostProcessor(it) })
 

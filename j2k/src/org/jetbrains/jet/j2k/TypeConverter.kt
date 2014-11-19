@@ -33,9 +33,9 @@ import org.jetbrains.jet.j2k.ast.Mutability
 import java.util.HashSet
 import org.jetbrains.jet.asJava.KotlinLightElement
 import org.jetbrains.jet.lang.psi.JetCallableDeclaration
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 
 class TypeConverter(val converter: Converter) {
     public fun convertType(type: PsiType?, nullability: Nullability = Nullability.Default, mutability: Mutability = Mutability.Default): Type {
@@ -370,9 +370,7 @@ class TypeConverter(val converter: Converter) {
         override fun fromAnnotations(owner: PsiModifierListOwner): Mutability {
             if (owner is KotlinLightElement<*, *>) {
                 val jetDeclaration = owner.origin as? JetCallableDeclaration ?: return Mutability.Default
-                val codeAnalyzer = converter.resolveSessionGetter?.invoke(jetDeclaration)
-                val descriptor = codeAnalyzer?.resolveToDescriptor(jetDeclaration)
-                                         as? CallableDescriptor ?: return Mutability.Default
+                val descriptor = converter.resolverForConverter.resolveToDescriptor(jetDeclaration) as? CallableDescriptor ?: return Mutability.Default
                 val type = descriptor.getReturnType() ?: return Mutability.Default
                 val classDescriptor = TypeUtils.getClassDescriptor(type) ?: return Mutability.Default
                 return if (DescriptorUtils.getFqName(classDescriptor).asString() in mutableKotlinClasses)
