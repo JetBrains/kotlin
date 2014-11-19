@@ -3794,6 +3794,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("substitution.kt")
+            public void testSubstitution() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/substitution.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unsupported.kt")
             public void testUnsupported() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/unsupported.kt");
