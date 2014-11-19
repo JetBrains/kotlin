@@ -189,6 +189,11 @@ public class AsmUtil {
             }
         }
 
+        if (AnnotationsPackage.isPlatformStaticInClassObject(functionDescriptor)) {
+            // Native method will be a member of the class, the class object method will be delegated to it
+            flags &= ~Opcodes.ACC_NATIVE;
+        }
+
         if (functionDescriptor.getModality() == Modality.FINAL && !(functionDescriptor instanceof ConstructorDescriptor)) {
             DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
             if (!(containingDeclaration instanceof ClassDescriptor) ||

@@ -1,3 +1,5 @@
+package foo
+
 import kotlin.jvm.*
 
 class WithNative {

@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
+import org.jetbrains.jet.lang.resolve.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.Approximation;
 import org.jetbrains.jet.lang.types.TypesPackage;
@@ -129,6 +130,8 @@ public class FunctionCodegen extends ParentCodegenAware {
         Method asmMethod = jvmSignature.getAsmMethod();
 
         int flags = getMethodAsmFlags(functionDescriptor, methodContextKind);
+        boolean isNative = NativeDeclarationsPackage.hasNativeAnnotation(functionDescriptor);
+
         MethodVisitor mv = v.newMethod(origin,
                                        flags,
                                        asmMethod.getName(),
@@ -154,8 +157,9 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         generateBridges(functionDescriptor);
 
+        boolean staticInClassObject = AnnotationsPackage.isPlatformStaticInClassObject(functionDescriptor);
 
-        if (AnnotationsPackage.isPlatformStaticInClassObject(functionDescriptor)) {
+        if (staticInClassObject) {
             MemberCodegen<?> codegen = getParentCodegen().getParentCodegen();
             ((ImplementationBodyCodegen) codegen).addAdditionalTask(new PlatformStaticGenerator(functionDescriptor, origin, state));
         }
@@ -175,8 +179,16 @@ public class FunctionCodegen extends ParentCodegenAware {
             return;
         }
 
-        if ((flags & Opcodes.ACC_NATIVE) == 0) {
+        if (!isNative) {
             generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, getParentCodegen());
+        }
+        else if (staticInClassObject) {
+            // native platformStatic foo() in class object should delegate to the static native function moved to the outer class
+            mv.visitCode();
+            ClassifierDescriptor outerClassDescriptor =
+                    (ClassifierDescriptor) functionDescriptor.getContainingDeclaration().getContainingDeclaration();
+            assert outerClassDescriptor != null : "Class object has no outer class: " + functionDescriptor.getContainingDeclaration();
+            generateDelegateToMethodBody(false, mv, asmMethod, typeMapper.mapClass(outerClassDescriptor).getInternalName());
         }
 
         endVisit(mv, null, origin.getElement());
@@ -304,7 +316,7 @@ public class FunctionCodegen extends ParentCodegenAware {
         JetTypeMapper typeMapper = parentCodegen.typeMapper;
 
         if (context.getParentContext() instanceof PackageFacadeContext) {
-            generateStaticDelegateMethodBody(mv, signature.getAsmMethod(), (PackageFacadeContext) context.getParentContext());
+            generatePackageDelegateMethodBody(mv, signature.getAsmMethod(), (PackageFacadeContext) context.getParentContext());
         }
         else {
             FrameMap frameMap = createFrameMap(parentCodegen.state, functionDescriptor, signature, isStaticMethod(context.getContextKind(),
@@ -374,10 +386,19 @@ public class FunctionCodegen extends ParentCodegenAware {
         }
     }
 
-    private static void generateStaticDelegateMethodBody(
+    private static void generatePackageDelegateMethodBody(
             @NotNull MethodVisitor mv,
             @NotNull Method asmMethod,
             @NotNull PackageFacadeContext context
+    ) {
+        generateDelegateToMethodBody(true, mv, asmMethod, context.getDelegateToClassType().getInternalName());
+    }
+
+    private static void generateDelegateToMethodBody(
+            boolean isStatic,
+            @NotNull MethodVisitor mv,
+            @NotNull Method asmMethod,
+            @NotNull String classToDelegateTo
     ) {
         InstructionAdapter iv = new InstructionAdapter(mv);
         Type[] argTypes = asmMethod.getArgumentTypes();
@@ -388,12 +409,12 @@ public class FunctionCodegen extends ParentCodegenAware {
         iv.visitLabel(label);
         iv.visitLineNumber(1, label);
 
-        int k = 0;
+        int k = isStatic ? 0 : 1;
         for (Type argType : argTypes) {
             iv.load(k, argType);
             k += argType.getSize();
         }
-        iv.invokestatic(context.getDelegateToClassType().getInternalName(), asmMethod.getName(), asmMethod.getDescriptor(), false);
+        iv.invokestatic(classToDelegateTo, asmMethod.getName(), asmMethod.getDescriptor(), false);
         iv.areturn(asmMethod.getReturnType());
     }
 
@@ -593,7 +614,7 @@ public class FunctionCodegen extends ParentCodegenAware {
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             if (this.owner instanceof PackageFacadeContext) {
                 mv.visitCode();
-                generateStaticDelegateMethodBody(mv, defaultMethod, (PackageFacadeContext) this.owner);
+                generatePackageDelegateMethodBody(mv, defaultMethod, (PackageFacadeContext) this.owner);
                 endVisit(mv, "default method delegation", callableDescriptorToDeclaration(functionDescriptor));
             }
             else {
