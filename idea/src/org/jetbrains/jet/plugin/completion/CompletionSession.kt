@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.caches.resolve.*
-import org.jetbrains.jet.plugin.codeInsight.TipsManager
+import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
@@ -66,7 +66,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val boldImmediateLookupElementFactory: LookupElementFactory = run {
         if (jetReference != null) {
             val expression = jetReference.expression
-            val receivers = TipsManager.getReferenceVariantsReceivers(expression, bindingContext!!)
+            val receivers = ReferenceVariantsHelper.getReferenceVariantsReceivers(expression, bindingContext!!)
             val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
             val receiverTypes = receivers.flatMap {
                 SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(it, bindingContext, dataFlowInfo)
@@ -112,7 +112,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected abstract fun doComplete()
 
     protected fun getReferenceVariants(kindFilter: DescriptorKindFilter): Collection<DeclarationDescriptor> {
-        return TipsManager.getReferenceVariants(jetReference!!.expression,
+        return ReferenceVariantsHelper.getReferenceVariants(jetReference!!.expression,
                                                 bindingContext!!,
                                                 kindFilter,
                                                 prefixMatcher.asNameFilter(),

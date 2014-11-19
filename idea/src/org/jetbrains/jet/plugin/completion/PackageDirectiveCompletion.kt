@@ -25,7 +25,7 @@ import com.intellij.util.ProcessingContext
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetPackageDirective
 import org.jetbrains.jet.plugin.caches.resolve.*
-import org.jetbrains.jet.plugin.codeInsight.TipsManager
+import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 
 /**
@@ -53,7 +53,7 @@ object PackageDirectiveCompletion {
             val resolveSession = ref.expression.getLazyResolveSession()
             val bindingContext = resolveSession.resolveToElement(ref.expression)
 
-            val variants = TipsManager.getPackageReferenceVariants(ref.expression, bindingContext, prefixMatcher.asNameFilter())
+            val variants = ReferenceVariantsHelper.getPackageReferenceVariants(ref.expression, bindingContext, prefixMatcher.asNameFilter())
             for (variant in variants) {
                 val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(resolveSession, variant)
                 if (!lookupElement.getLookupString().contains(DUMMY_IDENTIFIER)) {

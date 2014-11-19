@@ -48,7 +48,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.codeInsight.TipsManager;
+import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -409,7 +409,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                 return name.equals(refName);
             }
         };
-        Collection<DeclarationDescriptor> variants = TipsManager.INSTANCE$.getReferenceVariants(
+        Collection<DeclarationDescriptor> variants = ReferenceVariantsHelper.INSTANCE$.getReferenceVariants(
                 callNameExpression, bindingContext, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK, Collections.<DescriptorKindExclude>emptyList()), nameFilter, visibilityFilter);
 
         Collection<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>>();

@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.jet.plugin.util.extensionsUtils.isExtensionCallable
 
-public object TipsManager{
+public object ReferenceVariantsHelper {
 
     public fun getReferenceVariants(
             expression: JetSimpleNameExpression,
