@@ -784,11 +784,15 @@ public class AsmUtil {
     }
 
     public static void dup(@NotNull InstructionAdapter v, @NotNull Type type) {
-        if (type.getSize() == 2) {
+        int size = type.getSize();
+        if (size == 2) {
             v.dup2();
         }
-        else {
+        else if (size == 1) {
             v.dup();
+        }
+        else {
+            throw new UnsupportedOperationException();
         }
     }
 

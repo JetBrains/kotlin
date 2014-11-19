@@ -104,15 +104,15 @@ public abstract class StackValue {
         return false;
     }
 
-    public void putReceiver(@NotNull InstructionAdapter v, boolean isRead) {}
+
+    public void putReceiver(@NotNull InstructionAdapter v, boolean isRead) {
+        //by default there is no receiver
+        //if you have it inherit StackValueWithSimpleReceiver
+    }
 
     public void dup(@NotNull InstructionAdapter v, boolean withReceiver) {
-        switch (type.getSize()) {
-            case 0: break;
-            case 1: v.dup(); break;
-            case 2: v.dup2(); break;
-            default:
-                throw new UnsupportedOperationException();
+        if (!Type.VOID_TYPE.equals(type)) {
+            AsmUtil.dup(v, type);
         }
     }
 
@@ -132,8 +132,8 @@ public abstract class StackValue {
         storeSelector(value.type, v);
     }
 
-    public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
-        throw new UnsupportedOperationException("cannot store to value " + this);
+    protected void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
+        throw new UnsupportedOperationException("Cannot store to value " + this);
     }
 
     public void condJump(@NotNull Label label, boolean jumpIfFalse, @NotNull InstructionAdapter v) {
@@ -1482,8 +1482,9 @@ public abstract class StackValue {
         @Override
         public void dup(@NotNull InstructionAdapter v, boolean withWriteReceiver) {
             if (!withWriteReceiver) {
-                super.dup(v, withWriteReceiver);
-            } else {
+                super.dup(v, false);
+            }
+            else {
                 int receiverSize = isNonStaticAccess(false) ? receiverSize() : 0;
                 switch (receiverSize) {
                     case 0:
@@ -1529,9 +1530,9 @@ public abstract class StackValue {
     static class ComplexReceiver extends StackValue {
 
         private final StackValueWithSimpleReceiver originalValueWithReceiver;
-        private final boolean [] isReadOperations;
+        private final boolean[] isReadOperations;
 
-        public ComplexReceiver(StackValueWithSimpleReceiver value, boolean [] isReadOperations) {
+        public ComplexReceiver(StackValueWithSimpleReceiver value, boolean[] isReadOperations) {
             super(value.type, value.receiver.hasSideEffects());
             this.originalValueWithReceiver = value;
             this.isReadOperations = isReadOperations;
@@ -1541,20 +1542,21 @@ public abstract class StackValue {
         public void putSelector(
                 @NotNull Type type, @NotNull InstructionAdapter v
         ) {
-            boolean wasPutted = false;
+            boolean wasPut = false;
             StackValue receiver = originalValueWithReceiver.receiver;
             for (boolean operation : isReadOperations) {
                 if (originalValueWithReceiver.isNonStaticAccess(operation)) {
-                    if (!wasPutted) {
+                    if (!wasPut) {
                         receiver.put(receiver.type, v);
-                        wasPutted = true;
-                    } else {
+                        wasPut = true;
+                    }
+                    else {
                         receiver.dup(v, false);
                     }
                 }
             }
 
-            if (!wasPutted && receiver.hasSideEffects()) {
+            if (!wasPut && receiver.hasSideEffects()) {
                 receiver.put(Type.VOID_TYPE, v);
             }
         }
@@ -1564,7 +1566,7 @@ public abstract class StackValue {
 
         private final StackValue[] instructions;
 
-        protected Receiver(@NotNull Type type, StackValue ... receiverInstructions) {
+        protected Receiver(@NotNull Type type, StackValue... receiverInstructions) {
             super(type);
             instructions = receiverInstructions;
         }
@@ -1586,7 +1588,7 @@ public abstract class StackValue {
         public DelegatedForComplexReceiver(
                 @NotNull Type type,
                 @NotNull StackValueWithSimpleReceiver originalValue,
-                @NotNull StackValue receiver
+                @NotNull ComplexReceiver receiver
         ) {
             super(type, bothReceiverStatic(originalValue), bothReceiverStatic(originalValue), receiver, originalValue.hasSideEffects());
             this.originalValue = originalValue;
@@ -1620,11 +1622,12 @@ public abstract class StackValue {
         return complexReceiver(stackValue, false, true);
     }
 
-    private static StackValue complexReceiver(StackValue stackValue, boolean ... isReadOperations) {
+    private static StackValue complexReceiver(StackValue stackValue, boolean... isReadOperations) {
         if (stackValue instanceof StackValueWithSimpleReceiver) {
             return new DelegatedForComplexReceiver(stackValue.type, (StackValueWithSimpleReceiver) stackValue,
                                  new ComplexReceiver((StackValueWithSimpleReceiver) stackValue, isReadOperations));
-        } else {
+        }
+        else {
             return stackValue;
         }
     }

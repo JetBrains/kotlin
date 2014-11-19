@@ -54,11 +54,6 @@ public class StackValueWithLeaveTask(
         val leaveTasks: StackValueWithLeaveTask.() -> Unit
 ) : StackValue(stackValue.type) {
 
-    override fun put(type: Type, v: InstructionAdapter, skipReceiver: Boolean) {
-        stackValue.put(type, v, skipReceiver)
-        leaveTasks()
-    }
-
     override fun condJump(label: Label, jumpIfFalse: Boolean, v: InstructionAdapter) {
         stackValue.condJump(label, jumpIfFalse, v)
         leaveTasks()
@@ -69,12 +64,8 @@ public class StackValueWithLeaveTask(
     }
 
     override fun putSelector(type: Type, v: InstructionAdapter) {
-        throw UnsupportedOperationException()
-    }
-
-
-    override fun storeSelector(topOfStackType: Type, v: InstructionAdapter) {
-        throw UnsupportedOperationException();
+        stackValue.putSelector(type, v)
+        leaveTasks()
     }
 }
 

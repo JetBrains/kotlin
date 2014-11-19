@@ -1603,16 +1603,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 int index = myFrameMap.leave(variableDescriptor);
 
                 if (sharedVarType != null) {
-                    /*if (answer instanceof StackValue.Shared && index == ((StackValue.Shared) answer).getIndex()) {
-                        ((StackValue.Shared) answer).releaseOnPut();
-                    }
-                    else {*/
-                        v.aconst(null);
-                        v.store(index, OBJECT_TYPE);
-                    //}
+                    v.aconst(null);
+                    v.store(index, OBJECT_TYPE);
                 }
-                v.visitLocalVariable(variableDescriptor.getName().asString(), type.getDescriptor(), null, scopeStart, blockEnd,
-                                     index);
+                v.visitLocalVariable(variableDescriptor.getName().asString(), type.getDescriptor(), null, scopeStart, blockEnd, index);
                 return null;
             }
         });
