@@ -122,8 +122,8 @@ class PartialBodyResolveFilter(
             map.getOrPut(name, { ArrayList(places.size) }).addAll(places)
         }
 
-        fun addIfCanBeSmartCasted(expression: JetExpression) {
-            val name = expression.smartCastedExpressionName() ?: return
+        fun addIfCanBeSmartCast(expression: JetExpression) {
+            val name = expression.smartCastExpressionName() ?: return
             if (filter(name)) {
                 addPlace(name, expression)
             }
@@ -134,7 +134,7 @@ class PartialBodyResolveFilter(
                 expression.acceptChildren(this)
 
                 if (expression.getOperationToken() == JetTokens.EXCLEXCL) {
-                    addIfCanBeSmartCasted(expression.getBaseExpression())
+                    addIfCanBeSmartCast(expression.getBaseExpression())
                 }
             }
 
@@ -142,7 +142,7 @@ class PartialBodyResolveFilter(
                 expression.acceptChildren(this)
 
                 if (expression.getOperationReference()?.getReferencedNameElementType() == JetTokens.AS_KEYWORD) {
-                    addIfCanBeSmartCasted(expression.getLeft())
+                    addIfCanBeSmartCast(expression.getLeft())
                 }
             }
 
@@ -151,11 +151,11 @@ class PartialBodyResolveFilter(
                 val thenBranch = expression.getThen()
                 val elseBranch = expression.getElse()
 
-                val smartCastedNames = collectPossiblySmartCastedInCondition(condition).filter(filter)
-                if (smartCastedNames.isNotEmpty()) {
+                val smartCastNames = collectPossiblySmartCastInCondition(condition).filter(filter)
+                if (smartCastNames.isNotEmpty()) {
                     val exits = collectAlwaysExitPoints(thenBranch) + collectAlwaysExitPoints(elseBranch)
                     if (exits.isNotEmpty()) {
-                        for (name in smartCastedNames) {
+                        for (name in smartCastNames) {
                             addPlaces(name, exits)
                         }
                     }
@@ -204,7 +204,7 @@ class PartialBodyResolveFilter(
         return map
     }
 
-    private fun collectPossiblySmartCastedInCondition(condition: JetExpression?): Set<String> {
+    private fun collectPossiblySmartCastInCondition(condition: JetExpression?): Set<String> {
         val result = HashSet<String>()
         condition?.accept(object : ControlFlowVisitor() {
             override fun visitBinaryExpression(expression: JetBinaryExpression) {
@@ -212,15 +212,15 @@ class PartialBodyResolveFilter(
 
                 val operation = expression.getOperationToken()
                 if (operation == JetTokens.EQEQ || operation == JetTokens.EXCLEQ) {
-                    result.addIfNotNull(expression.getLeft()?.smartCastedExpressionName())
-                    result.addIfNotNull(expression.getRight()?.smartCastedExpressionName())
+                    result.addIfNotNull(expression.getLeft()?.smartCastExpressionName())
+                    result.addIfNotNull(expression.getRight()?.smartCastExpressionName())
                 }
             }
 
             override fun visitIsExpression(expression: JetIsExpression) {
                 expression.acceptChildren(this)
 
-                result.addIfNotNull(expression.getLeftHandSide()?.smartCastedExpressionName())
+                result.addIfNotNull(expression.getLeftHandSide()?.smartCastExpressionName())
             }
         })
         return result
@@ -342,15 +342,15 @@ class PartialBodyResolveFilter(
 
     private fun PsiElement.isStatement() = this is JetExpression && getParent() is JetBlockExpression
 
-    private fun JetExpression.smartCastedExpressionName(): String? {
+    private fun JetExpression.smartCastExpressionName(): String? {
         return when (this) {
             is JetSimpleNameExpression -> this.getReferencedName()
 
             is JetQualifiedExpression -> {
-                val selectorName = getSelectorExpression().smartCastedExpressionName() ?: return null
+                val selectorName = getSelectorExpression().smartCastExpressionName() ?: return null
                 val receiver = getReceiverExpression()
                 if (receiver is JetThisExpression) return selectorName
-                val receiverName = receiver.smartCastedExpressionName() ?: return null
+                val receiverName = receiver.smartCastExpressionName() ?: return null
                 return selectorName + "." + receiverName
             }
 

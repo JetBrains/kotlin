@@ -109,7 +109,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
 
         val renderType = this is VariableDescriptor && type != this.getReturnType()
         if (!renderType) return s
-        return s + " smart-casted to " + if (type != null) DescriptorRenderer.COMPACT.renderType(type) else "unknown type"
+        return s + " smart-cast to " + if (type != null) DescriptorRenderer.COMPACT.renderType(type) else "unknown type"
     }
 
     private fun JetExpression.presentation(): String {
