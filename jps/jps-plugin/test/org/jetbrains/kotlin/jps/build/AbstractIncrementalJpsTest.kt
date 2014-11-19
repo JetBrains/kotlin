@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.jps.cmdline.ProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     class object {
@@ -223,7 +225,8 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
 
     private fun createMappingsDump(project: ProjectDescriptor) =
             createKotlinIncrementalCacheDump(project) + "\n\n\n" +
-            createCommonMappingsDump(project)
+            createCommonMappingsDump(project) + "\n\n\n" +
+            createJavaMappingsDump(project)
 
     private fun createKotlinIncrementalCacheDump(project: ProjectDescriptor): String {
         return StringBuilder {
@@ -261,6 +264,14 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         result.println("End of SourceToOutputMap")
 
         return resultBuf.toString()
+    }
+
+    private fun createJavaMappingsDump(project: ProjectDescriptor): String {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        PrintStream(byteArrayOutputStream).use {
+            project.dataManager.getMappings().toStream(it)
+        }
+        return byteArrayOutputStream.toString()
     }
 
     private data class MakeResult(val log: String, val makeFailed: Boolean, val mappingsDump: String?)
