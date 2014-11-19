@@ -338,7 +338,7 @@ public abstract class ElementResolver {
         JetScope propertyResolutionScope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(jetProperty);
 
         BodyResolveContextForLazy bodyResolveContext = new BodyResolveContextForLazy(
-                createParameters(resolveSession),
+                createParameters(resolveSession, null),
                 new Function<JetDeclaration, JetScope>() {
                     @Override
                     public JetScope apply(JetDeclaration declaration) {
@@ -418,28 +418,27 @@ public abstract class ElementResolver {
         bodyResolver.resolveAnonymousInitializer(createEmptyContext(resolveSession), classInitializer, classOrObjectDescriptor);
     }
 
-    private BodyResolver createBodyResolver(ResolveSession resolveSession, BindingTrace trace, JetFile file, @Nullable Function1<JetElement, Boolean> filter) {
+    private BodyResolver createBodyResolver(ResolveSession resolveSession, BindingTrace trace, JetFile file, @Nullable Function1<JetElement, Boolean> statementFilter) {
         InjectorForBodyResolve bodyResolve = new InjectorForBodyResolve(
                 file.getProject(),
-                createParameters(resolveSession),
+                createParameters(resolveSession, statementFilter),
                 trace,
                 resolveSession.getModuleDescriptor(),
                 getAdditionalCheckerProvider(file)
         );
-        BodyResolver resolver = bodyResolve.getBodyResolver();
-        resolver.getExpressionTypingServices().setFilter(filter);
-        return resolver;
+        return bodyResolve.getBodyResolver();
     }
 
-    private static TopDownAnalysisParameters createParameters(@NotNull ResolveSession resolveSession) {
+    private static TopDownAnalysisParameters createParameters(@NotNull ResolveSession resolveSession, @Nullable Function1<JetElement, Boolean> statementFilter) {
         return TopDownAnalysisParameters.createForLocalDeclarations(
                 resolveSession.getStorageManager(), resolveSession.getExceptionTracker(),
-                Predicates.<PsiFile>alwaysTrue());
+                Predicates.<PsiFile>alwaysTrue(),
+                statementFilter);
     }
 
     @NotNull
     private static BodyResolveContextForLazy createEmptyContext(@NotNull ResolveSession resolveSession) {
-        return new BodyResolveContextForLazy(createParameters(resolveSession), Functions.<JetScope>constant(null));
+        return new BodyResolveContextForLazy(createParameters(resolveSession, null), Functions.<JetScope>constant(null));
     }
 
     private static JetScope getExpressionResolutionScope(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {

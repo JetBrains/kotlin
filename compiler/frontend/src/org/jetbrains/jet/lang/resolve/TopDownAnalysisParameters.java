@@ -18,9 +18,12 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
 import com.intellij.psi.PsiFile;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.context.LazinessToken;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.StorageManager;
 
@@ -42,7 +45,7 @@ public class TopDownAnalysisParameters extends LazinessToken implements GlobalCo
             boolean analyzingBootstrapLibrary,
             boolean declaredLocally
     ) {
-        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, analyzingBootstrapLibrary,
+        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, null, analyzingBootstrapLibrary,
                                              declaredLocally, LAZY);
     }
 
@@ -54,7 +57,7 @@ public class TopDownAnalysisParameters extends LazinessToken implements GlobalCo
             boolean analyzingBootstrapLibrary,
             boolean declaredLocally
     ) {
-        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, analyzingBootstrapLibrary,
+        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, null, analyzingBootstrapLibrary,
                                              declaredLocally, true);
     }
 
@@ -64,15 +67,23 @@ public class TopDownAnalysisParameters extends LazinessToken implements GlobalCo
             @NotNull ExceptionTracker exceptionTracker,
             @NotNull Predicate<PsiFile> analyzeCompletely
     ) {
-        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, false, true, false);
+        return createForLocalDeclarations(storageManager, exceptionTracker, analyzeCompletely, null);
     }
 
     @NotNull
-    private final StorageManager storageManager;
-    @NotNull
-    private final ExceptionTracker exceptionTracker;
-    @NotNull
-    private final Predicate<PsiFile> analyzeCompletely;
+    public static TopDownAnalysisParameters createForLocalDeclarations(
+            @NotNull StorageManager storageManager,
+            @NotNull ExceptionTracker exceptionTracker,
+            @NotNull Predicate<PsiFile> analyzeCompletely,
+            @Nullable Function1<JetElement, Boolean> statementFilter
+    ) {
+        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, statementFilter, false, true, false);
+    }
+
+    @NotNull private final StorageManager storageManager;
+    @NotNull private final ExceptionTracker exceptionTracker;
+    @NotNull private final Predicate<PsiFile> analyzeCompletely;
+    @Nullable private final Function1<JetElement, Boolean> statementFilter;
     private final boolean analyzingBootstrapLibrary;
     private final boolean declaredLocally;
     private final boolean lazyTopDownAnalysis;
@@ -81,6 +92,7 @@ public class TopDownAnalysisParameters extends LazinessToken implements GlobalCo
             @NotNull StorageManager storageManager,
             @NotNull ExceptionTracker exceptionTracker,
             @NotNull Predicate<PsiFile> analyzeCompletely,
+            @Nullable Function1<JetElement, Boolean> statementFilter,
             boolean analyzingBootstrapLibrary,
             boolean declaredLocally,
             boolean lazyTopDownAnalysis
@@ -88,6 +100,7 @@ public class TopDownAnalysisParameters extends LazinessToken implements GlobalCo
         this.storageManager = storageManager;
         this.exceptionTracker = exceptionTracker;
         this.analyzeCompletely = analyzeCompletely;
+        this.statementFilter = statementFilter;
         this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
         this.declaredLocally = declaredLocally;
         this.lazyTopDownAnalysis = lazyTopDownAnalysis;
@@ -108,6 +121,11 @@ public class TopDownAnalysisParameters extends LazinessToken implements GlobalCo
     @NotNull
     public Predicate<PsiFile> getAnalyzeCompletely() {
         return analyzeCompletely;
+    }
+
+    @Nullable
+    public Function1<JetElement, Boolean> getStatementFilter() {
+        return statementFilter;
     }
 
     public boolean isAnalyzingBootstrapLibrary() {
