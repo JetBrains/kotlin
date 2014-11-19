@@ -23,6 +23,7 @@ import org.jetbrains.jet.storage.MemoizedFunctionToNotNull
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable
 import org.jetbrains.jet.storage.NotNullLazyValue
 import org.jetbrains.jet.storage.NullableLazyValue
+import java.util.concurrent.ConcurrentMap
 
 public class LoggingStorageManager(
         private val delegate: StorageManager,
@@ -136,6 +137,14 @@ public class LoggingStorageManager(
 
     override fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V?): MemoizedFunctionToNullable<K, V> {
         return delegate.createMemoizedFunctionWithNullableValues(compute.logged)
+    }
+
+    override fun createMemoizedFunction<K, V: Any>(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNotNull<K, V> {
+        return delegate.createMemoizedFunction(compute.logged, map)
+    }
+
+    override fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNullable<K, V> {
+        return delegate.createMemoizedFunctionWithNullableValues(compute.logged, map)
     }
 
     override fun createLazyValue<T: Any>(computable: () -> T): NotNullLazyValue<T> {

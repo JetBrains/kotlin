@@ -32,15 +32,15 @@ import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
-import java.util.concurrent.locks.Lock;
+import java.util.concurrent.ConcurrentMap;
 
 // This class is kept under the same package as LockBasedStorageManager to get access to its protected members
 // Otherwise wed have to expose the lock which is worse than have such a hackish class placement
 public class LockBasedLazyResolveStorageManager implements LazyResolveStorageManager {
 
-    private final LockBasedStorageManager storageManager;
+    private final StorageManager storageManager;
 
-    public LockBasedLazyResolveStorageManager(@NotNull LockBasedStorageManager storageManager) {
+    public LockBasedLazyResolveStorageManager(@NotNull StorageManager storageManager) {
         this.storageManager = storageManager;
     }
 
@@ -65,7 +65,24 @@ public class LockBasedLazyResolveStorageManager implements LazyResolveStorageMan
     public BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace) {
         // It seems safe to have a separate lock for traces:
         // no other locks will be acquired inside the trace operations
-        return new LockProtectedTrace(storageManager.lock, originalTrace);
+
+        return new LockProtectedTrace(storageManager, originalTrace);
+    }
+
+    @NotNull
+    @Override
+    public <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(
+            @NotNull Function1<? super K, ? extends V> compute, @NotNull ConcurrentMap<K, Object> map
+    ) {
+        return storageManager.createMemoizedFunctionWithNullableValues(compute, map);
+    }
+
+    @NotNull
+    @Override
+    public <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(
+            @NotNull Function1<? super K, ? extends V> compute, @NotNull ConcurrentMap<K, Object> map
+    ) {
+        return storageManager.createMemoizedFunction(compute, map);
     }
 
     @NotNull
@@ -135,73 +152,69 @@ public class LockBasedLazyResolveStorageManager implements LazyResolveStorageMan
     }
 
     private static class LockProtectedContext implements BindingContext {
-        private final Lock lock;
+        private final StorageManager storageManager;
         private final BindingContext context;
 
-        private LockProtectedContext(Lock lock, BindingContext context) {
-            this.lock = lock;
+        private LockProtectedContext(StorageManager storageManager, BindingContext context) {
+            this.storageManager = storageManager;
             this.context = context;
         }
 
         @NotNull
         @Override
         public Diagnostics getDiagnostics() {
-            lock.lock();
-            try {
-                return context.getDiagnostics();
-            }
-            finally {
-                lock.unlock();
-            }
+            return storageManager.compute(new Function0<Diagnostics>() {
+                @Override
+                public Diagnostics invoke() {
+                    return context.getDiagnostics();
+                }
+            });
         }
 
         @Nullable
         @Override
-        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-            lock.lock();
-            try {
-                return context.get(slice, key);
-            }
-            finally {
-                lock.unlock();
-            }
+        public <K, V> V get(final ReadOnlySlice<K, V> slice, final K key) {
+            return storageManager.compute(new Function0<V>() {
+                @Override
+                public V invoke() {
+                    return context.get(slice, key);
+                }
+            });
         }
 
         @NotNull
         @Override
-        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-            lock.lock();
-            try {
-                return context.getKeys(slice);
-            }
-            finally {
-                lock.unlock();
-            }
+        public <K, V> Collection<K> getKeys(final WritableSlice<K, V> slice) {
+            return storageManager.compute(new Function0<Collection<K>>() {
+                @Override
+                public Collection<K> invoke() {
+                    return context.getKeys(slice);
+                }
+            });
         }
 
         @NotNull
         @Override
         @TestOnly
-        public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
-            lock.lock();
-            try {
-                return context.getSliceContents(slice);
-            }
-            finally {
-                lock.unlock();
-            }
+        public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull final ReadOnlySlice<K, V> slice) {
+            return storageManager.compute(new Function0<ImmutableMap<K, V>>() {
+                @Override
+                public ImmutableMap<K, V> invoke() {
+                    return context.getSliceContents(slice);
+                }
+            });
         }
     }
 
     private static class LockProtectedTrace implements BindingTrace {
-        private final Lock lock;
         private final BindingTrace trace;
         private final BindingContext context;
+        private final StorageManager storageManager;
 
-        public LockProtectedTrace(@NotNull Lock lock, @NotNull BindingTrace trace) {
-            this.lock = lock;
+        public LockProtectedTrace(@NotNull StorageManager storageManager, @NotNull BindingTrace trace) {
+            this.storageManager = storageManager;
             this.trace = trace;
-            this.context = new LockProtectedContext(lock, trace.getBindingContext());
+            this.context = new LockProtectedContext(storageManager, trace.getBindingContext());
         }
 
         @NotNull
@@ -211,60 +224,58 @@ public class LockBasedLazyResolveStorageManager implements LazyResolveStorageMan
         }
 
         @Override
-        public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
-            lock.lock();
-            try {
-                trace.record(slice, key, value);
-            }
-            finally {
-                lock.unlock();
-            }
+        public <K, V> void record(final WritableSlice<K, V> slice, final K key, final V value) {
+            storageManager.compute(new Function0<Unit>() {
+                @Override
+                public Unit invoke() {
+                    trace.record(slice, key, value);
+                    return Unit.INSTANCE$;
+                }
+            });
         }
 
         @Override
-        public <K> void record(WritableSlice<K, Boolean> slice, K key) {
-            lock.lock();
-            try {
-                trace.record(slice, key);
-            }
-            finally {
-                lock.unlock();
-            }
+        public <K> void record(final WritableSlice<K, Boolean> slice, final K key) {
+            storageManager.compute(new Function0<Unit>() {
+                @Override
+                public Unit invoke() {
+                    trace.record(slice, key);
+                    return Unit.INSTANCE$;
+                }
+            });
         }
 
         @Override
         @Nullable
-        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-            lock.lock();
-            try {
-                return trace.get(slice, key);
-            }
-            finally {
-                lock.unlock();
-            }
+        public <K, V> V get(final ReadOnlySlice<K, V> slice, final K key) {
+            return storageManager.compute(new Function0<V>() {
+                @Override
+                public V invoke() {
+                    return trace.get(slice, key);
+                }
+            });
         }
 
         @Override
         @NotNull
-        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-            lock.lock();
-            try {
-                return trace.getKeys(slice);
-            }
-            finally {
-                lock.unlock();
-            }
+        public <K, V> Collection<K> getKeys(final WritableSlice<K, V> slice) {
+            return storageManager.compute(new Function0<Collection<K>>() {
+                @Override
+                public Collection<K> invoke() {
+                    return trace.getKeys(slice);
+                }
+            });
         }
 
         @Override
-        public void report(@NotNull Diagnostic diagnostic) {
-            lock.lock();
-            try {
-                trace.report(diagnostic);
-            }
-            finally {
-                lock.unlock();
-            }
+        public void report(@NotNull final Diagnostic diagnostic) {
+            storageManager.compute(new Function0<Unit>() {
+                @Override
+                public Unit invoke() {
+                    trace.report(diagnostic);
+                    return Unit.INSTANCE$;
+                }
+            });
         }
     }
 }
