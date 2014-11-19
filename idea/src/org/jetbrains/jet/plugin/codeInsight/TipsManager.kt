@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 
 import java.util.*
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
@@ -33,6 +32,12 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
+import com.google.dart.compiler.util.Maps
+import org.jetbrains.jet.lang.types.Variance
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil
 
 public object TipsManager{
 
@@ -148,7 +153,7 @@ public object TipsManager{
             resolutionScope.getDescriptorsFiltered(kindFilter, nameFilter)
                     .stream()
                     .filterIsInstance(javaClass<CallableDescriptor>())
-                    .filterTo(this) { ExpressionTypingUtils.checkIsExtensionCallable(receiver, it, isInfixCall, context, dataFlowInfo) }
+                    .filterTo(this) { checkIsExtensionCallable(receiver, it, isInfixCall, context, dataFlowInfo) }
         }
     }
 
@@ -156,7 +161,7 @@ public object TipsManager{
                                                       context: BindingContext,
                                                       dataFlowInfo: DataFlowInfo,
                                                       isInfixCall: Boolean): Boolean
-            = receivers.any { ExpressionTypingUtils.checkIsExtensionCallable(it, this, isInfixCall, context, dataFlowInfo) }
+            = receivers.any { checkIsExtensionCallable(it, this, isInfixCall, context, dataFlowInfo) }
 
     public fun CallableDescriptor.isExtensionCallableWithImplicitReceiver(scope: JetScope, context: BindingContext, dataFlowInfo: DataFlowInfo): Boolean
             = isExtensionCallable(scope.getImplicitReceiversHierarchy().map { it.getValue() }, context, dataFlowInfo, false)
@@ -166,5 +171,70 @@ public object TipsManager{
                                            nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
         return resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter)
+    }
+
+    /*
+    * Checks if receiver declaration could be resolved to call expected receiver.
+    */
+    public fun checkIsExtensionCallable(
+            receiverArgument: ReceiverValue,
+            callableDescriptor: CallableDescriptor,
+            isInfixCall: Boolean,
+            bindingContext: BindingContext,
+            dataFlowInfo: DataFlowInfo
+    ): Boolean {
+        if (isInfixCall && (callableDescriptor !is SimpleFunctionDescriptor || callableDescriptor.getValueParameters().size() != 1)) {
+            return false
+        }
+
+        val types = SmartCastUtils.getSmartCastVariants(receiverArgument, bindingContext, dataFlowInfo)
+
+        for (type in types) {
+            if (checkReceiverResolution(receiverArgument, type, callableDescriptor)) return true
+        }
+
+        return false
+    }
+
+    private fun checkReceiverResolution(receiverArgument: ReceiverValue, receiverType: JetType, callableDescriptor: CallableDescriptor): Boolean {
+        val receiverParameter = callableDescriptor.getExtensionReceiverParameter()
+
+        if (!receiverArgument.exists() && receiverParameter == null) {
+            // Both receivers do not exist
+            return true
+        }
+
+        if (!(receiverArgument.exists() && receiverParameter != null)) {
+            return false
+        }
+
+        val typeNamesInReceiver = collectUsedTypeNames(receiverParameter.getType())
+
+        val constraintSystem = ConstraintSystemImpl()
+        val typeVariables = LinkedHashMap<TypeParameterDescriptor, Variance>()
+        for (typeParameterDescriptor in callableDescriptor.getTypeParameters()) {
+            if (typeNamesInReceiver.contains(typeParameterDescriptor.getName())) {
+                typeVariables.put(typeParameterDescriptor, Variance.INVARIANT)
+            }
+        }
+        constraintSystem.registerTypeVariables(typeVariables)
+
+        constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION)
+        return constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true)
+    }
+
+    private fun collectUsedTypeNames(jetType: JetType): Set<Name> {
+        val typeNames = HashSet<Name>()
+
+        val descriptor = jetType.getConstructor().getDeclarationDescriptor()
+        if (descriptor != null) {
+            typeNames.add(descriptor.getName())
+        }
+
+        for (argument in jetType.getArguments()) {
+            typeNames.addAll(collectUsedTypeNames(argument.getType()))
+        }
+
+        return typeNames
     }
 }

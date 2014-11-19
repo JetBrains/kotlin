@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import com.intellij.openapi.project.Project
 import java.util.HashSet
@@ -36,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.stubs.StringStubIndexExtension
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.plugin.codeInsight.TipsManager
 
 public class KotlinIndicesHelper(private val project: Project,
                                  private val resolveSession: ResolveSessionForBodies,
@@ -213,7 +212,7 @@ public class KotlinIndicesHelper(private val project: Project,
         }
 
         return descriptors.filter { visibilityFilter(it) &&
-                    ExpressionTypingUtils.checkIsExtensionCallable(receiverValue, it, isInfixCall, bindingContext, dataFlowInfo) }
+                    TipsManager.checkIsExtensionCallable(receiverValue, it, isInfixCall, bindingContext, dataFlowInfo) }
     }
 
     public fun getClassDescriptors(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
