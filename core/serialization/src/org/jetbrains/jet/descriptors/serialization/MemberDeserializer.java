@@ -221,16 +221,13 @@ public class MemberDeserializer {
     }
 
     @NotNull
-    public List<DeserializedTypeParameterDescriptor> typeParameters(
-            @NotNull List<TypeParameter> protos,
-            @NotNull TypeDeserializer typeDeserializer
-    ) {
+    public List<DeserializedTypeParameterDescriptor> typeParameters(@NotNull List<TypeParameter> protos) {
         List<DeserializedTypeParameterDescriptor> result = new ArrayList<DeserializedTypeParameterDescriptor>(protos.size());
         for (int i = 0; i < protos.size(); i++) {
             TypeParameter proto = protos.get(i);
             DeserializedTypeParameterDescriptor descriptor = new DeserializedTypeParameterDescriptor(
                     getComponents().getStorageManager(),
-                    typeDeserializer,
+                    context.getTypeDeserializer(),
                     proto,
                     context.getContainingDeclaration(),
                     context.getNameResolver().getName(proto.getName()),

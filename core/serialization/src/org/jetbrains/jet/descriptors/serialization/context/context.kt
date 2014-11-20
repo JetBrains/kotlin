@@ -67,12 +67,8 @@ public open class DeserializationContext(
         classDeserializer: ClassDeserializer,
         public val nameResolver: NameResolver
 ) : DeserializationGlobalContext(components, classDeserializer) {
-    fun withTypes(containingDeclaration: DeclarationDescriptor): DeserializationContextWithTypes {
-        val typeDeserializer = TypeDeserializer(this, null, "Deserializer for ${containingDeclaration.getName()}")
-        return withTypes(containingDeclaration, typeDeserializer)
-    }
-
-    fun withTypes(containingDeclaration: DeclarationDescriptor, typeDeserializer: TypeDeserializer): DeserializationContextWithTypes {
+    fun withTypes(containingDeclaration: DeclarationDescriptor, parent: TypeDeserializer? = null): DeserializationContextWithTypes {
+        val typeDeserializer = TypeDeserializer(this, parent, "Deserializer for ${containingDeclaration.getName()}")
         return DeserializationContextWithTypes(components, classDeserializer, nameResolver, containingDeclaration, typeDeserializer)
     }
 }
@@ -88,13 +84,12 @@ class DeserializationContextWithTypes(
     val memberDeserializer: MemberDeserializer = MemberDeserializer(this)
 
     fun childContext(descriptor: DeclarationDescriptor, typeParameterProtos: List<TypeParameter>): DeserializationContextWithTypes {
-        val childTypeDeserializer = TypeDeserializer(this, typeDeserializer, "Child deserializer for ${descriptor.getName()}")
-        val childContext = withTypes(descriptor, childTypeDeserializer)
+        val child = this.withTypes(descriptor, parent = this.typeDeserializer)
 
-        for (typeParameter in childContext.memberDeserializer.typeParameters(typeParameterProtos, childTypeDeserializer)) {
-            childTypeDeserializer.addTypeParameter(typeParameter)
+        for (typeParameter in child.memberDeserializer.typeParameters(typeParameterProtos)) {
+            child.typeDeserializer.addTypeParameter(typeParameter)
         }
 
-        return childContext
+        return child
     }
 }
