@@ -66,7 +66,7 @@ import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.traverseFollowingInstructi
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValueBoxer.AsList
 import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
-import org.jetbrains.jet.plugin.caches.resolve.getModuleDescriptorForElement
+import org.jetbrains.jet.plugin.caches.resolve.findModuleDescriptor
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -701,7 +701,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             analyzeControlFlow(
                     localInstructions,
                     pseudocode,
-                    originalFile.getModuleDescriptorForElement(),
+                    originalFile.findModuleDescriptor(),
                     bindingContext,
                     modifiedVarDescriptorsForControlFlow,
                     options,

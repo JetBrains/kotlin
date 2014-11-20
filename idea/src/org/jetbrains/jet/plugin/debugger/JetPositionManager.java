@@ -306,7 +306,7 @@ public class JetPositionManager implements PositionManager {
         ResolutionFacade resolveSession = ResolvePackage.getLazyResolveSession(element);
 
         GenerationState state = new GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION,
-                                                    resolveSession.getModuleDescriptorForElement(element),
+                                                    resolveSession.findModuleDescriptor(element),
                                                     resolveSession.analyze(element),
                                                     Collections.singletonList(file)
         );

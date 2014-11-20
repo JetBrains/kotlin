@@ -73,7 +73,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         }
 
         ExpressionTypingComponents components =
-                new InjectorForMacros(project, resolveSession.getModuleDescriptorForElement(contextExpression)).getExpressionTypingComponents();
+                new InjectorForMacros(project, resolveSession.findModuleDescriptor(contextExpression)).getExpressionTypingComponents();
 
         DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
 

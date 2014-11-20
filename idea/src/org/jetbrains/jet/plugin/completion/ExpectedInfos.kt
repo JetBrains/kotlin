@@ -174,7 +174,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val resolveSession: Reso
                 false).replaceCollectAllCandidates(true)
         val callResolver = InjectorForMacros(
                 callElement.getProject(),
-                resolveSession.getModuleDescriptorForElement(callElement)
+                resolveSession.findModuleDescriptor(callElement)
         ).getCallResolver()
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 

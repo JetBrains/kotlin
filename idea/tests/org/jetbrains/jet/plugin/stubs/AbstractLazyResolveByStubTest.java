@@ -64,7 +64,7 @@ public abstract class AbstractLazyResolveByStubTest extends KotlinCodeInsightTes
 
     private void performTest(@NotNull String path, boolean checkPrimaryConstructors, boolean checkPropertyAccessors) {
         JetFile file = (JetFile) getFile();
-        ModuleDescriptor module = ResolvePackage.getModuleDescriptorForElement(file);
+        ModuleDescriptor module = ResolvePackage.findModuleDescriptor(file);
         PackageViewDescriptor packageViewDescriptor = module.getPackage(new FqName("test"));
         Assert.assertNotNull(packageViewDescriptor);
 

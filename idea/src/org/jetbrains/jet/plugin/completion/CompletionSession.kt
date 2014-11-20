@@ -52,7 +52,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val jetReference: JetSimpleNameReference? = position.getParent()?.getReferences()?.filterIsInstance(javaClass<JetSimpleNameReference>())?.firstOrNull()
     private val file = position.getContainingFile() as JetFile
     protected val resolveSession: ResolutionFacade = file.getLazyResolveSession()
-    protected val moduleDescriptor: ModuleDescriptor = resolveSession.getModuleDescriptorForElement(file)
+    protected val moduleDescriptor: ModuleDescriptor = resolveSession.findModuleDescriptor(file)
     protected val bindingContext: BindingContext? = jetReference?.let { resolveSession.analyze(it.expression) }
     protected val inDescriptor: DeclarationDescriptor? = jetReference?.let { bindingContext!!.get(BindingContext.RESOLUTION_SCOPE, it.expression)?.getContainingDeclaration() }
 

@@ -36,8 +36,8 @@ public fun JetElement.analyze(): BindingContext {
     return getLazyResolveSession().analyze(this)
 }
 
-public fun JetElement.getModuleDescriptorForElement(): ModuleDescriptor {
-    return getLazyResolveSession().getModuleDescriptorForElement(this)
+public fun JetElement.findModuleDescriptor(): ModuleDescriptor {
+    return getLazyResolveSession().findModuleDescriptor(this)
 }
 
 public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalysisResult {

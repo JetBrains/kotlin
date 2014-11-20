@@ -53,7 +53,7 @@ public class KotlinCacheService(val project: Project) {
                 return cache.getLazyResolveSession(element).resolveToElement(element)
             }
 
-            override fun getModuleDescriptorForElement(element: JetElement): ModuleDescriptor {
+            override fun findModuleDescriptor(element: JetElement): ModuleDescriptor {
                 return cache.getLazyResolveSession(element).getModuleDescriptor()
             }
 

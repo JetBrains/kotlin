@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.psi.psiUtil.getTextWithLocation
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.plugin.util.approximateFlexibleTypes
-import org.jetbrains.jet.plugin.caches.resolve.getModuleDescriptorForElement
+import org.jetbrains.jet.plugin.caches.resolve.findModuleDescriptor
 
 public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgumentList>(
         "remove.explicit.type.arguments", javaClass()) {
@@ -47,7 +47,7 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgu
         val context = AnalyzerFacadeWithCache.getContextForElement(callExpression)
         if (callExpression.getTypeArguments().isEmpty()) return false
 
-        val injector = InjectorForMacros(callExpression.getProject(), callExpression.getModuleDescriptorForElement())
+        val injector = InjectorForMacros(callExpression.getProject(), callExpression.findModuleDescriptor())
 
         val scope = context[BindingContext.RESOLUTION_SCOPE, callExpression]
         val originalCall = callExpression.getResolvedCall(context)

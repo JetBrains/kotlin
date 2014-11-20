@@ -28,5 +28,5 @@ public trait ResolutionFacade {
 
     public fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor
 
-    public fun getModuleDescriptorForElement(element: JetElement): ModuleDescriptor
+    public fun findModuleDescriptor(element: JetElement): ModuleDescriptor
 }

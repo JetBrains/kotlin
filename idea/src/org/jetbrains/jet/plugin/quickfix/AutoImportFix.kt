@@ -138,7 +138,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
         val result = ArrayList<PrioritizedFqName>()
 
-        val moduleDescriptor = resolveSession.getModuleDescriptorForElement(element)
+        val moduleDescriptor = resolveSession.findModuleDescriptor(element)
         val indicesHelper = KotlinIndicesHelper(file.getProject(), resolveSession, searchScope, moduleDescriptor, ::isVisible)
 
         if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
