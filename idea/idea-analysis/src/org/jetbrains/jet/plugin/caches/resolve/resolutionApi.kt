@@ -32,6 +32,11 @@ public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
     return getResolutionFacade().resolveToDescriptor(this)
 }
 
+//NOTE: the difference between analyze and analyzeFully is 'intentionally' unclear
+// in theory they do the same thing via different code
+// analyze - see ResolveSessionForBodies, ResolveElementCache
+// analyzeFully - see KotlinResolveCache, KotlinResolveDataProvider
+// In the future these two approaches should be unified
 public fun JetElement.analyze(): BindingContext {
     return getResolutionFacade().analyze(this)
 }
