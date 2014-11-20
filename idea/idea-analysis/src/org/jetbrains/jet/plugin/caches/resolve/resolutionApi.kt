@@ -22,6 +22,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 
 public fun JetElement.getLazyResolveSession(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
@@ -37,6 +38,10 @@ public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
 
 public fun JetElement.resolveToElement(): BindingContext {
     return getLazyResolveSession().resolveToElement(this)
+}
+
+public fun JetElement.getModuleDescriptorForElement(): ModuleDescriptor {
+    return getLazyResolveSession().getModuleDescriptorForElement(this)
 }
 
 public fun JetElement.getBindingContext(): BindingContext {

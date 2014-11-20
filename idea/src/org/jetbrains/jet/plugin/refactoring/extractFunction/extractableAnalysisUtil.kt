@@ -40,7 +40,6 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.jet.utils.DFS
 import org.jetbrains.jet.utils.DFS.*
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
@@ -67,6 +66,7 @@ import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.traverseFollowingInstructi
 import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValueBoxer.AsList
 import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.plugin.caches.resolve.getModuleDescriptorForElement
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -697,12 +697,11 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val modifiedVarDescriptorsForControlFlow = HashMap(modifiedVarDescriptorsWithExpressions)
     modifiedVarDescriptorsForControlFlow.keySet().retainAll(localInstructions.getVarDescriptorsAccessedAfterwards(bindingContext))
-    val moduleDescriptor = originalFile.getLazyResolveSession().getModuleDescriptorForElement(originalFile)
     val (controlFlow, controlFlowMessage) =
             analyzeControlFlow(
                     localInstructions,
                     pseudocode,
-                    moduleDescriptor,
+                    originalFile.getModuleDescriptorForElement(),
                     bindingContext,
                     modifiedVarDescriptorsForControlFlow,
                     options,

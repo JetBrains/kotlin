@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.psi.JetTypeProjection
 import org.jetbrains.jet.lang.psi.Call
 import org.jetbrains.jet.di.InjectorForMacros
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetTypeArgumentList
 import org.jetbrains.jet.lang.psi.JetReturnExpression
@@ -36,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.jet.lang.psi.psiUtil.getTextWithLocation
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.plugin.util.approximateFlexibleTypes
+import org.jetbrains.jet.plugin.caches.resolve.getModuleDescriptorForElement
 
 public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgumentList>(
         "remove.explicit.type.arguments", javaClass()) {
@@ -47,8 +47,7 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgu
         val context = AnalyzerFacadeWithCache.getContextForElement(callExpression)
         if (callExpression.getTypeArguments().isEmpty()) return false
 
-        val resolveSession = callExpression.getLazyResolveSession()
-        val injector = InjectorForMacros(callExpression.getProject(), resolveSession.getModuleDescriptorForElement(callExpression))
+        val injector = InjectorForMacros(callExpression.getProject(), callExpression.getModuleDescriptorForElement())
 
         val scope = context[BindingContext.RESOLUTION_SCOPE, callExpression]
         val originalCall = callExpression.getResolvedCall(context)
