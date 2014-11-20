@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
 import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import com.intellij.openapi.roots.libraries.LibraryUtil
@@ -37,6 +36,8 @@ import com.intellij.openapi.module.impl.scopes.JdkScope
 import com.intellij.openapi.roots.JdkOrderEntry
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
+import org.jetbrains.jet.lang.resolve.descriptorUtil.module
+import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
 
 private val LOG = Logger.getInstance("org.jetbrains.jet.plugin.debugger")
 
@@ -58,13 +59,12 @@ fun findPackagePartInternalNameForLibraryFile(elementAt: JetElement): String? {
     val packagePartFile = findPackagePartFileNamesForElement(topLevelDeclaration).singleOrNull()
     if (packagePartFile != null) return packagePartFile
 
-    val resolveSession = topLevelDeclaration.getLazyResolveSession()
 
-    val descriptor = resolveSession.resolveToDescriptor(topLevelDeclaration)
+    val descriptor = topLevelDeclaration.resolveToDescriptor()
     if (descriptor !is CallableDescriptor) return null
 
     val packageFqName = topLevelDeclaration.getContainingJetFile().getPackageFqName()
-    val packageDescriptor = resolveSession.getModuleDescriptorForElement(topLevelDeclaration).getPackage(packageFqName)
+    val packageDescriptor = descriptor.module.getPackage(packageFqName)
     if (packageDescriptor == null) {
         reportError(topLevelDeclaration, descriptor)
         return null
