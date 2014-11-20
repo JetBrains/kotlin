@@ -9396,6 +9396,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("VisibilityInClassObject.kt")
+            public void testVisibilityInClassObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/VisibilityInClassObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("VisibilityInheritModifier.kt")
             public void testVisibilityInheritModifier() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/VisibilityInheritModifier.kt");

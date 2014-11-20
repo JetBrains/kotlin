@@ -63,6 +63,9 @@ public class Visibilities {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             ClassDescriptor classDescriptor = DescriptorUtils.getParentOfType(what, ClassDescriptor.class);
+            if (DescriptorUtils.isClassObject(classDescriptor)) {
+                classDescriptor = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
+            }
             if (classDescriptor == null) return false;
 
             ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class, false);
