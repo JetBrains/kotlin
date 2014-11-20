@@ -133,13 +133,17 @@ public final class DebugProtoBuf {
      */
     PUBLIC(3, 3),
     /**
-     * <code>EXTRA = 4;</code>
+     * <code>PRIVATE_TO_THIS = 4;</code>
+     */
+    PRIVATE_TO_THIS(4, 4),
+    /**
+     * <code>EXTRA = 5;</code>
      *
      * <pre>
      * there's an extra field for the actual visibility
      * </pre>
      */
-    EXTRA(4, 4),
+    EXTRA(5, 5),
     ;
 
     /**
@@ -163,13 +167,17 @@ public final class DebugProtoBuf {
      */
     public static final int PUBLIC_VALUE = 3;
     /**
-     * <code>EXTRA = 4;</code>
+     * <code>PRIVATE_TO_THIS = 4;</code>
+     */
+    public static final int PRIVATE_TO_THIS_VALUE = 4;
+    /**
+     * <code>EXTRA = 5;</code>
      *
      * <pre>
      * there's an extra field for the actual visibility
      * </pre>
      */
-    public static final int EXTRA_VALUE = 4;
+    public static final int EXTRA_VALUE = 5;
 
 
     public final int getNumber() { return value; }
@@ -180,7 +188,8 @@ public final class DebugProtoBuf {
         case 1: return PRIVATE;
         case 2: return PROTECTED;
         case 3: return PUBLIC;
-        case 4: return EXTRA;
+        case 4: return PRIVATE_TO_THIS;
+        case 5: return EXTRA;
         default: return null;
       }
     }
@@ -17780,10 +17789,10 @@ public final class DebugProtoBuf {
       "\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003\":\n\014Callab" +
       "leKind\022\007\n\003FUN\020\000\022\007\n\003VAL\020\001\022\007\n\003VAR\020\002\022\017\n\013CON" +
       "STRUCTOR\020\003*\005\010d\020\310\001*-\n\010Modality\022\t\n\005FINAL\020\000" +
-      "\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002*M\n\nVisibility\022\014" +
+      "\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002*b\n\nVisibility\022\014" +
       "\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002",
-      "\022\n\n\006PUBLIC\020\003\022\t\n\005EXTRA\020\004B\022B\rDebugProtoBuf" +
-      "\210\001\000"
+      "\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005EXT" +
+      "RA\020\005B\022B\rDebugProtoBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
