@@ -24,9 +24,9 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.jet.plugin.caches.resolve.resolveToElement
 
 public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpression>("convert.to.for.each.loop.intention", javaClass()) {
     private fun getFunctionLiteralArgument(element: JetExpression): JetFunctionLiteralExpression? {
@@ -78,7 +78,7 @@ public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpres
             isWellFormedFunctionLiteral(functionLiteral) &&
             checkTotalNumberOfArguments(element)) {
 
-            val context = element.getContainingJetFile().getLazyResolveSession().resolveToElement(element)
+            val context = element.resolveToElement()
             val resolvedCall = element.getResolvedCall(context)
             val functionFqName = if (resolvedCall != null) DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() else null
 
