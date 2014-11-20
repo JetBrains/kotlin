@@ -55,7 +55,7 @@ public class MonitorInstruction extends IntrinsicMethod {
             @NotNull Type returnType,
             @Nullable PsiElement element,
             @NotNull List<JetExpression> arguments,
-            @Nullable StackValue receiver
+            @NotNull StackValue receiver
     ) {
         assert element != null : "Element should not be null";
 

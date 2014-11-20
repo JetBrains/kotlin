@@ -44,7 +44,7 @@ public class JavaClassArray extends IntrinsicMethod {
             @NotNull Type returnType,
             @Nullable PsiElement element,
             @NotNull List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull StackValue receiver
     ) {
         assert element != null : "Element should not be null";
         ResolvedCall<?> resolvedCall = getResolvedCallWithAssert((JetElement) element, codegen.getBindingContext());

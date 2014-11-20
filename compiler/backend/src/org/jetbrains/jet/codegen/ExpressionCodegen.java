@@ -1797,7 +1797,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression, StackValue receiver) {
+    public StackValue visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression, @NotNull StackValue receiver) {
         ResolvedCall<?> resolvedCall = getResolvedCall(expression, bindingContext);
 
         DeclarationDescriptor descriptor;
@@ -2810,7 +2810,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitBinaryExpression(@NotNull JetBinaryExpression expression, StackValue receiver) {
+    public StackValue visitBinaryExpression(@NotNull JetBinaryExpression expression, @NotNull StackValue receiver) {
         JetSimpleNameExpression reference = expression.getOperationReference();
         IElementType opToken = reference.getReferencedNameElementType();
         if (opToken == JetTokens.EQ) {
@@ -3194,7 +3194,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitPrefixExpression(@NotNull JetPrefixExpression expression, StackValue receiver) {
+    public StackValue visitPrefixExpression(@NotNull JetPrefixExpression expression, @NotNull StackValue receiver) {
         DeclarationDescriptor originalOperation = bindingContext.get(REFERENCE_TARGET, expression.getOperationReference());
         ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(expression, bindingContext);
         CallableDescriptor op = resolvedCall.getResultingDescriptor();

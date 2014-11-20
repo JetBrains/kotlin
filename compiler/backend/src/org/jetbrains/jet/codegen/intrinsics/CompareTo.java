@@ -38,10 +38,9 @@ public class CompareTo extends IntrinsicMethod {
             @NotNull Type returnType,
             @Nullable PsiElement element,
             @NotNull List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull StackValue receiver
     ) {
         JetExpression argument;
-        assert arguments != null;
         if (arguments.size() == 1) {
             argument = arguments.get(0);
         }

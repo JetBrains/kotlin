@@ -36,11 +36,11 @@ public class ArrayGet extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
-            List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull List<JetExpression> arguments,
+            @NotNull StackValue receiver
     ) {
         int argumentIndex;
-        if (receiver == null || receiver == StackValue.none()) {
+        if (receiver == StackValue.none()) {
             receiver = codegen.gen(arguments.get(0));
             argumentIndex = 1;
         } else {

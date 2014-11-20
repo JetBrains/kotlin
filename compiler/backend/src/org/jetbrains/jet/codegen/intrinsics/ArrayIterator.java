@@ -50,7 +50,7 @@ public class ArrayIterator extends IntrinsicMethod {
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull StackValue receiver
     ) {
         receiver.put(receiver.type, v);
         JetCallExpression call = (JetCallExpression) element;

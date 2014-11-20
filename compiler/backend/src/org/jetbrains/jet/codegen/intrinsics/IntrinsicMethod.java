@@ -36,7 +36,7 @@ public abstract class IntrinsicMethod implements Callable {
             @NotNull final Type returnType,
             @Nullable final PsiElement element,
             @NotNull final List<JetExpression> arguments,
-            @Nullable final StackValue receiver
+            @NotNull final StackValue receiver
     ) {
         return StackValue.operation(returnType, new Function1<InstructionAdapter, Unit>() {
 
@@ -56,6 +56,6 @@ public abstract class IntrinsicMethod implements Callable {
             @NotNull Type returnType,
             @Nullable PsiElement element,
             @NotNull List<JetExpression> arguments,
-            @Nullable StackValue receiver
+            @NotNull StackValue receiver
     );
 }

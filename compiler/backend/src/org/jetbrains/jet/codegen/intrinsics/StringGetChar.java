@@ -35,9 +35,9 @@ public class StringGetChar extends IntrinsicMethod {
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull StackValue receiver
     ) {
-        if (receiver != null) {
+        if (receiver != StackValue.none()) {
             receiver.put(receiver.type, v);
         }
         if (!arguments.isEmpty()) {

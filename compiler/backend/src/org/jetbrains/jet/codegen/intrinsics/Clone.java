@@ -44,7 +44,7 @@ public class Clone extends IntrinsicMethod {
             @NotNull Type returnType,
             @Nullable PsiElement element,
             @NotNull List<JetExpression> arguments,
-            @Nullable StackValue receiver
+            @NotNull StackValue receiver
     ) {
         ResolvedCall<?> resolvedCall = getResolvedCallWithAssert(((JetElement) element), codegen.getBindingContext());
         StackValue.receiver(resolvedCall, receiver, codegen, null).put(OBJECT_TYPE, v);

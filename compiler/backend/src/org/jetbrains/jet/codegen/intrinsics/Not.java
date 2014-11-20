@@ -34,8 +34,8 @@ public class Not extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
-            List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull List<JetExpression> arguments,
+            @NotNull StackValue receiver
     ) {
         StackValue stackValue;
         if (arguments.size() == 1) {

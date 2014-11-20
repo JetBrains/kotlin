@@ -37,7 +37,7 @@ public class ArraySet extends IntrinsicMethod {
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull StackValue receiver
     ) {
         receiver.put(receiver.type, v);
         Type type = correctElementType(receiver.type);

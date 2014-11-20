@@ -45,7 +45,7 @@ public class BinaryOp extends IntrinsicMethod {
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull StackValue receiver
     ) {
         assert isPrimitive(returnType) : "Return type of BinaryOp intrinsic should be of primitive type : " + returnType;
 
@@ -53,7 +53,7 @@ public class BinaryOp extends IntrinsicMethod {
 
         if (arguments.size() == 1) {
             // Intrinsic is called as an ordinary function
-            if (receiver != null) {
+            if (receiver != StackValue.none()) {
                 receiver.put(operandType, v);
             }
             codegen.gen(arguments.get(0), shift() ? Type.INT_TYPE : operandType);

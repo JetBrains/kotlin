@@ -37,16 +37,16 @@ public class UnaryPlus extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull List<JetExpression> arguments,
+            @NotNull StackValue receiver
     ) {
         assert isPrimitive(returnType) : "Return type of UnaryPlus intrinsic should be of primitive type : " + returnType;
 
-        if (receiver != null && receiver != StackValue.none()) {
+        if (receiver != StackValue.none()) {
             receiver.put(returnType, v);
         }
         else {
-            assert arguments != null;
+            assert !arguments.isEmpty();
             codegen.gen(arguments.get(0), returnType);
         }
         return returnType;

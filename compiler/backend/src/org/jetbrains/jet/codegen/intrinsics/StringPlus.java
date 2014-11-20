@@ -38,9 +38,9 @@ public class StringPlus extends IntrinsicMethod {
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull StackValue receiver
     ) {
-        if (receiver == null || receiver == StackValue.none()) {
+        if (receiver == StackValue.none()) {
             codegen.gen(arguments.get(0)).put(JAVA_STRING_TYPE, v);
             codegen.gen(arguments.get(1)).put(OBJECT_TYPE, v);
         }

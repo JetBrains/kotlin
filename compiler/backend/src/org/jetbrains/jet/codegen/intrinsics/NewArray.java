@@ -36,7 +36,7 @@ public class NewArray extends IntrinsicMethod {
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull StackValue receiver
     ) {
         codegen.generateNewArray((JetCallExpression) element).put(returnType, v);
         return returnType;

@@ -38,7 +38,7 @@ public class RangeTo extends IntrinsicMethod {
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull StackValue receiver
     ) {
         v.anew(returnType);
         v.dup();

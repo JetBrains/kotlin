@@ -41,7 +41,7 @@ public class JavaClassProperty extends IntrinsicMethod {
             @NotNull Type returnType,
             @Nullable PsiElement element,
             @NotNull List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull StackValue receiver
     ) {
         Type type = receiver.type;
         if (isPrimitive(type)) {

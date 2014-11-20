@@ -40,7 +40,7 @@ public class Equals extends IntrinsicMethod {
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull StackValue receiver
     ) {
         StackValue leftExpr;
         JetExpression rightExpr;

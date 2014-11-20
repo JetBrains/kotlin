@@ -40,9 +40,9 @@ public class Concat extends IntrinsicMethod {
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
-            StackValue receiver
+            @NotNull StackValue receiver
     ) {
-        if (receiver == null || receiver == StackValue.none()) {
+        if (receiver == StackValue.none()) {
             // LHS + RHS
             genStringBuilderConstructor(v);
             codegen.invokeAppend(arguments.get(0));
