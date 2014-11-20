@@ -33,13 +33,13 @@ import org.jetbrains.jet.asJava.LightClassUtil.PropertyAccessorsPsiMethods
 import org.jetbrains.jet.lang.psi.psiUtil.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lexer.JetSingleValueToken
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.references.*
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 val isTargetUsage = (PsiReference::matchesTarget).searchFilter
 
@@ -75,7 +75,7 @@ public fun PsiNamedElement.getSpecialNamesToSearch(): List<String> {
         this is JetParameter -> {
             if (!hasValOrVarNode()) return Collections.emptyList<String>()
 
-            val context = AnalyzerFacadeWithCache.getContextForElement(this)
+            val context = this.analyze()
             val paramDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? ValueParameterDescriptor
             context[BindingContext.DATA_CLASS_COMPONENT_FUNCTION, paramDescriptor]?.let {
                 listOf(it.getName().asString(), JetTokens.LPAR.getValue())

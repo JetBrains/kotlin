@@ -22,7 +22,6 @@ import com.intellij.refactoring.changeSignature.ParameterInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -30,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
@@ -91,7 +90,7 @@ public class JetParameterInfo implements ParameterInfo {
         String inheritedParamName = inheritedParam.getName();
 
         if (oldParam.getName().equals(inheritedParamName)) {
-            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(inheritedJetFunction);
+            BindingContext bindingContext = ResolvePackage.analyze(inheritedJetFunction);
             JetScope parametersScope = JetChangeSignatureUsageProcessor.getFunctionBodyScope(inheritedJetFunction, bindingContext);
 
             if (parametersScope != null && parametersScope.getLocalVariable(Name.identifier(name)) == null)

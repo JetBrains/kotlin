@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionCallUsage;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetFunctionDefinitionUsage;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.usages.JetParameterUsage;
@@ -129,7 +129,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         JetChangeInfo changeInfo = (JetChangeInfo) info;
         PsiElement function = info.getMethod();
         PsiElement element = function != null ? function : changeInfo.getContext();
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
+        BindingContext bindingContext = ResolvePackage.analyze((JetElement) element);
         FunctionDescriptor oldDescriptor = changeInfo.getOldDescriptor();
         JetScope parametersScope = null;
         DeclarationDescriptor containingDeclaration = oldDescriptor != null ? oldDescriptor.getContainingDeclaration() : null;

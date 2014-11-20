@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.ValueArgument
 import org.jetbrains.jet.plugin.JetBundle
@@ -33,6 +32,7 @@ import org.jetbrains.jet.plugin.util.MaybeError
 import org.jetbrains.jet.plugin.util.MaybeValue
 import com.intellij.codeInsight.hint.HintManager
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 // Internal because you shouldn't construct this manually. You can end up with an inconsistant CallDescription.
 public class CallDescription internal (
@@ -89,7 +89,7 @@ public class CallDescription internal (
 public fun JetQualifiedExpression.toCallDescription(): CallDescription? {
     val callExpression = getSelectorExpression() as? JetCallExpression ?: return null
 
-    val bindingContext = AnalyzerFacadeWithCache.getContextForElement(callExpression)
+    val bindingContext = callExpression.analyze()
     // This should work. Nothing that returns a CallableDescriptor returns null and (out T is T)
     val resolvedCall = callExpression.getResolvedCall(bindingContext) ?:
         return null

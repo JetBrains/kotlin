@@ -43,7 +43,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
 
 import java.util.*;
@@ -271,7 +271,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
             Collection<JetNamedFunction> mainFunctions = JetTopLevelFunctionsFqnNameIndex.getInstance().get(
                     mainFunFqName, module.getProject(), module.getModuleRuntimeScope(true));
             for (JetNamedFunction function : mainFunctions) {
-                BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(function);
+                BindingContext bindingContext = ResolvePackage.analyze(function);
                 MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(bindingContext);
                 if (mainFunctionDetector.isMain(function)) {
                     return function;

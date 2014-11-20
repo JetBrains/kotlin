@@ -9,7 +9,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getCall
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.Qualifier
@@ -26,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetTypeReference
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -33,22 +33,22 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionF
         if (PsiTreeUtil.getParentOfType(diagElement, javaClass<JetTypeReference>(), javaClass<JetAnnotationEntry>()) != null) return null
 
         val callExpr = when (diagnostic.getFactory()) {
-            in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS, Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND -> {
-                val parent = diagElement.getParent()
-                if (parent is JetCallExpression && parent.getCalleeExpression() == diagElement) parent else diagElement
-            }
+                           in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS, Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND -> {
+                               val parent = diagElement.getParent()
+                               if (parent is JetCallExpression && parent.getCalleeExpression() == diagElement) parent else diagElement
+                           }
 
-            Errors.NO_VALUE_FOR_PARAMETER,
-            Errors.TOO_MANY_ARGUMENTS -> diagElement.getParentByType(javaClass<JetCallExpression>())
+                           Errors.NO_VALUE_FOR_PARAMETER,
+                           Errors.TOO_MANY_ARGUMENTS -> diagElement.getParentByType(javaClass<JetCallExpression>())
 
-            else -> throw AssertionError("Unexpected diagnostic: ${diagnostic.getFactory()}")
-        } as? JetExpression ?: return null
+                           else -> throw AssertionError("Unexpected diagnostic: ${diagnostic.getFactory()}")
+                       } as? JetExpression ?: return null
 
         val calleeExpr = when (callExpr) {
-            is JetCallExpression -> callExpr.getCalleeExpression()
-            is JetSimpleNameExpression -> callExpr
-            else -> null
-        } as? JetSimpleNameExpression ?: return null
+                             is JetCallExpression -> callExpr.getCalleeExpression()
+                             is JetSimpleNameExpression -> callExpr
+                             else -> null
+                         } as? JetSimpleNameExpression ?: return null
 
         if (calleeExpr.getReferencedNameElementType() != JetTokens.IDENTIFIER) return null
 
@@ -56,7 +56,7 @@ object CreateFunctionOrPropertyFromCallActionFactory : JetSingleIntentionActionF
         val fullCallExpr =
                 if (callParent is JetQualifiedExpression && callParent.getSelectorExpression() == callExpr) callParent else callExpr
 
-        val context = AnalyzerFacadeWithCache.getContextForElement(callExpr)
+        val context = calleeExpr.analyze()
         val receiver = callExpr.getCall(context)?.getExplicitReceiver()
 
         val receiverType = when (receiver) {

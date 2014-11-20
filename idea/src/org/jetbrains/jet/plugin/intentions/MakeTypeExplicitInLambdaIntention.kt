@@ -18,13 +18,13 @@ package org.jetbrains.jet.plugin.intentions
 
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(
         "make.type.explicit.in.lambda", javaClass()) {
@@ -42,7 +42,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
             caretLocation != closeBraceOffset) return false
         else if (arrow == null && caretLocation != openBraceOffset + 1 && caretLocation != closeBraceOffset) return false
 
-        val context = AnalyzerFacadeWithCache.getContextForElement(element)
+        val context = element.analyze()
         val func = context[BindingContext.FUNCTION, element.getFunctionLiteral()]
         if (func == null || ErrorUtils.containsErrorType(func)) return false
 
@@ -55,7 +55,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
 
     override fun applyTo(element: JetFunctionLiteralExpression, editor: Editor) {
         val functionLiteral = element.getFunctionLiteral()
-        val context = AnalyzerFacadeWithCache.getContextForElement(element)
+        val context = element.analyze()
         val func = context[BindingContext.FUNCTION, functionLiteral]!!
 
         // Step 1: make the parameters types explicit

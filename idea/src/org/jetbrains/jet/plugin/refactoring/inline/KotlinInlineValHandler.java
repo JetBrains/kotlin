@@ -62,7 +62,6 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 
 import java.util.List;
@@ -231,7 +230,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             return null;
         }
 
-        BindingContext context = AnalyzerFacadeWithCache.getContextForElement(initializer);
+        BindingContext context = ResolvePackage.analyze(initializer);
         SimpleFunctionDescriptor fun = context.get(BindingContext.FUNCTION, functionLiteralExpression.getFunctionLiteral());
         if (fun == null || ErrorUtils.containsErrorType(fun)) {
             return null;
@@ -343,7 +342,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
     @Nullable
     private static String getTypeArgumentsStringForCall(@NotNull JetExpression initializer) {
-        BindingContext context = AnalyzerFacadeWithCache.getContextForElement(initializer);
+        BindingContext context = ResolvePackage.analyze(initializer);
         ResolvedCall<?> call = CallUtilPackage.getResolvedCall(initializer, context);
         if (call == null) return null;
 

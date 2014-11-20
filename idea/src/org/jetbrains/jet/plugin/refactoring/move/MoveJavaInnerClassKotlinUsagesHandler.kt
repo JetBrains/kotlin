@@ -21,12 +21,8 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.psi.PsiClass
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.jet.lang.psi.JetReferenceExpression
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import java.util.Collections
 import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import com.intellij.psi.util.PsiTreeUtil

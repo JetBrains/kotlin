@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
@@ -164,7 +164,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
             elementText = ((JetFile) element).getName();
         }
         else if (element instanceof JetNamedDeclaration) {
-            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
+            BindingContext bindingContext = ResolvePackage.analyze((JetElement) element);
 
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             if (descriptor == null) return null;

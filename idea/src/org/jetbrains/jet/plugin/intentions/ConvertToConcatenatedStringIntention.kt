@@ -7,11 +7,11 @@ import org.jetbrains.jet.lang.psi.JetStringTemplateEntry
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetStringTemplateEntryWithExpression
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class ConvertToConcatenatedStringIntention : JetSelfTargetingIntention<JetStringTemplateExpression>("convert.to.concatenated.string.intention", javaClass()) {
     override fun isApplicableTo(element: JetStringTemplateExpression): Boolean {
@@ -62,7 +62,7 @@ public class ConvertToConcatenatedStringIntention : JetSelfTargetingIntention<Je
     private fun String.quote(quote: String) = quote + this + quote
 
     private fun JetExpression.isStringExpression(): Boolean {
-        val context = AnalyzerFacadeWithCache.getContextForElement(this)
+        val context = this.analyze()
         val elementType = BindingContextUtils.getRecordedTypeInfo(this, context)?.getType()
 
         return KotlinBuiltIns.getInstance().isString(elementType)

@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetPrefixExpression
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
@@ -30,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class ConvertIfWithThrowToAssertIntention :
         JetSelfTargetingIntention<JetIfExpression>("convert.if.with.throw.to.assert", javaClass()) {
@@ -48,7 +48,7 @@ public class ConvertIfWithThrowToAssertIntention :
         val paramAmount = thrownExpr.getValueArguments().size
         if (paramAmount > 1) return false
 
-        val context = AnalyzerFacadeWithCache.getContextForElement(thrownExpr)
+        val context = thenExpr.analyze()
         val resolvedCall = thrownExpr.getResolvedCall(context)
         if (resolvedCall == null) return false
 

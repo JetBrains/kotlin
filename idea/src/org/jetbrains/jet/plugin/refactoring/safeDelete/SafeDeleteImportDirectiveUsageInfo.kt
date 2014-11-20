@@ -17,10 +17,9 @@
 package org.jetbrains.jet.plugin.refactoring.safeDelete
 
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class SafeDeleteImportDirectiveUsageInfo(
         importDirective: JetImportDirective, declaration: JetDeclaration
@@ -39,7 +38,7 @@ fun JetImportDirective.isSafeToDelete(declaration: JetDeclaration): Boolean {
     }
 
     if (importReference != null) {
-        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(importReference)
+        val bindingContext = importReference.analyze()
         val referenceDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, importReference)
         val declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
         return referenceDescriptor == declarationDescriptor

@@ -25,12 +25,12 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.psi.PsiReference
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import java.util.Collections
 import org.jetbrains.jet.lang.psi.JetReferenceExpression
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.utils.keysToMap
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public trait JetReference : PsiPolyVariantReference {
     public fun resolveToDescriptors(): Collection<DeclarationDescriptor>
@@ -72,18 +72,15 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
     override fun isSoft(): Boolean = false
 
     private fun resolveToPsiElements(): Collection<PsiElement> {
-        val context = AnalyzerFacadeWithCache.getContextForElement(expression)
-        return resolveToPsiElements(context, getTargetDescriptors(context))
+        return resolveToPsiElements(expression.analyze(), getTargetDescriptors(expression.analyze()))
     }
 
     override fun resolveToDescriptors(): Collection<DeclarationDescriptor> {
-        val context = AnalyzerFacadeWithCache.getContextForElement(expression)
-        return getTargetDescriptors(context)
+        return getTargetDescriptors(expression.analyze())
     }
 
     override fun resolveMap(): Map<DeclarationDescriptor, Collection<PsiElement>> {
-        val context = AnalyzerFacadeWithCache.getContextForElement(expression)
-        return getTargetDescriptors(context) keysToMap { DescriptorToDeclarationUtil.resolveToPsiElements(expression.getProject(), it) }
+        return getTargetDescriptors(expression.analyze()) keysToMap { DescriptorToDeclarationUtil.resolveToPsiElements(expression.getProject(), it) }
     }
 
     private fun resolveToPsiElements(context: BindingContext, targetDescriptors: Collection<DeclarationDescriptor>): Collection<PsiElement> {

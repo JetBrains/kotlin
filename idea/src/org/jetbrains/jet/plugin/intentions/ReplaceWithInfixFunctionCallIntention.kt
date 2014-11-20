@@ -23,11 +23,11 @@ import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.psi.JetValueArgument
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.codeInsight.hint.HintManager
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>("replace.with.infix.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetCallExpression): Boolean {
@@ -88,7 +88,7 @@ public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntent
         val operatorText = element.getCalleeExpression()!!.getText()
         val valueArguments = element.getValueArgumentList()?.getArguments() ?: listOf<JetValueArgument>()
         val functionLiteralArguments = element.getFunctionLiteralArguments()
-        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(parent)
+        val bindingContext = parent.analyze()
         val receiverType = bindingContext[BindingContext.EXPRESSION_TYPE, receiver]
         if (receiverType == null) {
             if (bindingContext[BindingContext.QUALIFIER, receiver] != null) {

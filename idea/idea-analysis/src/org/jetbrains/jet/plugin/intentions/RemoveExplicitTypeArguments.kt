@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall
 import org.jetbrains.jet.lang.types.TypeUtils
@@ -36,6 +35,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.getTextWithLocation
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.jet.plugin.util.approximateFlexibleTypes
 import org.jetbrains.jet.plugin.caches.resolve.findModuleDescriptor
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgumentList>(
         "remove.explicit.type.arguments", javaClass()) {
@@ -44,7 +44,7 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetTypeArgu
         val callExpression = element.getParent()
         if (callExpression !is JetCallExpression) return false
 
-        val context = AnalyzerFacadeWithCache.getContextForElement(callExpression)
+        val context = callExpression.analyze()
         if (callExpression.getTypeArguments().isEmpty()) return false
 
         val injector = InjectorForMacros(callExpression.getProject(), callExpression.findModuleDescriptor())

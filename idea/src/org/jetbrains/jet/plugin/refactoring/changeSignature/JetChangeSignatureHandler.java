@@ -32,10 +32,13 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import java.util.Collection;
@@ -74,7 +77,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             JetElement jetElement = PsiTreeUtil.getParentOfType(element, JetElement.class);
             if (jetElement == null) return null;
 
-            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(jetElement);
+            BindingContext bindingContext = ResolvePackage.analyze(jetElement);
             DeclarationDescriptor descriptor =
                     bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) receiverExpr);
 
@@ -92,7 +95,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             @NotNull Project project,
             @Nullable Editor editor
     ) {
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(element);
+        BindingContext bindingContext = ResolvePackage.analyze(element);
         FunctionDescriptor functionDescriptor = findDescriptor(element, project, editor, bindingContext);
         if (functionDescriptor == null) {
             return;

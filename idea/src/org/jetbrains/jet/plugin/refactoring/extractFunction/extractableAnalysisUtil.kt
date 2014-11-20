@@ -42,7 +42,6 @@ import org.jetbrains.jet.utils.DFS
 import org.jetbrains.jet.utils.DFS.*
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
@@ -67,6 +66,7 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.OutputValueBoxer.AsL
 import org.jetbrains.jet.plugin.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.findModuleDescriptor
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -776,7 +776,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
     val result = generateDeclaration(ExtractionGeneratorOptions(inTempFile = true))
 
     val valueParameterList = (result.declaration as? JetNamedFunction)?.getValueParameterList()
-    val bindingContext = AnalyzerFacadeWithCache.getContextForElement(result.declaration.getGeneratedBlockBody())
+    val bindingContext = result.declaration.getGeneratedBlockBody().analyze()
 
     for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
         if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue

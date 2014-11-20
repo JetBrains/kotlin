@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class JetQuickDocumentationProvider extends AbstractDocumentationProvider {
@@ -67,7 +67,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         if (quickNavigation) {
             JetReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class, false);
             if (referenceExpression != null) {
-                BindingContext context = AnalyzerFacadeWithCache.getContextForElement(referenceExpression);
+                BindingContext context = ResolvePackage.analyze(referenceExpression);
                 DeclarationDescriptor declarationDescriptor = context.get(BindingContext.REFERENCE_TARGET, referenceExpression);
                 if (declarationDescriptor != null) {
                     return mixKotlinToJava(declarationDescriptor, element, originalElement);
@@ -82,7 +82,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
     }
 
     private static String renderKotlinDeclaration(JetDeclaration declaration, boolean quickNavigation) {
-        BindingContext context = AnalyzerFacadeWithCache.getContextForElement(declaration);
+        BindingContext context = ResolvePackage.analyze(declaration);
         DeclarationDescriptor declarationDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
         assert declarationDescriptor != null;

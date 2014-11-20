@@ -37,8 +37,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.references.JetReference;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchPackage;
 
@@ -68,7 +68,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
 
         JetElement codeBlockForLocalDeclaration = getEnclosingElementForLocalDeclaration(element);
         if (codeBlockForLocalDeclaration != null) {
-            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
+            BindingContext bindingContext = ResolvePackage.analyze((JetElement) element);
 
             final Map<PsiReference, PsiElement> referencesToElements = new HashMap<PsiReference, PsiElement>();
             codeBlockForLocalDeclaration.accept(new CalleeReferenceVisitorBase(bindingContext, true) {

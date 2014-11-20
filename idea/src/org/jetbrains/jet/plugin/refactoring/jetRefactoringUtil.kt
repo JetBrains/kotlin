@@ -59,7 +59,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.util.text.StringUtil
@@ -299,7 +298,7 @@ public fun chooseContainerElement<T>(
 
                 private fun JetElement.renderDeclaration(): String? {
                     val name = renderName()
-                    val descriptor = AnalyzerFacadeWithCache.getContextForElement(this)[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
+                    val descriptor = this.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
                     val params = (descriptor as? FunctionDescriptor)?.let { descriptor ->
                         descriptor.getValueParameters()
                                 .map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it.getType()) }

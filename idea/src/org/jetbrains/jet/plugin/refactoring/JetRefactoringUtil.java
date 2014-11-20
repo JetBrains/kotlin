@@ -51,9 +51,9 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers;
 import org.jetbrains.jet.plugin.util.string.StringPackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -127,7 +127,7 @@ public class JetRefactoringUtil {
             @Nullable Collection<PsiElement> ignore,
             @NotNull String actionStringKey
     ) {
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(declaration);
+        BindingContext bindingContext = ResolvePackage.analyze(declaration);
 
         CallableDescriptor declarationDescriptor =
                 (CallableDescriptor)bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
@@ -262,7 +262,7 @@ public class JetRefactoringUtil {
         PsiElement originalDeclaration = AsJavaPackage.getUnwrapped(method);
         if (originalDeclaration instanceof JetDeclaration) {
             JetDeclaration jetDeclaration = (JetDeclaration) originalDeclaration;
-            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(jetDeclaration);
+            BindingContext bindingContext = ResolvePackage.analyze(jetDeclaration);
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetDeclaration);
 
             if (descriptor != null) return formatFunctionDescriptor(descriptor);
@@ -272,7 +272,7 @@ public class JetRefactoringUtil {
 
     @NotNull
     public static String formatClass(@NotNull JetClassOrObject classOrObject) {
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
+        BindingContext bindingContext = ResolvePackage.analyze(classOrObject);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
         if (descriptor instanceof ClassDescriptor) return formatClassDescriptor(descriptor);
@@ -425,7 +425,7 @@ public class JetRefactoringUtil {
                 }
                 if (addExpression) {
                     JetExpression expression = (JetExpression)element;
-                    BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(expression);
+                    BindingContext bindingContext = ResolvePackage.analyze(expression);
                     JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
                     if (expressionType == null || !KotlinBuiltIns.getInstance().isUnit(expressionType)) {
                         expressions.add(expression);
