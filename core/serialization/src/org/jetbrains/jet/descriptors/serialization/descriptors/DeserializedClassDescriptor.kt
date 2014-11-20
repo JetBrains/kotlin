@@ -112,7 +112,7 @@ public class DeserializedClassDescriptor(
             return descriptor
         }
 
-        return context.deserializer.loadCallable(constructorProto.getData()) as ConstructorDescriptor
+        return context.memberDeserializer.loadCallable(constructorProto.getData()) as ConstructorDescriptor
     }
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = primaryConstructor()

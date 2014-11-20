@@ -78,7 +78,7 @@ public abstract class DeserializedMemberScope protected(
 
         [suppress("UNCHECKED_CAST")]
         return memberProtos.mapTo(LinkedHashSet<D>()) { memberProto ->
-            context.deserializer.loadCallable(memberProto) as D
+            context.memberDeserializer.loadCallable(memberProto) as D
         }
     }
 

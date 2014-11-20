@@ -123,8 +123,8 @@ public class MemberDeserializer {
                                                           !isNotDefault,
                                                           property.getKind(), null, SourceElement.NO_SOURCE);
                 DeserializationContextWithTypes setterLocal = local.childContext(setter, Collections.<TypeParameter>emptyList());
-                List<ValueParameterDescriptor> valueParameters
-                        = setterLocal.getDeserializer().valueParameters(proto, AnnotatedCallableKind.PROPERTY_SETTER);
+                List<ValueParameterDescriptor> valueParameters =
+                        setterLocal.getMemberDeserializer().valueParameters(proto, AnnotatedCallableKind.PROPERTY_SETTER);
                 assert valueParameters.size() == 1 : "Property setter should have a single value parameter: " + setter;
                 setter.initialize(valueParameters.get(0));
             }
@@ -166,7 +166,7 @@ public class MemberDeserializer {
                 local.getTypeDeserializer().typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
                 getDispatchReceiverParameter(),
                 local.getTypeDeserializer().getOwnTypeParameters(),
-                local.getDeserializer().valueParameters(proto, AnnotatedCallableKind.FUNCTION),
+                local.getMemberDeserializer().valueParameters(proto, AnnotatedCallableKind.FUNCTION),
                 local.getTypeDeserializer().type(proto.getReturnType()),
                 modality(Flags.MODALITY.get(flags)),
                 visibility(Flags.VISIBILITY.get(flags))
@@ -192,7 +192,7 @@ public class MemberDeserializer {
         DeserializationContextWithTypes local = context.childContext(descriptor, Collections.<TypeParameter>emptyList());
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
-                local.getDeserializer().valueParameters(proto, AnnotatedCallableKind.FUNCTION),
+                local.getMemberDeserializer().valueParameters(proto, AnnotatedCallableKind.FUNCTION),
                 visibility(Flags.VISIBILITY.get(proto.getFlags()))
         );
         descriptor.setReturnType(local.getTypeDeserializer().type(proto.getReturnType()));
