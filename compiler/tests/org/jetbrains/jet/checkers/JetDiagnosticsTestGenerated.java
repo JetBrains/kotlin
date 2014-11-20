@@ -3722,6 +3722,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("block.kt")
+            public void testBlock() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/block.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("dynamicCalls.kt")
             public void testDynamicCalls() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/dynamicCalls.kt");

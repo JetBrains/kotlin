@@ -597,8 +597,7 @@ public class CandidateResolver {
 
         BindingContext bindingContext = trace.getBindingContext();
         if (!safeAccess && !receiverParameter.getType().isNullable() && receiverArgumentType.isNullable()) {
-            if (!SmartCastUtils.isNotNull(receiverArgument, bindingContext, context.dataFlowInfo)) {
-
+            if (!SmartCastUtils.canBeSmartCast(receiverParameter, receiverArgument, bindingContext, context.dataFlowInfo)) {
                 context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck);
                 return UNSAFE_CALL_ERROR;
             }
