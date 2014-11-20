@@ -73,7 +73,7 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierL
 
     @Nullable
     private JetModifierKeywordToken findVisibilityChangeTo(JetFile file) {
-        BindingContext bindingContext = ResolvePackage.getBindingContext(file);
+        BindingContext bindingContext = ResolvePackage.analyzeFully(file);
         DeclarationDescriptor descriptor;
         if (element instanceof JetParameter) {
             descriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, element);

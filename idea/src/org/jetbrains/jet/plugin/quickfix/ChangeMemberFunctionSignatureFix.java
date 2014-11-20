@@ -116,7 +116,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
             return Collections.emptyList();
         }
 
-        BindingContext context = ResolvePackage.getBindingContext(functionElement);
+        BindingContext context = ResolvePackage.analyzeFully(functionElement);
         FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionElement);
         if (functionDescriptor == null) return Lists.newArrayList();
         List<FunctionDescriptor> superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor);

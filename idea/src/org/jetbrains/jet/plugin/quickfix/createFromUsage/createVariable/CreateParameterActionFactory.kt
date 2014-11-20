@@ -13,7 +13,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElement
 import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.guessTypes
-import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor

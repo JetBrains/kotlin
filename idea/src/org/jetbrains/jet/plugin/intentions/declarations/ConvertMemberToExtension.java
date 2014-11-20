@@ -88,7 +88,7 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
         JetCallableDeclaration member = getTarget(editor, file);
         assert member != null : "Must be checked by isAvailable";
 
-        BindingContext bindingContext = ResolvePackage.getBindingContext(member);
+        BindingContext bindingContext = ResolvePackage.analyzeFully(member);
         DeclarationDescriptor memberDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, member);
         if (memberDescriptor == null) return;
 

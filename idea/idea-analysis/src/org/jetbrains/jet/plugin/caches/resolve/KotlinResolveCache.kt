@@ -292,7 +292,7 @@ private object KotlinResolveDataProvider {
         else {
             if (contextElement !is JetExpression) return BindingContext.EMPTY
 
-            val contextForElement = contextElement.getBindingContext()
+            val contextForElement = contextElement.analyzeFully()
 
             scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, contextElement]
             dataFlowInfo = contextForElement.getDataFlowInfo(contextElement)

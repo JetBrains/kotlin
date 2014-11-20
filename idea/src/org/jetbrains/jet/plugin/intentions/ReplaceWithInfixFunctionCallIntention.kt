@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.intentions
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.psi.JetValueArgument
@@ -58,7 +58,7 @@ public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntent
 
                 if (valueArguments?.getArguments()?.size() == 1 && valueArguments?.getArguments()?.first()?.isNamed() ?: false) {
                     val file = element.getContainingJetFile()
-                    val bindingContext = file.getBindingContext()
+                    val bindingContext = file.analyzeFully()
                     val resolvedCall = element.getResolvedCall(bindingContext)
                     val valueArgumentsMap = resolvedCall?.getValueArguments()
                     val firstArgument = valueArguments?.getArguments()?.first()

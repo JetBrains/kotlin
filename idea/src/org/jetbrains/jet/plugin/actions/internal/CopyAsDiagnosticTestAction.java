@@ -40,7 +40,7 @@ public class CopyAsDiagnosticTestAction extends AnAction {
         PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
         assert editor != null && psiFile != null;
 
-        BindingContext bindingContext = ResolvePackage.getBindingContext((JetFile) psiFile);
+        BindingContext bindingContext = ResolvePackage.analyzeFully((JetFile) psiFile);
 
         List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile);
         String result = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, diagnostics).toString();

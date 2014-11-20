@@ -61,7 +61,7 @@ public class ChangeToConstructorInvocationFix extends JetIntentionAction<JetDele
         }
 
         JetTypeReference typeReference = element.getTypeReference();
-        BindingContext context = ResolvePackage.getBindingContext(typeReference);
+        BindingContext context = ResolvePackage.analyzeFully(typeReference);
         JetType supertype = context.get(BindingContext.TYPE, typeReference);
         if (supertype == null) return false;
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);

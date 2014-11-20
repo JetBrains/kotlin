@@ -49,7 +49,7 @@ public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalysisRe
     return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this) + extraFiles.toList())
 }
 
-public fun JetElement.getBindingContext(): BindingContext {
+public fun JetElement.analyzeFully(): BindingContext {
     return getAnalysisResults().bindingContext
 }
 

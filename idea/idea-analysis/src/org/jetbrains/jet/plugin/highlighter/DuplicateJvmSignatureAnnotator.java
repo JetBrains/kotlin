@@ -44,7 +44,7 @@ public class DuplicateJvmSignatureAnnotator implements Annotator {
         PsiFile file = element.getContainingFile();
         if (!(file instanceof JetFile) || TargetPlatformDetector.getPlatform((JetFile) file) != TargetPlatform.JVM) return;
 
-        Diagnostics otherDiagnostics = ResolvePackage.getBindingContext((JetElement) element).getDiagnostics();
+        Diagnostics otherDiagnostics = ResolvePackage.analyzeFully((JetElement) element).getDiagnostics();
         GlobalSearchScope moduleScope = getModuleInfo(element).contentScope();
         Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(element, otherDiagnostics, moduleScope);
         
