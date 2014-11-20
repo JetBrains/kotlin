@@ -48,7 +48,7 @@ class BuiltinsPackageFragment(storageManager: StorageManager, module: ModuleDesc
                 DeserializationComponents(
                         storageManager, module, BuiltInsClassDataFinder(), AnnotationLoader.UNSUPPORTED, // TODO: support annotations
                         ConstantLoader.UNSUPPORTED, provider, FlexibleTypeCapabilitiesDeserializer.ThrowException
-                ).createContext(nameResolver),
+                ).createContext(this, nameResolver),
                 { readClassNames() }
         )
 

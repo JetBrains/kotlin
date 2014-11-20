@@ -16,30 +16,32 @@
 
 package org.jetbrains.jet.descriptors.serialization
 
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
 
 public class ClassDeserializer(private val components: DeserializationComponents) {
-    private val classes: (ClassKey) -> DeserializedClassDescriptor? = components.storageManager.createMemoizedFunctionWithNullableValues {
-        (key: ClassKey) ->
-        val classId = key.classId
-        val classData = key.classData ?: components.classDataFinder.findClassData(classId)
-        if (classData != null) {
-            val outerClassContext =
-                    if (classId.isTopLevelClass()) null
-                    else classes(ClassKey(classId.getOuterClassId(), null))?.context
-            // TODO: use outerClassContext
-            DeserializedClassDescriptor(components.createContext(classData.getNameResolver()), classData.getClassProto())
-        }
-        else {
-            null
-        }
-    }
+    private val classes: (ClassKey) -> DeserializedClassDescriptor? =
+            components.storageManager.createMemoizedFunctionWithNullableValues { key -> createClass(key) }
 
     // Additional ClassData parameter is needed to avoid calling ClassDataFinder#findClassData() if it is already computed at call site
-    public fun deserializeClass(classId: ClassId, classData: ClassData? = null): ClassDescriptor? = classes(ClassKey(classId, classData))
+    public fun deserializeClass(classId: ClassId, classData: ClassData? = null): DeserializedClassDescriptor? =
+            classes(ClassKey(classId, classData))
+
+    private fun createClass(key: ClassKey): DeserializedClassDescriptor? {
+        val classId = key.classId
+        val classData = key.classData ?: components.classDataFinder.findClassData(classId) ?: return null
+        val outerContext = if (classId.isTopLevelClass()) {
+            val fragments = components.packageFragmentProvider.getPackageFragments(classId.getPackageFqName())
+            assert(fragments.size() == 1) { "There should be exactly one package: $fragments, class id is $classId" }
+            components.createContext(fragments.single(), classData.getNameResolver())
+        }
+        else {
+            deserializeClass(classId.getOuterClassId())?.context ?: return null
+        }
+
+        return DeserializedClassDescriptor(outerContext, classData.getClassProto(), classData.getNameResolver())
+    }
 
     private inner class ClassKey(val classId: ClassId, val classData: ClassData?) {
         override fun equals(other: Any?): Boolean = other is ClassKey && classId == other.classId

@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
-
 public fun DeserializedPackageMemberScope(
         packageDescriptor: PackageFragmentDescriptor,
         packageData: PackageData,
@@ -36,16 +35,16 @@ public fun DeserializedPackageMemberScope(
 ): DeserializedPackageMemberScope = DeserializedPackageMemberScope(
         packageDescriptor,
         packageData.getPackageProto(),
-        components.createContext(packageData.getNameResolver()),
+        components.createContext(packageDescriptor, packageData.getNameResolver()),
         classNames
 )
 
 public open class DeserializedPackageMemberScope(
         packageDescriptor: PackageFragmentDescriptor,
         proto: ProtoBuf.Package,
-        private val context: DeserializationContext,
-        classNames: () -> Collection<Name>)
-: DeserializedMemberScope(context.withTypes(packageDescriptor), proto.getMemberList()) {
+        outerContext: DeserializationContext,
+        classNames: () -> Collection<Name>
+) : DeserializedMemberScope(outerContext.childContext(packageDescriptor, listOf()), proto.getMemberList()) {
 
     private val packageFqName = packageDescriptor.fqName
     private val classNames = context.components.storageManager.createLazyValue(classNames)

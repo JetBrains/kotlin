@@ -20,7 +20,7 @@ import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents;
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationContextWithTypes;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
 import org.jetbrains.jet.descriptors.serialization.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
@@ -40,10 +40,9 @@ import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter
 import static org.jetbrains.jet.descriptors.serialization.SerializationPackage.*;
 
 public class MemberDeserializer {
+    private final DeserializationContext context;
 
-    private final DeserializationContextWithTypes context;
-
-    public MemberDeserializer(@NotNull DeserializationContextWithTypes context) {
+    public MemberDeserializer(@NotNull DeserializationContext context) {
         this.context = context;
     }
 
@@ -69,7 +68,7 @@ public class MemberDeserializer {
 
     @NotNull
     private PropertyDescriptor loadProperty(@NotNull final Callable proto) {
-        final int flags = proto.getFlags();
+        int flags = proto.getFlags();
 
         DeserializedPropertyDescriptor property = new DeserializedPropertyDescriptor(
                 context.getContainingDeclaration(),
@@ -84,7 +83,7 @@ public class MemberDeserializer {
                 context.getNameResolver()
         );
 
-        DeserializationContextWithTypes local = context.childContext(property, proto.getTypeParameterList());
+        DeserializationContext local = context.childContext(property, proto.getTypeParameterList());
         property.setType(
                 local.getTypeDeserializer().type(proto.getReturnType()),
                 local.getTypeDeserializer().getOwnTypeParameters(),
@@ -122,7 +121,7 @@ public class MemberDeserializer {
                                                           visibility(Flags.VISIBILITY.get(setterFlags)), isNotDefault,
                                                           !isNotDefault,
                                                           property.getKind(), null, SourceElement.NO_SOURCE);
-                DeserializationContextWithTypes setterLocal = local.childContext(setter, Collections.<TypeParameter>emptyList());
+                DeserializationContext setterLocal = local.childContext(setter, Collections.<TypeParameter>emptyList());
                 List<ValueParameterDescriptor> valueParameters =
                         setterLocal.getMemberDeserializer().valueParameters(proto, AnnotatedCallableKind.PROPERTY_SETTER);
                 assert valueParameters.size() == 1 : "Property setter should have a single value parameter: " + setter;
@@ -161,7 +160,7 @@ public class MemberDeserializer {
         DeserializedSimpleFunctionDescriptor function = DeserializedSimpleFunctionDescriptor.create(
                 context.getContainingDeclaration(), proto, getComponents().getAnnotationLoader(), context.getNameResolver()
         );
-        DeserializationContextWithTypes local = context.childContext(function, proto.getTypeParameterList());
+        DeserializationContext local = context.childContext(function, proto.getTypeParameterList());
         function.initialize(
                 local.getTypeDeserializer().typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
                 getDispatchReceiverParameter(),
@@ -188,8 +187,9 @@ public class MemberDeserializer {
                 classDescriptor,
                 getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
                 // TODO: primary
-                true, SourceElement.NO_SOURCE);
-        DeserializationContextWithTypes local = context.childContext(descriptor, Collections.<TypeParameter>emptyList());
+                true, SourceElement.NO_SOURCE
+        );
+        DeserializationContext local = context.childContext(descriptor, Collections.<TypeParameter>emptyList());
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
                 local.getMemberDeserializer().valueParameters(proto, AnnotatedCallableKind.FUNCTION),

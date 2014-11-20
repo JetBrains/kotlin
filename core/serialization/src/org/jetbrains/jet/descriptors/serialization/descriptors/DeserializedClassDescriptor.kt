@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.StaticScopeForKotlinClass
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
-import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.descriptors.serialization
 import org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName
@@ -37,23 +36,25 @@ import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import java.util.*
+import org.jetbrains.jet.descriptors.serialization.NameResolver
 
 public class DeserializedClassDescriptor(
         outerContext: DeserializationContext,
-        private val classProto: ProtoBuf.Class
+        private val classProto: ProtoBuf.Class,
+        nameResolver: NameResolver
 ) : ClassDescriptor, AbstractClassDescriptor(
         outerContext.components.storageManager,
-        outerContext.nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName()
+        nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName()
 ) {
     private val modality = serialization.modality(Flags.MODALITY.get(classProto.getFlags()))
     private val visibility = serialization.visibility(Flags.VISIBILITY.get(classProto.getFlags()))
     private val kind = classKind(Flags.CLASS_KIND.get(classProto.getFlags()))
     private val isInner = Flags.INNER.get(classProto.getFlags())
 
-    private val classId = outerContext.nameResolver.getClassId(classProto.getFqName())
-
-    val context = outerContext.withTypes(this).childContext(this, classProto.getTypeParameterList())
+    val context = outerContext.childContext(this, classProto.getTypeParameterList(), nameResolver)
     private val components: DeserializationComponents get() = context.components
+
+    private val classId = nameResolver.getClassId(classProto.getFqName())
 
     private val staticScope = StaticScopeForKotlinClass(this)
     private val typeConstructor = DeserializedClassTypeConstructor()
@@ -61,23 +62,12 @@ public class DeserializedClassDescriptor(
     private val nestedClasses = NestedClassDescriptors()
     private val enumEntries = EnumEntryClassDescriptors()
 
-    private val containingDeclaration = components.storageManager.createLazyValue { computeContainingDeclaration() }
+    private val containingDeclaration = outerContext.containingDeclaration
     private val annotations = components.storageManager.createLazyValue { computeAnnotations() }
     private val primaryConstructor = components.storageManager.createNullableLazyValue { computePrimaryConstructor() }
     private val classObjectDescriptor = components.storageManager.createNullableLazyValue { computeClassObjectDescriptor() }
 
-    override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclaration()
-
-    private fun computeContainingDeclaration(): DeclarationDescriptor {
-        if (classId.isTopLevelClass()) {
-            val fragments = components.packageFragmentProvider.getPackageFragments(classId.getPackageFqName())
-            assert(fragments.size() == 1) { "there should be exactly one package: $fragments, class id is $classId" }
-            return fragments.single()
-        }
-        else {
-            return components.deserializeClass(classId.getOuterClassId()) ?: ErrorUtils.getErrorModule()
-        }
-    }
+    override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclaration
 
     override fun getTypeConstructor() = typeConstructor
 
@@ -132,7 +122,7 @@ public class DeserializedClassDescriptor(
                 throw IllegalStateException("Object should have a serialized class object: $classId")
             }
 
-            return DeserializedClassDescriptor(context, classObjectProto.getData())
+            return DeserializedClassDescriptor(context, classObjectProto.getData(), context.nameResolver)
         }
 
         return components.deserializeClass(classId.createNestedClassId(getClassObjectName(getName())))

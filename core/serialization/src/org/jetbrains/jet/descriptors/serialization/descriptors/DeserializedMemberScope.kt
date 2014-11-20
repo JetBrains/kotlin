@@ -18,19 +18,18 @@ package org.jetbrains.jet.descriptors.serialization.descriptors
 
 import org.jetbrains.jet.descriptors.serialization.Flags
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationContextWithTypes
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.utils.Printer
-
-import java.util.*
 import org.jetbrains.jet.utils.toReadOnlyList
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.CallableKind
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext
+import java.util.*
 
 public abstract class DeserializedMemberScope protected(
-        private val context: DeserializationContextWithTypes,
+        protected val context: DeserializationContext,
         membersList: Collection<ProtoBuf.Callable>)
 : JetScope {
 
