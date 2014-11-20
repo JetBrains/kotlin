@@ -21,7 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
-import org.jetbrains.jet.descriptors.serialization.descriptors.*;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
@@ -156,9 +159,9 @@ public class MemberDeserializer {
 
     @NotNull
     private CallableMemberDescriptor loadFunction(@NotNull Callable proto) {
-        int flags = proto.getFlags();
+        Annotations annotations = getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION);
         DeserializedSimpleFunctionDescriptor function = DeserializedSimpleFunctionDescriptor.create(
-                context.getContainingDeclaration(), proto, getComponents().getAnnotationLoader(), context.getNameResolver()
+                context.getContainingDeclaration(), proto, context.getNameResolver(), annotations
         );
         DeserializationContext local = context.childContext(function, proto.getTypeParameterList());
         function.initialize(
@@ -167,8 +170,8 @@ public class MemberDeserializer {
                 local.getTypeDeserializer().getOwnTypeParameters(),
                 local.getMemberDeserializer().valueParameters(proto, AnnotatedCallableKind.FUNCTION),
                 local.getTypeDeserializer().type(proto.getReturnType()),
-                modality(Flags.MODALITY.get(flags)),
-                visibility(Flags.VISIBILITY.get(flags))
+                modality(Flags.MODALITY.get(proto.getFlags())),
+                visibility(Flags.VISIBILITY.get(proto.getFlags()))
         );
         return function;
     }
@@ -201,23 +204,14 @@ public class MemberDeserializer {
 
     @NotNull
     private Annotations getAnnotations(@NotNull Callable proto, int flags, @NotNull AnnotatedCallableKind kind) {
-        return getAnnotations(
-                context.getContainingDeclaration(), proto, flags, kind, getComponents().getAnnotationLoader(), context.getNameResolver()
-        );
-    }
-
-    public static Annotations getAnnotations(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull Callable proto,
-            int flags,
-            @NotNull AnnotatedCallableKind kind,
-            @NotNull AnnotationLoader annotationLoader,
-            @NotNull NameResolver nameResolver
-    ) {
+        DeclarationDescriptor containingDeclaration = context.getContainingDeclaration();
         assert containingDeclaration instanceof ClassOrPackageFragmentDescriptor
                 : "Only members in classes or package fragments should be serialized: " + containingDeclaration;
-        return Flags.HAS_ANNOTATIONS.get(flags) ? annotationLoader.loadCallableAnnotations(
-                (ClassOrPackageFragmentDescriptor) containingDeclaration, proto, nameResolver, kind) : Annotations.EMPTY;
+        return Flags.HAS_ANNOTATIONS.get(flags) ?
+               getComponents().getAnnotationLoader().loadCallableAnnotations(
+                       (ClassOrPackageFragmentDescriptor) containingDeclaration, proto, context.getNameResolver(), kind
+               ) :
+               Annotations.EMPTY;
     }
 
     @NotNull
