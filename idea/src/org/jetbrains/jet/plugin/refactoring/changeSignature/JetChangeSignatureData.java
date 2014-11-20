@@ -62,14 +62,21 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
         this.descriptorsForSignatureChange = descriptorsForSignatureChange;
         final List<JetParameter> valueParameters = this.baseDeclaration instanceof JetFunction
                                                    ? ((JetFunction) this.baseDeclaration).getValueParameters()
-                                                   : ((JetClass) this.baseDeclaration).getPrimaryConstructorParameters();
+                                                   : this.baseDeclaration instanceof JetClass
+                                                     ? ((JetClass) this.baseDeclaration).getPrimaryConstructorParameters()
+                                                     : null;
         this.parameters = new ArrayList<JetParameterInfo>(
                 ContainerUtil.map(this.baseDescriptor.getValueParameters(), new Function<ValueParameterDescriptor, JetParameterInfo>() {
                     @Override
                     public JetParameterInfo fun(ValueParameterDescriptor param) {
-                        JetParameter parameter = valueParameters.get(param.getIndex());
-                        return new JetParameterInfo(param.getIndex(), param.getName().asString(), param.getType(),
-                                                    parameter.getDefaultValue(), parameter.getValOrVarNode());
+                        JetParameter parameter = valueParameters != null ? valueParameters.get(param.getIndex()) : null;
+                        return new JetParameterInfo(
+                                param.getIndex(),
+                                param.getName().asString(),
+                                param.getType(),
+                                parameter != null ? parameter.getDefaultValue() : null,
+                                parameter != null ? parameter.getValOrVarNode() : null
+                        );
                     }
                 }));
     }

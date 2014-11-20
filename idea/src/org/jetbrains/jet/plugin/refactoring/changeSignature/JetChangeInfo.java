@@ -22,14 +22,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiType;
-import com.intellij.refactoring.changeSignature.ChangeInfo;
-import com.intellij.refactoring.changeSignature.ChangeSignatureProcessor;
-import com.intellij.refactoring.changeSignature.JavaChangeInfo;
-import com.intellij.refactoring.changeSignature.ParameterInfoImpl;
+import com.intellij.refactoring.changeSignature.*;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Function;
 import com.intellij.util.VisibilityUtil;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
 import kotlin.KotlinPackage;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +42,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -338,5 +337,46 @@ public class JetChangeInfo implements ChangeInfo {
     public void primaryMethodUpdated() {
         primaryMethodUpdated = true;
         javaChangeInfo = null;
+    }
+
+    @NotNull
+    public static JetChangeInfo fromJavaChangeInfo(
+            @NotNull ChangeInfo javaChangeInfo,
+            @NotNull JetMethodDescriptor originalChangeSignatureDescriptor
+    ) {
+        PsiMethod method = (PsiMethod) javaChangeInfo.getMethod();
+
+        FunctionDescriptor functionDescriptor = ResolvePackage.getJavaMethodDescriptor(method);
+
+        final List<ValueParameterDescriptor> parameterDescriptors = functionDescriptor.getValueParameters();
+        List<JetParameterInfo> newParameters = KotlinPackage.map(
+                KotlinPackage.withIndices(javaChangeInfo.getNewParameters()),
+                new Function1<Pair<? extends Integer, ? extends ParameterInfo>, JetParameterInfo>() {
+                    @Override
+                    public JetParameterInfo invoke(Pair<? extends Integer, ? extends ParameterInfo> pair) {
+                        ParameterInfo info = pair.getSecond();
+                        JetParameterInfo jetParameterInfo = new JetParameterInfo(
+                                info.getOldIndex(),
+                                info.getName(),
+                                parameterDescriptors.get(pair.getFirst()).getType(),
+                                null,
+                                null
+                        );
+                        jetParameterInfo.setDefaultValueText(info.getDefaultValue());
+                        return jetParameterInfo;
+                    }
+                }
+        );
+
+        return new JetChangeInfo(
+                originalChangeSignatureDescriptor,
+                javaChangeInfo.getNewName(),
+                functionDescriptor.getReturnType(),
+                "",
+                functionDescriptor.getVisibility(),
+                newParameters,
+                method,
+                new JetGeneratedInfo()
+        );
     }
 }

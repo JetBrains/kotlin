@@ -28,6 +28,7 @@ import com.intellij.refactoring.changeSignature.ChangeSignatureProcessor;
 import com.intellij.refactoring.changeSignature.ParameterInfoImpl;
 import com.intellij.refactoring.changeSignature.ThrownExceptionInfo;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.VisibilityUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -326,6 +327,36 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         newParameter.setDefaultValueText("\"abc\"");
         changeInfo.addParameter(newParameter);
         doTest(changeInfo);
+    }
+
+    public void testJavaMethodKotlinUsages() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    String getNewName(@NotNull PsiMethod method) {
+                        return "bar";
+                    }
+
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        return ArrayUtil.remove(super.getNewParameters(method), 1);
+                    }
+                }
+        );
+    }
+
+    public void testJavaConstructorKotlinUsages() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        return ArrayUtil.remove(super.getNewParameters(method), 1);
+                    }
+                }
+        );
     }
 
     public void testFunctionRenameJavaUsages() throws Exception {
