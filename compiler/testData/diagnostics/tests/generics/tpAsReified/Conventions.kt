@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline fun <reified T> T.plus(p: T): T = this
 

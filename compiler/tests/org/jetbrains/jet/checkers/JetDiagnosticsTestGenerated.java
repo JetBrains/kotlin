@@ -5597,6 +5597,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("inlineReified.kt")
+            public void testInlineReified() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/inlineReified.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("invoke.kt")
             public void testInvoke() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/invoke.kt");

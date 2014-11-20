@@ -128,9 +128,19 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             hasInlinable |= checkInlinableParameter(receiverParameter, receiver, functionDescriptor, trace);
         }
 
+        hasInlinable |= containsReifiedTypeParameters(functionDescriptor);
+
         if (!hasInlinable) {
             trace.report(Errors.NOTHING_TO_INLINE.on(function, functionDescriptor));
         }
+    }
+
+    private static boolean containsReifiedTypeParameters(@NotNull FunctionDescriptor descriptor) {
+        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
+            if (typeParameterDescriptor.isReified()) return true;
+        }
+
+        return false;
     }
 
     public static boolean checkInlinableParameter(
