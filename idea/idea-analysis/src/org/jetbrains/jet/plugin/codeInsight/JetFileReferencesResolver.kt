@@ -71,27 +71,27 @@ object JetFileReferencesResolver {
             if (resolveShortNames || userType.getQualifier() != null) {
                 val referenceExpression = userType.getReferenceExpression()
                 if (referenceExpression != null) {
-                    resolveMap[referenceExpression] = resolveSession.resolveToElement(referenceExpression)
+                    resolveMap[referenceExpression] = resolveSession.analyze(referenceExpression)
                 }
             }
         }
 
         override fun visitQualifiedExpression(expression: JetQualifiedExpression) {
             val receiverExpression = expression.getReceiverExpression()
-            if (resolveQualifiers || resolveSession.resolveToElement(expression)[BindingContext.QUALIFIER, receiverExpression] == null) {
+            if (resolveQualifiers || resolveSession.analyze(expression)[BindingContext.QUALIFIER, receiverExpression] == null) {
                 receiverExpression.accept(this)
             }
 
             val referenceExpression = expression.getSelectorExpression()?.referenceExpression()
             if (referenceExpression != null) {
-                resolveMap[referenceExpression] = resolveSession.resolveToElement(referenceExpression)
+                resolveMap[referenceExpression] = resolveSession.analyze(referenceExpression)
             }
             expression.getSelectorExpression()?.accept(this)
         }
 
         override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
             if (resolveShortNames) {
-                resolveMap[expression] = resolveSession.resolveToElement(expression)
+                resolveMap[expression] = resolveSession.analyze(expression)
             }
         }
     }

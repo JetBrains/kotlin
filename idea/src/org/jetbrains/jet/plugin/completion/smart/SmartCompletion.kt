@@ -40,7 +40,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                       val visibilityFilter: (DeclarationDescriptor) -> Boolean,
                       val originalFile: JetFile,
                       val boldImmediateLookupElementFactory: LookupElementFactory) {
-    private val bindingContext = resolveSession.resolveToElement(expression)
+    private val bindingContext = resolveSession.analyze(expression)
     private val project = expression.getProject()
 
     public data class Result(val declarationFilter: ((DeclarationDescriptor) -> Collection<LookupElement>)?,
@@ -185,7 +185,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                     if (operationToken == JetTokens.EQ || operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ) {
                         val left = parent.getLeft()
                         if (left is JetReferenceExpression) {
-                            return resolveSession.resolveToElement(left)[BindingContext.REFERENCE_TARGET, left].toSet()
+                            return resolveSession.analyze(left)[BindingContext.REFERENCE_TARGET, left].toSet()
                         }
                     }
                 }

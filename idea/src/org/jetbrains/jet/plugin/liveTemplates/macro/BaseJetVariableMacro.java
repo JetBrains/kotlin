@@ -66,7 +66,7 @@ public abstract class BaseJetVariableMacro extends Macro {
 
         ResolutionFacade resolveSession = ResolvePackage.getLazyResolveSession((JetFile) psiFile);
 
-        BindingContext bindingContext = resolveSession.resolveToElement(contextExpression);
+        BindingContext bindingContext = resolveSession.analyze(contextExpression);
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
         if (scope == null) {
             return null;

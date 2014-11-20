@@ -51,7 +51,7 @@ object PackageDirectiveCompletion {
             val result = result.withPrefixMatcher(prefixMatcher)
 
             val resolveSession = ref.expression.getLazyResolveSession()
-            val bindingContext = resolveSession.resolveToElement(ref.expression)
+            val bindingContext = resolveSession.analyze(ref.expression)
 
             val variants = ReferenceVariantsHelper(bindingContext, { true }).getPackageReferenceVariants(ref.expression, prefixMatcher.asNameFilter())
             for (variant in variants) {

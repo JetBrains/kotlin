@@ -28,6 +28,6 @@ public final class AnalyzerFacadeWithCache {
 
     @NotNull
     public static BindingContext getContextForElement(@NotNull JetElement jetElement) {
-        return ResolvePackage.resolveToElement(jetElement);
+        return ResolvePackage.analyze(jetElement);
     }
 }

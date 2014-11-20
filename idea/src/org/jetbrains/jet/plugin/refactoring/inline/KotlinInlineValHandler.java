@@ -304,7 +304,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             @NotNull ResolutionFacade resolveSessionForBodies
     ) {
         JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
-        BindingContext context = resolveSessionForBodies.resolveToElement(functionLiteralExpression);
+        BindingContext context = resolveSessionForBodies.analyze(functionLiteralExpression);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             DiagnosticFactory<?> factory = diagnostic.getFactory();
             PsiElement element = diagnostic.getPsiElement();
@@ -324,7 +324,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
         ResolutionFacade resolveSessionForBodies = ResolvePackage.getLazyResolveSession(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
-            BindingContext context = resolveSessionForBodies.resolveToElement(inlinedExpression);
+            BindingContext context = resolveSessionForBodies.analyze(inlinedExpression);
             Call call = CallUtilPackage.getCallWithAssert(inlinedExpression, context);
 
             JetElement callElement = call.getCallElement();

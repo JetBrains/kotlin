@@ -159,7 +159,7 @@ public object ShortenReferences {
         protected val elementsToShorten: MutableSet<T> = LinkedHashSet()
 
         protected fun bindingContext(element: JetElement): BindingContext
-                = resolveMap[element] ?: resolveSession.resolveToElement(element)
+                = resolveMap[element] ?: resolveSession.analyze(element)
 
         protected abstract fun getShortenedElement(element: T): JetElement?
 
@@ -193,7 +193,7 @@ public object ShortenReferences {
             if (target == null) return false
 
             val typeReference = PsiTreeUtil.getParentOfType(userType, javaClass<JetTypeReference>())!!
-            val scope = resolveSession.resolveToElement(typeReference)[BindingContext.TYPE_RESOLUTION_SCOPE, typeReference]!!
+            val scope = resolveSession.analyze(typeReference)[BindingContext.TYPE_RESOLUTION_SCOPE, typeReference]!!
             val name = target.getName()
             val targetByName = scope.getClassifier(name)
             if (targetByName == null) {

@@ -307,7 +307,7 @@ public class JetPositionManager implements PositionManager {
 
         GenerationState state = new GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION,
                                                     resolveSession.getModuleDescriptorForElement(element),
-                                                    resolveSession.resolveToElement(element),
+                                                    resolveSession.analyze(element),
                                                     Collections.singletonList(file)
         );
         state.beforeCompile();

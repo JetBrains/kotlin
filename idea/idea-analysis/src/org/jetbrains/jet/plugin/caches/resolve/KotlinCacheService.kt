@@ -49,7 +49,7 @@ public class KotlinCacheService(val project: Project) {
     public fun getResolutionFacade(elements: List<JetElement>): ResolutionFacade {
         val cache = getCacheToAnalyzeFiles(elements.map { it.getContainingJetFile() })
         return object : ResolutionFacade {
-            override fun resolveToElement(element: JetElement): BindingContext {
+            override fun analyze(element: JetElement): BindingContext {
                 return cache.getLazyResolveSession(element).resolveToElement(element)
             }
 

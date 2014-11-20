@@ -24,7 +24,7 @@ import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
-import org.jetbrains.jet.plugin.caches.resolve.resolveToElement
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 fun specifyTypeExplicitly(declaration: JetNamedFunction, typeText: String) {
     specifyTypeExplicitly(declaration, JetPsiFactory(declaration).createType(typeText))
@@ -44,12 +44,12 @@ fun specifyTypeExplicitly(declaration: JetNamedFunction, typeReference: JetTypeR
 }
 
 fun expressionType(expression: JetExpression): JetType? {
-    val bindingContext = expression.resolveToElement()
+    val bindingContext = expression.analyze()
     return bindingContext.get(BindingContext.EXPRESSION_TYPE, expression)
 }
 
 fun functionReturnType(function: JetNamedFunction): JetType? {
-    val bindingContext = function.resolveToElement()
+    val bindingContext = function.analyze()
     val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function)
     if (descriptor == null) return null
     return (descriptor as FunctionDescriptor).getReturnType()

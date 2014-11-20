@@ -32,8 +32,8 @@ public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
     return getLazyResolveSession().resolveToDescriptor(this)
 }
 
-public fun JetElement.resolveToElement(): BindingContext {
-    return getLazyResolveSession().resolveToElement(this)
+public fun JetElement.analyze(): BindingContext {
+    return getLazyResolveSession().analyze(this)
 }
 
 public fun JetElement.getModuleDescriptorForElement(): ModuleDescriptor {

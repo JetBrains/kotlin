@@ -125,7 +125,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         }
 
         ResolutionFacade resolveSession = ResolvePackage.getLazyResolveSession(expression);
-        final BindingContext bindingContext = resolveSession.resolveToElement(expression);
+        final BindingContext bindingContext = resolveSession.analyze(expression);
         ModuleDescriptor moduleDescriptorForElement = resolveSession.getModuleDescriptorForElement(expression);
         final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);

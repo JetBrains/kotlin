@@ -120,7 +120,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
         val searchScope = file.getResolveScope()
 
-        val bindingContext = resolveSession.resolveToElement(element)
+        val bindingContext = resolveSession.analyze(element)
 
         val diagnostics = bindingContext.getDiagnostics().forElement(element)
         if (!diagnostics.any { it.getFactory() in ERRORS }) return listOf()

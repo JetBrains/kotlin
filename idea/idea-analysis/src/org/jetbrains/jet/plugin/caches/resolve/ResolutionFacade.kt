@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 
 public trait ResolutionFacade {
 
-    public fun resolveToElement(element: JetElement): BindingContext
+    public fun analyze(element: JetElement): BindingContext
 
     public fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor
 

@@ -65,7 +65,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.util.text.StringUtil
 import javax.swing.Icon
 import org.jetbrains.jet.plugin.util.string.collapseSpaces
-import org.jetbrains.jet.plugin.caches.resolve.resolveToElement
+import org.jetbrains.jet.plugin.caches.resolve.analyze
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -273,7 +273,7 @@ public fun JetElement.getContextForContainingDeclarationBody(): BindingContext? 
         }
         else -> null
     }
-    return bodyElement?.let { it.resolveToElement() }
+    return bodyElement?.let { it.analyze() }
 }
 
 public fun chooseContainerElement<T>(

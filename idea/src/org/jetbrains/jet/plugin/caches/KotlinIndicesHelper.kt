@@ -73,7 +73,7 @@ public class KotlinIndicesHelper(
     }
 
     public fun getTopLevelCallablesByName(name: String, context: JetExpression /*TODO: to be dropped*/): Collection<CallableDescriptor> {
-        val jetScope = resolveSession.resolveToElement(context).get(BindingContext.RESOLUTION_SCOPE, context) ?: return listOf()
+        val jetScope = resolveSession.analyze(context).get(BindingContext.RESOLUTION_SCOPE, context) ?: return listOf()
 
         val result = HashSet<CallableDescriptor>()
 
@@ -127,7 +127,7 @@ public class KotlinIndicesHelper(
         val sourceNames = JetTopLevelFunctionsFqnNameIndex.getInstance().getAllKeys(project).stream() + JetTopLevelPropertiesFqnNameIndex.getInstance().getAllKeys(project).stream()
         val allFqNames = sourceNames.map { FqName(it) } + JetFromJavaDescriptorHelper.getTopLevelCallableFqNames(project, scope, false).stream()
 
-        val jetScope = resolveSession.resolveToElement(context).get(BindingContext.RESOLUTION_SCOPE, context) ?: return listOf()
+        val jetScope = resolveSession.analyze(context).get(BindingContext.RESOLUTION_SCOPE, context) ?: return listOf()
 
         return allFqNames.filter { nameFilter(it.shortName().asString()) }
                 .toSet()
@@ -135,7 +135,7 @@ public class KotlinIndicesHelper(
     }
 
     public fun getCallableExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression): Collection<CallableDescriptor> {
-        val bindingContext = resolveSession.resolveToElement(expression)
+        val bindingContext = resolveSession.analyze(expression)
         val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
 
         val functionsIndex = JetTopLevelFunctionsFqnNameIndex.getInstance()

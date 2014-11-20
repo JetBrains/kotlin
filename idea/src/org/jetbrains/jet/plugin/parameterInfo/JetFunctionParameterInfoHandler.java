@@ -239,7 +239,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         StringBuilder builder = new StringBuilder();
 
         PsiElement owner = context.getParameterOwner();
-        BindingContext bindingContext = resolveSession.resolveToElement((JetElement) owner);
+        BindingContext bindingContext = resolveSession.analyze((JetElement) owner);
 
         for (int i = 0; i < valueParameters.size(); ++i) {
             if (i != 0) {
@@ -383,7 +383,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         }
 
         ResolutionFacade resolveSession = ResolvePackage.getLazyResolveSession(callNameExpression.getContainingJetFile());
-        BindingContext bindingContext = resolveSession.resolveToElement(callNameExpression);
+        BindingContext bindingContext = resolveSession.analyze(callNameExpression);
 
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
         final DeclarationDescriptor placeDescriptor;
