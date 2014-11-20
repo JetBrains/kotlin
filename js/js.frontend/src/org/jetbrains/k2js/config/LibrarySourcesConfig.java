@@ -103,7 +103,7 @@ public class LibrarySourcesConfig extends Config {
                     actualModuleName = LibraryUtils.getKotlinJsModuleName(filePath);
                 }
                 if (actualModuleName == null) {
-                    LOG.error("Could not find Kotlin-JS-Module-Name for " + filePath);
+                    LOG.error("Could not find " + LibraryUtils.KOTLIN_JS_MODULE_NAME + " for " + filePath);
                 }
                 JetFileCollector jetFileCollector = new JetFileCollector(jetFiles, actualModuleName, psiManager);
                 VfsUtilCore.visitChildrenRecursively(file, jetFileCollector);
