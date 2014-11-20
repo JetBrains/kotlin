@@ -52,9 +52,3 @@ public fun JetElement.analyzeFully(): BindingContext {
 public fun JetElement.analyzeFullyAndGetResult(vararg extraFiles: JetFile): AnalysisResult {
     return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this) + extraFiles.toList())
 }
-
-public fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalysisResult {
-    if (elements.isEmpty()) return AnalysisResult.EMPTY
-    val element = elements.first()
-    return KotlinCacheService.getInstance(element.getProject()).getAnalysisResults(elements)
-}

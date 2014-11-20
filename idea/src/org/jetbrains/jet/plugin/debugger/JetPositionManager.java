@@ -59,6 +59,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.plugin.caches.resolve.IdeaModuleInfo;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.util.DebuggerUtils;
@@ -325,7 +326,7 @@ public class JetPositionManager implements PositionManager {
                     GlobalSearchScope packageFacadeScope = key.second.contentScope();
                     Collection<JetFile> packageFiles = findFilesWithExactPackage(key.first, packageFacadeScope, project);
 
-                    AnalysisResult analysisResult = ResolvePackage.getAnalysisResultsForElements(packageFiles);
+                    AnalysisResult analysisResult = KotlinCacheService.OBJECT$.getInstance(project).getAnalysisResults(packageFiles);
                     analysisResult.throwIfError();
 
                     GenerationState state = new GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION,

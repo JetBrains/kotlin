@@ -173,6 +173,8 @@ public class KotlinCacheService(val project: Project) {
     }
 
     public fun getAnalysisResults(elements: Collection<JetElement>): AnalysisResult {
+        if (elements.isEmpty()) return AnalysisResult.EMPTY
+
         val files = elements.map { it.getContainingJetFile() }.toSet()
         assertAreInSameModule(files)
 
