@@ -201,46 +201,387 @@ LazyJavaPackageFragmentProvider@98 {
 }
 
 LazyJavaPackageFragment@100['<root>'] {
-    classes('f1': Name@120) = null // through LazyPackageFragmentScopeForJavaPackage@121
-    classes('f2': Name@122) = null // through LazyPackageFragmentScopeForJavaPackage@121
-    classes('foo2': Name@123) = null // through LazyPackageFragmentScopeForJavaPackage@121
-    classes('fooPackageLocal': Name@124) = null // through LazyPackageFragmentScopeForJavaPackage@121
-    classes('privateFunction': Name@125) = null // through LazyPackageFragmentScopeForJavaPackage@121
-    classes('privateFunctionInner': Name@126) = null // through LazyPackageFragmentScopeForJavaPackage@121
-    classes('privateProperty': Name@127) = null // through LazyPackageFragmentScopeForJavaPackage@121
-    classes('privatePropertyInner': Name@128) = null // through LazyPackageFragmentScopeForJavaPackage@121
-    deserializedPackageScope = Empty@129 // through LazyPackageFragmentScopeForJavaPackage@121
-    functions('f1': Name@120) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@121
-    functions('f2': Name@122) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@121
-    functions('foo2': Name@123) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@121
-    functions('fooPackageLocal': Name@124) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@121
-    functions('privateFunction': Name@125) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@121
-    functions('privateFunctionInner': Name@126) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@121
-    memberIndex = computeMemberIndex$1@131 // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('foo2': Name@120) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('fooPackageLocal': Name@122) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('privateFunction': Name@123) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('privateFunctionInner': Name@124) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('privateProperty': Name@125) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    classes('privatePropertyInner': Name@126) = null // through LazyPackageFragmentScopeForJavaPackage@121
+    deserializedPackageScope = Empty@127 // through LazyPackageFragmentScopeForJavaPackage@121
+    functions('foo2': Name@120) = EmptyList@128[empty] // through LazyPackageFragmentScopeForJavaPackage@121
+    functions('fooPackageLocal': Name@122) = EmptyList@128[empty] // through LazyPackageFragmentScopeForJavaPackage@121
+    functions('privateFunction': Name@123) = EmptyList@128[empty] // through LazyPackageFragmentScopeForJavaPackage@121
+    functions('privateFunctionInner': Name@124) = EmptyList@128[empty] // through LazyPackageFragmentScopeForJavaPackage@121
+    memberIndex = computeMemberIndex$1@129 // through LazyPackageFragmentScopeForJavaPackage@121
 }
 
 LazyJavaPackageFragment@105['java'] {
-    classes('lang': Name@132) = null // through LazyPackageFragmentScopeForJavaPackage@133
-    deserializedPackageScope = Empty@129 // through LazyPackageFragmentScopeForJavaPackage@133
-    functions('lang': Name@134) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@133
-    memberIndex = computeMemberIndex$1@135 // through LazyPackageFragmentScopeForJavaPackage@133
+    classes('lang': Name@130) = null // through LazyPackageFragmentScopeForJavaPackage@131
+    deserializedPackageScope = Empty@127 // through LazyPackageFragmentScopeForJavaPackage@131
+    functions('lang': Name@132) = EmptyList@128[empty] // through LazyPackageFragmentScopeForJavaPackage@131
+    memberIndex = computeMemberIndex$1@133 // through LazyPackageFragmentScopeForJavaPackage@131
 }
 
 LazyJavaPackageFragment@107['lang'] {
-    classes('f1': Name@120) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('f2': Name@122) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('foo2': Name@123) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('fooPackageLocal': Name@124) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('privateFunction': Name@125) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('privateFunctionInner': Name@126) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('privateProperty': Name@127) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    classes('privatePropertyInner': Name@128) = null // through LazyPackageFragmentScopeForJavaPackage@136
-    deserializedPackageScope = Empty@129 // through LazyPackageFragmentScopeForJavaPackage@136
-    functions('f1': Name@120) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@136
-    functions('f2': Name@122) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@136
-    functions('foo2': Name@123) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@136
-    functions('fooPackageLocal': Name@124) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@136
-    functions('privateFunction': Name@125) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@136
-    functions('privateFunctionInner': Name@126) = EmptyList@130[empty] // through LazyPackageFragmentScopeForJavaPackage@136
-    memberIndex = computeMemberIndex$1@137 // through LazyPackageFragmentScopeForJavaPackage@136
+    classes('foo2': Name@120) = null // through LazyPackageFragmentScopeForJavaPackage@134
+    classes('fooPackageLocal': Name@122) = null // through LazyPackageFragmentScopeForJavaPackage@134
+    classes('privateFunction': Name@123) = null // through LazyPackageFragmentScopeForJavaPackage@134
+    classes('privateFunctionInner': Name@124) = null // through LazyPackageFragmentScopeForJavaPackage@134
+    classes('privateProperty': Name@125) = null // through LazyPackageFragmentScopeForJavaPackage@134
+    classes('privatePropertyInner': Name@126) = null // through LazyPackageFragmentScopeForJavaPackage@134
+    deserializedPackageScope = Empty@127 // through LazyPackageFragmentScopeForJavaPackage@134
+    functions('foo2': Name@120) = EmptyList@128[empty] // through LazyPackageFragmentScopeForJavaPackage@134
+    functions('fooPackageLocal': Name@122) = EmptyList@128[empty] // through LazyPackageFragmentScopeForJavaPackage@134
+    functions('privateFunction': Name@123) = EmptyList@128[empty] // through LazyPackageFragmentScopeForJavaPackage@134
+    functions('privateFunctionInner': Name@124) = EmptyList@128[empty] // through LazyPackageFragmentScopeForJavaPackage@134
+    memberIndex = computeMemberIndex$1@135 // through LazyPackageFragmentScopeForJavaPackage@134
+}
+
+ResolutionTaskHolder@136 {
+    <name not found> = ArrayList@137[1] { ResolutionCandidate@138 }
+    <name not found> = ArrayList@139[1] { ResolutionCandidate@138 }
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+}
+
+ResolutionTaskHolder@140 {
+    <name not found> = ArrayList@141[1] { ResolutionCandidate@142 }
+    <name not found> = ArrayList@143[1] { ResolutionCandidate@142 }
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+}
+
+ResolutionTaskHolder@144 {
+    <name not found> = ArrayList@145[1] { ResolutionCandidate@146 }
+    <name not found> = ArrayList@147[1] { ResolutionCandidate@146 }
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+}
+
+ResolutionTaskHolder@148 {
+    <name not found> = ArrayList@149[1] { ResolutionCandidate@150 }
+    <name not found> = ArrayList@151[1] { ResolutionCandidate@150 }
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+}
+
+ResolutionTaskHolder@152 {
+    <name not found> = ArrayList@153[1] { ResolutionCandidate@154 }
+    <name not found> = ArrayList@155[1] { ResolutionCandidate@154 }
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+}
+
+ResolutionTaskHolder@156 {
+    <name not found> = ArrayList@157[1] { ResolutionCandidate@158 }
+    <name not found> = ArrayList@159[1] { ResolutionCandidate@158 }
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+}
+
+ResolutionTaskHolder@160 {
+    <name not found> = ArrayList@161[1] { ResolutionCandidate@162 }
+    <name not found> = ArrayList@163[1] { ResolutionCandidate@162 }
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+}
+
+ResolutionTaskHolder@164 {
+    <name not found> = ArrayList@165[1] { ResolutionCandidate@166 }
+    <name not found> = ArrayList@167[1] { ResolutionCandidate@166 }
+    <name not found> = EmptyList@128[empty]
+    <name not found> = EmptyList@128[empty]
+}
+
+ResolutionTaskHolder@168 {
+    <name not found> = ArrayList@169[1] { ResolutionCandidate@170 }
+    <name not found> = ArrayList@171[1] { ResolutionCandidate@170 }
+}
+
+ResolutionTaskHolder@172 {
+    <name not found> = ArrayList@173[1] { ResolutionCandidate@174 }
+    <name not found> = ArrayList@175[1] { ResolutionCandidate@174 }
+}
+
+ResolutionTaskHolder@176 {
+    <name not found> = ArrayList@177[1] { ResolutionCandidate@178 }
+    <name not found> = ArrayList@179[1] { ResolutionCandidate@178 }
+}
+
+ResolutionTaskHolder@180 {
+    <name not found> = ArrayList@181[1] { ResolutionCandidate@182 }
+    <name not found> = ArrayList@183[1] { ResolutionCandidate@182 }
+}
+
+ResolutionTaskHolder@184 {
+    <name not found> = ArrayList@185[1] { ResolutionCandidate@186 }
+    <name not found> = ArrayList@187[1] { ResolutionCandidate@186 }
+}
+
+ResolutionTaskHolder@188 {
+    <name not found> = ArrayList@189[1] { ResolutionCandidate@190 }
+    <name not found> = ArrayList@191[1] { ResolutionCandidate@190 }
+}
+
+ResolutionTaskHolder@192 {
+    <name not found> = ArrayList@193[1] { ResolutionCandidate@194 }
+    <name not found> = ArrayList@195[1] { ResolutionCandidate@194 }
+}
+
+ResolutionTaskHolder@196 {
+    <name not found> = ArrayList@197[1] { ResolutionCandidate@198 }
+    <name not found> = ArrayList@199[1] { ResolutionCandidate@198 }
+}
+
+ResolutionTaskHolder@200 {
+    <name not found> = ArrayList@201[1] { ResolutionCandidate@202 }
+    <name not found> = ArrayList@203[1] { ResolutionCandidate@202 }
+}
+
+ResolutionTaskHolder@204 {
+    <name not found> = ArrayList@205[1] { ResolutionCandidate@206 }
+    <name not found> = ArrayList@207[1] { ResolutionCandidate@206 }
+}
+
+ResolutionTaskHolder@208 {
+    <name not found> = ArrayList@209[1] { ResolutionCandidate@210 }
+    <name not found> = ArrayList@211[1] { ResolutionCandidate@210 }
+}
+
+ResolutionTaskHolder@212 {
+    <name not found> = ArrayList@213[1] { ResolutionCandidate@214 }
+    <name not found> = ArrayList@215[1] { ResolutionCandidate@214 }
+}
+
+ResolutionTaskHolder@216 {
+    <name not found> = ArrayList@217[1] { ResolutionCandidate@218 }
+    <name not found> = ArrayList@219[1] { ResolutionCandidate@218 }
+}
+
+ResolutionTaskHolder@220 {
+    <name not found> = ArrayList@221[1] { ResolutionCandidate@222 }
+    <name not found> = ArrayList@223[1] { ResolutionCandidate@222 }
+}
+
+ResolutionTaskHolder@224 {
+    <name not found> = ArrayList@225[1] { ResolutionCandidate@226 }
+    <name not found> = ArrayList@227[1] { ResolutionCandidate@226 }
+}
+
+ResolutionTaskHolder@228 {
+    <name not found> = ArrayList@229[1] { ResolutionCandidate@230 }
+    <name not found> = ArrayList@231[1] { ResolutionCandidate@230 }
+}
+
+ResolutionTaskHolder@232 {
+    <name not found> = ArrayList@233[1] { ResolutionCandidate@234 }
+    <name not found> = ArrayList@235[1] { ResolutionCandidate@234 }
+}
+
+ResolutionTaskHolder@236 {
+    <name not found> = ArrayList@237[1] { ResolutionCandidate@238 }
+    <name not found> = ArrayList@239[1] { ResolutionCandidate@238 }
+}
+
+ResolutionTaskHolder@240 {
+    <name not found> = ArrayList@241[1] { ResolutionCandidate@242 }
+    <name not found> = ArrayList@243[1] { ResolutionCandidate@242 }
+}
+
+ResolutionTaskHolder@244 {
+    <name not found> = ArrayList@245[1] { ResolutionCandidate@246 }
+    <name not found> = ArrayList@247[1] { ResolutionCandidate@246 }
+}
+
+ResolutionTaskHolder@248 {
+    <name not found> = ArrayList@249[1] { ResolutionCandidate@250 }
+    <name not found> = ArrayList@251[1] { ResolutionCandidate@250 }
+}
+
+ResolutionTaskHolder@252 {
+    <name not found> = ArrayList@253[1] { ResolutionCandidate@254 }
+    <name not found> = ArrayList@255[1] { ResolutionCandidate@254 }
+}
+
+ResolutionTaskHolder@256 {
+    <name not found> = ArrayList@257[1] { ResolutionCandidate@258 }
+    <name not found> = ArrayList@259[1] { ResolutionCandidate@258 }
+}
+
+ResolutionTaskHolder@260 {
+    <name not found> = ArrayList@261[1] { ResolutionCandidate@262 }
+    <name not found> = ArrayList@263[1] { ResolutionCandidate@262 }
+}
+
+ResolutionTaskHolder@264 {
+    <name not found> = ArrayList@265[1] { ResolutionCandidate@266 }
+    <name not found> = ArrayList@267[1] { ResolutionCandidate@266 }
+}
+
+ResolutionTaskHolder@268 {
+    <name not found> = ArrayList@269[1] { ResolutionCandidate@270 }
+    <name not found> = ArrayList@271[1] { ResolutionCandidate@270 }
+}
+
+ResolutionTaskHolder@272 {
+    <name not found> = ArrayList@273[1] { ResolutionCandidate@274 }
+    <name not found> = ArrayList@275[1] { ResolutionCandidate@274 }
+}
+
+ResolutionTaskHolder@276 {
+    <name not found> = ArrayList@277[1] { ResolutionCandidate@278 }
+    <name not found> = ArrayList@279[1] { ResolutionCandidate@278 }
+}
+
+ResolutionTaskHolder@280 {
+    <name not found> = ArrayList@281[1] { ResolutionCandidate@282 }
+    <name not found> = ArrayList@283[1] { ResolutionCandidate@282 }
+}
+
+ResolutionTaskHolder@284 {
+    <name not found> = ArrayList@285[1] { ResolutionCandidate@286 }
+    <name not found> = ArrayList@287[1] { ResolutionCandidate@286 }
+}
+
+ResolutionTaskHolder@288 {
+    <name not found> = ArrayList@289[1] { ResolutionCandidate@290 }
+    <name not found> = ArrayList@291[1] { ResolutionCandidate@290 }
+}
+
+ResolutionTaskHolder@292 {
+    <name not found> = ArrayList@293[1] { ResolutionCandidate@294 }
+    <name not found> = ArrayList@295[1] { ResolutionCandidate@294 }
+}
+
+ResolutionTaskHolder@296 {
+    <name not found> = ArrayList@297[1] { ResolutionCandidate@298 }
+    <name not found> = ArrayList@299[1] { ResolutionCandidate@298 }
+}
+
+ResolutionTaskHolder@300 {
+    <name not found> = ArrayList@301[1] { ResolutionCandidate@302 }
+    <name not found> = ArrayList@303[1] { ResolutionCandidate@302 }
+}
+
+ResolutionTaskHolder@304 {
+    <name not found> = ArrayList@305[1] { ResolutionCandidate@306 }
+    <name not found> = ArrayList@307[1] { ResolutionCandidate@306 }
+}
+
+ResolutionTaskHolder@308 {
+    <name not found> = ArrayList@309[1] { ResolutionCandidate@310 }
+    <name not found> = ArrayList@311[1] { ResolutionCandidate@310 }
+}
+
+ResolutionTaskHolder@312 {
+    <name not found> = ArrayList@313[1] { ResolutionCandidate@314 }
+    <name not found> = ArrayList@315[1] { ResolutionCandidate@314 }
+}
+
+ResolutionTaskHolder@316 {
+    <name not found> = ArrayList@317[1] { ResolutionCandidate@318 }
+    <name not found> = ArrayList@319[1] { ResolutionCandidate@318 }
+}
+
+ResolutionTaskHolder@320 {
+    <name not found> = ArrayList@321[1] { ResolutionCandidate@322 }
+    <name not found> = ArrayList@323[1] { ResolutionCandidate@322 }
+}
+
+ResolutionTaskHolder@324 {
+    <name not found> = ArrayList@325[1] { ResolutionCandidate@326 }
+    <name not found> = ArrayList@327[1] { ResolutionCandidate@326 }
+}
+
+ResolutionTaskHolder@328 {
+    <name not found> = ArrayList@329[1] { ResolutionCandidate@330 }
+    <name not found> = ArrayList@331[1] { ResolutionCandidate@330 }
+}
+
+ResolutionTaskHolder@332 {
+    <name not found> = ArrayList@333[1] { ResolutionCandidate@334 }
+    <name not found> = ArrayList@335[1] { ResolutionCandidate@334 }
+}
+
+ResolutionTaskHolder@336 {
+    <name not found> = ArrayList@337[1] { ResolutionCandidate@338 }
+    <name not found> = ArrayList@339[1] { ResolutionCandidate@338 }
+}
+
+ResolutionTaskHolder@340 {
+    <name not found> = ArrayList@341[1] { ResolutionCandidate@342 }
+    <name not found> = ArrayList@343[1] { ResolutionCandidate@342 }
+}
+
+ResolutionTaskHolder@344 {
+    <name not found> = ArrayList@345[1] { ResolutionCandidate@346 }
+    <name not found> = ArrayList@347[1] { ResolutionCandidate@346 }
+}
+
+ResolutionTaskHolder@348 {
+    <name not found> = ArrayList@349[1] { ResolutionCandidate@350 }
+    <name not found> = ArrayList@351[1] { ResolutionCandidate@350 }
+}
+
+ResolutionTaskHolder@352 {
+    <name not found> = ArrayList@353[1] { ResolutionCandidate@354 }
+    <name not found> = ArrayList@355[1] { ResolutionCandidate@354 }
+}
+
+ResolutionTaskHolder@356 {
+    <name not found> = ArrayList@357[1] { ResolutionCandidate@358 }
+    <name not found> = ArrayList@359[1] { ResolutionCandidate@358 }
+}
+
+ResolutionTaskHolder@360 {
+    <name not found> = ArrayList@361[1] { ResolutionCandidate@362 }
+    <name not found> = ArrayList@363[1] { ResolutionCandidate@362 }
+}
+
+ResolutionTaskHolder@364 {
+    <name not found> = ArrayList@365[1] { ResolutionCandidate@366 }
+    <name not found> = ArrayList@367[1] { ResolutionCandidate@366 }
+}
+
+ResolutionTaskHolder@368 {
+    <name not found> = ArrayList@369[1] { ResolutionCandidate@370 }
+    <name not found> = ArrayList@371[1] { ResolutionCandidate@370 }
+}
+
+ResolutionTaskHolder@372 {
+    <name not found> = ArrayList@373[1] { ResolutionCandidate@374 }
+    <name not found> = ArrayList@375[1] { ResolutionCandidate@374 }
+}
+
+ResolutionTaskHolder@376 {
+    <name not found> = ArrayList@377[1] { ResolutionCandidate@378 }
+    <name not found> = ArrayList@379[1] { ResolutionCandidate@378 }
+}
+
+ResolutionTaskHolder@380 {
+    <name not found> = ArrayList@381[1] { ResolutionCandidate@382 }
+    <name not found> = ArrayList@383[1] { ResolutionCandidate@382 }
+}
+
+ResolutionTaskHolder@384 {
+    <name not found> = ArrayList@385[1] { ResolutionCandidate@386 }
+    <name not found> = ArrayList@387[1] { ResolutionCandidate@386 }
+}
+
+ResolutionTaskHolder@388 {
+    <name not found> = ArrayList@389[1] { ResolutionCandidate@390 }
+    <name not found> = ArrayList@391[1] { ResolutionCandidate@390 }
+}
+
+ResolutionTaskHolder@392 {
+    <name not found> = ArrayList@393[1] { ResolutionCandidate@394 }
+    <name not found> = ArrayList@395[1] { ResolutionCandidate@394 }
 }

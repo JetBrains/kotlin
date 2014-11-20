@@ -1,0 +1,9 @@
+fun foo(p1: Int, p2: Int) { }
+
+fun bar(pp: Int, a: Int) {
+    foo(pp, <caret>)
+}
+
+// COMPLETION_TYPE: SMART
+// ELEMENT: pp
+// CHAR: ','

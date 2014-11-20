@@ -28,8 +28,15 @@ import com.intellij.codeInsight.completion.PrefixMatcher
 import java.util.ArrayList
 import com.intellij.codeInsight.completion.CompletionResultSet
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import com.intellij.openapi.util.TextRange
+import com.intellij.codeInsight.completion.CompletionParameters
 
-class LookupElementsCollector(private val prefixMatcher: PrefixMatcher, private val resolveSession: ResolveSessionForBodies) {
+class LookupElementsCollector(
+        private val prefixMatcher: PrefixMatcher,
+        private val completionParameters: CompletionParameters,
+        private val resolveSession: ResolveSessionForBodies,
+        private val boldImmediateLookupElementFactory: LookupElementFactory
+) {
     private val elements = ArrayList<LookupElement>()
 
     public fun flushToResultSet(resultSet: CompletionResultSet) {
@@ -53,7 +60,7 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher, private 
 
     public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean) {
         run {
-            val lookupElement = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
+            val lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolveSession, descriptor)
             if (suppressAutoInsertion) {
                 addElementWithAutoInsertionSuppressed(lookupElement)
             }
@@ -70,15 +77,19 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher, private 
                 if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
                     val parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size()
                     if (parameterCount > 1) {
-                        val lookupElement = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
+                        val lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolveSession, descriptor)
                         addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
                             override fun renderElement(presentation: LookupElementPresentation) {
                                 super.renderElement(presentation)
-                                presentation.setItemText(getLookupString() + " " + buildLambdaPresentation(parameterType))
+
+                                val tails = presentation.getTailFragments()
+                                presentation.clearTail()
+                                presentation.appendTailText(" " + buildLambdaPresentation(parameterType), false)
+                                tails.drop(1)/*drop old function signature*/.forEach { presentation.appendTailText(it.text, it.isGrayed()) }
                             }
 
                             override fun handleInsert(context: InsertionContext) {
-                                JetFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, true)).handleInsert(context, this)
+                                KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, true)).handleInsert(context, this)
                             }
                         })
                     }
@@ -89,8 +100,28 @@ class LookupElementsCollector(private val prefixMatcher: PrefixMatcher, private 
 
     public fun addElement(element: LookupElement) {
         if (prefixMatcher.prefixMatches(element)) {
-            elements.add(element)
+            elements.add(object: LookupElementDecorator<LookupElement>(element) {
+                override fun handleInsert(context: InsertionContext) {
+                    getDelegate().handleInsert(context)
+
+                    if (context.shouldAddCompletionChar() && !isJustTyping(context, this)) {
+                        val handler = when (context.getCompletionChar()) {
+                            ',' -> WithTailInsertHandler.commaTail()
+                            '=' -> WithTailInsertHandler.eqTail()
+                            else -> null
+                        }
+                        handler?.postHandleInsert(context, getDelegate())
+                    }
+                }
+            })
         }
+    }
+
+    // used to avoid insertion of spaces before/after ',', '=' on just typing
+    private fun isJustTyping(context: InsertionContext, element: LookupElement): Boolean {
+        if (!completionParameters.isAutoPopup()) return false
+        val insertedText = context.getDocument().getText(TextRange(context.getStartOffset(), context.getTailOffset()))
+        return insertedText == element.getUserData(KotlinCompletionCharFilter.JUST_TYPING_PREFIX)
     }
 
     public fun addElementWithAutoInsertionSuppressed(element: LookupElement) {

@@ -3,13 +3,10 @@ package whats.the.difference
 import java.util.HashSet
 
 fun iarray(vararg a : Int) = a // BUG
-
-fun IntArray.lastIndex() = size - 1
+val IntArray.indices: IntRange get() = IntRange(0, lastIndex())
+fun IntArray.lastIndex() = size() - 1
 
 fun box() : String {
-    // Problematic code does not compile
-//    val vals = iarray(789, 678, 567, 456, 345, 234, 123, 012)
-
     val vals = iarray(789, 678, 567, 456, 345, 234, 123, 12)
     val diffs = HashSet<Int>()
     for (i in vals.indices)

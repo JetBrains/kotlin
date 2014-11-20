@@ -4,6 +4,5 @@
 
 fun test(): Int {
     val foo: Int
-
     return foo
 }

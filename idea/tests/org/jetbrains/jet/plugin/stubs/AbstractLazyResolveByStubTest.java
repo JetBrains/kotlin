@@ -39,7 +39,7 @@ import org.junit.Assert;
 import java.io.File;
 
 import static com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel;
-import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.FORBID_ERROR_TYPES;
+import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
 
 public abstract class AbstractLazyResolveByStubTest extends KotlinCodeInsightTestCase {
     protected void doTest(String testFileName) throws Exception {
@@ -78,7 +78,7 @@ public abstract class AbstractLazyResolveByStubTest extends KotlinCodeInsightTes
                         .filterRecursion(RecursiveDescriptorComparator.SKIP_BUILT_INS_PACKAGES)
                         .checkPrimaryConstructors(checkPrimaryConstructors)
                         .checkPropertyAccessors(checkPropertyAccessors)
-                        .withValidationStrategy(FORBID_ERROR_TYPES),
+                        .withValidationStrategy(errorTypesForbidden()),
                 fileToCompareTo
         );
     }

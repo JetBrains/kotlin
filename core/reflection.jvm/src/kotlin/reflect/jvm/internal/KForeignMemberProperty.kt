@@ -52,7 +52,7 @@ open class KForeignMemberProperty<T : Any, out R>(
             "val ${owner.jClass.getName()}.$name"
 }
 
-class KMutableForeignMemberProperty<T : Any, out R>(
+class KMutableForeignMemberProperty<T : Any, R>(
         name: String,
         owner: KClassImpl<T>
 ) : KMutableMemberProperty<T, R>, KMutablePropertyImpl<R>, KForeignMemberProperty<T, R>(name, owner) {

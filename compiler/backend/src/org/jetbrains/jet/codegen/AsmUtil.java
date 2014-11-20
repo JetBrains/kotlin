@@ -20,11 +20,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -430,11 +433,16 @@ public class AsmUtil {
         v.invokevirtual("java/lang/StringBuilder", "append", "(" + type.getDescriptor() + ")Ljava/lang/StringBuilder;", false);
     }
 
-    public static StackValue genToString(InstructionAdapter v, StackValue receiver, Type receiverType) {
-        Type type = stringValueOfType(receiverType);
-        receiver.put(type, v);
-        v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
-        return StackValue.onStack(JAVA_STRING_TYPE);
+    public static StackValue genToString(final InstructionAdapter v, final StackValue receiver, final Type receiverType) {
+        return StackValue.operation(JAVA_STRING_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter adapter) {
+                Type type = stringValueOfType(receiverType);
+                receiver.put(type, v);
+                v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
+                return null;
+            }
+        });
     }
 
     static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type) {
@@ -488,26 +496,33 @@ public class AsmUtil {
 
     @NotNull
     public static StackValue genEqualsForExpressionsOnStack(
-            @NotNull InstructionAdapter v,
-            @NotNull IElementType opToken,
-            @NotNull Type leftType,
-            @NotNull Type rightType
+            final @NotNull IElementType opToken,
+            final @NotNull StackValue left,
+            final @NotNull StackValue right
     ) {
+        final Type leftType = left.type;
+        final Type rightType = right.type;
         if (isPrimitive(leftType) && leftType == rightType) {
-            return StackValue.cmp(opToken, leftType);
+            return StackValue.cmp(opToken, leftType, left, right);
         }
 
         if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
-            return StackValue.cmp(opToken, leftType);
+            return StackValue.cmp(opToken, leftType, left, right);
         }
 
-        v.invokestatic("kotlin/jvm/internal/Intrinsics", "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
+        return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter v) {
+                left.put(leftType, v);
+                right.put(rightType, v);
+                v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
 
-        if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
-            genInvertBoolean(v);
-        }
-
-        return StackValue.onStack(Type.BOOLEAN_TYPE);
+                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
+                    genInvertBoolean(v);
+                }
+                return Unit.INSTANCE$;
+            }
+        });
     }
 
     public static void genIncrement(Type expectedType, int myDelta, InstructionAdapter v) {
@@ -578,7 +593,7 @@ public class AsmUtil {
             if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
                 v.load(index, asmType);
                 v.visitLdcInsn(parameter.getName().asString());
-                v.invokestatic("kotlin/jvm/internal/Intrinsics", "checkParameterIsNotNull",
+                v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkParameterIsNotNull",
                                "(Ljava/lang/Object;Ljava/lang/String;)V", false);
             }
         }
@@ -624,7 +639,7 @@ public class AsmUtil {
             v.dup();
             v.visitLdcInsn(descriptor.getContainingDeclaration().getName().asString());
             v.visitLdcInsn(descriptor.getName().asString());
-            v.invokestatic("kotlin/jvm/internal/Intrinsics", assertMethodToCall,
+            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, assertMethodToCall,
                            "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V", false);
         }
     }
@@ -641,7 +656,7 @@ public class AsmUtil {
         return new StackValue(stackValue.type) {
 
             @Override
-            public void put(Type type, InstructionAdapter v) {
+            public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
                 stackValue.put(type, v);
                 if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
                     v.dup();
@@ -688,6 +703,11 @@ public class AsmUtil {
         else {
             v.iconst(0);
         }
+    }
+
+    public static boolean isInstancePropertyWithStaticBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
+        DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
+        return isObject(containingDeclaration) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
@@ -764,11 +784,15 @@ public class AsmUtil {
     }
 
     public static void dup(@NotNull InstructionAdapter v, @NotNull Type type) {
-        if (type.getSize() == 2) {
+        int size = type.getSize();
+        if (size == 2) {
             v.dup2();
         }
-        else {
+        else if (size == 1) {
             v.dup();
+        }
+        else {
+            throw new UnsupportedOperationException();
         }
     }
 

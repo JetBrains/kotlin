@@ -98,31 +98,86 @@ LazyJavaPackageFragment@43['<root>'] {
     classes('block': Name@65) = null // through LazyPackageFragmentScopeForJavaPackage@62
     classes('doCall': Name@66) = null // through LazyPackageFragmentScopeForJavaPackage@62
     classes('inline': Name@67) = null // through LazyPackageFragmentScopeForJavaPackage@62
-    classes('invoke': Name@68) = null // through LazyPackageFragmentScopeForJavaPackage@62
-    deserializedPackageScope = Empty@69 // through LazyPackageFragmentScopeForJavaPackage@62
-    functions('NullPointerException': Name@63) = EmptyList@70[empty] // through LazyPackageFragmentScopeForJavaPackage@62
-    functions('block': Name@65) = EmptyList@70[empty] // through LazyPackageFragmentScopeForJavaPackage@62
-    functions('doCall': Name@66) = EmptyList@70[empty] // through LazyPackageFragmentScopeForJavaPackage@62
-    functions('invoke': Name@68) = EmptyList@70[empty] // through LazyPackageFragmentScopeForJavaPackage@62
-    memberIndex = computeMemberIndex$1@71 // through LazyPackageFragmentScopeForJavaPackage@62
+    deserializedPackageScope = Empty@68 // through LazyPackageFragmentScopeForJavaPackage@62
+    functions('NullPointerException': Name@63) = EmptyList@69[empty] // through LazyPackageFragmentScopeForJavaPackage@62
+    functions('block': Name@65) = EmptyList@69[empty] // through LazyPackageFragmentScopeForJavaPackage@62
+    functions('doCall': Name@66) = EmptyList@69[empty] // through LazyPackageFragmentScopeForJavaPackage@62
+    memberIndex = computeMemberIndex$1@70 // through LazyPackageFragmentScopeForJavaPackage@62
 }
 
 LazyJavaPackageFragment@48['java'] {
-    classes('lang': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@73
-    deserializedPackageScope = Empty@69 // through LazyPackageFragmentScopeForJavaPackage@73
-    functions('lang': Name@74) = EmptyList@70[empty] // through LazyPackageFragmentScopeForJavaPackage@73
-    memberIndex = computeMemberIndex$1@75 // through LazyPackageFragmentScopeForJavaPackage@73
+    classes('lang': Name@71) = null // through LazyPackageFragmentScopeForJavaPackage@72
+    deserializedPackageScope = Empty@68 // through LazyPackageFragmentScopeForJavaPackage@72
+    functions('lang': Name@73) = EmptyList@69[empty] // through LazyPackageFragmentScopeForJavaPackage@72
+    memberIndex = computeMemberIndex$1@74 // through LazyPackageFragmentScopeForJavaPackage@72
 }
 
 LazyJavaPackageFragment@50['lang'] {
-    classes('NullPointerException': Name@63) = LazyJavaClassDescriptor@8['NullPointerException'] // through LazyPackageFragmentScopeForJavaPackage@76
-    classes('block': Name@65) = null // through LazyPackageFragmentScopeForJavaPackage@76
-    classes('doCall': Name@66) = null // through LazyPackageFragmentScopeForJavaPackage@76
-    classes('invoke': Name@68) = null // through LazyPackageFragmentScopeForJavaPackage@76
-    deserializedPackageScope = Empty@69 // through LazyPackageFragmentScopeForJavaPackage@76
-    functions('NullPointerException': Name@63) = EmptyList@70[empty] // through LazyPackageFragmentScopeForJavaPackage@76
-    functions('block': Name@65) = EmptyList@70[empty] // through LazyPackageFragmentScopeForJavaPackage@76
-    functions('doCall': Name@66) = EmptyList@70[empty] // through LazyPackageFragmentScopeForJavaPackage@76
-    functions('invoke': Name@68) = EmptyList@70[empty] // through LazyPackageFragmentScopeForJavaPackage@76
-    memberIndex = computeMemberIndex$1@77 // through LazyPackageFragmentScopeForJavaPackage@76
+    classes('NullPointerException': Name@63) = LazyJavaClassDescriptor@8['NullPointerException'] // through LazyPackageFragmentScopeForJavaPackage@75
+    classes('block': Name@65) = null // through LazyPackageFragmentScopeForJavaPackage@75
+    classes('doCall': Name@66) = null // through LazyPackageFragmentScopeForJavaPackage@75
+    deserializedPackageScope = Empty@68 // through LazyPackageFragmentScopeForJavaPackage@75
+    functions('NullPointerException': Name@63) = EmptyList@69[empty] // through LazyPackageFragmentScopeForJavaPackage@75
+    functions('block': Name@65) = EmptyList@69[empty] // through LazyPackageFragmentScopeForJavaPackage@75
+    functions('doCall': Name@66) = EmptyList@69[empty] // through LazyPackageFragmentScopeForJavaPackage@75
+    memberIndex = computeMemberIndex$1@76 // through LazyPackageFragmentScopeForJavaPackage@75
+}
+
+ResolutionTaskHolder@77 {
+    <name not found> = ArrayList@78[1] { ResolutionCandidate@79 }
+    <name not found> = ArrayList@80[1] { ResolutionCandidate@79 }
+    <name not found> = EmptyList@69[empty]
+    <name not found> = EmptyList@69[empty]
+    <name not found> = EmptyList@69[empty]
+    <name not found> = EmptyList@69[empty]
+}
+
+ResolutionTaskHolder@81 {
+    <name not found> = ArrayList@82[1] { ResolutionCandidate@83 }
+    <name not found> = ArrayList@84[1] { ResolutionCandidate@83 }
+    <name not found> = EmptyList@69[empty]
+    <name not found> = EmptyList@69[empty]
+    <name not found> = EmptyList@69[empty]
+    <name not found> = EmptyList@69[empty]
+}
+
+ResolutionTaskHolder@85 {
+    <name not found> = ArrayList@86[1] { ResolutionCandidate@87 }
+    <name not found> = ArrayList@88[1] { ResolutionCandidate@87 }
+    <name not found> = EmptyList@69[empty]
+    <name not found> = EmptyList@69[empty]
+}
+
+ResolutionTaskHolder@89 {
+    <name not found> = ArrayList@90[1] { ResolutionCandidate@91 }
+    <name not found> = ArrayList@92[1] { ResolutionCandidate@91 }
+}
+
+ResolutionTaskHolder@93 {
+    <name not found> = ArrayList@94[1] { ResolutionCandidate@95 }
+    <name not found> = ArrayList@96[1] { ResolutionCandidate@95 }
+}
+
+ResolutionTaskHolder@97 {
+    <name not found> = ArrayList@98[1] { ResolutionCandidate@99 }
+    <name not found> = ArrayList@100[1] { ResolutionCandidate@99 }
+}
+
+ResolutionTaskHolder@101 {
+    <name not found> = ArrayList@102[1] { ResolutionCandidate@103 }
+    <name not found> = ArrayList@104[1] { ResolutionCandidate@103 }
+}
+
+ResolutionTaskHolder@105 {
+    <name not found> = ArrayList@106[1] { ResolutionCandidate@107 }
+    <name not found> = ArrayList@108[1] { ResolutionCandidate@107 }
+}
+
+ResolutionTaskHolder@109 {
+    <name not found> = ArrayList@110[2] { ResolutionCandidate@111, ResolutionCandidate@112 }
+    <name not found> = ArrayList@113[2] { ResolutionCandidate@111, ResolutionCandidate@112 }
+    <name not found> = EmptyList@69[empty]
+    <name not found> = EmptyList@69[empty]
+    <name not found> = EmptyList@69[empty]
+    <name not found> = EmptyList@69[empty]
 }

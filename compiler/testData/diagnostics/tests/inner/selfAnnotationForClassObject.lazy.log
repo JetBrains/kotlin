@@ -38,3 +38,13 @@ LazyJavaPackageFragment@13['java'] {
 LazyJavaPackageFragment@15['lang'] {
     classes('ClassObjectAnnotation': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@31
 }
+
+ResolutionTaskHolder@32 {
+    <name not found> = ArrayList@33[1] { ResolutionCandidate@34 }
+    <name not found> = ArrayList@35[1] { ResolutionCandidate@34 }
+}
+
+ResolutionTaskHolder@36 {
+    <name not found> = ArrayList@37[1] { ResolutionCandidate@38 }
+    <name not found> = ArrayList@39[1] { ResolutionCandidate@38 }
+}

@@ -36,6 +36,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
     var toNullableT: Boolean = false
 
     var defaultInline = false
+    var receiverAsterisk = false
     val inlineFamilies = HashMap<Family, Boolean>()
 
     val buildFamilies = HashSet<Family>(defaultFamilies.toList())
@@ -104,6 +105,10 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
         typeParams.add(t)
     }
 
+    fun receiverAsterisk(v: Boolean) {
+        receiverAsterisk = true
+    }
+
     fun inline(value: Boolean, vararg families: Family) {
         if (families.isEmpty())
             defaultInline = value
@@ -157,13 +162,14 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
         if (returnType.isEmpty())
             throw RuntimeException("No return type specified for $signature")
 
+        val isAsteriskOrT = if (receiverAsterisk) "*" else "T"
         val receiver = when (f) {
-            Iterables -> "Iterable<T>"
-            Collections -> "Collection<T>"
-            Lists -> "List<T>"
+            Iterables -> "Iterable<$isAsteriskOrT>"
+            Collections -> "Collection<$isAsteriskOrT>"
+            Lists -> "List<$isAsteriskOrT>"
             Maps -> "Map<K, V>"
-            Streams -> "Stream<T>"
-            ArraysOfObjects -> "Array<T>"
+            Streams -> "Stream<$isAsteriskOrT>"
+            ArraysOfObjects -> "Array<$isAsteriskOrT>"
             Strings -> "String"
             ArraysOfPrimitives -> primitive?.let { it.name() + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
             else -> throw IllegalStateException("Invalid family")
@@ -215,7 +221,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
             if (primitive == null && f != Strings) {
                 val implicitTypeParameters = receiver.dropWhile { it != '<' }.drop(1).filterNot { it == ' ' }.takeWhile { it != '>' }.split(",")
                 for (implicit in implicitTypeParameters.reverse()) {
-                    if (!types.any { it.startsWith(implicit) }) {
+                    if (implicit != "*" && !types.any { it.startsWith(implicit) || it.startsWith("reified " + implicit) }) {
                         types.add(0, implicit)
                     }
                 }

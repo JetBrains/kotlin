@@ -1,0 +1,18 @@
+trait A {
+    fun foo(): Int
+}
+
+trait B: A {
+    override fun foo(): Int
+    override fun foo1(): Int
+}
+
+fun g(a: A) {
+    if (a is B) {
+        a.fo<caret>
+    }
+}
+
+// EXIST: foo
+// EXIST: foo1
+// NUMBER: 2

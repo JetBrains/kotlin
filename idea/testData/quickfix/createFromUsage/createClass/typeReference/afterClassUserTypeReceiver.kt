@@ -2,7 +2,6 @@
 package p
 
 class T {
-
     class A {
 
     }

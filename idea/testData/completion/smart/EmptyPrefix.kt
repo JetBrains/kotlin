@@ -26,4 +26,4 @@ fun f3() : String{}
 // EXIST: f1
 // EXIST: f2
 // ABSENT: f3
-// EXIST: { lookupString:"Foo", itemText:"Foo()" }
+// EXIST: { lookupString:"Foo", itemText:"Foo", tailText: "() (<root>)" }

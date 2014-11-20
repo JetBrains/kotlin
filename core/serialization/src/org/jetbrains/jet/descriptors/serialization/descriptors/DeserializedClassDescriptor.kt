@@ -46,7 +46,7 @@ public fun DeserializedClassDescriptor(globalContext: DeserializationGlobalConte
         = DeserializedClassDescriptor(globalContext.withNameResolver(classData.getNameResolver()), classData.getClassProto())
 
 public class DeserializedClassDescriptor(outerContext: DeserializationContext, private val classProto: ProtoBuf.Class)
-  : AbstractClassDescriptor(outerContext.storageManager, outerContext.nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName()), ClassDescriptor {
+: AbstractClassDescriptor(outerContext.storageManager, outerContext.nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName()), ClassDescriptor {
 
     private val modality = serialization.modality(Flags.MODALITY.get(classProto.getFlags()))
     private val visibility = serialization.visibility(Flags.VISIBILITY.get(classProto.getFlags()))
@@ -61,6 +61,7 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
     private val typeConstructor = DeserializedClassTypeConstructor(typeParameters)
     private val memberScope = DeserializedClassMemberScope()
     private val nestedClasses = NestedClassDescriptors()
+    private val enumEntries = EnumEntryClassDescriptors()
 
     private val containingDeclaration = outerContext.storageManager.createLazyValue { computeContainingDeclaration() }
     private val annotations = context.storageManager.createLazyValue { computeAnnotations() }
@@ -236,36 +237,31 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
 
         override fun getImplicitReceiver() = classDescriptor.getThisAsReceiverParameter()
 
-        override fun getClassDescriptor(name: Name): ClassifierDescriptor? = classDescriptor.nestedClasses.findClass(name)
+        override fun getClassDescriptor(name: Name): ClassifierDescriptor? =
+                classDescriptor.enumEntries.findEnumEntry(name) ?: classDescriptor.nestedClasses.findNestedClass(name)
 
         override fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
-            result.addAll(classDescriptor.nestedClasses.getAllDescriptors())
+            result.addAll(classDescriptor.nestedClasses.all())
+        }
+
+        override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
+            result.addAll(classDescriptor.enumEntries.all())
         }
     }
 
     private inner class NestedClassDescriptors {
         private val nestedClassNames = nestedClassNames()
-        private val enumEntryNames = enumEntryNames()
 
-        val findClass: MemoizedFunctionToNullable<Name, ClassDescriptor> = run {
-            val storageManager = context.storageManager
-            val enumMemberNames = storageManager.createLazyValue { computeEnumMemberNames() }
-
-            storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> { name ->
-                if (enumEntryNames.contains(name)) {
-                    EnumEntrySyntheticClassDescriptor.create(storageManager, this@DeserializedClassDescriptor, name, enumMemberNames, SourceElement.NO_SOURCE)
-                }
-                else if (nestedClassNames.contains(name)) {
-                    context.deserializeClass(classId.createNestedClassId(name))
-                }
-                else {
-                    null
-                }
+        val findNestedClass = context.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
+            name ->
+            if (nestedClassNames.contains(name)) {
+                context.deserializeClass(classId.createNestedClassId(name))
             }
+            else null
         }
 
         private fun nestedClassNames(): Set<Name> {
-            val result = HashSet<Name>()
+            val result = LinkedHashSet<Name>()
             val nameResolver = context.nameResolver
             for (index in classProto.getNestedClassNameList()) {
                 result.add(nameResolver.getName(index!!))
@@ -273,10 +269,20 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
             return result
         }
 
+        fun all(): Collection<ClassDescriptor> {
+            val result = ArrayList<ClassDescriptor>(nestedClassNames.size())
+            nestedClassNames.forEach { name -> result.addIfNotNull(findNestedClass(name)) }
+            return result
+        }
+    }
+
+    private inner class EnumEntryClassDescriptors {
+        private val enumEntryNames = enumEntryNames()
+
         private fun enumEntryNames(): Set<Name> {
             if (getKind() != ClassKind.ENUM_CLASS) return setOf()
 
-            val result = HashSet<Name>()
+            val result = LinkedHashSet<Name>()
             val nameResolver = context.nameResolver
             for (index in classProto.getEnumEntryList()) {
                 result.add(nameResolver.getName(index!!))
@@ -284,7 +290,21 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
             return result
         }
 
+        val findEnumEntry = context.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
+            name ->
+            if (name in enumEntryNames) {
+                EnumEntrySyntheticClassDescriptor.create(
+                        context.storageManager, this@DeserializedClassDescriptor, name, enumMemberNames, SourceElement.NO_SOURCE
+                )
+            }
+            else null
+        }
+
+        private val enumMemberNames = context.storageManager.createLazyValue { computeEnumMemberNames() }
+
         private fun computeEnumMemberNames(): Collection<Name> {
+            // NOTE: order of enum entry members should be irrelevant
+            // because enum entries are effectively invisible to user (as classes)
             val result = HashSet<Name>()
 
             for (supertype in getTypeConstructor().getSupertypes()) {
@@ -299,14 +319,9 @@ public class DeserializedClassDescriptor(outerContext: DeserializationContext, p
             return classProto.getMemberList().mapTo(result) { nameResolver.getName(it.getName()) }
         }
 
-        public fun getAllDescriptors(): Collection<ClassDescriptor> {
-            val result = ArrayList<ClassDescriptor>(nestedClassNames.size() + enumEntryNames.size())
-            for (name in nestedClassNames) {
-                result.addIfNotNull(findClass(name))
-            }
-            for (name in enumEntryNames) {
-                result.addIfNotNull(findClass(name))
-            }
+        fun all(): Collection<ClassDescriptor> {
+            val result = ArrayList<ClassDescriptor>(enumEntryNames.size())
+            enumEntryNames.forEach { name -> result.addIfNotNull(findEnumEntry(name)) }
             return result
         }
     }

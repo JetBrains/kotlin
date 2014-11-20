@@ -77,7 +77,7 @@ public class TailRecursionCodegen {
         if (callable.getReceiverClass() != null) {
             if (resolvedCall.getExtensionReceiver() != fd.getExtensionReceiverParameter().getValue()) {
                 StackValue expression = context.getReceiverExpression(codegen.typeMapper);
-                expression.store(callable.getReceiverClass(), v);
+                expression.store(StackValue.onStack(callable.getReceiverClass()), v, true);
             }
             else {
                 AsmUtil.pop(v, callable.getReceiverClass());
@@ -118,7 +118,7 @@ public class TailRecursionCodegen {
             }
             else if (arg instanceof DefaultValueArgument) {
                 AsmUtil.pop(v, type);
-                DefaultParameterValueLoader.DEFAULT.putValueOnStack(parameterDescriptor, codegen);
+                DefaultParameterValueLoader.DEFAULT.genValue(parameterDescriptor, codegen).put(type, v);
             }
             else if (arg instanceof VarargValueArgument) {
                 // assign the parameter below

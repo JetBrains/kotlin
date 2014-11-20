@@ -25,3 +25,15 @@ LazyJavaPackageFragment@7['lang'] {
     classes('field': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@24
     deserializedPackageScope = Empty@19 // through LazyPackageFragmentScopeForJavaPackage@24
 }
+
+ResolutionTaskHolder@25 {
+    <name not found> = ArrayList@26[1] { ResolutionCandidate@27 }
+    <name not found> = ArrayList@28[1] { ResolutionCandidate@27 }
+    <name not found> = EmptyList@21[empty]
+    <name not found> = EmptyList@21[empty]
+}
+
+ResolutionTaskHolder@29 {
+    <name not found> = ArrayList@30[1] { ResolutionCandidate@31 }
+    <name not found> = ArrayList@32[1] { ResolutionCandidate@31 }
+}

@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxInline")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({CompileKotlinAgainstInlineKotlinTestGenerated.AnonymousObject.class, CompileKotlinAgainstInlineKotlinTestGenerated.Builders.class, CompileKotlinAgainstInlineKotlinTestGenerated.Capture.class, CompileKotlinAgainstInlineKotlinTestGenerated.Complex.class, CompileKotlinAgainstInlineKotlinTestGenerated.DefaultValues.class, CompileKotlinAgainstInlineKotlinTestGenerated.LambdaClassClash.class, CompileKotlinAgainstInlineKotlinTestGenerated.LambdaTransformation.class, CompileKotlinAgainstInlineKotlinTestGenerated.LocalFunInLambda.class, CompileKotlinAgainstInlineKotlinTestGenerated.NoInline.class, CompileKotlinAgainstInlineKotlinTestGenerated.NonLocalReturns.class, CompileKotlinAgainstInlineKotlinTestGenerated.Simple.class, CompileKotlinAgainstInlineKotlinTestGenerated.Special.class, CompileKotlinAgainstInlineKotlinTestGenerated.Trait.class, CompileKotlinAgainstInlineKotlinTestGenerated.TryCatchFinally.class})
+@InnerTestClasses({CompileKotlinAgainstInlineKotlinTestGenerated.AnonymousObject.class, CompileKotlinAgainstInlineKotlinTestGenerated.Builders.class, CompileKotlinAgainstInlineKotlinTestGenerated.Capture.class, CompileKotlinAgainstInlineKotlinTestGenerated.Complex.class, CompileKotlinAgainstInlineKotlinTestGenerated.DefaultValues.class, CompileKotlinAgainstInlineKotlinTestGenerated.LambdaClassClash.class, CompileKotlinAgainstInlineKotlinTestGenerated.LambdaTransformation.class, CompileKotlinAgainstInlineKotlinTestGenerated.LocalFunInLambda.class, CompileKotlinAgainstInlineKotlinTestGenerated.NoInline.class, CompileKotlinAgainstInlineKotlinTestGenerated.NonLocalReturns.class, CompileKotlinAgainstInlineKotlinTestGenerated.Reified.class, CompileKotlinAgainstInlineKotlinTestGenerated.Simple.class, CompileKotlinAgainstInlineKotlinTestGenerated.Special.class, CompileKotlinAgainstInlineKotlinTestGenerated.Trait.class, CompileKotlinAgainstInlineKotlinTestGenerated.TryCatchFinally.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompileKotlinAgainstKotlinTest {
     public void testAllFilesPresentInBoxInline() throws Exception {
@@ -603,6 +603,21 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                     doBoxTestWithInlineCheck(fileName);
                 }
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxInline/reified")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Reified extends AbstractCompileKotlinAgainstKotlinTest {
+        public void testAllFilesPresentInReified() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        }
+
+        @TestMetadata("packages.1.kt")
+        public void testPackages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/packages.1.kt");
+            doBoxTestWithInlineCheck(fileName);
         }
     }
 

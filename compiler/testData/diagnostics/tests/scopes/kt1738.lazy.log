@@ -24,8 +24,48 @@ LazyJavaPackageFragment@6['java'] {
 }
 
 LazyJavaPackageFragment@8['lang'] {
-    classes('inc': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@26
-    deserializedPackageScope = Empty@21 // through LazyPackageFragmentScopeForJavaPackage@26
-    functions('inc': Name@25) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@26
-    memberIndex = computeMemberIndex$1@27 // through LazyPackageFragmentScopeForJavaPackage@26
+    deserializedPackageScope = Empty@21 // through LazyPackageFragmentScopeForJavaPackage@25
+}
+
+ResolutionTaskHolder@26 {
+    <name not found> = ArrayList@27[1] { ResolutionCandidate@28 }
+    <name not found> = ArrayList@29[1] { ResolutionCandidate@28 }
+    <name not found> = EmptyList@23[empty]
+    <name not found> = EmptyList@23[empty]
+    <name not found> = EmptyList@23[empty]
+    <name not found> = EmptyList@23[empty]
+    <name not found> = EmptyList@23[empty]
+    <name not found> = EmptyList@23[empty]
+    <name not found> = EmptyList@23[empty]
+    <name not found> = EmptyList@23[empty]
+    <name not found> = EmptyList@23[empty]
+    <name not found> = EmptyList@23[empty]
+    <name not found> = EmptyList@23[empty]
+    <name not found> = EmptyList@23[empty]
+    <name not found> = EmptyList@23[empty]
+}
+
+ResolutionTaskHolder@30 {
+    <name not found> = ArrayList@31[1] { ResolutionCandidate@32 }
+    <name not found> = ArrayList@33[1] { ResolutionCandidate@32 }
+}
+
+ResolutionTaskHolder@34 {
+    <name not found> = ArrayList@35[1] { ResolutionCandidate@36 }
+    <name not found> = ArrayList@37[1] { ResolutionCandidate@36 }
+}
+
+ResolutionTaskHolder@38 {
+    <name not found> = ArrayList@39[1] { ResolutionCandidate@40 }
+    <name not found> = ArrayList@41[1] { ResolutionCandidate@40 }
+}
+
+ResolutionTaskHolder@42 {
+    <name not found> = ArrayList@43[1] { ResolutionCandidate@44 }
+    <name not found> = ArrayList@45[1] { ResolutionCandidate@44 }
+}
+
+ResolutionTaskHolder@46 {
+    <name not found> = ArrayList@47[1] { ResolutionCandidate@48 }
+    <name not found> = ArrayList@49[1] { ResolutionCandidate@48 }
 }

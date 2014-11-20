@@ -40,14 +40,14 @@ LazyJavaClassifierType@22['String'] {
 
 LazyJavaClassifierType@25['String'] {
     arguments = ArrayList@26[empty]
-    classifier = JavaClassImpl@21['String']
+    classifier = JavaClassImpl@18['String']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@15
 }
 
 LazyJavaClassifierType@27['String'] {
     arguments = ArrayList@28[empty]
-    classifier = JavaClassImpl@18['String']
+    classifier = JavaClassImpl@21['String']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@15
 }
@@ -75,21 +75,21 @@ LazyJavaClassifierType@36['Throwable'] {
 
 LazyJavaClassifierType@39['Throwable'] {
     arguments = ArrayList@40[empty]
-    classifier = JavaClassImpl@31['Throwable']
+    classifier = JavaClassImpl@38['Throwable']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@32
 }
 
 LazyJavaClassifierType@41['Throwable'] {
     arguments = ArrayList@42[empty]
-    classifier = JavaClassImpl@35['Throwable']
+    classifier = JavaClassImpl@31['Throwable']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@32
 }
 
 LazyJavaClassifierType@43['Throwable'] {
     arguments = ArrayList@44[empty]
-    classifier = JavaClassImpl@38['Throwable']
+    classifier = JavaClassImpl@35['Throwable']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@32
 }
@@ -133,35 +133,227 @@ LazyJavaPackageFragment@49['<root>'] {
     classes('PropertyMetadata': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@75
     classes('PropertyMetadataImpl': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@75
     classes('String': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@75
-    classes('get': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@75
-    classes('propertyDelegated': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@75
-    deserializedPackageScope = Empty@83 // through LazyPackageFragmentScopeForJavaPackage@75
-    functions('Exception': Name@76) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@75
-    functions('MyProperty': Name@77) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@75
-    functions('PropertyMetadataImpl': Name@79) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@75
-    functions('get': Name@81) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@75
-    functions('propertyDelegated': Name@82) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@75
-    memberIndex = computeMemberIndex$1@85 // through LazyPackageFragmentScopeForJavaPackage@75
+    classes('propertyDelegated': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@75
+    deserializedPackageScope = Empty@82 // through LazyPackageFragmentScopeForJavaPackage@75
+    functions('Exception': Name@76) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@75
+    functions('MyProperty': Name@77) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@75
+    functions('PropertyMetadataImpl': Name@79) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@75
+    functions('propertyDelegated': Name@81) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@75
+    memberIndex = computeMemberIndex$1@84 // through LazyPackageFragmentScopeForJavaPackage@75
 }
 
 LazyJavaPackageFragment@57['java'] {
-    classes('lang': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@87
-    deserializedPackageScope = Empty@83 // through LazyPackageFragmentScopeForJavaPackage@87
-    functions('lang': Name@88) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@87
-    memberIndex = computeMemberIndex$1@89 // through LazyPackageFragmentScopeForJavaPackage@87
+    classes('lang': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@86
+    deserializedPackageScope = Empty@82 // through LazyPackageFragmentScopeForJavaPackage@86
+    functions('lang': Name@87) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@86
+    memberIndex = computeMemberIndex$1@88 // through LazyPackageFragmentScopeForJavaPackage@86
 }
 
 LazyJavaPackageFragment@59['lang'] {
-    classes('Exception': Name@76) = LazyJavaClassDescriptor@0['Exception'] // through LazyPackageFragmentScopeForJavaPackage@90
-    classes('MyProperty': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@90
-    classes('PropertyMetadataImpl': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@90
-    classes('get': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@90
-    classes('propertyDelegated': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@90
-    deserializedPackageScope = Empty@83 // through LazyPackageFragmentScopeForJavaPackage@90
-    functions('Exception': Name@76) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@90
-    functions('MyProperty': Name@77) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@90
-    functions('PropertyMetadataImpl': Name@79) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@90
-    functions('get': Name@81) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@90
-    functions('propertyDelegated': Name@82) = EmptyList@84[empty] // through LazyPackageFragmentScopeForJavaPackage@90
-    memberIndex = computeMemberIndex$1@91 // through LazyPackageFragmentScopeForJavaPackage@90
+    classes('Exception': Name@76) = LazyJavaClassDescriptor@0['Exception'] // through LazyPackageFragmentScopeForJavaPackage@89
+    classes('MyProperty': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@89
+    classes('PropertyMetadataImpl': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@89
+    classes('propertyDelegated': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@89
+    deserializedPackageScope = Empty@82 // through LazyPackageFragmentScopeForJavaPackage@89
+    functions('Exception': Name@76) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@89
+    functions('MyProperty': Name@77) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@89
+    functions('PropertyMetadataImpl': Name@79) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@89
+    functions('propertyDelegated': Name@81) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@89
+    memberIndex = computeMemberIndex$1@90 // through LazyPackageFragmentScopeForJavaPackage@89
+}
+
+ResolutionTaskHolder@91 {
+    <name not found> = ArrayList@92[1] { ResolutionCandidate@93 }
+    <name not found> = ArrayList@94[1] { ResolutionCandidate@93 }
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@95 {
+    <name not found> = ArrayList@96[1] { ResolutionCandidate@97 }
+    <name not found> = ArrayList@98[1] { ResolutionCandidate@97 }
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@99 {
+    <name not found> = ArrayList@100[1] { ResolutionCandidate@101 }
+    <name not found> = ArrayList@102[1] { ResolutionCandidate@101 }
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@103 {
+    <name not found> = ArrayList@104[1] { ResolutionCandidate@105 }
+    <name not found> = ArrayList@106[1] { ResolutionCandidate@105 }
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@107 {
+    <name not found> = ArrayList@108[1] { ResolutionCandidate@109 }
+    <name not found> = ArrayList@110[1] { ResolutionCandidate@109 }
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@111 {
+    <name not found> = ArrayList@112[1] { ResolutionCandidate@113 }
+    <name not found> = ArrayList@114[1] { ResolutionCandidate@113 }
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@115 {
+    <name not found> = ArrayList@116[1] { ResolutionCandidate@117 }
+    <name not found> = ArrayList@118[1] { ResolutionCandidate@117 }
+}
+
+ResolutionTaskHolder@119 {
+    <name not found> = ArrayList@120[1] { ResolutionCandidate@121 }
+    <name not found> = ArrayList@122[1] { ResolutionCandidate@121 }
+}
+
+ResolutionTaskHolder@123 {
+    <name not found> = ArrayList@124[4] { ResolutionCandidate@125, ResolutionCandidate@126, ResolutionCandidate@127, ... }
+    <name not found> = ArrayList@128[5] { ResolutionCandidate@125, ResolutionCandidate@126, ResolutionCandidate@127, ... }
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@129 {
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
 }

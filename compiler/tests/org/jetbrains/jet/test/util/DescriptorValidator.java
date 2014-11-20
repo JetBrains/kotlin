@@ -56,25 +56,33 @@ public class DescriptorValidator {
     }
 
     public static class ValidationVisitor implements DeclarationDescriptorVisitor<Boolean, DiagnosticCollector> {
-        public static final ValidationVisitor FORBID_ERROR_TYPES = new ValidationVisitor(
-                false, Predicates.<DeclarationDescriptor>alwaysTrue());
-        public static final ValidationVisitor ALLOW_ERROR_TYPES = new ValidationVisitor(
-                true, Predicates.<DeclarationDescriptor>alwaysTrue());
+        public static ValidationVisitor errorTypesForbidden() {
+            return new ValidationVisitor();
+        }
 
-        private final boolean allowErrorTypes;
-        private final Predicate<DeclarationDescriptor> recursiveFilter;
+        public static ValidationVisitor errorTypesAllowed() {
+            return new ValidationVisitor().allowErrorTypes();
+        }
 
-        private ValidationVisitor(boolean allowErrorTypes, @NotNull Predicate<DeclarationDescriptor> recursiveFilter) {
-            this.allowErrorTypes = allowErrorTypes;
-            this.recursiveFilter = recursiveFilter;
+        private boolean allowErrorTypes = false;
+        private Predicate<DeclarationDescriptor> recursiveFilter = Predicates.alwaysTrue();
+
+        protected ValidationVisitor() {
         }
 
         @NotNull
         public ValidationVisitor withStepIntoFilter(@NotNull Predicate<DeclarationDescriptor> filter) {
-            return new ValidationVisitor(allowErrorTypes, filter);
+            this.recursiveFilter = filter;
+            return this;
         }
 
-        private void validateScope(@NotNull JetScope scope, @NotNull DiagnosticCollector collector) {
+        @NotNull
+        public ValidationVisitor allowErrorTypes() {
+            this.allowErrorTypes = true;
+            return this;
+        }
+
+        protected void validateScope(@NotNull JetScope scope, @NotNull DiagnosticCollector collector) {
             for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
                 if (recursiveFilter.apply(descriptor)) {
                     descriptor.accept(new ScopeValidatorVisitor(collector), scope);

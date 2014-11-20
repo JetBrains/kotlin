@@ -21,22 +21,19 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.jet.renderer.Renderer;
 
-import java.text.MessageFormat;
-
 import static org.jetbrains.jet.lang.diagnostics.rendering.RenderingPackage.renderParameter;
 
-public class DiagnosticWithParameters1Renderer<A> implements DiagnosticRenderer<DiagnosticWithParameters1<?, A>> {
-    private final MessageFormat messageFormat;
+public class DiagnosticWithParameters1Renderer<A> extends AbstractDiagnosticWithParametersRenderer<DiagnosticWithParameters1<?, A>> {
     private final Renderer<? super A> rendererForA;
 
     public DiagnosticWithParameters1Renderer(@NotNull String message, @Nullable Renderer<? super A> rendererForA) {
-        this.messageFormat = new MessageFormat(message);
+        super(message);
         this.rendererForA = rendererForA;
     }
 
     @NotNull
     @Override
-    public String render(@NotNull DiagnosticWithParameters1<?, A> diagnostic) {
-        return messageFormat.format(new Object[]{renderParameter(diagnostic.getA(), rendererForA)});
+    public Object[] renderParameters(@NotNull DiagnosticWithParameters1<?, A> diagnostic) {
+        return new Object[]{renderParameter(diagnostic.getA(), rendererForA)};
     }
 }

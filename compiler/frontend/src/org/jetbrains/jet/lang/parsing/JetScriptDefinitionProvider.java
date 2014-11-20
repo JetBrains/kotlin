@@ -26,10 +26,14 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import java.util.*;
 
 public class JetScriptDefinitionProvider {
-    private final HashMap<String,JetScriptDefinition> scripts = new HashMap<String, JetScriptDefinition>();
-    private final HashSet<PsiFile> scriptsFiles = new HashSet<PsiFile>();
+    private final Map<String, JetScriptDefinition> scripts = new HashMap<String, JetScriptDefinition>();
+    private final Set<PsiFile> scriptsFiles = new HashSet<PsiFile>();
 
     private static final JetScriptDefinition standardScript = new JetScriptDefinition(JetParserDefinition.STD_SCRIPT_EXT, Collections.<AnalyzerScriptParameter>emptyList());
+
+    public static JetScriptDefinitionProvider getInstance(Project project) {
+        return ServiceManager.getService(project, JetScriptDefinitionProvider.class);
+    }
 
     public JetScriptDefinitionProvider() {
         // .kts will take analyzer parameters explicitly specified on compilation
@@ -38,10 +42,6 @@ public class JetScriptDefinitionProvider {
 
     public void markFileAsScript(JetFile file) {
         scriptsFiles.add(file);
-    }
-
-    public static JetScriptDefinitionProvider getInstance(Project project) {
-        return ServiceManager.getService(project, JetScriptDefinitionProvider.class);
     }
 
     public JetScriptDefinition findScriptDefinition(PsiFile psiFile) {

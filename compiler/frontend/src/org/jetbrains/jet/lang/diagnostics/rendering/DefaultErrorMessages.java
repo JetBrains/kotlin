@@ -470,7 +470,7 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_INFERENCE_UPPER_BOUND_VIOLATED, "{0}", TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER);
         MAP.put(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, "Type inference failed. Expected type mismatch: found: {1} required: {0}", RENDER_TYPE, RENDER_TYPE);
 
-        MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected", null);
+        MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected", (Renderer) null);
         MAP.put(NO_TYPE_ARGUMENTS_ON_RHS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected. " +
                                                            "Use ''{1}'' if you don''t want to pass type arguments", null, STRING);
 
@@ -479,6 +479,8 @@ public class DefaultErrorMessages {
                 "Separate it with a semicolon (;) if it is not intended to be an argument.");
 
         MAP.put(TYPE_PARAMETER_AS_REIFIED, "Cannot use ''{0}'' as reified type parameter. Use a class instead.", NAME);
+        MAP.put(REIFIED_TYPE_PARAMETER_NO_INLINE, "Only type parameters of inline functions can be reified");
+        MAP.put(REIFIED_TYPE_NOTHING_SUBSTITUTION, "Cannot use ''{0}'' as reified type parameter", RENDER_TYPE);
 
         MAP.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes");
         MAP.put(MISSING_VAL_ON_ANNOTATION_PARAMETER, "'val' keyword is missing on annotation parameter");

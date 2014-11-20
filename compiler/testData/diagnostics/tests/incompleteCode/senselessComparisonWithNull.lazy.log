@@ -29,3 +29,53 @@ LazyJavaPackageFragment@9['lang'] {
     functions('invoke': Name@24) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@22
     memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@22
 }
+
+ResolutionTaskHolder@26 {
+    <name not found> = ArrayList@27[1] { ResolutionCandidate@28 }
+    <name not found> = ArrayList@29[1] { ResolutionCandidate@28 }
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+}
+
+ResolutionTaskHolder@30 {
+    <name not found> = ArrayList@31[1] { ResolutionCandidate@32 }
+    <name not found> = ArrayList@33[1] { ResolutionCandidate@32 }
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+}
+
+ResolutionTaskHolder@34 {
+    <name not found> = ArrayList@35[1] { ResolutionCandidate@36 }
+    <name not found> = ArrayList@37[1] { ResolutionCandidate@36 }
+}
+
+ResolutionTaskHolder@38 {
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+}

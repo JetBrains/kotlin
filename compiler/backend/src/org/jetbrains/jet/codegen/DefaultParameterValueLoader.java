@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetParameter;
 
@@ -24,18 +23,17 @@ import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorT
 
 public interface DefaultParameterValueLoader {
 
-    void putValueOnStack(ValueParameterDescriptor descriptor, ExpressionCodegen codegen);
+    StackValue genValue(ValueParameterDescriptor descriptor, ExpressionCodegen codegen);
 
     DefaultParameterValueLoader DEFAULT = new DefaultParameterValueLoader() {
         @Override
-        public void putValueOnStack(
+        public StackValue genValue(
                 ValueParameterDescriptor descriptor,
                 ExpressionCodegen codegen
         ) {
             JetParameter jetParameter = (JetParameter) descriptorToDeclaration(descriptor);
             assert jetParameter != null;
-            Type propertyType = codegen.typeMapper.mapType(descriptor.getType());
-            codegen.gen(jetParameter.getDefaultValue(), propertyType);
+            return codegen.gen(jetParameter.getDefaultValue());
         }
     };
 }

@@ -22,16 +22,14 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClosureCodegen;
 import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.commons.RemappingMethodAdapter;
@@ -61,7 +59,7 @@ public class MethodInliner {
     private final List<InvokeCall> invokeCalls = new ArrayList<InvokeCall>();
 
     //keeps order
-    private final List<ConstructorInvocation> constructorInvocations = new ArrayList<ConstructorInvocation>();
+    private final List<AnonymousObjectGeneration> anonymousObjectGenerations = new ArrayList<AnonymousObjectGeneration>();
     //current state
     private final Map<String, String> currentTypeMapping = new HashMap<String, String>();
 
@@ -139,44 +137,55 @@ public class MethodInliner {
 
         final MethodNode resultNode = new MethodNode(node.access, node.name, node.desc, node.signature, null);
 
-        final Iterator<ConstructorInvocation> iterator = constructorInvocations.iterator();
+        final Iterator<AnonymousObjectGeneration> iterator = anonymousObjectGenerations.iterator();
 
         RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(resultNode.access, resultNode.desc, resultNode,
                                                                                    new TypeRemapper(currentTypeMapping));
 
         InlineAdapter lambdaInliner = new InlineAdapter(remappingMethodAdapter, parameters.totalSize()) {
 
-            private ConstructorInvocation invocation;
+            private AnonymousObjectGeneration anonymousObjectGen;
+            private void handleAnonymousObjectGeneration() {
+                anonymousObjectGen = iterator.next();
+
+                if (anonymousObjectGen.shouldRegenerate()) {
+                    //TODO: need poping of type but what to do with local funs???
+                    Type newLambdaType = Type.getObjectType(inliningContext.nameGenerator.genLambdaClassName());
+                    currentTypeMapping.put(anonymousObjectGen.getOwnerInternalName(), newLambdaType.getInternalName());
+                    AnonymousObjectTransformer transformer =
+                            new AnonymousObjectTransformer(anonymousObjectGen.getOwnerInternalName(),
+                                                           inliningContext
+                                                                   .subInlineWithClassRegeneration(
+                                                                           inliningContext.nameGenerator,
+                                                                           currentTypeMapping,
+                                                                           anonymousObjectGen),
+                                                           isSameModule, newLambdaType
+                            );
+
+                    InlineResult transformResult = transformer.doTransform(anonymousObjectGen, nodeRemapper);
+                    result.addAllClassesToRemove(transformResult);
+
+                    if (inliningContext.isInliningLambda && !anonymousObjectGen.isStaticOrigin()) {
+                        // this class is transformed and original not used so we should remove original one after inlining
+                        // Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda
+                        // because it can be local function from outer scope
+                        result.addClassToRemove(anonymousObjectGen.getOwnerInternalName());
+                    }
+
+                    if (transformResult.needFurtherReification()) {
+                        ReifiedTypeInliner.putNeedClassReificationMarker(mv);
+                        result.markAsNeededFurtherReificationIf(true);
+                    }
+                }
+            }
+
             @Override
             public void anew(@NotNull Type type) {
                 if (isAnonymousConstructorCall(type.getInternalName(), "<init>")) {
-                    invocation = iterator.next();
-
-                    if (invocation.shouldRegenerate()) {
-                        //TODO: need poping of type but what to do with local funs???
-                        Type newLambdaType = Type.getObjectType(inliningContext.nameGenerator.genLambdaClassName());
-                        currentTypeMapping.put(invocation.getOwnerInternalName(), newLambdaType.getInternalName());
-                        AnonymousObjectTransformer transformer =
-                                new AnonymousObjectTransformer(invocation.getOwnerInternalName(),
-                                                               inliningContext
-                                                                       .subInlineWithClassRegeneration(
-                                                                               inliningContext.nameGenerator,
-                                                                               currentTypeMapping,
-                                                                               invocation),
-                                                               isSameModule, newLambdaType
-                                );
-
-                        InlineResult transformResult = transformer.doTransform(invocation, nodeRemapper);
-                        result.addAllClassesToRemove(transformResult);
-
-                        if (inliningContext.isInliningLambda) {
-                            //this class is transformed and original not used so we should remove original one after inlining
-                            result.addClassToRemove(invocation.getOwnerInternalName());
-                        }
-                    }
+                    handleAnonymousObjectGeneration();
                 }
 
-                //in case of regenerated invocation type would be remapped to new one via remappingMethodAdapter
+                //in case of regenerated anonymousObjectGen type would be remapped to new one via remappingMethodAdapter
                 super.anew(type);
             }
 
@@ -221,22 +230,33 @@ public class MethodInliner {
                     addInlineMarker(this, false);
                 }
                 else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
-                    assert invocation != null : "<init> call not corresponds to new call" + owner + " " + name;
-                    if (invocation.shouldRegenerate()) {
+                    assert anonymousObjectGen != null : "<init> call not corresponds to new call" + owner + " " + name;
+                    if (anonymousObjectGen.shouldRegenerate()) {
                         //put additional captured parameters on stack
-                        for (CapturedParamDesc capturedParamDesc : invocation.getAllRecapturedParameters()) {
+                        for (CapturedParamDesc capturedParamDesc : anonymousObjectGen.getAllRecapturedParameters()) {
                             visitFieldInsn(Opcodes.GETSTATIC, capturedParamDesc.getContainingLambdaName(),
                                            "$$$" + capturedParamDesc.getFieldName(), capturedParamDesc.getType().getDescriptor());
                         }
-                        super.visitMethodInsn(opcode, invocation.getNewLambdaType().getInternalName(), name, invocation.getNewConstructorDescriptor(), itf);
-                        invocation = null;
+                        super.visitMethodInsn(opcode, anonymousObjectGen.getNewLambdaType().getInternalName(), name, anonymousObjectGen.getNewConstructorDescriptor(), itf);
+                        anonymousObjectGen = null;
                     } else {
                         super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);
                     }
                 }
+                else if (ReifiedTypeInliner.isNeedClassReificationMarker(new MethodInsnNode(opcode, owner, name, desc, false))) {
+                    // we will put it if needed in anew processing
+                }
                 else {
                     super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);
                 }
+            }
+
+            @Override
+            public void visitFieldInsn(int opcode, @NotNull String owner, @NotNull String name, @NotNull String desc) {
+                if (opcode == Opcodes.GETSTATIC && isAnonymousSingletonLoad(owner, name)) {
+                    handleAnonymousObjectGeneration();
+                }
+                super.visitFieldInsn(opcode, owner, name, desc);
             }
 
             @Override
@@ -357,11 +377,17 @@ public class MethodInliner {
         AbstractInsnNode cur = node.instructions.getFirst();
         int index = 0;
 
+        boolean awaitClassReification = false;
+        Set<LabelNode> possibleDeadLabels = new HashSet<LabelNode>();
+
         while (cur != null) {
             Frame<SourceValue> frame = sources[index];
 
             if (frame != null) {
-                if (cur.getType() == AbstractInsnNode.METHOD_INSN) {
+                if (ReifiedTypeInliner.isNeedClassReificationMarker(cur)) {
+                    awaitClassReification = true;
+                }
+                else if (cur.getType() == AbstractInsnNode.METHOD_INSN) {
                     MethodInsnNode methodInsnNode = (MethodInsnNode) cur;
                     String owner = methodInsnNode.owner;
                     String desc = methodInsnNode.desc;
@@ -402,11 +428,27 @@ public class MethodInliner {
                             }
                         }
 
-                        constructorInvocations.add(new ConstructorInvocation(owner, desc, lambdaMapping, isSameModule, inliningContext.classRegeneration));
+                        anonymousObjectGenerations.add(
+                                buildConstructorInvocation(
+                                        owner, desc, lambdaMapping, awaitClassReification
+                                )
+                        );
+                        awaitClassReification = false;
+                    }
+                }
+                else if (cur.getOpcode() == Opcodes.GETSTATIC) {
+                    FieldInsnNode fieldInsnNode = (FieldInsnNode) cur;
+                    String owner = fieldInsnNode.owner;
+                    if (isAnonymousSingletonLoad(owner, fieldInsnNode.name)) {
+                        anonymousObjectGenerations.add(
+                                new AnonymousObjectGeneration(
+                                        owner, isSameModule, awaitClassReification, isAlreadyRegenerated(owner), true
+                                )
+                        );
+                        awaitClassReification = false;
                     }
                 }
             }
-
             AbstractInsnNode prevNode = cur;
             cur = cur.getNext();
             index++;
@@ -445,6 +487,26 @@ public class MethodInliner {
         return start == end;
     }
 
+    @NotNull
+    private AnonymousObjectGeneration buildConstructorInvocation(
+            @NotNull String owner,
+            @NotNull String desc,
+            @NotNull Map<Integer, LambdaInfo> lambdaMapping,
+            boolean needReification
+    ) {
+        return new AnonymousObjectGeneration(
+                owner, needReification, isSameModule, lambdaMapping,
+                inliningContext.classRegeneration,
+                isAlreadyRegenerated(owner),
+                desc,
+                false
+        );
+    }
+
+    private boolean isAlreadyRegenerated(@NotNull String owner) {
+        return inliningContext.typeMapping.containsKey(owner);
+    }
+
     public LambdaInfo getLambdaIfExists(AbstractInsnNode insnNode) {
         if (insnNode.getOpcode() == Opcodes.ALOAD) {
             int varIndex = ((VarInsnNode) insnNode).var;
@@ -468,7 +530,7 @@ public class MethodInliner {
             AbstractInsnNode next = cur.getNext();
             if (next.getType() == AbstractInsnNode.METHOD_INSN) {
                 MethodInsnNode methodInsnNode = (MethodInsnNode) next;
-                if (methodInsnNode.name.equals("checkParameterIsNotNull") && methodInsnNode.owner.equals("kotlin/jvm/internal/Intrinsics")) {
+                if (methodInsnNode.name.equals("checkParameterIsNotNull") && methodInsnNode.owner.equals(IntrinsicMethods.INTRINSICS_CLASS_NAME)) {
                     AbstractInsnNode prev = cur.getPrevious();
 
                     assert cur.getOpcode() == Opcodes.LDC : "checkParameterIsNotNull should go after LDC but " + cur;

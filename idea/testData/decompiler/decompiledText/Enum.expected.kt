@@ -6,7 +6,7 @@ package test
 public final enum class Enum() : kotlin.Enum<test.Enum>, dependency.Tr {
     ONE
 
-    THREE
-
     TWO
+
+    THREE
 }

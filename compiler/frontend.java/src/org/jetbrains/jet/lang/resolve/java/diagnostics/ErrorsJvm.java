@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory0;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetElement;
 
 import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.DECLARATION_SIGNATURE;
 import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT;
@@ -35,8 +34,8 @@ public interface ErrorsJvm {
     DiagnosticFactory1<PsiElement, ConflictingJvmDeclarationsData> ACCIDENTAL_OVERRIDE =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 
-    DiagnosticFactory1<JetDeclaration, DeclarationDescriptor> OVERRIDE_CANNOT_BE_STATIC = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory1<JetDeclaration, DeclarationDescriptor> PLATFORM_STATIC_NOT_IN_OBJECT = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<JetDeclaration> OVERRIDE_CANNOT_BE_STATIC = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<JetDeclaration> PLATFORM_STATIC_NOT_IN_OBJECT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory1<JetDeclaration, DeclarationDescriptor> PLATFORM_STATIC_ILLEGAL_USAGE = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
 
     @SuppressWarnings("UnusedDeclaration")

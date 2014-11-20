@@ -66,6 +66,8 @@ import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.createClass.ClassKind
 import org.jetbrains.jet.plugin.util.isAny
 import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
+import org.jetbrains.jet.lang.psi.psiUtil.siblings
+import org.jetbrains.jet.plugin.refactoring.getLineCount
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -427,40 +429,31 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 val newLine = psiFactory.createNewLine()
 
-                fun prepend(element: PsiElement, elementBeforeStart: PsiElement, skipInitial: Boolean): PsiElement {
-                    val parent = elementBeforeStart.getParent()!!
-                    val anchor =
-                            if (!skipInitial && elementBeforeStart !is PsiWhiteSpace) {
-                                elementBeforeStart
+                fun calcNecessaryEmptyLines(decl: JetDeclaration, after: Boolean): Int {
+                    var lineBreaksPresent: Int = 0
+                    var neighbor: PsiElement? = null
+                    for (sibling in decl.siblings(forward = after, withItself = false)) {
+                        when (sibling) {
+                            is PsiWhiteSpace -> lineBreaksPresent += (sibling.getText() ?: "").count { it == '\n' }
+                            else -> {
+                                neighbor = sibling
+                                break
                             }
-                            else {
-                                PsiTreeUtil.skipSiblingsForward(elementBeforeStart, javaClass<PsiWhiteSpace>())
-                            }
-                    val addedElement = parent.addBefore(element, anchor)!!
-                    parent.addAfter(newLine, addedElement)
-                    parent.addAfter(newLine, addedElement)
-                    return addedElement
-                }
-
-                fun append(element: PsiElement, elementAfterEnd: PsiElement, skipInitial: Boolean): PsiElement {
-                    val parent = elementAfterEnd.getParent()!!
-                    val anchor =
-                            if (!skipInitial && elementAfterEnd !is PsiWhiteSpace) {
-                                elementAfterEnd
-                            }
-                            else {
-                                PsiTreeUtil.skipSiblingsBackward(elementAfterEnd, javaClass<PsiWhiteSpace>())
-                            }
-                    val addedElement = parent.addAfter(element, anchor)!!
-                    if (anchor?.getNode()?.getElementType() != JetTokens.LBRACE) {
-                        parent.addAfter(newLine, anchor)
-                        parent.addAfter(newLine, anchor)
+                        }
                     }
-                    return addedElement
+
+                    val neighborType = neighbor?.getNode()?.getElementType()
+                    val lineBreaksNeeded = when {
+                        neighborType == JetTokens.LBRACE, neighborType == JetTokens.RBRACE -> 1
+                        neighbor is JetDeclaration && (neighbor !is JetProperty || decl !is JetProperty) -> 2
+                        else -> 1
+                    }
+
+                    return Math.max(lineBreaksNeeded - lineBreaksPresent, 0)
                 }
 
-                when (containingElement) {
-                    is JetFile -> return append(declaration, containingElement.getLastChild()!!, false) as JetNamedDeclaration
+                val declarationInPlace = when (containingElement) {
+                    is JetFile -> containingElement.add(declaration) as JetNamedDeclaration
 
                     is JetClassOrObject -> {
                         var classBody = containingElement.getBody()
@@ -470,11 +463,13 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         }
 
                         if (declaration is JetNamedFunction) {
-                            val rBrace = classBody!!.getRBrace()
-                            return (rBrace?.let { append(declaration, it, true) }
-                                    ?: append(declaration, classBody!!.getLastChild()!!, false)) as JetNamedDeclaration
+                            val anchor = PsiTreeUtil.skipSiblingsBackward(
+                                    classBody!!.getRBrace() ?: classBody!!.getLastChild()!!,
+                                    javaClass<PsiWhiteSpace>()
+                            )
+                            classBody.addAfter(declaration, anchor) as JetNamedDeclaration
                         }
-                        return prepend(declaration, classBody!!.getLBrace()!!, true) as JetNamedDeclaration
+                        else classBody.addAfter(declaration, classBody!!.getLBrace()!!) as JetNamedDeclaration
                     }
 
                     is JetBlockExpression -> {
@@ -485,13 +480,23 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                 parent.addAfter(newLine, containingElement)
                             }
 
-                            return prepend(declaration, containingElement.getFirstChild()!!, false) as JetNamedDeclaration
+                            containingElement.addBefore(declaration, containingElement.getFirstChild()!!) as JetNamedDeclaration
                         }
-                        return prepend(declaration, containingElement.getLBrace()!!, true) as JetNamedDeclaration
+                        else containingElement.addAfter(declaration, containingElement.getLBrace()!!) as JetNamedDeclaration
                     }
 
                     else -> throw AssertionError("Invalid containing element: ${containingElement.getText()}")
                 }
+
+                val parent = declarationInPlace.getParent()
+                calcNecessaryEmptyLines(declarationInPlace, false).let {
+                    if (it > 0) parent.addBefore(psiFactory.createNewLine(it), declarationInPlace)
+                }
+                calcNecessaryEmptyLines(declarationInPlace, true).let {
+                    if (it > 0) parent.addAfter(psiFactory.createNewLine(it), declarationInPlace)
+                }
+
+                return declarationInPlace
             }
         }
 

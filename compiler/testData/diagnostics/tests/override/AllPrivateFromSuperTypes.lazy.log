@@ -38,3 +38,41 @@ LazyJavaPackageFragment@12['lang'] {
     classes('a': Name@33) = null // through LazyPackageFragmentScopeForJavaPackage@34
     deserializedPackageScope = Empty@29 // through LazyPackageFragmentScopeForJavaPackage@34
 }
+
+ResolutionTaskHolder@35 {
+    <name not found> = ArrayList@36[1] { ResolutionCandidate@37 }
+    <name not found> = ArrayList@38[1] { ResolutionCandidate@39 }
+    <name not found> = ArrayList@40[1] { ResolutionCandidate@41 }
+    <name not found> = ArrayList@42[1] { ResolutionCandidate@43 }
+    <name not found> = ArrayList@44[1] { ResolutionCandidate@37 }
+    <name not found> = ArrayList@45[1] { ResolutionCandidate@39 }
+    <name not found> = ArrayList@46[1] { ResolutionCandidate@41 }
+    <name not found> = ArrayList@47[1] { ResolutionCandidate@43 }
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+    <name not found> = EmptyList@31[empty]
+}
+
+ResolutionTaskHolder@48 {
+    <name not found> = ArrayList@49[1] { ResolutionCandidate@50 }
+    <name not found> = ArrayList@51[1] { ResolutionCandidate@50 }
+}

@@ -3,7 +3,6 @@
 
 class A<T>(val n: T) {
     var foo: String
-
 }
 
 fun test() {

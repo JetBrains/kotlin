@@ -28,3 +28,48 @@ LazyJavaPackageFragment@7['java'] {
     functions('lang': Name@26) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@24
     memberIndex = computeMemberIndex$1@28 // through LazyPackageFragmentScopeForJavaPackage@24
 }
+
+ResolutionTaskHolder@29 {
+    <name not found> = ArrayList@30[1] { ResolutionCandidate@31 }
+    <name not found> = ArrayList@32[1] { ResolutionCandidate@31 }
+}
+
+ResolutionTaskHolder@33 {
+    <name not found> = ArrayList@34[1] { ResolutionCandidate@35 }
+    <name not found> = ArrayList@36[1] { ResolutionCandidate@35 }
+}
+
+ResolutionTaskHolder@37 {
+    <name not found> = ArrayList@38[1] { ResolutionCandidate@39 }
+    <name not found> = ArrayList@40[1] { ResolutionCandidate@39 }
+}
+
+ResolutionTaskHolder@41 {
+    <name not found> = ArrayList@42[1] { ResolutionCandidate@43 }
+    <name not found> = ArrayList@44[1] { ResolutionCandidate@43 }
+}
+
+ResolutionTaskHolder@45 {
+    <name not found> = ArrayList@46[1] { ResolutionCandidate@47 }
+    <name not found> = ArrayList@48[1] { ResolutionCandidate@47 }
+}
+
+ResolutionTaskHolder@49 {
+    <name not found> = ArrayList@50[1] { ResolutionCandidate@51 }
+    <name not found> = ArrayList@52[1] { ResolutionCandidate@51 }
+}
+
+ResolutionTaskHolder@53 {
+    <name not found> = ArrayList@54[1] { ResolutionCandidate@55 }
+    <name not found> = ArrayList@56[1] { ResolutionCandidate@55 }
+}
+
+ResolutionTaskHolder@57 {
+    <name not found> = ArrayList@58[1] { ResolutionCandidate@59 }
+    <name not found> = ArrayList@60[1] { ResolutionCandidate@59 }
+}
+
+ResolutionTaskHolder@61 {
+    <name not found> = ArrayList@62[1] { ResolutionCandidate@63 }
+    <name not found> = ArrayList@64[1] { ResolutionCandidate@63 }
+}

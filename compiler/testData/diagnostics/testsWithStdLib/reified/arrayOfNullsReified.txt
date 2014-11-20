@@ -1,0 +1,5 @@
+package
+
+kotlin.inline() internal fun </*0*/ reified T> bar(): kotlin.Unit
+internal fun baz(): kotlin.Unit
+internal fun </*0*/ T> foo(): kotlin.Unit

@@ -1,4 +1,4 @@
-trait R<in T: Comparable<T>> {
+trait R<T: Comparable<T>> {
     var value: T
 }
 

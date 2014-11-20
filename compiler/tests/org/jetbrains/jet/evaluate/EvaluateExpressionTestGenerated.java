@@ -123,6 +123,12 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
             doConstantTest(fileName);
         }
 
+        @TestMetadata("objectProperty.kt")
+        public void testObjectProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/objectProperty.kt");
+            doConstantTest(fileName);
+        }
+
         @TestMetadata("strings.kt")
         public void testStrings() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/evaluate/constant/strings.kt");

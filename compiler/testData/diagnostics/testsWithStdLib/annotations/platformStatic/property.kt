@@ -1,29 +1,44 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 import kotlin.platform.platformStatic
 
+open class B {
+    public open val base1 : Int = 1
+    public open val base2 : Int = 1
+}
+
 class A {
-    class object {
+    class object : B() {
         var p1:Int = 1
-            <!PLATFORM_STATIC_ILLEGAL_USAGE!>[platformStatic] set(p: Int)<!> {
+            [platformStatic] set(p: Int) {
                 p1 = 1
             }
 
-        <!PLATFORM_STATIC_ILLEGAL_USAGE!>[platformStatic] val z<!> = 1;
+        [platformStatic] val z = 1;
+
+        [platformStatic] override val base1: Int = 0
+
+        override val base2: Int = 0
+            [platformStatic] get
     }
 
-    object A {
+    object A : B() {
         var p:Int = 1
-            <!PLATFORM_STATIC_ILLEGAL_USAGE!>[platformStatic] set(p1: Int)<!> {
+            [platformStatic] set(p1: Int) {
                 p = 1
             }
 
-        <!PLATFORM_STATIC_ILLEGAL_USAGE!>[platformStatic] val z<!> = 1;
+        [platformStatic] val z = 1;
+
+        <!OVERRIDE_CANNOT_BE_STATIC!>[platformStatic] override val base1: Int<!> = 0
+
+        override val base2: Int = 0
+            <!OVERRIDE_CANNOT_BE_STATIC!>[platformStatic] get<!>
     }
 
     var p:Int = 1
-        <!PLATFORM_STATIC_ILLEGAL_USAGE!>[platformStatic] set(p1: Int)<!> {
+        <!PLATFORM_STATIC_NOT_IN_OBJECT!>[platformStatic] set(p1: Int)<!> {
             p = 1
         }
 
-    <!PLATFORM_STATIC_ILLEGAL_USAGE!>[platformStatic] val z<!> = 1;
+    <!PLATFORM_STATIC_NOT_IN_OBJECT!>[platformStatic] val z2<!> = 1;
 }

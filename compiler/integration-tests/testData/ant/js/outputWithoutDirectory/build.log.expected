@@ -1,0 +1,9 @@
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+
+BUILD SUCCESSFUL
+Total time: [time]
+
+Return code: 0

@@ -17,16 +17,16 @@ LazyJavaPackageFragmentProvider@0 {
 LazyJavaPackageFragment@2['<root>'] {
     classes('Int': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@18
     classes('IntArray': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@18
-    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@18
 }
 
 LazyJavaPackageFragment@7['java'] {
-    classes('lang': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@22
-    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@22
-    functions('lang': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@22
-    memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@22
+    classes('lang': Name@20) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    deserializedPackageScope = Empty@22 // through LazyPackageFragmentScopeForJavaPackage@21
+    functions('lang': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@21
+    memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@21
 }
 
-LazyJavaPackageFragment@9['lang'] {
-    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@26
+ResolutionTaskHolder@26 {
+    <name not found> = ArrayList@27[1] { ResolutionCandidate@28 }
+    <name not found> = ArrayList@29[1] { ResolutionCandidate@28 }
 }

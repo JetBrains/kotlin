@@ -98,7 +98,7 @@ public class LibrarySourcesConfig extends Config {
             }
 
             if (file == null) {
-                LOG.error("File '" + path + "not found.'");
+                LOG.error("File '" + path + "' not found.'");
             }
             else {
                 JetFileCollector jetFileCollector = new JetFileCollector(jetFiles, actualModuleName, psiManager);

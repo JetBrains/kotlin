@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
+import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -169,5 +170,9 @@ public class CallableMethod implements Callable {
     @Override
     public String toString() {
         return Printer.OPCODES[invokeOpcode] + " " + owner.getInternalName() + "." + signature;
+    }
+
+    public boolean isStaticCall() {
+        return getInvokeOpcode() == Opcodes.INVOKESTATIC;
     }
 }

@@ -38,7 +38,7 @@ import org.jetbrains.jet.context.GlobalContextImpl
 fun createModuleResolverProvider(
         project: Project,
         globalContext: GlobalContextImpl,
-        analyzerFacade: AnalyzerFacade<ResolverForModule, JvmPlatformParameters>,
+        analyzerFacade: AnalyzerFacade<out ResolverForModule, JvmPlatformParameters>,
         syntheticFiles: Collection<JetFile>,
         delegateProvider: ModuleResolverProvider,
         moduleFilter: (IdeaModuleInfo) -> Boolean

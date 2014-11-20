@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -34,14 +33,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -50,13 +43,18 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
@@ -186,80 +184,6 @@ public class ExpressionTypingUtils {
                 }
             }
         }
-    }
-
-    /*
-    * Checks if receiver declaration could be resolved to call expected receiver.
-    */
-    public static boolean checkIsExtensionCallable (
-            @NotNull ReceiverValue receiverArgument,
-            @NotNull CallableDescriptor callableDescriptor,
-            boolean isInfixCall,
-            @NotNull BindingContext bindingContext,
-            @NotNull DataFlowInfo dataFlowInfo
-    ) {
-        if (isInfixCall
-              && (!(callableDescriptor instanceof SimpleFunctionDescriptor) || callableDescriptor.getValueParameters().size() != 1)) {
-            return false;
-        }
-
-        List<JetType> types = SmartCastUtils.getSmartCastVariants(receiverArgument, bindingContext, dataFlowInfo);
-
-        for (JetType type : types) {
-            if (checkReceiverResolution(receiverArgument, type, callableDescriptor)) return true;
-            if (type.isNullable()) {
-                JetType notNullableType = TypeUtils.makeNotNullable(type);
-                if (checkReceiverResolution(receiverArgument, notNullableType, callableDescriptor)) return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static boolean checkReceiverResolution (
-            @NotNull ReceiverValue receiverArgument,
-            @NotNull JetType receiverType,
-            @NotNull CallableDescriptor callableDescriptor
-    ) {
-        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getExtensionReceiverParameter();
-
-        if (!receiverArgument.exists() && receiverParameter == null) {
-            // Both receivers do not exist
-            return true;
-        }
-
-        if (!(receiverArgument.exists() && receiverParameter != null)) {
-            return false;
-        }
-
-        Set<Name> typeNamesInReceiver = collectUsedTypeNames(receiverParameter.getType());
-
-        ConstraintSystem constraintSystem = new ConstraintSystemImpl();
-        Map<TypeParameterDescriptor, Variance> typeVariables = Maps.newLinkedHashMap();
-        for (TypeParameterDescriptor typeParameterDescriptor : callableDescriptor.getTypeParameters()) {
-            if (typeNamesInReceiver.contains(typeParameterDescriptor.getName())) {
-                typeVariables.put(typeParameterDescriptor, Variance.INVARIANT);
-            }
-        }
-        constraintSystem.registerTypeVariables(typeVariables);
-
-        constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
-        return constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true);
-    }
-
-    private static Set<Name> collectUsedTypeNames(@NotNull JetType jetType) {
-        Set<Name> typeNames = new HashSet<Name>();
-
-        ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-        if (descriptor != null) {
-            typeNames.add(descriptor.getName());
-        }
-
-        for (TypeProjection argument : jetType.getArguments()) {
-            typeNames.addAll(collectUsedTypeNames(argument.getType()));
-        }
-
-        return typeNames;
     }
 
     @NotNull

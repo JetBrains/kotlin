@@ -43,3 +43,21 @@ LazyJavaPackageFragment@11['lang'] {
     functions('accept': Name@39) = EmptyList@35[empty] // through LazyPackageFragmentScopeForJavaPackage@38
     memberIndex = computeMemberIndex$1@40 // through LazyPackageFragmentScopeForJavaPackage@38
 }
+
+ResolutionTaskHolder@41 {
+    <name not found> = ArrayList@42[1] { ResolutionCandidate@43 }
+    <name not found> = ArrayList@44[1] { ResolutionCandidate@43 }
+    <name not found> = EmptyList@35[empty]
+    <name not found> = EmptyList@35[empty]
+    <name not found> = EmptyList@35[empty]
+    <name not found> = EmptyList@35[empty]
+}
+
+ResolutionTaskHolder@45 {
+    <name not found> = ArrayList@46[1] { ResolutionCandidate@47 }
+    <name not found> = ArrayList@48[1] { ResolutionCandidate@47 }
+    <name not found> = EmptyList@35[empty]
+    <name not found> = EmptyList@35[empty]
+    <name not found> = EmptyList@35[empty]
+    <name not found> = EmptyList@35[empty]
+}

@@ -20,7 +20,7 @@ fun test() {
 // ---------------------
 // copy from kotlin util
 
-fun arrayList<T>(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size))
+fun arrayList<T>(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size()))
 
 fun <T, C: MutableCollection<in T>> Array<T>.toCollection(result: C) : C {
     for (element in this) result.add(element)

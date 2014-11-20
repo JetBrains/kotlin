@@ -15,6 +15,6 @@ fun foo(p: C?) {
 // ORDER: p
 // ORDER: local
 // ORDER: global
-// ORDER: C.INSTANCE
+// ORDER: INSTANCE
 // ORDER: object
 // ORDER: null

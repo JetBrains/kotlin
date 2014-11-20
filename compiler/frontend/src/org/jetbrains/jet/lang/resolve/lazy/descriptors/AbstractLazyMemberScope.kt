@@ -122,7 +122,7 @@ public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : De
     protected fun computeDescriptorsFromDeclaredElements(kindFilter: DescriptorKindFilter,
                                                          nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
         val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
-        val result = ArrayList<DeclarationDescriptor>(declarations.size())
+        val result = LinkedHashSet<DeclarationDescriptor>(declarations.size())
         for (declaration in declarations) {
             if (declaration is JetClassOrObject) {
                 val name = declaration.getNameAsSafeName()

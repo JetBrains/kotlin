@@ -48,12 +48,32 @@ LazyJavaPackageFragment@23['java'] {
     memberIndex = computeMemberIndex$1@39 // through LazyPackageFragmentScopeForJavaPackage@37
 }
 
-LazyJavaPackageFragment@12['lang'] {
+LazyJavaPackageFragment@25['lang'] {
     classes('a': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@41
     deserializedPackageScope = Empty@32 // through LazyPackageFragmentScopeForJavaPackage@41
 }
 
-LazyJavaPackageFragment@25['lang'] {
+LazyJavaPackageFragment@12['lang'] {
     classes('a': Name@42) = null // through LazyPackageFragmentScopeForJavaPackage@43
     deserializedPackageScope = Empty@32 // through LazyPackageFragmentScopeForJavaPackage@43
+}
+
+ResolutionTaskHolder@44 {
+    <name not found> = ArrayList@45[1] { ResolutionCandidate@46 }
+    <name not found> = ArrayList@47[1] { ResolutionCandidate@46 }
+    <name not found> = EmptyList@34[empty]
+    <name not found> = EmptyList@34[empty]
+    <name not found> = EmptyList@34[empty]
+    <name not found> = EmptyList@34[empty]
+    <name not found> = EmptyList@34[empty]
+    <name not found> = EmptyList@34[empty]
+    <name not found> = EmptyList@34[empty]
+    <name not found> = EmptyList@34[empty]
+}
+
+ResolutionTaskHolder@48 {
+    <name not found> = ArrayList@49[1] { ResolutionCandidate@50 }
+    <name not found> = ArrayList@51[1] { ResolutionCandidate@50 }
+    <name not found> = EmptyList@34[empty]
+    <name not found> = EmptyList@34[empty]
 }

@@ -4,6 +4,5 @@
 
 fun test() {
     val foo: Unit
-
     val u: Unit = foo
 }

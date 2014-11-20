@@ -25,5 +25,5 @@ get() {}
 //public fun kotlin.Int.<get-ext>(): kotlin.Int defined in rendererTest
 //kotlin.deprecated internal val deprecatedVal: kotlin.Int defined in rendererTest
 //public val <T : kotlin.CharSequence> T.extWithTwoUpperBounds: kotlin.Int where T : kotlin.Number defined in rendererTest
-//<T : kotlin.CharSequence & kotlin.Number> defined in rendererTest
+//<T : kotlin.CharSequence & kotlin.Number> defined in rendererTest.extWithTwoUpperBounds
 //public fun T.<get-extWithTwoUpperBounds>(): kotlin.Int defined in rendererTest

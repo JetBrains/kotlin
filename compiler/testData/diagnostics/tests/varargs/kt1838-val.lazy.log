@@ -32,3 +32,10 @@ LazyJavaPackageFragment@9['lang'] {
     classes('t': Name@20) = null // through LazyPackageFragmentScopeForJavaPackage@27
     deserializedPackageScope = Empty@21 // through LazyPackageFragmentScopeForJavaPackage@27
 }
+
+ResolutionTaskHolder@28 {
+    <name not found> = ArrayList@29[1] { ResolutionCandidate@30 }
+    <name not found> = ArrayList@31[1] { ResolutionCandidate@30 }
+    <name not found> = EmptyList@25[empty]
+    <name not found> = EmptyList@25[empty]
+}

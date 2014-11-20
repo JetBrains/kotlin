@@ -109,8 +109,13 @@ public class JetPsiFactory(private val project: Project) {
         return createProperty("val${text}x").findElementAt(3)!!
     }
 
+    // Remove when all Java usages are rewritten to Kotlin
     public fun createNewLine(): PsiElement {
         return createWhiteSpace("\n")
+    }
+
+    public fun createNewLine(lineBreaks: Int): PsiElement {
+        return createWhiteSpace("\n".repeat(lineBreaks))
     }
 
     public fun createClass(text: String): JetClass {

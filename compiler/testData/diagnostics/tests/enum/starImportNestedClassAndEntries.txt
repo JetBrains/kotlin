@@ -11,13 +11,25 @@ package bar {
 package foo {
 
     internal final enum class E : kotlin.Enum<foo.E> {
-        private constructor E()
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: foo.E): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public enum entry ENTRY : foo.E {
+            private constructor ENTRY()
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: foo.E): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public class object <class-object-for-ENTRY> : foo.E.ENTRY {
+                private constructor <class-object-for-ENTRY>()
+                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: foo.E): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
 
         public enum entry ANOTHER : foo.E {
             private constructor ANOTHER()
@@ -39,25 +51,13 @@ package foo {
             }
         }
 
-        public enum entry ENTRY : foo.E {
-            private constructor ENTRY()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: foo.E): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-            public class object <class-object-for-ENTRY> : foo.E.ENTRY {
-                private constructor <class-object-for-ENTRY>()
-                public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: foo.E): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-                public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-                public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-                public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-            }
-        }
+        private constructor E()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: foo.E): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         internal final class Nested {
             public constructor Nested()

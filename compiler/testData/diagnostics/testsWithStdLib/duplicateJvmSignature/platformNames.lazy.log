@@ -77,7 +77,7 @@ LazyJavaPackageFragment@23['kotlin'] {
     functions('platform': Name@60) = EmptyList@44[empty] // through DeserializedPackageMemberScope@57
     functions('platform': Name@60) = EmptyList@44[empty] // through LazyPackageFragmentScopeForJavaPackage@52
     memberIndex = computeMemberIndex$1@61 // through LazyPackageFragmentScopeForJavaPackage@52
-    membersProtos = HashMap@62 // through DeserializedPackageMemberScope@57
+    membersProtos = LinkedHashMap@62 // through DeserializedPackageMemberScope@57
     properties('io': Name@58) = EmptyList@44[empty] // through DeserializedPackageMemberScope@57
     properties('jvm': Name@59) = EmptyList@44[empty] // through DeserializedPackageMemberScope@57
     properties('platform': Name@60) = EmptyList@44[empty] // through DeserializedPackageMemberScope@57
@@ -88,6 +88,11 @@ LazyJavaPackageFragment@3['platform'] {
     classes('platformName': Name@41) = DeserializedClassDescriptor@2['platformName'] // through LazyPackageFragmentScopeForJavaPackage@63
 }
 
-TypeDeserializer@64 {
-    classDescriptors('4': Integer@65) = DeserializedClassDescriptor@66['String']
+ResolutionTaskHolder@64 {
+    <name not found> = ArrayList@65[1] { ResolutionCandidate@66 }
+    <name not found> = ArrayList@67[1] { ResolutionCandidate@66 }
+}
+
+TypeDeserializer@68 {
+    classDescriptors('4': Integer@69) = DeserializedClassDescriptor@70['String']
 }

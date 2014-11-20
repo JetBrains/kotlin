@@ -30,23 +30,32 @@ class WithTailInsertHandler(val tailText: String,
                             val spaceAfter: Boolean,
                             val overwriteText: Boolean = true) : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        val document = context.getDocument()
-
         item.handleInsert(context)
+        postHandleInsert(context, item)
+    }
+
+    fun postHandleInsert(context: InsertionContext, item: LookupElement) {
+        val completionChar = context.getCompletionChar()
+        if (completionChar == tailText.singleOrNull() || (spaceAfter && completionChar == ' ')) {
+            context.setAddCompletionChar(false)
+        }
+        //TODO: what if completion char is different?
+
+        val document = context.getDocument()
         PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(document)
 
         var tailOffset = context.getTailOffset()
-        if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR && item.getUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY) != null) {
+        if (completionChar == Lookup.REPLACE_SELECT_CHAR && item.getUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY) != null) {
             val offset = context.getOffsetMap().getOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET)
             if (offset != -1) tailOffset = offset
         }
 
         val moveCaret = context.getEditor().getCaretModel().getOffset() == tailOffset
 
-        fun isCharAt(offset: Int, c: Char) = offset < document.getTextLength() && document.getCharsSequence().charAt(offset) == c
-        fun isTextAt(offset: Int, text: String) = offset + text.length <= document.getTextLength() && document.getText(TextRange(offset, offset + text.length)) == text
-
         if (overwriteText) {
+            fun isCharAt(offset: Int, c: Char) = offset < document.getTextLength() && document.getCharsSequence().charAt(offset) == c
+            fun isTextAt(offset: Int, text: String) = offset + text.length <= document.getTextLength() && document.getText(TextRange(offset, offset + text.length)) == text
+
             if (spaceBefore && isCharAt(tailOffset, ' ')) {
                 document.deleteString(tailOffset, tailOffset + 1)
             }
@@ -74,5 +83,13 @@ class WithTailInsertHandler(val tailText: String,
                 AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(context.getEditor(), null)
             }
         }
+    }
+
+    class object {
+        fun commaTail() = WithTailInsertHandler(",", spaceBefore = false, spaceAfter = true /*TODO: use code style option*/)
+        fun rparenthTail() = WithTailInsertHandler(")", spaceBefore = false, spaceAfter = false)
+        fun elseTail() = WithTailInsertHandler("else", spaceBefore = true, spaceAfter = true)
+        fun eqTail() = WithTailInsertHandler("=", spaceBefore = true, spaceAfter = true) /*TODO: use code style options*/
+        fun spaceTail() = WithTailInsertHandler(" ", spaceBefore = false, spaceAfter = false)
     }
 }

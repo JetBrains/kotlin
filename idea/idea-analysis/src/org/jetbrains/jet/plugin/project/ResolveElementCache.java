@@ -73,10 +73,6 @@ public class ResolveElementCache extends ElementResolver {
     @NotNull
     @Override
     public AdditionalCheckerProvider getAdditionalCheckerProvider(@NotNull JetFile jetFile) {
-        TargetPlatform platform = TargetPlatformDetector.getPlatform(jetFile);
-        if (platform == TargetPlatform.JS) {
-            return AdditionalCheckerProvider.Empty.INSTANCE$;
-        }
-        return JavaDeclarationCheckerProvider.INSTANCE$;
+        return TargetPlatformDetector.getPlatform(jetFile).getAdditionalCheckerProvider();
     }
 }

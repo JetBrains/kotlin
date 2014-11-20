@@ -162,6 +162,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinEnum/renameKotlinEnum.test")
+    public void testRenameKotlinEnum_RenameKotlinEnum() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinEnum/renameKotlinEnum.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renameKotlinFunctionInEnum/renameKotlinFunctionInEnum.test")
+    public void testRenameKotlinFunctionInEnum_RenameKotlinFunctionInEnum() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinFunctionInEnum/renameKotlinFunctionInEnum.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinMethod/javaWrapperForKotlinMethod.test")
     public void testRenameKotlinMethod_JavaWrapperForKotlinMethod() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinMethod/javaWrapperForKotlinMethod.test");

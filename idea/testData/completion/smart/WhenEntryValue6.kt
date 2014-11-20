@@ -11,8 +11,8 @@ fun foo(e: E?) {
     }
 }
 
-// ABSENT: E.A
-// EXIST: E.B
-// EXIST: E.C
+// ABSENT: A
+// EXIST: B
+// EXIST: C
 // EXIST: null
 // EXIST: {"lookupString":"else","tailText":" ->","itemText":"else"}

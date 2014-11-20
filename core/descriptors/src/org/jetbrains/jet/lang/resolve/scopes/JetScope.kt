@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.resolve.scopes
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.utils.Printer
+import org.jetbrains.jet.utils.toReadOnlyList
+import java.lang.reflect.Modifier
 
 public trait JetScope {
 
@@ -114,6 +116,16 @@ public class DescriptorKindFilter(
         return DescriptorKindFilter(mask, excludes)
     }
 
+    override fun toString(): String {
+        val predefinedFilterName = DEBUG_PREDEFINED_FILTERS_MASK_NAMES.firstOrNull { it.mask == kindMask } ?.name
+        val kindString = predefinedFilterName ?: DEBUG_MASK_BIT_NAMES
+                .map { if (acceptsKinds(it.mask)) it.name else null }
+                .filterNotNull()
+                .joinToString(separator = " | ")
+
+        return "DescriptorKindFilter($kindString, $excludes)"
+    }
+
     private fun DeclarationDescriptor.kind(): Int {
         return when (this) {
             is ClassDescriptor -> if (this.getKind().isSingleton()) SINGLETON_CLASSIFIERS_MASK else NON_SINGLETON_CLASSIFIERS_MASK
@@ -145,6 +157,29 @@ public class DescriptorKindFilter(
         public val FUNCTIONS: DescriptorKindFilter = DescriptorKindFilter(FUNCTIONS_MASK)
         public val VARIABLES: DescriptorKindFilter = DescriptorKindFilter(VARIABLES_MASK)
         public val VALUES: DescriptorKindFilter = DescriptorKindFilter(VALUES_MASK)
+
+        private class MaskToName(val mask: Int, val name: String)
+
+        private val DEBUG_PREDEFINED_FILTERS_MASK_NAMES = staticFields<DescriptorKindFilter>()
+                .map { field ->
+                    val filter = field.get(null) as? DescriptorKindFilter
+                    if (filter != null) MaskToName(filter.kindMask, field.getName()) else null
+                }
+                .filterNotNull()
+                .toReadOnlyList()
+
+        private val DEBUG_MASK_BIT_NAMES = staticFields<DescriptorKindFilter>()
+                .filter { it.getType() == Integer.TYPE }
+                .map { field ->
+                    val mask = field.get(null) as Int
+                    val isOneBitMask = mask == (mask and (-mask))
+                    if (isOneBitMask) MaskToName(mask, field.getName()) else null
+                }
+                .filterNotNull()
+                .toReadOnlyList()
+
+        [suppress("NOTHING_TO_INLINE")]
+        private inline fun <reified T> staticFields() = javaClass<T>().getFields().filter { Modifier.isStatic(it.getModifiers()) }
     }
 }
 
@@ -154,10 +189,14 @@ public trait DescriptorKindExclude {
     public object Extensions : DescriptorKindExclude {
         override fun matches(descriptor: DeclarationDescriptor)
                 = descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null
+
+        override fun toString() = this.javaClass.getSimpleName()
     }
 
     public object NonExtensions : DescriptorKindExclude {
         override fun matches(descriptor: DeclarationDescriptor)
                 = descriptor !is CallableDescriptor || descriptor.getExtensionReceiverParameter() == null
+
+        override fun toString() = this.javaClass.getSimpleName()
     }
 }

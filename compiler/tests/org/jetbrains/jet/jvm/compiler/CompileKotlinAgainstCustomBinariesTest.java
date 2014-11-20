@@ -74,7 +74,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         RecursiveDescriptorComparator.Configuration comparator =
                 RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(
-                        DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES);
+                        DescriptorValidator.ValidationVisitor.errorTypesAllowed());
         validateAndCompareDescriptorWithFile(packageView, comparator, getTestDataFileWithExtension("txt"));
     }
 

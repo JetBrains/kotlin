@@ -17,17 +17,24 @@ LazyJavaPackageFragmentProvider@4 {
     packageFragments('kotlin.jvm': FqName@17) = null
 }
 
-LazyJavaPackageFragment@6['<root>'] {
-    deserializedPackageScope = Empty@18 // through LazyPackageFragmentScopeForJavaPackage@19
-}
-
 LazyJavaPackageFragment@10['java'] {
-    classes('lang': Name@20) = null // through LazyPackageFragmentScopeForJavaPackage@21
-    deserializedPackageScope = Empty@18 // through LazyPackageFragmentScopeForJavaPackage@21
-    functions('lang': Name@22) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@21
-    memberIndex = computeMemberIndex$1@24 // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('lang': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@19
+    deserializedPackageScope = Empty@20 // through LazyPackageFragmentScopeForJavaPackage@19
+    functions('lang': Name@21) = EmptyList@22[empty] // through LazyPackageFragmentScopeForJavaPackage@19
+    memberIndex = computeMemberIndex$1@23 // through LazyPackageFragmentScopeForJavaPackage@19
 }
 
-LazyJavaPackageFragment@12['lang'] {
-    deserializedPackageScope = Empty@18 // through LazyPackageFragmentScopeForJavaPackage@25
+ResolutionTaskHolder@24 {
+    <name not found> = ArrayList@25[1] { ResolutionCandidate@26 }
+    <name not found> = ArrayList@27[1] { ResolutionCandidate@26 }
+}
+
+ResolutionTaskHolder@28 {
+    <name not found> = ArrayList@29[1] { ResolutionCandidate@30 }
+    <name not found> = ArrayList@31[1] { ResolutionCandidate@30 }
+}
+
+ResolutionTaskHolder@32 {
+    <name not found> = ArrayList@33[1] { ResolutionCandidate@34 }
+    <name not found> = ArrayList@35[1] { ResolutionCandidate@34 }
 }

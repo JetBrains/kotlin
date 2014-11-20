@@ -25,8 +25,27 @@ LazyJavaPackageFragment@10['java'] {
 }
 
 LazyJavaPackageFragment@12['lang'] {
-    classes('Bar': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@27
-    deserializedPackageScope = Empty@22 // through LazyPackageFragmentScopeForJavaPackage@27
-    functions('Bar': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@27
-    memberIndex = computeMemberIndex$1@28 // through LazyPackageFragmentScopeForJavaPackage@27
+    deserializedPackageScope = Empty@22 // through LazyPackageFragmentScopeForJavaPackage@26
+}
+
+ResolutionTaskHolder@27 {
+    <name not found> = ArrayList@28[1] { ResolutionCandidate@29 }
+    <name not found> = ArrayList@30[1] { ResolutionCandidate@29 }
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+}
+
+ResolutionTaskHolder@31 {
+    <name not found> = ArrayList@32[1] { ResolutionCandidate@33 }
+    <name not found> = ArrayList@34[1] { ResolutionCandidate@33 }
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
 }

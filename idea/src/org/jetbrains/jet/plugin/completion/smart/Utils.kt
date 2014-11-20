@@ -71,19 +71,19 @@ fun LookupElement.addTail(tail: Tail?): LookupElement {
 
         Tail.COMMA -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler(",", spaceBefore = false, spaceAfter = true /*TODO: use code style option*/).handleInsert(context, getDelegate())
+                WithTailInsertHandler.commaTail().handleInsert(context, getDelegate())
             }
         }
 
         Tail.RPARENTH -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                handlers.WithTailInsertHandler(")", spaceBefore = false, spaceAfter = false).handleInsert(context, getDelegate())
+                WithTailInsertHandler.rparenthTail().handleInsert(context, getDelegate())
             }
         }
 
         Tail.ELSE -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                handlers.WithTailInsertHandler("else", spaceBefore = true, spaceAfter = true).handleInsert(context, getDelegate())
+                WithTailInsertHandler.elseTail().handleInsert(context, getDelegate())
             }
         }
     }
@@ -186,8 +186,12 @@ fun functionType(function: FunctionDescriptor): JetType? {
                                                         function.getReturnType() ?: return null)
 }
 
-fun createLookupElement(descriptor: DeclarationDescriptor, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): LookupElement {
-    var element = KotlinLookupElementFactory.createLookupElement(resolveSession, descriptor)
+fun LookupElementFactory.createLookupElement(
+        descriptor: DeclarationDescriptor,
+        resolveSession: ResolveSessionForBodies,
+        bindingContext: BindingContext
+): LookupElement {
+    var element = createLookupElement(resolveSession, descriptor)
 
     if (descriptor is FunctionDescriptor && descriptor.getValueParameters().isNotEmpty()) {
         element = element.keepOldArgumentListOnTab()

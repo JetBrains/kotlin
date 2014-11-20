@@ -1,4 +1,4 @@
-open class A<out T> () {
+open class A<T> () {
    fun plus(e: T) = B<T> (e)
 }
 

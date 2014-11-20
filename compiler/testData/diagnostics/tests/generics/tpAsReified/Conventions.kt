@@ -1,6 +1,8 @@
-fun <reified T> T.plus(<!UNUSED_PARAMETER!>p<!>: T): T = this
+// !DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER
 
-fun <reified T> T.invoke(): T  = this
+inline fun <reified T> T.plus(p: T): T = this
+
+inline fun <reified T> T.invoke(): T  = this
 
 fun <A> main(tp: A, any: Any) {
     tp <!TYPE_PARAMETER_AS_REIFIED!>+<!> tp

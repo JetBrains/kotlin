@@ -16,12 +16,9 @@
 
 package org.jetbrains.jet.plugin.completion.handlers
 
-import com.google.common.collect.Sets
-import com.intellij.codeInsight.TailType
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetFunction
 import org.jetbrains.jet.lang.psi.JetPsiUtil
@@ -38,9 +35,13 @@ public object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
                                        JetTokens.CONTINUE_KEYWORD.toString())
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        val keyword = item.getLookupString()
+        if (shouldInsertSpaceAfter(item.getLookupString(), context)) {
+            WithTailInsertHandler.spaceTail().postHandleInsert(context, item)
+        }
+    }
 
-        if (keyword in NO_SPACE_AFTER) return
+    private fun shouldInsertSpaceAfter(keyword: String, context: InsertionContext): Boolean {
+        if (keyword in NO_SPACE_AFTER) return false
 
         if (keyword == JetTokens.RETURN_KEYWORD.toString()) {
             val element = context.getFile().findElementAt(context.getStartOffset())
@@ -48,13 +49,11 @@ public object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
                 val jetFunction = PsiTreeUtil.getParentOfType(element, javaClass<JetFunction>())
                 if (jetFunction != null && (!jetFunction.hasDeclaredReturnType() || JetPsiUtil.isVoidType(jetFunction.getTypeReference()))) {
                     // No space for void function
-                    return
+                    return false
                 }
             }
         }
 
-        // Add space after keyword
-        context.setAddCompletionChar(false)
-        TailType.SPACE.processTail(context.getEditor(), context.getTailOffset())
+        return true
     }
 }

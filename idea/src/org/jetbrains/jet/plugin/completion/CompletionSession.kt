@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.caches.resolve.*
-import org.jetbrains.jet.plugin.codeInsight.TipsManager
+import org.jetbrains.jet.plugin.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
@@ -33,9 +33,10 @@ import org.jetbrains.jet.plugin.caches.KotlinIndicesHelper
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptorKindExclude
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -62,7 +63,25 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, resolveSession)
+    protected val referenceVariantsHelper: ReferenceVariantsHelper?
+            = if (bindingContext != null) ReferenceVariantsHelper(bindingContext) { isVisibleDescriptor(it) } else null
+
+    protected val boldImmediateLookupElementFactory: LookupElementFactory = run {
+        if (jetReference != null) {
+            val expression = jetReference.expression
+            val receivers = referenceVariantsHelper!!.getReferenceVariantsReceivers(expression)
+            val dataFlowInfo = bindingContext!!.getDataFlowInfo(expression)
+            val receiverTypes = receivers.flatMap {
+                SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(it, bindingContext, dataFlowInfo)
+            }
+            BoldImmediateLookupElementFactory(receiverTypes)
+        }
+        else {
+            LookupElementFactory.DEFAULT
+        }
+    }
+
+    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolveSession, boldImmediateLookupElementFactory)
 
     protected val project: Project = position.getProject()
 
@@ -95,13 +114,8 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected abstract fun doComplete()
 
-    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter): Collection<DeclarationDescriptor> {
-        return TipsManager.getReferenceVariants(jetReference!!.expression,
-                                                bindingContext!!,
-                                                kindFilter,
-                                                prefixMatcher.asNameFilter(),
-                                                { isVisibleDescriptor(it) })
-    }
+    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter): Collection<DeclarationDescriptor>
+            = referenceVariantsHelper!!.getReferenceVariants(jetReference!!.expression, kindFilter, prefixMatcher.asNameFilter())
 
     protected fun shouldRunTopLevelCompletion(): Boolean
             = configuration.completeNonImportedDeclarations && isNoQualifierContext()
@@ -209,7 +223,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     override fun doComplete() {
         if (jetReference != null) {
-            val completion = SmartCompletion(jetReference.expression, resolveSession, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile)
+            val completion = SmartCompletion(jetReference.expression, resolveSession, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile, boldImmediateLookupElementFactory)
             val result = completion.execute()
             if (result != null) {
                 collector.addElements(result.additionalItems)

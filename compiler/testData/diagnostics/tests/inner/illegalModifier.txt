@@ -94,14 +94,6 @@ internal final class D {
 }
 
 internal final enum class H : kotlin.Enum<H> {
-    private constructor H()
-    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: H): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
     public enum entry I : H {
         private constructor I()
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: H): kotlin.Int
@@ -128,6 +120,14 @@ internal final enum class H : kotlin.Enum<H> {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
+
+    private constructor H()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: H): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     internal final inner class J {
         public constructor J()

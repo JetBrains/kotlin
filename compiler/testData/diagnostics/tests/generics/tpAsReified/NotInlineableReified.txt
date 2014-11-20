@@ -1,0 +1,3 @@
+package
+
+internal fun </*0*/ T1, /*1*/ reified T2, /*2*/ T3, /*3*/ reified T4> foo(): kotlin.Unit

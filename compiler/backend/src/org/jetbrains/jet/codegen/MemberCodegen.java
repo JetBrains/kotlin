@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.jet.lang.descriptors.SourceElement.NO_SOURCE;
@@ -70,6 +69,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
     protected ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
+    private boolean wereReifierMarkers;
 
     public MemberCodegen(
             @NotNull GenerationState state,
@@ -235,20 +235,10 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         JetExpression initializer = property.getDelegateExpressionOrInitializer();
         assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
 
-        JetType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
+        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER,
+                                                                             StackValue.LOCAL_0);
 
-        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER);
-
-        if (!propValue.isStatic) {
-            codegen.v.load(0, OBJECT_TYPE);
-        }
-
-        Type type = codegen.expressionType(initializer);
-        if (jetType.isNullable()) {
-            type = boxType(type);
-        }
-        codegen.gen(initializer, type);
-        propValue.store(type, codegen.v);
+        propValue.store(codegen.gen(initializer), codegen.v);
 
         ResolvedCall<FunctionDescriptor> pdResolvedCall =
                 bindingContext.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, propertyDescriptor);
@@ -389,5 +379,13 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     @NotNull
     public FieldOwnerContext<?> getContext() {
         return context;
+    }
+
+    public boolean wereReifierMarkers() {
+        return wereReifierMarkers;
+    }
+
+    public void setWereReifierMarkers(boolean wereReifierMarkers) {
+        this.wereReifierMarkers = wereReifierMarkers;
     }
 }

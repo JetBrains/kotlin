@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.psi.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.filters.position.PositionElementFilter
 import com.intellij.codeInsight.completion.*
-import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
+import org.jetbrains.jet.plugin.completion.handlers.KotlinFunctionInsertHandler
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.jet.lexer.JetKeywordToken
@@ -60,7 +60,7 @@ object KeywordCompletion {
                         .withInsertHandler(if (keywordToken !in FUNCTION_KEYWORDS)
                                                KotlinKeywordInsertHandler
                                            else
-                                               JetFunctionInsertHandler.NO_PARAMETERS_HANDLER)
+                                               KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER)
                 collector.addElement(element)
             }
         }

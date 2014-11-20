@@ -35,3 +35,6 @@ public fun ByteArray.toString(charset: Charset): String = String(this, charset)
 
 [Intrinsic("kotlin.collections.copyToArray")] public fun <reified T> Collection<T>.copyToArray(): Array<T> =
         throw UnsupportedOperationException()
+
+/** Returns the List if its not null otherwise returns the empty list */
+public inline fun <reified T> Array<T>?.orEmpty(): Array<T> = this ?: array<T>()

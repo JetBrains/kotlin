@@ -27,12 +27,79 @@ LazyJavaPackageFragment@10['java'] {
 LazyJavaPackageFragment@12['lang'] {
     classes('F': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@27
     classes('foo': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@27
-    classes('p': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@27
-    classes('r': Name@30) = null // through LazyPackageFragmentScopeForJavaPackage@27
+    classes('r': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@27
     deserializedPackageScope = Empty@22 // through LazyPackageFragmentScopeForJavaPackage@27
     functions('F': Name@26) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@27
     functions('foo': Name@28) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@27
-    functions('p': Name@29) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@27
-    functions('r': Name@30) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@27
-    memberIndex = computeMemberIndex$1@31 // through LazyPackageFragmentScopeForJavaPackage@27
+    functions('r': Name@29) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@27
+    memberIndex = computeMemberIndex$1@30 // through LazyPackageFragmentScopeForJavaPackage@27
+}
+
+ResolutionTaskHolder@31 {
+    <name not found> = ArrayList@32[1] { ResolutionCandidate@33 }
+    <name not found> = ArrayList@34[1] { ResolutionCandidate@33 }
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+}
+
+ResolutionTaskHolder@35 {
+    <name not found> = ArrayList@36[1] { ResolutionCandidate@37 }
+    <name not found> = ArrayList@38[1] { ResolutionCandidate@37 }
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+}
+
+ResolutionTaskHolder@39 {
+    <name not found> = ArrayList@40[1] { ResolutionCandidate@41 }
+    <name not found> = ArrayList@42[1] { ResolutionCandidate@41 }
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+}
+
+ResolutionTaskHolder@43 {
+    <name not found> = ArrayList@44[1] { ResolutionCandidate@45 }
+    <name not found> = ArrayList@46[1] { ResolutionCandidate@45 }
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+    <name not found> = EmptyList@24[empty]
+}
+
+ResolutionTaskHolder@47 {
+    <name not found> = ArrayList@48[1] { ResolutionCandidate@49 }
+    <name not found> = ArrayList@50[1] { ResolutionCandidate@49 }
 }

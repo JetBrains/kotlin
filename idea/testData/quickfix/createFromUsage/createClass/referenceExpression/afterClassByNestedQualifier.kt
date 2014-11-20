@@ -5,7 +5,6 @@ package p
 fun foo() = A.B.C
 
 class A {
-
     class B {
 
     }

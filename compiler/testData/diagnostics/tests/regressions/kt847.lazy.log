@@ -10,17 +10,14 @@ LazyJavaPackageFragmentProvider@0 {
     packageFragments('kotlin.jvm': FqName@12) = null
 }
 
-LazyJavaPackageFragment@2['<root>'] {
-    deserializedPackageScope = Empty@13 // through LazyPackageFragmentScopeForJavaPackage@14
-}
-
 LazyJavaPackageFragment@5['java'] {
-    classes('lang': Name@15) = null // through LazyPackageFragmentScopeForJavaPackage@16
-    deserializedPackageScope = Empty@13 // through LazyPackageFragmentScopeForJavaPackage@16
-    functions('lang': Name@17) = EmptyList@18[empty] // through LazyPackageFragmentScopeForJavaPackage@16
-    memberIndex = computeMemberIndex$1@19 // through LazyPackageFragmentScopeForJavaPackage@16
+    classes('lang': Name@13) = null // through LazyPackageFragmentScopeForJavaPackage@14
+    deserializedPackageScope = Empty@15 // through LazyPackageFragmentScopeForJavaPackage@14
+    functions('lang': Name@16) = EmptyList@17[empty] // through LazyPackageFragmentScopeForJavaPackage@14
+    memberIndex = computeMemberIndex$1@18 // through LazyPackageFragmentScopeForJavaPackage@14
 }
 
-LazyJavaPackageFragment@7['lang'] {
-    deserializedPackageScope = Empty@13 // through LazyPackageFragmentScopeForJavaPackage@20
+ResolutionTaskHolder@19 {
+    <name not found> = ArrayList@20[1] { ResolutionCandidate@21 }
+    <name not found> = ArrayList@22[1] { ResolutionCandidate@21 }
 }

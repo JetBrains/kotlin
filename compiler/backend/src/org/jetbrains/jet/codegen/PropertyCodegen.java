@@ -43,13 +43,14 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
+import java.util.List;
+
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.getParentBodyCodegen;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.PROPERTY_METADATA_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -250,16 +251,17 @@ public class PropertyCodegen {
         ClassBuilder builder = v;
 
         FieldOwnerContext backingFieldContext = context;
-        if (AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
+        if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
             modifiers |= ACC_STATIC | getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate);
-            ImplementationBodyCodegen codegen = getParentBodyCodegen(classBodyCodegen);
-            builder = codegen.v;
-            backingFieldContext = codegen.context;
-            v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
-        } else {
-            if (kind != OwnerKind.PACKAGE || isDelegate) {
-                modifiers |= ACC_PRIVATE;
+            if (AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
+                ImplementationBodyCodegen codegen = getParentBodyCodegen(classBodyCodegen);
+                builder = codegen.v;
+                backingFieldContext = codegen.context;
+                v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
             }
+        }
+        else if (kind != OwnerKind.PACKAGE || isDelegate) {
+            modifiers |= ACC_PRIVATE;
         }
 
         if (AsmUtil.isPropertyWithBackingFieldCopyInOuterClass(propertyDescriptor)) {
@@ -380,14 +382,7 @@ public class PropertyCodegen {
         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             InstructionAdapter v = codegen.v;
             PropertyDescriptor propertyDescriptor = callableDescriptor.getCorrespondingProperty();
-
-            int paramCode = 0;
-            if (codegen.getContext().getContextKind() != OwnerKind.PACKAGE) {
-                v.load(0, OBJECT_TYPE);
-                paramCode = 1;
-            }
-
-            StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, true, null);
+            StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.LOCAL_0);
 
             if (callableDescriptor instanceof PropertyGetterDescriptor) {
                 Type type = signature.getReturnType();
@@ -395,15 +390,15 @@ public class PropertyCodegen {
                 v.areturn(type);
             }
             else if (callableDescriptor instanceof PropertySetterDescriptor) {
-                ReceiverParameterDescriptor receiverParameter = propertyDescriptor.getExtensionReceiverParameter();
-                if (receiverParameter != null) {
-                    paramCode += codegen.typeMapper.mapType(receiverParameter.getType()).getSize();
-                }
+                List<ValueParameterDescriptor> valueParameters = callableDescriptor.getValueParameters();
+                assert valueParameters.size() == 1 : "Property setter should have only one value parameter but has " + callableDescriptor;
+                int parameterIndex = codegen.lookupLocalIndex(valueParameters.get(0));
+                assert parameterIndex >= 0 : "Local index for setter parameter should be positive or zero: " + callableDescriptor;
                 Type type = codegen.typeMapper.mapType(propertyDescriptor);
-                v.load(paramCode, type);
-                property.store(type, v);
+                property.store(StackValue.local(parameterIndex, type), codegen.v);
                 v.visitInsn(RETURN);
-            } else {
+            }
+            else {
                 throw new IllegalStateException("Unknown property accessor: " + callableDescriptor);
             }
         }
@@ -417,10 +412,6 @@ public class PropertyCodegen {
             final int indexInPropertyMetadataArray,
             int propertyMetadataArgumentIndex
     ) {
-        if (codegen.getContext().getContextKind() != OwnerKind.PACKAGE) {
-            codegen.v.load(0, OBJECT_TYPE);
-        }
-
         CodegenContext<? extends ClassOrPackageFragmentDescriptor> ownerContext = codegen.getContext().getClassOrPackageParentContext();
         final Type owner;
         if (ownerContext instanceof ClassContext) {
@@ -437,15 +428,16 @@ public class PropertyCodegen {
                 resolvedCall.getCall().getValueArguments().get(propertyMetadataArgumentIndex).asElement(),
                 new StackValue(PROPERTY_METADATA_TYPE) {
                     @Override
-                    public void put(Type type, InstructionAdapter v) {
-                        v.getstatic(owner.getInternalName(), JvmAbi.PROPERTY_METADATA_ARRAY_NAME, "[" + PROPERTY_METADATA_TYPE);
-                        v.iconst(indexInPropertyMetadataArray);
-                        StackValue.arrayElement(PROPERTY_METADATA_TYPE).put(type, v);
+                    public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
+                        Field array = StackValue
+                                .field(Type.getType("[" + PROPERTY_METADATA_TYPE), owner, JvmAbi.PROPERTY_METADATA_ARRAY_NAME, true,
+                                       StackValue.none());
+                        StackValue.arrayElement(PROPERTY_METADATA_TYPE, array, StackValue.constant(indexInPropertyMetadataArray, Type.INT_TYPE)).put(type, v);
                     }
                 }
         );
 
-        StackValue delegatedProperty = codegen.intermediateValueForProperty(propertyDescriptor, true, null);
+        StackValue delegatedProperty = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.LOCAL_0);
         return codegen.invokeFunction(resolvedCall, delegatedProperty);
     }
 

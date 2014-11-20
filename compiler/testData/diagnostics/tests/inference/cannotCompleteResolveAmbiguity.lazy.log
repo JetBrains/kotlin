@@ -40,14 +40,14 @@ LazyJavaClassifierType@22['String'] {
 
 LazyJavaClassifierType@25['String'] {
     arguments = ArrayList@26[empty]
-    classifier = JavaClassImpl@18['String']
+    classifier = JavaClassImpl@21['String']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@15
 }
 
 LazyJavaClassifierType@27['String'] {
     arguments = ArrayList@28[empty]
-    classifier = JavaClassImpl@21['String']
+    classifier = JavaClassImpl@18['String']
     nullable = 'true': Boolean@24
     typeConstructor = DeserializedClassTypeConstructor@15
 }
@@ -145,4 +145,31 @@ LazyJavaPackageFragment@64['lang'] {
     functions('Exception': Name@85) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@86
     functions('g': Name@87) = EmptyList@83[empty] // through LazyPackageFragmentScopeForJavaPackage@86
     memberIndex = computeMemberIndex$1@88 // through LazyPackageFragmentScopeForJavaPackage@86
+}
+
+ResolutionTaskHolder@89 {
+    <name not found> = ArrayList@90[2] { ResolutionCandidate@91, ResolutionCandidate@92 }
+    <name not found> = ArrayList@93[2] { ResolutionCandidate@91, ResolutionCandidate@92 }
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@94 {
+    <name not found> = ArrayList@95[4] { ResolutionCandidate@96, ResolutionCandidate@97, ResolutionCandidate@98, ... }
+    <name not found> = ArrayList@99[5] { ResolutionCandidate@96, ResolutionCandidate@97, ResolutionCandidate@98, ... }
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+}
+
+ResolutionTaskHolder@100 {
+    <name not found> = ArrayList@101[4] { ResolutionCandidate@102, ResolutionCandidate@103, ResolutionCandidate@104, ... }
+    <name not found> = ArrayList@105[5] { ResolutionCandidate@102, ResolutionCandidate@103, ResolutionCandidate@104, ... }
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
+    <name not found> = EmptyList@83[empty]
 }

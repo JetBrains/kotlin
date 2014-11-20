@@ -46,17 +46,17 @@ DeserializedTypeParameterDescriptor@23['R'] {
     upperBounds = LinkedHashSet@25[1] { DeserializedType@26['kotlin.Any'] }
 }
 
-DeserializedType@18['kotlin.Any'] {
-    constructor = DeserializedClassTypeConstructor@27
-    memberScope = DeserializedClassMemberScope@28
-}
-
 DeserializedType@22['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@27
     memberScope = DeserializedClassMemberScope@28
 }
 
 DeserializedType@26['kotlin.Any'] {
+    constructor = DeserializedClassTypeConstructor@27
+    memberScope = DeserializedClassMemberScope@28
+}
+
+DeserializedType@18['kotlin.Any'] {
     constructor = DeserializedClassTypeConstructor@27
     memberScope = DeserializedClassMemberScope@28
 }
@@ -154,7 +154,7 @@ LazyJavaPackageFragment@60['io'] {
     functions('foo': Name@87) = EmptyList@90[empty] // through DeserializedPackageMemberScope@94
     functions('foo': Name@87) = EmptyList@90[empty] // through LazyPackageFragmentScopeForJavaPackage@93
     memberIndex = computeMemberIndex$1@95 // through LazyPackageFragmentScopeForJavaPackage@93
-    membersProtos = HashMap@96 // through DeserializedPackageMemberScope@94
+    membersProtos = LinkedHashMap@96 // through DeserializedPackageMemberScope@94
     properties('bar': Name@85) = EmptyList@90[empty] // through DeserializedPackageMemberScope@94
     properties('baz': Name@86) = EmptyList@90[empty] // through DeserializedPackageMemberScope@94
     properties('foo': Name@87) = EmptyList@90[empty] // through DeserializedPackageMemberScope@94
@@ -208,7 +208,7 @@ LazyJavaPackageFragment@13['kotlin'] {
     functions('reflect': Name@113) = EmptyList@90[empty] // through DeserializedPackageMemberScope@110
     functions('reflect': Name@113) = EmptyList@90[empty] // through LazyPackageFragmentScopeForJavaPackage@104
     memberIndex = computeMemberIndex$1@114 // through LazyPackageFragmentScopeForJavaPackage@104
-    membersProtos = HashMap@115 // through DeserializedPackageMemberScope@110
+    membersProtos = LinkedHashMap@115 // through DeserializedPackageMemberScope@110
     properties('bar': Name@85) = EmptyList@90[empty] // through DeserializedPackageMemberScope@110
     properties('baz': Name@86) = EmptyList@90[empty] // through DeserializedPackageMemberScope@110
     properties('foo': Name@87) = EmptyList@90[empty] // through DeserializedPackageMemberScope@110
@@ -244,24 +244,54 @@ LazyJavaPackageFragment@14['reflect'] {
     memberIndex = computeMemberIndex$1@121 // through LazyPackageFragmentScopeForJavaPackage@118
 }
 
-TypeDeserializer@122 {
-    classDescriptors('2': Integer@123) = DeserializedClassDescriptor@124['Any']
+ResolutionTaskHolder@122 {
+    <name not found> = ArrayList@123[1] { ResolutionCandidate@124 }
+    <name not found> = ArrayList@125[1] { ResolutionCandidate@124 }
 }
 
-TypeDeserializer@125 {
-    classDescriptors('2': Integer@123) = DeserializedClassDescriptor@124['Any']
+ResolutionTaskHolder@126 {
+    <name not found> = ArrayList@127[1] { ResolutionCandidate@128 }
+    <name not found> = ArrayList@129[1] { ResolutionCandidate@128 }
 }
 
-TypeDeserializer@126 {
-    classDescriptors('2': Integer@123) = DeserializedClassDescriptor@124['Any']
+ResolutionTaskHolder@130 {
+    <name not found> = ArrayList@131[1] { ResolutionCandidate@132 }
+    <name not found> = ArrayList@133[1] { ResolutionCandidate@132 }
 }
 
-TypeDeserializer@127 {
-    classDescriptors('3': Integer@128) = DeserializedClassDescriptor@124['Any']
-    classDescriptors('4': Integer@129) = DeserializedClassDescriptor@2['Function0']
+ResolutionTaskHolder@134 {
+    <name not found> = ArrayList@135[1] { ResolutionCandidate@136 }
+    <name not found> = ArrayList@137[1] { ResolutionCandidate@136 }
 }
 
-TypeDeserializer@130 {
-    classDescriptors('3': Integer@128) = DeserializedClassDescriptor@124['Any']
-    classDescriptors('4': Integer@129) = DeserializedClassDescriptor@4['Function1']
+ResolutionTaskHolder@138 {
+    <name not found> = ArrayList@139[1] { ResolutionCandidate@140 }
+    <name not found> = ArrayList@141[1] { ResolutionCandidate@140 }
+}
+
+ResolutionTaskHolder@142 {
+    <name not found> = ArrayList@143[1] { ResolutionCandidate@144 }
+    <name not found> = ArrayList@145[1] { ResolutionCandidate@144 }
+}
+
+TypeDeserializer@146 {
+    classDescriptors('2': Integer@147) = DeserializedClassDescriptor@148['Any']
+}
+
+TypeDeserializer@149 {
+    classDescriptors('2': Integer@147) = DeserializedClassDescriptor@148['Any']
+}
+
+TypeDeserializer@150 {
+    classDescriptors('2': Integer@147) = DeserializedClassDescriptor@148['Any']
+}
+
+TypeDeserializer@151 {
+    classDescriptors('3': Integer@152) = DeserializedClassDescriptor@148['Any']
+    classDescriptors('4': Integer@153) = DeserializedClassDescriptor@2['Function0']
+}
+
+TypeDeserializer@154 {
+    classDescriptors('3': Integer@152) = DeserializedClassDescriptor@148['Any']
+    classDescriptors('4': Integer@153) = DeserializedClassDescriptor@4['Function1']
 }

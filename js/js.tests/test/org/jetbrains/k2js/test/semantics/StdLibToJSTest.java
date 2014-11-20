@@ -19,13 +19,9 @@ package org.jetbrains.k2js.test.semantics;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 
-/**
- */
 public class StdLibToJSTest extends StdLibTestBase {
-
     public void testCompileJavaScriptFiles() throws Exception {
-        performStdLibTest(DEFAULT_ECMA_VERSIONS,
-                          "libraries/stdlib/src");
+        performStdLibTest(DEFAULT_ECMA_VERSIONS, "libraries/stdlib/src");
     }
 
     @Nullable

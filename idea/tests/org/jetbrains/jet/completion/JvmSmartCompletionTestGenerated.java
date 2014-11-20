@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -75,6 +74,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("AnonymousObjectForJavaInterface.kt")
     public void testAnonymousObjectForJavaInterface() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/AnonymousObjectForJavaInterface.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AnonymousObjectWithPrefix.kt")
+    public void testAnonymousObjectWithPrefix() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/AnonymousObjectWithPrefix.kt");
         doTest(fileName);
     }
 
@@ -150,6 +155,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("ClassObjectMembersWithPrefix.kt")
+    public void testClassObjectMembersWithPrefix() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ClassObjectMembersWithPrefix.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Constructor.kt")
     public void testConstructor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/Constructor.kt");
@@ -171,6 +182,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("ConstructorForNullable.kt")
     public void testConstructorForNullable() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ConstructorForNullable.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ConstructorWithParameters.kt")
+    public void testConstructorWithParameters() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ConstructorWithParameters.kt");
         doTest(fileName);
     }
 
@@ -279,6 +296,18 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("IfValueInBlock2.kt")
     public void testIfValueInBlock2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/IfValueInBlock2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImmediateExtensionMembers.kt")
+    public void testImmediateExtensionMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ImmediateExtensionMembers.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImmediateMembers.kt")
+    public void testImmediateMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/smart/ImmediateMembers.kt");
         doTest(fileName);
     }
 

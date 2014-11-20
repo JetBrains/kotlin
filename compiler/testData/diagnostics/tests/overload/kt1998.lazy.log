@@ -34,3 +34,19 @@ LazyJavaPackageFragment@10['java'] {
 LazyJavaPackageFragment@12['lang'] {
     deserializedPackageScope = Empty@22 // through LazyPackageFragmentScopeForJavaPackage@28
 }
+
+ResolutionTaskHolder@29 {
+    <name not found> = ArrayList@30[1] { ResolutionCandidate@31 }
+    <name not found> = ArrayList@32[1] { ResolutionCandidate@31 }
+    <name not found> = ArrayList@33[1] { ResolutionCandidate@34 }
+    <name not found> = ArrayList@35[1] { ResolutionCandidate@34 }
+    <name not found> = ArrayList@36[3] { ResolutionCandidate@37, ResolutionCandidate@38, ResolutionCandidate@39 }
+    <name not found> = ArrayList@40[3] { ResolutionCandidate@37, ResolutionCandidate@38, ResolutionCandidate@39 }
+    <name not found> = EmptyList@26[empty]
+    <name not found> = EmptyList@26[empty]
+}
+
+ResolutionTaskHolder@41 {
+    <name not found> = ArrayList@42[1] { ResolutionCandidate@43 }
+    <name not found> = ArrayList@44[1] { ResolutionCandidate@43 }
+}

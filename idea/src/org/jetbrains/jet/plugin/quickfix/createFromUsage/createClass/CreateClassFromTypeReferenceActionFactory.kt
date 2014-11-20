@@ -8,22 +8,20 @@ import java.util.Collections
 import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass
-import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall
 import org.jetbrains.jet.lang.psi.JetConstructorCalleeExpression
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 
 public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val userType = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetUserType>()) ?: return Collections.emptyList()
         val typeArguments = userType.getTypeArgumentsAsTypes()
 
-        val name = userType.getReferencedName() ?: return Collections.emptyList()
+        val refExpr = userType.getReferenceExpression() ?: return Collections.emptyList()
+        val name = refExpr.getReferencedName()
 
         val typeRefParent = userType.getParent()?.getParent()
         if (typeRefParent is JetConstructorCalleeExpression) return Collections.emptyList()
@@ -54,7 +52,8 @@ public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFact
             }
         }
 
-        return possibleKinds.map {
+        val createPackageAction = refExpr.getCreatePackageFixIfApplicable(targetParent)
+        val createClassActions = possibleKinds.map {
             val classInfo = ClassInfo(
                     kind = it,
                     name = name,
@@ -64,5 +63,6 @@ public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFact
             )
             CreateClassFromUsageFix(userType, classInfo)
         }
+        return createPackageAction.singletonOrEmptyList() + createClassActions
     }
 }

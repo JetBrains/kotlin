@@ -95,7 +95,7 @@ LazyJavaPackageFragment@35['kotlin'] {
     functions('platform': Name@72) = EmptyList@56[empty] // through DeserializedPackageMemberScope@69
     functions('platform': Name@72) = EmptyList@56[empty] // through LazyPackageFragmentScopeForJavaPackage@64
     memberIndex = computeMemberIndex$1@73 // through LazyPackageFragmentScopeForJavaPackage@64
-    membersProtos = HashMap@74 // through DeserializedPackageMemberScope@69
+    membersProtos = LinkedHashMap@74 // through DeserializedPackageMemberScope@69
     properties('io': Name@70) = EmptyList@56[empty] // through DeserializedPackageMemberScope@69
     properties('jvm': Name@71) = EmptyList@56[empty] // through DeserializedPackageMemberScope@69
     properties('platform': Name@72) = EmptyList@56[empty] // through DeserializedPackageMemberScope@69
@@ -106,6 +106,26 @@ LazyJavaPackageFragment@3['platform'] {
     classes('platformName': Name@53) = DeserializedClassDescriptor@2['platformName'] // through LazyPackageFragmentScopeForJavaPackage@75
 }
 
-TypeDeserializer@76 {
-    classDescriptors('4': Integer@77) = DeserializedClassDescriptor@78['String']
+ResolutionTaskHolder@76 {
+    <name not found> = ArrayList@77[1] { ResolutionCandidate@78 }
+    <name not found> = ArrayList@79[1] { ResolutionCandidate@78 }
+}
+
+ResolutionTaskHolder@80 {
+    <name not found> = ArrayList@81[1] { ResolutionCandidate@82 }
+    <name not found> = ArrayList@83[1] { ResolutionCandidate@82 }
+}
+
+ResolutionTaskHolder@84 {
+    <name not found> = ArrayList@85[1] { ResolutionCandidate@86 }
+    <name not found> = ArrayList@87[1] { ResolutionCandidate@86 }
+}
+
+ResolutionTaskHolder@88 {
+    <name not found> = ArrayList@89[1] { ResolutionCandidate@90 }
+    <name not found> = ArrayList@91[1] { ResolutionCandidate@90 }
+}
+
+TypeDeserializer@92 {
+    classDescriptors('4': Integer@93) = DeserializedClassDescriptor@94['String']
 }

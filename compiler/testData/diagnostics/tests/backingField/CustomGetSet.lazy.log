@@ -13,28 +13,47 @@ LazyJavaPackageFragmentProvider@0 {
 
 LazyJavaPackageFragment@2['<root>'] {
     classes('Int': Name@14) = null // through LazyPackageFragmentScopeForJavaPackage@15
-    classes('minus': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@15
-    classes('minusOne': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@15
-    classes('plus': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@15
-    deserializedPackageScope = Empty@19 // through LazyPackageFragmentScopeForJavaPackage@15
-    functions('minus': Name@16) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@15
-    functions('plus': Name@18) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@15
-    memberIndex = computeMemberIndex$1@21 // through LazyPackageFragmentScopeForJavaPackage@15
+    classes('minusOne': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@15
+    deserializedPackageScope = Empty@17 // through LazyPackageFragmentScopeForJavaPackage@15
 }
 
 LazyJavaPackageFragment@6['java'] {
-    classes('lang': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@23
-    deserializedPackageScope = Empty@19 // through LazyPackageFragmentScopeForJavaPackage@23
-    functions('lang': Name@24) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@23
-    memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('lang': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@19
+    deserializedPackageScope = Empty@17 // through LazyPackageFragmentScopeForJavaPackage@19
+    functions('lang': Name@20) = EmptyList@21[empty] // through LazyPackageFragmentScopeForJavaPackage@19
+    memberIndex = computeMemberIndex$1@22 // through LazyPackageFragmentScopeForJavaPackage@19
 }
 
 LazyJavaPackageFragment@8['lang'] {
-    classes('minus': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@26
-    classes('minusOne': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@26
-    classes('plus': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@26
-    deserializedPackageScope = Empty@19 // through LazyPackageFragmentScopeForJavaPackage@26
-    functions('minus': Name@16) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@26
-    functions('plus': Name@18) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@26
-    memberIndex = computeMemberIndex$1@27 // through LazyPackageFragmentScopeForJavaPackage@26
+    classes('minusOne': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    deserializedPackageScope = Empty@17 // through LazyPackageFragmentScopeForJavaPackage@23
+}
+
+ResolutionTaskHolder@24 {
+    <name not found> = ArrayList@25[1] { ResolutionCandidate@26 }
+    <name not found> = ArrayList@27[1] { ResolutionCandidate@26 }
+    <name not found> = EmptyList@21[empty]
+    <name not found> = EmptyList@21[empty]
+}
+
+ResolutionTaskHolder@28 {
+    <name not found> = ArrayList@29[1] { ResolutionCandidate@30 }
+    <name not found> = ArrayList@31[1] { ResolutionCandidate@30 }
+    <name not found> = EmptyList@21[empty]
+    <name not found> = EmptyList@21[empty]
+}
+
+ResolutionTaskHolder@32 {
+    <name not found> = ArrayList@33[1] { ResolutionCandidate@34 }
+    <name not found> = ArrayList@35[1] { ResolutionCandidate@34 }
+}
+
+ResolutionTaskHolder@36 {
+    <name not found> = ArrayList@37[8] { ResolutionCandidate@38, ResolutionCandidate@39, ResolutionCandidate@40, ... }
+    <name not found> = ArrayList@41[8] { ResolutionCandidate@38, ResolutionCandidate@39, ResolutionCandidate@40, ... }
+}
+
+ResolutionTaskHolder@42 {
+    <name not found> = ArrayList@43[8] { ResolutionCandidate@44, ResolutionCandidate@45, ResolutionCandidate@46, ... }
+    <name not found> = ArrayList@47[8] { ResolutionCandidate@44, ResolutionCandidate@45, ResolutionCandidate@46, ... }
 }

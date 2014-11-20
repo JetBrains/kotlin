@@ -51,7 +51,7 @@ LazyJavaPackageFragment@26['io'] {
     functions('A': Name@31) = EmptyList@34[empty] // through DeserializedPackageMemberScope@37
     functions('A': Name@31) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@36
     memberIndex = computeMemberIndex$1@38 // through LazyPackageFragmentScopeForJavaPackage@36
-    membersProtos = HashMap@39 // through DeserializedPackageMemberScope@37
+    membersProtos = LinkedHashMap@39 // through DeserializedPackageMemberScope@37
     properties('A': Name@31) = EmptyList@34[empty] // through DeserializedPackageMemberScope@37
 }
 
@@ -81,7 +81,7 @@ LazyJavaPackageFragment@24['kotlin'] {
     functions('jvm': Name@51) = EmptyList@34[empty] // through DeserializedPackageMemberScope@49
     functions('jvm': Name@51) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@46
     memberIndex = computeMemberIndex$1@52 // through LazyPackageFragmentScopeForJavaPackage@46
-    membersProtos = HashMap@53 // through DeserializedPackageMemberScope@49
+    membersProtos = LinkedHashMap@53 // through DeserializedPackageMemberScope@49
     properties('A': Name@31) = EmptyList@34[empty] // through DeserializedPackageMemberScope@49
     properties('io': Name@50) = EmptyList@34[empty] // through DeserializedPackageMemberScope@49
     properties('jvm': Name@51) = EmptyList@34[empty] // through DeserializedPackageMemberScope@49
@@ -92,4 +92,13 @@ LazyJavaPackageFragment@22['lang'] {
     deserializedPackageScope = Empty@33 // through LazyPackageFragmentScopeForJavaPackage@54
     functions('A': Name@31) = EmptyList@34[empty] // through LazyPackageFragmentScopeForJavaPackage@54
     memberIndex = computeMemberIndex$1@55 // through LazyPackageFragmentScopeForJavaPackage@54
+}
+
+ResolutionTaskHolder@56 {
+    <name not found> = ArrayList@57[1] { ResolutionCandidate@58 }
+    <name not found> = ArrayList@59[1] { ResolutionCandidate@58 }
+    <name not found> = EmptyList@34[empty]
+    <name not found> = EmptyList@34[empty]
+    <name not found> = EmptyList@34[empty]
+    <name not found> = EmptyList@34[empty]
 }

@@ -76,7 +76,7 @@ public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase
         }
 
         public void testEnum() {
-            checkModifiers("test.Enum", PUBLIC, FINAL, ENUM);
+            checkModifiers("test.Enum", PUBLIC, ENUM);
         }
 
         public void testTrait() {

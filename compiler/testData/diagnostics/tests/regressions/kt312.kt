@@ -1,7 +1,7 @@
 // KT-312 Nullability problem when a nullable version of a generic type is returned
 
 fun <T> Array<out T>.safeGet(index : Int) : T<!BASE_WITH_NULLABLE_UPPER_BOUND!>?<!> {
-    return if (index < size) this[index] else null
+    return if (index < size()) this[index] else null
 }
 
 val args : Array<String> = Array<String>(1, {""})

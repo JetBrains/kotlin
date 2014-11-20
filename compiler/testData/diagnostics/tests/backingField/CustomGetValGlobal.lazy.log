@@ -22,9 +22,18 @@ LazyJavaPackageFragment@9['java'] {
 }
 
 LazyJavaPackageFragment@11['lang'] {
-    classes('times': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@22
-    classes('zz': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@22
+    classes('zz': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@22
     deserializedPackageScope = Empty@17 // through LazyPackageFragmentScopeForJavaPackage@22
-    functions('times': Name@21) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@22
-    memberIndex = computeMemberIndex$1@24 // through LazyPackageFragmentScopeForJavaPackage@22
+}
+
+ResolutionTaskHolder@23 {
+    <name not found> = ArrayList@24[1] { ResolutionCandidate@25 }
+    <name not found> = ArrayList@26[1] { ResolutionCandidate@25 }
+    <name not found> = EmptyList@19[empty]
+    <name not found> = EmptyList@19[empty]
+}
+
+ResolutionTaskHolder@27 {
+    <name not found> = ArrayList@28[7] { ResolutionCandidate@29, ResolutionCandidate@30, ResolutionCandidate@31, ... }
+    <name not found> = ArrayList@32[7] { ResolutionCandidate@29, ResolutionCandidate@30, ResolutionCandidate@31, ... }
 }

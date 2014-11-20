@@ -53,9 +53,9 @@ LazyJavaPackageFragmentProvider@32 {
     packageFragments('kotlin.io': FqName@48) = null
     packageFragments('kotlin.jvm': FqName@49) = null
     packageFragments('p': FqName@50) = null
-    packageFragments('p.A': FqName@27) = null
-    packageFragments('p.Array': FqName@51) = null
-    packageFragments('p.B': FqName@52) = null
+    packageFragments('p.A': FqName@51) = null
+    packageFragments('p.Array': FqName@52) = null
+    packageFragments('p.B': FqName@29) = null
     packageFragments('p.Base': FqName@53) = null
     packageFragments('p.T': FqName@54) = null
 }
@@ -84,14 +84,14 @@ LazyJavaPackageFragmentProvider@55 {
     packageFragments('kotlin.io': FqName@71) = null
     packageFragments('kotlin.jvm': FqName@72) = null
     packageFragments('p': FqName@73) = null
-    packageFragments('p.A': FqName@74) = null
-    packageFragments('p.Array': FqName@75) = null
-    packageFragments('p.B': FqName@29) = null
+    packageFragments('p.A': FqName@27) = null
+    packageFragments('p.Array': FqName@74) = null
+    packageFragments('p.B': FqName@75) = null
     packageFragments('p.Base': FqName@76) = null
     packageFragments('p.T': FqName@77) = null
 }
 
-LazyJavaPackageFragment@2['<root>'] {
+LazyJavaPackageFragment@56['<root>'] {
     classes('A': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@79
     classes('Array': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@79
     classes('B': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@79
@@ -102,7 +102,7 @@ LazyJavaPackageFragment@2['<root>'] {
     memberIndex = computeMemberIndex$1@87 // through LazyPackageFragmentScopeForJavaPackage@79
 }
 
-LazyJavaPackageFragment@56['<root>'] {
+LazyJavaPackageFragment@33['<root>'] {
     classes('A': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@88
     classes('Array': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@88
     classes('B': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@88
@@ -113,7 +113,7 @@ LazyJavaPackageFragment@56['<root>'] {
     memberIndex = computeMemberIndex$1@89 // through LazyPackageFragmentScopeForJavaPackage@88
 }
 
-LazyJavaPackageFragment@33['<root>'] {
+LazyJavaPackageFragment@2['<root>'] {
     classes('A': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@90
     classes('Array': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@90
     classes('B': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@90

@@ -12,139 +12,226 @@ LazyJavaClassDescriptor@2['Lock'] {
     nestedClassIndex = LinkedHashMap@13 // through LazyJavaClassMemberScope@5
     nestedClasses('lock': Name@6) = null // through LazyJavaClassMemberScope@5
     nestedClasses('unlock': Name@9) = null // through LazyJavaClassMemberScope@5
-    properties('lock': Name@6) = EmptyList@14[empty] // through LazyJavaClassMemberScope@5
-    properties('unlock': Name@9) = EmptyList@14[empty] // through LazyJavaClassMemberScope@5
-    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@15['<this>']
-    typeConstructor = LazyJavaClassTypeConstructor@16['Lock']
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@14['<this>']
+    typeConstructor = LazyJavaClassTypeConstructor@15['Lock']
 }
 
-LazyJavaClassDescriptor@17['RuntimeException'] {
-    typeConstructor = LazyJavaClassTypeConstructor@18['RuntimeException']
+LazyJavaClassDescriptor@16['RuntimeException'] {
+    typeConstructor = LazyJavaClassTypeConstructor@17['RuntimeException']
 }
 
-LazyJavaClassDescriptor@19['UnsupportedOperationException'] {
-    typeConstructor = LazyJavaClassTypeConstructor@20['UnsupportedOperationException']
+LazyJavaClassDescriptor@18['UnsupportedOperationException'] {
+    typeConstructor = LazyJavaClassTypeConstructor@19['UnsupportedOperationException']
 }
 
 LazyJavaClassTypeConstructor@1['Exception'] {
-    parameters = ArrayList@21[empty]
-    supertypes = ArrayList@22[1] { LazyJavaClassifierType@23['Throwable'] }
+    parameters = ArrayList@20[empty]
+    supertypes = ArrayList@21[1] { LazyJavaClassifierType@22['Throwable'] }
 }
 
-LazyJavaClassTypeConstructor@16['Lock'] {
-    parameters = ArrayList@24[empty]
-    supertypes = ArrayList@25[1] { JetTypeImpl@26['Any'] }
+LazyJavaClassTypeConstructor@15['Lock'] {
+    parameters = ArrayList@23[empty]
+    supertypes = ArrayList@24[1] { JetTypeImpl@25['Any'] }
 }
 
-LazyJavaClassTypeConstructor@18['RuntimeException'] {
-    parameters = ArrayList@27[empty]
-    supertypes = ArrayList@28[1] { LazyJavaClassifierType@29['Exception'] }
+LazyJavaClassTypeConstructor@17['RuntimeException'] {
+    parameters = ArrayList@26[empty]
+    supertypes = ArrayList@27[1] { LazyJavaClassifierType@28['Exception'] }
 }
 
-LazyJavaClassTypeConstructor@20['UnsupportedOperationException'] {
-    parameters = ArrayList@30[empty]
-    supertypes = ArrayList@31[1] { LazyJavaClassifierType@32['RuntimeException'] }
+LazyJavaClassTypeConstructor@19['UnsupportedOperationException'] {
+    parameters = ArrayList@29[empty]
+    supertypes = ArrayList@30[1] { LazyJavaClassifierType@31['RuntimeException'] }
 }
 
-LazyJavaClassifierType@29['Exception'] {
-    arguments = ArrayList@33[empty]
-    classifier = JavaClassImpl@34['Exception']
+LazyJavaClassifierType@28['Exception'] {
+    arguments = ArrayList@32[empty]
+    classifier = JavaClassImpl@33['Exception']
     typeConstructor = LazyJavaClassTypeConstructor@1['Exception']
 }
 
-LazyJavaClassifierType@35['Object'] {
-    classifier = JavaClassImpl@36['Object']
-    typeConstructor = DeserializedClassTypeConstructor@37
+LazyJavaClassifierType@34['Object'] {
+    classifier = JavaClassImpl@35['Object']
+    typeConstructor = DeserializedClassTypeConstructor@36
 }
 
-LazyJavaClassifierType@32['RuntimeException'] {
-    arguments = ArrayList@38[empty]
-    classifier = JavaClassImpl@39['RuntimeException']
-    typeConstructor = LazyJavaClassTypeConstructor@18['RuntimeException']
+LazyJavaClassifierType@31['RuntimeException'] {
+    arguments = ArrayList@37[empty]
+    classifier = JavaClassImpl@38['RuntimeException']
+    typeConstructor = LazyJavaClassTypeConstructor@17['RuntimeException']
 }
 
-LazyJavaClassifierType@23['Throwable'] {
-    arguments = ArrayList@40[empty]
-    classifier = JavaClassImpl@41['Throwable']
-    typeConstructor = DeserializedClassTypeConstructor@42
+LazyJavaClassifierType@22['Throwable'] {
+    arguments = ArrayList@39[empty]
+    classifier = JavaClassImpl@40['Throwable']
+    typeConstructor = DeserializedClassTypeConstructor@41
 }
 
-LazyJavaPackageFragmentProvider@43 {
-    packageFragments('<root>': FqName@44) = LazyJavaPackageFragment@45['<root>']
-    packageFragments('Int': FqName@46) = null
-    packageFragments('Lock': FqName@47) = null
-    packageFragments('T': FqName@48) = null
-    packageFragments('UnsupportedOperationException': FqName@49) = null
-    packageFragments('java': FqName@50) = LazyJavaPackageFragment@51['java']
-    packageFragments('java.lang': FqName@52) = LazyJavaPackageFragment@53['lang']
-    packageFragments('java.lang.Int': FqName@54) = null
-    packageFragments('java.lang.Lock': FqName@55) = null
-    packageFragments('java.lang.T': FqName@56) = null
-    packageFragments('java.lang.UnsupportedOperationException': FqName@57) = null
-    packageFragments('java.util': FqName@58) = LazyJavaPackageFragment@59['util']
-    packageFragments('java.util.concurrent': FqName@60) = LazyJavaPackageFragment@61['concurrent']
-    packageFragments('java.util.concurrent.locks': FqName@62) = LazyJavaPackageFragment@63['locks']
-    packageFragments('java.util.concurrent.locks.Lock': FqName@64) = null
-    packageFragments('kotlin': FqName@65) = null
-    packageFragments('kotlin.Int': FqName@66) = null
-    packageFragments('kotlin.Lock': FqName@67) = null
-    packageFragments('kotlin.T': FqName@68) = null
-    packageFragments('kotlin.UnsupportedOperationException': FqName@69) = null
-    packageFragments('kotlin.io': FqName@70) = null
-    packageFragments('kotlin.jvm': FqName@71) = null
-    packageFragments('kt58': FqName@72) = null
-    packageFragments('kt58.Int': FqName@73) = null
-    packageFragments('kt58.Lock': FqName@74) = null
-    packageFragments('kt58.T': FqName@75) = null
-    packageFragments('kt58.UnsupportedOperationException': FqName@76) = null
-    topLevelClasses(JavaClassImpl@34['Exception']) = LazyJavaClassDescriptor@0['Exception']
-    topLevelClasses(JavaClassImpl@77['Lock']) = LazyJavaClassDescriptor@2['Lock']
-    topLevelClasses(JavaClassImpl@39['RuntimeException']) = LazyJavaClassDescriptor@17['RuntimeException']
-    topLevelClasses(JavaClassImpl@78['UnsupportedOperationException']) = LazyJavaClassDescriptor@19['UnsupportedOperationException']
+LazyJavaPackageFragmentProvider@42 {
+    packageFragments('<root>': FqName@43) = LazyJavaPackageFragment@44['<root>']
+    packageFragments('Int': FqName@45) = null
+    packageFragments('Lock': FqName@46) = null
+    packageFragments('T': FqName@47) = null
+    packageFragments('UnsupportedOperationException': FqName@48) = null
+    packageFragments('java': FqName@49) = LazyJavaPackageFragment@50['java']
+    packageFragments('java.lang': FqName@51) = LazyJavaPackageFragment@52['lang']
+    packageFragments('java.lang.Int': FqName@53) = null
+    packageFragments('java.lang.Lock': FqName@54) = null
+    packageFragments('java.lang.T': FqName@55) = null
+    packageFragments('java.lang.UnsupportedOperationException': FqName@56) = null
+    packageFragments('java.util': FqName@57) = LazyJavaPackageFragment@58['util']
+    packageFragments('java.util.concurrent': FqName@59) = LazyJavaPackageFragment@60['concurrent']
+    packageFragments('java.util.concurrent.locks': FqName@61) = LazyJavaPackageFragment@62['locks']
+    packageFragments('java.util.concurrent.locks.Lock': FqName@63) = null
+    packageFragments('kotlin': FqName@64) = null
+    packageFragments('kotlin.Int': FqName@65) = null
+    packageFragments('kotlin.Lock': FqName@66) = null
+    packageFragments('kotlin.T': FqName@67) = null
+    packageFragments('kotlin.UnsupportedOperationException': FqName@68) = null
+    packageFragments('kotlin.io': FqName@69) = null
+    packageFragments('kotlin.jvm': FqName@70) = null
+    packageFragments('kt58': FqName@71) = null
+    packageFragments('kt58.Int': FqName@72) = null
+    packageFragments('kt58.Lock': FqName@73) = null
+    packageFragments('kt58.T': FqName@74) = null
+    packageFragments('kt58.UnsupportedOperationException': FqName@75) = null
+    topLevelClasses(JavaClassImpl@33['Exception']) = LazyJavaClassDescriptor@0['Exception']
+    topLevelClasses(JavaClassImpl@76['Lock']) = LazyJavaClassDescriptor@2['Lock']
+    topLevelClasses(JavaClassImpl@38['RuntimeException']) = LazyJavaClassDescriptor@16['RuntimeException']
+    topLevelClasses(JavaClassImpl@77['UnsupportedOperationException']) = LazyJavaClassDescriptor@18['UnsupportedOperationException']
 }
 
-LazyJavaPackageFragment@61['concurrent'] {
-    classes('locks': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@80
-    deserializedPackageScope = Empty@81 // through LazyPackageFragmentScopeForJavaPackage@80
-    functions('locks': Name@82) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@80
-    memberIndex = computeMemberIndex$1@83 // through LazyPackageFragmentScopeForJavaPackage@80
+LazyJavaPackageFragment@60['concurrent'] {
+    classes('locks': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@79
+    deserializedPackageScope = Empty@80 // through LazyPackageFragmentScopeForJavaPackage@79
+    functions('locks': Name@81) = EmptyList@82[empty] // through LazyPackageFragmentScopeForJavaPackage@79
+    memberIndex = computeMemberIndex$1@83 // through LazyPackageFragmentScopeForJavaPackage@79
 }
 
-LazyJavaPackageFragment@51['java'] {
+LazyJavaPackageFragment@50['java'] {
     classes('lang': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@85
     classes('util': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@85
-    deserializedPackageScope = Empty@81 // through LazyPackageFragmentScopeForJavaPackage@85
-    functions('lang': Name@87) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@85
-    functions('util': Name@88) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@85
+    deserializedPackageScope = Empty@80 // through LazyPackageFragmentScopeForJavaPackage@85
+    functions('lang': Name@87) = EmptyList@82[empty] // through LazyPackageFragmentScopeForJavaPackage@85
+    functions('util': Name@88) = EmptyList@82[empty] // through LazyPackageFragmentScopeForJavaPackage@85
     memberIndex = computeMemberIndex$1@89 // through LazyPackageFragmentScopeForJavaPackage@85
 }
 
-LazyJavaPackageFragment@53['lang'] {
-    classes('UnsupportedOperationException': Name@90) = LazyJavaClassDescriptor@19['UnsupportedOperationException'] // through LazyPackageFragmentScopeForJavaPackage@91
+LazyJavaPackageFragment@52['lang'] {
+    classes('UnsupportedOperationException': Name@90) = LazyJavaClassDescriptor@18['UnsupportedOperationException'] // through LazyPackageFragmentScopeForJavaPackage@91
     classes('body': Name@92) = null // through LazyPackageFragmentScopeForJavaPackage@91
     classes('doSmth': Name@93) = null // through LazyPackageFragmentScopeForJavaPackage@91
-    classes('invoke': Name@94) = null // through LazyPackageFragmentScopeForJavaPackage@91
-    classes('lock': Name@6) = null // through LazyPackageFragmentScopeForJavaPackage@91
-    classes('unlock': Name@9) = null // through LazyPackageFragmentScopeForJavaPackage@91
-    deserializedPackageScope = Empty@81 // through LazyPackageFragmentScopeForJavaPackage@91
-    functions('body': Name@92) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@91
-    functions('doSmth': Name@93) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@91
-    functions('invoke': Name@94) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@91
-    functions('lock': Name@6) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@91
-    functions('unlock': Name@9) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@91
-    memberIndex = computeMemberIndex$1@95 // through LazyPackageFragmentScopeForJavaPackage@91
+    deserializedPackageScope = Empty@80 // through LazyPackageFragmentScopeForJavaPackage@91
+    functions('body': Name@92) = EmptyList@82[empty] // through LazyPackageFragmentScopeForJavaPackage@91
+    functions('doSmth': Name@93) = EmptyList@82[empty] // through LazyPackageFragmentScopeForJavaPackage@91
+    memberIndex = computeMemberIndex$1@94 // through LazyPackageFragmentScopeForJavaPackage@91
 }
 
-LazyJavaPackageFragment@63['locks'] {
-    classes('Lock': Name@96) = LazyJavaClassDescriptor@2['Lock'] // through LazyPackageFragmentScopeForJavaPackage@97
-    deserializedPackageScope = Empty@81 // through LazyPackageFragmentScopeForJavaPackage@97
-    functions('Lock': Name@98) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@97
-    memberIndex = computeMemberIndex$1@99 // through LazyPackageFragmentScopeForJavaPackage@97
+LazyJavaPackageFragment@62['locks'] {
+    classes('Lock': Name@95) = LazyJavaClassDescriptor@2['Lock'] // through LazyPackageFragmentScopeForJavaPackage@96
+    deserializedPackageScope = Empty@80 // through LazyPackageFragmentScopeForJavaPackage@96
+    functions('Lock': Name@97) = EmptyList@82[empty] // through LazyPackageFragmentScopeForJavaPackage@96
+    memberIndex = computeMemberIndex$1@98 // through LazyPackageFragmentScopeForJavaPackage@96
 }
 
-LazyJavaPackageFragment@59['util'] {
-    classes('concurrent': Name@100) = null // through LazyPackageFragmentScopeForJavaPackage@101
-    deserializedPackageScope = Empty@81 // through LazyPackageFragmentScopeForJavaPackage@101
-    functions('concurrent': Name@102) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@101
-    memberIndex = computeMemberIndex$1@103 // through LazyPackageFragmentScopeForJavaPackage@101
+LazyJavaPackageFragment@58['util'] {
+    classes('concurrent': Name@99) = null // through LazyPackageFragmentScopeForJavaPackage@100
+    deserializedPackageScope = Empty@80 // through LazyPackageFragmentScopeForJavaPackage@100
+    functions('concurrent': Name@101) = EmptyList@82[empty] // through LazyPackageFragmentScopeForJavaPackage@100
+    memberIndex = computeMemberIndex$1@102 // through LazyPackageFragmentScopeForJavaPackage@100
+}
+
+ResolutionTaskHolder@103 {
+    <name not found> = ArrayList@104[1] { ResolutionCandidate@105 }
+    <name not found> = ArrayList@106[1] { ResolutionCandidate@105 }
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+}
+
+ResolutionTaskHolder@107 {
+    <name not found> = ArrayList@108[1] { ResolutionCandidate@109 }
+    <name not found> = ArrayList@110[1] { ResolutionCandidate@109 }
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+}
+
+ResolutionTaskHolder@111 {
+    <name not found> = ArrayList@112[1] { ResolutionCandidate@113 }
+    <name not found> = ArrayList@114[1] { ResolutionCandidate@113 }
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+}
+
+ResolutionTaskHolder@115 {
+    <name not found> = ArrayList@116[1] { ResolutionCandidate@117 }
+    <name not found> = ArrayList@118[1] { ResolutionCandidate@117 }
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+}
+
+ResolutionTaskHolder@119 {
+    <name not found> = ArrayList@120[1] { ResolutionCandidate@121 }
+    <name not found> = ArrayList@122[1] { ResolutionCandidate@121 }
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+}
+
+ResolutionTaskHolder@123 {
+    <name not found> = ArrayList@124[1] { ResolutionCandidate@125 }
+    <name not found> = ArrayList@126[1] { ResolutionCandidate@125 }
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+}
+
+ResolutionTaskHolder@127 {
+    <name not found> = ArrayList@128[1] { ResolutionCandidate@129 }
+    <name not found> = ArrayList@130[1] { ResolutionCandidate@129 }
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+}
+
+ResolutionTaskHolder@131 {
+    <name not found> = ArrayList@132[1] { ResolutionCandidate@133 }
+    <name not found> = ArrayList@134[1] { ResolutionCandidate@133 }
+    <name not found> = EmptyList@82[empty]
+    <name not found> = EmptyList@82[empty]
+}
+
+ResolutionTaskHolder@135 {
+    <name not found> = ArrayList@136[1] { ResolutionCandidate@137 }
+    <name not found> = ArrayList@138[1] { ResolutionCandidate@137 }
+}
+
+ResolutionTaskHolder@139 {
+    <name not found> = ArrayList@140[1] { ResolutionCandidate@141 }
+    <name not found> = ArrayList@142[1] { ResolutionCandidate@141 }
+}
+
+ResolutionTaskHolder@143 {
+    <name not found> = ArrayList@144[1] { ResolutionCandidate@145 }
+    <name not found> = ArrayList@146[1] { ResolutionCandidate@145 }
+}
+
+ResolutionTaskHolder@147 {
+    <name not found> = ArrayList@148[1] { ResolutionCandidate@149 }
+    <name not found> = ArrayList@150[1] { ResolutionCandidate@149 }
+}
+
+ResolutionTaskHolder@151 {
+    <name not found> = ArrayList@152[1] { ResolutionCandidate@153 }
+    <name not found> = ArrayList@154[1] { ResolutionCandidate@153 }
 }

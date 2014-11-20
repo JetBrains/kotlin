@@ -24,9 +24,11 @@ import java.util.*
 
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeSelectorUtil.*
 
-public class ChainedScope(private val containingDeclaration: DeclarationDescriptor?/* it's nullable as a hack for TypeUtils.intersect() */,
-                          private val debugName: String,
-                          vararg scopes: JetScope) : JetScope {
+public open class ChainedScope(
+        private val containingDeclaration: DeclarationDescriptor?/* it's nullable as a hack for TypeUtils.intersect() */,
+        private val debugName: String,
+        vararg scopes: JetScope
+) : JetScope {
     private val scopeChain = scopes.clone()
     private var implicitReceiverHierarchy: List<ReceiverParameterDescriptor>? = null
 

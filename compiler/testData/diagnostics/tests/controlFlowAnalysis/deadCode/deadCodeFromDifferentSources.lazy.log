@@ -37,21 +37,21 @@ LazyJavaClassifierType@21['String'] {
 
 LazyJavaClassifierType@24['String'] {
     arguments = ArrayList@25[empty]
-    classifier = JavaClassImpl@15['String']
+    classifier = JavaClassImpl@23['String']
     nullable = 'true': Boolean@26
     typeConstructor = DeserializedClassTypeConstructor@17
 }
 
 LazyJavaClassifierType@27['String'] {
     arguments = ArrayList@28[empty]
-    classifier = JavaClassImpl@23['String']
+    classifier = JavaClassImpl@20['String']
     nullable = 'true': Boolean@26
     typeConstructor = DeserializedClassTypeConstructor@17
 }
 
 LazyJavaClassifierType@29['String'] {
     arguments = ArrayList@30[empty]
-    classifier = JavaClassImpl@20['String']
+    classifier = JavaClassImpl@15['String']
     nullable = 'true': Boolean@26
     typeConstructor = DeserializedClassTypeConstructor@17
 }
@@ -79,14 +79,14 @@ LazyJavaClassifierType@38['Throwable'] {
 
 LazyJavaClassifierType@41['Throwable'] {
     arguments = ArrayList@42[empty]
-    classifier = JavaClassImpl@40['Throwable']
+    classifier = JavaClassImpl@37['Throwable']
     nullable = 'true': Boolean@26
     typeConstructor = DeserializedClassTypeConstructor@34
 }
 
 LazyJavaClassifierType@43['Throwable'] {
     arguments = ArrayList@44[empty]
-    classifier = JavaClassImpl@37['Throwable']
+    classifier = JavaClassImpl@40['Throwable']
     nullable = 'true': Boolean@26
     typeConstructor = DeserializedClassTypeConstructor@34
 }
@@ -133,10 +133,77 @@ LazyJavaPackageFragment@58['java'] {
 LazyJavaPackageFragment@60['lang'] {
     classes('Exception': Name@75) = LazyJavaClassDescriptor@2['Exception'] // through LazyPackageFragmentScopeForJavaPackage@76
     classes('bar': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@76
-    classes('plus': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@76
     deserializedPackageScope = Empty@71 // through LazyPackageFragmentScopeForJavaPackage@76
     functions('Exception': Name@75) = EmptyList@73[empty] // through LazyPackageFragmentScopeForJavaPackage@76
     functions('bar': Name@77) = EmptyList@73[empty] // through LazyPackageFragmentScopeForJavaPackage@76
-    functions('plus': Name@78) = EmptyList@73[empty] // through LazyPackageFragmentScopeForJavaPackage@76
-    memberIndex = computeMemberIndex$1@79 // through LazyPackageFragmentScopeForJavaPackage@76
+    memberIndex = computeMemberIndex$1@78 // through LazyPackageFragmentScopeForJavaPackage@76
+}
+
+ResolutionTaskHolder@79 {
+    <name not found> = ArrayList@80[1] { ResolutionCandidate@81 }
+    <name not found> = ArrayList@82[1] { ResolutionCandidate@81 }
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+}
+
+ResolutionTaskHolder@83 {
+    <name not found> = ArrayList@84[1] { ResolutionCandidate@85 }
+    <name not found> = ArrayList@86[1] { ResolutionCandidate@85 }
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+}
+
+ResolutionTaskHolder@87 {
+    <name not found> = ArrayList@88[1] { ResolutionCandidate@89 }
+    <name not found> = ArrayList@90[1] { ResolutionCandidate@89 }
+}
+
+ResolutionTaskHolder@91 {
+    <name not found> = ArrayList@92[1] { ResolutionCandidate@93 }
+    <name not found> = ArrayList@94[1] { ResolutionCandidate@93 }
+}
+
+ResolutionTaskHolder@95 {
+    <name not found> = ArrayList@96[1] { ResolutionCandidate@97 }
+    <name not found> = ArrayList@98[1] { ResolutionCandidate@97 }
+}
+
+ResolutionTaskHolder@99 {
+    <name not found> = ArrayList@100[1] { ResolutionCandidate@101 }
+    <name not found> = ArrayList@102[1] { ResolutionCandidate@101 }
+}
+
+ResolutionTaskHolder@103 {
+    <name not found> = ArrayList@104[1] { ResolutionCandidate@105 }
+    <name not found> = ArrayList@106[1] { ResolutionCandidate@105 }
+}
+
+ResolutionTaskHolder@107 {
+    <name not found> = ArrayList@108[1] { ResolutionCandidate@109 }
+    <name not found> = ArrayList@110[1] { ResolutionCandidate@109 }
+}
+
+ResolutionTaskHolder@111 {
+    <name not found> = ArrayList@112[4] { ResolutionCandidate@113, ResolutionCandidate@114, ResolutionCandidate@115, ... }
+    <name not found> = ArrayList@116[5] { ResolutionCandidate@113, ResolutionCandidate@114, ResolutionCandidate@115, ... }
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
+    <name not found> = EmptyList@73[empty]
 }

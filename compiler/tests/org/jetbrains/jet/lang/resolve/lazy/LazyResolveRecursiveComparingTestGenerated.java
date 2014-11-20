@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyResolveRecursiveComparingTest {
     @TestMetadata("compiler/testData/loadJava/compiledKotlin")
     @TestDataPath("$PROJECT_ROOT")
-    @InnerTestClasses({CompiledKotlin.Annotations.class, CompiledKotlin.Class.class, CompiledKotlin.ClassFun.class, CompiledKotlin.ClassObject.class, CompiledKotlin.Constructor.class, CompiledKotlin.DataClass.class, CompiledKotlin.Enum.class, CompiledKotlin.FromLoadJava.class, CompiledKotlin.Fun.class, CompiledKotlin.Inline.class, CompiledKotlin.PlatformTypes.class, CompiledKotlin.Prop.class, CompiledKotlin.Type.class, CompiledKotlin.Visibility.class})
+    @InnerTestClasses({CompiledKotlin.Annotations.class, CompiledKotlin.Class.class, CompiledKotlin.ClassFun.class, CompiledKotlin.ClassObject.class, CompiledKotlin.Constructor.class, CompiledKotlin.DataClass.class, CompiledKotlin.Enum.class, CompiledKotlin.FromLoadJava.class, CompiledKotlin.Fun.class, CompiledKotlin.Inline.class, CompiledKotlin.MemberOrder.class, CompiledKotlin.PlatformTypes.class, CompiledKotlin.Prop.class, CompiledKotlin.Type.class, CompiledKotlin.Visibility.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CompiledKotlin extends AbstractLazyResolveRecursiveComparingTest {
         public void testAllFilesPresentInCompiledKotlin() throws Exception {
@@ -981,6 +981,12 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("enumWithConstuctor.kt")
             public void testEnumWithConstuctor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/enum/enumWithConstuctor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumWithInnerClasses.kt")
+            public void testEnumWithInnerClasses() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/enum/enumWithInnerClasses.kt");
                 doTest(fileName);
             }
 
@@ -2353,6 +2359,51 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("inlineFunction.kt")
             public void testInlineFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/inline/inlineFunction.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class MemberOrder extends AbstractLazyResolveRecursiveComparingTest {
+            public void testAllFilesPresentInMemberOrder() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("callablesNameClash.kt")
+            public void testCallablesNameClash() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/callablesNameClash.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumEntries.kt")
+            public void testEnumEntries() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/enumEntries.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("extensionMembers.kt")
+            public void testExtensionMembers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionMembers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("extensionPropertiesNameClash.kt")
+            public void testExtensionPropertiesNameClash() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionPropertiesNameClash.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("innerClasses.kt")
+            public void testInnerClasses() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/innerClasses.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevelCallables.kt")
+            public void testTopLevelCallables() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/topLevelCallables.kt");
                 doTest(fileName);
             }
         }

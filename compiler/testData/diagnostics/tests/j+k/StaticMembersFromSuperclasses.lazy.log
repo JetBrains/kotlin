@@ -80,3 +80,23 @@ LazyJavaPackageFragment@40['lang'] {
 LazyJavaTypeAttributes@55 {
     howThisTypeIsUsedAccordingToAnnotations$delegate = TypeUsage@56
 }
+
+ResolutionTaskHolder@57 {
+    <name not found> = ArrayList@58[1] { ResolutionCandidate@59 }
+    <name not found> = ArrayList@60[1] { ResolutionCandidate@59 }
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+}
+
+ResolutionTaskHolder@61 {
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+    <name not found> = EmptyList@6[empty]
+}

@@ -1334,6 +1334,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("beforeClassUserTypeReceiverNoBody.kt")
+                public void testClassUserTypeReceiverNoBody() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/beforeClassUserTypeReceiverNoBody.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("beforeEnumEntryNotQualifierNoTypeArgs.kt")
                 public void testEnumEntryNotQualifierNoTypeArgs() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/typeReference/beforeEnumEntryNotQualifierNoTypeArgs.kt");

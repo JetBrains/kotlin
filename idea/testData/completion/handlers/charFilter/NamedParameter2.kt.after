@@ -1,0 +1,8 @@
+fun foo(xxx: Int, yyy: Int)
+
+fun test() {
+    foo(xxx = 10, yyy = <caret>)
+}
+
+// ELEMENT: yyy
+// CHAR: ' '

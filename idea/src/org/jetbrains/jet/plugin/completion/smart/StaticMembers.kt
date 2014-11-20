@@ -33,6 +33,7 @@ import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.completion.qualifiedNameForSourceCode
 import org.jetbrains.jet.lang.resolve.descriptorUtil.isExtension
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
+import org.jetbrains.jet.plugin.completion.LookupElementFactory
 
 // adds java static members, enum members and members from class object
 class StaticMembers(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
@@ -41,8 +42,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
                                context: JetExpression,
                                enumEntriesToSkip: Set<DeclarationDescriptor>) {
 
-        val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context]
-        if (scope == null) return
+        val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return
 
         val expectedInfosByClass = expectedInfos.groupBy { TypeUtils.getClassDescriptor(it.type) }
         for ((classDescriptor, expectedInfosForClass) in expectedInfosByClass) {
@@ -64,8 +64,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
 
             val classifier: (ExpectedInfo) -> ExpectedInfoClassification
             if (descriptor is CallableDescriptor) {
-                val returnType = descriptor.getReturnType()
-                if (returnType == null) return
+                val returnType = descriptor.getReturnType() ?: return
                 classifier = {
                     expectedInfo ->
                         when {
@@ -107,13 +106,14 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
     }
 
     private fun createLookupElement(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): LookupElement {
-        val lookupElement = createLookupElement(memberDescriptor, resolveSession, bindingContext)
+        val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(memberDescriptor, resolveSession, bindingContext)
         val qualifierPresentation = classDescriptor.getName().asString()
-        val lookupString = qualifierPresentation + "." + lookupElement.getLookupString()
         val qualifierText = qualifiedNameForSourceCode(classDescriptor)
 
         return object: LookupElementDecorator<LookupElement>(lookupElement) {
-            override fun getLookupString() = lookupString
+            override fun getAllLookupStrings(): Set<String> {
+                return setOf(lookupElement.getLookupString(), qualifierPresentation)
+            }
 
             override fun renderElement(presentation: LookupElementPresentation) {
                 getDelegate().renderElement(presentation)

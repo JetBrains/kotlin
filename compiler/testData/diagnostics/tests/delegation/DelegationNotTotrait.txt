@@ -15,14 +15,6 @@ internal final class Br : T {
 }
 
 internal open enum class EN : kotlin.Enum<EN> {
-    private constructor EN()
-    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EN): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
     public enum entry A : EN {
         private constructor A()
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EN): kotlin.Int
@@ -42,6 +34,14 @@ internal open enum class EN : kotlin.Enum<EN> {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
+
+    private constructor EN()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EN): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EN

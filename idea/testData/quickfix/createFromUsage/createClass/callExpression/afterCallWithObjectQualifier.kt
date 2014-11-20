@@ -1,7 +1,6 @@
 // "Create class 'Foo'" "true"
 
 object A {
-
     class Foo(i: Int) {
 
     }

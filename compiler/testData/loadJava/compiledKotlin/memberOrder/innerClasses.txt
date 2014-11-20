@@ -1,0 +1,27 @@
+package test
+
+internal final class O {
+    /*primary*/ public constructor O()
+
+    internal final class A1 {
+        /*primary*/ public constructor A1()
+    }
+
+    internal final inner class A2 {
+        /*primary*/ public constructor A2()
+    }
+
+    internal final class B1 {
+        /*primary*/ public constructor B1()
+    }
+
+    internal final inner class B2 {
+        /*primary*/ public constructor B2()
+    }
+
+    internal trait C1 {
+    }
+
+    internal trait C2 {
+    }
+}

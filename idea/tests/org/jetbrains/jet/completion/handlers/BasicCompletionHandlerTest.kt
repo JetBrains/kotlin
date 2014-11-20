@@ -21,8 +21,20 @@ import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 
 public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
-    override val completionType: CompletionType = CompletionType.BASIC
     override val testDataRelativePath: String = "/completion/handlers"
+
+    private fun doTest() {
+        doTest(2, "*", null, null, '\n')
+    }
+
+    private fun doTest(time: Int, lookupString: String?, tailText: String?, completionChar: Char) {
+        doTest(time, lookupString, null, tailText, completionChar)
+    }
+
+    private fun doTest(time: Int, lookupString: String?, itemText: String?, tailText: String?, completionChar: Char) {
+        fixture.configureByFile(fileName())
+        doTestWithTextLoaded(CompletionType.BASIC, time, lookupString, itemText, tailText, completionChar)
+    }
 
     fun testClassCompletionImport() = doTest(2, "SortedSet", null, '\n')
 
@@ -48,9 +60,9 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testNamedParametersCompletion() = doTest()
 
-    fun testNamedParametersCompletionOnEqual() = doTest(0, "paramTest =", null, '=')
+    fun testNamedParametersCompletionOnEqual() = doTest(0, "paramTest", "paramTest =", null, '=')
 
-    fun testNamedParameterKeywordName() = doTest(1, "class =", null, '\n')
+    fun testNamedParameterKeywordName() = doTest(1, "class", "class =", null, '\n')
 
     fun testInsertJavaClassImport() = doTest()
 
@@ -72,11 +84,11 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testHigherOrderFunctionWithArg() = doTest(2, "filterNot", null, '\n')
 
-    fun testHigherOrderFunctionWithArgs1() = doTest(1, "foo", "foo { (String, Char) -> ... }", null, '\n')
+    fun testHigherOrderFunctionWithArgs1() = doTest(1, "foo", "foo", " { (String, Char) -> ... }", '\n')
 
-    fun testHigherOrderFunctionWithArgs2() = doTest(1, "foo", "foo(p: (String, Char) -> Boolean)", null, '\n')
+    fun testHigherOrderFunctionWithArgs2() = doTest(1, "foo", "foo", "(p: (String, Char) -> Boolean)", '\n')
 
-    fun testHigherOrderFunctionWithArgs3() = doTest(1, "foo", "foo { (String, Char) -> ... }", null, '\n')
+    fun testHigherOrderFunctionWithArgs3() = doTest(1, "foo", "foo", " { (String, Char) -> ... }", '\n')
 
     fun testForceParenthesisForTabChar() = doTest(0, "some", null, '\t')
 
@@ -149,7 +161,7 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
     fun testTypeArgOfSuper() = doTest(1, "X", null, '\n')
 
     fun testKeywordClassName() = doTest(1, "class", null, '\n')
-    fun testKeywordFunctionName() = doTest(1, "fun", "fun()", null, '\n')
+    fun testKeywordFunctionName() = doTest(1, "fun", "fun", "()", '\n')
 
     fun testInfixCall() = doTest(1, "to", null, null, '\n')
     fun testInfixCallOnSpace() = doTest(1, "to", null, null, ' ')

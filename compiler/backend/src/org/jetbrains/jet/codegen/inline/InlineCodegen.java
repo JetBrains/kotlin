@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen.inline;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.*;
@@ -76,13 +75,16 @@ public class InlineCodegen implements CallGenerator {
     protected final ParametersBuilder invocationParamBuilder = ParametersBuilder.newBuilder();
     protected final Map<Integer, LambdaInfo> expressionMap = new HashMap<Integer, LambdaInfo>();
 
+    private final ReifiedTypeInliner reifiedTypeInliner;
+
     private LambdaInfo activeLambda;
 
     public InlineCodegen(
             @NotNull ExpressionCodegen codegen,
             @NotNull GenerationState state,
             @NotNull SimpleFunctionDescriptor functionDescriptor,
-            @NotNull JetElement callElement
+            @NotNull JetElement callElement,
+            @Nullable ReifiedTypeParameterMappings typeParameterMappings
     ) {
         assert functionDescriptor.getInlineStrategy().isInline() : "InlineCodegen could inline only inline function but " + functionDescriptor;
 
@@ -91,6 +93,9 @@ public class InlineCodegen implements CallGenerator {
         this.codegen = codegen;
         this.callElement = callElement;
         this.functionDescriptor = functionDescriptor.getOriginal();
+
+        reifiedTypeInliner = new ReifiedTypeInliner(typeParameterMappings);
+
         initialFrameSize = codegen.getFrameMap().getCurrentSize();
 
         context = (MethodContext) getContext(functionDescriptor, state);
@@ -200,6 +205,7 @@ public class InlineCodegen implements CallGenerator {
     }
 
     private InlineResult inlineCall(MethodNode node) {
+        reifiedTypeInliner.reifyInstructions(node.instructions);
         generateClosuresBodies();
 
         //through generation captured parameters will be added to invocationParamBuilder
@@ -215,7 +221,7 @@ public class InlineCodegen implements CallGenerator {
                                                                .subGenerator(functionDescriptor.getName().asString()),
                                                        codegen.getContext(),
                                                        callElement,
-                                                       codegen.getParentCodegen().getClassName());
+                                                       codegen.getParentCodegen().getClassName(), reifiedTypeInliner);
 
         MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule, "Method inlining " + callElement.getText()); //with captured
 
@@ -329,16 +335,21 @@ public class InlineCodegen implements CallGenerator {
             return false;
         }
 
-        if (stackValue instanceof StackValue.Composed) {
-            //see: Method.isSpecialStackValue: go through aload 0
-            if (codegen.getContext().isInliningLambda() && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
-                if (descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor)) {
-                    //TODO: check type of context
-                    return false;
-                }
-            }
+        //skip direct capturing fields
+        StackValue receiver = null;
+        if (stackValue instanceof StackValue.Field) {
+            receiver = ((StackValue.Field) stackValue).receiver;
         }
-        return true;
+        else if (stackValue instanceof StackValue.FieldForSharedVar) {
+            receiver = ((StackValue.Field) ((StackValue.FieldForSharedVar) stackValue).receiver).receiver;
+        }
+
+        if (!(receiver instanceof StackValue.Local)) {
+            return true;
+        }
+
+        //TODO: check type of context
+        return !(codegen.getContext().isInliningLambda() && descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor));
     }
 
     private void putParameterOnStack(ParameterInfo... infos) {
@@ -357,7 +368,7 @@ public class InlineCodegen implements CallGenerator {
             ParameterInfo info = infos[i];
             if (!info.isSkippedOrRemapped()) {
                 Type type = info.type;
-                StackValue.local(index[i], type).store(type, codegen.v);
+                StackValue.local(index[i], type).store(StackValue.onStack(type), codegen.v);
             }
         }
     }

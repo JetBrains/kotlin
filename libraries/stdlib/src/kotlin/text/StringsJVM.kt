@@ -274,26 +274,6 @@ public inline fun <T : Appendable> String.takeWhileTo(result: T, predicate: (Cha
 deprecated("Use toList() instead.")
 public fun String.toCollection(): Collection<Char> = toCollection(ArrayList<Char>(this.length()))
 
-/** Returns a new String containing the everything but the leading whitespace characters */
-public fun String.trimLeading(): String {
-    var count = 0
-
-    while ((count < this.length) && (this[count] <= ' ')) {
-        count++
-    }
-    return if (count > 0) substring(count) else this
-}
-
-/** Returns a new String containing the everything but the trailing whitespace characters */
-public fun String.trimTrailing(): String {
-    var count = this.length
-
-    while (count > 0 && this[count - 1] <= ' ') {
-        count--
-    }
-    return if (count < this.length) substring(0, count) else this
-}
-
 /**
  * Replaces every *regexp* occurence in the text with the value retruned by the given function *body* that can handle
  * particular occurance using [[MatchResult]] provided.

@@ -3,7 +3,6 @@
 // ERROR: An integer literal does not conform to the expected type V
 
 class B<T>(val t: T) {
-
     inner class Foo<U, V, W>(v: V, w: W) {
 
     }

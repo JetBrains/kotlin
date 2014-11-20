@@ -1,0 +1,52 @@
+LazyAnnotationDescriptor@0 {
+    resolutionResults = OverloadResolutionResultsImpl@1
+    type = JetTypeImpl@2['inline']
+    valueArguments(ValueParameterDescriptorImpl@3['strategy']) = null
+}
+
+LazyJavaPackageFragmentProvider@4 {
+    packageFragments('<root>': FqName@5) = LazyJavaPackageFragment@6['<root>']
+    packageFragments('T': FqName@7) = null
+    packageFragments('inline': FqName@8) = null
+    packageFragments('java': FqName@9) = LazyJavaPackageFragment@10['java']
+    packageFragments('java.lang': FqName@11) = LazyJavaPackageFragment@12['lang']
+    packageFragments('java.lang.T': FqName@13) = null
+    packageFragments('java.lang.inline': FqName@14) = null
+    packageFragments('kotlin': FqName@15) = null
+    packageFragments('kotlin.T': FqName@16) = null
+    packageFragments('kotlin.inline': FqName@17) = null
+    packageFragments('kotlin.io': FqName@18) = null
+    packageFragments('kotlin.jvm': FqName@19) = null
+}
+
+LazyJavaPackageFragment@6['<root>'] {
+    classes('bar': Name@20) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('inline': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    deserializedPackageScope = Empty@23 // through LazyPackageFragmentScopeForJavaPackage@21
+    functions('bar': Name@20) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@21
+    memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@21
+}
+
+LazyJavaPackageFragment@10['java'] {
+    classes('lang': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@27
+    deserializedPackageScope = Empty@23 // through LazyPackageFragmentScopeForJavaPackage@27
+    functions('lang': Name@28) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@27
+    memberIndex = computeMemberIndex$1@29 // through LazyPackageFragmentScopeForJavaPackage@27
+}
+
+LazyJavaPackageFragment@12['lang'] {
+    classes('bar': Name@20) = null // through LazyPackageFragmentScopeForJavaPackage@30
+    deserializedPackageScope = Empty@23 // through LazyPackageFragmentScopeForJavaPackage@30
+    functions('bar': Name@20) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@30
+    memberIndex = computeMemberIndex$1@31 // through LazyPackageFragmentScopeForJavaPackage@30
+}
+
+ResolutionTaskHolder@32 {
+    <name not found> = ArrayList@33[1] { ResolutionCandidate@34 }
+    <name not found> = ArrayList@35[1] { ResolutionCandidate@34 }
+}
+
+ResolutionTaskHolder@36 {
+    <name not found> = ArrayList@37[1] { ResolutionCandidate@38 }
+    <name not found> = ArrayList@39[1] { ResolutionCandidate@38 }
+}

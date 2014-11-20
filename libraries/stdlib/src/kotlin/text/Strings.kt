@@ -24,6 +24,26 @@ public fun String.trimTrailing(postfix: String): String {
     return answer
 }
 
+/** Returns a new String containing the everything but the leading whitespace characters */
+public fun String.trimLeading(): String {
+    var count = 0
+
+    while ((count < this.length) && (this[count] <= ' ')) {
+        count++
+    }
+    return if (count > 0) substring(count) else this
+}
+
+/** Returns a new String containing the everything but the trailing whitespace characters */
+public fun String.trimTrailing(): String {
+    var count = this.length
+
+    while (count > 0 && this[count - 1] <= ' ') {
+        count--
+    }
+    return if (count < this.length) substring(0, count) else this
+}
+
 /** Returns true if the string is not null and not empty */
 public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
 

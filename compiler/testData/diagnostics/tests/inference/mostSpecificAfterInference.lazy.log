@@ -94,3 +94,46 @@ LazyJavaTypeParameterDescriptor@3['T'] {
 LazyJavaTypeParameterResolver@77 {
     resolve(JavaTypeParameterImpl@78['T']) = LazyJavaTypeParameterDescriptor@3['T']
 }
+
+ResolutionTaskHolder@79 {
+    <name not found> = ArrayList@80[1] { ResolutionCandidate@81 }
+    <name not found> = ArrayList@82[1] { ResolutionCandidate@81 }
+}
+
+ResolutionTaskHolder@83 {
+    <name not found> = ArrayList@84[1] { ResolutionCandidate@85 }
+    <name not found> = ArrayList@86[1] { ResolutionCandidate@85 }
+}
+
+ResolutionTaskHolder@87 {
+    <name not found> = ArrayList@88[1] { ResolutionCandidate@89 }
+    <name not found> = ArrayList@90[1] { ResolutionCandidate@89 }
+}
+
+ResolutionTaskHolder@91 {
+    <name not found> = ArrayList@92[1] { ResolutionCandidate@93 }
+    <name not found> = ArrayList@94[1] { ResolutionCandidate@93 }
+}
+
+ResolutionTaskHolder@95 {
+    <name not found> = ArrayList@96[1] { ResolutionCandidate@97 }
+    <name not found> = ArrayList@98[1] { ResolutionCandidate@97 }
+}
+
+ResolutionTaskHolder@99 {
+    <name not found> = ArrayList@100[2] { ResolutionCandidate@101, ResolutionCandidate@102 }
+    <name not found> = ArrayList@103[2] { ResolutionCandidate@101, ResolutionCandidate@102 }
+    <name not found> = EmptyList@59[empty]
+    <name not found> = EmptyList@59[empty]
+    <name not found> = EmptyList@59[empty]
+    <name not found> = EmptyList@59[empty]
+}
+
+ResolutionTaskHolder@104 {
+    <name not found> = ArrayList@105[2] { ResolutionCandidate@106, ResolutionCandidate@107 }
+    <name not found> = ArrayList@108[2] { ResolutionCandidate@106, ResolutionCandidate@107 }
+    <name not found> = EmptyList@59[empty]
+    <name not found> = EmptyList@59[empty]
+    <name not found> = EmptyList@59[empty]
+    <name not found> = EmptyList@59[empty]
+}

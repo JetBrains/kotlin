@@ -974,10 +974,6 @@
         return result;
     };
 
-    Kotlin.arrayIndices = function (arr) {
-        return new Kotlin.NumberRange(0, arr.length - 1);
-    };
-
     Kotlin.arrayIterator = function (array) {
         return new Kotlin.ArrayIterator(array);
     };

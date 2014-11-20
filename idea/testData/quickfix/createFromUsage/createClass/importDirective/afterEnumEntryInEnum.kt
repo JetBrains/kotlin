@@ -4,7 +4,6 @@ package p
 import p.E.A
 
 enum class E {
-
     A
 
 }

@@ -11,14 +11,6 @@ internal final annotation class AnnE : kotlin.Annotation {
 }
 
 internal final enum class MyEnum : kotlin.Enum<MyEnum> {
-    private constructor MyEnum()
-    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnum): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
     public enum entry A : MyEnum {
         private constructor A()
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnum): kotlin.Int
@@ -38,6 +30,14 @@ internal final enum class MyEnum : kotlin.Enum<MyEnum> {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
+
+    private constructor MyEnum()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnum): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyEnum

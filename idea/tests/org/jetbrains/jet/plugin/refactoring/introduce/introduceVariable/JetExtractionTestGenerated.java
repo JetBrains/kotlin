@@ -1361,6 +1361,24 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/parameters/candidateTypes"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("cantLiftAnonymousToSupertype.kt")
+                public void testCantLiftAnonymousToSupertype() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/cantLiftAnonymousToSupertype.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("liftAnonymousToSupertype1.kt")
+                public void testLiftAnonymousToSupertype1() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/liftAnonymousToSupertype1.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("liftAnonymousToSupertype2.kt")
+                public void testLiftAnonymousToSupertype2() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/liftAnonymousToSupertype2.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("nonNullableTypes.kt")
                 public void testNonNullableTypes() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/nonNullableTypes.kt");

@@ -25,7 +25,7 @@ import org.jetbrains.jet.plugin.caches.resolve.JsAnalyzerFacade
 public object AnalyzerFacadeProvider {
     //NOTE: it's convenient that JS backend doesn't have platform parameters (for now)
     // otherwise we would be forced to add casts on the call site of setupResolverForProject
-    public fun getAnalyzerFacade(targetPlatform: TargetPlatform): AnalyzerFacade<ResolverForModule, JvmPlatformParameters> {
+    public fun getAnalyzerFacade(targetPlatform: TargetPlatform): AnalyzerFacade<out ResolverForModule, JvmPlatformParameters> {
         return when (targetPlatform) {
             TargetPlatform.JVM -> JvmAnalyzerFacade
             TargetPlatform.JS -> JsAnalyzerFacade

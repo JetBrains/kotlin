@@ -18,20 +18,30 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.context.GlobalContextImpl;
+import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.CompositePackageFragmentProvider;
+import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallsPackage;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.LazyImportScope;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -61,7 +71,15 @@ public class LazyTopDownAnalyzer {
 
     @SuppressWarnings("ConstantConditions")
     @NotNull
+    private KotlinCodeAnalyzer resolveSession = null;
+
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
     private BodyResolver bodyResolver = null;
+
+    public void setKotlinCodeAnalyzer(@NotNull KotlinCodeAnalyzer kotlinCodeAnalyzer) {
+        this.resolveSession = kotlinCodeAnalyzer;
+    }
 
     @Inject
     public void setTrace(@NotNull BindingTrace trace) {
@@ -94,8 +112,41 @@ public class LazyTopDownAnalyzer {
     }
 
     @NotNull
+    public TopDownAnalysisContext analyzeFiles(
+            @NotNull Project project,
+            @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
+            @NotNull Collection<JetFile> files,
+            @NotNull List<? extends PackageFragmentProvider> additionalProviders,
+            AdditionalCheckerProvider additionalCheckerProvider
+    ) {
+        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
+
+        ResolveSession resolveSession = new InjectorForLazyResolve(
+                project,
+                new GlobalContextImpl((LockBasedStorageManager) c.getStorageManager(), c.getExceptionTracker()), // TODO
+                (ModuleDescriptorImpl) moduleDescriptor, // TODO
+                new FileBasedDeclarationProviderFactory(c.getStorageManager(), files),
+                trace,
+                additionalCheckerProvider
+        ).getResolveSession();
+
+        CompositePackageFragmentProvider provider =
+                new CompositePackageFragmentProvider(KotlinPackage.plus(Arrays.asList(resolveSession.getPackageFragmentProvider()), additionalProviders));
+
+        ((ModuleDescriptorImpl) moduleDescriptor).initialize(provider);
+
+        setKotlinCodeAnalyzer(resolveSession);
+
+        analyzeDeclarations(
+                c.getTopDownAnalysisParameters(),
+                files
+        );
+
+        return c;
+    }
+
+    @NotNull
     public TopDownAnalysisContext analyzeDeclarations(
-            final KotlinCodeAnalyzer resolveSession,
             @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull Collection<? extends PsiElement> declarations
     ) {
@@ -111,7 +162,6 @@ public class LazyTopDownAnalyzer {
         for (PsiElement declaration : declarations) {
             declaration.accept(
                     new JetVisitorVoid() {
-
                         private void registerDeclarations(@NotNull List<JetDeclaration> declarations) {
                             for (JetDeclaration jetDeclaration : declarations) {
                                 jetDeclaration.accept(this);
@@ -129,6 +179,7 @@ public class LazyTopDownAnalyzer {
                                 JetScript script = file.getScript();
                                 assert script != null;
 
+                                DescriptorResolver.registerFileInPackage(trace, file);
                                 c.getScripts().put(script, resolveSession.getScriptDescriptor(script));
                             }
                             else {
@@ -269,7 +320,6 @@ public class LazyTopDownAnalyzer {
 
         bodyResolver.resolveBodies(c);
 
-
         return c;
     }
 
@@ -350,7 +400,6 @@ public class LazyTopDownAnalyzer {
             }
         }
     }
-
 }
 
 

@@ -98,7 +98,7 @@ public class TypeUtils {
     }
 
     public static final JetType NO_EXPECTED_TYPE = new SpecialType("NO_EXPECTED_TYPE");
-    
+
     public static final JetType UNIT_EXPECTED_TYPE = new SpecialType("UNIT_EXPECTED_TYPE");
 
     public static boolean noExpectedType(@NotNull JetType type) {
@@ -171,7 +171,7 @@ public class TypeUtils {
             allNullable &= type.isNullable();
             nullabilityStripped.add(makeNotNullable(type));
         }
-        
+
         if (nothingTypePresent) {
             return allNullable ? KotlinBuiltIns.getInstance().getNullableNothingType() : KotlinBuiltIns.getInstance().getNothingType();
         }
@@ -227,7 +227,21 @@ public class TypeUtils {
                 constructor,
                 allNullable,
                 Collections.<TypeProjection>emptyList(),
-                new ChainedScope(null, "member scope for intersection type " + constructor, scopes)); // TODO : check intersectibility, don't use a chanied scope
+                new IntersectionScope(constructor, scopes)
+        );
+    }
+
+    // TODO : check intersectibility, don't use a chanied scope
+    public static class IntersectionScope extends ChainedScope {
+        public IntersectionScope(@NotNull TypeConstructor constructor, @NotNull JetScope[] scopes) {
+            super(null, "member scope for intersection type " + constructor, scopes);
+        }
+
+        @NotNull
+        @Override
+        public DeclarationDescriptor getContainingDeclaration() {
+            throw new UnsupportedOperationException("Should not call getContainingDeclaration on intersection scope " + this);
+        }
     }
 
     private static class TypeUnifier {
@@ -434,7 +448,7 @@ public class TypeUtils {
         if (TypesPackage.isFlexible(type) && isNullableType(TypesPackage.flexibility(type).getUpperBound())) {
             return true;
         }
-        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+        if (isTypeParameter(type)) {
             return hasNullableSuperType(type);
         }
         return false;
@@ -450,7 +464,7 @@ public class TypeUtils {
             if (supertype.isNullable()) return true;
             if (hasNullableSuperType(supertype)) return true;
         }
-        
+
         return false;
     }
 
@@ -718,6 +732,23 @@ public class TypeUtils {
                 return substitutionContext.toString();
             }
         });
+    }
+
+    public static boolean isTypeParameter(@NotNull JetType type) {
+        return getTypeParameterDescriptorOrNull(type) != null;
+    }
+
+    public static boolean isNonReifiedTypeParemeter(@NotNull JetType type) {
+        TypeParameterDescriptor typeParameterDescriptor = getTypeParameterDescriptorOrNull(type);
+        return typeParameterDescriptor != null && !typeParameterDescriptor.isReified();
+    }
+
+    @Nullable
+    public static TypeParameterDescriptor getTypeParameterDescriptorOrNull(@NotNull JetType type) {
+        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+            return (TypeParameterDescriptor) type.getConstructor().getDeclarationDescriptor();
+        }
+        return null;
     }
 
     private static abstract class AbstractTypeWithKnownNullability extends AbstractJetType {

@@ -18,7 +18,8 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.CodeBuilder
 import com.intellij.psi.PsiNameIdentifierOwner
-import org.jetbrains.jet.j2k.CodeConverter
+import org.jetbrains.jet.lexer.JetKeywordToken
+import org.jetbrains.jet.lexer.JetTokens
 
 fun PsiNameIdentifierOwner.declarationIdentifier(): Identifier {
     val name = getName()
@@ -35,7 +36,7 @@ class Identifier(
         get() = name.isEmpty()
 
     private fun toKotlin(): String {
-        if (quotingNeeded && ONLY_KOTLIN_KEYWORDS.contains(name) || name.contains("$")) {
+        if (quotingNeeded && KEYWORDS.contains(name) || name.contains("$")) {
             return quote(name)
         }
 
@@ -53,9 +54,7 @@ class Identifier(
     class object {
         val Empty = Identifier("")
 
-        val ONLY_KOTLIN_KEYWORDS: Set<String> = setOf(
-                "package", "as", "type", "val", "var", "fun", "is", "in", "object", "when", "trait", "This"
-        )
+        private val KEYWORDS = JetTokens.KEYWORDS.getTypes().map { (it as JetKeywordToken).getValue() }.toSet()
 
         fun toKotlin(name: String): String = Identifier(name).toKotlin()
     }

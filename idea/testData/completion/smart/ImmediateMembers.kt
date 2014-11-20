@@ -1,0 +1,22 @@
+trait T {
+    fun fromTrait() = ""
+}
+
+abstract class Base : T {
+    fun fromBase() = ""
+}
+
+class Derived : Base() {
+    override fun fromTrait() = ""
+
+    val fromDerived: String = ""
+}
+
+fun foo(d: Derived): String {
+    return d.<caret>
+}
+
+// EXIST: { itemText: "fromTrait", attributes: "bold" }
+// EXIST: { itemText: "fromDerived", attributes: "bold" }
+// EXIST: { itemText: "fromBase", attributes: "" }
+// EXIST: { itemText: "toString", attributes: "" }

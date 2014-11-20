@@ -20,7 +20,7 @@ internal trait BaseImpl : BaseSuper<D> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait BaseSuper</*0*/ T> {
+internal trait BaseSuper</*0*/ out T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

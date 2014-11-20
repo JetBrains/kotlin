@@ -1,4 +1,4 @@
-val <reified T> v: T
+val <<!REIFIED_TYPE_PARAMETER_NO_INLINE!>reified<!> T> v: T
     get() = throw UnsupportedOperationException()
 
 fun <T> id(p: T): T = p

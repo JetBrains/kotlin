@@ -1,0 +1,11 @@
+package test
+
+internal val f1: kotlin.Int = 1
+    internal fun <get-f1>(): kotlin.Int
+internal val f3: kotlin.Int = 1
+    internal fun <get-f3>(): kotlin.Int
+internal val f5: kotlin.Int = 1
+    internal fun <get-f5>(): kotlin.Int
+internal fun f2(): kotlin.Int
+internal fun f4(): kotlin.Int
+internal fun f4(/*0*/ i: kotlin.Int): kotlin.Int

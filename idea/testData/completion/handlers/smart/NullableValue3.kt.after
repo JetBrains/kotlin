@@ -8,4 +8,5 @@ fun foo(){
     val k : K = K.bar()!!<caret>
 }
 
-// ELEMENT_TEXT: "!! K.bar()"
+// ELEMENT_TEXT: "!! K.bar"
+// TAIL_TEXT: "()"

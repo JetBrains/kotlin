@@ -9,5 +9,5 @@ fun foo(){
     val f : Foo = <caret>
 }
 
-// EXIST: { lookupString:"Foo.X", itemText:"Foo.X", tailText:" (sample)", typeText:"Foo" }
-// EXIST: { lookupString:"Foo.Y", itemText:"Foo.Y", tailText:" (sample)", typeText:"Foo" }
+// EXIST: { lookupString:"X", itemText:"Foo.X", tailText:" (sample)", typeText:"Foo" }
+// EXIST: { lookupString:"Y", itemText:"Foo.Y", tailText:" (sample)", typeText:"Foo" }

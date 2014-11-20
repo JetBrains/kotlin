@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallCompleter;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
+import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -73,6 +74,7 @@ public class InjectorForMacros {
     private final ArgumentTypeResolver argumentTypeResolver;
     private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
+    private final TaskPrioritizer taskPrioritizer;
 
     public InjectorForMacros(
         @NotNull Project project,
@@ -103,6 +105,7 @@ public class InjectorForMacros {
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
+        this.taskPrioritizer = new TaskPrioritizer(storageManager);
 
         this.expressionTypingServices.setAnnotationResolver(annotationResolver);
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
@@ -126,6 +129,7 @@ public class InjectorForMacros {
         this.callResolver.setCallCompleter(callCompleter);
         this.callResolver.setCandidateResolver(candidateResolver);
         this.callResolver.setExpressionTypingServices(expressionTypingServices);
+        this.callResolver.setTaskPrioritizer(taskPrioritizer);
         this.callResolver.setTypeResolver(typeResolver);
 
         annotationResolver.setCallResolver(callResolver);

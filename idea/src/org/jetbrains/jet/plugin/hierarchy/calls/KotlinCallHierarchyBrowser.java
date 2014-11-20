@@ -80,7 +80,7 @@ public class KotlinCallHierarchyBrowser extends CallHierarchyBrowserBase {
     @Override
     protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String typeName, @NotNull PsiElement psiElement) {
         if (typeName.equals(CALLER_TYPE)) {
-            return KotlinCallerMethodsTreeStructure.newInstance(myProject, psiElement, getCurrentScopeType());
+            return new KotlinCallerMethodsTreeStructure(myProject, psiElement, getCurrentScopeType());
         }
 
         if (typeName.equals(CALLEE_TYPE)) {

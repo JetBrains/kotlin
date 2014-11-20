@@ -29,7 +29,7 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
-import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
+import org.jetbrains.jet.plugin.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.plugin.completion.handlers.CaretPosition
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
@@ -67,12 +67,14 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
         }
         if (allConstructors.isNotEmpty() && visibleConstructors.isEmpty()) return
 
-        var lookupElement = createLookupElement(classifier, resolveSession, bindingContext)
+        var lookupElement = LookupElementFactory.DEFAULT.createLookupElement(classifier, resolveSession, bindingContext)
 
         var lookupString = lookupElement.getLookupString()
+        var allLookupStrings = setOf(lookupString)
 
         val typeArgs = jetType.getArguments()
         var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgs)
+        var signatureText: String? = null
 
         val insertHandler: InsertHandler<LookupElement>
         val typeText = qualifiedNameForSourceCode(classifier) + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgs)
@@ -80,7 +82,8 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
             val constructorParenthesis = if (classifier.getKind() != ClassKind.TRAIT) "()" else ""
             itemText += constructorParenthesis
             itemText = "object: " + itemText + "{...}"
-            lookupString = "object" //?
+            lookupString = "object"
+            allLookupStrings = setOf(lookupString, lookupElement.getLookupString())
             insertHandler = InsertHandler<LookupElement> {(context, item) ->
                 val editor = context.getEditor()
                 val startOffset = context.getStartOffset()
@@ -97,14 +100,18 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
         }
         else {
             //TODO: when constructor has one parameter of lambda type with more than one parameter, generate special additional item
-            itemText += "()"
-            val baseInsertHandler =
-                    (if (visibleConstructors.size == 0)
-                        JetFunctionInsertHandler.NO_PARAMETERS_HANDLER
-                    else if (visibleConstructors.size == 1)
-                        KotlinLookupElementFactory.getDefaultInsertHandler(visibleConstructors.single())
-                    else
-                        JetFunctionInsertHandler.WITH_PARAMETERS_HANDLER) as JetFunctionInsertHandler
+            signatureText = when (visibleConstructors.size) {
+                0 -> "()"
+                1 -> DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(visibleConstructors.single())
+                else -> "(...)"
+            }
+
+            val baseInsertHandler = when (visibleConstructors.size) {
+                0 -> KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
+                1 -> LookupElementFactory.getDefaultInsertHandler(visibleConstructors.single()) as KotlinFunctionInsertHandler
+                else -> KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
+            }
+
             insertHandler = object : InsertHandler<LookupElement> {
                 override fun handleInsert(context: InsertionContext, item: LookupElement) {
                     context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)
@@ -127,9 +134,15 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
         lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
             override fun getLookupString() = lookupString
 
+            override fun getAllLookupStrings() = allLookupStrings
+
             override fun renderElement(presentation: LookupElementPresentation) {
                 getDelegate().renderElement(presentation)
                 presentation.setItemText(itemText)
+
+                if (signatureText != null) {
+                    presentation.prependTailText(signatureText!!, false)
+                }
             }
 
             override fun handleInsert(context: InsertionContext) {
@@ -151,7 +164,7 @@ class TypeInstantiationItems(val resolveSession: ResolveSessionForBodies, val bi
             val samConstructor = scope.getFunctions(`class`.getName())
                                          .filterIsInstance(javaClass<SamConstructorDescriptor>())
                                          .singleOrNull() ?: return
-            val lookupElement = createLookupElement(samConstructor, resolveSession, bindingContext)
+            val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(samConstructor, resolveSession, bindingContext)
                     .assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
                     .addTail(tail)
             collection.add(lookupElement)

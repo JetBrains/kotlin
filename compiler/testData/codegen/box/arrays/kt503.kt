@@ -22,11 +22,8 @@ fun box() : String {
     catch (e : ArrayIndexOutOfBoundsException) {
         // No more tests to process
     }
-    System.out?.println(n)
     return if(n == 2) "OK" else "fail"
 }
 
 fun thirdElementIsThree(a : IntArray) =
-// Problematic code does not compile
-//    a.size >= 3 & a[2] == 3
-    a.size >= 3 && a[2] == 3
+    a.size() >= 3 && a[2] == 3

@@ -298,6 +298,66 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("HigherOrderFunction2.kt")
+        public void testHigherOrderFunction2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/HigherOrderFunction2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateExtensionMembers1.kt")
+        public void testImmediateExtensionMembers1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateExtensionMembers1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateExtensionMembers2.kt")
+        public void testImmediateExtensionMembers2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateExtensionMembers2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateExtensionMembers3.kt")
+        public void testImmediateExtensionMembers3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateExtensionMembers3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateExtensionMembers4.kt")
+        public void testImmediateExtensionMembers4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateExtensionMembers4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateMembers1.kt")
+        public void testImmediateMembers1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateMembers1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateMembers2.kt")
+        public void testImmediateMembers2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateMembers2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateMembers3.kt")
+        public void testImmediateMembers3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateMembers3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateMembers4.kt")
+        public void testImmediateMembers4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateMembers4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImmediateMembers5.kt")
+        public void testImmediateMembers5() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImmediateMembers5.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ImportedEnumMembers.kt")
         public void testImportedEnumMembers() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/ImportedEnumMembers.kt");
@@ -780,6 +840,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("Extensions.kt")
+            public void testExtensions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/Extensions.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("InvalidTypeParameters.kt")
             public void testInvalidTypeParameters() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/InvalidTypeParameters.kt");
@@ -807,6 +873,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("KotlinTypeExtension.kt")
             public void testKotlinTypeExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/KotlinTypeExtension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoDuplicatedMethodForSmartCast.kt")
+            public void testNoDuplicatedMethodForSmartCast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/basic/common/extensions/NoDuplicatedMethodForSmartCast.kt");
                 doTest(fileName);
             }
 

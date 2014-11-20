@@ -36,3 +36,8 @@ LazyJavaPackageFragment@9['java'] {
 LazyJavaPackageFragment@11['lang'] {
     classes('UnresolvedType': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@31
 }
+
+ResolutionTaskHolder@32 {
+    <name not found> = ArrayList@33[1] { ResolutionCandidate@34 }
+    <name not found> = ArrayList@35[1] { ResolutionCandidate@34 }
+}

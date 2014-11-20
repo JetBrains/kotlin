@@ -427,9 +427,21 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             doTest(fileName);
         }
 
+        @TestMetadata("simpleClassObjectProperty.kt")
+        public void testSimpleClassObjectProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/platformStatic/simpleClassObjectProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleObject.kt")
         public void testSimpleObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/platformStatic/simpleObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleObjectProperty.kt")
+        public void testSimpleObjectProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/platformStatic/simpleObjectProperty.kt");
             doTest(fileName);
         }
     }

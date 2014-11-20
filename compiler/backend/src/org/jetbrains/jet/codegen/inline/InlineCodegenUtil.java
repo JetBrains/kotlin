@@ -23,6 +23,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.PackageContext;
@@ -231,6 +232,10 @@ public class InlineCodegenUtil {
         return "<init>".equals(methodName) && isAnonymousClass(internalName);
     }
 
+    public static boolean isAnonymousSingletonLoad(@NotNull String internalName, @NotNull String fieldName) {
+        return JvmAbi.INSTANCE_FIELD.equals(fieldName) && isAnonymousClass(internalName);
+    }
+
     public static boolean isAnonymousClass(String internalName) {
         String shortName = getLastNamePart(internalName);
         int index = shortName.lastIndexOf("$");
@@ -365,6 +370,26 @@ public class InlineCodegenUtil {
         textifier.print(new PrintWriter(sw));
         sw.flush();
         return node.name + " " + node.desc + ": \n " + sw.getBuffer().toString();
+    }
+
+    @NotNull
+    /* package */ static ClassReader buildClassReaderByInternalName(@NotNull GenerationState state, @NotNull String internalName) {
+        //try to find just compiled classes then in dependencies
+        try {
+            OutputFile outputFile = state.getFactory().get(internalName + ".class");
+            if (outputFile != null) {
+                return new ClassReader(outputFile.asByteArray());
+            } else {
+                VirtualFile file = findVirtualFile(state.getProject(), internalName);
+                if (file == null) {
+                    throw new RuntimeException("Couldn't find virtual file for " + internalName);
+                }
+                return new ClassReader(file.contentsToByteArray());
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static class LabelTextifier extends Textifier {

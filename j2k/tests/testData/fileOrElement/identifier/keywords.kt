@@ -1,5 +1,5 @@
 val `as`: Int
-val `type`: Int
+val type: Int
 val `val`: Int
 val `var`: Int
 val `fun`: Int

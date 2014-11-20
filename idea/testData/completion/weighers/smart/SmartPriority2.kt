@@ -19,10 +19,10 @@ fun foo(pFoo: C, s: String) {
 // ORDER: pFoo
 // ORDER: nullableFoo
 // ORDER: nullableFoo
-// ORDER: C.INSTANCE_FOO
+// ORDER: INSTANCE_FOO
 // ORDER: local
 // ORDER: nonNullable
 // ORDER: nullableX
 // ORDER: nullableX
-// ORDER: C.INSTANCE_X
+// ORDER: INSTANCE_X
 // ORDER: object

@@ -6,7 +6,7 @@ fun bar() {
     foo1() ?: <caret>
 }
 
-// EXIST: { itemText:"foo3()" }
-// ABSENT: { itemText:"foo2()" }
-// EXIST: { itemText:"!! foo2()" }
-// EXIST: { itemText:"?: foo2()" }
+// EXIST: { itemText:"foo3" }
+// ABSENT: { itemText:"foo2" }
+// EXIST: { itemText:"!! foo2" }
+// EXIST: { itemText:"?: foo2" }

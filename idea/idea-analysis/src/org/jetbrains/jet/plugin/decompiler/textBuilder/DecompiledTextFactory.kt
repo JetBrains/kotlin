@@ -101,12 +101,6 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
         }
     }
 
-    fun sortDeclarations(input: Collection<DeclarationDescriptor>): List<DeclarationDescriptor> {
-        val r = ArrayList(input)
-        Collections.sort(r, MemberComparator.INSTANCE)
-        return r
-    }
-
     fun saveDescriptorToRange(descriptor: DeclarationDescriptor, startOffset: Int, endOffset: Int) {
         renderedDescriptorsToRange[descriptorToKey(descriptor)] = TextRange(startOffset, endOffset)
     }
@@ -153,7 +147,7 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                     builder.append(subindent)
                     appendDescriptor(classObject, subindent)
                 }
-                for (member in sortDeclarations(descriptor.getDefaultType().getMemberScope().getDescriptors())) {
+                for (member in descriptor.getDefaultType().getMemberScope().getDescriptors()) {
                     if (member.getContainingDeclaration() != descriptor) {
                         continue
                     }
@@ -188,7 +182,7 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
     }
 
     appendDecompiledTextAndPackageName()
-    for (member in sortDeclarations(descriptors)) {
+    for (member in descriptors) {
         appendDescriptor(member, "")
         builder.append("\n")
     }

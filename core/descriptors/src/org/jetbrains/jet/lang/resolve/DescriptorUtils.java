@@ -266,11 +266,6 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.CLASS);
     }
 
-    public static boolean containerKindIs(@NotNull DeclarationDescriptor descriptor, @NotNull ClassKind kind) {
-        DeclarationDescriptor parentDeclaration = descriptor.getContainingDeclaration();
-        return  parentDeclaration != null && isKindOf(parentDeclaration, kind);
-    }
-
     public static boolean isKindOf(@Nullable DeclarationDescriptor descriptor, @NotNull ClassKind classKind) {
         return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == classKind;
     }

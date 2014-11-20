@@ -186,3 +186,8 @@ LazyJavaTypeParameterResolver@129 {
 LazyJavaTypeParameterResolver@131 {
     resolve(JavaTypeParameterImpl@132['TB']) = LazyJavaTypeParameterDescriptor@125['TB']
 }
+
+ResolutionTaskHolder@133 {
+    <name not found> = ArrayList@134[1] { ResolutionCandidate@135 }
+    <name not found> = ArrayList@136[1] { ResolutionCandidate@135 }
+}

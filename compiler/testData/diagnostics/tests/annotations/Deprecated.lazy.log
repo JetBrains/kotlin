@@ -57,3 +57,13 @@ LazyJavaPackageFragment@21['lang'] {
     functions('Deprecated': Name@44) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@43
     memberIndex = computeMemberIndex$1@45 // through LazyPackageFragmentScopeForJavaPackage@43
 }
+
+ResolutionTaskHolder@46 {
+    <name not found> = ArrayList@47[1] { ResolutionCandidate@48 }
+    <name not found> = ArrayList@49[1] { ResolutionCandidate@48 }
+}
+
+ResolutionTaskHolder@50 {
+    <name not found> = ArrayList@51[1] { ResolutionCandidate@52 }
+    <name not found> = ArrayList@53[1] { ResolutionCandidate@52 }
+}

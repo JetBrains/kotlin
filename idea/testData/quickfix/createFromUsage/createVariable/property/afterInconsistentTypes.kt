@@ -4,7 +4,6 @@
 
 class A<T>(val n: T) {
     val foo: Any
-
 }
 
 fun test(): Int {

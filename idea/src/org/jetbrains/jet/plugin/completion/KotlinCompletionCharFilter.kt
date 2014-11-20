@@ -20,39 +20,51 @@ import com.intellij.codeInsight.lookup.CharFilter
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.CharFilter.Result
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
 import com.intellij.openapi.util.Key
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 
 public class KotlinCompletionCharFilter() : CharFilter() {
     class object {
-        public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key<Boolean>("JetCompletionCharFilter.ACCEPT_OPENNING_BRACE")
-        public val ACCEPT_EQ: Key<Boolean> = Key<Boolean>("JetCompletionCharFilter.ACCEPT_EQ")
+        public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key("KotlinCompletionCharFilter.ACCEPT_OPENNING_BRACE")
+
+        public val JUST_TYPING_PREFIX: Key<String> = Key("KotlinCompletionCharFilter.JUST_TYPING_PREFIX")
     }
 
-    public override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
+    override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
         if (lookup.getPsiFile() !is JetFile) return null
+        if (!lookup.isCompletion()) return null
 
-        if (c == '.' && prefixLength == 0 && !lookup.isSelectionTouched()) {
-            val caret = lookup.getEditor().getCaretModel().getOffset()
-            if (caret > 0 && (lookup.getEditor().getDocument().getCharsSequence().charAt(caret - 1)) == '.') {
-                return Result.HIDE_LOOKUP
-            }
+        if (Character.isJavaIdentifierPart(c) || c == ':' /* used in '::xxx'*/) {
+            return CharFilter.Result.ADD_TO_PREFIX
         }
 
-        if (c == '{') {
-            val currentItem = lookup.getCurrentItem()
-            if (currentItem != null && currentItem.getUserData(ACCEPT_OPENING_BRACE) ?: false) {
-                return Result.SELECT_ITEM_AND_FINISH_LOOKUP
-            }
+        val currentItem = lookup.getCurrentItem()
+        if (!lookup.isSelectionTouched()) {
+            currentItem?.putUserData(JUST_TYPING_PREFIX, lookup.itemPattern(currentItem))
         }
 
-        if (c == '=') {
-            val currentItem = lookup.getCurrentItem()
-            if (currentItem != null && currentItem.getUserData(ACCEPT_EQ) ?: false) {
-                return Result.SELECT_ITEM_AND_FINISH_LOOKUP
+        return when (c) {
+            '.' -> {
+                //TODO: this heuristics better to be only used for auto-popup completion but I see no way to check this
+                if (prefixLength == 0 && !lookup.isSelectionTouched()) {
+                    val caret = lookup.getEditor().getCaretModel().getOffset()
+                    if (caret > 0 && lookup.getEditor().getDocument().getCharsSequence()[caret - 1] == '.') {
+                        return Result.HIDE_LOOKUP
+                    }
+                }
+                Result.SELECT_ITEM_AND_FINISH_LOOKUP
             }
-        }
 
-        return null
+            '{' -> {
+                if (currentItem != null && currentItem.getUserData(ACCEPT_OPENING_BRACE) ?: false)
+                    Result.SELECT_ITEM_AND_FINISH_LOOKUP
+                else
+                    Result.HIDE_LOOKUP
+            }
+
+            ',', ' ', '(', '=' -> Result.SELECT_ITEM_AND_FINISH_LOOKUP
+
+            else -> CharFilter.Result.HIDE_LOOKUP
+        }
     }
 }

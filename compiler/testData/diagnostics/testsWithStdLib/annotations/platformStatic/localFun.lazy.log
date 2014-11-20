@@ -79,7 +79,7 @@ LazyJavaPackageFragment@21['kotlin'] {
     functions('platform': Name@60) = EmptyList@45[empty] // through DeserializedPackageMemberScope@57
     functions('platform': Name@60) = EmptyList@45[empty] // through LazyPackageFragmentScopeForJavaPackage@53
     memberIndex = computeMemberIndex$1@61 // through LazyPackageFragmentScopeForJavaPackage@53
-    membersProtos = HashMap@62 // through DeserializedPackageMemberScope@57
+    membersProtos = LinkedHashMap@62 // through DeserializedPackageMemberScope@57
     properties('io': Name@58) = EmptyList@45[empty] // through DeserializedPackageMemberScope@57
     properties('jvm': Name@59) = EmptyList@45[empty] // through DeserializedPackageMemberScope@57
     properties('platform': Name@60) = EmptyList@45[empty] // through DeserializedPackageMemberScope@57
@@ -90,4 +90,9 @@ LazyJavaPackageFragment@3['platform'] {
     deserializedPackageScope = Empty@43 // through LazyPackageFragmentScopeForJavaPackage@64
     functions('platformStatic': Name@65) = EmptyList@45[empty] // through LazyPackageFragmentScopeForJavaPackage@64
     memberIndex = computeMemberIndex$1@66 // through LazyPackageFragmentScopeForJavaPackage@64
+}
+
+ResolutionTaskHolder@67 {
+    <name not found> = ArrayList@68[1] { ResolutionCandidate@69 }
+    <name not found> = ArrayList@70[1] { ResolutionCandidate@69 }
 }

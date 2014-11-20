@@ -44,3 +44,13 @@ LazyJavaPackageFragment@14['java'] {
 LazyJavaPackageFragment@16['lang'] {
     classes('Exception': Name@25) = LazyJavaClassDescriptor@0['Exception'] // through LazyPackageFragmentScopeForJavaPackage@34
 }
+
+ResolutionTaskHolder@35 {
+    <name not found> = ArrayList@36[1] { ResolutionCandidate@37 }
+    <name not found> = ArrayList@38[1] { ResolutionCandidate@37 }
+}
+
+ResolutionTaskHolder@39 {
+    <name not found> = ArrayList@40[1] { ResolutionCandidate@41 }
+    <name not found> = ArrayList@42[1] { ResolutionCandidate@41 }
+}

@@ -113,14 +113,14 @@ LazyJavaClassifierType@58['AutoCloseable'] {
     typeConstructor = LazyJavaClassTypeConstructor@13['AutoCloseable']
 }
 
-LazyJavaClassifierType@61['Closeable'] {
+LazyJavaClassifierType@67['Closeable'] {
     arguments = ArrayList@70[empty]
     classifier = JavaClassImpl@71['Closeable']
     memberScope = LazyJavaClassMemberScope@29
     typeConstructor = LazyJavaClassTypeConstructor@31['Closeable']
 }
 
-LazyJavaClassifierType@67['Closeable'] {
+LazyJavaClassifierType@61['Closeable'] {
     arguments = ArrayList@72[empty]
     classifier = JavaClassImpl@73['Closeable']
     memberScope = LazyJavaClassMemberScope@29
@@ -266,7 +266,7 @@ LazyJavaPackageFragmentProvider@111 {
     topLevelClasses(JavaClassImpl@69['AutoCloseable']) = LazyJavaClassDescriptor@7['AutoCloseable']
     topLevelClasses(JavaClassImpl@157['BufferedInputStream']) = LazyJavaClassDescriptor@14['BufferedInputStream']
     topLevelClasses(JavaClassImpl@158['BufferedReader']) = LazyJavaClassDescriptor@21['BufferedReader']
-    topLevelClasses(JavaClassImpl@71['Closeable']) = LazyJavaClassDescriptor@28['Closeable']
+    topLevelClasses(JavaClassImpl@73['Closeable']) = LazyJavaClassDescriptor@28['Closeable']
     topLevelClasses(JavaClassImpl@159['InputStream']) = LazyJavaClassDescriptor@32['InputStream']
     topLevelClasses(JavaClassImpl@98['Readable']) = LazyJavaClassDescriptor@38['Readable']
     topLevelClasses(JavaClassImpl@160['Reader']) = LazyJavaClassDescriptor@42['Reader']
@@ -279,49 +279,136 @@ LazyJavaPackageFragment@113['<root>'] {
     classes('Int': Name@165) = null // through LazyPackageFragmentScopeForJavaPackage@162
     classes('Reader': Name@166) = null // through LazyPackageFragmentScopeForJavaPackage@162
     classes('String': Name@167) = null // through LazyPackageFragmentScopeForJavaPackage@162
-    classes('foo': Name@168) = null // through LazyPackageFragmentScopeForJavaPackage@162
-    classes('inline': Name@169) = null // through LazyPackageFragmentScopeForJavaPackage@162
-    classes('java': Name@170) = null // through LazyPackageFragmentScopeForJavaPackage@162
-    deserializedPackageScope = Empty@171 // through LazyPackageFragmentScopeForJavaPackage@162
+    classes('inline': Name@168) = null // through LazyPackageFragmentScopeForJavaPackage@162
+    classes('java': Name@169) = null // through LazyPackageFragmentScopeForJavaPackage@162
+    deserializedPackageScope = Empty@170 // through LazyPackageFragmentScopeForJavaPackage@162
     functions('BufferedInputStream': Name@8) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@162
     functions('BufferedReader': Name@11) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@162
-    functions('foo': Name@168) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@162
-    functions('java': Name@172) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@162
-    memberIndex = computeMemberIndex$1@173 // through LazyPackageFragmentScopeForJavaPackage@162
+    functions('java': Name@171) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@162
+    memberIndex = computeMemberIndex$1@172 // through LazyPackageFragmentScopeForJavaPackage@162
 }
 
 LazyJavaPackageFragment@127['io'] {
-    classes('BufferedInputStream': Name@161) = LazyJavaClassDescriptor@14['BufferedInputStream'] // through LazyPackageFragmentScopeForJavaPackage@174
-    classes('BufferedReader': Name@163) = LazyJavaClassDescriptor@21['BufferedReader'] // through LazyPackageFragmentScopeForJavaPackage@174
-    classes('InputStream': Name@164) = LazyJavaClassDescriptor@32['InputStream'] // through LazyPackageFragmentScopeForJavaPackage@174
-    classes('Int': Name@165) = null // through LazyPackageFragmentScopeForJavaPackage@174
-    classes('Reader': Name@166) = LazyJavaClassDescriptor@42['Reader'] // through LazyPackageFragmentScopeForJavaPackage@174
-    classes('String': Name@167) = null // through LazyPackageFragmentScopeForJavaPackage@174
-    classes('foo': Name@168) = null // through LazyPackageFragmentScopeForJavaPackage@174
-    classes('inline': Name@169) = null // through LazyPackageFragmentScopeForJavaPackage@174
-    deserializedPackageScope = Empty@171 // through LazyPackageFragmentScopeForJavaPackage@174
-    functions('BufferedInputStream': Name@8) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@174
-    functions('BufferedReader': Name@11) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@174
-    functions('foo': Name@168) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@174
-    memberIndex = computeMemberIndex$1@175 // through LazyPackageFragmentScopeForJavaPackage@174
+    classes('BufferedInputStream': Name@161) = LazyJavaClassDescriptor@14['BufferedInputStream'] // through LazyPackageFragmentScopeForJavaPackage@173
+    classes('BufferedReader': Name@163) = LazyJavaClassDescriptor@21['BufferedReader'] // through LazyPackageFragmentScopeForJavaPackage@173
+    classes('InputStream': Name@164) = LazyJavaClassDescriptor@32['InputStream'] // through LazyPackageFragmentScopeForJavaPackage@173
+    classes('Int': Name@165) = null // through LazyPackageFragmentScopeForJavaPackage@173
+    classes('Reader': Name@166) = LazyJavaClassDescriptor@42['Reader'] // through LazyPackageFragmentScopeForJavaPackage@173
+    classes('String': Name@167) = null // through LazyPackageFragmentScopeForJavaPackage@173
+    classes('inline': Name@168) = null // through LazyPackageFragmentScopeForJavaPackage@173
+    deserializedPackageScope = Empty@170 // through LazyPackageFragmentScopeForJavaPackage@173
+    functions('BufferedInputStream': Name@8) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@173
+    functions('BufferedReader': Name@11) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@173
+    memberIndex = computeMemberIndex$1@174 // through LazyPackageFragmentScopeForJavaPackage@173
 }
 
 LazyJavaPackageFragment@125['java'] {
-    classes('io': Name@176) = null // through LazyPackageFragmentScopeForJavaPackage@177
-    classes('lang': Name@178) = null // through LazyPackageFragmentScopeForJavaPackage@177
-    deserializedPackageScope = Empty@171 // through LazyPackageFragmentScopeForJavaPackage@177
-    functions('io': Name@179) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@177
-    functions('lang': Name@180) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@177
-    memberIndex = computeMemberIndex$1@181 // through LazyPackageFragmentScopeForJavaPackage@177
+    classes('io': Name@175) = null // through LazyPackageFragmentScopeForJavaPackage@176
+    classes('lang': Name@177) = null // through LazyPackageFragmentScopeForJavaPackage@176
+    deserializedPackageScope = Empty@170 // through LazyPackageFragmentScopeForJavaPackage@176
+    functions('io': Name@178) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@176
+    functions('lang': Name@179) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@176
+    memberIndex = computeMemberIndex$1@180 // through LazyPackageFragmentScopeForJavaPackage@176
 }
 
 LazyJavaPackageFragment@137['lang'] {
-    classes('BufferedInputStream': Name@8) = null // through LazyPackageFragmentScopeForJavaPackage@182
-    classes('BufferedReader': Name@11) = null // through LazyPackageFragmentScopeForJavaPackage@182
-    classes('foo': Name@168) = null // through LazyPackageFragmentScopeForJavaPackage@182
-    deserializedPackageScope = Empty@171 // through LazyPackageFragmentScopeForJavaPackage@182
-    functions('BufferedInputStream': Name@8) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@182
-    functions('BufferedReader': Name@11) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@182
-    functions('foo': Name@168) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@182
-    memberIndex = computeMemberIndex$1@183 // through LazyPackageFragmentScopeForJavaPackage@182
+    classes('BufferedInputStream': Name@8) = null // through LazyPackageFragmentScopeForJavaPackage@181
+    classes('BufferedReader': Name@11) = null // through LazyPackageFragmentScopeForJavaPackage@181
+    deserializedPackageScope = Empty@170 // through LazyPackageFragmentScopeForJavaPackage@181
+    functions('BufferedInputStream': Name@8) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@181
+    functions('BufferedReader': Name@11) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@181
+    memberIndex = computeMemberIndex$1@182 // through LazyPackageFragmentScopeForJavaPackage@181
+}
+
+ResolutionTaskHolder@183 {
+    <name not found> = ArrayList@184[1] { ResolutionCandidate@185 }
+    <name not found> = ArrayList@186[1] { ResolutionCandidate@185 }
+}
+
+ResolutionTaskHolder@187 {
+    <name not found> = ArrayList@188[1] { ResolutionCandidate@189 }
+    <name not found> = ArrayList@190[1] { ResolutionCandidate@189 }
+}
+
+ResolutionTaskHolder@191 {
+    <name not found> = ArrayList@192[1] { ResolutionCandidate@193 }
+    <name not found> = ArrayList@194[1] { ResolutionCandidate@193 }
+}
+
+ResolutionTaskHolder@195 {
+    <name not found> = ArrayList@196[1] { ResolutionCandidate@197 }
+    <name not found> = ArrayList@198[1] { ResolutionCandidate@197 }
+}
+
+ResolutionTaskHolder@199 {
+    <name not found> = ArrayList@200[1] { ResolutionCandidate@201 }
+    <name not found> = ArrayList@202[1] { ResolutionCandidate@201 }
+}
+
+ResolutionTaskHolder@203 {
+    <name not found> = ArrayList@204[1] { ResolutionCandidate@205 }
+    <name not found> = ArrayList@206[1] { ResolutionCandidate@205 }
+}
+
+ResolutionTaskHolder@207 {
+    <name not found> = ArrayList@208[1] { ResolutionCandidate@209 }
+    <name not found> = ArrayList@210[1] { ResolutionCandidate@209 }
+}
+
+ResolutionTaskHolder@211 {
+    <name not found> = ArrayList@212[2] { ResolutionCandidate@213, ResolutionCandidate@214 }
+    <name not found> = ArrayList@215[2] { ResolutionCandidate@213, ResolutionCandidate@214 }
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+}
+
+ResolutionTaskHolder@216 {
+    <name not found> = ArrayList@217[2] { ResolutionCandidate@218, ResolutionCandidate@219 }
+    <name not found> = ArrayList@220[2] { ResolutionCandidate@218, ResolutionCandidate@219 }
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+}
+
+ResolutionTaskHolder@221 {
+    <name not found> = ArrayList@222[2] { ResolutionCandidate@223, ResolutionCandidate@224 }
+    <name not found> = ArrayList@225[2] { ResolutionCandidate@223, ResolutionCandidate@224 }
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
+}
+
+ResolutionTaskHolder@226 {
+    <name not found> = ArrayList@227[2] { ResolutionCandidate@228, ResolutionCandidate@229 }
+    <name not found> = ArrayList@230[2] { ResolutionCandidate@228, ResolutionCandidate@229 }
+    <name not found> = EmptyList@9[empty]
+    <name not found> = EmptyList@9[empty]
 }

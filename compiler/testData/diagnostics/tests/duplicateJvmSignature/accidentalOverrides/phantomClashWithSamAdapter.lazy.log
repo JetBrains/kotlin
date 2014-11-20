@@ -104,3 +104,13 @@ LazyJavaPackageFragment@73['p'] {
     classes('Foo': Name@78) = LazyJavaClassDescriptor@0['Foo'] // through LazyPackageFragmentScopeForJavaPackage@89
     classes('Unit': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@89
 }
+
+ResolutionTaskHolder@90 {
+    <name not found> = ArrayList@91[1] { ResolutionCandidate@92 }
+    <name not found> = ArrayList@93[1] { ResolutionCandidate@92 }
+}
+
+ResolutionTaskHolder@94 {
+    <name not found> = ArrayList@95[1] { ResolutionCandidate@96 }
+    <name not found> = ArrayList@97[1] { ResolutionCandidate@96 }
+}

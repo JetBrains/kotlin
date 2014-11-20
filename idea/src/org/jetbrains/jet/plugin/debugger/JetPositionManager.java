@@ -27,6 +27,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -56,6 +57,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
+import org.jetbrains.jet.plugin.caches.resolve.IdeaModuleInfo;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
@@ -69,7 +71,7 @@ import static org.jetbrains.jet.plugin.stubindex.PackageIndexUtil.findFilesWithE
 
 public class JetPositionManager implements PositionManager {
     private final DebugProcess myDebugProcess;
-    private final WeakHashMap<FqName, CachedValue<JetTypeMapper>> myTypeMappers = new WeakHashMap<FqName, CachedValue<JetTypeMapper>>();
+    private final WeakHashMap<Pair<FqName, IdeaModuleInfo>, CachedValue<JetTypeMapper>> myTypeMappers = new WeakHashMap<Pair<FqName, IdeaModuleInfo>, CachedValue<JetTypeMapper>>();
 
     public JetPositionManager(DebugProcess debugProcess) {
         myDebugProcess = debugProcess;
@@ -312,15 +314,16 @@ public class JetPositionManager implements PositionManager {
     }
 
     private JetTypeMapper prepareTypeMapper(final JetFile file) {
-        final FqName fqName = file.getPackageFqName();
-        CachedValue<JetTypeMapper> value = myTypeMappers.get(fqName);
+        final Pair<FqName, IdeaModuleInfo> key = createKeyForTypeMapper(file);
+
+        CachedValue<JetTypeMapper> value = myTypeMappers.get(key);
         if(value == null) {
             value = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<JetTypeMapper>() {
                 @Override
                 public Result<JetTypeMapper> compute() {
                     Project project = file.getProject();
-                    GlobalSearchScope packageFacadeScope = ResolvePackage.getModuleInfo(file).contentScope();
-                    Collection<JetFile> packageFiles = findFilesWithExactPackage(fqName, packageFacadeScope, project);
+                    GlobalSearchScope packageFacadeScope = key.second.contentScope();
+                    Collection<JetFile> packageFiles = findFilesWithExactPackage(key.first, packageFacadeScope, project);
 
                     AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResultsForElements(packageFiles);
                     analyzeExhaust.throwIfError();
@@ -333,7 +336,8 @@ public class JetPositionManager implements PositionManager {
                     return new Result<JetTypeMapper>(state.getTypeMapper(), PsiModificationTracker.MODIFICATION_COUNT);
                 }
             }, false);
-            myTypeMappers.put(fqName, value);
+
+            myTypeMappers.put(key, value);
         }
 
         return value.getValue();
@@ -373,14 +377,15 @@ public class JetPositionManager implements PositionManager {
 
     @TestOnly
     public void addTypeMapper(JetFile file, final JetTypeMapper typeMapper) {
-        FqName fqName = file.getPackageFqName();
         CachedValue<JetTypeMapper> value = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<JetTypeMapper>() {
             @Override
             public Result<JetTypeMapper> compute() {
                 return new Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT);
             }
         }, false);
-        myTypeMappers.put(fqName, value);
+
+        Pair<FqName, IdeaModuleInfo> key = createKeyForTypeMapper(file);
+        myTypeMappers.put(key, value);
     }
 
 
@@ -426,6 +431,10 @@ public class JetPositionManager implements PositionManager {
             }
         }
         return false;
+    }
+
+    private static Pair<FqName, IdeaModuleInfo> createKeyForTypeMapper(@NotNull JetFile file) {
+        return new Pair<FqName, IdeaModuleInfo>(file.getPackageFqName(), ResolvePackage.getModuleInfo(file));
     }
 
 }

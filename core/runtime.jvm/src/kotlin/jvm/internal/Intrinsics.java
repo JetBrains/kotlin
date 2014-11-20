@@ -19,6 +19,7 @@ package kotlin.jvm.internal;
 import kotlin.IntRange;
 import kotlin.KotlinNullPointerException;
 
+import java.lang.Deprecated;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -93,6 +94,8 @@ public class Intrinsics {
         return first == null ? second == null : first.equals(second);
     }
 
+    // This method is not used from generated code anymore but kept for backwards compatibility
+    @Deprecated
     public static IntRange arrayIndices(int length) {
         return new IntRange(0, length - 1);
     }
@@ -101,6 +104,30 @@ public class Intrinsics {
             "throwNpe", "checkExpressionValueIsNotNull", "checkReturnedValueIsNotNull", "checkFieldIsNotNull", "checkParameterIsNotNull",
             "throwParameterIsNullException"
     ));
+
+    private static void throwUndefinedForReified() {
+        throw new UnsupportedOperationException("You should not use functions with reified parameter without inline");
+    }
+
+    public static void reifyNewArray(int parameterTypeIndex) {
+        throwUndefinedForReified();
+    }
+
+    public static void reifyCheckcast(int parameterTypeIndex) {
+        throwUndefinedForReified();
+    }
+
+    public static void reifyInstanceof(int parameterTypeIndex) {
+        throwUndefinedForReified();
+    }
+
+    public static void reifyJavaClass(int parameterTypeIndex) {
+        throwUndefinedForReified();
+    }
+
+    public static void needClassReification() {
+        throwUndefinedForReified();
+    }
 
     public static <T extends Throwable> T sanitizeStackTrace(T throwable) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();

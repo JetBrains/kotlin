@@ -39,7 +39,7 @@ class MutableArray<T>(length: Int, init : (Int) -> T) : ReadOnlyArray<T>, WriteO
     override fun set(index : Int, value : T) : Unit { array[index] = value }
 
     override val size : Int
-        get() = array.size
+        get() = array.size()
 }
 
 fun box() : String {
@@ -47,10 +47,10 @@ fun box() : String {
     a [0] = 10
     a.set(1, 2, 13)
     a [3] = 40
-    System.out?.println(a.iterator())
-    System.out?.println(a.iterator().hasNext())
+    a.iterator()
+    a.iterator().hasNext()
     for(el in a) {
-        System.out?.println(el)
+        val fl = el
     }
     return "OK"
 }
