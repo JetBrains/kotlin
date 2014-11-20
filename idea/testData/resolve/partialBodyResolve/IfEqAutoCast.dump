@@ -1,2 +1,6 @@
 Resolve target: value-parameter val o: kotlin.String? smart-cast to kotlin.String
-Skipped statements:
+----------------------------------------------
+fun foo(o: String?, o1: String) {
+    if (o != o1) return
+    <caret>o.hashCode()
+}

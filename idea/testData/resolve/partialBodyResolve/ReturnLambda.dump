@@ -1,3 +1,11 @@
 Resolve target: value-parameter val p: kotlin.String? smart-cast to kotlin.String
-Skipped statements:
-println()
+----------------------------------------------
+fun foo(p: String?): () -> String {
+    if (p == null) {
+        return {
+            // STATEMENT DELETED: println()
+            "a"
+        }
+    }
+    <caret>p.size
+}

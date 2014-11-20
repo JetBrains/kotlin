@@ -1,3 +1,10 @@
 Resolve target: fun f(): kotlin.Unit
-Skipped statements:
-x()
+----------------------------------------------
+class C {
+    fun f(){}
+}
+
+fun foo() {
+    val lambda = {() -> // STATEMENT DELETED: x(); C() }
+    lambda().<caret>f()
+}

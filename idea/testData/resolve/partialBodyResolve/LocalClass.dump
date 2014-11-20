@@ -1,2 +1,13 @@
 Resolve target: value-parameter val p: kotlin.String?
-Skipped statements:
+----------------------------------------------
+fun foo(p: String?) {
+    class LocalClass {
+        fun f(): String? {
+            if (p == null) return null
+            print(p.size)
+            return ""
+        }
+    }
+
+    <caret>p?.size
+}

@@ -1,3 +1,6 @@
 Resolve target: value-parameter val p: kotlin.Any?
-Skipped statements:
-if (p == null) { print("null") }
+----------------------------------------------
+fun foo(p: Any?) {
+    // STATEMENT DELETED: if (p == null) { print("null") }
+    <caret>p.hashCode()
+}

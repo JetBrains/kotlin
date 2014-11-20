@@ -1,3 +1,7 @@
 Resolve target: value-parameter val p: kotlin.Any
-Skipped statements:
-if (p !is String) { print(error) }
+----------------------------------------------
+val error = "error"
+fun foo(p: Any) {
+    // STATEMENT DELETED: if (p !is String) { print(error) }
+    println(<caret>p.size)
+}

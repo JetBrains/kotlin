@@ -1,3 +1,12 @@
 Resolve target: val x: kotlin.Any?
-Skipped statements:
-if (x == null) { print(1) if (f()) { return } else { print(2) } }
+----------------------------------------------
+fun foo() {
+    for (i in 1..10) {
+        val x = take()
+        // STATEMENT DELETED: if (x == null) { print(1) if (f()) { return } else { print(2) } }
+        <caret>x.hashCode()
+    }
+}
+
+fun take(): Any? = null
+fun f(): Boolean{}

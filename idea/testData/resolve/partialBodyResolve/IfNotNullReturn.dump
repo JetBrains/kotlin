@@ -1,3 +1,0 @@
-Resolve target: value-parameter val p: kotlin.Any?
-Skipped statements:
-if (p != null) return

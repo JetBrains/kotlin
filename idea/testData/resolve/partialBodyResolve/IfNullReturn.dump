@@ -1,3 +1,9 @@
 Resolve target: value-parameter val p: kotlin.Any? smart-cast to kotlin.Any
-Skipped statements:
-print("null")
+----------------------------------------------
+fun foo(p: Any?) {
+    if (p == null) {
+        // STATEMENT DELETED: print("null")
+        return
+    }
+    <caret>p.hashCode()
+}

@@ -30,6 +30,7 @@ import com.intellij.openapi.util.Key
 import java.io.PrintWriter
 import java.io.StringWriter
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.psi.PsiComment
 
 public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
 public fun JetPsiFactory(contextElement: JetElement): JetPsiFactory = JetPsiFactory(contextElement.getProject())
@@ -630,6 +631,14 @@ public class JetPsiFactory(private val project: Project) {
 
     public fun createEmptyClassObject(): JetClassObject {
         return createClass("class foo { class object { } }").getClassObject()!!
+    }
+
+    public fun createComment(text: String): PsiComment {
+        val file = createFile(text)
+        val comments = file.getChildren().filterIsInstance<PsiComment>()
+        val comment = comments.single()
+        assert(comment.getText() == text)
+        return comment
     }
 
     public fun wrapInABlock(expression: JetExpression): JetBlockExpression {

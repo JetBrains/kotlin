@@ -36,6 +36,9 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.lang.psi.psiUtil.parents
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandProcessor
+import org.jetbrains.jet.lang.psi.JetPsiFactory
 
 public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = JetTestCaseBuilder.getHomeDirectory()
@@ -45,7 +48,8 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         myFixture.configureByFile(testPath)
 
         val file = myFixture.getFile() as JetFile
-        val offset = myFixture.getEditor().getCaretModel().getOffset()
+        val editor = myFixture.getEditor()
+        val offset = editor.getCaretModel().getOffset()
         val element = file.findElementAt(offset)
         val refExpression = element.getParentByType(javaClass<JetSimpleNameExpression>()) ?: error("No JetSimpleNameExpression at caret")
 
@@ -63,16 +67,31 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
 
         val builder = StringBuilder()
         builder.append("Resolve target: ${target2.presentation(type2)}\n")
-        builder.append("Skipped statements:\n")
-        set.sortBy { it.getTextOffset() }.forEach {
-            if (!it.parents(withItself = false).any { it in set }) { // do not dump skipped statements which are inside other skipped statement
-                builder append it.presentation() append "\n"
-            }
-        }
+        builder.append("----------------------------------------------\n")
+
+        val skippedStatements = set
+                .filter { !it.parents(withItself = false).any { it in set } } // do not include skipped statements which are inside other skipped statement
+                .sortBy { it.getTextOffset() }
+
+        CommandProcessor.getInstance().executeCommand(
+                {
+                    ApplicationManager.getApplication().runWriteAction {
+                        for (statement in skippedStatements) {
+                            statement.replace(JetPsiFactory(getProject()).createComment("// STATEMENT DELETED: ${statement.compactPresentation()}"))
+                        }
+                    }
+                },
+                "",
+                null
+        )
+        val fileText = file.getText()
+        val newCaretOffset = editor.getCaretModel().getOffset()
+        builder.append(fileText.substring(0, newCaretOffset))
+        builder.append("<caret>")
+        builder.append(fileText.substring(newCaretOffset))
 
         JetTestUtils.assertEqualsToFile(File(testPath.substringBeforeLast('.') + ".dump"), builder.toString())
 
-        //TODO: discuss that descriptors are different
         Assert.assertEquals(target2.presentation(type2), target1.presentation(type1))
     }
 
@@ -112,7 +131,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         return s + " smart-cast to " + if (type != null) DescriptorRenderer.COMPACT.renderType(type) else "unknown type"
     }
 
-    private fun JetExpression.presentation(): String {
+    private fun JetExpression.compactPresentation(): String {
         val text = getText()
         val builder = StringBuilder()
         var dropSpace = false

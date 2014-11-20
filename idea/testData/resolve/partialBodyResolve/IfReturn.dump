@@ -1,3 +1,6 @@
 Resolve target: val kotlin.String.size: kotlin.Int
-Skipped statements:
-if (x()) return
+----------------------------------------------
+fun foo(p: String) {
+    // STATEMENT DELETED: if (x()) return
+    println(p.<caret>size)
+}
