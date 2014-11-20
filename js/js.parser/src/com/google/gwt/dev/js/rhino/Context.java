@@ -54,7 +54,7 @@ import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Hashtable;
 import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.MissingResourceException;
 
 /**
  * This class represents the runtime context of an executing script.
@@ -718,37 +718,14 @@ public class Context {
         return cx;
     }
 
-    /* OPT there's a noticable delay for the first error!  Maybe it'd
-     * make sense to use a ListResourceBundle instead of a properties
-     * file to avoid (synchronized) text parsing.
-     */
-    // bruce: removed referenced to the initial "java" package name
-    //        that used to be there due to a build artifact 
-    static final String defaultResource =
-      "com.google.gwt.dev.js.rhino.Messages";
-    
-
     static String getMessage(String messageId, Object[] arguments) {
-        Context cx = getCurrentContext();
-        Locale locale = cx != null ? cx.getLocale() : Locale.getDefault();
-
-        // ResourceBundle does cacheing.
-        ResourceBundle rb = ResourceBundle.getBundle(defaultResource, locale);
-
         String formatString;
         try {
-            formatString = rb.getString(messageId);
-        } catch (java.util.MissingResourceException mre) {
-            throw new RuntimeException
-                ("no message resource found for message property "+ messageId);
+            formatString = messages.getString(messageId);
+        } catch (MissingResourceException mre) {
+            throw new RuntimeException("No message resource found for message property " + messageId);
         }
 
-        /*
-         * It's OK to format the string, even if 'arguments' is null;
-         * we need to format it anyway, to make double ''s collapse to
-         * single 's.
-         */
-        // TODO: MessageFormat is not available on pJava
         MessageFormat formatter = new MessageFormat(formatString);
         return formatter.format(arguments);
     }
@@ -769,6 +746,7 @@ public class Context {
 
     static final boolean check = true;
 
+    private static MessagesBundle messages = new MessagesBundle();
     private static Hashtable threadContexts = new Hashtable(11);
     private static Object threadLocalCx;
     private static Method threadLocalGet;
