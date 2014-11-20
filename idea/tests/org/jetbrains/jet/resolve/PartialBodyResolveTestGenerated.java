@@ -19,6 +19,7 @@ package org.jetbrains.jet.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.jet.JUnit3RunnerWithInners;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -236,6 +237,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     @TestMetadata("Lambda.kt")
     public void testLambda() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/Lambda.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("LambdaInCurrentStatement.kt")
+    public void testLambdaInCurrentStatement() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LambdaInCurrentStatement.kt");
         doTest(fileName);
     }
 

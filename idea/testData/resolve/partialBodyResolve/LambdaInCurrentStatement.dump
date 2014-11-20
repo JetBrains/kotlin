@@ -1,0 +1,3 @@
+Resolve target: value-parameter val c: kotlin.Collection<kotlin.String>
+Skipped statements:
+println()
