@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.psi.JetCallableDeclaration;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.*;
@@ -61,8 +60,7 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
         overriddenNonOverridableMembers.clear();
         containingDeclarationsNames.clear();
 
-        ResolutionFacade resolveSession = ResolvePackage.getLazyResolveSession((JetFile) file);
-        DeclarationDescriptor descriptor = resolveSession.resolveToDescriptor(element);
+        DeclarationDescriptor descriptor = ResolvePackage.resolveToDescriptor(element);
         if (!(descriptor instanceof CallableMemberDescriptor)) return false;
 
         for (CallableMemberDescriptor overriddenDescriptor : getAllDeclaredNonOverridableOverriddenDescriptors(

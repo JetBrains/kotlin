@@ -59,7 +59,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
                                             JetObjectDeclaration.class);
         if (declaration == null) return;
 
-        DeclarationDescriptor descriptor = ResolvePackage.getLazyResolveSession(declaration).resolveToDescriptor(declaration);
+        DeclarationDescriptor descriptor = ResolvePackage.resolveToDescriptor(declaration);
 
         Collection<? extends DeclarationDescriptor> superDescriptors;
         String message;

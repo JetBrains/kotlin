@@ -20,6 +20,8 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.analyzer.AnalyzeExhaust
 import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 public fun JetElement.getLazyResolveSession(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
@@ -27,6 +29,10 @@ public fun JetElement.getLazyResolveSession(): ResolutionFacade {
 
 public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalyzeExhaust {
     return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this) + extraFiles.toList())
+}
+
+public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
+    return getLazyResolveSession().resolveToDescriptor(this)
 }
 
 public fun JetElement.getBindingContext(): BindingContext {

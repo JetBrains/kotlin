@@ -17,9 +17,9 @@
 package org.jetbrains.jet.plugin.j2k
 
 import org.jetbrains.jet.j2k.ResolverForConverter
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
 
-public object IdeaResolverForConverter: ResolverForConverter {
-    override fun resolveToDescriptor(declaration: JetDeclaration) = declaration.getLazyResolveSession().resolveToDescriptor(declaration)
+public object IdeaResolverForConverter : ResolverForConverter {
+    override fun resolveToDescriptor(declaration: JetDeclaration) = declaration.resolveToDescriptor()
 }

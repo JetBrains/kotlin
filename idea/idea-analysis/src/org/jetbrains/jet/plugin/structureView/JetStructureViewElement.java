@@ -131,7 +131,7 @@ public class JetStructureViewElement implements StructureViewTreeElement, Querya
             return null;
         }
 
-        return ResolvePackage.getLazyResolveSession(declaration).resolveToDescriptor(declaration);
+        return ResolvePackage.resolveToDescriptor(declaration);
     }
 
     @NotNull

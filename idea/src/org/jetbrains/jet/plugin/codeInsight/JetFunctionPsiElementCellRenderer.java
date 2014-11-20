@@ -28,7 +28,7 @@ public class JetFunctionPsiElementCellRenderer extends DefaultPsiElementCellRend
     public String getElementText(PsiElement element) {
         if (element instanceof JetNamedFunction) {
             JetNamedFunction function = (JetNamedFunction) element;
-            DeclarationDescriptor descriptor = ResolvePackage.getLazyResolveSession(function).resolveToDescriptor(function);
+            DeclarationDescriptor descriptor = ResolvePackage.resolveToDescriptor(function);
             return DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor);
         }
         return super.getElementText(element);

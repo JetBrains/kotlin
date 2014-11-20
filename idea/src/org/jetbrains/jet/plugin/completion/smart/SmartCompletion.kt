@@ -29,11 +29,11 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.util.makeNotNullable
 import org.jetbrains.jet.plugin.util.makeNullable
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolutionFacade,
@@ -151,7 +151,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             val offset = declaration.getTextRange()!!.getStartOffset()
             val originalDeclaration = PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, javaClass<JetDeclaration>(), true)
             if (originalDeclaration != null) {
-                val originalDescriptor = originalDeclaration.getLazyResolveSession().resolveToDescriptor(originalDeclaration) as? CallableDescriptor
+                val originalDescriptor = originalDeclaration.resolveToDescriptor() as? CallableDescriptor
                 val returnType = originalDescriptor?.getReturnType()
                 return if (returnType != null) listOf(ExpectedInfo(returnType, declaration.getName(), null)) else null
             }
