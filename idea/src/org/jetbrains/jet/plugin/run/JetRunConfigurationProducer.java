@@ -84,13 +84,13 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         if (!(psiFile instanceof JetFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null;
 
         JetFile jetFile = (JetFile) psiFile;
-        final ResolutionFacade session = ResolvePackage.getLazyResolveSession(jetFile);
+        final ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(jetFile);
         MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(
                 new NotNullFunction<JetNamedFunction, FunctionDescriptor>() {
                     @NotNull
                     @Override
                     public FunctionDescriptor fun(JetNamedFunction function) {
-                        return (FunctionDescriptor) session.resolveToDescriptor(function);
+                        return (FunctionDescriptor) resolutionFacade.resolveToDescriptor(function);
                     }
                 });
 

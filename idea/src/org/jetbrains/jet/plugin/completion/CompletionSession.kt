@@ -51,9 +51,9 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected val position: PsiElement = parameters.getPosition()
     protected val jetReference: JetSimpleNameReference? = position.getParent()?.getReferences()?.filterIsInstance(javaClass<JetSimpleNameReference>())?.firstOrNull()
     private val file = position.getContainingFile() as JetFile
-    protected val resolveSession: ResolutionFacade = file.getLazyResolveSession()
-    protected val moduleDescriptor: ModuleDescriptor = resolveSession.findModuleDescriptor(file)
-    protected val bindingContext: BindingContext? = jetReference?.let { resolveSession.analyze(it.expression) }
+    protected val resolutionFacade: ResolutionFacade = file.getResolutionFacade()
+    protected val moduleDescriptor: ModuleDescriptor = resolutionFacade.findModuleDescriptor(file)
+    protected val bindingContext: BindingContext? = jetReference?.let { resolutionFacade.analyze(it.expression) }
     protected val inDescriptor: DeclarationDescriptor? = jetReference?.let { bindingContext!!.get(BindingContext.RESOLUTION_SCOPE, it.expression)?.getContainingDeclaration() }
 
     // set prefix matcher here to override default one which relies on CompletionUtil.findReferencePrefix()
@@ -82,7 +82,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         }
     }
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolveSession, boldImmediateLookupElementFactory)
+    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolutionFacade, boldImmediateLookupElementFactory)
 
     protected val project: Project = position.getProject()
 
@@ -92,7 +92,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     }
 
     protected val indicesHelper: KotlinIndicesHelper
-            = KotlinIndicesHelper(project, resolveSession, searchScope, moduleDescriptor) { isVisibleDescriptor(it) }
+            = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor) { isVisibleDescriptor(it) }
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (configuration.completeNonAccessibleDeclarations) return true
@@ -141,7 +141,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
         AllClassesCompletion(
-                parameters, resolveSession, moduleDescriptor,
+                parameters, resolutionFacade, moduleDescriptor,
                 searchScope, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }
         ).collect(collector)
     }
@@ -228,7 +228,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     override fun doComplete() {
         if (jetReference != null) {
-            val completion = SmartCompletion(jetReference.expression, resolveSession, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile, boldImmediateLookupElementFactory)
+            val completion = SmartCompletion(jetReference.expression, resolutionFacade, { isVisibleDescriptor(it) }, parameters.getOriginalFile() as JetFile, boldImmediateLookupElementFactory)
             val result = completion.execute()
             if (result != null) {
                 collector.addElements(result.additionalItems)

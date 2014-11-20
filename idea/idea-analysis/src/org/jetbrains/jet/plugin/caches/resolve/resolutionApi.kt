@@ -24,25 +24,25 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 
-public fun JetElement.getLazyResolveSession(): ResolutionFacade {
+public fun JetElement.getResolutionFacade(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
 }
 
 public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
-    return getLazyResolveSession().resolveToDescriptor(this)
+    return getResolutionFacade().resolveToDescriptor(this)
 }
 
 public fun JetElement.analyze(): BindingContext {
-    return getLazyResolveSession().analyze(this)
+    return getResolutionFacade().analyze(this)
 }
 
 public fun JetElement.analyzeAndGetResult(): AnalysisResult {
-    val resolutionFacade = getLazyResolveSession()
+    val resolutionFacade = getResolutionFacade()
     return AnalysisResult.success(resolutionFacade.analyze(this), resolutionFacade.findModuleDescriptor(this))
 }
 
 public fun JetElement.findModuleDescriptor(): ModuleDescriptor {
-    return getLazyResolveSession().findModuleDescriptor(this)
+    return getResolutionFacade().findModuleDescriptor(this)
 }
 
 public fun JetElement.analyzeFully(): BindingContext {

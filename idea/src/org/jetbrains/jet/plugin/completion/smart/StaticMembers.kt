@@ -36,7 +36,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.completion.LookupElementFactory
 
 // adds java static members, enum members and members from class object
-class StaticMembers(val bindingContext: BindingContext, val resolveSession: ResolutionFacade) {
+class StaticMembers(val bindingContext: BindingContext, val resolutionFacade: ResolutionFacade) {
     public fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
                                context: JetExpression,
@@ -106,7 +106,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
     }
 
     private fun createLookupElement(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): LookupElement {
-        val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(memberDescriptor, resolveSession, bindingContext)
+        val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(memberDescriptor, resolutionFacade, bindingContext)
         val qualifierPresentation = classDescriptor.getName().asString()
         val qualifierText = qualifiedNameForSourceCode(classDescriptor)
 

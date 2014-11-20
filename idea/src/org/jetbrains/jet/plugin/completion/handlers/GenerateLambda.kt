@@ -21,9 +21,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.codeInsight.template.Template
-import org.jetbrains.jet.plugin.refactoring.JetNameValidator
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
-import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.codeInsight.template.Expression
 import com.intellij.codeInsight.template.ExpressionContext
 import com.intellij.codeInsight.template.TextResult
@@ -38,7 +36,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.ExpectedInfos
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.jet.plugin.refactoring.EmptyValidator
 import org.jetbrains.jet.plugin.util.IdeDescriptorRenderers
@@ -85,9 +83,9 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
     val expression = PsiTreeUtil.findElementOfClassAtRange(file, placeholderRange.getStartOffset(), placeholderRange.getEndOffset(), javaClass<JetExpression>())
     if (expression == null) return false
 
-    val resolveSession = file.getLazyResolveSession()
-    val bindingContext = resolveSession.analyze(expression)
-    val expectedInfos = ExpectedInfos(bindingContext, resolveSession).calculate(expression) ?: return false
+    val resolutionFacade = file.getResolutionFacade()
+    val bindingContext = resolutionFacade.analyze(expression)
+    val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade).calculate(expression) ?: return false
     val functionTypes = expectedInfos.map { it.type }.filter { KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(it) }.toSet()
     if (functionTypes.size <= 1) return false
 

@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import java.util.Collections
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import java.util.LinkedHashMap
 
@@ -58,7 +58,7 @@ object JetFileReferencesResolver {
     }
 
     private class ResolveAllReferencesVisitor(file: JetFile, val resolveQualifiers: Boolean, val resolveShortNames: Boolean) : JetTreeVisitorVoid() {
-        private val resolveSession = file.getLazyResolveSession()
+        private val resolutionFacade = file.getResolutionFacade()
         private val resolveMap = LinkedHashMap<JetReferenceExpression, BindingContext>()
 
         public val result: Map<JetReferenceExpression, BindingContext> = resolveMap
@@ -71,27 +71,27 @@ object JetFileReferencesResolver {
             if (resolveShortNames || userType.getQualifier() != null) {
                 val referenceExpression = userType.getReferenceExpression()
                 if (referenceExpression != null) {
-                    resolveMap[referenceExpression] = resolveSession.analyze(referenceExpression)
+                    resolveMap[referenceExpression] = resolutionFacade.analyze(referenceExpression)
                 }
             }
         }
 
         override fun visitQualifiedExpression(expression: JetQualifiedExpression) {
             val receiverExpression = expression.getReceiverExpression()
-            if (resolveQualifiers || resolveSession.analyze(expression)[BindingContext.QUALIFIER, receiverExpression] == null) {
+            if (resolveQualifiers || resolutionFacade.analyze(expression)[BindingContext.QUALIFIER, receiverExpression] == null) {
                 receiverExpression.accept(this)
             }
 
             val referenceExpression = expression.getSelectorExpression()?.referenceExpression()
             if (referenceExpression != null) {
-                resolveMap[referenceExpression] = resolveSession.analyze(referenceExpression)
+                resolveMap[referenceExpression] = resolutionFacade.analyze(referenceExpression)
             }
             expression.getSelectorExpression()?.accept(this)
         }
 
         override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
             if (resolveShortNames) {
-                resolveMap[expression] = resolveSession.analyze(expression)
+                resolveMap[expression] = resolutionFacade.analyze(expression)
             }
         }
     }

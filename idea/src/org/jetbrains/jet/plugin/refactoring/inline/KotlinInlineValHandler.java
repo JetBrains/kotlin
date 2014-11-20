@@ -261,12 +261,12 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
         List<JetFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
 
-        ResolutionFacade resolveSessionForBodies = ResolvePackage.getLazyResolveSession(containingFile);
+        ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             JetFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(inlinedExpression);
             assert functionLiteralExpression != null : "can't find function literal expression for " + inlinedExpression.getText();
 
-            if (needToAddParameterTypes(functionLiteralExpression, resolveSessionForBodies)) {
+            if (needToAddParameterTypes(functionLiteralExpression, resolutionFacade)) {
                 functionsToAddParameters.add(functionLiteralExpression);
             }
         }
@@ -301,10 +301,10 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
     private static boolean needToAddParameterTypes(
             @NotNull JetFunctionLiteralExpression functionLiteralExpression,
-            @NotNull ResolutionFacade resolveSessionForBodies
+            @NotNull ResolutionFacade resolutionFacade
     ) {
         JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
-        BindingContext context = resolveSessionForBodies.analyze(functionLiteralExpression);
+        BindingContext context = resolutionFacade.analyze(functionLiteralExpression);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             DiagnosticFactory<?> factory = diagnostic.getFactory();
             PsiElement element = diagnostic.getPsiElement();
@@ -322,9 +322,9 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
         List<JetCallExpression> callsToAddArguments = Lists.newArrayList();
 
-        ResolutionFacade resolveSessionForBodies = ResolvePackage.getLazyResolveSession(containingFile);
+        ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
-            BindingContext context = resolveSessionForBodies.analyze(inlinedExpression);
+            BindingContext context = resolutionFacade.analyze(inlinedExpression);
             Call call = CallUtilPackage.getCallWithAssert(inlinedExpression, context);
 
             JetElement callElement = call.getCallElement();

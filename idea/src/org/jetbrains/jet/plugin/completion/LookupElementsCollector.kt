@@ -34,7 +34,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
-        private val resolveSession: ResolutionFacade,
+        private val resolutionFacade: ResolutionFacade,
         private val boldImmediateLookupElementFactory: LookupElementFactory
 ) {
     private val elements = ArrayList<LookupElement>()
@@ -60,7 +60,7 @@ class LookupElementsCollector(
 
     public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean) {
         run {
-            val lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolveSession, descriptor)
+            val lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolutionFacade, descriptor)
             if (suppressAutoInsertion) {
                 addElementWithAutoInsertionSuppressed(lookupElement)
             }
@@ -77,7 +77,7 @@ class LookupElementsCollector(
                 if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
                     val parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size()
                     if (parameterCount > 1) {
-                        val lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolveSession, descriptor)
+                        val lookupElement = boldImmediateLookupElementFactory.createLookupElement(resolutionFacade, descriptor)
                         addElement(object : LookupElementDecorator<LookupElement>(lookupElement) {
                             override fun renderElement(presentation: LookupElementPresentation) {
                                 super.renderElement(presentation)

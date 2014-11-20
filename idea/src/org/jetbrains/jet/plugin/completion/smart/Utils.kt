@@ -188,10 +188,10 @@ fun functionType(function: FunctionDescriptor): JetType? {
 
 fun LookupElementFactory.createLookupElement(
         descriptor: DeclarationDescriptor,
-        resolveSession: ResolutionFacade,
+        resolutionFacade: ResolutionFacade,
         bindingContext: BindingContext
 ): LookupElement {
-    var element = createLookupElement(resolveSession, descriptor)
+    var element = createLookupElement(resolutionFacade, descriptor)
 
     if (descriptor is FunctionDescriptor && descriptor.getValueParameters().isNotEmpty()) {
         element = element.keepOldArgumentListOnTab()

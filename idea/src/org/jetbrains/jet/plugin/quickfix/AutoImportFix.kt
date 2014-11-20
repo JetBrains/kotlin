@@ -116,11 +116,11 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         }
         if (referenceName.isEmpty()) return listOf()
 
-        val resolveSession = element.getLazyResolveSession()
+        val resolutionFacade = element.getResolutionFacade()
 
         val searchScope = file.getResolveScope()
 
-        val bindingContext = resolveSession.analyze(element)
+        val bindingContext = resolutionFacade.analyze(element)
 
         val diagnostics = bindingContext.getDiagnostics().forElement(element)
         if (!diagnostics.any { it.getFactory() in ERRORS }) return listOf()
@@ -138,8 +138,8 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
         val result = ArrayList<PrioritizedFqName>()
 
-        val moduleDescriptor = resolveSession.findModuleDescriptor(element)
-        val indicesHelper = KotlinIndicesHelper(file.getProject(), resolveSession, searchScope, moduleDescriptor, ::isVisible)
+        val moduleDescriptor = resolutionFacade.findModuleDescriptor(element)
+        val indicesHelper = KotlinIndicesHelper(file.getProject(), resolutionFacade, searchScope, moduleDescriptor, ::isVisible)
 
         if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
             result.addAll(getClassNames(referenceName, file, searchScope))

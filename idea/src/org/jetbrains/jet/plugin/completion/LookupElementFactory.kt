@@ -38,12 +38,12 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
 public open class LookupElementFactory protected() {
-    public open fun createLookupElement(analyzer: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
+    public open fun createLookupElement(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
         val _descriptor = if (descriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(descriptor)
         else
             descriptor
-        return createLookupElement(analyzer, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
+        return createLookupElement(resolutionFacade, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
     }
 
     public fun createLookupElementForJavaClass(psiClass: PsiClass): LookupElement {
@@ -149,8 +149,8 @@ public open class LookupElementFactory protected() {
 }
 
 public class BoldImmediateLookupElementFactory(private val receiverTypes: Collection<JetType>) : LookupElementFactory() {
-    override fun createLookupElement(analyzer: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
-        val element = super.createLookupElement(analyzer, descriptor)
+    override fun createLookupElement(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LookupElement {
+        val element = super.createLookupElement(resolutionFacade, descriptor)
 
         if (descriptor !is CallableMemberDescriptor) return element
         val receiverParameter = descriptor.getExtensionReceiverParameter()

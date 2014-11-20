@@ -216,7 +216,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         JetValueArgumentList argumentList = (JetValueArgumentList) parameterOwner;
 
         FunctionDescriptor functionDescriptor = itemToShow.first;
-        ResolutionFacade resolveSession = itemToShow.second;
+        ResolutionFacade resolutionFacade = itemToShow.second;
 
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
         List<JetValueArgument> valueArguments = argumentList.getArguments();
@@ -239,7 +239,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         StringBuilder builder = new StringBuilder();
 
         PsiElement owner = context.getParameterOwner();
-        BindingContext bindingContext = resolveSession.analyze((JetElement) owner);
+        BindingContext bindingContext = resolutionFacade.analyze((JetElement) owner);
 
         for (int i = 0; i < valueParameters.size(); ++i) {
             if (i != 0) {
@@ -382,8 +382,8 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             return null;
         }
 
-        ResolutionFacade resolveSession = ResolvePackage.getLazyResolveSession(callNameExpression.getContainingJetFile());
-        BindingContext bindingContext = resolveSession.analyze(callNameExpression);
+        ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(callNameExpression.getContainingJetFile());
+        BindingContext bindingContext = resolutionFacade.analyze(callNameExpression);
 
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
         final DeclarationDescriptor placeDescriptor;
@@ -409,18 +409,19 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             }
         };
         Collection<DeclarationDescriptor> variants = new ReferenceVariantsHelper(bindingContext, visibilityFilter).getReferenceVariants(
-                callNameExpression, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK, Collections.<DescriptorKindExclude>emptyList()), nameFilter);
+                callNameExpression, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK,
+                                                             Collections.<DescriptorKindExclude>emptyList()), nameFilter);
 
         Collection<Pair<? extends DeclarationDescriptor, ResolutionFacade>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolutionFacade>>();
         for (DeclarationDescriptor variant : variants) {
             if (variant instanceof FunctionDescriptor) {
                 //todo: renamed functions?
-                itemsToShow.add(Pair.create((FunctionDescriptor) variant, resolveSession));
+                itemsToShow.add(Pair.create((FunctionDescriptor) variant, resolutionFacade));
             }
             else if (variant instanceof ClassDescriptor) {
                 //todo: renamed classes?
                 for (ConstructorDescriptor constructorDescriptor : ((ClassDescriptor) variant).getConstructors()) {
-                    itemsToShow.add(Pair.create(constructorDescriptor, resolveSession));
+                    itemsToShow.add(Pair.create(constructorDescriptor, resolutionFacade));
                 }
             }
         }

@@ -40,7 +40,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 
-class TypeInstantiationItems(val resolveSession: ResolutionFacade, val bindingContext: BindingContext, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
+class TypeInstantiationItems(val resolutionFacade: ResolutionFacade, val bindingContext: BindingContext, val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
         val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.type.makeNotNullable() }
         for ((jetType, infos) in expectedInfosGrouped) {
@@ -67,7 +67,7 @@ class TypeInstantiationItems(val resolveSession: ResolutionFacade, val bindingCo
         }
         if (allConstructors.isNotEmpty() && visibleConstructors.isEmpty()) return
 
-        var lookupElement = LookupElementFactory.DEFAULT.createLookupElement(classifier, resolveSession, bindingContext)
+        var lookupElement = LookupElementFactory.DEFAULT.createLookupElement(classifier, resolutionFacade, bindingContext)
 
         var lookupString = lookupElement.getLookupString()
         var allLookupStrings = setOf(lookupString)
@@ -164,7 +164,7 @@ class TypeInstantiationItems(val resolveSession: ResolutionFacade, val bindingCo
             val samConstructor = scope.getFunctions(`class`.getName())
                                          .filterIsInstance(javaClass<SamConstructorDescriptor>())
                                          .singleOrNull() ?: return
-            val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(samConstructor, resolveSession, bindingContext)
+            val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(samConstructor, resolutionFacade, bindingContext)
                     .assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
                     .addTail(tail)
             collection.add(lookupElement)

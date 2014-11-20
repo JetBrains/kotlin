@@ -36,11 +36,11 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.caches.resolve.resolveToDescriptor
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
-                      val resolveSession: ResolutionFacade,
+                      val resolutionFacade: ResolutionFacade,
                       val visibilityFilter: (DeclarationDescriptor) -> Boolean,
                       val originalFile: JetFile,
                       val boldImmediateLookupElementFactory: LookupElementFactory) {
-    private val bindingContext = resolveSession.analyze(expression)
+    private val bindingContext = resolutionFacade.analyze(expression)
     private val project = expression.getProject()
 
     public data class Result(val declarationFilter: ((DeclarationDescriptor) -> Collection<LookupElement>)?,
@@ -117,7 +117,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                         else -> ExpectedInfoClassification.NOT_MATCHES
                     }
                 }
-                result.addLookupElements(expectedInfos, classifier, { boldImmediateLookupElementFactory.createLookupElement(descriptor, resolveSession, bindingContext) })
+                result.addLookupElements(expectedInfos, classifier, { boldImmediateLookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext) })
 
                 if (receiver == null) {
                     toFunctionReferenceLookupElement(descriptor, functionExpectedInfos)?.let { result.add(it) }
@@ -128,9 +128,9 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
         val additionalItems = ArrayList<LookupElement>()
         if (receiver == null) {
-            TypeInstantiationItems(resolveSession, bindingContext, visibilityFilter).addToCollection(additionalItems, expectedInfos)
+            TypeInstantiationItems(resolutionFacade, bindingContext, visibilityFilter).addToCollection(additionalItems, expectedInfos)
 
-            StaticMembers(bindingContext, resolveSession).addToCollection(additionalItems, expectedInfos, expression, itemsToSkip)
+            StaticMembers(bindingContext, resolutionFacade).addToCollection(additionalItems, expectedInfos, expression, itemsToSkip)
 
             ThisItems(bindingContext).addToCollection(additionalItems, expressionWithType, expectedInfos)
 
@@ -157,7 +157,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             }
         }
 
-        return ExpectedInfos(bindingContext, resolveSession).calculate(expression)
+        return ExpectedInfos(bindingContext, resolutionFacade).calculate(expression)
     }
 
     private fun implicitlyTypedDeclarationFromInitializer(expression: JetExpression): JetDeclaration? {
@@ -175,7 +175,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             is JetProperty -> {
                 //TODO: this can be filtered out by ordinary completion
                 if (expression == parent.getInitializer()) {
-                    return resolveSession.resolveToDescriptor(parent).toSet()
+                    return resolutionFacade.resolveToDescriptor(parent).toSet()
                 }
             }
 
@@ -185,7 +185,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                     if (operationToken == JetTokens.EQ || operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ) {
                         val left = parent.getLeft()
                         if (left is JetReferenceExpression) {
-                            return resolveSession.analyze(left)[BindingContext.REFERENCE_TARGET, left].toSet()
+                            return resolutionFacade.analyze(left)[BindingContext.REFERENCE_TARGET, left].toSet()
                         }
                     }
                 }
@@ -237,7 +237,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             val matchedExpectedInfos = functionExpectedInfos.filter { functionType.isSubtypeOf(it.type) }
             if (matchedExpectedInfos.isEmpty()) return null
 
-            var lookupElement = boldImmediateLookupElementFactory.createLookupElement(descriptor, resolveSession, bindingContext)
+            var lookupElement = boldImmediateLookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext)
             val text = "::" + (if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration().getName() else descriptor.getName())
             lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
                 override fun getLookupString() = text
@@ -296,7 +296,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         if (jetType.isError()) return null
         val classifier = jetType.getConstructor().getDeclarationDescriptor() ?: return null
 
-        val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(classifier, resolveSession, bindingContext)
+        val lookupElement = LookupElementFactory.DEFAULT.createLookupElement(classifier, resolutionFacade, bindingContext)
         val lookupString = lookupElement.getLookupString()
 
         val typeArgs = jetType.getArguments()

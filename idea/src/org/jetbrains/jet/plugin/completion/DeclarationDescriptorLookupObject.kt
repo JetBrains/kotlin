@@ -27,7 +27,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
  */
 public class DeclarationDescriptorLookupObject(
         public val descriptor: DeclarationDescriptor,
-        private val analyzer: ResolutionFacade,
+        private val resolutionFacade: ResolutionFacade,
         public val psiElement: PsiElement?
 ) {
     override fun toString(): String {
@@ -44,7 +44,7 @@ public class DeclarationDescriptorLookupObject(
 
         val lookupObject = other as DeclarationDescriptorLookupObject
 
-        if (analyzer != lookupObject.analyzer) {
+        if (resolutionFacade != lookupObject.resolutionFacade) {
             LOG.warn("Descriptors from different resolve sessions")
             return false
         }
