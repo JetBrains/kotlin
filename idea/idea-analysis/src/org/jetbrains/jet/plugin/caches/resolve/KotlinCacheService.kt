@@ -41,24 +41,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 private val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
 
-public fun JetElement.getLazyResolveSession(): ResolutionFacade {
-    return KotlinCacheService.getInstance(getProject()).getAnalysisFacade(listOf(this))
-}
-
-public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalyzeExhaust {
-    return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this) + extraFiles.toList())
-}
-
-public fun JetElement.getBindingContext(): BindingContext {
-    return getAnalysisResults().bindingContext
-}
-
-public fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExhaust {
-    if (elements.isEmpty()) return AnalyzeExhaust.EMPTY
-    val element = elements.first()
-    return KotlinCacheService.getInstance(element.getProject()).getAnalysisResults(elements)
-}
-
 public class KotlinCacheService(val project: Project) {
     class object {
         public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
