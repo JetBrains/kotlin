@@ -21,10 +21,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.analyzer.AnalysisResult
 
 public trait ResolutionFacade {
 
     public fun analyze(element: JetElement): BindingContext
+
+    public fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult
 
     public fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor
 

@@ -60,6 +60,10 @@ public class KotlinCacheService(val project: Project) {
             override fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor {
                 return cache.getLazyResolveSession(declaration).resolveToDescriptor(declaration)
             }
+
+            override fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult {
+                return cache.getAnalysisResultsForElements(elements)
+            }
         }
     }
 
