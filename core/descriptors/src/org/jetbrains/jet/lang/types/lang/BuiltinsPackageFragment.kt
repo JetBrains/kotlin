@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.types.lang
 
 import org.jetbrains.jet.descriptors.serialization.*
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationLoader
 import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
@@ -33,6 +32,7 @@ import java.io.DataInputStream
 import java.io.IOException
 import java.io.InputStream
 import java.util.ArrayList
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
 
 class BuiltinsPackageFragment(storageManager: StorageManager, module: ModuleDescriptor)
   : PackageFragmentDescriptorImpl(module, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) {
@@ -41,13 +41,16 @@ class BuiltinsPackageFragment(storageManager: StorageManager, module: ModuleDesc
 
     public val provider: PackageFragmentProvider = BuiltinsPackageFragmentProvider()
 
-    private val members: DeserializedPackageMemberScope = run {
-        val deserializationContext = DeserializationGlobalContext(
-                storageManager, module, BuiltInsClassDataFinder(), AnnotationLoader.UNSUPPORTED, // TODO: support annotations
-                ConstantLoader.UNSUPPORTED, provider, FlexibleTypeCapabilitiesDeserializer.ThrowException
-        ).withNameResolver(nameResolver)
-        DeserializedPackageMemberScope(this, loadPackage(), deserializationContext, { readClassNames() })
-    }
+    private val members: DeserializedPackageMemberScope =
+        DeserializedPackageMemberScope(
+                this,
+                loadPackage(),
+                DeserializationComponents(
+                        storageManager, module, BuiltInsClassDataFinder(), AnnotationLoader.UNSUPPORTED, // TODO: support annotations
+                        ConstantLoader.UNSUPPORTED, provider, FlexibleTypeCapabilitiesDeserializer.ThrowException
+                ).createContext().withNameResolver(nameResolver),
+                { readClassNames() }
+        )
 
     private fun loadPackage(): ProtoBuf.Package {
         val packageFilePath = BuiltInsSerializationUtil.getPackageFilePath(fqName)

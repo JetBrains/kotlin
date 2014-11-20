@@ -32,24 +32,28 @@ import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.descriptors.serialization.ClassDeserializer
 import org.jetbrains.jet.descriptors.serialization.FlexibleTypeCapabilitiesDeserializer
 
-public open class DeserializationGlobalContext(
+public class DeserializationComponents(
         public val storageManager: StorageManager,
         public val moduleDescriptor: ModuleDescriptor,
         public val classDataFinder: ClassDataFinder,
         public val annotationLoader: AnnotationLoader,
         public val constantLoader: ConstantLoader,
         public val packageFragmentProvider: PackageFragmentProvider,
-        public val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
-        public val classDeserializer: ClassDeserializer = ClassDeserializer(storageManager)
+        public val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer
+) {
+    public fun createContext(): DeserializationGlobalContext = DeserializationGlobalContext(this)
+}
+
+public open class DeserializationGlobalContext(
+        public val components: DeserializationComponents,
+        public val classDeserializer: ClassDeserializer = ClassDeserializer(components)
 ) {
     {
         classDeserializer.globalContext = this
     }
 
     public fun withNameResolver(nameResolver: NameResolver): DeserializationContext {
-        return DeserializationContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                                      constantLoader, packageFragmentProvider, flexibleTypeCapabilitiesDeserializer,
-                                      classDeserializer, nameResolver)
+        return DeserializationContext(components, classDeserializer, nameResolver)
     }
 }
 
@@ -59,45 +63,28 @@ fun DeserializationGlobalContext.deserializeClass(classId: ClassId): ClassDescri
 
 
 public open class DeserializationContext(
-        storageManager: StorageManager,
-        moduleDescriptor: ModuleDescriptor,
-        classDataFinder: ClassDataFinder,
-        annotationLoader: AnnotationLoader,
-        constantLoader: ConstantLoader,
-        packageFragmentProvider: PackageFragmentProvider,
-        flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
+        components: DeserializationComponents,
         classDeserializer: ClassDeserializer,
         public val nameResolver: NameResolver
-) : DeserializationGlobalContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                                 constantLoader, packageFragmentProvider, flexibleTypeCapabilitiesDeserializer, classDeserializer) {
+) : DeserializationGlobalContext(components, classDeserializer) {
     fun withTypes(containingDeclaration: DeclarationDescriptor): DeserializationContextWithTypes {
         val typeDeserializer = TypeDeserializer(this, null, "Deserializer for ${containingDeclaration.getName()}")
         return withTypes(containingDeclaration, typeDeserializer)
     }
 
     fun withTypes(containingDeclaration: DeclarationDescriptor, typeDeserializer: TypeDeserializer): DeserializationContextWithTypes {
-        return DeserializationContextWithTypes(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                                               constantLoader, packageFragmentProvider, flexibleTypeCapabilitiesDeserializer,
-                                               classDeserializer, nameResolver, containingDeclaration, typeDeserializer)
+        return DeserializationContextWithTypes(components, classDeserializer, nameResolver, containingDeclaration, typeDeserializer)
     }
-
 }
 
 
 class DeserializationContextWithTypes(
-        storageManager: StorageManager,
-        moduleDescriptor: ModuleDescriptor,
-        classDataFinder: ClassDataFinder,
-        annotationLoader: AnnotationLoader,
-        constantLoader: ConstantLoader,
-        packageFragmentProvider: PackageFragmentProvider,
-        flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
+        components: DeserializationComponents,
         classDeserializer: ClassDeserializer,
         nameResolver: NameResolver,
         val containingDeclaration: DeclarationDescriptor,
         val typeDeserializer: TypeDeserializer
-) : DeserializationContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                           constantLoader, packageFragmentProvider, flexibleTypeCapabilitiesDeserializer, classDeserializer, nameResolver) {
+) : DeserializationContext(components, classDeserializer, nameResolver) {
     val deserializer: MemberDeserializer = MemberDeserializer(this)
 
     fun childContext(descriptor: DeclarationDescriptor, typeParameterProtos: List<TypeParameter>): DeserializationContextWithTypes {

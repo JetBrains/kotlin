@@ -19,6 +19,7 @@ package org.jetbrains.jet.descriptors.serialization;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContextWithTypes;
 import org.jetbrains.jet.descriptors.serialization.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -44,6 +45,11 @@ public class MemberDeserializer {
 
     public MemberDeserializer(@NotNull DeserializationContextWithTypes context) {
         this.context = context;
+    }
+
+    @NotNull
+    private DeserializationComponents getComponents() {
+        return context.getComponents();
     }
 
     @NotNull
@@ -129,14 +135,14 @@ public class MemberDeserializer {
 
         if (Flags.HAS_CONSTANT.get(flags)) {
             property.setCompileTimeInitializer(
-                    context.getStorageManager().createNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
+                    getComponents().getStorageManager().createNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
                         @Nullable
                         @Override
                         public CompileTimeConstant<?> invoke() {
                             DeclarationDescriptor containingDeclaration = context.getContainingDeclaration();
                             assert containingDeclaration instanceof ClassOrPackageFragmentDescriptor
                                     : "Only members in classes or package fragments should be serialized: " + containingDeclaration;
-                            return context.getConstantLoader().loadPropertyConstant(
+                            return getComponents().getConstantLoader().loadPropertyConstant(
                                     (ClassOrPackageFragmentDescriptor) containingDeclaration, proto,
                                     context.getNameResolver(), AnnotatedCallableKind.PROPERTY);
                         }
@@ -153,7 +159,7 @@ public class MemberDeserializer {
     private CallableMemberDescriptor loadFunction(@NotNull Callable proto) {
         int flags = proto.getFlags();
         DeserializedSimpleFunctionDescriptor function = DeserializedSimpleFunctionDescriptor.create(
-                context.getContainingDeclaration(), proto, context.getAnnotationLoader(), context.getNameResolver()
+                context.getContainingDeclaration(), proto, getComponents().getAnnotationLoader(), context.getNameResolver()
         );
         DeserializationContextWithTypes local = context.childContext(function, proto.getTypeParameterList());
         function.initialize(
@@ -195,7 +201,9 @@ public class MemberDeserializer {
 
     @NotNull
     private Annotations getAnnotations(@NotNull Callable proto, int flags, @NotNull AnnotatedCallableKind kind) {
-        return getAnnotations(context.getContainingDeclaration(), proto, flags, kind, context.getAnnotationLoader(), context.getNameResolver());
+        return getAnnotations(
+                context.getContainingDeclaration(), proto, flags, kind, getComponents().getAnnotationLoader(), context.getNameResolver()
+        );
     }
 
     public static Annotations getAnnotations(
@@ -221,7 +229,7 @@ public class MemberDeserializer {
         for (int i = 0; i < protos.size(); i++) {
             TypeParameter proto = protos.get(i);
             DeserializedTypeParameterDescriptor descriptor = new DeserializedTypeParameterDescriptor(
-                    context.getStorageManager(),
+                    getComponents().getStorageManager(),
                     typeDeserializer,
                     proto,
                     context.getContainingDeclaration(),
@@ -268,7 +276,7 @@ public class MemberDeserializer {
             @NotNull AnnotatedCallableKind kind,
             @NotNull Callable.ValueParameter valueParameter
     ) {
-        return Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags()) ? context.getAnnotationLoader()
+        return Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags()) ? getComponents().getAnnotationLoader()
                        .loadValueParameterAnnotations(classOrPackage, callable, context.getNameResolver(), kind, valueParameter)
                : Annotations.EMPTY;
     }

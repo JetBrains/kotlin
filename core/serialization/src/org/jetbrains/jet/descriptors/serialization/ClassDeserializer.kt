@@ -17,20 +17,20 @@
 package org.jetbrains.jet.descriptors.serialization
 
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext
 import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.resolve.name.ClassId
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
 
-public class ClassDeserializer(storageManager: StorageManager) {
+public class ClassDeserializer(components: DeserializationComponents) {
     // This should have been a constructor parameter, but this class and the context depend circularly on each other
     var globalContext: DeserializationGlobalContext by Delegates.notNull()
 
-    private val classes: (ClassKey) -> DeserializedClassDescriptor? = storageManager.createMemoizedFunctionWithNullableValues {
+    private val classes: (ClassKey) -> DeserializedClassDescriptor? = components.storageManager.createMemoizedFunctionWithNullableValues {
         (key: ClassKey) ->
         val classId = key.classId
-        val classData = key.classData ?: globalContext.classDataFinder.findClassData(classId)
+        val classData = key.classData ?: components.classDataFinder.findClassData(classId)
         if (classData != null) {
             val outerClassContext =
                     if (classId.isTopLevelClass()) null

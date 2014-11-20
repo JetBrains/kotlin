@@ -20,7 +20,7 @@ import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobal
 import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
 
 public class DeserializationGlobalContextForJava(
         storageManager: StorageManager,
@@ -29,5 +29,9 @@ public class DeserializationGlobalContextForJava(
         annotationLoader: AnnotationDescriptorLoader,
         constantLoader: ConstantDescriptorLoader,
         packageFragmentProvider: LazyJavaPackageFragmentProvider
-) : DeserializationGlobalContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                                 constantLoader, packageFragmentProvider, JavaFlexibleTypeCapabilitiesDeserializer)
+) : DeserializationGlobalContext(
+        DeserializationComponents(
+                storageManager, moduleDescriptor, classDataFinder, annotationLoader, constantLoader, packageFragmentProvider,
+                JavaFlexibleTypeCapabilitiesDeserializer
+        )
+)

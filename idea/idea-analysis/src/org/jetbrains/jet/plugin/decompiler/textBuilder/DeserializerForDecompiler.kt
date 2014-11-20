@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.descriptors.serialization.ClassData
@@ -146,8 +146,11 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         moduleDescriptor.seal()
         moduleContainingMissingDependencies.seal()
     }
-    val deserializationContext = DeserializationGlobalContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
-                                                              constantLoader, packageFragmentProvider, JavaFlexibleTypeCapabilitiesDeserializer)
+
+    val deserializationContext = DeserializationComponents(
+            storageManager, moduleDescriptor, classDataFinder, annotationLoader, constantLoader, packageFragmentProvider,
+            JavaFlexibleTypeCapabilitiesDeserializer
+    ).createContext()
 
     private fun createDummyPackageFragment(fqName: FqName): MutablePackageFragmentDescriptor {
         return MutablePackageFragmentDescriptor(moduleDescriptor, fqName)

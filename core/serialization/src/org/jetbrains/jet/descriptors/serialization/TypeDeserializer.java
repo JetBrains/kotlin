@@ -20,13 +20,13 @@ import kotlin.Function0;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
@@ -53,13 +53,18 @@ public class TypeDeserializer {
         this.debugName = debugName + (parent == null ? "" : ". Child of " + parent.debugName);
         this.context = context;
 
-        this.classDescriptors = context.getStorageManager().createMemoizedFunctionWithNullableValues(
+        this.classDescriptors = getComponents().getStorageManager().createMemoizedFunctionWithNullableValues(
                 new Function1<Integer, ClassDescriptor>() {
                     @Override
                     public ClassDescriptor invoke(Integer fqNameIndex) {
                         return computeClassDescriptor(fqNameIndex);
                     }
                 });
+    }
+
+    @NotNull
+    private DeserializationComponents getComponents() {
+        return context.getComponents();
     }
 
     public void addTypeParameter(@NotNull DeserializedTypeParameterDescriptor typeParameterDescriptor) {
@@ -83,7 +88,7 @@ public class TypeDeserializer {
     public JetType type(@NotNull ProtoBuf.Type proto) {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
             String id = context.getNameResolver().getString(proto.getFlexibleTypeCapabilitiesId());
-            FlexibleTypeCapabilities capabilities = context.getFlexibleTypeCapabilitiesDeserializer().capabilitiesById(id);
+            FlexibleTypeCapabilities capabilities = getComponents().getFlexibleTypeCapabilitiesDeserializer().capabilitiesById(id);
 
             if (capabilities == null) return ErrorUtils.createErrorType(new DeserializedType(proto) + ": Capabilities not found for id " + id);
 
@@ -139,8 +144,10 @@ public class TypeDeserializer {
 
     @Nullable
     private ClassDescriptor computeClassDescriptor(int fqNameIndex) {
-        ClassId classId = context.getNameResolver().getClassId(fqNameIndex);
-        return SerializationPackage.findClassAcrossModuleDependencies(context.getModuleDescriptor(), classId);
+        return SerializationPackage.findClassAcrossModuleDependencies(
+                getComponents().getModuleDescriptor(),
+                context.getNameResolver().getClassId(fqNameIndex)
+        );
     }
 
     private List<TypeProjection> typeArguments(List<ProtoBuf.Type.Argument> protos) {
@@ -180,13 +187,13 @@ public class TypeDeserializer {
             this.typeProto = proto;
             this.arguments = typeArguments(proto.getArgumentList());
 
-            this.constructor = context.getStorageManager().createLazyValue(new Function0<TypeConstructor>() {
+            this.constructor = getComponents().getStorageManager().createLazyValue(new Function0<TypeConstructor>() {
                 @Override
                 public TypeConstructor invoke() {
                     return typeConstructor(typeProto);
                 }
             });
-            this.memberScope = context.getStorageManager().createLazyValue(new Function0<JetScope>() {
+            this.memberScope = getComponents().getStorageManager().createLazyValue(new Function0<JetScope>() {
                 @Override
                 public JetScope invoke() {
                     return computeMemberScope();
