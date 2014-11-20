@@ -28,10 +28,6 @@ public fun JetElement.getLazyResolveSession(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
 }
 
-public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalysisResult {
-    return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this) + extraFiles.toList())
-}
-
 public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
     return getLazyResolveSession().resolveToDescriptor(this)
 }
@@ -42,6 +38,10 @@ public fun JetElement.resolveToElement(): BindingContext {
 
 public fun JetElement.getModuleDescriptorForElement(): ModuleDescriptor {
     return getLazyResolveSession().getModuleDescriptorForElement(this)
+}
+
+public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalysisResult {
+    return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this) + extraFiles.toList())
 }
 
 public fun JetElement.getBindingContext(): BindingContext {
