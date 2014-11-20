@@ -45,12 +45,12 @@ public fun JetElement.findModuleDescriptor(): ModuleDescriptor {
     return getLazyResolveSession().findModuleDescriptor(this)
 }
 
-public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalysisResult {
-    return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this) + extraFiles.toList())
+public fun JetElement.analyzeFully(): BindingContext {
+    return analyzeFullyAndGetResult().bindingContext
 }
 
-public fun JetElement.analyzeFully(): BindingContext {
-    return getAnalysisResults().bindingContext
+public fun JetElement.analyzeFullyAndGetResult(vararg extraFiles: JetFile): AnalysisResult {
+    return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this) + extraFiles.toList())
 }
 
 public fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalysisResult {

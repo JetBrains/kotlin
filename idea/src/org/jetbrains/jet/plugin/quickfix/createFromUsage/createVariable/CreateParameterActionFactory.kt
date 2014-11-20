@@ -40,7 +40,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
-import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 
 object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
     private fun JetType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, context: BindingContext): Boolean {
@@ -66,7 +66,7 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
     }
 
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val result = (diagnostic.getPsiFile() as? JetFile)?.getAnalysisResults() ?: return null
+        val result = (diagnostic.getPsiFile() as? JetFile)?.analyzeFullyAndGetResult() ?: return null
         val context = result.bindingContext
 
         val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetSimpleNameExpression>()) ?: return null

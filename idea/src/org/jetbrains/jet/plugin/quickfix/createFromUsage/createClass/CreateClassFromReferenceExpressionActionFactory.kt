@@ -13,7 +13,7 @@ import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetImportDirective
-import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.jet.lang.resolve.calls.callUtil.getCall
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.BindingContext
@@ -38,7 +38,7 @@ public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActi
 
         val name = refExpr.getReferencedName()
 
-        val (context, moduleDescriptor) = refExpr.getAnalysisResults()
+        val (context, moduleDescriptor) = refExpr.analyzeFullyAndGetResult()
 
         val fullCallExpr = refExpr.getParent()?.let {
             when {

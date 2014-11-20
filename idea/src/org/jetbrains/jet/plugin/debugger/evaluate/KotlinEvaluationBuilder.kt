@@ -44,7 +44,7 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.codegen.ClassFileFactory
 import org.jetbrains.jet.OutputFileCollection
-import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
 import com.intellij.openapi.diagnostic.Logger
@@ -220,7 +220,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         private fun JetNamedFunction.getParametersForDebugger(): ParametersDescriptor {
             return runReadAction {
                 val parameters = ParametersDescriptor()
-                val bindingContext = getAnalysisResults().bindingContext
+                val bindingContext = analyzeFullyAndGetResult().bindingContext
                 val descriptor = bindingContext[BindingContext.FUNCTION, this]
                 if (descriptor != null) {
                     val receiver = descriptor.getExtensionReceiverParameter()
@@ -280,7 +280,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     throw EvaluateExceptionUtil.createEvaluateException(e.getMessage())
                 }
 
-                val analysisResult = this.getAnalysisResults(createFlexibleTypesFile())
+                val analysisResult = this.analyzeFullyAndGetResult(createFlexibleTypesFile())
                 if (analysisResult.isError()) {
                     throw EvaluateExceptionUtil.createEvaluateException(analysisResult.error)
                 }

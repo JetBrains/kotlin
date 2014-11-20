@@ -30,7 +30,7 @@ import org.jetbrains.jet.j2k.JavaToKotlinTranslator
 import org.jetbrains.jet.lang.diagnostics.Severity
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
+import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.jet.JetTestCaseBuilder
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 
@@ -74,7 +74,7 @@ public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtur
     }
 
     protected fun addErrorsDump(jetFile: JetFile): String {
-        val diagnostics = jetFile.getAnalysisResults().bindingContext.getDiagnostics()
+        val diagnostics = jetFile.analyzeFullyAndGetResult().bindingContext.getDiagnostics()
         val errors = diagnostics.filter { it.getSeverity() == Severity.ERROR }
         if (errors.isEmpty()) return jetFile.getText()
         val header = errors.map { "// ERROR: " + DefaultErrorMessages.RENDERER.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
