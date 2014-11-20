@@ -264,6 +264,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("MutliDeclaration.kt")
+    public void testMutliDeclaration() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/MutliDeclaration.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ReturnLambda.kt")
     public void testReturnLambda() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ReturnLambda.kt");
@@ -273,6 +279,24 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     @TestMetadata("Simple.kt")
     public void testSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/Simple.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SmartCastInTheSameStatement.kt")
+    public void testSmartCastInTheSameStatement() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/SmartCastInTheSameStatement.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SmartCastPointsResolveRequired1.kt")
+    public void testSmartCastPointsResolveRequired1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/SmartCastPointsResolveRequired1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SmartCastPointsResolveRequired2.kt")
+    public void testSmartCastPointsResolveRequired2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/SmartCastPointsResolveRequired2.kt");
         doTest(fileName);
     }
 
