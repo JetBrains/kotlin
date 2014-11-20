@@ -54,7 +54,9 @@ public final class DeserializedDescriptorResolver {
     public ClassDescriptor resolveClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass, CLASS);
         if (data != null) {
-            return context.getClassDeserializer().deserializeClass(kotlinClass.getClassId(), JavaProtoBufUtil.readClassDataFrom(data));
+            return context.getComponents().getClassDeserializer().deserializeClass(
+                    kotlinClass.getClassId(), JavaProtoBufUtil.readClassDataFrom(data)
+            );
         }
         return null;
     }
@@ -65,7 +67,7 @@ public final class DeserializedDescriptorResolver {
         if (data != null) {
             //all classes are included in java scope
             return DescriptorsPackage.DeserializedPackageMemberScope(
-                    descriptor, JavaProtoBufUtil.readPackageDataFrom(data), context,
+                    descriptor, JavaProtoBufUtil.readPackageDataFrom(data), context.getComponents(),
                     new Function0<Collection<Name>>() {
                         @Override
                         public Collection<Name> invoke() {

@@ -41,46 +41,31 @@ public class DeserializationComponents(
         public val packageFragmentProvider: PackageFragmentProvider,
         public val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer
 ) {
-    public fun createContext(): DeserializationGlobalContext = DeserializationGlobalContext(this)
-}
+    public val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 
-public open class DeserializationGlobalContext(
-        public val components: DeserializationComponents,
-        public val classDeserializer: ClassDeserializer = ClassDeserializer(components)
-) {
-    {
-        classDeserializer.globalContext = this
-    }
+    public fun deserializeClass(classId: ClassId): ClassDescriptor? = classDeserializer.deserializeClass(classId)
 
-    public fun withNameResolver(nameResolver: NameResolver): DeserializationContext {
-        return DeserializationContext(components, classDeserializer, nameResolver)
-    }
-}
-
-fun DeserializationGlobalContext.deserializeClass(classId: ClassId): ClassDescriptor? {
-    return classDeserializer.deserializeClass(classId)
+    public fun createContext(nameResolver: NameResolver): DeserializationContext = DeserializationContext(this, nameResolver)
 }
 
 
 public open class DeserializationContext(
-        components: DeserializationComponents,
-        classDeserializer: ClassDeserializer,
+        public val components: DeserializationComponents,
         public val nameResolver: NameResolver
-) : DeserializationGlobalContext(components, classDeserializer) {
+) {
     fun withTypes(containingDeclaration: DeclarationDescriptor, parent: TypeDeserializer? = null): DeserializationContextWithTypes {
         val typeDeserializer = TypeDeserializer(this, parent, "Deserializer for ${containingDeclaration.getName()}")
-        return DeserializationContextWithTypes(components, classDeserializer, nameResolver, containingDeclaration, typeDeserializer)
+        return DeserializationContextWithTypes(components, nameResolver, containingDeclaration, typeDeserializer)
     }
 }
 
 
 class DeserializationContextWithTypes(
         components: DeserializationComponents,
-        classDeserializer: ClassDeserializer,
         nameResolver: NameResolver,
         val containingDeclaration: DeclarationDescriptor,
         val typeDeserializer: TypeDeserializer
-) : DeserializationContext(components, classDeserializer, nameResolver) {
+) : DeserializationContext(components, nameResolver) {
     val memberDeserializer: MemberDeserializer = MemberDeserializer(this)
 
     fun childContext(descriptor: DeclarationDescriptor, typeParameterProtos: List<TypeParameter>): DeserializationContextWithTypes {

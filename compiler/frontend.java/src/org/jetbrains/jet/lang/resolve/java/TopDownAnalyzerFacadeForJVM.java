@@ -126,7 +126,8 @@ public enum TopDownAnalyzerFacadeForJVM {
 
                     additionalProviders.add(
                             new IncrementalPackageFragmentProvider(
-                                    files, module, topDownAnalysisParameters.getStorageManager(), injector.getDeserializationGlobalContextForJava(),
+                                    files, module, topDownAnalysisParameters.getStorageManager(),
+                                    injector.getDeserializationGlobalContextForJava().getComponents(),
                                     incrementalCache, moduleId, injector.getJavaDescriptorResolver()
                             )
                     );

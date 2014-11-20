@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.descriptors.serialization.ClassData
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.jet.plugin.decompiler.isKotlinWithCompatibleAbiVersion
-import org.jetbrains.jet.descriptors.serialization.context.deserializeClass
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
@@ -54,7 +53,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), listOf(), PlatformToKotlinClassMap.EMPTY)
 
-    override fun resolveTopLevelClass(classId: ClassId) = deserializationContext.deserializeClass(classId)
+    override fun resolveTopLevelClass(classId: ClassId) = deserializationComponents.deserializeClass(classId)
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
         assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")
@@ -67,7 +66,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         val membersScope = DeserializedPackageMemberScope(
                 createDummyPackageFragment(packageFqName),
                 JavaProtoBufUtil.readPackageDataFrom(annotationData),
-                deserializationContext
+                deserializationComponents
         ) { listOf() }
         return membersScope.getDescriptors()
     }
@@ -147,10 +146,10 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         moduleContainingMissingDependencies.seal()
     }
 
-    val deserializationContext = DeserializationComponents(
+    private val deserializationComponents = DeserializationComponents(
             storageManager, moduleDescriptor, classDataFinder, annotationLoader, constantLoader, packageFragmentProvider,
             JavaFlexibleTypeCapabilitiesDeserializer
-    ).createContext()
+    )
 
     private fun createDummyPackageFragment(fqName: FqName): MutablePackageFragmentDescriptor {
         return MutablePackageFragmentDescriptor(moduleDescriptor, fqName)

@@ -75,7 +75,7 @@ public class DeserializedClassDescriptor(
             return fragments.single()
         }
         else {
-            return context.deserializeClass(classId.getOuterClassId()) ?: ErrorUtils.getErrorModule()
+            return components.deserializeClass(classId.getOuterClassId()) ?: ErrorUtils.getErrorModule()
         }
     }
 
@@ -135,7 +135,7 @@ public class DeserializedClassDescriptor(
             return DeserializedClassDescriptor(context, classObjectProto.getData())
         }
 
-        return context.deserializeClass(classId.createNestedClassId(getClassObjectName(getName())))
+        return components.deserializeClass(classId.createNestedClassId(getClassObjectName(getName())))
     }
 
     override fun getClassObjectDescriptor(): ClassDescriptor? = classObjectDescriptor()
@@ -254,8 +254,8 @@ public class DeserializedClassDescriptor(
 
         val findNestedClass = components.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
             name ->
-            if (nestedClassNames.contains(name)) {
-                context.deserializeClass(classId.createNestedClassId(name))
+            if (name in nestedClassNames) {
+                components.deserializeClass(classId.createNestedClassId(name))
             }
             else null
         }

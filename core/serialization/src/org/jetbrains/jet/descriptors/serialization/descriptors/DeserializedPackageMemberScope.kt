@@ -28,11 +28,17 @@ import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 
 
-public fun DeserializedPackageMemberScope(packageDescriptor: PackageFragmentDescriptor,
-                                          packageData: PackageData,
-                                          context: DeserializationGlobalContext,
-                                          classNames: () -> Collection<Name>): DeserializedPackageMemberScope
-        = DeserializedPackageMemberScope(packageDescriptor, packageData.getPackageProto(), context.withNameResolver(packageData.getNameResolver()), classNames)
+public fun DeserializedPackageMemberScope(
+        packageDescriptor: PackageFragmentDescriptor,
+        packageData: PackageData,
+        components: DeserializationComponents,
+        classNames: () -> Collection<Name>
+): DeserializedPackageMemberScope = DeserializedPackageMemberScope(
+        packageDescriptor,
+        packageData.getPackageProto(),
+        components.createContext(packageData.getNameResolver()),
+        classNames
+)
 
 public open class DeserializedPackageMemberScope(
         packageDescriptor: PackageFragmentDescriptor,
@@ -47,7 +53,7 @@ public open class DeserializedPackageMemberScope(
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = computeDescriptors(kindFilter, nameFilter)
 
-    override fun getClassDescriptor(name: Name) = context.deserializeClass(ClassId(packageFqName, name))
+    override fun getClassDescriptor(name: Name) = context.components.deserializeClass(ClassId(packageFqName, name))
 
     override fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
         for (className in classNames()) {
