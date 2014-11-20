@@ -21,11 +21,9 @@ import org.jetbrains.jet.codegen.ExpressionCodegen
 import org.jetbrains.jet.codegen.StackValue
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE
-import org.jetbrains.jet.codegen.operation
 
 public class StringPlus : LazyIntrinsicMethod() {
     override fun generateImpl(
@@ -35,7 +33,7 @@ public class StringPlus : LazyIntrinsicMethod() {
             arguments: List<JetExpression>,
             receiver: StackValue
     ): StackValue {
-        return operation(JAVA_STRING_TYPE) {
+        return StackValue.operation(JAVA_STRING_TYPE) {
             if (receiver == StackValue.none()) {
                 codegen.gen(arguments.get(0)).put(JAVA_STRING_TYPE, it)
                 codegen.gen(arguments.get(1)).put(OBJECT_TYPE, it)

@@ -1582,6 +1582,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/optimizations/negateTrueVar.kt");
                 doTestWithStdlib(fileName);
             }
+
+            @TestMetadata("noOptimization.kt")
+            public void testNoOptimization() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/optimizations/noOptimization.kt");
+                doTestWithStdlib(fileName);
+            }
         }
     }
 

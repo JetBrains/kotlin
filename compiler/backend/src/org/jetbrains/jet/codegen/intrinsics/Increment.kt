@@ -20,17 +20,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.codegen.ExpressionCodegen
 import org.jetbrains.jet.codegen.StackValue
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetReferenceExpression
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 import org.jetbrains.jet.codegen.AsmUtil.genIncrement
 import org.jetbrains.jet.codegen.AsmUtil.isPrimitive
-import org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE
-import org.jetbrains.jet.codegen.operation
 
 public class Increment(private val myDelta: Int) : LazyIntrinsicMethod() {
 
@@ -48,7 +41,7 @@ public class Increment(private val myDelta: Int) : LazyIntrinsicMethod() {
             }
         }
         else {
-            return operation(returnType) {
+            return StackValue.operation(returnType) {
                 receiver.put(returnType, it)
                 genIncrement(returnType, myDelta, it)
             }
