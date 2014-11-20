@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,26 +18,23 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
 
-public class NumberCast extends IntrinsicMethod {
+public class NumberCast extends LazyIntrinsicMethod {
     @NotNull
     @Override
-    public Type generateImpl(
+    public StackValue generateImpl(
             @NotNull ExpressionCodegen codegen,
-            @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
             @NotNull StackValue receiver
     ) {
-        receiver.put(returnType, v);
-        return returnType;
+        return StackValue.coercion(receiver, returnType);        
     }
 }

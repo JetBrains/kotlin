@@ -1466,6 +1466,7 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen")
     @TestDataPath("$PROJECT_ROOT")
+    @InnerTestClasses({LazyCodegen.Optimizations.class})
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LazyCodegen extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInLazyCodegen() throws Exception {
@@ -1524,6 +1525,63 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         public void testWhen() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/when.kt");
             doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/optimizations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Optimizations extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInOptimizations() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/lazyCodegen/optimizations"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("negateConstantCompare.kt")
+            public void testNegateConstantCompare() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/optimizations/negateConstantCompare.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("negateFalse.kt")
+            public void testNegateFalse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/optimizations/negateFalse.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("negateFalseVar.kt")
+            public void testNegateFalseVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/optimizations/negateFalseVar.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("negateFalseVarChain.kt")
+            public void testNegateFalseVarChain() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/optimizations/negateFalseVarChain.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("negateObjectComp.kt")
+            public void testNegateObjectComp() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/optimizations/negateObjectComp.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("negateObjectComp2.kt")
+            public void testNegateObjectComp2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/optimizations/negateObjectComp2.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("negateTrue.kt")
+            public void testNegateTrue() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/optimizations/negateTrue.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("negateTrueVar.kt")
+            public void testNegateTrueVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/lazyCodegen/optimizations/negateTrueVar.kt");
+                doTestWithStdlib(fileName);
+            }
         }
     }
 

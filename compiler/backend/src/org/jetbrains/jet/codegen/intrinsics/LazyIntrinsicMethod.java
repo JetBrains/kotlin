@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -26,44 +27,37 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.AsmUtil.genIncrement;
-import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
+public abstract class LazyIntrinsicMethod extends IntrinsicMethod {
 
-public class Increment extends IntrinsicMethod {
-    private final int myDelta;
-
-    public Increment(int delta) {
-        myDelta = delta;
+    @Override
+    public final StackValue generate(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull Type returnType,
+            @Nullable PsiElement element,
+            @NotNull List<JetExpression> arguments,
+            @NotNull StackValue receiver
+    ) {
+        return StackValue.coercion(generateImpl(codegen, returnType, element, arguments, receiver), returnType);
     }
 
     @NotNull
     @Override
-    public Type generateImpl(
+    protected Type generateImpl(
             @NotNull ExpressionCodegen codegen,
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
-            PsiElement element,
+            @Nullable PsiElement element,
             @NotNull List<JetExpression> arguments,
             @NotNull StackValue receiver
     ) {
-        assert isPrimitive(returnType) : "Return type of Increment intrinsic should be of primitive type : " + returnType;
-
-        if (arguments.size() > 0) {
-            JetExpression operand = arguments.get(0);
-            StackValue stackValue = codegen.genQualified(receiver, operand);
-            StackValue result;
-            if (stackValue instanceof StackValue.Local && Type.INT_TYPE.equals(stackValue.type)) {
-                result = StackValue.preIncrementForLocalVar(((StackValue.Local) stackValue).index, myDelta);
-            } else {
-                result = StackValue.preIncrement(returnType, stackValue, myDelta, this, null, codegen);
-            }
-            result.put(returnType, v);
-        }
-        else {
-            receiver.put(returnType, v);
-            genIncrement(returnType, myDelta, v);
-        }
-
-        return returnType;
+        throw new UnsupportedOperationException();
     }
+
+    public abstract StackValue generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull Type returnType,
+            @Nullable PsiElement element,
+            @NotNull List<JetExpression> arguments,
+            @NotNull StackValue receiver
+    );
 }

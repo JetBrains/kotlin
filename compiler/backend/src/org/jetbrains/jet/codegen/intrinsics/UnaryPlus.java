@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -29,12 +28,11 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 
-public class UnaryPlus extends IntrinsicMethod {
+public class UnaryPlus extends LazyIntrinsicMethod {
     @NotNull
     @Override
-    public Type generateImpl(
+    public StackValue generateImpl(
             @NotNull ExpressionCodegen codegen,
-            @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             @Nullable PsiElement element,
             @NotNull List<JetExpression> arguments,
@@ -43,12 +41,11 @@ public class UnaryPlus extends IntrinsicMethod {
         assert isPrimitive(returnType) : "Return type of UnaryPlus intrinsic should be of primitive type : " + returnType;
 
         if (receiver != StackValue.none()) {
-            receiver.put(returnType, v);
+            return receiver;
         }
         else {
             assert !arguments.isEmpty();
-            codegen.gen(arguments.get(0), returnType);
+            return codegen.gen(arguments.get(0));
         }
-        return returnType;
     }
 }

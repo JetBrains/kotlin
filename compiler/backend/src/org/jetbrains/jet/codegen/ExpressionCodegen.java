@@ -1297,7 +1297,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (entries.length == 1 && entries[0] instanceof JetStringTemplateEntryWithExpression) {
             JetExpression expr = entries[0].getExpression();
-            return genToString(v, gen(expr), expressionType(expr));
+            return genToString(gen(expr), expressionType(expr));
         }
 
         for (JetStringTemplateEntry entry : entries) {
@@ -3434,7 +3434,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private StackValue generateNewArray(@NotNull JetCallExpression expression, @NotNull final JetType arrayType) {
 
-        final List < JetExpression > args = new ArrayList<JetExpression>();
+        final List<JetExpression> args = new ArrayList<JetExpression>();
         for (ValueArgument va : expression.getValueArguments()) {
             args.add(va.getArgumentExpression());
         }

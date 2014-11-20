@@ -402,6 +402,9 @@ public abstract class StackValue {
     }
 
     public static StackValue coercion(@NotNull StackValue value, @NotNull Type castType) {
+        if (value.type.equals(castType)) {
+            return value;
+        }
         return new CoercionValue(value, castType);
     }
 

@@ -19,19 +19,17 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-public class Not extends IntrinsicMethod {
+public class Not extends LazyIntrinsicMethod {
     @NotNull
     @Override
-    public Type generateImpl(
+    public StackValue generateImpl(
             @NotNull ExpressionCodegen codegen,
-            @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
@@ -44,7 +42,6 @@ public class Not extends IntrinsicMethod {
         else {
             stackValue = receiver;
         }
-        StackValue.not(StackValue.coercion(stackValue, Type.BOOLEAN_TYPE)).put(returnType, v);
-        return returnType;
+        return StackValue.not(StackValue.coercion(stackValue, Type.BOOLEAN_TYPE));
     }
 }

@@ -18,27 +18,24 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
 
-public class NewArray extends IntrinsicMethod {
+public class NewArray extends LazyIntrinsicMethod {
     @NotNull
     @Override
-    public Type generateImpl(
+    public StackValue generateImpl(
             @NotNull ExpressionCodegen codegen,
-            @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
             @NotNull StackValue receiver
     ) {
-        codegen.generateNewArray((JetCallExpression) element).put(returnType, v);
-        return returnType;
+        return codegen.generateNewArray((JetCallExpression) element);
     }
 }

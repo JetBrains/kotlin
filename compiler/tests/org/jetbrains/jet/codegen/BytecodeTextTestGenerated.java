@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/bytecodeText")
 @TestDataPath("$PROJECT_ROOT")
-@InnerTestClasses({BytecodeTextTestGenerated.BoxingOptimization.class, BytecodeTextTestGenerated.Constants.class, BytecodeTextTestGenerated.DirectInvoke.class, BytecodeTextTestGenerated.Inline.class, BytecodeTextTestGenerated.LineNumbers.class, BytecodeTextTestGenerated.Statements.class, BytecodeTextTestGenerated.StaticFields.class, BytecodeTextTestGenerated.StoreStackBeforeInline.class, BytecodeTextTestGenerated.When.class, BytecodeTextTestGenerated.WhenEnumOptimization.class, BytecodeTextTestGenerated.WhenStringOptimization.class})
+@InnerTestClasses({BytecodeTextTestGenerated.BoxingOptimization.class, BytecodeTextTestGenerated.Constants.class, BytecodeTextTestGenerated.DirectInvoke.class, BytecodeTextTestGenerated.Inline.class, BytecodeTextTestGenerated.LazyCodegen.class, BytecodeTextTestGenerated.LineNumbers.class, BytecodeTextTestGenerated.Statements.class, BytecodeTextTestGenerated.StaticFields.class, BytecodeTextTestGenerated.StoreStackBeforeInline.class, BytecodeTextTestGenerated.When.class, BytecodeTextTestGenerated.WhenEnumOptimization.class, BytecodeTextTestGenerated.WhenStringOptimization.class})
 @RunWith(JUnit3RunnerWithInners.class)
 public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("accessorForProtected.kt")
@@ -345,6 +345,51 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("splitedExceptionTable.kt")
         public void testSplitedExceptionTable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/splitedExceptionTable.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeText/lazyCodegen")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class LazyCodegen extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInLazyCodegen() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/lazyCodegen"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("negateConst.kt")
+        public void testNegateConst() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/lazyCodegen/negateConst.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("negateConstantCompare.kt")
+        public void testNegateConstantCompare() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/lazyCodegen/negateConstantCompare.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("negateObjectComp.kt")
+        public void testNegateObjectComp() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/lazyCodegen/negateObjectComp.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("negateObjectCompChaing.kt")
+        public void testNegateObjectCompChaing() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/lazyCodegen/negateObjectCompChaing.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("negateVar.kt")
+        public void testNegateVar() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/lazyCodegen/negateVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("negateVarChain.kt")
+        public void testNegateVarChain() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/lazyCodegen/negateVarChain.kt");
             doTest(fileName);
         }
     }

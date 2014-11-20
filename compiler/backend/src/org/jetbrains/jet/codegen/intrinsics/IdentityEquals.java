@@ -18,25 +18,23 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-public class IdentityEquals extends IntrinsicMethod {
+public class IdentityEquals extends LazyIntrinsicMethod {
     @NotNull
     @Override
-    public Type generateImpl(
+    public StackValue generateImpl(
             @NotNull ExpressionCodegen codegen,
-            @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             @NotNull List<JetExpression> arguments,
@@ -54,7 +52,6 @@ public class IdentityEquals extends IntrinsicMethod {
             left = codegen.gen(e.getLeft());
             right = codegen.gen(e.getRight());
         }
-        StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE, left, right).put(returnType, v);
-        return returnType;
+        return StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE, left, right);
     }
 }

@@ -31,7 +31,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.List;
 
 public abstract class IntrinsicMethod implements Callable {
-    public final StackValue generate(
+    public StackValue generate(
             @NotNull final ExpressionCodegen codegen,
             @NotNull final Type returnType,
             @Nullable final PsiElement element,
@@ -39,7 +39,6 @@ public abstract class IntrinsicMethod implements Callable {
             @NotNull final StackValue receiver
     ) {
         return StackValue.operation(returnType, new Function1<InstructionAdapter, Unit>() {
-
             @Override
             public Unit invoke(InstructionAdapter v) {
                 Type actualType = generateImpl(codegen, v, returnType, element, arguments, receiver);
