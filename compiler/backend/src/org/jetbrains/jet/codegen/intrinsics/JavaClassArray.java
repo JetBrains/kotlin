@@ -43,7 +43,7 @@ public class JavaClassArray extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments,
+            @NotNull List<JetExpression> arguments,
             StackValue receiver
     ) {
         assert element != null : "Element should not be null";

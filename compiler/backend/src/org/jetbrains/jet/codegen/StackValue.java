@@ -41,6 +41,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
@@ -1004,7 +1005,7 @@ public abstract class StackValue {
                 ((CallableMethod) getter).invokeWithNotNullAssertion(v, state, resolvedGetCall);
             }
             else {
-                StackValue result = ((IntrinsicMethod) getter).generate(codegen, this.type, null, null, null);
+                StackValue result = ((IntrinsicMethod) getter).generate(codegen, this.type, null, Collections.<JetExpression>emptyList(), null);
                 result.put(result.type, v);
             }
             coerceTo(type, v);
@@ -1069,7 +1070,7 @@ public abstract class StackValue {
             }
             else {
                 //noinspection ConstantConditions
-                StackValue result = ((IntrinsicMethod) setter).generate(codegen, null, null, null, null);
+                StackValue result = ((IntrinsicMethod) setter).generate(codegen, null, null, Collections.<JetExpression>emptyList(), null);
                 result.put(result.type, v);
             }
         }

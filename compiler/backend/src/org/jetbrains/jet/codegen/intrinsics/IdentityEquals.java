@@ -39,7 +39,7 @@ public class IdentityEquals extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
-            List<JetExpression> arguments,
+            @NotNull List<JetExpression> arguments,
             StackValue receiver
     ) {
         StackValue left;

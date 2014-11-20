@@ -37,7 +37,7 @@ public class HashCode extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments,
+            @NotNull List<JetExpression> arguments,
             StackValue receiver
     ) {
         receiver.put(AsmTypeConstants.OBJECT_TYPE, v);

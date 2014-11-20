@@ -34,7 +34,7 @@ public class NumberCast extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
-            List<JetExpression> arguments,
+            @NotNull List<JetExpression> arguments,
             StackValue receiver
     ) {
         receiver.put(returnType, v);

@@ -36,7 +36,7 @@ public class ToString extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
-            List<JetExpression> arguments,
+            @NotNull List<JetExpression> arguments,
             StackValue receiver
     ) {
         genToString(v, receiver, receiver.type).put(returnType, v);

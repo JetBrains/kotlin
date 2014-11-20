@@ -44,7 +44,7 @@ public class BinaryOp extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
-            List<JetExpression> arguments,
+            @NotNull List<JetExpression> arguments,
             StackValue receiver
     ) {
         assert isPrimitive(returnType) : "Return type of BinaryOp intrinsic should be of primitive type : " + returnType;

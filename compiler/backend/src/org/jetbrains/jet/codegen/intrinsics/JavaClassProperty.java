@@ -40,7 +40,7 @@ public class JavaClassProperty extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments,
+            @NotNull List<JetExpression> arguments,
             StackValue receiver
     ) {
         Type type = receiver.type;

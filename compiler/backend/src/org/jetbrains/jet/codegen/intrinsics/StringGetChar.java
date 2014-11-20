@@ -34,13 +34,13 @@ public class StringGetChar extends IntrinsicMethod {
             @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
-            List<JetExpression> arguments,
+            @NotNull List<JetExpression> arguments,
             StackValue receiver
     ) {
         if (receiver != null) {
             receiver.put(receiver.type, v);
         }
-        if (arguments != null) {
+        if (!arguments.isEmpty()) {
             codegen.gen(arguments.get(0)).put(Type.INT_TYPE, v);
         }
         v.invokeinterface("java/lang/CharSequence", "charAt", "(I)C");
