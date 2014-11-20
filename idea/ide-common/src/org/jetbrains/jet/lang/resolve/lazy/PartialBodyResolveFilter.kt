@@ -83,7 +83,8 @@ class PartialBodyResolveFilter(
                 val smartCastPlaces = potentialSmartCastPlaces(statement)
                 if (!smartCastPlaces.isEmpty()) {
                     addStatementToResolve(statement)
-                    statementsToResolve.addStatementsForPlaces(smartCastPlaces.values().flatMap { it })
+                    //TODO: do we really need correct resolve for ALL smart cast places?
+                    addStatementsToResolveForPlaces(smartCastPlaces.values().flatMap { it })
                 }
                 else if (statement is JetDeclaration) {
                     addStatementToResolve(statement)
@@ -94,25 +95,25 @@ class PartialBodyResolveFilter(
         addStatementsToResolve(parent)
     }
 
-    private fun addStatementToResolve(statement: JetExpression) {
+    private fun addStatementToResolve(statement: JetExpression): Boolean {
         assert(statement.getParent() is JetBlockExpression)
-        if (statementsToResolve.add(statement)) {
-            // search for code blocks inside statement and make sure its values will be resolved
-            statement.accept(object : JetVisitorVoid(){
-                override fun visitBlockExpression(expression: JetBlockExpression) {
-                    if (isValueNeeded(expression)) {
-                        val value = expression.lastStatement()
-                        if (value != null) {
-                            addStatementsToResolve(value)
-                        }
+        if (!statementsToResolve.add(statement)) return false
+        // search for code blocks inside statement and make sure its values will be resolved
+        statement.accept(object : JetVisitorVoid(){
+            override fun visitBlockExpression(expression: JetBlockExpression) {
+                if (isValueNeeded(expression)) {
+                    val value = expression.lastStatement()
+                    if (value != null) {
+                        addStatementsToResolve(value)
                     }
                 }
+            }
 
-                override fun visitJetElement(element: JetElement) {
-                    element.acceptChildren(this)
-                }
-            })
-        }
+            override fun visitJetElement(element: JetElement) {
+                element.acceptChildren(this)
+            }
+        })
+        return true
     }
 
     /**
@@ -351,11 +352,11 @@ class PartialBodyResolveFilter(
 
     private fun JetElement.noControlFlowInside() = this is JetFunction || this is JetClass || this is JetClassBody
 
-    private fun MutableSet<JetExpression>.addStatementsForPlaces(places: Collection<JetExpression>) {
+    private fun addStatementsToResolveForPlaces(places: Collection<JetExpression>) {
         for (place in places) {
             var parent: PsiElement = place
             while (true) {
-                if (parent.isStatement() && !add(parent as JetExpression)) break
+                if (parent.isStatement() && !addStatementToResolve(parent as JetExpression)) break
                 parent = parent.getParent()
             }
         }
