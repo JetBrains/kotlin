@@ -285,7 +285,7 @@ public final class StaticContext {
                     String propertyName = getSuggestedName(propertyDescriptor);
 
                     if (!isExtension(propertyDescriptor)) {
-                        if (propertyDescriptor.getVisibility() == Visibilities.PRIVATE) {
+                        if (Visibilities.isPrivate(propertyDescriptor.getVisibility())) {
                             propertyName = getMangledName(propertyDescriptor, propertyName);
                         }
                         return declarePropertyOrPropertyAccessorName(descriptor, propertyName, false);

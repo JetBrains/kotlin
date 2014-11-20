@@ -68,7 +68,7 @@ public final class JetDescriptorIconProvider {
                 return PlatformIcons.PROTECTED_ICON;
             }
 
-            if (visibility == Visibilities.PRIVATE) {
+            if (Visibilities.isPrivate(visibility)) {
                 return PlatformIcons.PRIVATE_ICON;
             }
 

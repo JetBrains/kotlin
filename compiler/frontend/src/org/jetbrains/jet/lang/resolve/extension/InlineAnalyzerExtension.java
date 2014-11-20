@@ -98,7 +98,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             @NotNull JetFunction function,
             @NotNull BindingTrace trace
     ) {
-        if (functionDescriptor.getVisibility() == Visibilities.PRIVATE || functionDescriptor.getModality() == Modality.FINAL) {
+        if (Visibilities.isPrivate(functionDescriptor.getVisibility()) || functionDescriptor.getModality() == Modality.FINAL) {
             return;
         }
 

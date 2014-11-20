@@ -754,8 +754,8 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         if (CodegenBinding.canHaveOuter(context, classDescriptor)) return false;
 
-        if (classDescriptor.getVisibility() == Visibilities.PRIVATE ||
-            constructorDescriptor.getVisibility() == Visibilities.PRIVATE) return false;
+        if (Visibilities.isPrivate(classDescriptor.getVisibility()) ||
+            Visibilities.isPrivate(constructorDescriptor.getVisibility())) return false;
 
         if (constructorDescriptor.getValueParameters().isEmpty()) return false;
 

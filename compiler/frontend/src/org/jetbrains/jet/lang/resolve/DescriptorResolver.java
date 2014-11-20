@@ -889,7 +889,7 @@ public class DescriptorResolver {
 
     private static void initializeWithDefaultGetterSetter(PropertyDescriptorImpl propertyDescriptor) {
         PropertyGetterDescriptorImpl getter = propertyDescriptor.getGetter();
-        if (getter == null && propertyDescriptor.getVisibility() != Visibilities.PRIVATE) {
+        if (getter == null && !Visibilities.isPrivate(propertyDescriptor.getVisibility())) {
             getter = DescriptorFactory.createDefaultGetter(propertyDescriptor);
             getter.initialize(propertyDescriptor.getType());
         }
@@ -1144,7 +1144,7 @@ public class DescriptorResolver {
         boolean isLocal = DescriptorUtils.isLocal(descriptor);
         Visibility visibility = descriptor.getVisibility();
         boolean transformNeeded = !isLocal && !visibility.isPublicAPI()
-                                  && !(definedInClass && Visibilities.PRIVATE.equals(visibility));
+                                  && !(definedInClass && Visibilities.isPrivate(visibility));
         if (transformNeeded) {
             if (type.getConstructor().getSupertypes().size() == 1) {
                 assert type.getArguments().isEmpty() : "Object expression couldn't have any type parameters!";

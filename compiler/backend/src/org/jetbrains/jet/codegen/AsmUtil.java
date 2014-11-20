@@ -324,7 +324,7 @@ public class AsmUtil {
         if (memberDescriptor instanceof ConstructorDescriptor && isAnonymousObject(memberDescriptor.getContainingDeclaration())) {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
-        if (memberVisibility != Visibilities.PRIVATE) {
+        if (!Visibilities.isPrivate(memberVisibility)) {
             return null;
         }
         // the following code is only for PRIVATE visibility of member

@@ -378,7 +378,7 @@ public class OverridingUtil {
             @Override
             public Boolean invoke(CallableMemberDescriptor descriptor) {
                 //nested class could capture private member, so check for private visibility added
-                return descriptor.getVisibility() != Visibilities.PRIVATE && Visibilities.isVisible(descriptor, current);
+                return !Visibilities.isPrivate(descriptor.getVisibility()) && Visibilities.isVisible(descriptor, current);
             }
         });
     }

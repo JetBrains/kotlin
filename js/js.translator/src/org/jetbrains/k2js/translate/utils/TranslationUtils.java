@@ -178,7 +178,7 @@ public final class TranslationUtils {
         JsName backingFieldName = context.getNameForDescriptor(descriptor);
         if(!JsDescriptorUtils.isSimpleFinalProperty(descriptor)) {
             String backingFieldMangledName;
-            if (descriptor.getVisibility() != Visibilities.PRIVATE) {
+            if (!Visibilities.isPrivate(descriptor.getVisibility())) {
                 backingFieldMangledName = getMangledName(descriptor, getKotlinBackingFieldName(backingFieldName.getIdent()));
             } else {
                 backingFieldMangledName = getKotlinBackingFieldName(backingFieldName.getIdent());

@@ -81,7 +81,7 @@ public class JetRefactoringUtil {
         else if (visibility == Visibilities.INTERNAL) {
             return JetTokens.INTERNAL_KEYWORD;
         }
-        else if (visibility == Visibilities.PRIVATE) {
+        else if (Visibilities.isPrivate(visibility)) {
             return JetTokens.PRIVATE_KEYWORD;
         }
 

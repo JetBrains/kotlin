@@ -34,7 +34,7 @@ public class JavaVisibilities {
         @Override
         protected Integer compareTo(@NotNull Visibility visibility) {
             if (this == visibility) return 0;
-            if (visibility == Visibilities.PRIVATE) return 1;
+            if (Visibilities.isPrivate(visibility)) return 1;
             return -1;
         }
 
@@ -105,7 +105,7 @@ public class JavaVisibilities {
         protected Integer compareTo(@NotNull Visibility visibility) {
             if (this == visibility) return 0;
             if (visibility == Visibilities.INTERNAL) return null;
-            if (visibility == Visibilities.PRIVATE) return 1;
+            if (Visibilities.isPrivate(visibility)) return 1;
             return -1;
         }
 
