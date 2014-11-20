@@ -36,6 +36,8 @@ import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jet.plugin.JetBundle;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
     private final CommonCompilerArguments commonCompilerArguments;
@@ -53,6 +55,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JLabel labelForOutputPrefixFile;
     private JLabel labelForOutputPostfixFile;
     private JCheckBox incrementalCompilationCheckBox;
+    private JLabel labelForOutputDirectory;
+    private JTextField outputDirectory;
+    private JCheckBox copyRuntimeFilesCheckBox;
 
     public KotlinCompilerConfigurableTab(ConfigurableEP ep) {
         this.extPoint = ep;
@@ -67,6 +72,15 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                          JetBundle.message("kotlin.compiler.js.option.output.prefix.browse.title"));
         setupFileChooser(labelForOutputPostfixFile, outputPostfixFile,
                          JetBundle.message("kotlin.compiler.js.option.output.postfix.browse.title"));
+
+        labelForOutputDirectory.setLabelFor(outputDirectory);
+        copyRuntimeFilesCheckBox.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(@NotNull ChangeEvent e) {
+                outputDirectory.setEnabled(copyRuntimeFilesCheckBox.isSelected());
+                labelForOutputDirectory.setEnabled(copyRuntimeFilesCheckBox.isSelected());
+            }
+        });
     }
 
     @NotNull
@@ -91,6 +105,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public boolean isModified() {
         return ComparingUtils.isModified(generateNoWarningsCheckBox, commonCompilerArguments.suppressWarnings) ||
                ComparingUtils.isModified(additionalArgsOptionsField, compilerSettings.getAdditionalArguments()) ||
+               ComparingUtils.isModified(copyRuntimeFilesCheckBox, compilerSettings.getCopyJsLibraryFiles()) ||
+               ComparingUtils.isModified(outputDirectory, compilerSettings.getOutputDirectoryForJsLibraryFiles()) ||
 
                ComparingUtils.isModified(incrementalCompilationCheckBox, compilerWorkspaceSettings.getIncrementalCompilationEnabled()) ||
 
@@ -103,6 +119,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void apply() throws ConfigurationException {
         commonCompilerArguments.suppressWarnings = generateNoWarningsCheckBox.isSelected();
         compilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
+        compilerSettings.setCopyJsLibraryFiles(copyRuntimeFilesCheckBox.isSelected());
+        compilerSettings.setOutputDirectoryForJsLibraryFiles(outputDirectory.getText());
 
         compilerWorkspaceSettings.setIncrementalCompilationEnabled(incrementalCompilationCheckBox.isSelected());
 
@@ -115,6 +133,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void reset() {
         generateNoWarningsCheckBox.setSelected(commonCompilerArguments.suppressWarnings);
         additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());
+        copyRuntimeFilesCheckBox.setSelected(compilerSettings.getCopyJsLibraryFiles());
+        outputDirectory.setText(compilerSettings.getOutputDirectoryForJsLibraryFiles());
 
         incrementalCompilationCheckBox.setSelected(compilerWorkspaceSettings.getIncrementalCompilationEnabled());
 

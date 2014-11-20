@@ -73,7 +73,7 @@
           </component>
         </children>
       </grid>
-      <grid id="98e8a" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="98e8a" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
@@ -125,6 +125,32 @@
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
+          </component>
+          <component id="b93a8" class="javax.swing.JLabel" binding="labelForOutputDirectory">
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="org/jetbrains/jet/plugin/JetBundle" key="kotlin.compiler.js.option.output.copy.dir"/>
+            </properties>
+          </component>
+          <component id="f1f6b" class="javax.swing.JTextField" binding="outputDirectory">
+            <constraints>
+              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <text value="lib"/>
+            </properties>
+          </component>
+          <component id="bb4ef" class="javax.swing.JCheckBox" binding="copyRuntimeFilesCheckBox">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="org/jetbrains/jet/plugin/JetBundle" key="kotlin.compiler.js.option.output.copy.files"/>
+            </properties>
           </component>
         </children>
       </grid>
