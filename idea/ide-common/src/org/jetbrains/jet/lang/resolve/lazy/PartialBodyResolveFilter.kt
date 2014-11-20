@@ -45,7 +45,7 @@ class PartialBodyResolveFilter(
     ;{
         assert(body.isAncestor(elementToResolve, strict = false))
 
-        body.accept(object : JetVisitorVoid(){
+        body.accept(object : JetVisitorVoid() {
             override fun visitNamedFunction(function: JetNamedFunction) {
                 super.visitNamedFunction(function)
 
@@ -288,7 +288,7 @@ class PartialBodyResolveFilter(
                     insideLoop = false
                 }
                 else {
-                    // do not make sense to search exits inside for as not necessary enter it at all
+                    // do not make sense to search exits inside while-loop as not necessary enter it at all
                     condition?.accept(this)
                 }
             }
@@ -343,14 +343,14 @@ class PartialBodyResolveFilter(
     /**
      * Recursively visits code but does not enter constructs that may not affect smart casts/control flow
      */
-    private inner abstract class ControlFlowVisitor : JetVisitorVoid() {
+    private abstract class ControlFlowVisitor : JetVisitorVoid() {
         override fun visitJetElement(element: JetElement) {
             if (element.noControlFlowInside()) return
             element.acceptChildren(this)
         }
-    }
 
-    private fun JetElement.noControlFlowInside() = this is JetFunction || this is JetClass || this is JetClassBody
+        private fun JetElement.noControlFlowInside() = this is JetFunction || this is JetClass || this is JetClassBody
+    }
 
     private fun addStatementsToResolveForPlaces(places: Collection<JetExpression>) {
         for (place in places) {
