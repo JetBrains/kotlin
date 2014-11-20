@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
@@ -54,9 +54,9 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         JetFile jetFile = JetTestUtils.loadJetFile(getProject(), file);
 
         Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
-        AnalyzeExhaust analyzeExhaust = JetTestUtils.analyzeFile(jetFile);
+        AnalysisResult analysisResult = JetTestUtils.analyzeFile(jetFile);
         List<JetDeclaration> declarations = jetFile.getDeclarations();
-        BindingContext bindingContext = analyzeExhaust.getBindingContext();
+        BindingContext bindingContext = analysisResult.getBindingContext();
         for (JetDeclaration declaration : declarations) {
             addDeclaration(data, bindingContext, declaration);
 

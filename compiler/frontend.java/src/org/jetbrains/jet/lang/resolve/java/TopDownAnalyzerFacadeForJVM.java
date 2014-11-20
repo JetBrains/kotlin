@@ -22,7 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
@@ -57,7 +57,7 @@ public enum TopDownAnalyzerFacadeForJVM {
     }
 
     @NotNull
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
+    public static AnalysisResult analyzeFilesWithJavaIntegration(
             Project project,
             Collection<JetFile> files,
             BindingTrace trace,
@@ -72,7 +72,7 @@ public enum TopDownAnalyzerFacadeForJVM {
                                                                 incrementalCacheProvider);
     }
 
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegrationWithCustomContext(
+    public static AnalysisResult analyzeFilesWithJavaIntegrationWithCustomContext(
             @NotNull Project project,
             @NotNull GlobalContext globalContext,
             @NotNull Collection<JetFile> files,
@@ -109,7 +109,7 @@ public enum TopDownAnalyzerFacadeForJVM {
             additionalProviders.add(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 
             injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, files, additionalProviders);
-            return AnalyzeExhaust.success(trace.getBindingContext(), module);
+            return AnalysisResult.success(trace.getBindingContext(), module);
         }
         finally {
             injector.destroy();

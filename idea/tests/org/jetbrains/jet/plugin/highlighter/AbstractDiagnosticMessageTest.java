@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -82,8 +82,8 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
         MessageType messageType = getMessageTypeDirective(directives);
 
         JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
-        AnalyzeExhaust analyzeExhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegration(psiFile);
-        BindingContext bindingContext = analyzeExhaust.getBindingContext();
+        AnalysisResult analysisResult = JvmResolveUtil.analyzeOneFileWithJavaIntegration(psiFile);
+        BindingContext bindingContext = analysisResult.getBindingContext();
 
         List<Diagnostic> diagnostics = ContainerUtil.filter(bindingContext.getDiagnostics().all(), new Condition<Diagnostic>() {
             @Override

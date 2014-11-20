@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.caches.resolve
 
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.analyzer.AnalyzeExhaust
+import org.jetbrains.jet.analyzer.AnalysisResult
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
@@ -28,7 +28,7 @@ public fun JetElement.getLazyResolveSession(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
 }
 
-public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalyzeExhaust {
+public fun JetElement.getAnalysisResults(vararg extraFiles: JetFile): AnalysisResult {
     return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this) + extraFiles.toList())
 }
 
@@ -48,8 +48,8 @@ public fun JetElement.getBindingContext(): BindingContext {
     return getAnalysisResults().bindingContext
 }
 
-public fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExhaust {
-    if (elements.isEmpty()) return AnalyzeExhaust.EMPTY
+public fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalysisResult {
+    if (elements.isEmpty()) return AnalysisResult.EMPTY
     val element = elements.first()
     return KotlinCacheService.getInstance(element.getProject()).getAnalysisResults(elements)
 }

@@ -23,7 +23,7 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -94,14 +94,14 @@ public class DescriptorRendererTest extends JetLiteFixture {
     private void doTest() throws IOException {
         String fileName = getTestName(false) + ".kt";
         JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
-        AnalyzeExhaust analyzeExhaust =
+        AnalysisResult analysisResult =
                 JvmResolveUtil.analyzeOneFileWithJavaIntegration(psiFile);
-        final BindingContext bindingContext = analyzeExhaust.getBindingContext();
+        final BindingContext bindingContext = analysisResult.getBindingContext();
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
 
         FqName fqName = psiFile.getPackageFqName();
         if (!fqName.isRoot()) {
-            PackageViewDescriptor packageDescriptor = analyzeExhaust.getModuleDescriptor().getPackage(fqName);
+            PackageViewDescriptor packageDescriptor = analysisResult.getModuleDescriptor().getPackage(fqName);
             descriptors.add(packageDescriptor);
         }
 

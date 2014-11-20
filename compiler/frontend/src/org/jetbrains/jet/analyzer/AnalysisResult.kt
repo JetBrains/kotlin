@@ -21,13 +21,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.ErrorUtils
 import kotlin.platform.platformStatic
 
-public data open class AnalyzeExhaust protected (
+public data open class AnalysisResult protected (
         public val bindingContext: BindingContext,
         public val moduleDescriptor: ModuleDescriptor
 ) {
 
     public val error: Throwable
-        get() = if (this is Error) this.exception else throw IllegalStateException("Should only be called for error analyze exhaust")
+        get() = if (this is Error) this.exception else throw IllegalStateException("Should only be called for error analysis result")
 
     public fun isError(): Boolean = this is Error
 
@@ -37,16 +37,16 @@ public data open class AnalyzeExhaust protected (
         }
     }
 
-    private class Error(bindingContext: BindingContext, val exception: Throwable) : AnalyzeExhaust(bindingContext, ErrorUtils.getErrorModule())
+    private class Error(bindingContext: BindingContext, val exception: Throwable) : AnalysisResult(bindingContext, ErrorUtils.getErrorModule())
 
     class object {
-        public val EMPTY: AnalyzeExhaust = success(BindingContext.EMPTY, ErrorUtils.getErrorModule())
+        public val EMPTY: AnalysisResult = success(BindingContext.EMPTY, ErrorUtils.getErrorModule())
 
-        platformStatic public fun success(bindingContext: BindingContext, module: ModuleDescriptor): AnalyzeExhaust {
-            return AnalyzeExhaust(bindingContext, module)
+        platformStatic public fun success(bindingContext: BindingContext, module: ModuleDescriptor): AnalysisResult {
+            return AnalysisResult(bindingContext, module)
         }
 
-        platformStatic public fun error(bindingContext: BindingContext, error: Throwable): AnalyzeExhaust {
+        platformStatic public fun error(bindingContext: BindingContext, error: Throwable): AnalysisResult {
             return Error(bindingContext, error)
         }
     }

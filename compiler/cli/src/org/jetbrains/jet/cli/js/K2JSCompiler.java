@@ -33,7 +33,7 @@ import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.OutputFileCollection;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.ExitCode;
@@ -198,9 +198,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static boolean analyzeAndReportErrors(@NotNull MessageCollector messageCollector,
             @NotNull final List<JetFile> sources, @NotNull final Config config) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
-        analyzerWithCompilerReport.analyzeAndReport(sources, new Function0<AnalyzeExhaust>() {
+        analyzerWithCompilerReport.analyzeAndReport(sources, new Function0<AnalysisResult>() {
             @Override
-            public AnalyzeExhaust invoke() {
+            public AnalysisResult invoke() {
                 return TopDownAnalyzerFacadeForJS.analyzeFiles(sources, Predicates.<PsiFile>alwaysTrue(), config);
             }
         });

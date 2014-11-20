@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.caches.resolve
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.analyzer.AnalyzeExhaust
+import org.jetbrains.jet.analyzer.AnalysisResult
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.containers.SLRUCache
 import com.intellij.psi.util.PsiModificationTracker
@@ -172,7 +172,7 @@ public class KotlinCacheService(val project: Project) {
         return getCacheToAnalyzeFiles(listOf(file)).getLazyResolveSession(file)
     }
 
-    public fun getAnalysisResults(elements: Collection<JetElement>): AnalyzeExhaust {
+    public fun getAnalysisResults(elements: Collection<JetElement>): AnalysisResult {
         val files = elements.map { it.getContainingJetFile() }.toSet()
         assertAreInSameModule(files)
 

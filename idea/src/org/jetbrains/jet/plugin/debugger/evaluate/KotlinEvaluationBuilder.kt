@@ -280,17 +280,17 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     throw EvaluateExceptionUtil.createEvaluateException(e.getMessage())
                 }
 
-                val analyzeExhaust = this.getAnalysisResults(createFlexibleTypesFile())
-                if (analyzeExhaust.isError()) {
-                    throw EvaluateExceptionUtil.createEvaluateException(analyzeExhaust.error)
+                val analysisResult = this.getAnalysisResults(createFlexibleTypesFile())
+                if (analysisResult.isError()) {
+                    throw EvaluateExceptionUtil.createEvaluateException(analysisResult.error)
                 }
 
-                val bindingContext = analyzeExhaust.bindingContext
+                val bindingContext = analysisResult.bindingContext
                 bindingContext.getDiagnostics().firstOrNull { it.getSeverity() == Severity.ERROR }?.let {
                     throw EvaluateExceptionUtil.createEvaluateException(DefaultErrorMessages.RENDERER.render(it))
                 }
 
-                analyzeExhaust
+                analysisResult
             }
     }
 }

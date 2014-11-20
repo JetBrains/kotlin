@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.analyzer.AnalyzeExhaust
+import org.jetbrains.jet.analyzer.AnalysisResult
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import com.intellij.util.containers.SLRUCache
@@ -100,7 +100,7 @@ private class KotlinResolveCache(
         CachedValueProvider.Result(results, PsiModificationTracker.MODIFICATION_COUNT, resolverProvider.exceptionTracker)
     }, false)
 
-    fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExhaust {
+    fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalysisResult {
         val slruCache = synchronized(analysisResults) {
             analysisResults.getValue()!!
         }
@@ -113,24 +113,24 @@ private class KotlinResolveCache(
         val withError = results.firstOrNull { it.isError() }
         val bindingContext = CompositeBindingContext.create(results.map { it.bindingContext })
         return if (withError != null)
-                   AnalyzeExhaust.error(bindingContext, withError.error)
+                   AnalysisResult.error(bindingContext, withError.error)
                else
                     //TODO: (module refactoring) several elements are passed here in debugger
-                   AnalyzeExhaust.success(bindingContext, getLazyResolveSession(elements.first()).getModuleDescriptor())
+                   AnalysisResult.success(bindingContext, getLazyResolveSession(elements.first()).getModuleDescriptor())
     }
 }
 
 private class PerFileAnalysisCache(val file: JetFile, val resolveSession: ResolveSessionForBodies) {
-    private val cache = HashMap<PsiElement, AnalyzeExhaust>()
+    private val cache = HashMap<PsiElement, AnalysisResult>()
 
-    private fun lookUp(analyzableElement: JetElement): AnalyzeExhaust? {
+    private fun lookUp(analyzableElement: JetElement): AnalysisResult? {
         // Looking for parent elements that are already analyzed
         // Also removing all elements whose parents are already analyzed, to guarantee consistency
         val descendantsOfCurrent = arrayListOf<PsiElement>()
         val toRemove = hashSetOf<PsiElement>()
 
         var current: PsiElement? = analyzableElement
-        var result: AnalyzeExhaust? = null
+        var result: AnalysisResult? = null
         while (current != null) {
             val cached = cache[current]
             if (cached != null) {
@@ -148,12 +148,12 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
         return result
     }
 
-    fun getAnalysisResults(element: JetElement): AnalyzeExhaust {
+    fun getAnalysisResults(element: JetElement): AnalysisResult {
         assert (element.getContainingJetFile() == file, "Wrong file. Expected $file, but was ${element.getContainingJetFile()}")
 
         val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element)
 
-        return synchronized(this) { (): AnalyzeExhaust ->
+        return synchronized(this) { (): AnalysisResult ->
 
             val cached = lookUp(analyzableParent)
             if (cached != null) return@synchronized cached
@@ -166,10 +166,10 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
         }
     }
 
-    private fun analyze(analyzableElement: JetElement): AnalyzeExhaust {
+    private fun analyze(analyzableElement: JetElement): AnalysisResult {
         val project = analyzableElement.getProject()
         if (DumbService.isDumb(project)) {
-            return AnalyzeExhaust.EMPTY
+            return AnalysisResult.EMPTY
         }
 
         try {
@@ -182,7 +182,7 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
             DiagnosticUtils.throwIfRunningOnServer(e)
             LOG.error(e)
 
-            return AnalyzeExhaust.error(BindingContext.EMPTY, e)
+            return AnalysisResult.error(BindingContext.EMPTY, e)
         }
     }
 }
@@ -222,10 +222,10 @@ private object KotlinResolveDataProvider {
                     ?: element.getContainingJetFile()
     }
 
-    fun analyze(project: Project, resolveSession: ResolveSessionForBodies, analyzableElement: JetElement): AnalyzeExhaust {
+    fun analyze(project: Project, resolveSession: ResolveSessionForBodies, analyzableElement: JetElement): AnalysisResult {
         try {
             if (analyzableElement is JetCodeFragment) {
-                return AnalyzeExhaust.success(
+                return AnalysisResult.success(
                         analyzeExpressionCodeFragment(resolveSession, analyzableElement),
                         resolveSession.getModuleDescriptor()
                 )
@@ -259,7 +259,7 @@ private object KotlinResolveDataProvider {
                     ),
                     listOf(analyzableElement)
             )
-            return AnalyzeExhaust.success(
+            return AnalysisResult.success(
                     trace.getBindingContext(),
                     resolveSession.getModuleDescriptor()
             )
@@ -271,7 +271,7 @@ private object KotlinResolveDataProvider {
             DiagnosticUtils.throwIfRunningOnServer(e)
             LOG.error(e)
 
-            return AnalyzeExhaust.error(BindingContext.EMPTY, e)
+            return AnalysisResult.error(BindingContext.EMPTY, e)
         }
     }
 

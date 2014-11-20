@@ -20,7 +20,7 @@ import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
@@ -40,26 +40,26 @@ public class GenerationUtils {
 
     @NotNull
     public static GenerationState compileFileGetGenerationStateForTest(@NotNull JetFile psiFile) {
-        AnalyzeExhaust analyzeExhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile);
-        return compileFilesGetGenerationState(psiFile.getProject(), analyzeExhaust, Collections.singletonList(psiFile));
+        AnalysisResult analysisResult = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile);
+        return compileFilesGetGenerationState(psiFile.getProject(), analysisResult, Collections.singletonList(psiFile));
     }
 
     @NotNull
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files) {
-        AnalyzeExhaust analyzeExhaust = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
+        AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 project, files, Predicates.<PsiFile>alwaysTrue());
-        return compileFilesGetGenerationState(project, analyzeExhaust, files);
+        return compileFilesGetGenerationState(project, analysisResult, files);
     }
 
     @NotNull
     public static GenerationState compileFilesGetGenerationState(
             @NotNull Project project,
-            @NotNull AnalyzeExhaust analyzeExhaust,
+            @NotNull AnalysisResult analysisResult,
             @NotNull List<JetFile> files
     ) {
-        analyzeExhaust.throwIfError();
-        GenerationState state = new GenerationState(project, ClassBuilderFactories.TEST, analyzeExhaust.getModuleDescriptor(),
-                                                    analyzeExhaust.getBindingContext(), files);
+        analysisResult.throwIfError();
+        GenerationState state = new GenerationState(project, ClassBuilderFactories.TEST, analysisResult.getModuleDescriptor(),
+                                                    analysisResult.getBindingContext(), files);
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }

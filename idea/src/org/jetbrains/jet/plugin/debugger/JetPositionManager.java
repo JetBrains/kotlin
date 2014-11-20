@@ -38,7 +38,7 @@ import com.sun.jdi.request.ClassPrepareRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -326,11 +326,11 @@ public class JetPositionManager implements PositionManager {
                     GlobalSearchScope packageFacadeScope = key.second.contentScope();
                     Collection<JetFile> packageFiles = findFilesWithExactPackage(key.first, packageFacadeScope, project);
 
-                    AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResultsForElements(packageFiles);
-                    analyzeExhaust.throwIfError();
+                    AnalysisResult analysisResult = ResolvePackage.getAnalysisResultsForElements(packageFiles);
+                    analysisResult.throwIfError();
 
                     GenerationState state = new GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION,
-                                                                analyzeExhaust.getModuleDescriptor(), analyzeExhaust.getBindingContext(),
+                                                                analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(),
                                                                 new ArrayList<JetFile>(packageFiles)
                     );
                     state.beforeCompile();

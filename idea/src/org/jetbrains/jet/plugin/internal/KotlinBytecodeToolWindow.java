@@ -37,7 +37,7 @@ import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.OutputFileCollection;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.KotlinCodegenFacade;
@@ -107,12 +107,12 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
             GenerationState state;
             try {
-                AnalyzeExhaust exhaust = ResolvePackage.getAnalysisResults(jetFile);
-                if (exhaust.isError()) {
-                    return printStackTraceToString(exhaust.getError());
+                AnalysisResult result = ResolvePackage.getAnalysisResults(jetFile);
+                if (result.isError()) {
+                    return printStackTraceToString(result.getError());
                 }
                 state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
-                                            exhaust.getModuleDescriptor(), exhaust.getBindingContext(),
+                                            result.getModuleDescriptor(), result.getBindingContext(),
                                             Collections.singletonList(jetFile), !enableAssertions.isSelected(), !enableAssertions.isSelected(),
                                             GenerationState.GenerateClassFilter.GENERATE_ALL,
                                             !enableInline.isSelected(), !enableOptimization.isSelected(), null, null,

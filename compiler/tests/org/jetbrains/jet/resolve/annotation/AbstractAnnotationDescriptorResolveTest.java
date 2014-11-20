@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -317,8 +317,8 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     protected JetFile getFile(@NotNull String content) {
         JetFile ktFile = JetTestUtils.createFile("dummy.kt", content, getProject());
-        AnalyzeExhaust analyzeExhaust = analyzeFile(ktFile);
-        context = analyzeExhaust.getBindingContext();
+        AnalysisResult analysisResult = analyzeFile(ktFile);
+        context = analysisResult.getBindingContext();
 
         return ktFile;
     }
@@ -336,7 +336,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     }
 
     @NotNull
-    protected AnalyzeExhaust analyzeFile(@NotNull JetFile ktFile) {
+    protected AnalysisResult analyzeFile(@NotNull JetFile ktFile) {
         return JetTestUtils.analyzeFile(ktFile);
     }
 

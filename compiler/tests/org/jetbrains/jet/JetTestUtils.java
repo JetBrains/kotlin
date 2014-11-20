@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
@@ -93,7 +93,7 @@ import static org.jetbrains.jet.ConfigurationKind.ALL;
 import static org.jetbrains.jet.ConfigurationKind.JDK_AND_ANNOTATIONS;
 import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
 import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
-import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class JetTestUtils {
@@ -244,12 +244,12 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static AnalyzeExhaust analyzeFile(@NotNull JetFile file) {
+    public static AnalysisResult analyzeFile(@NotNull JetFile file) {
         return JvmResolveUtil.analyzeOneFileWithJavaIntegration(file);
     }
 
     @NotNull
-    public static AnalyzeExhaust analyzeFileWithoutBody(@NotNull JetFile file) {
+    public static AnalysisResult analyzeFileWithoutBody(@NotNull JetFile file) {
         return JvmResolveUtil.analyzeFilesWithJavaIntegration(file.getProject(),
                                                               Collections.singleton(file),
                                                               Predicates.<PsiFile>alwaysFalse());
@@ -486,7 +486,7 @@ public class JetTestUtils {
             @NotNull Disposable disposable
     ) throws IOException {
         if (!ktFiles.isEmpty()) {
-            compileKotlinToDirAndGetAnalyzeExhaust(ktFiles, outDir, disposable, ALL);
+            compileKotlinToDirAndGetAnalysisResult(ktFiles, outDir, disposable, ALL);
         }
         else {
             boolean mkdirs = outDir.mkdirs();

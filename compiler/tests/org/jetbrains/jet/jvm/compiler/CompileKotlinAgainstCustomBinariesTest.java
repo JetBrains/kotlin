@@ -24,7 +24,7 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -82,11 +82,11 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     private PackageViewDescriptor analyzeFileToPackageView(@NotNull File... extraClassPath) throws IOException {
         Project project = createEnvironment(Arrays.asList(extraClassPath)).getProject();
 
-        AnalyzeExhaust exhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
+        AnalysisResult result = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                 JetTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt"))
         );
 
-        PackageViewDescriptor packageView = exhaust.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
+        PackageViewDescriptor packageView = result.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
         assertNotNull("Failed to find package: " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, packageView);
         return packageView;
     }
@@ -174,12 +174,12 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         Project project = createEnvironment(Collections.singletonList(tmpdir)).getProject();
 
-        AnalyzeExhaust exhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegration(
+        AnalysisResult result = JvmResolveUtil.analyzeOneFileWithJavaIntegration(
                 JetTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt"))
         );
-        exhaust.throwIfError();
+        result.throwIfError();
 
-        BindingContext bindingContext = exhaust.getBindingContext();
+        BindingContext bindingContext = result.getBindingContext();
         AnalyzerWithCompilerReport.reportDiagnostics(bindingContext.getDiagnostics(), MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         assertEquals("There should be no diagnostics", 0, Iterables.size(bindingContext.getDiagnostics()));

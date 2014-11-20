@@ -144,9 +144,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>();
 
     {
-        val exhaust = config.currentFile.getAnalysisResults()
-        currentFileContext = exhaust.bindingContext
-        currentFileModule = exhaust.moduleDescriptor
+        val result = config.currentFile.getAnalysisResults()
+        currentFileContext = result.bindingContext
+        currentFileModule = result.moduleDescriptor
     }
 
     public var placement: CallablePlacement by Delegates.notNull()

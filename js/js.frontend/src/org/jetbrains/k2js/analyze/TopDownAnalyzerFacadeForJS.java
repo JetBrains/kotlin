@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
@@ -58,7 +58,7 @@ public final class TopDownAnalyzerFacadeForJS {
 
     //TODO: refactor
     @NotNull
-    public static AnalyzeExhaust analyzeFiles(
+    public static AnalysisResult analyzeFiles(
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull Config config
@@ -91,7 +91,7 @@ public final class TopDownAnalyzerFacadeForJS {
                                            files :
                                            Config.withJsLibAdded(files, config);
             injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, allFiles);
-            return AnalyzeExhaust.success(trace.getBindingContext(), owner);
+            return AnalysisResult.success(trace.getBindingContext(), owner);
         }
         finally {
             injector.destroy();

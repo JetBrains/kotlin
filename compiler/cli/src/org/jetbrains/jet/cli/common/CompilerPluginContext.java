@@ -30,7 +30,7 @@ import java.util.List;
 public class CompilerPluginContext {
     @NotNull
     private final Project project;
-    //TODO: should we in fact store AnalyzeExhaust here?
+    //TODO: should we in fact store AnalysisResult here?
     @NotNull
     private final BindingContext context;
     @NotNull

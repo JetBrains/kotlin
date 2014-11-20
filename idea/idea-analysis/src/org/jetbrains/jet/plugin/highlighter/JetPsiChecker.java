@@ -35,7 +35,7 @@ import com.intellij.xml.util.XmlStringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.Severity;
@@ -101,12 +101,12 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
 
         JetFile file = (JetFile) element.getContainingFile();
 
-        AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResults(file);
-        if (analyzeExhaust.isError()) {
-            throw new ProcessCanceledException(analyzeExhaust.getError());
+        AnalysisResult analysisResult = ResolvePackage.getAnalysisResults(file);
+        if (analysisResult.isError()) {
+            throw new ProcessCanceledException(analysisResult.getError());
         }
 
-        BindingContext bindingContext = analyzeExhaust.getBindingContext();
+        BindingContext bindingContext = analysisResult.getBindingContext();
 
         for (HighlightingVisitor visitor : getAfterAnalysisVisitor(holder, bindingContext)) {
             element.accept(visitor);
