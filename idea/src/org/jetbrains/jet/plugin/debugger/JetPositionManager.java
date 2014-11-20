@@ -303,11 +303,11 @@ public class JetPositionManager implements PositionManager {
 
     private static JetTypeMapper createTypeMapperForLibraryFile(@Nullable PsiElement notPositionedElement, @NotNull JetFile file) {
         JetElement element = getElementToCreateTypeMapperForLibraryFile(notPositionedElement);
-        ResolutionFacade resolveSession = ResolvePackage.getLazyResolveSession(element);
+        AnalysisResult analysisResult = ResolvePackage.analyzeAndGetResult(element);
 
         GenerationState state = new GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION,
-                                                    resolveSession.findModuleDescriptor(element),
-                                                    resolveSession.analyze(element),
+                                                    analysisResult.getModuleDescriptor(),
+                                                    analysisResult.getBindingContext(),
                                                     Collections.singletonList(file)
         );
         state.beforeCompile();

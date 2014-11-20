@@ -29,6 +29,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.di.InjectorForMacros;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -39,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.util.extensionsUtils.ExtensionsUtilsPackage;
 
@@ -64,16 +64,16 @@ public abstract class BaseJetVariableMacro extends Macro {
         JetExpression contextExpression = findContextExpression(psiFile, context.getStartOffset());
         if (contextExpression == null) return null;
 
-        ResolutionFacade resolveSession = ResolvePackage.getLazyResolveSession((JetFile) psiFile);
+        AnalysisResult analysisResult = ResolvePackage.analyzeAndGetResult(contextExpression);
 
-        BindingContext bindingContext = resolveSession.analyze(contextExpression);
+        BindingContext bindingContext = analysisResult.getBindingContext();
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
         if (scope == null) {
             return null;
         }
 
         ExpressionTypingComponents components =
-                new InjectorForMacros(project, resolveSession.findModuleDescriptor(contextExpression)).getExpressionTypingComponents();
+                new InjectorForMacros(project, analysisResult.getModuleDescriptor()).getExpressionTypingComponents();
 
         DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
 

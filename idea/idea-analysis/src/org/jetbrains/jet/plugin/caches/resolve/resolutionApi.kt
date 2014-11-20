@@ -36,6 +36,11 @@ public fun JetElement.analyze(): BindingContext {
     return getLazyResolveSession().analyze(this)
 }
 
+public fun JetElement.analyzeAndGetResult(): AnalysisResult {
+    val resolutionFacade = getLazyResolveSession()
+    return AnalysisResult.success(resolutionFacade.analyze(this), resolutionFacade.findModuleDescriptor(this))
+}
+
 public fun JetElement.findModuleDescriptor(): ModuleDescriptor {
     return getLazyResolveSession().findModuleDescriptor(this)
 }

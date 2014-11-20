@@ -34,8 +34,8 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.analyzer.AnalyzerPackage;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -49,7 +49,6 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
@@ -124,9 +123,8 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             }
         }
 
-        ResolutionFacade resolveSession = ResolvePackage.getLazyResolveSession(expression);
-        final BindingContext bindingContext = resolveSession.analyze(expression);
-        ModuleDescriptor moduleDescriptorForElement = resolveSession.findModuleDescriptor(expression);
+        AnalysisResult analysisResult = ResolvePackage.analyzeAndGetResult(expression);
+        final BindingContext bindingContext = analysisResult.getBindingContext();
         final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (scope != null) {
@@ -134,7 +132,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
             ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
             JetType typeNoExpectedType = AnalyzerPackage.computeTypeInfoInContext(
-                    expression, scope, bindingTrace, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, moduleDescriptorForElement
+                    expression, scope, bindingTrace, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, analysisResult.getModuleDescriptor()
             ).getType();
             if (expressionType != null && typeNoExpectedType != null && !JetTypeChecker.DEFAULT.equalTypes(expressionType,
                                                                                                            typeNoExpectedType)) {
