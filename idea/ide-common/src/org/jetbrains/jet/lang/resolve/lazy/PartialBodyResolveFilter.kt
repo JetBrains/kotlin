@@ -38,7 +38,6 @@ class PartialBodyResolveFilter(
 ) : (JetElement) -> Boolean {
 
     private val statementsToResolve = HashSet<JetExpression>()
-    private val processedBlocks = HashSet<JetBlockExpression>()
 
     private val nothingFunctionNames = HashSet(probablyNothingCallableNamesService.functionNames())
     private val nothingPropertyNames = probablyNothingCallableNamesService.propertyNames()
@@ -63,13 +62,7 @@ class PartialBodyResolveFilter(
         addStatementsToResolve(elementToResolve)
     }
 
-    override fun invoke(statement: JetElement): Boolean {
-        val block = statement.getParent() as JetBlockExpression
-        if (block !in processedBlocks) {
-            processBlock(block)
-        }
-        return statement in statementsToResolve
-    }
+    override fun invoke(statement: JetElement) = statement in statementsToResolve
 
     tailRecursive
     private fun addStatementsToResolve(element: JetElement) {
@@ -77,11 +70,10 @@ class PartialBodyResolveFilter(
         val parent = element.getParent() as? JetElement ?: return
 
         if (parent is JetBlockExpression) {
-            processBlock(parent)
             if (element in statementsToResolve) return // already processed
 
             if (element is JetExpression) {
-                statementsToResolve.add(element)
+                addStatementToResolve(element)
             }
 
             for (statement in element.siblings(forward = false, withItself = false)) {
@@ -90,11 +82,11 @@ class PartialBodyResolveFilter(
 
                 val smartCastPlaces = potentialSmartCastPlaces(statement)
                 if (!smartCastPlaces.isEmpty()) {
-                    statementsToResolve.add(statement)
+                    addStatementToResolve(statement)
                     statementsToResolve.addStatementsForPlaces(smartCastPlaces.values().flatMap { it })
                 }
                 else if (statement is JetDeclaration) {
-                    statementsToResolve.add(statement)
+                    addStatementToResolve(statement)
                 }
             }
         }
@@ -102,12 +94,24 @@ class PartialBodyResolveFilter(
         addStatementsToResolve(parent)
     }
 
-    private fun processBlock(block: JetBlockExpression) {
-        if (processedBlocks.add(block)) {
-            val lastStatement = block.lastStatement()
-            if (lastStatement != null && lastStatement !in statementsToResolve && isValueNeeded(block)) {
-                addStatementsToResolve(lastStatement)
-            }
+    private fun addStatementToResolve(statement: JetExpression) {
+        assert(statement.getParent() is JetBlockExpression)
+        if (statementsToResolve.add(statement)) {
+            // search for code blocks inside statement and make sure its values will be resolved
+            statement.accept(object : JetVisitorVoid(){
+                override fun visitBlockExpression(expression: JetBlockExpression) {
+                    if (isValueNeeded(expression)) {
+                        val value = expression.lastStatement()
+                        if (value != null) {
+                            addStatementsToResolve(value)
+                        }
+                    }
+                }
+
+                override fun visitJetElement(element: JetElement) {
+                    element.acceptChildren(this)
+                }
+            })
         }
     }
 
