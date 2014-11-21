@@ -37,12 +37,12 @@ class PartialBodyResolveFilter(
         probablyNothingCallableNames: ProbablyNothingCallableNames
 ) : org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider() {
 
-    private val statementTree = StatementTree()
+    private val statementMarks = StatementMarks()
 
     private val nothingFunctionNames = HashSet(probablyNothingCallableNames.functionNames())
     private val nothingPropertyNames = probablyNothingCallableNames.propertyNames()
 
-    override val filter: ((JetElement) -> Boolean)? = { it is JetExpression && statementTree.statementMark(it) != MarkLevel.SKIP }
+    override val filter: ((JetElement) -> Boolean)? = { it is JetExpression && statementMarks.statementMark(it) != MarkLevel.SKIP }
 
     ;{
         assert(declaration.isAncestor(elementToResolve))
@@ -61,25 +61,23 @@ class PartialBodyResolveFilter(
             }
         })
 
-        statementTree.mark(elementToResolve, MarkLevel.NEED_COMPLETION)
-        statementTree.blocks(declaration).forEach {
-            processBlock(it)
-        }
+        statementMarks.mark(elementToResolve, MarkLevel.NEED_COMPLETION)
+        declaration.blocks().forEach { processBlock(it) }
     }
 
     //TODO: do..while is special case
 
     private fun processBlock(block: JetBlockExpression): NameFilter {
         if (isValueNeeded(block)) {
-            block.lastStatement()?.let { statementTree.mark(it, MarkLevel.NEED_REFERENCE_RESOLVE) }
+            block.lastStatement()?.let { statementMarks.mark(it, MarkLevel.NEED_REFERENCE_RESOLVE) }
         }
 
         val nameFilter = NameFilter()
-        if (!statementTree.hasMarks(block, MarkLevel.NEED_REFERENCE_RESOLVE)) return nameFilter
+        if (!statementMarks.hasMarks(block, MarkLevel.NEED_REFERENCE_RESOLVE)) return nameFilter
 
         val startStatement = block.getLastChild().siblings(forward = false)
                 .filterIsInstance<JetExpression>()
-                .first { statementTree.statementMark(it) > MarkLevel.TAKE }
+                .first { statementMarks.statementMark(it) > MarkLevel.TAKE }
 
         for (statement in startStatement.siblings(forward = false)) {
             if (statement !is JetExpression) continue
@@ -87,7 +85,7 @@ class PartialBodyResolveFilter(
             if (statement is JetNamedDeclaration) {
                 val name = statement.getName()
                 if (name != null && nameFilter.accepts(name)) {
-                    statementTree.mark(statement, MarkLevel.NEED_REFERENCE_RESOLVE)
+                    statementMarks.mark(statement, MarkLevel.NEED_REFERENCE_RESOLVE)
                 }
             }
             else if (statement is JetMultiDeclaration) {
@@ -95,12 +93,12 @@ class PartialBodyResolveFilter(
                     val name = it.getName()
                     name != null && nameFilter.accepts(name)
                 }) {
-                    statementTree.mark(statement, MarkLevel.NEED_REFERENCE_RESOLVE)
+                    statementMarks.mark(statement, MarkLevel.NEED_REFERENCE_RESOLVE)
                 }
             }
 
             fun updateNameFilter() {
-                val level = statementTree.statementMark(statement)
+                val level = statementMarks.statementMark(statement)
                 when (level) {
                     MarkLevel.NEED_REFERENCE_RESOLVE -> nameFilter.addUsedNames(statement)
                     MarkLevel.NEED_COMPLETION -> nameFilter.addAllNames()
@@ -115,14 +113,14 @@ class PartialBodyResolveFilter(
                     //TODO: do we really need correct resolve for ALL smart cast places?
                     smartCastPlaces.values()
                             .flatMap { it }
-                            .forEach { statementTree.mark(it, MarkLevel.NEED_REFERENCE_RESOLVE) }
+                            .forEach { statementMarks.mark(it, MarkLevel.NEED_REFERENCE_RESOLVE) }
                     updateNameFilter()
                 }
             }
 
-            val level = statementTree.statementMark(statement)
+            val level = statementMarks.statementMark(statement)
             if (level > MarkLevel.TAKE) {
-                for (nestedBlock in statementTree.blocks(statement)) {
+                for (nestedBlock in statement.blocks()) {
                     val childFilter = processBlock(nestedBlock)
                     nameFilter.addNames(childFilter)
                 }
@@ -371,8 +369,6 @@ class PartialBodyResolveFilter(
         private fun JetElement.noControlFlowInside() = this is JetFunction || this is JetClass || this is JetClassBody
     }
 
-    private fun PsiElement.isStatement() = this is JetExpression && getParent() is JetBlockExpression
-
     private data class SmartCastName(val receiverName: SmartCastName?, val selectorName: String) {
         override fun toString(): String = if (receiverName != null) receiverName.toString() + "." + selectorName else selectorName
 
@@ -403,36 +399,6 @@ class PartialBodyResolveFilter(
             else -> null
         }
     }
-
-//    private fun JetExpression?.isNullLiteral() = this?.getNode()?.getElementType() == JetNodeTypes.NULL
-
-    private fun JetExpression?.isTrueConstant()
-            = this != null && getNode()?.getElementType() == JetNodeTypes.BOOLEAN_CONSTANT && getText() == "true"
-
-    //TODO: review logic
-    private fun isValueNeeded(expression: JetExpression): Boolean {
-        val parent = expression.getParent()
-        return when (parent) {
-            is JetBlockExpression -> expression == parent.lastStatement() && isValueNeeded(parent)
-
-            is JetContainerNode -> { //TODO - not quite correct
-                val pparent = parent.getParent() as? JetExpression
-                pparent != null && isValueNeeded(pparent)
-            }
-
-            is JetDeclarationWithBody -> {
-                if (expression == parent.getBodyExpression())
-                    !parent.hasBlockBody() && !parent.hasDeclaredReturnType()
-                else
-                    true
-            }
-
-            else -> true
-        }
-    }
-
-    private fun JetBlockExpression.lastStatement(): JetExpression?
-            = getLastChild()?.siblings(forward = false)?.firstIsInstanceOrNull<JetExpression>()
 
     //TODO: declarations with special names (e.g. "get")
     private class NameFilter {
@@ -484,28 +450,9 @@ class PartialBodyResolveFilter(
         NEED_COMPLETION
     }
 
-    private inner class StatementTree {
+    private inner class StatementMarks {
         private val statementMarks = HashMap<JetExpression, MarkLevel>()
         private val blockLevels = HashMap<JetBlockExpression, MarkLevel>()
-
-        val topLevelBlocks: Collection<JetBlockExpression> = blocks(declaration)
-
-        fun blocks(statement: JetExpression): Collection<JetBlockExpression>
-                = blocks(statement : JetElement)
-
-        private fun blocks(element: JetElement): Collection<JetBlockExpression> {
-            val result = ArrayList<JetBlockExpression>(1)
-            element.accept(object : JetVisitorVoid() {
-                override fun visitBlockExpression(expression: JetBlockExpression) {
-                    result.add(expression)
-                }
-
-                override fun visitElement(element: PsiElement) {
-                    element.acceptChildren(this)
-                }
-            })
-            return result
-        }
 
         fun mark(element: PsiElement, level: MarkLevel) {
             var e = element
@@ -537,6 +484,55 @@ class PartialBodyResolveFilter(
             val level = blockLevels[block] ?: return minLevel == MarkLevel.SKIP
             return level >= minLevel
         }
+    }
+
+    class object {
+        private fun JetElement.blocks(): Collection<JetBlockExpression> {
+            val result = ArrayList<JetBlockExpression>(1)
+            this.accept(object : JetVisitorVoid() {
+                override fun visitBlockExpression(expression: JetBlockExpression) {
+                    result.add(expression)
+                }
+
+                override fun visitElement(element: PsiElement) {
+                    element.acceptChildren(this)
+                }
+            })
+            return result
+        }
+
+        //    private fun JetExpression?.isNullLiteral() = this?.getNode()?.getElementType() == JetNodeTypes.NULL
+
+        private fun JetExpression?.isTrueConstant()
+                = this != null && getNode()?.getElementType() == JetNodeTypes.BOOLEAN_CONSTANT && getText() == "true"
+
+        //TODO: review logic
+        private fun isValueNeeded(expression: JetExpression): Boolean {
+            val parent = expression.getParent()
+            return when (parent) {
+                is JetBlockExpression -> expression == parent.lastStatement() && isValueNeeded(parent)
+
+                is JetContainerNode -> { //TODO - not quite correct
+                    val pparent = parent.getParent() as? JetExpression
+                    pparent != null && isValueNeeded(pparent)
+                }
+
+                is JetDeclarationWithBody -> {
+                    if (expression == parent.getBodyExpression())
+                        !parent.hasBlockBody() && !parent.hasDeclaredReturnType()
+                    else
+                        true
+                }
+
+                else -> true
+            }
+        }
+
+        private fun JetBlockExpression.lastStatement(): JetExpression?
+                = getLastChild()?.siblings(forward = false)?.firstIsInstanceOrNull<JetExpression>()
+
+        private fun PsiElement.isStatement() = this is JetExpression && getParent() is JetBlockExpression
+
     }
 }
 
