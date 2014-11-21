@@ -28,6 +28,7 @@ import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lang.psi.psiUtil.isProbablyNothing
 import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
+import org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider
 
 //TODO: do resolve anonymous object's body
 
@@ -35,7 +36,7 @@ class PartialBodyResolveFilter(
         elementToResolve: JetElement,
         private val declaration: JetDeclaration,
         probablyNothingCallableNames: ProbablyNothingCallableNames
-) : org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider() {
+) : PartialBodyResolveProvider() {
 
     private val statementMarks = StatementMarks()
 
@@ -46,6 +47,8 @@ class PartialBodyResolveFilter(
 
     ;{
         assert(declaration.isAncestor(elementToResolve))
+        assert(!JetPsiUtil.isLocal(declaration),
+               "Should never be invoked on local declaration otherwise we may miss some local declarations with type Nothing")
 
         declaration.accept(object : JetVisitorVoid() {
             override fun visitNamedFunction(function: JetNamedFunction) {
