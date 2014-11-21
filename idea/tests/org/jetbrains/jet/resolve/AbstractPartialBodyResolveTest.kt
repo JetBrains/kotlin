@@ -33,12 +33,14 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 import org.jetbrains.jet.lang.psi.psiUtil.parents
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.jet.lang.psi.JetPsiFactory
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.psi.JetReferenceExpression
+import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 
 public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = JetTestCaseBuilder.getHomeDirectory()
@@ -49,24 +51,37 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
 
         val file = myFixture.getFile() as JetFile
         val editor = myFixture.getEditor()
-        val offset = editor.getCaretModel().getOffset()
-        val element = file.findElementAt(offset)
-        val refExpression = element.getParentByType(javaClass<JetSimpleNameExpression>()) ?: error("No JetSimpleNameExpression at caret")
+        val selectionModel = editor.getSelectionModel()
+        val expression = if (selectionModel.hasSelection()) {
+            PsiTreeUtil.findElementOfClassAtRange(file, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd(), javaClass<JetExpression>())
+                ?: error("No JetExpression at selection range")
+        }
+        else {
+            val offset = editor.getCaretModel().getOffset()
+            val element = file.findElementAt(offset)
+            element.getParentByType(javaClass<JetSimpleNameExpression>()) ?: error("No JetSimpleNameExpression at caret")
+        }
 
         val resolutionFacade = file.getResolutionFacade()
 
         // optimized resolve
-        val (target1, type1, processedStatements1) = doResolve(refExpression, resolutionFacade.analyzeWithPartialBodyResolve(refExpression))
+        val (target1, type1, processedStatements1) = doResolve(expression, resolutionFacade.analyzeWithPartialBodyResolve(expression))
 
         // full body resolve
-        val (target2, type2, processedStatements2) = doResolve(refExpression, resolutionFacade.analyze(refExpression))
+        val (target2, type2, processedStatements2) = doResolve(expression, resolutionFacade.analyze(expression))
 
         val set = HashSet(processedStatements2)
         assert (set.containsAll(processedStatements1))
         set.removeAll(processedStatements1)
 
         val builder = StringBuilder()
-        builder.append("Resolve target: ${target2.presentation(type2)}\n")
+
+        if (expression is JetReferenceExpression) {
+            builder.append("Resolve target: ${target2.presentation(type2)}\n")
+        }
+        else {
+            builder.append("Expression type:${type2.presentation()}\n")
+        }
         builder.append("----------------------------------------------\n")
 
         val skippedStatements = set
@@ -85,14 +100,26 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
                 null
         )
         val fileText = file.getText()
-        val newCaretOffset = editor.getCaretModel().getOffset()
-        builder.append(fileText.substring(0, newCaretOffset))
-        builder.append("<caret>")
-        builder.append(fileText.substring(newCaretOffset))
+        if (selectionModel.hasSelection()) {
+            val start = selectionModel.getSelectionStart()
+            val end = selectionModel.getSelectionEnd()
+            builder.append(fileText.substring(0, start))
+            builder.append("<selection>")
+            builder.append(fileText.substring(start, end))
+            builder.append("<selection>")
+            builder.append(fileText.substring(end))
+        }
+        else {
+            val newCaretOffset = editor.getCaretModel().getOffset()
+            builder.append(fileText.substring(0, newCaretOffset))
+            builder.append("<caret>")
+            builder.append(fileText.substring(newCaretOffset))
+        }
 
         JetTestUtils.assertEqualsToFile(File(testPath.substringBeforeLast('.') + ".dump"), builder.toString())
 
-        Assert.assertEquals(target2.presentation(type2), target1.presentation(type1))
+        Assert.assertEquals(target2.presentation(null), target1.presentation(null))
+        Assert.assertEquals(type2.presentation(), type1.presentation())
     }
 
     private data class ResolveData(
@@ -101,20 +128,20 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
             val processedStatements: Collection<JetExpression>
     )
 
-    private fun doResolve(refExpression: JetSimpleNameExpression, bindingContext: BindingContext): ResolveData {
-        val target = bindingContext[BindingContext.REFERENCE_TARGET, refExpression]
+    private fun doResolve(expression: JetExpression, bindingContext: BindingContext): ResolveData {
+        val target = if (expression is JetReferenceExpression) bindingContext[BindingContext.REFERENCE_TARGET, expression] else null
 
         val processedStatements = bindingContext.getSliceContents(BindingContext.PROCESSED)
                 .filter { it.value }
                 .map { it.key }
                 .filter { it.getParent() is JetBlockExpression }
 
-        val receiver = refExpression.getReceiverExpression()
+        val receiver = (expression as? JetSimpleNameExpression)?.getReceiverExpression()
         val expressionWithType = if (receiver != null) {
-            refExpression.getParent() as? JetExpression ?: refExpression
+            expression.getParent() as? JetExpression ?: expression
         }
         else {
-            refExpression
+            expression
         }
         val type = bindingContext[BindingContext.EXPRESSION_TYPE, expressionWithType]
 
@@ -128,8 +155,11 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
 
         val renderType = this is VariableDescriptor && type != this.getReturnType()
         if (!renderType) return s
-        return s + " smart-cast to " + if (type != null) DescriptorRenderer.COMPACT.renderType(type) else "unknown type"
+        return "$s smart-cast to ${type.presentation()}"
     }
+
+    private fun JetType?.presentation()
+            = if (this != null) DescriptorRenderer.COMPACT.renderType(this) else "unknown type"
 
     private fun JetExpression.compactPresentation(): String {
         val text = getText()
