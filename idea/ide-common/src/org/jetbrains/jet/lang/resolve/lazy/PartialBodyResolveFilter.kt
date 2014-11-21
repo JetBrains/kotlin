@@ -268,7 +268,7 @@ class PartialBodyResolveFilter(
     private fun collectAlwaysExitPoints(statement: JetExpression?): Collection<JetExpression> {
         val result = ArrayList<JetExpression>()
         statement?.accept(object : ControlFlowVisitor() {
-            var insideLoop = false
+            var insideLoopLevel: Int = 0
 
             override fun visitReturnExpression(expression: JetReturnExpression) {
                 result.add(expression)
@@ -303,9 +303,9 @@ class PartialBodyResolveFilter(
             override fun visitWhileExpression(loop: JetWhileExpression) {
                 val condition = loop.getCondition()
                 if (condition.isTrueConstant()) {
-                    insideLoop = true
+                    insideLoopLevel++
                     loop.getBody()?.accept(this)
-                    insideLoop = false
+                    insideLoopLevel--
                 }
                 else {
                     // do not make sense to search exits inside while-loop as not necessary enter it at all
@@ -315,19 +315,19 @@ class PartialBodyResolveFilter(
 
             override fun visitDoWhileExpression(loop: JetDoWhileExpression) {
                 loop.getCondition()?.accept(this)
-                insideLoop = true
+                insideLoopLevel++
                 loop.getBody()?.accept(this)
-                insideLoop = false
+                insideLoopLevel--
             }
 
             override fun visitBreakExpression(expression: JetBreakExpression) {
-                if (!insideLoop || expression.getLabelName() != null) {
+                if (insideLoopLevel == 0 || expression.getLabelName() != null) {
                     result.add(expression)
                 }
             }
 
             override fun visitContinueExpression(expression: JetContinueExpression) {
-                if (!insideLoop || expression.getLabelName() != null) {
+                if (insideLoopLevel == 0 || expression.getLabelName() != null) {
                     result.add(expression)
                 }
             }

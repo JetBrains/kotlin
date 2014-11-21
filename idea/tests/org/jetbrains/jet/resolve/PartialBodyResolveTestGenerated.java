@@ -72,12 +72,6 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
-    @TestMetadata("ExpressionBody.kt")
-    public void testExpressionBody() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ExpressionBody.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("ExpressionBodyExplicitType.kt")
     public void testExpressionBodyExplicitType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ExpressionBodyExplicitType.kt");
@@ -303,6 +297,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     @TestMetadata("MutliDeclaration.kt")
     public void testMutliDeclaration() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/MutliDeclaration.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NestedLoop.kt")
+    public void testNestedLoop() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/NestedLoop.kt");
         doTest(fileName);
     }
 
