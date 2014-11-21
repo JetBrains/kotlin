@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider;
 import org.jetbrains.jet.lang.resolve.lazy.DefaultNothingCallableNames;
 import org.jetbrains.jet.lang.resolve.lazy.ElementResolver;
 import org.jetbrains.jet.lang.resolve.lazy.ProbablyNothingCallableNames;
@@ -61,7 +62,7 @@ public class ResolveElementCache extends ElementResolver {
                                         manager.createWeaklyRetainedMemoizedFunction(new Function1<JetElement, BindingContext>() {
                                             @Override
                                             public BindingContext invoke(JetElement jetElement) {
-                                                return elementAdditionalResolve(jetElement, null);
+                                                return elementAdditionalResolve(jetElement, PartialBodyResolveProvider.NONE);
                                             }
                                         });
 

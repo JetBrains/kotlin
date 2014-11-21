@@ -35,12 +35,14 @@ class PartialBodyResolveFilter(
         elementToResolve: JetElement,
         private val declaration: JetDeclaration,
         probablyNothingCallableNames: ProbablyNothingCallableNames
-) : (JetElement) -> Boolean {
+) : org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider() {
 
     private val statementTree = StatementTree()
 
     private val nothingFunctionNames = HashSet(probablyNothingCallableNames.functionNames())
     private val nothingPropertyNames = probablyNothingCallableNames.propertyNames()
+
+    override val filter: ((JetElement) -> Boolean)? = { it is JetExpression && statementTree.statementMark(it) != MarkLevel.NONE }
 
     ;{
         assert(declaration.isAncestor(elementToResolve))
@@ -129,9 +131,6 @@ class PartialBodyResolveFilter(
 
         return nameFilter
     }
-
-    override fun invoke(statement: JetElement)
-            = statement is JetExpression && statementTree.statementMark(statement) != MarkLevel.NONE
 
     /**
      * Finds places within the given statement that may affect smart-casts after it.

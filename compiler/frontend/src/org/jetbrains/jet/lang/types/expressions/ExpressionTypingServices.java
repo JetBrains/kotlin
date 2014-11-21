@@ -24,7 +24,6 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzerPackage;
-import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -76,6 +75,8 @@ public class ExpressionTypingServices {
     private AnnotationResolver annotationResolver;
     @NotNull
     private CallResolverExtensionProvider extensionProvider;
+    @NotNull
+    private PartialBodyResolveProvider partialBodyResolveProvider;
 
     @NotNull
     public Project getProject() {
@@ -142,10 +143,14 @@ public class ExpressionTypingServices {
         this.extensionProvider = extensionProvider;
     }
 
-    @Nullable
-    private Function1<JetElement, Boolean> getStatementFilter() {
-        GlobalContext context = expressionTypingComponents.globalContext;
-        return context instanceof TopDownAnalysisParameters ? ((TopDownAnalysisParameters) context).getStatementFilter() : null;
+    @NotNull
+    private PartialBodyResolveProvider getPartialBodyResolveProvider() {
+        return partialBodyResolveProvider;
+    }
+
+    @Inject
+    public void setPartialBodyResolveProvider(@NotNull PartialBodyResolveProvider partialBodyResolveProvider) {
+        this.partialBodyResolveProvider = partialBodyResolveProvider;
     }
 
     public ExpressionTypingServices(@NotNull ExpressionTypingComponents components) {
@@ -215,7 +220,7 @@ public class ExpressionTypingServices {
     ) {
         List<JetElement> block = expression.getStatements();
 
-        Function1<JetElement, Boolean> filter = getStatementFilter();
+        Function1<JetElement, Boolean> filter = getPartialBodyResolveProvider().getFilter();
         if (filter != null && !(expression instanceof JetPsiUtil.JetExpressionWrapper)) {
             block = KotlinPackage.filter(block, filter);
         }
