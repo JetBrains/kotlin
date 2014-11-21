@@ -73,11 +73,7 @@ class PartialBodyResolveFilter(
         }
 
         val nameFilter = NameFilter()
-        if (!statementMarks.hasMarks(block, MarkLevel.NEED_REFERENCE_RESOLVE)) return nameFilter
-
-        val startStatement = block.getLastChild().siblings(forward = false)
-                .filterIsInstance<JetExpression>()
-                .first { statementMarks.statementMark(it) > MarkLevel.TAKE }
+        val startStatement = statementMarks.lastMarkedStatement(block, MarkLevel.NEED_REFERENCE_RESOLVE) ?: return nameFilter
 
         for (statement in startStatement.siblings(forward = false)) {
             if (statement !is JetExpression) continue
@@ -480,9 +476,12 @@ class PartialBodyResolveFilter(
         fun statementMark(statement: JetExpression): MarkLevel
                 = statementMarks[statement] ?: MarkLevel.SKIP
 
-        fun hasMarks(block: JetBlockExpression, minLevel: MarkLevel): Boolean {
-            val level = blockLevels[block] ?: return minLevel == MarkLevel.SKIP
-            return level >= minLevel
+        fun lastMarkedStatement(block: JetBlockExpression, minLevel: MarkLevel): JetExpression? {
+            val level = blockLevels[block] ?: MarkLevel.SKIP
+            if (level < minLevel) return null // optimization
+            return block.getLastChild().siblings(forward = false)
+                    .filterIsInstance<JetExpression>()
+                    .first { statementMark(it) >= minLevel }
         }
     }
 
