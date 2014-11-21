@@ -47,6 +47,12 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
+import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
+import org.jetbrains.jet.lang.psi.JetContainerNode
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.psi.psiUtil.siblings
+import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
 
 public class CheckPartialBodyResolveAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -88,7 +94,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
                     diffPanel.setDiffRequest(request)
                     diffBuilder.addOkAction().setText("Close")
                     diffBuilder.setTitle(title)
-                    diffBuilder.show()
+                    diffBuilder.showNotModal()
                     //TODO: choose continue or abort
                 }
                 return
@@ -112,27 +118,20 @@ public class CheckPartialBodyResolveAction : AnAction() {
                 element.acceptChildren(this)
             }
 
-            override fun visitReferenceExpression(expression: JetReferenceExpression) {
-                super.visitReferenceExpression(expression)
-
-                val bindingContext = resolver(expression, resolutionFacade)
-                val target = bindingContext[BindingContext.REFERENCE_TARGET, expression]
-                val offset = expression.getTextOffset()
-                val line = document.getLineNumber(offset)
-                val column = offset - document.getLineStartOffset(line)
-                val exprName = if (expression is JetNameReferenceExpression) expression.getReferencedName() else "<unnamed>"
-                builder.append("$exprName at (${line + 1}:${column + 1}) resolves to ${target?.presentation()}\n")
-            }
-
             override fun visitExpression(expression: JetExpression) {
                 super.visitExpression(expression)
 
+                // do not try to resolve to declaration as it crashes on some declaration (namely JetClassInitializer)
+                if (expression is JetDeclaration) return
+
+                if (!isValueNeeded(expression)) return
+
                 val bindingContext = resolver(expression, resolutionFacade)
 
                 val offset = expression.getTextOffset()
                 val line = document.getLineNumber(offset)
                 val column = offset - document.getLineStartOffset(line)
-                val exprName = if (expression is JetNameReferenceExpression) expression.getReferencedName() else "<unnamed>"
+                val exprName = if (expression is JetNameReferenceExpression) expression.getReferencedName() else expression.javaClass.getSimpleName()
                 builder.append("$exprName at (${line + 1}:${column + 1})")
 
                 if (expression is JetReferenceExpression) {
@@ -151,8 +150,8 @@ public class CheckPartialBodyResolveAction : AnAction() {
         return builder.toString()
     }
 
-    private fun DeclarationDescriptor.presentation() = DescriptorRenderer.DEBUG_TEXT.render(this)
-    private fun JetType.presentation() = DescriptorRenderer.DEBUG_TEXT.renderType(this)
+    private fun DeclarationDescriptor.presentation() = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
+    private fun JetType.presentation() = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(this)
 
     override fun update(e: AnActionEvent) {
         if (!KotlinInternalMode.enabled) {
@@ -189,4 +188,29 @@ public class CheckPartialBodyResolveAction : AnAction() {
         }
         return result
     }
+
+    //TODO: currently copied from PartialBodyResolveFilter - not good
+    private fun isValueNeeded(expression: JetExpression): Boolean {
+        val parent = expression.getParent()
+        return when (parent) {
+            is JetBlockExpression -> expression == parent.lastStatement() && isValueNeeded(parent)
+
+            is JetContainerNode -> { //TODO - not quite correct
+                val pparent = parent.getParent() as? JetExpression
+                pparent != null && isValueNeeded(pparent)
+            }
+
+            is JetDeclarationWithBody -> {
+                if (expression == parent.getBodyExpression())
+                    !parent.hasBlockBody() && !parent.hasDeclaredReturnType()
+                else
+                    true
+            }
+
+            else -> true
+        }
+    }
+
+    private fun JetBlockExpression.lastStatement(): JetExpression?
+            = getLastChild()?.siblings(forward = false)?.firstIsInstanceOrNull<JetExpression>()
 }
