@@ -20,7 +20,6 @@ fun jsFun(p: dynamic): dynamic
 - [ ] Dynamic classes/traits?
   - [ ] All members are implicitly `dynamic`
   - [ ] All types whose type constructors are marked `dynamic` are themselves dynamic types
-- [ ] Bounded dynamic types
 
 ## Typing rules
 
@@ -91,3 +90,27 @@ but it's hard to be sure it's worth the while
 
 - dynamic types are not supported on the JVM back-end
 - dynamic types are forbidden on the right-hand side of `is`, `!is`, `as` and `as?` (but not as generic arguments, e.g. `x is List<dynamic>` is allowed)
+
+## Prospect on bounded dynamic types
+
+*(not to be implemented now)*
+
+A bounded dynamic type `dynamic B` is represented as `(Nothing .. B?)`.
+
+Calls on such receivers are resolved statically against members of `B`, and dynamically against non-members of `B` (including extensions).
+
+> NOTE:
+this is an issue: some users would expect extensions to be bound statically, but we can't allow it, because otherwise a dynamic
+call with a name clashing with a name of an extension to `B` is impossible. Options:
+ - bind extensions to `B` (i.e. extensions to `Any` for `dynamic`) statically, this leads to unexpected changes in semantics when a new extension
+   is added in a *-imported package. Then, to make the dynamic calls possible, provide some sort of an intrinsic extension, e.g. `dynamic`)
+   that takes a string for a name and a varargs of parameters of type `dynamic`. Thus, to call a `recv.foo(a, b)` as a dynamic call, we can
+   always say `recv.dynamic("foo", a, b)`.
+ - never bind extensions statically on dynamic receivers, allow calling them passing the receiver as the first parameter,
+   so that we can call `foo(a)` instead of `a.foo()`. This poses no risk of accidentally changing semantics of some calls from dynamic to static
+
+Assignability rules:
+ - any subtype of `B?` can be passed where `dynamic B` is expected
+ - `dynamic B` can be passed where any supertype of `B` or subtype of `B`, but not a type unrelated to `B` is expected
+
+ Unbounded `dynamic` is the same as `dynamic Any`.
