@@ -95,9 +95,8 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         loadersStorage.setErrorReporter(LOGGING_REPORTER)
     }
 
-    private val annotationLoader = AnnotationDescriptorLoader();
+    private val annotationLoader = AnnotationDescriptorLoader(moduleDescriptor, storageManager);
     {
-        annotationLoader.setModule(moduleDescriptor)
         annotationLoader.setKotlinClassFinder(localClassFinder)
         annotationLoader.setErrorReporter(LOGGING_REPORTER)
         annotationLoader.setStorage(loadersStorage)

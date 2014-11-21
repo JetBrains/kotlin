@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
@@ -28,7 +29,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
@@ -37,24 +37,21 @@ import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArra
 import org.jetbrains.jet.lang.resolve.name.ClassId;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.javaClassIdToKotlinClassId;
 
 public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements AnnotationLoader {
+    private final ModuleDescriptor module;
+    private final StorageManager storageManager;
 
-    private ModuleDescriptor module;
-
-    @Inject
-    public void setModule(ModuleDescriptor module) {
+    public AnnotationDescriptorLoader(@NotNull ModuleDescriptor module, @NotNull StorageManager storageManager) {
         this.module = module;
+        this.storageManager = storageManager;
     }
 
     @Inject
@@ -78,39 +75,34 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
     @NotNull
     @Override
     public Annotations loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
-        KotlinJvmBinaryClass kotlinClass = findKotlinClassByDescriptor(descriptor);
+        final KotlinJvmBinaryClass kotlinClass = findKotlinClassByDescriptor(descriptor);
         if (kotlinClass == null) {
             // This means that the resource we're constructing the descriptor from is no longer present: KotlinClassFinder had found the
             // class earlier, but it can't now
             errorReporter.reportLoadingError("Kotlin class for loading class annotations is not found: " + descriptor, null);
             return Annotations.EMPTY;
         }
-        try {
-            return loadClassAnnotationsFromClass(kotlinClass);
-        }
-        catch (IOException e) {
-            errorReporter.reportLoadingError("Error loading member annotations from Kotlin class: " + kotlinClass, e);
-            return Annotations.EMPTY;
-        }
-    }
 
-    @NotNull
-    private Annotations loadClassAnnotationsFromClass(@NotNull KotlinJvmBinaryClass kotlinClass) throws IOException {
-        final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
-
-        kotlinClass.loadClassAnnotations(new KotlinJvmBinaryClass.AnnotationVisitor() {
-            @Nullable
+        return new DeserializedAnnotations(storageManager, new Function0<List<AnnotationDescriptor>>() {
             @Override
-            public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId) {
-                return resolveAnnotation(classId, result, module);
-            }
+            public List<AnnotationDescriptor> invoke() {
+                final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>(1);
 
-            @Override
-            public void visitEnd() {
+                kotlinClass.loadClassAnnotations(new KotlinJvmBinaryClass.AnnotationVisitor() {
+                    @Nullable
+                    @Override
+                    public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId) {
+                        return resolveAnnotation(classId, result, module);
+                    }
+
+                    @Override
+                    public void visitEnd() {
+                    }
+                });
+
+                return result;
             }
         });
-
-        return new AnnotationsImpl(result);
     }
 
     @Nullable
@@ -227,16 +219,21 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind,
-            @NotNull MemberSignature signature
+            @NotNull final MemberSignature signature
     ) {
-        KotlinJvmBinaryClass kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind);
+        final KotlinJvmBinaryClass kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind);
         if (kotlinClass == null) {
             errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: " + container, null);
             return Annotations.EMPTY;
         }
 
-        List<AnnotationDescriptor> annotations = storage.getStorage().invoke(kotlinClass).getMemberAnnotations().get(signature);
-        return annotations == null ? Annotations.EMPTY : new AnnotationsImpl(annotations);
+        return new DeserializedAnnotations(storageManager, new Function0<List<AnnotationDescriptor>>() {
+            @Override
+            public List<AnnotationDescriptor> invoke() {
+                List<AnnotationDescriptor> descriptors = storage.getStorage().invoke(kotlinClass).getMemberAnnotations().get(signature);
+                return descriptors == null ? Collections.<AnnotationDescriptor>emptyList() : descriptors;
+            }
+        });
     }
 
     @NotNull

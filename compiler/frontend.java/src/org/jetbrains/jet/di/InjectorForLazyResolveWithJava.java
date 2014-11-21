@@ -191,7 +191,7 @@ public class InjectorForLazyResolveWithJava {
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
-        this.annotationDescriptorLoader = new AnnotationDescriptorLoader();
+        this.annotationDescriptorLoader = new AnnotationDescriptorLoader(module, storageManager);
         this.constantDescriptorLoader = new ConstantDescriptorLoader();
         this.deserializationGlobalContextForJava = new DeserializationGlobalContextForJava(storageManager, module, javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
         this.descriptorLoadersStorage = new DescriptorLoadersStorage(storageManager);
@@ -277,7 +277,6 @@ public class InjectorForLazyResolveWithJava {
 
         annotationDescriptorLoader.setErrorReporter(traceBasedErrorReporter);
         annotationDescriptorLoader.setKotlinClassFinder(virtualFileFinder);
-        annotationDescriptorLoader.setModule(module);
         annotationDescriptorLoader.setStorage(descriptorLoadersStorage);
 
         descriptorLoadersStorage.setErrorReporter(traceBasedErrorReporter);
