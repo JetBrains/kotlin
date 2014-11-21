@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.calls.smartcasts.DataFlowInfo
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
 import org.jetbrains.jet.plugin.util.extensionsUtils.isExtensionCallable
+import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 
 public class KotlinIndicesHelper(
         private val project: Project,
@@ -199,13 +200,12 @@ public class KotlinIndicesHelper(
                                        module: ModuleDescriptor,
                                        bindingContext: BindingContext): Collection<CallableDescriptor> {
         val fqnString = callableFQN.asString()
-        val descriptors = /* this code is temporarily disabled because taking descriptors from another resolve session causes duplicates and potentially other problems*/
-        /*if (index != null) {
+        val descriptors = if (index != null) {
             index.get(fqnString, project, scope)
                     .filter { it.getReceiverTypeReference() != null }
-                    .map { it.getLazyResolveSession().resolveToDescriptor(it) as CallableDescriptor }
+                    .map { resolutionFacade.resolveToDescriptor(it) as CallableDescriptor }
         }
-        else*/ run {
+        else {
             val importDirective = JetPsiFactory(project).createImportDirective(fqnString)
             analyzeImportReference(importDirective, resolutionScope, BindingTraceContext(), module)
                     .filterIsInstance(javaClass<CallableDescriptor>())
