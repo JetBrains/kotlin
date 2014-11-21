@@ -118,7 +118,7 @@ class PartialBodyResolveFilter(
             if (level > MarkLevel.TAKE) { // otherwise there are no statements inside that need processBlock which only works when reference resolve needed
                 for (nestedBlock in statement.blocks()) {
                     val childFilter = processBlock(nestedBlock)
-                    nameFilter.addNames(childFilter)
+                    nameFilter.addNamesFromFilter(childFilter)
                 }
             }
         }
@@ -424,7 +424,7 @@ class PartialBodyResolveFilter(
             }
         }
 
-        fun addNames(filter: NameFilter) {
+        fun addNamesFromFilter(filter: NameFilter) {
             if (names == null) return
             if (filter.names == null) {
                 names = null
@@ -444,45 +444,6 @@ class PartialBodyResolveFilter(
         TAKE
         NEED_REFERENCE_RESOLVE
         NEED_COMPLETION
-    }
-
-    private inner class StatementMarks {
-        private val statementMarks = HashMap<JetExpression, MarkLevel>()
-        private val blockLevels = HashMap<JetBlockExpression, MarkLevel>()
-
-        fun mark(element: PsiElement, level: MarkLevel) {
-            var e = element
-            while (e != declaration) {
-                if (e.isStatement()) {
-                    markStatement(e as JetExpression, level)
-                }
-                e = e.getParent()!!
-            }
-        }
-
-        private fun markStatement(statement: JetExpression, level: MarkLevel) {
-            val currentLevel = statementMark(statement)
-            if (currentLevel < level) {
-                statementMarks[statement] = level
-
-                val block = statement.getParent() as JetBlockExpression
-                val currentBlockLevel = blockLevels[block] ?: MarkLevel.SKIP
-                if (currentBlockLevel < level) {
-                    blockLevels[block] = level
-                }
-            }
-        }
-
-        fun statementMark(statement: JetExpression): MarkLevel
-                = statementMarks[statement] ?: MarkLevel.SKIP
-
-        fun lastMarkedStatement(block: JetBlockExpression, minLevel: MarkLevel): JetExpression? {
-            val level = blockLevels[block] ?: MarkLevel.SKIP
-            if (level < minLevel) return null // optimization
-            return block.getLastChild().siblings(forward = false)
-                    .filterIsInstance<JetExpression>()
-                    .first { statementMark(it) >= minLevel }
-        }
     }
 
     class object {
@@ -531,7 +492,46 @@ class PartialBodyResolveFilter(
                 = getLastChild()?.siblings(forward = false)?.firstIsInstanceOrNull<JetExpression>()
 
         private fun PsiElement.isStatement() = this is JetExpression && getParent() is JetBlockExpression
-
     }
+
+    private inner class StatementMarks {
+        private val statementMarks = HashMap<JetExpression, MarkLevel>()
+        private val blockLevels = HashMap<JetBlockExpression, MarkLevel>()
+
+        fun mark(element: PsiElement, level: MarkLevel) {
+            var e = element
+            while (e != declaration) {
+                if (e.isStatement()) {
+                    markStatement(e as JetExpression, level)
+                }
+                e = e.getParent()!!
+            }
+        }
+
+        private fun markStatement(statement: JetExpression, level: MarkLevel) {
+            val currentLevel = statementMark(statement)
+            if (currentLevel < level) {
+                statementMarks[statement] = level
+
+                val block = statement.getParent() as JetBlockExpression
+                val currentBlockLevel = blockLevels[block] ?: MarkLevel.SKIP
+                if (currentBlockLevel < level) {
+                    blockLevels[block] = level
+                }
+            }
+        }
+
+        fun statementMark(statement: JetExpression): MarkLevel
+                = statementMarks[statement] ?: MarkLevel.SKIP
+
+        fun lastMarkedStatement(block: JetBlockExpression, minLevel: MarkLevel): JetExpression? {
+            val level = blockLevels[block] ?: MarkLevel.SKIP
+            if (level < minLevel) return null // optimization
+            return block.getLastChild().siblings(forward = false)
+                    .filterIsInstance<JetExpression>()
+                    .first { statementMark(it) >= minLevel }
+        }
+    }
+
 }
 
