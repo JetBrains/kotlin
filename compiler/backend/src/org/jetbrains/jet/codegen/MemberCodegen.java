@@ -86,6 +86,10 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         this.propertyCodegen = new PropertyCodegen(context, v, functionCodegen, this);
     }
 
+    protected MemberCodegen(@NotNull MemberCodegen<T> wrapped) {
+        this(wrapped.state, wrapped.getParentCodegen(), wrapped.getContext(), wrapped.element, wrapped.v);
+    }
+
     public void generate() {
         generateDeclaration();
 

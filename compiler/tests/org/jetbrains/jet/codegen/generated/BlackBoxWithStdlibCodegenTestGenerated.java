@@ -2718,6 +2718,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("reifiedInlineIntoNonInlineableLambda.kt")
+        public void testReifiedInlineIntoNonInlineableLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/reifiedInlineIntoNonInlineableLambda.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("safecast.kt")
         public void testSafecast() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/safecast.kt");
