@@ -34,6 +34,8 @@ import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import org.jetbrains.org.objectweb.asm.signature.SignatureWriter
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import com.google.common.collect.ImmutableSet
+import org.jetbrains.jet.codegen.context.MethodContext
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
 
@@ -70,34 +72,35 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
     }
 
     /**
-     * @return true if there is something need to be reified further
+     * @return set of type parameters' identifiers contained in markers that should be reified further
      * e.g. when we're generating inline function containing reified T
      * and another function containing reifiable parts is inlined into that function
      */
-    public fun reifyInstructions(instructions: InsnList): Boolean {
-        if (parametersMapping == null) return false
-        var needFurtherReification = false
+    public fun reifyInstructions(instructions: InsnList): ReifiedTypeParametersUsages {
+        if (parametersMapping == null) return ReifiedTypeParametersUsages()
+        var result = ReifiedTypeParametersUsages()
         for (insn in instructions.toArray()) {
             if (isParametrisedReifiedMarker(insn)) {
-                if (processReifyMarker(insn as MethodInsnNode, instructions)) {
-                    needFurtherReification = true
+                val newName: String? = processReifyMarker(insn as MethodInsnNode, instructions)
+                if (newName != null) {
+                    result.addUsedReifiedParameter(newName)
                 }
             }
         }
 
-        return needFurtherReification
+        return result
     }
 
     public fun reifySignature(oldSignature: String): SignatureReificationResult {
-        if (parametersMapping == null) return SignatureReificationResult(oldSignature, false)
+        if (parametersMapping == null) return SignatureReificationResult(oldSignature, ReifiedTypeParametersUsages())
 
         val signatureRemapper = object : SignatureWriter() {
-            var needFurtherReification = false
+            var typeParamsToReify = ReifiedTypeParametersUsages()
             override fun visitTypeVariable(name: String?) {
                 val mapping = getMappingByName(name) ?:
-                              return super.visitTypeArgument()
+                              return super.visitTypeVariable(name)
                 if (mapping.newName != null) {
-                    needFurtherReification = true
+                    typeParamsToReify.addUsedReifiedParameter(mapping.newName)
                     return super.visitTypeVariable(mapping.newName)
                 }
 
@@ -110,7 +113,7 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
                 val mapping = getMappingByName(name) ?:
                               return super.visitFormalTypeParameter(name)
                 if (mapping.newName != null) {
-                    needFurtherReification = true
+                    typeParamsToReify.addUsedReifiedParameter(mapping.newName)
                     super.visitFormalTypeParameter(mapping.newName)
                 }
             }
@@ -120,35 +123,38 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
 
         SignatureReader(oldSignature).accept(signatureRemapper)
 
-        return SignatureReificationResult(signatureRemapper.toString(), signatureRemapper.needFurtherReification)
+        return SignatureReificationResult(signatureRemapper.toString(), signatureRemapper.typeParamsToReify)
     }
 
-    data class SignatureReificationResult(val newSignature: String, val needFurtherReification: Boolean)
+    data class SignatureReificationResult(val newSignature: String, val typeParametersUsages: ReifiedTypeParametersUsages)
 
     /**
-     * @return true if this marker should be reified further
+     * @return new type parameter identifier if this marker should be reified further
+     * or null if it shouldn't
      */
-    private fun processReifyMarker(insn: MethodInsnNode, instructions: InsnList): Boolean {
-        val mapping = getTypeParameterMapping(insn) ?: return false
+    private fun processReifyMarker(insn: MethodInsnNode, instructions: InsnList): String? {
+        val mapping = getTypeParameterMapping(insn) ?: return null
 
         val asmType = mapping.asmType
         if (asmType != null) {
-            if (!when (insn.name) {
+            // process* methods return false if marker should be reified further
+            // or it's invalid (may be emitted explicitly in code)
+            // they return true if instruction is reified and marker can be deleted
+            if (when (insn.name) {
                 NEW_ARRAY_MARKER_METHOD_NAME -> processNewArray(insn, asmType)
                 CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, asmType)
                 INSTANCEOF_MARKER_METHOD_NAME -> processInstanceof(insn, asmType)
                 JAVA_CLASS_MARKER_METHOD_NAME -> processJavaClass(insn, asmType)
                 else -> false
             }) {
-                return false
+                instructions.remove(insn.getPrevious()!!)
+                instructions.remove(insn)
             }
-            instructions.remove(insn.getPrevious()!!)
-            instructions.remove(insn)
 
-            return false
+            return null
         } else {
-            instructions.set(insn.getPrevious()!!, iconstInsn(mapping.newIndex!!))
-            return true
+            instructions.set(insn.getPrevious()!!, LdcInsnNode(mapping.newName))
+            return mapping.newName
         }
     }
 
@@ -174,51 +180,61 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         return true
     }
 
-    private fun getParameterIndex(insn: MethodInsnNode): Int? {
+    private fun getParameterName(insn: MethodInsnNode): String? {
         val prev = insn.getPrevious()!!
 
         return when (prev.getOpcode()) {
-            Opcodes.ICONST_0 -> 0
-            Opcodes.ICONST_1 -> 1
-            Opcodes.ICONST_2 -> 2
-            Opcodes.ICONST_3 -> 3
-            Opcodes.ICONST_4 -> 4
-            Opcodes.ICONST_5 -> 5
-            Opcodes.BIPUSH, Opcodes.SIPUSH -> (prev as IntInsnNode).operand
-            Opcodes.LDC -> (prev as LdcInsnNode).cst as Int
-            else -> throw AssertionError("Unexpected opcode ${prev.getOpcode()}")
+            Opcodes.LDC -> (prev as LdcInsnNode).cst as String
+            else -> null
         }
     }
 
     private fun getTypeParameterMapping(insn: MethodInsnNode): ReifiedTypeParameterMapping? {
-        return parametersMapping?.get(getParameterIndex(insn) ?: return null)
+        return parametersMapping?.get(getParameterName(insn) ?: return null)
     }
 }
 
-public class ReifiedTypeParameterMappings(private val size: Int) {
-    private val mappingsByIndex = arrayOfNulls<ReifiedTypeParameterMapping>(size)
-    private val indexByParameterName = hashMapOf<String, Int>()
+public class ReifiedTypeParameterMappings() {
+    private val mappingsByName = hashMapOf<String, ReifiedTypeParameterMapping>()
 
-    public fun addParameterMappingToType(index: Int, name: String, asmType: Type) {
-        mappingsByIndex[index] = ReifiedTypeParameterMapping(name, asmType, null, null)
-        indexByParameterName[name] = index
+    public fun addParameterMappingToType(name: String, asmType: Type) {
+        mappingsByName[name] =  ReifiedTypeParameterMapping(name, asmType, null)
     }
 
-    public fun addParameterMappingToNewParameter(index: Int, name: String, newIndex: Int, newName: String) {
-        mappingsByIndex[index] = ReifiedTypeParameterMapping(name, null, newIndex, newName)
-        indexByParameterName[name] = index
+    public fun addParameterMappingToNewParameter(name: String, newName: String) {
+        mappingsByName[name] = ReifiedTypeParameterMapping(name, null, newName)
     }
 
-    fun get(index: Int) = mappingsByIndex[index]
     fun get(name: String): ReifiedTypeParameterMapping? {
-        return this[indexByParameterName[name] ?: return null]
+        return mappingsByName[name]
     }
 }
 
-public class ReifiedTypeParameterMapping(val name: String, val asmType: Type?, val newIndex: Int?, val newName: String?)
+public class ReifiedTypeParameterMapping(val name: String, val asmType: Type?, val newName: String?)
 
-private fun iconstInsn(n: Int): AbstractInsnNode {
-    val node = MethodNode()
-    InstructionAdapter(node).iconst(n)
-    return node.instructions.getFirst()!!
+public class ReifiedTypeParametersUsages {
+    val usedTypeParameters: MutableSet<String> = hashSetOf()
+
+    public fun wereUsedReifiedParameters(): Boolean = usedTypeParameters.isNotEmpty()
+
+    public fun addUsedReifiedParameter(name: String) {
+        usedTypeParameters.add(name)
+    }
+
+    public fun propagateChildUsagesWithinContext(child: ReifiedTypeParametersUsages, context: MethodContext) {
+        if (!child.wereUsedReifiedParameters()) return
+        // used for propagating reified TP usages from children member codegen to parent's
+        // mark enclosing object-literal/lambda as needed reification iff
+        // 1. at least one of it's method contains operations to reify
+        // 2. reified type parameter of these operations is not from current method signature
+        // i.e. from outer scope
+        child.usedTypeParameters.filterNot {
+            DescriptorUtils.containsReifiedTypeParameterWithName(context.getContextDescriptor(), it)
+        }.forEach { usedTypeParameters.add(it) }
+    }
+
+    public fun mergeAll(other: ReifiedTypeParametersUsages) {
+        if (!other.wereUsedReifiedParameters()) return
+        usedTypeParameters.addAll(other.usedTypeParameters)
+    }
 }

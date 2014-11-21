@@ -25,6 +25,7 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.inline.NameGenerator;
+import org.jetbrains.jet.codegen.inline.ReifiedTypeParametersUsages;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
@@ -46,9 +47,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
@@ -69,7 +68,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
     protected ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
-    private boolean wereReifierMarkers;
+    private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
 
     public MemberCodegen(
             @NotNull GenerationState state,
@@ -385,11 +384,8 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         return context;
     }
 
-    public boolean wereReifierMarkers() {
-        return wereReifierMarkers;
-    }
-
-    public void setWereReifierMarkers(boolean wereReifierMarkers) {
-        this.wereReifierMarkers = wereReifierMarkers;
+    @NotNull
+    public ReifiedTypeParametersUsages getReifiedTypeParametersUsages() {
+        return reifiedTypeParametersUsages;
     }
 }

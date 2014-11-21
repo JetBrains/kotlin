@@ -90,7 +90,7 @@ public class AnonymousObjectTransformer {
                 if (signature != null) {
                     ReifiedTypeInliner.SignatureReificationResult signatureResult = inliningContext.reifedTypeInliner.reifySignature(signature);
                     signature = signatureResult.getNewSignature();
-                    result.markAsNeededFurtherReificationIf(signatureResult.getNeedFurtherReification());
+                    result.getReifiedTypeParametersUsages().mergeAll(signatureResult.getTypeParametersUsages());
                 }
                 super.visit(version, access, name, signature, superName, interfaces);
             }
@@ -148,7 +148,7 @@ public class AnonymousObjectTransformer {
             MethodVisitor visitor = newMethod(classBuilder, next);
             InlineResult funResult = inlineMethod(anonymousObjectGen, parentRemapper, visitor, next, allCapturedParamBuilder);
             result.addAllClassesToRemove(funResult);
-            result.markAsNeededFurtherReificationIf(funResult.needFurtherReification());
+            result.getReifiedTypeParametersUsages().mergeAll(funResult.getReifiedTypeParametersUsages());
         }
 
         InlineResult constructorResult =
@@ -170,7 +170,7 @@ public class AnonymousObjectTransformer {
             @NotNull MethodNode sourceNode,
             @NotNull ParametersBuilder capturedBuilder
     ) {
-        boolean neededFurtherReification = inliningContext.reifedTypeInliner.reifyInstructions(sourceNode.instructions);
+        ReifiedTypeParametersUsages typeParametersToReify = inliningContext.reifedTypeInliner.reifyInstructions(sourceNode.instructions);
         Parameters parameters = getMethodParametersWithCaptured(capturedBuilder, sourceNode);
 
         RegeneratedLambdaFieldRemapper remapper =
@@ -182,7 +182,7 @@ public class AnonymousObjectTransformer {
                                                   remapper, isSameModule, "Transformer for " + anonymousObjectGen.getOwnerInternalName());
 
         InlineResult result = inliner.doInline(resultVisitor, new LocalVarRemapper(parameters, 0), false, LabelOwner.NOT_APPLICABLE);
-        result.markAsNeededFurtherReificationIf(neededFurtherReification);
+        result.getReifiedTypeParametersUsages().mergeAll(typeParametersToReify);
         resultVisitor.visitMaxs(-1, -1);
         resultVisitor.visitEnd();
         return result;

@@ -2640,6 +2640,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("anonymousObjectNoPropagate.kt")
+        public void testAnonymousObjectNoPropagate() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/anonymousObjectNoPropagate.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("anonymousObjectReifiedSupertype.kt")
         public void testAnonymousObjectReifiedSupertype() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/anonymousObjectReifiedSupertype.kt");
@@ -2688,6 +2694,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("nestedReified.kt")
+        public void testNestedReified() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/nestedReified.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("nestedReifiedSignature.kt")
+        public void testNestedReifiedSignature() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/nestedReifiedSignature.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("newArrayInt.kt")
         public void testNewArrayInt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/newArrayInt.kt");
@@ -2715,6 +2733,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("recursiveNonInlineableLambda.kt")
         public void testRecursiveNonInlineableLambda() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/recursiveNonInlineableLambda.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("reifiedInlineFunOfObject.kt")
+        public void testReifiedInlineFunOfObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/reifiedInlineFunOfObject.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("reifiedInlineFunOfObjectWithinReified.kt")
+        public void testReifiedInlineFunOfObjectWithinReified() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/reifiedInlineFunOfObjectWithinReified.kt");
             doTestWithStdlib(fileName);
         }
 

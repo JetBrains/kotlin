@@ -29,7 +29,6 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -142,6 +141,8 @@ public class InlineCodegen implements CallGenerator {
     private void endCall(@NotNull InlineResult result) {
         leaveTemps();
 
+        codegen.propagateChildReifiedTypeParametersUsages(result.getReifiedTypeParametersUsages());
+
         state.getFactory().removeInlinedClasses(result.getClassesToRemove());
     }
 
@@ -201,7 +202,7 @@ public class InlineCodegen implements CallGenerator {
     }
 
     private InlineResult inlineCall(MethodNode node) {
-        reifiedTypeInliner.reifyInstructions(node.instructions);
+        ReifiedTypeParametersUsages reificationResult = reifiedTypeInliner.reifyInstructions(node.instructions);
         generateClosuresBodies();
 
         //through generation captured parameters will be added to invocationParamBuilder
@@ -226,6 +227,7 @@ public class InlineCodegen implements CallGenerator {
 
         MethodNode adapter = InlineCodegenUtil.createEmptyMethodNode();
         InlineResult result = inliner.doInline(adapter, remapper, true, LabelOwner.SKIP_ALL);
+        result.getReifiedTypeParametersUsages().mergeAll(reificationResult);
 
         LabelOwner labelOwner = new LabelOwner() {
 

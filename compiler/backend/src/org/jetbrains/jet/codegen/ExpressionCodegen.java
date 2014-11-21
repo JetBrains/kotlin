@@ -207,28 +207,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         );
         literalCodegen.generate();
 
-        if (containsReifiedParametersInSupertypes(classDescriptor)) {
-            literalCodegen.setWereReifierMarkers(true);
-        }
+        addReifiedParametersFromSignature(literalCodegen, classDescriptor);
+        propagateChildReifiedTypeParametersUsages(literalCodegen.getReifiedTypeParametersUsages());
 
-        if (literalCodegen.wereReifierMarkers()) {
-            getParentCodegen().setWereReifierMarkers(true);
-        }
-
-        return new ObjectLiteralResult(literalCodegen.wereReifierMarkers(), classDescriptor);
+        return new ObjectLiteralResult(
+                literalCodegen.getReifiedTypeParametersUsages().wereUsedReifiedParameters(),
+                classDescriptor
+        );
     }
 
-    private static boolean containsReifiedParametersInSupertypes(@NotNull ClassDescriptor descriptor) {
+    private static void addReifiedParametersFromSignature(@NotNull MemberCodegen member, @NotNull ClassDescriptor descriptor) {
         for (JetType type : descriptor.getTypeConstructor().getSupertypes()) {
             for (TypeProjection supertypeArgument : type.getArguments()) {
                 TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(supertypeArgument.getType());
                 if (parameterDescriptor != null && parameterDescriptor.isReified()) {
-                    return true;
+                    member.getReifiedTypeParametersUsages().addUsedReifiedParameter(parameterDescriptor.getName().asString());
                 }
             }
         }
-
-        return false;
     }
 
     private static class ObjectLiteralResult {
@@ -1404,8 +1400,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         closureCodegen.generate();
 
-        if (closureCodegen.wereReifierMarkers()) {
+        if (closureCodegen.getReifiedTypeParametersUsages().wereUsedReifiedParameters()) {
             ReifiedTypeInliner.putNeedClassReificationMarker(v);
+            propagateChildReifiedTypeParametersUsages(closureCodegen.getReifiedTypeParametersUsages());
         }
 
         return closureCodegen.putInstanceOnStack(this);
@@ -2304,7 +2301,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @NotNull
     private CallGenerator getOrCreateCallGenerator(@NotNull ResolvedCall<?> resolvedCall) {
         Map<TypeParameterDescriptor, JetType> typeArguments = resolvedCall.getTypeArguments();
-        ReifiedTypeParameterMappings mappings = new ReifiedTypeParameterMappings(typeArguments.size());
+        ReifiedTypeParameterMappings mappings = new ReifiedTypeParameterMappings();
         for (Map.Entry<TypeParameterDescriptor, JetType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor key = entry.getKey();
             if (!key.isReified()) continue;
@@ -2314,16 +2311,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 // type is not generic
                 // boxType call needed because inlined method is compiled for T as java/lang/Object
                 mappings.addParameterMappingToType(
-                        key.getIndex(),
                         key.getName().getIdentifier(),
                         boxType(asmType(entry.getValue()))
                 );
             }
             else {
                 mappings.addParameterMappingToNewParameter(
-                        key.getIndex(),
                         key.getName().getIdentifier(),
-                        parameterDescriptor.getIndex(),
                         parameterDescriptor.getName().getIdentifier()
                 );
             }
@@ -3901,13 +3895,21 @@ The "returned" value of try expression with no finally is either the last expres
     public void putReifierMarkerIfTypeIsReifiedParameter(@NotNull JetType type, @NotNull String markerMethodName) {
         TypeParameterDescriptor typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
         if (typeParameterDescriptor != null && typeParameterDescriptor.isReified()) {
-            parentCodegen.setWereReifierMarkers(true);
-            v.iconst(typeParameterDescriptor.getIndex());
+            if (typeParameterDescriptor.getContainingDeclaration() != context.getContextDescriptor()) {
+                parentCodegen.getReifiedTypeParametersUsages().
+                        addUsedReifiedParameter(typeParameterDescriptor.getName().asString());
+            }
+
+            v.visitLdcInsn(typeParameterDescriptor.getName().asString());
             v.invokestatic(
                     IntrinsicMethods.INTRINSICS_CLASS_NAME, markerMethodName,
-                    Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE), false
+                    Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(String.class)), false
             );
         }
+    }
+
+    public void propagateChildReifiedTypeParametersUsages(@NotNull ReifiedTypeParametersUsages usages) {
+        parentCodegen.getReifiedTypeParametersUsages().propagateChildUsagesWithinContext(usages, context);
     }
 
     @Override
