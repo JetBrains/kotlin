@@ -3800,6 +3800,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("overrides.kt")
+            public void testOverrides() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/overrides.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("smartCast.kt")
             public void testSmartCast() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/smartCast.kt");
