@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptorKi
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.jet.lang.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.jet.utils.addToStdlib.firstOrNullIsInstance
+import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -50,7 +50,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
                                      protected val parameters: CompletionParameters,
                                      resultSet: CompletionResultSet) {
     protected val position: PsiElement = parameters.getPosition()
-    protected val jetReference: JetSimpleNameReference? = position.getParent()?.getReferences()?.filterIsInstance(javaClass<JetSimpleNameReference>())?.firstOrNull()
+    protected val jetReference: JetSimpleNameReference? = position.getParent()?.getReferences()?.firstIsInstanceOrNull<JetSimpleNameReference>()
     private val file = position.getContainingFile() as JetFile
     protected val resolutionFacade: ResolutionFacade = file.getResolutionFacade()
     protected val moduleDescriptor: ModuleDescriptor = resolutionFacade.findModuleDescriptor(file)

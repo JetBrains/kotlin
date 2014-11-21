@@ -36,19 +36,19 @@ public fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Colle
 public fun <T: Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) Collections.singleton(this) else Collections.emptySet()
 
 [suppress("NOTHING_TO_INLINE")]
-public inline fun <reified T : Any> Stream<*>.firstOrNullIsInstance(): T? {
+public inline fun <reified T : Any> Stream<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
 }
 
 [suppress("NOTHING_TO_INLINE")]
-public inline fun <reified T : Any> Iterable<*>.firstOrNullIsInstance(): T? {
+public inline fun <reified T : Any> Iterable<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
 }
 
 [suppress("NOTHING_TO_INLINE")]
-public inline fun <reified T : Any> Array<*>.firstOrNullIsInstance(): T? {
+public inline fun <reified T : Any> Array<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
 }

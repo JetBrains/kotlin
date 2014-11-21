@@ -26,7 +26,7 @@ import java.util.HashMap
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lang.psi.psiUtil.isProbablyNothing
-import org.jetbrains.jet.utils.addToStdlib.firstOrNullIsInstance
+import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 
 //TODO: do resolve anonymous object's body
@@ -432,7 +432,7 @@ class PartialBodyResolveFilter(
     }
 
     private fun JetBlockExpression.lastStatement(): JetExpression?
-            = getLastChild()?.siblings(forward = false)?.firstOrNullIsInstance<JetExpression>()
+            = getLastChild()?.siblings(forward = false)?.firstIsInstanceOrNull<JetExpression>()
 
     //TODO: declarations with special names (e.g. "get")
     private class NameFilter {

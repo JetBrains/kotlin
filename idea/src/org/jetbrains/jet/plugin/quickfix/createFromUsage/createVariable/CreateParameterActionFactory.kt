@@ -13,7 +13,6 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElement
 import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.guessTypes
-import org.jetbrains.jet.plugin.caches.resolve.analyzeFully
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
@@ -41,6 +40,7 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.jet.plugin.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
 import org.jetbrains.jet.plugin.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
 
 object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
     private fun JetType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, context: BindingContext): Boolean {
@@ -86,7 +86,7 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
 
         fun chooseContainingClass(it: PsiElement): JetClass? {
             parameterInfo.setValOrVar(if (varExpected) JetValVar.Var else JetValVar.Val)
-            return it.parents(false).filterIsInstance(javaClass<JetClassOrObject>()).firstOrNull() as? JetClass
+            return it.parents(false).firstIsInstanceOrNull<JetClassOrObject>() as? JetClass
         }
 
         // todo: skip lambdas for now because Change Signature doesn't apply to them yet
