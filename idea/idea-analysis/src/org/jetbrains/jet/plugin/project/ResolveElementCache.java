@@ -28,9 +28,9 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.DefaultNothingCallableNamesService;
+import org.jetbrains.jet.lang.resolve.lazy.DefaultNothingCallableNames;
 import org.jetbrains.jet.lang.resolve.lazy.ElementResolver;
-import org.jetbrains.jet.lang.resolve.lazy.ProbablyNothingCallableNamesService;
+import org.jetbrains.jet.lang.resolve.lazy.ProbablyNothingCallableNames;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.plugin.stubindex.JetProbablyNothingFunctionShortNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetProbablyNothingPropertyShortNameIndex;
@@ -87,13 +87,13 @@ public class ResolveElementCache extends ElementResolver {
 
     @NotNull
     @Override
-    protected ProbablyNothingCallableNamesService probablyNothingCallableNamesService() {
-        return new ProbablyNothingCallableNamesService() {
+    protected ProbablyNothingCallableNames probablyNothingCallableNames() {
+        return new ProbablyNothingCallableNames() {
             @NotNull
             @Override
             public Set<String> functionNames() {
                 // we have to add hardcoded-names until we have Kotlin compiled classes in caches
-                Set<String> hardcodedNames = DefaultNothingCallableNamesService.INSTANCE$.functionNames();
+                Set<String> hardcodedNames = DefaultNothingCallableNames.INSTANCE$.functionNames();
                 Collection<String> indexedNames = JetProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project);
                 Set<String> set = new HashSet<String>(hardcodedNames.size() + indexedNames.size());
                 set.addAll(hardcodedNames);

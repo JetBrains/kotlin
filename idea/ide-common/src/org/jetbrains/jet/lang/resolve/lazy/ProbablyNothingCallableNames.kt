@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.lazy
 
-public trait ProbablyNothingCallableNamesService {
+public trait ProbablyNothingCallableNames {
     public fun functionNames(): Set<String>
     public fun propertyNames(): Set<String>
 }
 
-public object DefaultNothingCallableNamesService : ProbablyNothingCallableNamesService {
+public object DefaultNothingCallableNames : ProbablyNothingCallableNames {
     private val hardcodedNames = setOf("error")
 
     override fun functionNames() = hardcodedNames

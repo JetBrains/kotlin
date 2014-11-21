@@ -34,13 +34,13 @@ import org.jetbrains.jet.utils.addToStdlib.firstOrNullIsInstance
 class PartialBodyResolveFilter(
         elementToResolve: JetElement,
         private val body: JetExpression,
-        probablyNothingCallableNamesService: ProbablyNothingCallableNamesService
+        probablyNothingCallableNames: ProbablyNothingCallableNames
 ) : (JetElement) -> Boolean {
 
     private val statementTree = StatementTree()
 
-    private val nothingFunctionNames = HashSet(probablyNothingCallableNamesService.functionNames())
-    private val nothingPropertyNames = probablyNothingCallableNamesService.propertyNames()
+    private val nothingFunctionNames = HashSet(probablyNothingCallableNames.functionNames())
+    private val nothingPropertyNames = probablyNothingCallableNames.propertyNames()
 
     ;{
         assert(body.isAncestor(elementToResolve, strict = false))
