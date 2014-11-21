@@ -31,7 +31,7 @@ fun jsFun(p: dynamic): dynamic
 - `lub(T, dynamic) = dynamic`
 - ??? `glb(T, dynamic) = T`
 - `dynamic` can't be substituted for reified parameters of function/constructor calls (this means that it's not possible to create an array of `dynamic`)
-- `dynamic` can't be used as a supertype or upper bound for a tpe parameter
+- `dynamic` can't be used as a supertype or upper bound for a type parameter
 - `dynamic` is less specific than any other type
 
 ## Syntax

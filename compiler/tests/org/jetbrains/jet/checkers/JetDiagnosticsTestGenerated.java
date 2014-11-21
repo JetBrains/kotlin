@@ -3818,6 +3818,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("supertypesAndBounds.kt")
+            public void testSupertypesAndBounds() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/supertypesAndBounds.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unsupported.kt")
             public void testUnsupported() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/unsupported.kt");

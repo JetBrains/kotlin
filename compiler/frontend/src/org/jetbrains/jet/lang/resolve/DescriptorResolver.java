@@ -238,9 +238,15 @@ public class DescriptorResolver {
         for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
             JetTypeReference typeReference = delegationSpecifier.getTypeReference();
             if (typeReference != null) {
-                result.add(resolver.resolveType(extensibleScope, typeReference, trace, checkBounds));
-                JetTypeElement bareSuperType = checkNullableSupertypeAndStripQuestionMarks(trace, typeReference.getTypeElement());
-                checkProjectionsInImmediateArguments(trace, bareSuperType);
+                JetType supertype = resolver.resolveType(extensibleScope, typeReference, trace, checkBounds);
+                if (TypesPackage.isDynamic(supertype)) {
+                    trace.report(DYNAMIC_SUPERTYPE.on(typeReference));
+                }
+                else {
+                    result.add(supertype);
+                    JetTypeElement bareSuperType = checkNullableSupertypeAndStripQuestionMarks(trace, typeReference.getTypeElement());
+                    checkProjectionsInImmediateArguments(trace, bareSuperType);
+                }
             }
             else {
                 result.add(ErrorUtils.createErrorType("No type reference"));
@@ -790,6 +796,9 @@ public class DescriptorResolver {
             else {
                 trace.report(FINAL_UPPER_BOUND.on(upperBound, upperBoundType));
             }
+        }
+        if (TypesPackage.isDynamic(upperBoundType)) {
+            trace.report(DYNAMIC_UPPER_BOUND.on(upperBound));
         }
     }
 
@@ -1366,7 +1375,7 @@ public class DescriptorResolver {
         List<JetTypeReference> jetTypeArguments = typeElement.getTypeArgumentsAsTypes();
 
         // A type reference from Kotlin code can yield a flexible type only if it's `ft<T1, T2>`, whose bounds should not be checked
-        if (TypesPackage.isFlexible(type)) {
+        if (TypesPackage.isFlexible(type) && !TypesPackage.isDynamic(type)) {
             assert jetTypeArguments.size() == 2
                     : "Flexible type cannot be denoted in Kotlin otherwise than as ft<T1, T2>, but was: "
                       + JetPsiUtil.getElementTextWithContext(typeReference);
