@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.gradle.plugin.android
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.api.BaseVariantOutput
 import org.gradle.api.tasks.util.PatternFilterable
 import org.jetbrains.annotations.NotNull
 
@@ -55,7 +54,7 @@ class AndroidGradleWrapper {
       list.add(variant.getProcessResources().getSourceOutputDir())
     }
     else {
-      for (BaseVariantOutput variantOutput : variant.getOutputs()) {
+      for (Object variantOutput : variant.getOutputs()) {
         list.add(variantOutput.processResources.sourceOutputDir)
       }
     }
