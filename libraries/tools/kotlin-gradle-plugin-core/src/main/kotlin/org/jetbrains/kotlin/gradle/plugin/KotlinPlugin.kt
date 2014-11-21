@@ -228,7 +228,10 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
                     javaSourceList.add(AndroidGradleWrapper.getJavaSrcDirs(buildTypeSourceSet))
                     kotlinTask.source(getExtention<KotlinSourceSet>(buildTypeSourceSet, "kotlin").getKotlin())
                 }
-                javaSourceList.add(Callable<File?>{ variant.getProcessResources().getSourceOutputDir() })
+
+                for (resourceFolder in AndroidGradleWrapper.getRClassFolder(variant)) {
+                    javaSourceList.add(Callable<File?>{ resourceFolder })
+                }
                 javaSourceList.add(Callable<File?>{ variant.getGenerateBuildConfig()?.getSourceOutputDir() })
                 javaSourceList.add(Callable<File?>{ variant.getAidlCompile().getSourceOutputDir() })
                 javaSourceList.add(Callable<File?>{ variant.getRenderscriptCompile().getSourceOutputDir() })
