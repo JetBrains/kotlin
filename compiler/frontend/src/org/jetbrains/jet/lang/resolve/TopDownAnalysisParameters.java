@@ -31,7 +31,7 @@ public class TopDownAnalysisParameters extends LazinessToken implements GlobalCo
     private static boolean LAZY;
 
     static {
-        LAZY = "true".equals(System.getProperty("lazy.tda"));
+        LAZY = !"false".equals(System.getProperty("lazy.tda"));
     }
 
     @NotNull
