@@ -291,7 +291,7 @@
                     <get src="${content.base.url}/jps/test/jps-build-test.jar" dest="${jps-test}/jps-build-test.jar" usetimestamp="true"/>
 
                     <get src="${content.base.url}/${idea.archive.name}" dest="dependencies/download/${idea.archive.name}" usetimestamp="true"/>
-                    
+
                     <delete file="dependencies/download/idea-sdk-sources.zip" failonerror="false"/>
                     <get src="${content.base.url}/sources.zip" dest="dependencies/download/idea-sdk-sources.zip" usetimestamp="true"/>
                 </then>
@@ -411,13 +411,16 @@
                 </and>
             </not>
             <then>
+                <property name="android.studio.version.pattern" value="[\d\.\w-]+"/>
+                <property name="android.studio.idea.version.pattern" value="[\d\.]+"/>
+
                 <loadresource property="android.version">
                     <url url="http://tools.android.com/download/studio/canary/latest"/>
                     <filterchain>
                         <tokenfilter>
                             <filetokenizer/>
                             <replaceregex
-                                pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/([\d\.]+)/android-studio-ide(.*)$"
+                                pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/(${android.studio.version.pattern})/android-studio-ide(.*)$"
                                 replace="\2" flags="s"/>
                         </tokenfilter>
                     </filterchain>
@@ -428,7 +431,7 @@
                         <tokenfilter>
                             <filetokenizer/>
                             <replaceregex
-                                pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/[\d\.]+/android-studio-ide-([\d\.]+)-(.*)$"
+                                pattern="^(.*)https?://dl\.google\.com/dl/android/studio/ide-zips/${android.studio.version.pattern}/android-studio-ide-(${android.studio.idea.version.pattern})-(.*)$"
                                 replace="\2" flags="s"/>
                         </tokenfilter>
                     </filterchain>
