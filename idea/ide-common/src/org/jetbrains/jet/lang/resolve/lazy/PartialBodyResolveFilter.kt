@@ -115,7 +115,7 @@ class PartialBodyResolveFilter(
             }
 
             val level = statementMarks.statementMark(statement)
-            if (level > MarkLevel.TAKE) {
+            if (level > MarkLevel.TAKE) { // otherwise there are no statements inside that need processBlock which only works when reference resolve needed
                 for (nestedBlock in statement.blocks()) {
                     val childFilter = processBlock(nestedBlock)
                     nameFilter.addNames(childFilter)
