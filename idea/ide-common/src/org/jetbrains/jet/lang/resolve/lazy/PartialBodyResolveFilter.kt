@@ -42,7 +42,7 @@ class PartialBodyResolveFilter(
     private val nothingFunctionNames = HashSet(probablyNothingCallableNames.functionNames())
     private val nothingPropertyNames = probablyNothingCallableNames.propertyNames()
 
-    override val filter: ((JetElement) -> Boolean)? = { it is JetExpression && statementTree.statementMark(it) != MarkLevel.NONE }
+    override val filter: ((JetElement) -> Boolean)? = { it is JetExpression && statementTree.statementMark(it) != MarkLevel.SKIP }
 
     ;{
         assert(declaration.isAncestor(elementToResolve))
@@ -79,7 +79,7 @@ class PartialBodyResolveFilter(
 
         val startStatement = block.getLastChild().siblings(forward = false)
                 .filterIsInstance<JetExpression>()
-                .first { statementTree.statementMark(it) > MarkLevel.RESOLVE_STATEMENT }
+                .first { statementTree.statementMark(it) > MarkLevel.TAKE }
 
         for (statement in startStatement.siblings(forward = false)) {
             if (statement !is JetExpression) continue
@@ -121,7 +121,7 @@ class PartialBodyResolveFilter(
             }
 
             val level = statementTree.statementMark(statement)
-            if (level > MarkLevel.RESOLVE_STATEMENT) {
+            if (level > MarkLevel.TAKE) {
                 for (nestedBlock in statementTree.blocks(statement)) {
                     val childFilter = processBlock(nestedBlock)
                     nameFilter.addNames(childFilter)
@@ -478,8 +478,8 @@ class PartialBodyResolveFilter(
     }
 
     private enum class MarkLevel {
-        NONE
-        RESOLVE_STATEMENT
+        SKIP
+        TAKE
         NEED_REFERENCE_RESOLVE
         NEED_COMPLETION
     }
@@ -523,7 +523,7 @@ class PartialBodyResolveFilter(
                 statementMarks[statement] = level
 
                 val block = statement.getParent() as JetBlockExpression
-                val currentBlockLevel = blockLevels[block] ?: MarkLevel.NONE
+                val currentBlockLevel = blockLevels[block] ?: MarkLevel.SKIP
                 if (currentBlockLevel < level) {
                     blockLevels[block] = level
                 }
@@ -531,10 +531,10 @@ class PartialBodyResolveFilter(
         }
 
         fun statementMark(statement: JetExpression): MarkLevel
-                = statementMarks[statement] ?: MarkLevel.NONE
+                = statementMarks[statement] ?: MarkLevel.SKIP
 
         fun hasMarks(block: JetBlockExpression, minLevel: MarkLevel): Boolean {
-            val level = blockLevels[block] ?: return minLevel == MarkLevel.NONE
+            val level = blockLevels[block] ?: return minLevel == MarkLevel.SKIP
             return level >= minLevel
         }
     }
