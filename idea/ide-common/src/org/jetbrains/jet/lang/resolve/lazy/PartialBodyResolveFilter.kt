@@ -25,10 +25,10 @@ import java.util.ArrayList
 import java.util.HashMap
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.JetNodeTypes
-import org.jetbrains.jet.lang.psi.psiUtil.isProbablyNothing
 import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.resolve.PartialBodyResolveProvider
+import org.jetbrains.jet.lang.psi.psiUtil.isProbablyNothing
 
 //TODO: do resolve anonymous object's body
 
@@ -41,7 +41,7 @@ class PartialBodyResolveFilter(
     private val statementMarks = StatementMarks()
 
     private val nothingFunctionNames = HashSet(probablyNothingCallableNames.functionNames())
-    private val nothingPropertyNames = probablyNothingCallableNames.propertyNames()
+    private val nothingVariableNames = HashSet(probablyNothingCallableNames.propertyNames())
 
     override val filter: ((JetElement) -> Boolean)? = { it is JetExpression && statementMarks.statementMark(it) != MarkLevel.SKIP }
 
@@ -51,11 +51,21 @@ class PartialBodyResolveFilter(
                "Should never be invoked on local declaration otherwise we may miss some local declarations with type Nothing")
 
         declaration.accept(object : JetVisitorVoid() {
-            override fun visitNamedFunction(function: JetNamedFunction) {
-                super.visitNamedFunction(function)
+            override fun visitDeclaration(declaration: JetDeclaration) {
+                super.visitDeclaration(declaration)
 
-                if (function.getTypeReference().isProbablyNothing()) {
-                    nothingFunctionNames.add(function.getName())
+                if (declaration is JetCallableDeclaration) {
+                    if (declaration.getTypeReference().containsProbablyNothing()) {
+                        val name = declaration.getName()
+                        if (name != null) {
+                            if (declaration is JetNamedFunction) {
+                                nothingFunctionNames.add(name)
+                            }
+                            else {
+                                nothingVariableNames.add(name)
+                            }
+                        }
+                    }
                 }
             }
 
@@ -338,7 +348,7 @@ class PartialBodyResolveFilter(
 
             override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
                 val name = expression.getReferencedName()
-                if (name in nothingPropertyNames) {
+                if (name in nothingVariableNames) {
                     result.add(expression)
                 }
             }
@@ -495,6 +505,22 @@ class PartialBodyResolveFilter(
                 = getLastChild()?.siblings(forward = false)?.firstIsInstanceOrNull<JetExpression>()
 
         private fun PsiElement.isStatement() = this is JetExpression && getParent() is JetBlockExpression
+
+        private fun JetTypeReference?.containsProbablyNothing(): Boolean {
+            var result = false
+            this?.getTypeElement()?.accept(object : JetVisitorVoid() {
+                override fun visitJetElement(element: JetElement) {
+                    element.acceptChildren(this)
+                }
+
+                override fun visitUserType(type: JetUserType) {
+                    if (type.isProbablyNothing()) {
+                        result = true
+                    }
+                }
+            })
+            return result
+        }
     }
 
     private inner class StatementMarks {

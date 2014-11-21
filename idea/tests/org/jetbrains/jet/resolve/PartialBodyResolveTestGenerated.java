@@ -276,6 +276,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("LambdaReturnsNothing2.kt")
+    public void testLambdaReturnsNothing2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LambdaReturnsNothing2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("LocalClass.kt")
     public void testLocalClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LocalClass.kt");
