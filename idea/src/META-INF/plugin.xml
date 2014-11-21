@@ -108,6 +108,10 @@
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift T"/>
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
+  <action id="CheckPartialBodyResolve" class="org.jetbrains.jet.plugin.actions.internal.CheckPartialBodyResolveAction"
+          text="Check Partial Body Resolve">
+      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
+  </action>
 
     <action id="KotlinInternalMode" class="org.jetbrains.jet.plugin.actions.internal.KotlinInternalModeToggleAction">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
