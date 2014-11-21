@@ -46,6 +46,7 @@ type
 "dynamic" is a *soft keyword*:
 - if it occurs in a non-type context, it's an identifier
 - in a type context, when followed by a dot (except for a dot that separates a receiver type from a function/property name) or an angle bracket `<`, it's an identifier
+- on the left-hand-side of `::` in a callable reference: `dynamic::foo` implies that `dynamic` there is a normal identifier
 
 ## Representation
 

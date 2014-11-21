@@ -3728,6 +3728,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("callableReferences.kt")
+            public void testCallableReferences() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/callableReferences.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("dynamicCalls.kt")
             public void testDynamicCalls() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/dynamicCalls.kt");
