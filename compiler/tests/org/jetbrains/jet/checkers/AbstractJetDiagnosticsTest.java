@@ -141,7 +141,19 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
         // We want to always create a test data file (txt) if it was missing,
         // but don't want to skip the following checks in case this one fails
-        Throwable exceptionFromLazyResolveLogValidation = checkLazyResolveLog(lazyOperationsLog, testDataFile);
+        Throwable exceptionFromLazyResolveLogValidation = null;
+        if (KotlinPackage.any(testFiles, new Function1<TestFile, Boolean>() {
+            @Override
+            public Boolean invoke(TestFile file) {
+                return file.checkLazyLog;
+            }
+        })) {
+            exceptionFromLazyResolveLogValidation = checkLazyResolveLog(lazyOperationsLog, testDataFile);
+        }
+        else {
+            File lazyLogFile = getLazyLogFile(testDataFile);
+            assertFalse("No lazy log expected, but found: " + lazyLogFile.getAbsolutePath(), lazyLogFile.exists());
+        }
 
         Throwable exceptionFromDescriptorValidation = null;
         try {
@@ -179,7 +191,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
     private static Throwable checkLazyResolveLog(LazyOperationsLog lazyOperationsLog, File testDataFile) {
         Throwable exceptionFromLazyResolveLogValidation = null;
         try {
-            File expectedFile = new File(FileUtil.getNameWithoutExtension(testDataFile.getAbsolutePath()) + ".lazy.log");
+            File expectedFile = getLazyLogFile(testDataFile);
 
             JetTestUtils.assertEqualsToFile(
                     expectedFile,
@@ -191,6 +203,10 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             exceptionFromLazyResolveLogValidation = e;
         }
         return exceptionFromLazyResolveLogValidation;
+    }
+
+    private static File getLazyLogFile(File testDataFile) {
+        return new File(FileUtil.getNameWithoutExtension(testDataFile.getAbsolutePath()) + ".lazy.log");
     }
 
     private void validateAndCompareDescriptorWithFile(

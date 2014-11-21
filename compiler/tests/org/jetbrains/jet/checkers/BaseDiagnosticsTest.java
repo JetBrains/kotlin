@@ -75,6 +75,8 @@ public abstract class BaseDiagnosticsTest extends
             = "\npackage " + EXPLICIT_FLEXIBLE_PACKAGE +
               "\npublic class " + EXPLICIT_FLEXIBLE_CLASS_NAME + "<L, U>";
     private static final String EXPLICIT_FLEXIBLE_TYPES_IMPORT = "import " + EXPLICIT_FLEXIBLE_PACKAGE + "." + EXPLICIT_FLEXIBLE_CLASS_NAME;
+    public static final String CHECK_LAZY_LOG_DIRECTIVE = "CHECK_LAZY_LOG";
+    public static final boolean CHECK_LAZY_LOG_DEFAULT = "true".equals(System.getProperty("check.lazy.logs", "false"));
 
     @Override
     protected TestModule createTestModule(String name) {
@@ -237,6 +239,7 @@ public abstract class BaseDiagnosticsTest extends
         private final Condition<Diagnostic> whatDiagnosticsToConsider;
         private final boolean declareCheckType;
         private final boolean declareFlexibleType;
+        public final boolean checkLazyLog;
 
         public TestFile(
                 @Nullable TestModule module,
@@ -246,6 +249,7 @@ public abstract class BaseDiagnosticsTest extends
         ) {
             this.module = module;
             this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives);
+            this.checkLazyLog = directives.containsKey(CHECK_LAZY_LOG_DIRECTIVE) || CHECK_LAZY_LOG_DEFAULT;
             this.declareCheckType = directives.containsKey(CHECK_TYPE_DIRECTIVE);
             this.declareFlexibleType = directives.containsKey(EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE);
             if (fileName.endsWith(".java")) {
