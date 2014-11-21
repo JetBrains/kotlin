@@ -68,6 +68,10 @@ class PartialBodyResolveFilter(
     //TODO: do..while is special case
 
     private fun processBlock(block: JetBlockExpression): NameFilter {
+        if (isValueNeeded(block)) {
+            block.lastStatement()?.let { statementTree.mark(it, MarkLevel.NEED_REFERENCE_RESOLVE) }
+        }
+
         val nameFilter = NameFilter()
         if (!statementTree.hasMarks(block, MarkLevel.NEED_REFERENCE_RESOLVE)) return nameFilter
 
@@ -117,9 +121,6 @@ class PartialBodyResolveFilter(
             val level = statementTree.statementMark(statement)
             if (level > MarkLevel.RESOLVE_STATEMENT) {
                 for (nestedBlock in statementTree.blocks(statement)) {
-                    if (isValueNeeded(nestedBlock)) {
-                        nestedBlock.lastStatement()?.let { statementTree.mark(it, MarkLevel.NEED_REFERENCE_RESOLVE) }
-                    }
                     val childFilter = processBlock(nestedBlock)
                     nameFilter.addNames(childFilter)
                 }

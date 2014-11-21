@@ -72,6 +72,18 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("ExpressionBody.kt")
+    public void testExpressionBody() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ExpressionBody.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExpressionBodyExplicitType.kt")
+    public void testExpressionBodyExplicitType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ExpressionBodyExplicitType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("For1.kt")
     public void testFor1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/For1.kt");
