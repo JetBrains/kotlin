@@ -54,6 +54,7 @@ public class SpecialFiles {
         filesCompiledWithoutStdLib.add("realStringRepeat.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
         filesCompiledWithoutStdLib.add("kt2395.kt"); // With MOCK_JDK
         filesCompiledWithoutStdLib.add("useAnonymousObjectAsIterator.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
+        filesCompiledWithoutStdLib.add("kt581.kt"); // OVERLOAD_RESOLUTION_AMBIGUITY
     }
 
     private static void fillExcludedFiles() {
