@@ -36,18 +36,16 @@ import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kin
 import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.PACKAGE_FACADE;
 
 public final class DeserializedDescriptorResolver {
+    private final ErrorReporter errorReporter;
     private DeserializationGlobalContextForJava context;
 
-    private ErrorReporter errorReporter;
-
-    @Inject
-    public void setContext(DeserializationGlobalContextForJava context) {
-        this.context = context;
+    public DeserializedDescriptorResolver(@NotNull ErrorReporter errorReporter) {
+        this.errorReporter = errorReporter;
     }
 
     @Inject
-    public void setErrorReporter(ErrorReporter errorReporter) {
-        this.errorReporter = errorReporter;
+    public void setContext(@NotNull DeserializationGlobalContextForJava context) {
+        this.context = context;
     }
 
     @Nullable

@@ -39,16 +39,19 @@ import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.ge
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinClassIdToJavaClassId;
 
 public abstract class BaseDescriptorLoader {
-    protected KotlinClassFinder kotlinClassFinder;
-    protected ErrorReporter errorReporter;
+    private final KotlinClassFinder kotlinClassFinder;
+    protected final ErrorReporter errorReporter;
+    protected final DescriptorLoadersStorage storage;
 
-    protected DescriptorLoadersStorage storage;
-
-    public abstract void setKotlinClassFinder(@NotNull KotlinClassFinder kotlinClassFinder);
-
-    public abstract void setErrorReporter(@NotNull ErrorReporter errorReporter);
-
-    public abstract void setStorage(@NotNull DescriptorLoadersStorage storage);
+    protected BaseDescriptorLoader(
+            @NotNull KotlinClassFinder kotlinClassFinder,
+            @NotNull ErrorReporter errorReporter,
+            @NotNull DescriptorLoadersStorage storage
+    ) {
+        this.kotlinClassFinder = kotlinClassFinder;
+        this.errorReporter = errorReporter;
+        this.storage = storage;
+    }
 
     @Nullable
     protected static MemberSignature getCallableSignature(

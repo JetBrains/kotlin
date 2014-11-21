@@ -87,27 +87,16 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
             return null
         }
     }
+
     private val storageManager = LockBasedStorageManager.NO_LOCKS
 
-    private val loadersStorage = DescriptorLoadersStorage(storageManager);
-    {
-        loadersStorage.setModule(moduleDescriptor)
-        loadersStorage.setErrorReporter(LOGGING_REPORTER)
-    }
+    private val loadersStorage = DescriptorLoadersStorage(storageManager, moduleDescriptor)
 
-    private val annotationLoader = AnnotationDescriptorLoader(moduleDescriptor, storageManager);
-    {
-        annotationLoader.setKotlinClassFinder(localClassFinder)
-        annotationLoader.setErrorReporter(LOGGING_REPORTER)
-        annotationLoader.setStorage(loadersStorage)
-    }
+    private val annotationLoader = AnnotationDescriptorLoader(
+            storageManager, moduleDescriptor, loadersStorage, localClassFinder, LOGGING_REPORTER
+    )
 
-    private val constantLoader = ConstantDescriptorLoader();
-    {
-        constantLoader.setKotlinClassFinder(localClassFinder)
-        constantLoader.setErrorReporter(LOGGING_REPORTER)
-        constantLoader.setStorage(loadersStorage)
-    }
+    private val constantLoader = ConstantDescriptorLoader(loadersStorage, localClassFinder, LOGGING_REPORTER)
 
     private val classDataFinder = object : ClassDataFinder {
         override fun findClassData(classId: ClassId): ClassData? {

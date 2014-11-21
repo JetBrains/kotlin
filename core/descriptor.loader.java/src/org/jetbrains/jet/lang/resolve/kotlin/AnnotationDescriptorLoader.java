@@ -39,37 +39,25 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.storage.StorageManager;
 
-import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSignature;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.javaClassIdToKotlinClassId;
 
 public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements AnnotationLoader {
-    private final ModuleDescriptor module;
     private final StorageManager storageManager;
+    private final ModuleDescriptor module;
 
-    public AnnotationDescriptorLoader(@NotNull ModuleDescriptor module, @NotNull StorageManager storageManager) {
+    public AnnotationDescriptorLoader(
+            @NotNull StorageManager storageManager,
+            @NotNull ModuleDescriptor module,
+            @NotNull DescriptorLoadersStorage storage,
+            @NotNull KotlinClassFinder kotlinClassFinder,
+            @NotNull ErrorReporter errorReporter
+    ) {
+        super(kotlinClassFinder, errorReporter, storage);
         this.module = module;
         this.storageManager = storageManager;
-    }
-
-    @Inject
-    @Override
-    public void setStorage(@NotNull DescriptorLoadersStorage storage) {
-        this.storage = storage;
-    }
-
-    @Inject
-    @Override
-    public void setKotlinClassFinder(@NotNull KotlinClassFinder kotlinClassFinder) {
-        this.kotlinClassFinder = kotlinClassFinder;
-    }
-
-    @Inject
-    @Override
-    public void setErrorReporter(@NotNull ErrorReporter errorReporter) {
-        this.errorReporter = errorReporter;
     }
 
     @NotNull
@@ -230,7 +218,7 @@ public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements 
         return new DeserializedAnnotations(storageManager, new Function0<List<AnnotationDescriptor>>() {
             @Override
             public List<AnnotationDescriptor> invoke() {
-                List<AnnotationDescriptor> descriptors = storage.getStorage().invoke(kotlinClass).getMemberAnnotations().get(signature);
+                List<AnnotationDescriptor> descriptors = storage.getStorageForClass(kotlinClass).getMemberAnnotations().get(signature);
                 return descriptors == null ? Collections.<AnnotationDescriptor>emptyList() : descriptors;
             }
         });
