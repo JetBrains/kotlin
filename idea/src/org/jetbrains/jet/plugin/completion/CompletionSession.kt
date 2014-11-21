@@ -158,7 +158,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         if (!NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
             val completeReference = jetReference != null && !isOnlyKeywordCompletion()
-            val onlyTypes = shouldRunOnlyTypeCompletion()
+            val onlyTypes = completeReference && shouldRunOnlyTypeCompletion()
 
             if (completeReference) {
                 val kindMask = if (onlyTypes)
