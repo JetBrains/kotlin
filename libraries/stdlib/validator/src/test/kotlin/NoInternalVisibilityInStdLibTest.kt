@@ -125,7 +125,7 @@ class NoInternalVisibilityInStdLibTest {
                     module,
                     null,
                     null
-            ).getModuleDescriptor()
+            ).moduleDescriptor
         }
     }
 
@@ -137,7 +137,7 @@ class NoInternalVisibilityInStdLibTest {
             val pathToJsStdlibJar = KOTLIN_ROOT_PATH + PathUtil.getKotlinPathsForDistDirectory().getJsLibJarPath().path
             val config = LibrarySourcesConfig(project, "testModule", listOf("@", pathToJsStdlibJar), EcmaVersion.defaultVersion(), false, false)
 
-            TopDownAnalyzerFacadeForJS.analyzeFiles(listOf(), { true }, config).getModuleDescriptor()
+            TopDownAnalyzerFacadeForJS.analyzeFiles(listOf(), { true }, config).moduleDescriptor
         }
     }
 
