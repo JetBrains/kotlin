@@ -96,6 +96,12 @@ open class KotlinAndriodPluginWrapper: KotlinBasePluginWrapper() {
     }
 }
 
+open class Kotlin2JsPluginWrapper : KotlinBasePluginWrapper() {
+    public override fun getPluginClassName():String {
+        return "org.jetbrains.kotlin.gradle.plugin.Kotlin2JsPlugin"
+    }
+}
+
 open class KSpec<T: Any?>(val predicate: (T) -> Boolean): Spec<T> {
     public override fun isSatisfiedBy(p0: T?): Boolean {
         return p0 != null && predicate(p0)

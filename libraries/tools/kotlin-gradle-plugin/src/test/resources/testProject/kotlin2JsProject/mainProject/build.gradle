@@ -1,0 +1,33 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "file://" + pathToKotlinPlugin
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT"
+    }
+}
+
+apply plugin: "kotlin2js"
+
+repositories {
+    maven {
+        url "file://" + pathToKotlinPlugin
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile project(":libraryProject"),
+            "org.jetbrains.kotlin:kotlin-js-library:0.1-SNAPSHOT"
+}
+
+compileKotlin2Js.kotlinOptions.sourceMap = true
+compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/web/js/app.js"
+compileKotlin2Js.kotlinOptions.suppressWarnings = true
+compileKotlin2Js.kotlinOptions.verbose = true
+
+copyKotlinJs.into "${projectDir}/web/js/lib"
