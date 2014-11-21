@@ -30,9 +30,7 @@ import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.jet.lang.psi.JetVisitorVoid
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetReferenceExpression
-import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.renderer.DescriptorRenderer
@@ -47,6 +45,8 @@ import javax.swing.SwingUtilities
 import org.jetbrains.jet.lang.psi.JetNameReferenceExpression
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.plugin.caches.resolve.ResolutionFacade
+import org.jetbrains.jet.plugin.caches.resolve.getResolutionFacade
 
 public class CheckPartialBodyResolveAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -67,10 +67,12 @@ public class CheckPartialBodyResolveAction : AnAction() {
             progressIndicator?.setText("Checking resolve $i of ${files.size}...")
             progressIndicator?.setText2(file.getVirtualFile().getPath())
 
-            val partialResolveDump = dumpResolve(file) {(element, resolveSession) ->
-                resolveSession.resolveToElementWithPartialBodyResolve(element)
+            val partialResolveDump = dumpResolve(file) {(element, resolutionFacade) ->
+                resolutionFacade.analyzeWithPartialBodyResolve(element)
             }
-            val goldDump = dumpResolve(file) {(element, resolveSession) -> resolveSession.resolveToElement(element) }
+            val goldDump = dumpResolve(file) {(element, resolutionFacade) ->
+                resolutionFacade.analyze(element)
+            }
             if (partialResolveDump != goldDump) {
                 SwingUtilities.invokeLater {
                     val title = "Difference Found in File ${file.getVirtualFile().getPath()}"
@@ -100,9 +102,9 @@ public class CheckPartialBodyResolveAction : AnAction() {
         }
     }
 
-    private fun dumpResolve(file: JetFile, resolver: (JetElement, ResolveSessionForBodies) -> BindingContext): String {
+    private fun dumpResolve(file: JetFile, resolver: (JetElement, ResolutionFacade) -> BindingContext): String {
         val builder = StringBuilder()
-        val resolveSession = file.getLazyResolveSession()
+        val resolutionFacade = file.getResolutionFacade()
         val document = FileDocumentManager.getInstance().getDocument(file.getVirtualFile())
         file.acceptChildren(object : JetVisitorVoid(){
             override fun visitJetElement(element: JetElement) {
@@ -113,7 +115,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
             override fun visitReferenceExpression(expression: JetReferenceExpression) {
                 super.visitReferenceExpression(expression)
 
-                val bindingContext = resolver(expression, resolveSession)
+                val bindingContext = resolver(expression, resolutionFacade)
                 val target = bindingContext[BindingContext.REFERENCE_TARGET, expression]
                 val offset = expression.getTextOffset()
                 val line = document.getLineNumber(offset)
@@ -125,7 +127,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
             override fun visitExpression(expression: JetExpression) {
                 super.visitExpression(expression)
 
-                val bindingContext = resolver(expression, resolveSession)
+                val bindingContext = resolver(expression, resolutionFacade)
 
                 val offset = expression.getTextOffset()
                 val line = document.getLineNumber(offset)
