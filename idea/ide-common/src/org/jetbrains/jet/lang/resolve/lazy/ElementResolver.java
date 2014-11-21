@@ -95,22 +95,11 @@ public abstract class ElementResolver {
                 elementOfAdditionalResolve = jetElement;
             }
 
-            if (partialBodyResolve && elementOfAdditionalResolve instanceof JetDeclarationWithBody) {
-                JetExpression body = ((JetDeclarationWithBody) elementOfAdditionalResolve).getBodyExpression();
+            if (partialBodyResolve && elementOfAdditionalResolve instanceof JetDeclaration) {
                 //TODO: do not resolve with filter if whole body resolve cached already
-                boolean inBody = body != null && PsiTreeUtil.isAncestor(body, jetElement, false);
-                Function1<JetElement, Boolean> filter;
-                if (inBody) {
-                    filter = new PartialBodyResolveFilter(jetElement, body, probablyNothingCallableNames());
-                }
-                else { // do as less as possible body-resolve
-                    filter = new Function1<JetElement, Boolean>() {
-                        @Override
-                        public Boolean invoke(JetElement element) {
-                            return false;
-                        }
-                    };
-                }
+                Function1<JetElement, Boolean> filter = new PartialBodyResolveFilter(
+                        jetElement,
+                        (JetDeclaration) elementOfAdditionalResolve, probablyNothingCallableNames());
                 return elementAdditionalResolve(elementOfAdditionalResolve, filter);
             }
 
@@ -155,7 +144,7 @@ public abstract class ElementResolver {
             initializerAdditionalResolve(resolveSession, (JetClassInitializer) resolveElement, trace, file, bodyResolveFilter);
         }
         else if (resolveElement instanceof JetProperty) {
-            propertyAdditionalResolve(resolveSession, (JetProperty) resolveElement, trace, file);
+            propertyAdditionalResolve(resolveSession, (JetProperty) resolveElement, trace, file, bodyResolveFilter);
         }
         else if (resolveElement instanceof JetDelegationSpecifierList) {
             delegationSpecifierAdditionalResolve(resolveSession, (JetDelegationSpecifierList) resolveElement, trace, file);
@@ -334,7 +323,12 @@ public abstract class ElementResolver {
                                                     descriptor.getScopeForMemberDeclarationResolution());
     }
 
-    private void propertyAdditionalResolve(final ResolveSession resolveSession, final JetProperty jetProperty, BindingTrace trace, JetFile file) {
+    private void propertyAdditionalResolve(
+            final ResolveSession resolveSession,
+            final JetProperty jetProperty,
+            BindingTrace trace,
+            JetFile file,
+            @Nullable Function1<JetElement, Boolean> bodyResolveFilter) {
         JetScope propertyResolutionScope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(jetProperty);
 
         BodyResolveContextForLazy bodyResolveContext = new BodyResolveContextForLazy(
@@ -347,7 +341,7 @@ public abstract class ElementResolver {
                         return resolveSession.getScopeProvider().getResolutionScopeForDeclaration(declaration);
                     }
                 });
-        BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file, null);
+        BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file, bodyResolveFilter);
         PropertyDescriptor descriptor = (PropertyDescriptor) resolveSession.resolveToDescriptor(jetProperty);
         ForceResolveUtil.forceResolveAllContents(descriptor);
 
@@ -388,7 +382,7 @@ public abstract class ElementResolver {
             JetClass klass,
             BindingTrace trace,
             JetFile file,
-            @Nullable Function1<JetElement, Boolean> filter
+            @Nullable Function1<JetElement, Boolean> bodyResolveFilter
     ) {
         JetScope scope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(klass);
 
@@ -399,7 +393,7 @@ public abstract class ElementResolver {
                               classDescriptor,
                               JetPsiUtil.getElementTextWithContext(klass));
 
-        BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file, filter);
+        BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file, bodyResolveFilter);
         bodyResolver.resolveConstructorParameterDefaultValuesAndAnnotations(createEmptyContext(resolveSession), trace, klass,
                                                                             constructorDescriptor, scope);
     }

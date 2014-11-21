@@ -25,15 +25,15 @@ import java.util.ArrayList
 import java.util.HashMap
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.JetNodeTypes
-import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.psi.psiUtil.isProbablyNothing
 import org.jetbrains.jet.utils.addToStdlib.firstOrNullIsInstance
+import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 
 //TODO: do resolve anonymous object's body
 
 class PartialBodyResolveFilter(
         elementToResolve: JetElement,
-        private val body: JetExpression,
+        private val declaration: JetDeclaration,
         probablyNothingCallableNames: ProbablyNothingCallableNames
 ) : (JetElement) -> Boolean {
 
@@ -43,9 +43,9 @@ class PartialBodyResolveFilter(
     private val nothingPropertyNames = probablyNothingCallableNames.propertyNames()
 
     ;{
-        assert(body.isAncestor(elementToResolve, strict = false))
+        assert(declaration.isAncestor(elementToResolve))
 
-        body.accept(object : JetVisitorVoid() {
+        declaration.accept(object : JetVisitorVoid() {
             override fun visitNamedFunction(function: JetNamedFunction) {
                 super.visitNamedFunction(function)
 
@@ -60,7 +60,7 @@ class PartialBodyResolveFilter(
         })
 
         statementTree.mark(elementToResolve, MarkLevel.NEED_COMPLETION)
-        statementTree.blocks(body).forEach {
+        statementTree.blocks(declaration).forEach {
             processBlock(it)
         }
     }
@@ -489,7 +489,7 @@ class PartialBodyResolveFilter(
         private val statementMarks = HashMap<JetExpression, MarkLevel>()
         private val blockLevels = HashMap<JetBlockExpression, MarkLevel>()
 
-        val topLevelBlocks: Collection<JetBlockExpression> = blocks(body)
+        val topLevelBlocks: Collection<JetBlockExpression> = blocks(declaration)
 
         fun blocks(statement: JetExpression): Collection<JetBlockExpression>
                 = blocks(statement : JetElement)
@@ -510,7 +510,7 @@ class PartialBodyResolveFilter(
 
         fun mark(element: PsiElement, level: MarkLevel) {
             var e = element
-            while (e != body) {
+            while (e != declaration) {
                 if (e.isStatement()) {
                     markStatement(e as JetExpression, level)
                 }

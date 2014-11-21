@@ -312,6 +312,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("PropertyAccessorBody.kt")
+    public void testPropertyAccessorBody() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/PropertyAccessorBody.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ReturnLambda.kt")
     public void testReturnLambda() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ReturnLambda.kt");
