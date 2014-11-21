@@ -1532,7 +1532,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @Override
-    protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration) {
+    protected void generateDeclaration(JetDeclaration declaration) {
         if (declaration instanceof JetEnumEntry) {
             String name = declaration.getName();
             assert name != null : "Enum entry has no name: " + declaration.getText();
@@ -1543,7 +1543,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             myEnumConstants.add((JetEnumEntry) declaration);
         }
 
-        super.generateDeclaration(propertyCodegen, declaration);
+        super.generateDeclaration(declaration);
     }
 
     private final List<JetEnumEntry> myEnumConstants = new ArrayList<JetEnumEntry>();
