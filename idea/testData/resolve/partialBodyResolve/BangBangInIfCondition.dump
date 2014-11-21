@@ -2,7 +2,7 @@ Resolve target: value-parameter val p: kotlin.Boolean? smart-cast to kotlin.Bool
 ----------------------------------------------
 fun foo(p: Boolean?, p1: Any?) {
     if (p!!) {
-        // STATEMENT DELETED: print(p1!!.hashCode())
+        /* STATEMENT DELETED: print(p1!!.hashCode()) */
     }
 
     <caret>p.hashCode()

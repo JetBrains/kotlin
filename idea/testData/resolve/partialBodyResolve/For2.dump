@@ -4,7 +4,7 @@ fun x(s: String): Collection<String>{}
 
 fun foo(p: Any?, p1: Any?) {
     for (e in x(p as String)) {
-        // STATEMENT DELETED: print(p1!!)
+        /* STATEMENT DELETED: print(p1!!) */
     }
 
     <caret>p.size

@@ -3,13 +3,13 @@ Resolve target: value-parameter val p: kotlin.String? smart-cast to kotlin.Strin
 fun foo(p: String?, x: Boolean, y: Boolean, z: Boolean, t: Boolean) {
     if (p == null) {
         if (x) {
-            // STATEMENT DELETED: print("x")
+            /* STATEMENT DELETED: print("x") */
             error("error")
         }
         else if (y) {
-            // STATEMENT DELETED: print("y")
+            /* STATEMENT DELETED: print("y") */
             if (z) {
-                // STATEMENT DELETED: print("z")
+                /* STATEMENT DELETED: print("z") */
                 return
             }
             else {
@@ -18,7 +18,7 @@ fun foo(p: String?, x: Boolean, y: Boolean, z: Boolean, t: Boolean) {
         }
         else {
             if (t) {
-                // STATEMENT DELETED: print("t")
+                /* STATEMENT DELETED: print("t") */
                 return
             }
             else {

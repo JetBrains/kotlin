@@ -4,7 +4,7 @@ fun x(s: Any): Boolean{}
 
 fun foo(p: Any?, p1: Any?) {
     while(x(p!!)) {
-        // STATEMENT DELETED: print(p1!!)
+        /* STATEMENT DELETED: print(p1!!) */
     }
 
     <caret>p.hashCode()

@@ -3,7 +3,7 @@ Resolve target: val x: kotlin.Any?
 fun foo() {
     for (i in 1..10) {
         val x = take()
-        // STATEMENT DELETED: if (x == null) { do { if (g()) break } while (f()) }
+        /* STATEMENT DELETED: if (x == null) { do { if (g()) break } while (f()) } */
         <caret>x.hashCode()
     }
 }

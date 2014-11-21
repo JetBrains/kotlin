@@ -1,7 +1,7 @@
 Resolve target: val v2: kotlin.Int
 ----------------------------------------------
 fun foo(p: Int) {
-    // STATEMENT DELETED: x()
+    /* STATEMENT DELETED: x() */
 
     val v1 = p * p
 
@@ -9,12 +9,12 @@ fun foo(p: Int) {
         val v2 = v1 * v1
         val v3 = v1 * v2
 
-        // STATEMENT DELETED: run { val v2 = 1 println(v2) }
+        /* STATEMENT DELETED: run { val v2 = 1 println(v2) } */
 
         print(<caret>v2)
 
-        // STATEMENT DELETED: run { val v2 = 2 println(v2) }
+        /* STATEMENT DELETED: run { val v2 = 2 println(v2) } */
     }
 
-    // STATEMENT DELETED: z()
+    /* STATEMENT DELETED: z() */
 }

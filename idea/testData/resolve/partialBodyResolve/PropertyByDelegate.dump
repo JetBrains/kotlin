@@ -3,7 +3,7 @@ Resolve target: fun g(): kotlin.Int
 import kotlin.properties.Delegates
 
 val prop: Int by Delegates.lazy {
-    // STATEMENT DELETED: print(1)
+    /* STATEMENT DELETED: print(1) */
     val v = f()
     <caret>g()
     v + 1

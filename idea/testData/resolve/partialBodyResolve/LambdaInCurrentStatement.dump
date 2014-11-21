@@ -8,7 +8,7 @@ fun foo(c: Collection<String>): Collection<String> {
             true
         }
         else {
-            // STATEMENT DELETED: println()
+            /* STATEMENT DELETED: println() */
             it[0] == 'a'
         }
     }

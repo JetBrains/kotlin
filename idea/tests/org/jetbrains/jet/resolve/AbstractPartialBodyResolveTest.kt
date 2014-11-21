@@ -77,7 +77,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
                 {
                     ApplicationManager.getApplication().runWriteAction {
                         for (statement in skippedStatements) {
-                            statement.replace(JetPsiFactory(getProject()).createComment("// STATEMENT DELETED: ${statement.compactPresentation()}"))
+                            statement.replace(JetPsiFactory(getProject()).createComment("/* STATEMENT DELETED: ${statement.compactPresentation()} */"))
                         }
                     }
                 },

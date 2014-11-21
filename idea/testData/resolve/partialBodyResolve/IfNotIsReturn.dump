@@ -3,7 +3,7 @@ Resolve target: value-parameter val p: kotlin.Any? smart-cast to kotlin.String
 fun foo(p: Any?) {
     if (p !is String) {
         if (p == null) {
-            // STATEMENT DELETED: print("null")
+            /* STATEMENT DELETED: print("null") */
             return
         }
         else {
