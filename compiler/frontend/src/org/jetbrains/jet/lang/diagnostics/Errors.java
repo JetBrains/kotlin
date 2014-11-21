@@ -208,6 +208,8 @@ public interface Errors {
     DiagnosticFactory0<JetTypeParameter>
             VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY = DiagnosticFactory0.create(ERROR, VARIANCE_MODIFIER);
 
+    DiagnosticFactory0<PsiElement> REIFIED_TYPE_PARAMETER_NO_INLINE = DiagnosticFactory0.create(ERROR);
+
     // Members
 
     DiagnosticFactory0<JetModifierListOwner> PACKAGE_MEMBER_CANNOT_BE_PROTECTED =
@@ -381,7 +383,6 @@ public interface Errors {
     DiagnosticFactory0<JetExpression> DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory1<PsiElement, TypeParameterDescriptor> TYPE_PARAMETER_AS_REIFIED = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory0<PsiElement> REIFIED_TYPE_PARAMETER_NO_INLINE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, JetType> REIFIED_TYPE_NOTHING_SUBSTITUTION = DiagnosticFactory1.create(ERROR);
 
     // Type inference
