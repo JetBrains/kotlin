@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,261 +14,216 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.descriptors.serialization;
+package org.jetbrains.jet.descriptors.serialization
 
-import kotlin.Function0;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents;
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.PropertyGetterDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.PropertySetterDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.DescriptorFactory;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.descriptors.serialization.*
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext
+import org.jetbrains.jet.descriptors.serialization.descriptors.*
+import org.jetbrains.jet.lang.descriptors.*
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.jet.lang.descriptors.impl.*
+import org.jetbrains.jet.lang.resolve.DescriptorFactory
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.CallableKind.*
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter
+import java.util.ArrayList
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+public class MemberDeserializer(private val context: DeserializationContext) {
+    private val components: DeserializationComponents get() = context.components
 
-import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable;
-import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter;
-import static org.jetbrains.jet.descriptors.serialization.SerializationPackage.*;
-
-public class MemberDeserializer {
-    private final DeserializationContext context;
-
-    public MemberDeserializer(@NotNull DeserializationContext context) {
-        this.context = context;
-    }
-
-    @NotNull
-    private DeserializationComponents getComponents() {
-        return context.getComponents();
-    }
-
-    @NotNull
-    public CallableMemberDescriptor loadCallable(@NotNull Callable proto) {
-        Callable.CallableKind callableKind = Flags.CALLABLE_KIND.get(proto.getFlags());
-        switch (callableKind) {
-            case FUN:
-                return loadFunction(proto);
-            case VAL:
-            case VAR:
-                return loadProperty(proto);
-            case CONSTRUCTOR:
-                return loadConstructor(proto);
+    public fun loadCallable(proto: Callable): CallableMemberDescriptor {
+        val callableKind = Flags.CALLABLE_KIND.get(proto.getFlags())
+        return when (callableKind) {
+            FUN -> loadFunction(proto)
+            VAL, VAR -> loadProperty(proto)
+            CONSTRUCTOR -> loadConstructor(proto)
+            else -> throw IllegalArgumentException("Unsupported callable kind: $callableKind")
         }
-        throw new IllegalArgumentException("Unsupported callable kind: " + callableKind);
     }
 
-    @NotNull
-    private PropertyDescriptor loadProperty(@NotNull final Callable proto) {
-        int flags = proto.getFlags();
+    private fun loadProperty(proto: Callable): PropertyDescriptor {
+        val flags = proto.getFlags()
 
-        DeserializedPropertyDescriptor property = new DeserializedPropertyDescriptor(
-                context.getContainingDeclaration(),
-                null,
+        val property = DeserializedPropertyDescriptor(
+                context.containingDeclaration, null,
                 getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
                 modality(Flags.MODALITY.get(flags)),
                 visibility(Flags.VISIBILITY.get(flags)),
                 Flags.CALLABLE_KIND.get(flags) == Callable.CallableKind.VAR,
-                context.getNameResolver().getName(proto.getName()),
-                SerializationPackage.memberKind(Flags.MEMBER_KIND.get(flags)),
+                context.nameResolver.getName(proto.getName()),
+                memberKind(Flags.MEMBER_KIND.get(flags)),
                 proto,
-                context.getNameResolver()
-        );
+                context.nameResolver
+        )
 
-        DeserializationContext local = context.childContext(property, proto.getTypeParameterList());
+        val local = context.childContext(property, proto.getTypeParameterList())
         property.setType(
-                local.getTypeDeserializer().type(proto.getReturnType()),
-                local.getTypeDeserializer().getOwnTypeParameters(),
+                local.typeDeserializer.type(proto.getReturnType()),
+                local.typeDeserializer.getOwnTypeParameters(),
                 getDispatchReceiverParameter(),
-                local.getTypeDeserializer().typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null)
-        );
+                local.typeDeserializer.typeOrNull(if (proto.hasReceiverType()) proto.getReceiverType() else null)
+        )
 
-        PropertyGetterDescriptorImpl getter = null;
-        PropertySetterDescriptorImpl setter = null;
-
-        if (Flags.HAS_GETTER.get(flags)) {
-            int getterFlags = proto.getGetterFlags();
-            boolean isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags);
-            if (isNotDefault) {
-                getter = new PropertyGetterDescriptorImpl(property,
-                                                          getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER),
-                                                          modality(Flags.MODALITY.get(getterFlags)),
-                                                          visibility(Flags.VISIBILITY.get(getterFlags)),
-                                                          isNotDefault, !isNotDefault,
-                                                          property.getKind(), null, SourceElement.NO_SOURCE);
+        val getter = if (Flags.HAS_GETTER.get(flags)) {
+            val getterFlags = proto.getGetterFlags()
+            val isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags)
+            val getter = if (isNotDefault) {
+                PropertyGetterDescriptorImpl(
+                        property,
+                        getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER),
+                        modality(Flags.MODALITY.get(getterFlags)),
+                        visibility(Flags.VISIBILITY.get(getterFlags)),
+                        /* hasBody = */ isNotDefault,
+                        /* isDefault = */ !isNotDefault,
+                        property.getKind(), null, SourceElement.NO_SOURCE
+                )
             }
             else {
-                getter = DescriptorFactory.createDefaultGetter(property);
+                DescriptorFactory.createDefaultGetter(property)
             }
-            getter.initialize(property.getReturnType());
+            getter.initialize(property.getReturnType())
+            getter
+        }
+        else {
+            null
         }
 
-        if (Flags.HAS_SETTER.get(flags)) {
-            int setterFlags = proto.getSetterFlags();
-            boolean isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags);
+        val setter = if (Flags.HAS_SETTER.get(flags)) {
+            val setterFlags = proto.getSetterFlags()
+            val isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags)
             if (isNotDefault) {
-                setter = new PropertySetterDescriptorImpl(property,
-                                                          getAnnotations(proto, setterFlags, AnnotatedCallableKind.PROPERTY_SETTER),
-                                                          modality(Flags.MODALITY.get(setterFlags)),
-                                                          visibility(Flags.VISIBILITY.get(setterFlags)), isNotDefault,
-                                                          !isNotDefault,
-                                                          property.getKind(), null, SourceElement.NO_SOURCE);
-                DeserializationContext setterLocal = local.childContext(setter, Collections.<TypeParameter>emptyList());
-                List<ValueParameterDescriptor> valueParameters =
-                        setterLocal.getMemberDeserializer().valueParameters(proto, AnnotatedCallableKind.PROPERTY_SETTER);
-                assert valueParameters.size() == 1 : "Property setter should have a single value parameter: " + setter;
-                setter.initialize(valueParameters.get(0));
+                val setter = PropertySetterDescriptorImpl(
+                        property,
+                        getAnnotations(proto, setterFlags, AnnotatedCallableKind.PROPERTY_SETTER),
+                        modality(Flags.MODALITY.get(setterFlags)),
+                        visibility(Flags.VISIBILITY.get(setterFlags)),
+                        /* hasBody = */ isNotDefault,
+                        /* isDefault = */ !isNotDefault,
+                        property.getKind(), null, SourceElement.NO_SOURCE
+                )
+                val setterLocal = local.childContext(setter, listOf())
+                val valueParameters = setterLocal.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.PROPERTY_SETTER)
+                assert(valueParameters.size() == 1) { "Property setter should have a single value parameter: $setter" }
+                setter.initialize(valueParameters.single())
+                setter
             }
             else {
-                setter = DescriptorFactory.createDefaultSetter(property);
+                DescriptorFactory.createDefaultSetter(property)
             }
+        }
+        else {
+            null
         }
 
         if (Flags.HAS_CONSTANT.get(flags)) {
             property.setCompileTimeInitializer(
-                    getComponents().getStorageManager().createNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
-                        @Nullable
-                        @Override
-                        public CompileTimeConstant<?> invoke() {
-                            DeclarationDescriptor containingDeclaration = context.getContainingDeclaration();
-                            assert containingDeclaration instanceof ClassOrPackageFragmentDescriptor
-                                    : "Only members in classes or package fragments should be serialized: " + containingDeclaration;
-                            return getComponents().getConstantLoader().loadPropertyConstant(
-                                    (ClassOrPackageFragmentDescriptor) containingDeclaration, proto,
-                                    context.getNameResolver(), AnnotatedCallableKind.PROPERTY);
-                        }
-                    })
-            );
+                components.storageManager.createNullableLazyValue {
+                    val containingDeclaration =
+                            context.containingDeclaration as? ClassOrPackageFragmentDescriptor
+                            ?: error("Only members in classes or package fragments should be serialized: ${context.containingDeclaration}")
+                    components.constantLoader.loadPropertyConstant(
+                            containingDeclaration, proto, context.nameResolver, AnnotatedCallableKind.PROPERTY
+                    )
+                }
+            )
         }
 
-        property.initialize(getter, setter);
+        property.initialize(getter, setter)
 
-        return property;
+        return property
     }
 
-    @NotNull
-    private CallableMemberDescriptor loadFunction(@NotNull Callable proto) {
-        Annotations annotations = getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION);
-        DeserializedSimpleFunctionDescriptor function = DeserializedSimpleFunctionDescriptor.create(
-                context.getContainingDeclaration(), proto, context.getNameResolver(), annotations
-        );
-        DeserializationContext local = context.childContext(function, proto.getTypeParameterList());
+    private fun loadFunction(proto: Callable): CallableMemberDescriptor {
+        val annotations = getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION)
+        val function = DeserializedSimpleFunctionDescriptor.create(context.containingDeclaration, proto, context.nameResolver, annotations)
+        val local = context.childContext(function, proto.getTypeParameterList())
         function.initialize(
-                local.getTypeDeserializer().typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
+                local.typeDeserializer.typeOrNull(if (proto.hasReceiverType()) proto.getReceiverType() else null),
                 getDispatchReceiverParameter(),
-                local.getTypeDeserializer().getOwnTypeParameters(),
-                local.getMemberDeserializer().valueParameters(proto, AnnotatedCallableKind.FUNCTION),
-                local.getTypeDeserializer().type(proto.getReturnType()),
+                local.typeDeserializer.getOwnTypeParameters(),
+                local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
+                local.typeDeserializer.type(proto.getReturnType()),
                 modality(Flags.MODALITY.get(proto.getFlags())),
                 visibility(Flags.VISIBILITY.get(proto.getFlags()))
-        );
-        return function;
+        )
+        return function
     }
 
-    @Nullable
-    private ReceiverParameterDescriptor getDispatchReceiverParameter() {
-        DeclarationDescriptor containingDeclaration = context.getContainingDeclaration();
-        return containingDeclaration instanceof ClassDescriptor
-               ? ((ClassDescriptor) containingDeclaration).getThisAsReceiverParameter() : null;
+    private fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? {
+        return (context.containingDeclaration as? ClassDescriptor)?.getThisAsReceiverParameter()
     }
 
-    @NotNull
-    private CallableMemberDescriptor loadConstructor(@NotNull Callable proto) {
-        ClassDescriptor classDescriptor = (ClassDescriptor) context.getContainingDeclaration();
-        ConstructorDescriptorImpl descriptor = ConstructorDescriptorImpl.create(
-                classDescriptor,
-                getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
-                // TODO: primary
+    private fun loadConstructor(proto: Callable): CallableMemberDescriptor {
+        val classDescriptor = context.containingDeclaration as ClassDescriptor
+        val descriptor = ConstructorDescriptorImpl.create(
+                classDescriptor, getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION), // TODO: primary
                 true, SourceElement.NO_SOURCE
-        );
-        DeserializationContext local = context.childContext(descriptor, Collections.<TypeParameter>emptyList());
+        )
+        val local = context.childContext(descriptor, listOf())
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
-                local.getMemberDeserializer().valueParameters(proto, AnnotatedCallableKind.FUNCTION),
+                local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
                 visibility(Flags.VISIBILITY.get(proto.getFlags()))
-        );
-        descriptor.setReturnType(local.getTypeDeserializer().type(proto.getReturnType()));
-        return descriptor;
+        )
+        descriptor.setReturnType(local.typeDeserializer.type(proto.getReturnType()))
+        return descriptor
     }
 
-    @NotNull
-    private Annotations getAnnotations(@NotNull Callable proto, int flags, @NotNull AnnotatedCallableKind kind) {
-        DeclarationDescriptor containingDeclaration = context.getContainingDeclaration();
-        assert containingDeclaration instanceof ClassOrPackageFragmentDescriptor
-                : "Only members in classes or package fragments should be serialized: " + containingDeclaration;
-        return Flags.HAS_ANNOTATIONS.get(flags) ?
-               getComponents().getAnnotationLoader().loadCallableAnnotations(
-                       (ClassOrPackageFragmentDescriptor) containingDeclaration, proto, context.getNameResolver(), kind
-               ) :
-               Annotations.EMPTY;
+    private fun getAnnotations(proto: Callable, flags: Int, kind: AnnotatedCallableKind): Annotations {
+        val containingDeclaration =
+                context.containingDeclaration as? ClassOrPackageFragmentDescriptor
+                ?: error("Only members in classes or package fragments should be serialized: ${context.containingDeclaration}")
+        return if (Flags.HAS_ANNOTATIONS.get(flags))
+            components.annotationLoader.loadCallableAnnotations(containingDeclaration, proto, context.nameResolver, kind)
+        else
+            Annotations.EMPTY
     }
 
-    @NotNull
-    public List<DeserializedTypeParameterDescriptor> typeParameters(@NotNull List<TypeParameter> protos) {
-        List<DeserializedTypeParameterDescriptor> result = new ArrayList<DeserializedTypeParameterDescriptor>(protos.size());
-        for (int i = 0; i < protos.size(); i++) {
-            TypeParameter proto = protos.get(i);
-            DeserializedTypeParameterDescriptor descriptor = new DeserializedTypeParameterDescriptor(
-                    getComponents().getStorageManager(),
-                    context.getTypeDeserializer(),
-                    proto,
-                    context.getContainingDeclaration(),
-                    context.getNameResolver().getName(proto.getName()),
-                    variance(proto.getVariance()),
-                    proto.getReified(),
-                    i
-            );
-            result.add(descriptor);
+    public fun typeParameters(protos: List<TypeParameter>): List<DeserializedTypeParameterDescriptor> {
+        val result = ArrayList<DeserializedTypeParameterDescriptor>(protos.size())
+        for (i in protos.indices) {
+            val proto = protos.get(i)
+            result.add(DeserializedTypeParameterDescriptor(
+                    components.storageManager, context.typeDeserializer, proto, context.containingDeclaration,
+                    context.nameResolver.getName(proto.getName()),
+                    variance(proto.getVariance()), proto.getReified(), i
+            ))
         }
-        return result;
+        return result
     }
 
-    @NotNull
-    private List<ValueParameterDescriptor> valueParameters(@NotNull Callable callable, @NotNull AnnotatedCallableKind kind) {
-        DeclarationDescriptor containerOfCallable = context.getContainingDeclaration().getContainingDeclaration();
-        assert containerOfCallable instanceof ClassOrPackageFragmentDescriptor
-                : "Only members in classes or package fragments should be serialized: " + containerOfCallable;
-        ClassOrPackageFragmentDescriptor classOrPackage = (ClassOrPackageFragmentDescriptor) containerOfCallable;
+    private fun valueParameters(callable: Callable, kind: AnnotatedCallableKind): List<ValueParameterDescriptor> {
+        val classOrPackage =
+                context.containingDeclaration.getContainingDeclaration() as? ClassOrPackageFragmentDescriptor
+                ?: error("Only members in classes or package fragments should be serialized: ${context.containingDeclaration}")
 
-        List<Callable.ValueParameter> protos = callable.getValueParameterList();
-        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(protos.size());
-        for (int i = 0; i < protos.size(); i++) {
-            Callable.ValueParameter proto = protos.get(i);
-            result.add(new ValueParameterDescriptorImpl(
-                    context.getContainingDeclaration(),
-                    null,
-                    i,
-                    getAnnotations(classOrPackage, callable, kind, proto),
-                    context.getNameResolver().getName(proto.getName()),
-                    context.getTypeDeserializer().type(proto.getType()),
+        val protos = callable.getValueParameterList()
+        val result = ArrayList<ValueParameterDescriptor>(protos.size())
+        for (i in protos.indices) {
+            val proto = protos.get(i)
+            result.add(ValueParameterDescriptorImpl(
+                    context.containingDeclaration, null, i,
+                    getParameterAnnotations(classOrPackage, callable, kind, proto),
+                    context.nameResolver.getName(proto.getName()),
+                    context.typeDeserializer.type(proto.getType()),
                     Flags.DECLARES_DEFAULT_VALUE.get(proto.getFlags()),
-                    context.getTypeDeserializer().typeOrNull(proto.hasVarargElementType() ? proto.getVarargElementType() : null),
-                    SourceElement.NO_SOURCE)
-            );
+                    context.typeDeserializer.typeOrNull(if (proto.hasVarargElementType()) proto.getVarargElementType() else null),
+                    SourceElement.NO_SOURCE
+            ))
         }
-        return result;
+        return result
     }
 
-    @NotNull
-    private Annotations getAnnotations(
-            @NotNull ClassOrPackageFragmentDescriptor classOrPackage,
-            @NotNull Callable callable,
-            @NotNull AnnotatedCallableKind kind,
-            @NotNull Callable.ValueParameter valueParameter
-    ) {
-        return Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags()) ? getComponents().getAnnotationLoader()
-                       .loadValueParameterAnnotations(classOrPackage, callable, context.getNameResolver(), kind, valueParameter)
-               : Annotations.EMPTY;
+    private fun getParameterAnnotations(
+            classOrPackage: ClassOrPackageFragmentDescriptor,
+            callable: Callable,
+            kind: AnnotatedCallableKind,
+            valueParameter: Callable.ValueParameter
+    ): Annotations {
+        return if (Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags()))
+            components.annotationLoader.loadValueParameterAnnotations(classOrPackage, callable, context.nameResolver, kind, valueParameter)
+        else
+            Annotations.EMPTY
     }
 }
