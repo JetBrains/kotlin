@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.CallableKind.*
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter
-import java.util.ArrayList
 
 public class MemberDeserializer(private val context: DeserializationContext) {
     private val components: DeserializationComponents get() = context.components
@@ -62,7 +61,7 @@ public class MemberDeserializer(private val context: DeserializationContext) {
                 local.typeDeserializer.type(proto.getReturnType()),
                 local.typeDeserializer.getOwnTypeParameters(),
                 getDispatchReceiverParameter(),
-                local.typeDeserializer.typeOrNull(if (proto.hasReceiverType()) proto.getReceiverType() else null)
+                if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType()) else null
         )
 
         val getter = if (Flags.HAS_GETTER.get(flags)) {
@@ -104,7 +103,6 @@ public class MemberDeserializer(private val context: DeserializationContext) {
                 )
                 val setterLocal = local.childContext(setter, listOf())
                 val valueParameters = setterLocal.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.PROPERTY_SETTER)
-                assert(valueParameters.size() == 1) { "Property setter should have a single value parameter: $setter" }
                 setter.initialize(valueParameters.single())
                 setter
             }
@@ -119,12 +117,8 @@ public class MemberDeserializer(private val context: DeserializationContext) {
         if (Flags.HAS_CONSTANT.get(flags)) {
             property.setCompileTimeInitializer(
                 components.storageManager.createNullableLazyValue {
-                    val containingDeclaration =
-                            context.containingDeclaration as? ClassOrPackageFragmentDescriptor
-                            ?: error("Only members in classes or package fragments should be serialized: ${context.containingDeclaration}")
-                    components.constantLoader.loadPropertyConstant(
-                            containingDeclaration, proto, context.nameResolver, AnnotatedCallableKind.PROPERTY
-                    )
+                    val container = context.containingDeclaration.asClassOrPackage()
+                    components.constantLoader.loadPropertyConstant(container, proto, context.nameResolver, AnnotatedCallableKind.PROPERTY)
                 }
             )
         }
@@ -139,7 +133,7 @@ public class MemberDeserializer(private val context: DeserializationContext) {
         val function = DeserializedSimpleFunctionDescriptor.create(context.containingDeclaration, proto, context.nameResolver, annotations)
         val local = context.childContext(function, proto.getTypeParameterList())
         function.initialize(
-                local.typeDeserializer.typeOrNull(if (proto.hasReceiverType()) proto.getReceiverType() else null),
+                if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType()) else null,
                 getDispatchReceiverParameter(),
                 local.typeDeserializer.getOwnTypeParameters(),
                 local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
@@ -171,48 +165,38 @@ public class MemberDeserializer(private val context: DeserializationContext) {
     }
 
     private fun getAnnotations(proto: Callable, flags: Int, kind: AnnotatedCallableKind): Annotations {
-        val containingDeclaration =
-                context.containingDeclaration as? ClassOrPackageFragmentDescriptor
-                ?: error("Only members in classes or package fragments should be serialized: ${context.containingDeclaration}")
         return if (Flags.HAS_ANNOTATIONS.get(flags))
-            components.annotationLoader.loadCallableAnnotations(containingDeclaration, proto, context.nameResolver, kind)
+            components.annotationLoader.loadCallableAnnotations(
+                    context.containingDeclaration.asClassOrPackage(), proto, context.nameResolver, kind
+            )
         else
             Annotations.EMPTY
     }
 
     public fun typeParameters(protos: List<TypeParameter>): List<DeserializedTypeParameterDescriptor> {
-        val result = ArrayList<DeserializedTypeParameterDescriptor>(protos.size())
-        for (i in protos.indices) {
-            val proto = protos.get(i)
-            result.add(DeserializedTypeParameterDescriptor(
+        return protos.withIndices().map { val (i, proto) = it
+            DeserializedTypeParameterDescriptor(
                     components.storageManager, context.typeDeserializer, proto, context.containingDeclaration,
                     context.nameResolver.getName(proto.getName()),
                     variance(proto.getVariance()), proto.getReified(), i
-            ))
+            )
         }
-        return result
     }
 
     private fun valueParameters(callable: Callable, kind: AnnotatedCallableKind): List<ValueParameterDescriptor> {
-        val classOrPackage =
-                context.containingDeclaration.getContainingDeclaration() as? ClassOrPackageFragmentDescriptor
-                ?: error("Only members in classes or package fragments should be serialized: ${context.containingDeclaration}")
+        val containerOfCallable = context.containingDeclaration.getContainingDeclaration().asClassOrPackage()
 
-        val protos = callable.getValueParameterList()
-        val result = ArrayList<ValueParameterDescriptor>(protos.size())
-        for (i in protos.indices) {
-            val proto = protos.get(i)
-            result.add(ValueParameterDescriptorImpl(
+        return callable.getValueParameterList().withIndices().map { val (i, proto) = it
+            ValueParameterDescriptorImpl(
                     context.containingDeclaration, null, i,
-                    getParameterAnnotations(classOrPackage, callable, kind, proto),
+                    getParameterAnnotations(containerOfCallable, callable, kind, proto),
                     context.nameResolver.getName(proto.getName()),
                     context.typeDeserializer.type(proto.getType()),
                     Flags.DECLARES_DEFAULT_VALUE.get(proto.getFlags()),
-                    context.typeDeserializer.typeOrNull(if (proto.hasVarargElementType()) proto.getVarargElementType() else null),
+                    if (proto.hasVarargElementType()) context.typeDeserializer.type(proto.getVarargElementType()) else null,
                     SourceElement.NO_SOURCE
-            ))
+            )
         }
-        return result
     }
 
     private fun getParameterAnnotations(
@@ -226,4 +210,8 @@ public class MemberDeserializer(private val context: DeserializationContext) {
         else
             Annotations.EMPTY
     }
+
+    private fun DeclarationDescriptor.asClassOrPackage(): ClassOrPackageFragmentDescriptor =
+            this as? ClassOrPackageFragmentDescriptor
+            ?: error("Only members in classes or package fragments should be serialized: $this")
 }

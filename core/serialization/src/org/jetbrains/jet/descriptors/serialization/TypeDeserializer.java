@@ -76,14 +76,6 @@ public class TypeDeserializer {
         return UtilsPackage.toReadOnlyList(typeParameterDescriptors.values());
     }
 
-    @Nullable
-    public JetType typeOrNull(@Nullable ProtoBuf.Type proto) {
-        if (proto == null) {
-            return null;
-        }
-        return type(proto);
-    }
-
     @NotNull
     public JetType type(@NotNull ProtoBuf.Type proto) {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
@@ -169,7 +161,12 @@ public class TypeDeserializer {
             TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
             return typeParameterDescriptor.getDefaultType().getMemberScope();
         }
-        return ((ClassDescriptor) descriptor).getMemberScope(typeArguments);
+        else if (descriptor instanceof ClassDescriptor) {
+            return ((ClassDescriptor) descriptor).getMemberScope(typeArguments);
+        }
+        else {
+            throw new IllegalStateException("Unsupported classifier: " + descriptor);
+        }
     }
 
     @Override

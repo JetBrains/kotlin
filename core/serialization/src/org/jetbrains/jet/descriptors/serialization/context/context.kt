@@ -17,10 +17,9 @@
 package org.jetbrains.jet.descriptors.serialization.context
 
 import org.jetbrains.jet.storage.StorageManager
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationLoader
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.descriptors.serialization.*
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationLoader
 import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader
 import org.jetbrains.jet.lang.resolve.name.ClassId
 
@@ -53,14 +52,10 @@ public class DeserializationContext(
 
     val memberDeserializer: MemberDeserializer = MemberDeserializer(this)
 
-    // Not using default arguments here because Java code calls this function
-    fun childContext(descriptor: DeclarationDescriptor, typeParameterProtos: List<TypeParameter>): DeserializationContext =
-            childContext(descriptor, typeParameterProtos, this.nameResolver)
-
     fun childContext(
             descriptor: DeclarationDescriptor,
-            typeParameterProtos: List<TypeParameter>,
-            nameResolver: NameResolver
+            typeParameterProtos: List<ProtoBuf.TypeParameter>,
+            nameResolver: NameResolver = this.nameResolver
     ): DeserializationContext {
         val child = DeserializationContext(components, nameResolver, descriptor, parentTypeDeserializer = this.typeDeserializer)
 

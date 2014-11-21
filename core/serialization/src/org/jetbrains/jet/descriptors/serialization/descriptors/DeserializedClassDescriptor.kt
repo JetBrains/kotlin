@@ -133,7 +133,7 @@ public class DeserializedClassDescriptor(
     private fun computeSuperTypes(): Collection<JetType> {
         val supertypes = ArrayList<JetType>(classProto.getSupertypeCount())
         for (supertype in classProto.getSupertypeList()) {
-            supertypes.add(context.typeDeserializer.`type`(supertype))
+            supertypes.add(context.typeDeserializer.type(supertype))
         }
         return supertypes
     }
