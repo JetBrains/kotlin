@@ -34,6 +34,11 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import java.util.HashMap
 import org.jetbrains.jet.lang.types.JetTypeImpl
 import java.util.regex.Pattern
+import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTaskHolder
+import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.jet.lang.psi.debugText.getDebugText
+import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate
 
 class LazyOperationsLog(
         val stringSanitizer: (String) -> String
@@ -185,6 +190,8 @@ class LazyOperationsLog(
                     }
                 }.appendQuoted()
             }
+            o is ResolutionCandidate<*> -> DescriptorRenderer.COMPACT.render(o.getDescriptor()).appendQuoted()
+            o is ResolutionTaskHolder<*, *> -> o.field<BasicCallResolutionContext>("basicCallResolutionContext").call.getCallElement().getDebugText()?.appendQuoted()
         }
         return sb.toString()
     }
