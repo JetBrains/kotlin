@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.plugin.refactoring.changeSignature.usages;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
@@ -26,19 +26,24 @@ import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class JetParameterUsage extends JetUsageInfo<JetSimpleNameExpression> {
     private final JetParameterInfo parameterInfo;
-    private final PsiElement function;
+    private final FunctionDescriptor functionDescriptor;
     private final boolean isInherited;
 
-    public JetParameterUsage(@NotNull JetSimpleNameExpression element, JetParameterInfo parameterInfo, PsiElement function, boolean inherited) {
+    public JetParameterUsage(
+            @NotNull JetSimpleNameExpression element,
+            JetParameterInfo parameterInfo,
+            FunctionDescriptor functionDescriptor,
+            boolean inherited
+    ) {
         super(element);
         this.parameterInfo = parameterInfo;
-        this.function = function;
+        this.functionDescriptor = functionDescriptor;
         isInherited = inherited;
     }
 
     @Override
     public boolean processUsage(JetChangeInfo changeInfo, JetSimpleNameExpression element) {
-        String newName = parameterInfo.getInheritedName(isInherited, function, changeInfo.getFunctionDescriptor());
+        String newName = parameterInfo.getInheritedName(isInherited, functionDescriptor, changeInfo.getFunctionDescriptor());
         element.replace(JetPsiFactory(element.getProject()).createSimpleName(newName));
         return false;
     }

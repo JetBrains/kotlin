@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.refactoring.changeSignature.usages;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
@@ -29,12 +30,12 @@ import java.util.Map;
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 
 public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
-    private final PsiElement function;
+    private final FunctionDescriptor functionDescriptor;
     private final boolean isInherited;
 
-    public JetFunctionCallUsage(@NotNull JetCallElement element, @NotNull PsiElement function, boolean isInherited) {
+    public JetFunctionCallUsage(@NotNull JetCallElement element, @NotNull FunctionDescriptor functionDescriptor, boolean isInherited) {
         super(element);
-        this.function = function;
+        this.functionDescriptor = functionDescriptor;
         this.isInherited = isInherited;
     }
 
@@ -75,7 +76,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             String defaultValueText = parameterInfo.getDefaultValueText();
 
             if (isNamedCall) {
-                String newName = parameterInfo.getInheritedName(isInherited, function, changeInfo.getFunctionDescriptor());
+                String newName = parameterInfo.getInheritedName(isInherited, functionDescriptor, changeInfo.getFunctionDescriptor());
                 parametersBuilder.append(newName).append('=');
             }
 
@@ -147,7 +148,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         PsiElement identifier = argumentNameExpression != null ? argumentNameExpression.getIdentifier() : null;
 
         if (identifier != null) {
-            String newName = parameterInfo.getInheritedName(isInherited, function, changeInfo.getFunctionDescriptor());
+            String newName = parameterInfo.getInheritedName(isInherited, functionDescriptor, changeInfo.getFunctionDescriptor());
             identifier.replace(JetPsiFactory(getProject()).createIdentifier(newName));
         }
     }

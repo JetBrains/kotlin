@@ -16,15 +16,11 @@
 
 package org.jetbrains.jet.plugin.refactoring.changeSignature.usages
 
-import org.jetbrains.jet.lang.psi.JetCallElement
-import com.intellij.psi.PsiElement
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeInfo
 import com.intellij.usageView.UsageInfo
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
-public class JavaMethodKotlinCallUsage(
-        val callElement: JetCallElement,
-        val javaMethodChangeInfo: JetChangeInfo): UsageInfo(javaMethodChangeInfo.getMethod()) {
-    private val delegateUsage = JetFunctionCallUsage(callElement, javaMethodChangeInfo.getMethod(), false)
-
-    fun processUsage(): Boolean = delegateUsage.processUsage(javaMethodChangeInfo, callElement)
-}
+public class KotlinSAMUsage(
+        val functionLiteral: JetFunctionLiteral,
+        val functionDescriptor: FunctionDescriptor
+): UsageInfo(functionLiteral)

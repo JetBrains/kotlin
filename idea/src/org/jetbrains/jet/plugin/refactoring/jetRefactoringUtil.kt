@@ -63,6 +63,8 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.util.text.StringUtil
 import javax.swing.Icon
 import org.jetbrains.jet.plugin.util.string.collapseSpaces
+import org.jetbrains.jet.asJava.KotlinLightMethod
+import com.intellij.psi.PsiMethod
 import org.jetbrains.jet.plugin.caches.resolve.analyze
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
@@ -363,6 +365,8 @@ public fun chooseContainerElementIfNecessary<T>(
         else -> chooseContainerElement(containers, editor, title, highlightSelection, toPsi, onSelect)
     }
 }
+
+public fun PsiElement.isTrueJavaMethod(): Boolean = this is PsiMethod && this !is KotlinLightMethod
 
 fun compareDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
     return d1 == d2 ||

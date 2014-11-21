@@ -108,13 +108,13 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
                     new HashSet<UsageInfo>(),
                     new Function1<FunctionDescriptor, Iterable<? extends UsageInfo>>() {
                         @Override
-                        public Iterable<? extends UsageInfo> invoke(FunctionDescriptor descriptor) {
+                        public Iterable<? extends UsageInfo> invoke(final FunctionDescriptor descriptor) {
                             PsiElement declaration = DescriptorToDeclarationUtil.INSTANCE$.getDeclaration(baseDeclaration.getProject(),
                                                                                                           descriptor);
                             assert declaration != null : "No declaration found for " + descriptor;
 
                             Set<UsageInfo> result = Sets.newHashSet();
-                            result.add(new JetFunctionDefinitionUsage(declaration, false));
+                            result.add(new JetFunctionDefinitionUsage(declaration, descriptor, false));
 
                             if (!(declaration instanceof JetNamedFunction)) return result;
 
@@ -130,7 +130,9 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
                                                 public UsageInfo invoke(PsiMethod method) {
                                                     if (method instanceof KotlinLightMethod) {
                                                         JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
-                                                        return declaration != null ? new JetFunctionDefinitionUsage(declaration, true) : null;
+                                                        return declaration != null
+                                                               ? new JetFunctionDefinitionUsage(declaration, descriptor, true)
+                                                               : null;
                                                     }
 
                                                     return new OverriderUsageInfo(method, baseLightMethod, true, true, true);

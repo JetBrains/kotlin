@@ -23,6 +23,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.changeSignature.ChangeSignatureProcessor;
 import com.intellij.refactoring.changeSignature.ParameterInfoImpl;
@@ -44,10 +45,7 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.getChangeSignatureDialog;
@@ -354,6 +352,129 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                     @Override
                     ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
                         return ArrayUtil.remove(super.getNewParameters(method), 1);
+                    }
+                }
+        );
+    }
+
+    public void testSAMAddToEmptyParamList() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        PsiType paramType = PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject()));
+                        return new ParameterInfoImpl[] { new ParameterInfoImpl(-1, "s", paramType) };
+                    }
+                }
+        );
+    }
+
+    public void testSAMAddToSingletonParamList() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        PsiParameter parameter = method.getParameterList().getParameters()[0];
+                        ParameterInfoImpl originalParameter = new ParameterInfoImpl(0, parameter.getName(), parameter.getType());
+                        ParameterInfoImpl newParameter = new ParameterInfoImpl(-1, "n", PsiType.INT);
+
+                        return new ParameterInfoImpl[] {newParameter, originalParameter};
+                    }
+                }
+        );
+    }
+
+    public void testSAMAddToNonEmptyParamList() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        ParameterInfoImpl[] originalParameters = super.getNewParameters(method);
+                        ParameterInfoImpl[] newParameters = Arrays.copyOf(originalParameters, originalParameters.length + 1);
+
+                        PsiType paramType = PsiType.getJavaLangObject(getPsiManager(), GlobalSearchScope.allScope(getProject()));
+                        newParameters[originalParameters.length] = new ParameterInfoImpl(-1, "o", paramType);
+
+                        return newParameters;
+                    }
+                }
+        );
+    }
+
+    public void testSAMRemoveSingletonParamList() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        return new ParameterInfoImpl[0];
+                    }
+                }
+        );
+    }
+
+    public void testSAMRemoveParam() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        return ArrayUtil.remove(super.getNewParameters(method), 0);
+                    }
+                }
+        );
+    }
+
+    public void testSAMRenameParam() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
+                        newParameters[0].setName("p");
+                        return newParameters;
+                    }
+                }
+        );
+    }
+
+    public void testSAMChangeParamType() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
+                        newParameters[0].setType(PsiType.getJavaLangObject(getPsiManager(), GlobalSearchScope.allScope(getProject())));
+                        return newParameters;
+                    }
+                }
+        );
+    }
+
+    public void testSAMRenameMethod() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    String getNewName(@NotNull PsiMethod method) {
+                        return "bar";
+                    }
+                }
+        );
+    }
+
+    public void testSAMChangeMethodReturnType() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @Nullable
+                    @Override
+                    PsiType getNewReturnType(@NotNull PsiMethod method) {
+                        return PsiType.getJavaLangObject(getPsiManager(), GlobalSearchScope.allScope(getProject()));
                     }
                 }
         );
