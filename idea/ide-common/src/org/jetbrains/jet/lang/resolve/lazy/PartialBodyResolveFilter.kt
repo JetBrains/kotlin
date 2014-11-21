@@ -198,7 +198,7 @@ class PartialBodyResolveFilter(
                     }
                 }
 
-                condition.accept(this)
+                condition?.accept(this)
 
                 if (thenBranch != null && elseBranch != null) {
                     val thenCasts = potentialSmartCastPlaces(thenBranch, filter)
