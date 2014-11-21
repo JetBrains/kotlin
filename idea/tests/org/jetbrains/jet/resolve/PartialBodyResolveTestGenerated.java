@@ -72,9 +72,15 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
-    @TestMetadata("For.kt")
-    public void testFor() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/For.kt");
+    @TestMetadata("For1.kt")
+    public void testFor1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/For1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("For2.kt")
+    public void testFor2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/For2.kt");
         doTest(fileName);
     }
 
@@ -156,6 +162,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("IfNullAlwaysExits.kt")
+    public void testIfNullAlwaysExits() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullAlwaysExits.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("IfNullBreak.kt")
     public void testIfNullBreak() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullBreak.kt");
@@ -234,6 +246,18 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("LabeledBreak.kt")
+    public void testLabeledBreak() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LabeledBreak.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("LabeledContinue.kt")
+    public void testLabeledContinue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LabeledContinue.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Lambda.kt")
     public void testLambda() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/Lambda.kt");
@@ -267,6 +291,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
     @TestMetadata("MutliDeclaration.kt")
     public void testMutliDeclaration() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/MutliDeclaration.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OutOfBodyResolve.kt")
+    public void testOutOfBodyResolve() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/OutOfBodyResolve.kt");
         doTest(fileName);
     }
 
