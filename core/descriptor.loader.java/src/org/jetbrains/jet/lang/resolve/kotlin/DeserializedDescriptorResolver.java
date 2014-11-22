@@ -20,6 +20,7 @@ import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DescriptorsPackage;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
@@ -37,22 +38,22 @@ import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kin
 
 public final class DeserializedDescriptorResolver {
     private final ErrorReporter errorReporter;
-    private DeserializationGlobalContextForJava context;
+    private DeserializationComponents components;
 
     public DeserializedDescriptorResolver(@NotNull ErrorReporter errorReporter) {
         this.errorReporter = errorReporter;
     }
 
     @Inject
-    public void setContext(@NotNull DeserializationGlobalContextForJava context) {
-        this.context = context;
+    public void setComponents(@NotNull DeserializationComponentsForJava context) {
+        this.components = context.getComponents();
     }
 
     @Nullable
     public ClassDescriptor resolveClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass, CLASS);
         if (data != null) {
-            return context.getComponents().getClassDeserializer().deserializeClass(
+            return components.getClassDeserializer().deserializeClass(
                     kotlinClass.getClassId(), JavaProtoBufUtil.readClassDataFrom(data)
             );
         }
@@ -65,7 +66,7 @@ public final class DeserializedDescriptorResolver {
         if (data != null) {
             //all classes are included in java scope
             return DescriptorsPackage.DeserializedPackageMemberScope(
-                    descriptor, JavaProtoBufUtil.readPackageDataFrom(data), context.getComponents(),
+                    descriptor, JavaProtoBufUtil.readPackageDataFrom(data), components,
                     new Function0<Collection<Name>>() {
                         @Override
                         public Collection<Name> invoke() {

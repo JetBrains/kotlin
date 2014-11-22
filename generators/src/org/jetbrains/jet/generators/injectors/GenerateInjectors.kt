@@ -22,8 +22,7 @@ import org.jetbrains.jet.context.GlobalContextImpl
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
+import org.jetbrains.jet.lang.resolve.java.*
 import org.jetbrains.jet.lang.resolve.java.resolver.*
 import org.jetbrains.jet.lang.resolve.java.sam.SamConversionResolverImpl
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder
@@ -37,13 +36,11 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaPropertyInitializerEvaluatorImpl
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.lang.resolve.java.lazy.ModuleClassResolver
-import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializationComponentsForJava
 import org.jetbrains.jet.lang.resolve.java.lazy.SingleModuleClassResolver
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory
-import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.kotlin.JavaDeclarationCheckerProvider
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer
-import org.jetbrains.jet.lang.resolve.java.JavaFlexibleTypeCapabilitiesProvider
 import org.jetbrains.jet.context.LazyResolveToken
 
 // NOTE: After making changes, you need to re-generate the injectors.
@@ -122,7 +119,7 @@ private fun generatorForTopDownAnalyzerForJvm() =
             commonForTopDownAnalyzer()
 
             publicField(javaClass<JavaDescriptorResolver>())
-            publicField(javaClass<DeserializationGlobalContextForJava>())
+            publicField(javaClass<DeserializationComponentsForJava>())
 
             field(javaClass<AdditionalCheckerProvider>(),
                   init = GivenExpression(javaClass<JavaDeclarationCheckerProvider>().getName() + ".INSTANCE$"))

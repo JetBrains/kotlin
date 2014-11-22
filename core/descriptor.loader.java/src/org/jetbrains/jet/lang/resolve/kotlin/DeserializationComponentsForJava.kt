@@ -23,7 +23,7 @@ import org.jetbrains.jet.descriptors.serialization.context.DeserializationCompon
 
 // This class is needed only for easier injection: exact types of needed components are specified in the constructor here.
 // Otherwise injector generator is not smart enough to deduce, for example, which package fragment provider DeserializationComponents needs
-public class DeserializationGlobalContextForJava(
+public class DeserializationComponentsForJava(
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
         classDataFinder: JavaClassDataFinder,

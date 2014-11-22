@@ -65,7 +65,7 @@ import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava;
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializationComponentsForJava;
 import org.jetbrains.jet.lang.resolve.kotlin.JavaClassDataFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorLoader;
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage;
@@ -126,7 +126,7 @@ public class InjectorForLazyResolveWithJava {
     private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
     private final GlobalJavaResolverContext globalJavaResolverContext;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
-    private final DeserializationGlobalContextForJava deserializationGlobalContextForJava;
+    private final DeserializationComponentsForJava deserializationComponentsForJava;
     private final JavaClassDataFinder javaClassDataFinder;
     private final AnnotationDescriptorLoader annotationDescriptorLoader;
     private final DescriptorLoadersStorage descriptorLoadersStorage;
@@ -194,7 +194,7 @@ public class InjectorForLazyResolveWithJava {
         this.descriptorLoadersStorage = new DescriptorLoadersStorage(storageManager, module);
         this.annotationDescriptorLoader = new AnnotationDescriptorLoader(storageManager, module, descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
         this.constantDescriptorLoader = new ConstantDescriptorLoader(descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
-        this.deserializationGlobalContextForJava = new DeserializationGlobalContextForJava(storageManager, module, javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
+        this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, module, javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
         this.resolveSession.setDescriptorResolver(descriptorResolver);
@@ -272,7 +272,7 @@ public class InjectorForLazyResolveWithJava {
 
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
 
-        deserializedDescriptorResolver.setContext(deserializationGlobalContextForJava);
+        deserializedDescriptorResolver.setComponents(deserializationComponentsForJava);
 
         javaClassFinder.initialize();
 
