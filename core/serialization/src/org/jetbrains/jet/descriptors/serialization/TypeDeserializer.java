@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
-import kotlin.Function0;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,13 +23,9 @@ import org.jetbrains.jet.descriptors.serialization.context.DeserializationCompon
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
-import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.ArrayList;
@@ -162,92 +157,5 @@ public class TypeDeserializer {
     @Override
     public String toString() {
         return debugName;
-    }
-
-    private static class DeserializedType extends AbstractJetType implements LazyType {
-        private final TypeDeserializer typeDeserializer;
-        private final ProtoBuf.Type typeProto;
-        private final NotNullLazyValue<TypeConstructor> constructor;
-        private final List<TypeProjection> arguments;
-        private final NotNullLazyValue<JetScope> memberScope;
-
-        public DeserializedType(@NotNull DeserializationContext context, @NotNull ProtoBuf.Type proto) {
-            this.typeDeserializer = context.getTypeDeserializer();
-            this.typeProto = proto;
-            this.arguments = typeDeserializer.typeArguments(proto.getArgumentList());
-
-            this.constructor = context.getComponents().getStorageManager().createLazyValue(new Function0<TypeConstructor>() {
-                @Override
-                public TypeConstructor invoke() {
-                    return typeDeserializer.typeConstructor(typeProto);
-                }
-            });
-            this.memberScope = context.getComponents().getStorageManager().createLazyValue(new Function0<JetScope>() {
-                @Override
-                public JetScope invoke() {
-                    return computeMemberScope();
-                }
-            });
-        }
-
-        @NotNull
-        @Override
-        public TypeConstructor getConstructor() {
-            return constructor.invoke();
-        }
-
-        @NotNull
-        @Override
-        public List<TypeProjection> getArguments() {
-            return arguments;
-        }
-
-        @Override
-        public boolean isNullable() {
-            return typeProto.getNullable();
-        }
-
-        @NotNull
-        private JetScope computeMemberScope() {
-            if (isError()) {
-                return ErrorUtils.createErrorScope(getConstructor().toString());
-            }
-            else {
-                return getTypeMemberScope(getConstructor(), getArguments());
-            }
-        }
-
-        @NotNull
-        private static JetScope getTypeMemberScope(@NotNull TypeConstructor constructor, @NotNull List<TypeProjection> typeArguments) {
-            ClassifierDescriptor descriptor = constructor.getDeclarationDescriptor();
-            if (descriptor instanceof TypeParameterDescriptor) {
-                TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
-                return typeParameterDescriptor.getDefaultType().getMemberScope();
-            }
-            else if (descriptor instanceof ClassDescriptor) {
-                return ((ClassDescriptor) descriptor).getMemberScope(typeArguments);
-            }
-            else {
-                throw new IllegalStateException("Unsupported classifier: " + descriptor);
-            }
-        }
-
-        @NotNull
-        @Override
-        public JetScope getMemberScope() {
-            return memberScope.invoke();
-        }
-
-        @Override
-        public boolean isError() {
-            ClassifierDescriptor descriptor = getConstructor().getDeclarationDescriptor();
-            return descriptor != null && ErrorUtils.isError(descriptor);
-        }
-
-        @NotNull
-        @Override
-        public Annotations getAnnotations() {
-            return Annotations.EMPTY;
-        }
     }
 }
