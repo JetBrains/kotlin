@@ -37,7 +37,7 @@ public class DeserializationComponents(
     public fun deserializeClass(classId: ClassId): ClassDescriptor? = classDeserializer.deserializeClass(classId)
 
     public fun createContext(descriptor: PackageFragmentDescriptor, nameResolver: NameResolver): DeserializationContext =
-            DeserializationContext(this, nameResolver, descriptor, parentTypeDeserializer = null)
+            DeserializationContext(this, nameResolver, descriptor, parentTypeDeserializer = null, typeParameters = listOf())
 }
 
 
@@ -45,24 +45,19 @@ public class DeserializationContext(
         public val components: DeserializationComponents,
         public val nameResolver: NameResolver,
         public val containingDeclaration: DeclarationDescriptor,
-        parentTypeDeserializer: TypeDeserializer?
+        parentTypeDeserializer: TypeDeserializer?,
+        typeParameters: List<ProtoBuf.TypeParameter>
 ) {
-    val typeDeserializer: TypeDeserializer =
-            TypeDeserializer(this, parentTypeDeserializer, "Deserializer for ${containingDeclaration.getName()}")
+    val typeDeserializer = TypeDeserializer(this, parentTypeDeserializer, typeParameters,
+                                            "Deserializer for ${containingDeclaration.getName()}")
 
-    val memberDeserializer: MemberDeserializer = MemberDeserializer(this)
+    val memberDeserializer = MemberDeserializer(this)
 
     fun childContext(
             descriptor: DeclarationDescriptor,
             typeParameterProtos: List<ProtoBuf.TypeParameter>,
             nameResolver: NameResolver = this.nameResolver
-    ): DeserializationContext {
-        val child = DeserializationContext(components, nameResolver, descriptor, parentTypeDeserializer = this.typeDeserializer)
-
-        for (typeParameter in child.memberDeserializer.typeParameters(typeParameterProtos)) {
-            child.typeDeserializer.addTypeParameter(typeParameter)
-        }
-
-        return child
-    }
+    ) = DeserializationContext(
+            components, nameResolver, descriptor, parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos
+    )
 }

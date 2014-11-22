@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.impl.*
 import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.CallableKind.*
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter
 
 public class MemberDeserializer(private val context: DeserializationContext) {
     private val components: DeserializationComponents get() = context.components
@@ -171,16 +170,6 @@ public class MemberDeserializer(private val context: DeserializationContext) {
             )
         else
             Annotations.EMPTY
-    }
-
-    public fun typeParameters(protos: List<TypeParameter>): List<DeserializedTypeParameterDescriptor> {
-        return protos.withIndices().map { val (i, proto) = it
-            DeserializedTypeParameterDescriptor(
-                    components.storageManager, context.typeDeserializer, proto, context.containingDeclaration,
-                    context.nameResolver.getName(proto.getName()),
-                    variance(proto.getVariance()), proto.getReified(), i
-            )
-        }
     }
 
     private fun valueParameters(callable: Callable, kind: AnnotatedCallableKind): List<ValueParameterDescriptor> {

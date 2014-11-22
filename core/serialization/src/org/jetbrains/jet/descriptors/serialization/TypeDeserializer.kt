@@ -28,19 +28,27 @@ import java.util.LinkedHashMap
 public class TypeDeserializer(
         private val context: DeserializationContext,
         private val parent: TypeDeserializer?,
+        private val typeParameterProtos: List<ProtoBuf.TypeParameter>,
         private val debugName: String
 ) {
-    private val typeParameterDescriptors = LinkedHashMap<Int, TypeParameterDescriptor>()
-
     private val classDescriptors: (Int) -> ClassDescriptor? = context.components.storageManager.createMemoizedFunctionWithNullableValues {
         fqNameIndex -> computeClassDescriptor(fqNameIndex)
     }
 
-    fun addTypeParameter(typeParameterDescriptor: DeserializedTypeParameterDescriptor) {
-        typeParameterDescriptors.put(typeParameterDescriptor.getProtoId(), typeParameterDescriptor)
+    private val typeParameterDescriptors = context.components.storageManager.createLazyValue {
+        if (typeParameterProtos.isEmpty()) {
+            mapOf<Int, TypeParameterDescriptor>()
+        }
+        else {
+            val result = LinkedHashMap<Int, TypeParameterDescriptor>()
+            for ((index, proto) in typeParameterProtos.withIndices()) {
+                result[proto.getId()] = DeserializedTypeParameterDescriptor(context, proto, index)
+            }
+            result
+        }
     }
 
-    fun getOwnTypeParameters(): List<TypeParameterDescriptor> = typeParameterDescriptors.values().toReadOnlyList()
+    fun getOwnTypeParameters(): List<TypeParameterDescriptor> = typeParameterDescriptors().values().toReadOnlyList()
 
     fun type(proto: ProtoBuf.Type): JetType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
@@ -79,7 +87,7 @@ public class TypeDeserializer(
     }
 
     private fun typeParameterTypeConstructor(proto: ProtoBuf.Type.Constructor): TypeConstructor? =
-            typeParameterDescriptors.get(proto.getId())?.getTypeConstructor() ?:
+            typeParameterDescriptors().get(proto.getId())?.getTypeConstructor() ?:
             parent?.typeParameterTypeConstructor(proto)
 
     private fun computeClassDescriptor(fqNameIndex: Int): ClassDescriptor? =
