@@ -20,8 +20,9 @@ import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
+import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DescriptorsPackage;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
@@ -65,14 +66,16 @@ public final class DeserializedDescriptorResolver {
         String[] data = readData(kotlinClass, PACKAGE_FACADE);
         if (data != null) {
             //all classes are included in java scope
-            return DescriptorsPackage.DeserializedPackageMemberScope(
-                    descriptor, JavaProtoBufUtil.readPackageDataFrom(data), components,
+            PackageData packageData = JavaProtoBufUtil.readPackageDataFrom(data);
+            return new DeserializedPackageMemberScope(
+                    descriptor, packageData.getPackageProto(), packageData.getNameResolver(), components,
                     new Function0<Collection<Name>>() {
                         @Override
                         public Collection<Name> invoke() {
                             return Collections.emptyList();
                         }
-                    });
+                    }
+            );
         }
         return null;
     }

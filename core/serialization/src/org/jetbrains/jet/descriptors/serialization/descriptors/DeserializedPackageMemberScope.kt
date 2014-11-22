@@ -16,9 +16,8 @@
 
 package org.jetbrains.jet.descriptors.serialization.descriptors
 
-import org.jetbrains.jet.descriptors.serialization.PackageData
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
-import org.jetbrains.jet.descriptors.serialization.context.*
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor
@@ -26,25 +25,15 @@ import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.utils.addIfNotNull
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
-
-public fun DeserializedPackageMemberScope(
-        packageDescriptor: PackageFragmentDescriptor,
-        packageData: PackageData,
-        components: DeserializationComponents,
-        classNames: () -> Collection<Name>
-): DeserializedPackageMemberScope = DeserializedPackageMemberScope(
-        packageDescriptor,
-        packageData.getPackageProto(),
-        components.createContext(packageDescriptor, packageData.getNameResolver()),
-        classNames
-)
+import org.jetbrains.jet.descriptors.serialization.NameResolver
 
 public open class DeserializedPackageMemberScope(
         packageDescriptor: PackageFragmentDescriptor,
         proto: ProtoBuf.Package,
-        outerContext: DeserializationContext,
+        nameResolver: NameResolver,
+        components: DeserializationComponents,
         classNames: () -> Collection<Name>
-) : DeserializedMemberScope(outerContext.childContext(packageDescriptor, listOf()), proto.getMemberList()) {
+) : DeserializedMemberScope(components.createContext(packageDescriptor, nameResolver), proto.getMemberList()) {
 
     private val packageFqName = packageDescriptor.fqName
     private val classNames = context.components.storageManager.createLazyValue(classNames)

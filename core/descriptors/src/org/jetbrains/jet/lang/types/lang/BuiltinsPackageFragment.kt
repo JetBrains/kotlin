@@ -45,10 +45,11 @@ class BuiltinsPackageFragment(storageManager: StorageManager, module: ModuleDesc
         DeserializedPackageMemberScope(
                 this,
                 loadPackage(),
+                nameResolver,
                 DeserializationComponents(
                         storageManager, module, BuiltInsClassDataFinder(), AnnotationLoader.UNSUPPORTED, // TODO: support annotations
                         ConstantLoader.UNSUPPORTED, provider, FlexibleTypeCapabilitiesDeserializer.ThrowException
-                ).createContext(this, nameResolver),
+                ),
                 { readClassNames() }
         )
 

@@ -63,9 +63,11 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
             LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassId()}")
             return Collections.emptyList()
         }
+        val packageData = JavaProtoBufUtil.readPackageDataFrom(annotationData)
         val membersScope = DeserializedPackageMemberScope(
                 createDummyPackageFragment(packageFqName),
-                JavaProtoBufUtil.readPackageDataFrom(annotationData),
+                packageData.getPackageProto(),
+                packageData.getNameResolver(),
                 deserializationComponents
         ) { listOf() }
         return membersScope.getDescriptors()

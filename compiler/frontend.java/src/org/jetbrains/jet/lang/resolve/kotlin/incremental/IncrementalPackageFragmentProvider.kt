@@ -109,9 +109,7 @@ public class IncrementalPackageFragmentProvider(
         override fun getMemberScope(): JetScope = memberScope()
 
         private inner class IncrementalPackageScope(val packageData: PackageData) : DeserializedPackageMemberScope(
-                this@IncrementalPackageFragment,
-                packageData.getPackageProto(),
-                deserializationComponents.createContext(this@IncrementalPackageFragment, packageData.getNameResolver()),
+                this@IncrementalPackageFragment, packageData.getPackageProto(), packageData.getNameResolver(), deserializationComponents,
                 { listOf() }
         ) {
             override fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> {
