@@ -82,18 +82,22 @@ public class TypeDeserializer {
             String id = context.getNameResolver().getString(proto.getFlexibleTypeCapabilitiesId());
             FlexibleTypeCapabilities capabilities = getComponents().getFlexibleTypeCapabilitiesDeserializer().capabilitiesById(id);
 
-            if (capabilities == null) return ErrorUtils.createErrorType(new DeserializedType(proto) + ": Capabilities not found for id " + id);
+            if (capabilities == null) {
+                return ErrorUtils.createErrorType(new DeserializedType(context, proto) + ": Capabilities not found for id " + id);
+            }
 
             return DelegatingFlexibleType.create(
-                    new DeserializedType(proto),
-                    new DeserializedType(proto.getFlexibleUpperBound()),
+                    new DeserializedType(context, proto),
+                    new DeserializedType(context, proto.getFlexibleUpperBound()),
                     capabilities
             );
         }
-        return new DeserializedType(proto);
+
+        return new DeserializedType(context, proto);
     }
 
-    private TypeConstructor typeConstructor(ProtoBuf.Type proto) {
+    @NotNull
+    public TypeConstructor typeConstructor(@NotNull ProtoBuf.Type proto) {
         ProtoBuf.Type.Constructor constructorProto = proto.getConstructor();
         int id = constructorProto.getId();
         TypeConstructor typeConstructor = typeConstructor(constructorProto);
@@ -101,7 +105,7 @@ public class TypeDeserializer {
             String message = constructorProto.getKind() == ProtoBuf.Type.Constructor.Kind.CLASS
                              ? context.getNameResolver().getClassId(id).asSingleFqName().asString()
                              : "Unknown type parameter " + id;
-            typeConstructor = ErrorUtils.createErrorType(message).getConstructor();
+            return ErrorUtils.createErrorType(message).getConstructor();
         }
         return typeConstructor;
     }
@@ -142,7 +146,8 @@ public class TypeDeserializer {
         );
     }
 
-    private List<TypeProjection> typeArguments(List<ProtoBuf.Type.Argument> protos) {
+    @NotNull
+    public List<TypeProjection> typeArguments(@NotNull List<ProtoBuf.Type.Argument> protos) {
         List<TypeProjection> result = new ArrayList<TypeProjection>(protos.size());
         for (ProtoBuf.Type.Argument proto : protos) {
             result.add(typeProjection(proto));
@@ -154,43 +159,30 @@ public class TypeDeserializer {
         return new TypeProjectionImpl(variance(proto.getProjection()), type(proto.getType()));
     }
 
-    @NotNull
-    private static JetScope getTypeMemberScope(@NotNull TypeConstructor constructor, @NotNull List<TypeProjection> typeArguments) {
-        ClassifierDescriptor descriptor = constructor.getDeclarationDescriptor();
-        if (descriptor instanceof TypeParameterDescriptor) {
-            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
-            return typeParameterDescriptor.getDefaultType().getMemberScope();
-        }
-        else if (descriptor instanceof ClassDescriptor) {
-            return ((ClassDescriptor) descriptor).getMemberScope(typeArguments);
-        }
-        else {
-            throw new IllegalStateException("Unsupported classifier: " + descriptor);
-        }
-    }
-
     @Override
     public String toString() {
         return debugName;
     }
 
-    private class DeserializedType extends AbstractJetType implements LazyType {
+    private static class DeserializedType extends AbstractJetType implements LazyType {
+        private final TypeDeserializer typeDeserializer;
         private final ProtoBuf.Type typeProto;
         private final NotNullLazyValue<TypeConstructor> constructor;
         private final List<TypeProjection> arguments;
         private final NotNullLazyValue<JetScope> memberScope;
 
-        public DeserializedType(@NotNull ProtoBuf.Type proto) {
+        public DeserializedType(@NotNull DeserializationContext context, @NotNull ProtoBuf.Type proto) {
+            this.typeDeserializer = context.getTypeDeserializer();
             this.typeProto = proto;
-            this.arguments = typeArguments(proto.getArgumentList());
+            this.arguments = typeDeserializer.typeArguments(proto.getArgumentList());
 
-            this.constructor = getComponents().getStorageManager().createLazyValue(new Function0<TypeConstructor>() {
+            this.constructor = context.getComponents().getStorageManager().createLazyValue(new Function0<TypeConstructor>() {
                 @Override
                 public TypeConstructor invoke() {
-                    return typeConstructor(typeProto);
+                    return typeDeserializer.typeConstructor(typeProto);
                 }
             });
-            this.memberScope = getComponents().getStorageManager().createLazyValue(new Function0<JetScope>() {
+            this.memberScope = context.getComponents().getStorageManager().createLazyValue(new Function0<JetScope>() {
                 @Override
                 public JetScope invoke() {
                     return computeMemberScope();
@@ -222,6 +214,21 @@ public class TypeDeserializer {
             }
             else {
                 return getTypeMemberScope(getConstructor(), getArguments());
+            }
+        }
+
+        @NotNull
+        private static JetScope getTypeMemberScope(@NotNull TypeConstructor constructor, @NotNull List<TypeProjection> typeArguments) {
+            ClassifierDescriptor descriptor = constructor.getDeclarationDescriptor();
+            if (descriptor instanceof TypeParameterDescriptor) {
+                TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
+                return typeParameterDescriptor.getDefaultType().getMemberScope();
+            }
+            else if (descriptor instanceof ClassDescriptor) {
+                return ((ClassDescriptor) descriptor).getMemberScope(typeArguments);
+            }
+            else {
+                throw new IllegalStateException("Unsupported classifier: " + descriptor);
             }
         }
 

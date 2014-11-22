@@ -155,7 +155,7 @@ class LazyOperationsLog(
                 javaClass.getPsi().getName().appendQuoted()
             }
             o.javaClass.getSimpleName() == "DeserializedType" -> {
-                val typeDeserializer = o.field<TypeDeserializer>("this\$0")
+                val typeDeserializer = o.field<TypeDeserializer>("typeDeserializer")
                 val context = typeDeserializer.field<DeserializationContext>("context")
                 val typeProto = o.field<ProtoBuf.Type>("typeProto")
                 val text = when (typeProto.getConstructor().getKind()) {
