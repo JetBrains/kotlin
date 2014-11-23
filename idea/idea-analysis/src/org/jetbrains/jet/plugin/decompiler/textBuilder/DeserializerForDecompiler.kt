@@ -94,9 +94,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     private val loadersStorage = DescriptorLoadersStorage(storageManager, moduleDescriptor)
 
-    private val annotationLoader = AnnotationDescriptorLoader(
-            storageManager, moduleDescriptor, loadersStorage, localClassFinder, LOGGING_REPORTER
-    )
+    private val annotationLoader = AnnotationDescriptorLoader(moduleDescriptor, loadersStorage, localClassFinder, LOGGING_REPORTER)
 
     private val constantLoader = ConstantDescriptorLoader(loadersStorage, localClassFinder, LOGGING_REPORTER)
 

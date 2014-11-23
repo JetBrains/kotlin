@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.kotlin
+package org.jetbrains.jet.descriptors.serialization.descriptors
 
+import org.jetbrains.jet.utils.toReadOnlyList
+import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.utils.toReadOnlyList
 
 class DeserializedAnnotations(
         storageManager: StorageManager,

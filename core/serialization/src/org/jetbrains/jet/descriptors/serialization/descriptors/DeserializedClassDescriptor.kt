@@ -63,9 +63,15 @@ public class DeserializedClassDescriptor(
     private val enumEntries = EnumEntryClassDescriptors()
 
     private val containingDeclaration = outerContext.containingDeclaration
-    private val annotations = components.storageManager.createLazyValue { computeAnnotations() }
     private val primaryConstructor = components.storageManager.createNullableLazyValue { computePrimaryConstructor() }
     private val classObjectDescriptor = components.storageManager.createNullableLazyValue { computeClassObjectDescriptor() }
+
+    private val annotations = if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
+        Annotations.EMPTY
+    }
+    else DeserializedAnnotations(components.storageManager) {
+        components.annotationLoader.loadClassAnnotations(this, classProto)
+    }
 
     override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclaration
 
@@ -79,14 +85,7 @@ public class DeserializedClassDescriptor(
 
     override fun isInner() = isInner
 
-    private fun computeAnnotations(): Annotations {
-        if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
-            return Annotations.EMPTY
-        }
-        return components.annotationLoader.loadClassAnnotations(this, classProto)
-    }
-
-    override fun getAnnotations(): Annotations = annotations()
+    override fun getAnnotations() = annotations
 
     override fun getScopeForMemberLookup() = memberScope
 

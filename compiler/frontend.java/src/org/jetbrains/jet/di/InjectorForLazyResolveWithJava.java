@@ -192,7 +192,7 @@ public class InjectorForLazyResolveWithJava {
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
         this.descriptorLoadersStorage = new DescriptorLoadersStorage(storageManager, module);
-        this.annotationDescriptorLoader = new AnnotationDescriptorLoader(storageManager, module, descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
+        this.annotationDescriptorLoader = new AnnotationDescriptorLoader(module, descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
         this.constantDescriptorLoader = new ConstantDescriptorLoader(descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
         this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, module, javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
 

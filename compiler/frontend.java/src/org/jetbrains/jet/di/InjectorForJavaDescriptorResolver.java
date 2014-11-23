@@ -103,7 +103,7 @@ public class InjectorForJavaDescriptorResolver {
         this.globalSearchScope = com.intellij.psi.search.GlobalSearchScope.allScope(project);
         this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
         this.descriptorLoadersStorage = new DescriptorLoadersStorage(lockBasedStorageManager, getModule());
-        this.annotationDescriptorLoader = new AnnotationDescriptorLoader(lockBasedStorageManager, getModule(), descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
+        this.annotationDescriptorLoader = new AnnotationDescriptorLoader(getModule(), descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
         this.constantDescriptorLoader = new ConstantDescriptorLoader(descriptorLoadersStorage, virtualFileFinder, traceBasedErrorReporter);
         this.deserializationComponentsForJava = new DeserializationComponentsForJava(lockBasedStorageManager, getModule(), javaClassDataFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider);
 

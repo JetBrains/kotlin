@@ -164,12 +164,14 @@ public class MemberDeserializer(private val context: DeserializationContext) {
     }
 
     private fun getAnnotations(proto: Callable, flags: Int, kind: AnnotatedCallableKind): Annotations {
-        return if (Flags.HAS_ANNOTATIONS.get(flags))
+        if (!Flags.HAS_ANNOTATIONS.get(flags)) {
+            return Annotations.EMPTY
+        }
+        return DeserializedAnnotations(components.storageManager) {
             components.annotationLoader.loadCallableAnnotations(
                     context.containingDeclaration.asClassOrPackage(), proto, context.nameResolver, kind
             )
-        else
-            Annotations.EMPTY
+        }
     }
 
     private fun valueParameters(callable: Callable, kind: AnnotatedCallableKind): List<ValueParameterDescriptor> {
@@ -194,10 +196,12 @@ public class MemberDeserializer(private val context: DeserializationContext) {
             kind: AnnotatedCallableKind,
             valueParameter: Callable.ValueParameter
     ): Annotations {
-        return if (Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags()))
+        if (!Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags())) {
+            return Annotations.EMPTY
+        }
+        return DeserializedAnnotations(components.storageManager) {
             components.annotationLoader.loadValueParameterAnnotations(classOrPackage, callable, context.nameResolver, kind, valueParameter)
-        else
-            Annotations.EMPTY
+        }
     }
 
     private fun DeclarationDescriptor.asClassOrPackage(): ClassOrPackageFragmentDescriptor =
