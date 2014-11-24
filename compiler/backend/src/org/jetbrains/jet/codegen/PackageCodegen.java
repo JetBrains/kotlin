@@ -272,7 +272,7 @@ public class PackageCodegen {
             if (file.isScript()) return;
         }
 
-        DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(bindings));
+        DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(new JavaSerializerExtension(bindings));
         Collection<PackageFragmentDescriptor> packageFragments = Lists.newArrayList();
         ContainerUtil.addIfNotNull(packageFragments, packageFragment);
         ContainerUtil.addIfNotNull(packageFragments, compiledPackageFragment);

@@ -1,0 +1,9 @@
+package test
+
+internal final class InnerClassReferencesOuterTP</*0*/ P> {
+    /*primary*/ public constructor InnerClassReferencesOuterTP</*0*/ P>()
+
+    internal final inner class Inner</*0*/ Q : P> {
+        /*primary*/ public constructor Inner</*0*/ Q : P>()
+    }
+}

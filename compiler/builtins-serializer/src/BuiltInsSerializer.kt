@@ -110,7 +110,7 @@ public class BuiltInsSerializer(val out: PrintStream?) {
         // TODO: perform some kind of validation? At the moment not possible because DescriptorValidator is in compiler-tests
         // DescriptorValidator.validate(packageView)
 
-        val serializer = DescriptorSerializer(SerializerExtension.DEFAULT)
+        val serializer = DescriptorSerializer.createTopLevel(SerializerExtension.DEFAULT)
 
         val classNames = ArrayList<Name>()
         val classifierDescriptors = DescriptorSerializer.sort(packageView.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS))
