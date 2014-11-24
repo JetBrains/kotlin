@@ -3764,6 +3764,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("extensionVals.kt")
+            public void testExtensionVals() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/extensionVals.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("extensionVars.kt")
+            public void testExtensionVars() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/extensionVars.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("extensions.kt")
             public void testExtensions() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/extensions.kt");
