@@ -18,15 +18,10 @@ package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 
 public abstract class SerializerExtension {
     public static final SerializerExtension DEFAULT = new SerializerExtension() {};
-
-    public boolean hasSupertypes(@NotNull ClassDescriptor descriptor) {
-        return true;
-    }
 
     public void serializeCallable(
             @NotNull CallableMemberDescriptor callable,

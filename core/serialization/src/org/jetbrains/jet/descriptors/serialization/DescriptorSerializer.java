@@ -24,7 +24,10 @@ import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 
@@ -33,10 +36,6 @@ public class DescriptorSerializer {
     private final NameTable nameTable;
     private final Interner<TypeParameterDescriptor> typeParameters;
     private final SerializerExtension extension;
-
-    public DescriptorSerializer() {
-        this(SerializerExtension.DEFAULT);
-    }
 
     public DescriptorSerializer(@NotNull SerializerExtension extension) {
         this(new NameTable(), new Interner<TypeParameterDescriptor>(), extension);
@@ -75,7 +74,7 @@ public class DescriptorSerializer {
             builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
         }
 
-        if (extension.hasSupertypes(classDescriptor)) {
+        if (!KotlinBuiltIns.getInstance().isSpecialClassWithNoSupertypes(classDescriptor)) {
             // Special classes (Any, Nothing) have no supertypes
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 builder.addSupertype(local.type(supertype));
