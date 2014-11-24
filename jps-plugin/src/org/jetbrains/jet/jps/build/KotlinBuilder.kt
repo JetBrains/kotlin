@@ -226,14 +226,29 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return
         }
 
-        val delta = context.getProjectDescriptor().dataManager.getMappings()!!.createDelta()
-        val callback = delta!!.getCallback()!!
+        val previousMappings = context.getProjectDescriptor().dataManager.getMappings()
+        val delta = previousMappings.createDelta()
+        val callback = delta.getCallback()
 
-        for ((outputItem, _) in outputsItemsAndTargets) {
+        for ((outputItem, target) in outputsItemsAndTargets) {
             val outputFile = outputItem.getOutputFile()
+            val classReader = ClassReader(outputFile.readBytes())
+
+            val sources = ArrayList<File>()
+            if (outputItem.getOutputFile().getName().endsWith("Package.class")) { // TODO hacky check
+                val oldClassSources = previousMappings.getClassSources(previousMappings.getName(classReader.getClassName()))
+
+                // TODO optimize
+                if (oldClassSources != null) {
+                    sources.addAll(oldClassSources)
+                    sources.removeAll(filesToCompile[target])
+                }
+            }
+            sources.addAll(outputItem.getSourceFiles())
+
             callback.associate(FileUtil.toSystemIndependentName(outputFile.getAbsolutePath()),
-                               outputItem.getSourceFiles().map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
-                               ClassReader(outputFile.readBytes())
+                               sources.map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
+                               classReader
             )
         }
 
