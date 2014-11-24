@@ -22,6 +22,7 @@ import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
@@ -77,6 +78,19 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
         return getProjectDescriptorFromFileDirective();
+    }
+
+    protected LightProjectDescriptor getProjectDescriptorFromTestName() {
+        String testName = StringUtil.toLowerCase(getTestName(false));
+
+        if (testName.endsWith("runtime")) {
+            return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+        }
+        else if (testName.endsWith("stdlib")) {
+            return ProjectDescriptorWithStdlibSources.INSTANCE;
+        }
+
+        return JetLightProjectDescriptor.INSTANCE;
     }
 
     protected LightProjectDescriptor getProjectDescriptorFromFileDirective() {

@@ -59,6 +59,6 @@ public abstract class AbstractJetPsiCheckerTest extends JetLightCodeInsightFixtu
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
+        return getProjectDescriptorFromTestName();
     }
 }
