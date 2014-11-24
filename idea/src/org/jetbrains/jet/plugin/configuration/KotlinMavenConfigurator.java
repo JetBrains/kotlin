@@ -53,6 +53,7 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
 
     public static final String NAME = "maven";
 
+    private static final String GROUP_ID = "org.jetbrains.kotlin";
     private static final String MAVEN_PLUGIN_ID = "kotlin-maven-plugin";
     private static final String KOTLIN_VERSION_PROPERTY = "kotlin.version";
     private static final String SNAPSHOT_REPOSITORY_ID = "sonatype.oss.snapshots";
@@ -72,11 +73,41 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
             return true;
         }
 
+        MavenDomProjectModel domProjectModel = getMavenDomProjectModel(module);
+        return hasKotlinMavenPlugin(domProjectModel) && hasDependencyOnLibrary(domProjectModel);
+    }
+
+    @NotNull
+    private static MavenDomProjectModel getMavenDomProjectModel(@NotNull Module module) {
         PsiFile pomFile = findModulePomFile(module);
-        if (pomFile == null) return false;
-        String text = pomFile.getText();
-        return text.contains("<artifactId>" + MAVEN_PLUGIN_ID + "</artifactId>") &&
-               text.contains("<artifactId>" + getLibraryId() + "</artifactId>");
+        assert pomFile != null : "pom file should not be null";
+
+        VirtualFile virtualFile = pomFile.getVirtualFile();
+        assert virtualFile != null : "Virtual file should exists for psi file " + pomFile.getName();
+
+        MavenDomProjectModel domModel = MavenDomUtil.getMavenDomProjectModel(pomFile.getProject(), virtualFile);
+        assert domModel != null : "maven dom model should not be null";
+        return domModel;
+    }
+
+    private static boolean hasGivenCoordinates(@NotNull MavenDomShortArtifactCoordinates mavenDomElement, @NotNull String groupId, @NotNull String artifactId) {
+        return groupId.equals(mavenDomElement.getGroupId().getRawText()) && artifactId.equals(mavenDomElement.getArtifactId().getRawText());
+    }
+
+    private static boolean hasKotlinMavenPlugin(@NotNull MavenDomProjectModel domModel) {
+        for(MavenDomPlugin mavenDomPlugin : domModel.getBuild().getPlugins().getPlugins()) {
+            if (hasGivenCoordinates(mavenDomPlugin, GROUP_ID, MAVEN_PLUGIN_ID)) return true;
+        }
+
+        return false;
+    }
+
+    private boolean hasDependencyOnLibrary(@NotNull MavenDomProjectModel domModel) {
+        for(MavenDomDependency mavenDomDependency : domModel.getDependencies().getDependencies()) {
+            if (hasGivenCoordinates(mavenDomDependency, GROUP_ID, getLibraryId())) return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -111,7 +142,7 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
         }
         new WriteCommandAction(file.getProject()) {
             @Override
-            protected void run(Result result) {
+            protected void run(@NotNull Result result) {
                 addKotlinVersionPropertyIfNeeded(domModel, version);
 
                 if (isSnapshot(version)) {
