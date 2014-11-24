@@ -5,6 +5,9 @@ End of files
 Compiling files:
 src/fun.kt
 End of files
+Cleaning output files:
+out/production/module/WillBeUnresolved.class
+End of files
 Compiling files:
 src/WillBeUnresolved.java
 End of files
