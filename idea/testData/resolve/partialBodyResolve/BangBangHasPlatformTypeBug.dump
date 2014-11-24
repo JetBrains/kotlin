@@ -1,0 +1,11 @@
+Expression type:kotlin.String
+----------------------------------------------
+fun foo(x: Any) {
+    if (x is String) {
+        print(<selection>System.getProperty("abc")!!<selection>)
+        /* STATEMENT DELETED: println() */
+    }
+    else {
+        /* STATEMENT DELETED: println() */
+    }
+}
