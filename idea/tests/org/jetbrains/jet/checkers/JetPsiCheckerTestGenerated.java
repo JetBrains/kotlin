@@ -225,6 +225,12 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PlatformStaticUsagesRuntime.kt")
+        public void testPlatformStaticUsagesRuntime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/PlatformStaticUsagesRuntime.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PrimaryConstructors.kt")
         public void testPrimaryConstructors() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/PrimaryConstructors.kt");
