@@ -6241,6 +6241,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inheritedPropertyInClassObject.kt")
+        public void testInheritedPropertyInClassObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/inheritedPropertyInClassObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inheritedPropertyInObject.kt")
+        public void testInheritedPropertyInObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/inheritedPropertyInObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("syntheticAccessor.kt")
         public void testSyntheticAccessor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/staticFields/syntheticAccessor.kt");

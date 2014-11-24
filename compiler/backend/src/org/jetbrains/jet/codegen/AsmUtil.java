@@ -698,12 +698,16 @@ public class AsmUtil {
     }
 
     public static boolean isInstancePropertyWithStaticBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
-        DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-        return isObject(containingDeclaration) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            return false;
+        }
+
+        return isObject(propertyDescriptor.getContainingDeclaration()) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
-        return isClassObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
+        return propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
+               isClassObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
     }
 
     public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
