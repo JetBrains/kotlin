@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField
-import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.java.lazy.child
@@ -48,7 +48,7 @@ import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindExclude.NonExtensions
 
 public abstract class LazyJavaMemberScope(
-        protected val c: LazyJavaResolverContextWithTypes,
+        protected val c: LazyJavaResolverContext,
         private val containingDeclaration: DeclarationDescriptor
 ) : JetScope {
     // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
@@ -115,7 +115,7 @@ public abstract class LazyJavaMemberScope(
                 containingDeclaration, annotations, method.getName(), c.sourceElementFactory.source(method)
         )
 
-        val c = c.child(functionDescriptorImpl, method.getTypeParameters().toSet())
+        val c = c.child(functionDescriptorImpl, method)
 
         val methodTypeParameters = method.getTypeParameters().map { p -> c.typeParameterResolver.resolveTypeParameter(p)!! }
         val valueParameters = resolveValueParameters(c, functionDescriptorImpl, method.getValueParameters())
@@ -155,9 +155,10 @@ public abstract class LazyJavaMemberScope(
     protected class ResolvedValueParameters(val descriptors: List<ValueParameterDescriptor>, val hasSynthesizedNames: Boolean)
 
     protected fun resolveValueParameters(
-            c: LazyJavaResolverContextWithTypes,
+            c: LazyJavaResolverContext,
             function: FunctionDescriptor,
-            jValueParameters: List<JavaValueParameter>): ResolvedValueParameters {
+            jValueParameters: List<JavaValueParameter>
+    ): ResolvedValueParameters {
         var synthesizedNames = false
         val descriptors = jValueParameters.withIndices().map { pair ->
             val (index, javaParameter) = pair

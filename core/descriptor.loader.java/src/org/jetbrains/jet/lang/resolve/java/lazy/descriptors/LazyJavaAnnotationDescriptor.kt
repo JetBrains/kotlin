@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.structure.*
 import org.jetbrains.jet.lang.resolve.constants.*
 import org.jetbrains.jet.lang.resolve.name.Name
@@ -43,14 +43,14 @@ private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
     override val value: Any? = "Deprecated in Java"
 }
 
-fun LazyJavaResolverContextWithTypes.resolveAnnotation(annotation: JavaAnnotation): LazyJavaAnnotationDescriptor? {
+fun LazyJavaResolverContext.resolveAnnotation(annotation: JavaAnnotation): LazyJavaAnnotationDescriptor? {
     val classId = annotation.getClassId()
     if (classId == null || JvmAnnotationNames.isSpecialAnnotation(classId, !PLATFORM_TYPES)) return null
     return LazyJavaAnnotationDescriptor(this, annotation)
 }
 
 class LazyJavaAnnotationDescriptor(
-        private val c: LazyJavaResolverContextWithTypes,
+        private val c: LazyJavaResolverContext,
         val javaAnnotation : JavaAnnotation
 ) : AnnotationDescriptor {
 

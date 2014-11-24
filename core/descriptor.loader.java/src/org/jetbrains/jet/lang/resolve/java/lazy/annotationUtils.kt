@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.resolveAnnotation
 
 class LazyJavaAnnotations(
-        c: LazyJavaResolverContextWithTypes,
+        c: LazyJavaResolverContext,
         val annotationOwner: JavaAnnotationOwner,
         private val extraLookup: (FqName) -> JavaAnnotation? = { null }
 ) : Annotations {
@@ -48,7 +48,7 @@ class LazyJavaAnnotations(
     override fun isEmpty() = iterator().hasNext()
 }
 
-fun LazyJavaResolverContextWithTypes.resolveAnnotations(annotationsOwner: JavaAnnotationOwner): Annotations
+fun LazyJavaResolverContext.resolveAnnotations(annotationsOwner: JavaAnnotationOwner): Annotations
         = LazyJavaAnnotations(this, annotationsOwner) { fqName -> externalAnnotationResolver.findExternalAnnotation(annotationsOwner, fqName) }
 
 private fun GlobalJavaResolverContext.hasAnnotation(owner: JavaAnnotationOwner, annotationFqName: FqName): Boolean

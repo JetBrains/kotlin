@@ -19,15 +19,13 @@ package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.*
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
-import org.jetbrains.jet.lang.resolve.java.lazy.withTypes
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 
 public abstract class LazyJavaStaticScope(
         c: LazyJavaResolverContext,
         descriptor: ClassOrPackageFragmentDescriptor
-) : LazyJavaMemberScope(c.withTypes(), descriptor) {
+) : LazyJavaMemberScope(c, descriptor) {
 
     override fun getDispatchReceiverParameter() = null
 

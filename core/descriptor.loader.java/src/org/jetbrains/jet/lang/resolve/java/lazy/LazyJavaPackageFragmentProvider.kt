@@ -31,23 +31,7 @@ public class LazyJavaPackageFragmentProvider(
         val module: ModuleDescriptor
 ) : PackageFragmentProvider {
 
-    private val c = LazyJavaResolverContext(
-            this,
-            FragmentClassResolver(),
-            outerContext.storageManager,
-            outerContext.finder,
-            outerContext.kotlinClassFinder,
-            outerContext.deserializedDescriptorResolver,
-            outerContext.externalAnnotationResolver,
-            outerContext.externalSignatureResolver,
-            outerContext.errorReporter,
-            outerContext.methodSignatureChecker,
-            outerContext.javaResolverCache,
-            outerContext.javaPropertyInitializerEvaluator,
-            outerContext.samConversionResolver,
-            outerContext.sourceElementFactory,
-            outerContext.moduleClassResolver
-    )
+    private val c = LazyJavaResolverContext(outerContext, this, FragmentClassResolver(), TypeParameterResolver.EMPTY)
 
     private val packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
             c.storageManager.createMemoizedFunctionWithNullableValues {
@@ -67,12 +51,7 @@ public class LazyJavaPackageFragmentProvider(
         val packageFragment = getPackageFragment(fqName.parent())
         if (packageFragment == null) return@lambda null
 
-        LazyJavaClassDescriptor(
-                c.withTypes(TypeParameterResolver.EMPTY),
-                packageFragment,
-                fqName,
-                jClass
-        )
+        LazyJavaClassDescriptor(c, packageFragment, fqName, jClass)
     }
 
     private fun getPackageFragment(fqName: FqName) = packageFragments(fqName)
