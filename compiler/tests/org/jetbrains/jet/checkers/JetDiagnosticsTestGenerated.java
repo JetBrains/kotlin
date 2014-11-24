@@ -4806,7 +4806,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
 
         @TestMetadata("compiler/testData/diagnostics/tests/inference")
         @TestDataPath("$PROJECT_ROOT")
-        @InnerTestClasses({Inference.Constraints.class, Inference.NestedCalls.class, Inference.Regressions.class, Inference.ReportingImprovements.class, Inference.UpperBounds.class, Inference.Varargs.class})
+        @InnerTestClasses({Inference.Constraints.class, Inference.NestedCalls.class, Inference.Regressions.class, Inference.ReportingImprovements.class, Inference.Substitutions.class, Inference.UpperBounds.class, Inference.Varargs.class})
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Inference extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInInference() throws Exception {
@@ -5415,6 +5415,39 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("subtypeForInvariantWithErrorGenerics.kt")
                 public void testSubtypeForInvariantWithErrorGenerics() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/reportingImprovements/subtypeForInvariantWithErrorGenerics.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/substitutions")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Substitutions extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInSubstitutions() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/substitutions"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("kt6081SubstituteIntoClassCorrectly.kt")
+                public void testKt6081SubstituteIntoClassCorrectly() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/substitutions/kt6081SubstituteIntoClassCorrectly.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleSubstitutionCheckTypeArgumentsNotTypeParameters.kt")
+                public void testSimpleSubstitutionCheckTypeArgumentsNotTypeParameters() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/substitutions/simpleSubstitutionCheckTypeArgumentsNotTypeParameters.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("substitutionIntoAnonymousClass.kt")
+                public void testSubstitutionIntoAnonymousClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/substitutions/substitutionIntoAnonymousClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("substitutionIntoInnerClass.kt")
+                public void testSubstitutionIntoInnerClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/substitutions/substitutionIntoInnerClass.kt");
                     doTest(fileName);
                 }
             }
