@@ -29,9 +29,9 @@ import org.jetbrains.jet.descriptors.serialization.context.DeserializationContex
 import java.util.*
 
 public abstract class DeserializedMemberScope protected(
-        protected val context: DeserializationContext,
-        membersList: Collection<ProtoBuf.Callable>)
-: JetScope {
+        protected val c: DeserializationContext,
+        membersList: Collection<ProtoBuf.Callable>
+) : JetScope {
 
     private data class ProtoKey(val name: Name, val kind: Kind, val isExtension: Boolean)
     private enum class Kind { FUNCTION PROPERTY }
@@ -45,11 +45,11 @@ public abstract class DeserializedMemberScope protected(
     }
 
     private val membersProtos =
-            context.components.storageManager.createLazyValue { groupByKey(filteredMemberProtos(membersList)) }
+            c.components.storageManager.createLazyValue { groupByKey(filteredMemberProtos(membersList)) }
     private val functions =
-            context.components.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
+            c.components.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
     private val properties =
-            context.components.storageManager.createMemoizedFunction<Name, Collection<VariableDescriptor>> { computeProperties(it) }
+            c.components.storageManager.createMemoizedFunction<Name, Collection<VariableDescriptor>> { computeProperties(it) }
 
     protected open fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> = allMemberProtos
 
@@ -57,7 +57,7 @@ public abstract class DeserializedMemberScope protected(
         val map = LinkedHashMap<ProtoKey, MutableList<ProtoBuf.Callable>>()
         for (memberProto in membersList) {
             val key = ProtoKey(
-                    context.nameResolver.getName(memberProto.getName()),
+                    c.nameResolver.getName(memberProto.getName()),
                     Flags.CALLABLE_KIND[memberProto.getFlags()].toKind(),
                     memberProto.hasReceiverType()
             )
@@ -77,7 +77,7 @@ public abstract class DeserializedMemberScope protected(
 
         [suppress("UNCHECKED_CAST")]
         return memberProtos.mapTo(LinkedHashSet<D>()) { memberProto ->
-            context.memberDeserializer.loadCallable(memberProto) as D
+            c.memberDeserializer.loadCallable(memberProto) as D
         }
     }
 
@@ -113,7 +113,7 @@ public abstract class DeserializedMemberScope protected(
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
 
-    override fun getContainingDeclaration() = context.containingDeclaration
+    override fun getContainingDeclaration() = c.containingDeclaration
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 

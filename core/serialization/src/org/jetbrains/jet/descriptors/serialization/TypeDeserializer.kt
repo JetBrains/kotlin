@@ -26,23 +26,23 @@ import org.jetbrains.jet.utils.*
 import java.util.LinkedHashMap
 
 public class TypeDeserializer(
-        private val context: DeserializationContext,
+        private val c: DeserializationContext,
         private val parent: TypeDeserializer?,
         private val typeParameterProtos: List<ProtoBuf.TypeParameter>,
         private val debugName: String
 ) {
-    private val classDescriptors: (Int) -> ClassDescriptor? = context.components.storageManager.createMemoizedFunctionWithNullableValues {
+    private val classDescriptors: (Int) -> ClassDescriptor? = c.components.storageManager.createMemoizedFunctionWithNullableValues {
         fqNameIndex -> computeClassDescriptor(fqNameIndex)
     }
 
-    private val typeParameterDescriptors = context.components.storageManager.createLazyValue {
+    private val typeParameterDescriptors = c.components.storageManager.createLazyValue {
         if (typeParameterProtos.isEmpty()) {
             mapOf<Int, TypeParameterDescriptor>()
         }
         else {
             val result = LinkedHashMap<Int, TypeParameterDescriptor>()
             for ((index, proto) in typeParameterProtos.withIndices()) {
-                result[proto.getId()] = DeserializedTypeParameterDescriptor(context, proto, index)
+                result[proto.getId()] = DeserializedTypeParameterDescriptor(c, proto, index)
             }
             result
         }
@@ -52,21 +52,21 @@ public class TypeDeserializer(
 
     fun type(proto: ProtoBuf.Type): JetType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
-            val id = context.nameResolver.getString(proto.getFlexibleTypeCapabilitiesId())
-            val capabilities = context.components.flexibleTypeCapabilitiesDeserializer.capabilitiesById(id)
+            val id = c.nameResolver.getString(proto.getFlexibleTypeCapabilitiesId())
+            val capabilities = c.components.flexibleTypeCapabilitiesDeserializer.capabilitiesById(id)
 
             if (capabilities == null) {
-                return ErrorUtils.createErrorType("${DeserializedType(context, proto)}: Capabilities not found for id $id")
+                return ErrorUtils.createErrorType("${DeserializedType(c, proto)}: Capabilities not found for id $id")
             }
 
             return DelegatingFlexibleType.create(
-                    DeserializedType(context, proto),
-                    DeserializedType(context, proto.getFlexibleUpperBound()),
+                    DeserializedType(c, proto),
+                    DeserializedType(c, proto.getFlexibleUpperBound()),
                     capabilities
             )
         }
 
-        return DeserializedType(context, proto)
+        return DeserializedType(c, proto)
     }
 
     fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor {
@@ -74,7 +74,7 @@ public class TypeDeserializer(
         val id = constructorProto.getId()
         return typeConstructor(constructorProto) ?: ErrorUtils.createErrorType(
                 if (constructorProto.getKind() == ProtoBuf.Type.Constructor.Kind.CLASS)
-                    context.nameResolver.getClassId(id).asSingleFqName().asString()
+                    c.nameResolver.getClassId(id).asSingleFqName().asString()
                 else
                     "Unknown type parameter $id"
         ).getConstructor()
@@ -91,7 +91,7 @@ public class TypeDeserializer(
             parent?.typeParameterTypeConstructor(proto)
 
     private fun computeClassDescriptor(fqNameIndex: Int): ClassDescriptor? =
-            context.components.moduleDescriptor.findClassAcrossModuleDependencies(context.nameResolver.getClassId(fqNameIndex))
+            c.components.moduleDescriptor.findClassAcrossModuleDependencies(c.nameResolver.getClassId(fqNameIndex))
 
     fun typeArguments(protos: List<ProtoBuf.Type.Argument>): List<TypeProjection> =
             protos.map { proto ->

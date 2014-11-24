@@ -17,7 +17,6 @@
 package org.jetbrains.jet.descriptors.serialization
 
 import org.jetbrains.jet.descriptors.serialization.*
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationComponents
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext
 import org.jetbrains.jet.descriptors.serialization.descriptors.*
 import org.jetbrains.jet.lang.descriptors.*
@@ -27,9 +26,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.CallableKind.*
 
-public class MemberDeserializer(private val context: DeserializationContext) {
-    private val components: DeserializationComponents get() = context.components
-
+public class MemberDeserializer(private val c: DeserializationContext) {
     public fun loadCallable(proto: Callable): CallableMemberDescriptor {
         val callableKind = Flags.CALLABLE_KIND.get(proto.getFlags())
         return when (callableKind) {
@@ -44,18 +41,18 @@ public class MemberDeserializer(private val context: DeserializationContext) {
         val flags = proto.getFlags()
 
         val property = DeserializedPropertyDescriptor(
-                context.containingDeclaration, null,
+                c.containingDeclaration, null,
                 getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
                 modality(Flags.MODALITY.get(flags)),
                 visibility(Flags.VISIBILITY.get(flags)),
                 Flags.CALLABLE_KIND.get(flags) == Callable.CallableKind.VAR,
-                context.nameResolver.getName(proto.getName()),
+                c.nameResolver.getName(proto.getName()),
                 memberKind(Flags.MEMBER_KIND.get(flags)),
                 proto,
-                context.nameResolver
+                c.nameResolver
         )
 
-        val local = context.childContext(property, proto.getTypeParameterList())
+        val local = c.childContext(property, proto.getTypeParameterList())
         property.setType(
                 local.typeDeserializer.type(proto.getReturnType()),
                 local.typeDeserializer.getOwnTypeParameters(),
@@ -115,9 +112,9 @@ public class MemberDeserializer(private val context: DeserializationContext) {
 
         if (Flags.HAS_CONSTANT.get(flags)) {
             property.setCompileTimeInitializer(
-                components.storageManager.createNullableLazyValue {
-                    val container = context.containingDeclaration.asClassOrPackage()
-                    components.constantLoader.loadPropertyConstant(container, proto, context.nameResolver, AnnotatedCallableKind.PROPERTY)
+                c.components.storageManager.createNullableLazyValue {
+                    val container = c.containingDeclaration.asClassOrPackage()
+                    c.components.constantLoader.loadPropertyConstant(container, proto, c.nameResolver, AnnotatedCallableKind.PROPERTY)
                 }
             )
         }
@@ -129,8 +126,8 @@ public class MemberDeserializer(private val context: DeserializationContext) {
 
     private fun loadFunction(proto: Callable): CallableMemberDescriptor {
         val annotations = getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION)
-        val function = DeserializedSimpleFunctionDescriptor.create(context.containingDeclaration, proto, context.nameResolver, annotations)
-        val local = context.childContext(function, proto.getTypeParameterList())
+        val function = DeserializedSimpleFunctionDescriptor.create(c.containingDeclaration, proto, c.nameResolver, annotations)
+        val local = c.childContext(function, proto.getTypeParameterList())
         function.initialize(
                 if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType()) else null,
                 getDispatchReceiverParameter(),
@@ -144,16 +141,16 @@ public class MemberDeserializer(private val context: DeserializationContext) {
     }
 
     private fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? {
-        return (context.containingDeclaration as? ClassDescriptor)?.getThisAsReceiverParameter()
+        return (c.containingDeclaration as? ClassDescriptor)?.getThisAsReceiverParameter()
     }
 
     private fun loadConstructor(proto: Callable): CallableMemberDescriptor {
-        val classDescriptor = context.containingDeclaration as ClassDescriptor
+        val classDescriptor = c.containingDeclaration as ClassDescriptor
         val descriptor = ConstructorDescriptorImpl.create(
                 classDescriptor, getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION), // TODO: primary
                 true, SourceElement.NO_SOURCE
         )
-        val local = context.childContext(descriptor, listOf())
+        val local = c.childContext(descriptor, listOf())
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
                 local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
@@ -167,24 +164,24 @@ public class MemberDeserializer(private val context: DeserializationContext) {
         if (!Flags.HAS_ANNOTATIONS.get(flags)) {
             return Annotations.EMPTY
         }
-        return DeserializedAnnotations(components.storageManager) {
-            components.annotationLoader.loadCallableAnnotations(
-                    context.containingDeclaration.asClassOrPackage(), proto, context.nameResolver, kind
+        return DeserializedAnnotations(c.components.storageManager) {
+            c.components.annotationLoader.loadCallableAnnotations(
+                    c.containingDeclaration.asClassOrPackage(), proto, c.nameResolver, kind
             )
         }
     }
 
     private fun valueParameters(callable: Callable, kind: AnnotatedCallableKind): List<ValueParameterDescriptor> {
-        val containerOfCallable = context.containingDeclaration.getContainingDeclaration().asClassOrPackage()
+        val containerOfCallable = c.containingDeclaration.getContainingDeclaration().asClassOrPackage()
 
         return callable.getValueParameterList().withIndices().map { val (i, proto) = it
             ValueParameterDescriptorImpl(
-                    context.containingDeclaration, null, i,
+                    c.containingDeclaration, null, i,
                     getParameterAnnotations(containerOfCallable, callable, kind, proto),
-                    context.nameResolver.getName(proto.getName()),
-                    context.typeDeserializer.type(proto.getType()),
+                    c.nameResolver.getName(proto.getName()),
+                    c.typeDeserializer.type(proto.getType()),
                     Flags.DECLARES_DEFAULT_VALUE.get(proto.getFlags()),
-                    if (proto.hasVarargElementType()) context.typeDeserializer.type(proto.getVarargElementType()) else null,
+                    if (proto.hasVarargElementType()) c.typeDeserializer.type(proto.getVarargElementType()) else null,
                     SourceElement.NO_SOURCE
             )
         }
@@ -199,8 +196,8 @@ public class MemberDeserializer(private val context: DeserializationContext) {
         if (!Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags())) {
             return Annotations.EMPTY
         }
-        return DeserializedAnnotations(components.storageManager) {
-            components.annotationLoader.loadValueParameterAnnotations(classOrPackage, callable, context.nameResolver, kind, valueParameter)
+        return DeserializedAnnotations(c.components.storageManager) {
+            c.components.annotationLoader.loadValueParameterAnnotations(classOrPackage, callable, c.nameResolver, kind, valueParameter)
         }
     }
 

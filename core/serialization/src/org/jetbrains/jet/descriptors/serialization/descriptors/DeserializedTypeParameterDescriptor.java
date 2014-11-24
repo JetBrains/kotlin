@@ -34,16 +34,16 @@ public class DeserializedTypeParameterDescriptor extends AbstractLazyTypeParamet
     private final ProtoBuf.TypeParameter proto;
     private final TypeDeserializer typeDeserializer;
 
-    public DeserializedTypeParameterDescriptor(@NotNull DeserializationContext context, @NotNull ProtoBuf.TypeParameter proto, int index) {
-        super(context.getComponents().getStorageManager(),
-              context.getContainingDeclaration(),
-              context.getNameResolver().getName(proto.getName()),
+    public DeserializedTypeParameterDescriptor(@NotNull DeserializationContext c, @NotNull ProtoBuf.TypeParameter proto, int index) {
+        super(c.getComponents().getStorageManager(),
+              c.getContainingDeclaration(),
+              c.getNameResolver().getName(proto.getName()),
               SerializationPackage.variance(proto.getVariance()),
               proto.getReified(),
               index,
               SourceElement.NO_SOURCE);
         this.proto = proto;
-        this.typeDeserializer = context.getTypeDeserializer();
+        this.typeDeserializer = c.getTypeDeserializer();
     }
 
     @NotNull

@@ -36,12 +36,12 @@ public open class DeserializedPackageMemberScope(
 ) : DeserializedMemberScope(components.createContext(packageDescriptor, nameResolver), proto.getMemberList()) {
 
     private val packageFqName = packageDescriptor.fqName
-    private val classNames = context.components.storageManager.createLazyValue(classNames)
+    private val classNames = c.components.storageManager.createLazyValue(classNames)
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = computeDescriptors(kindFilter, nameFilter)
 
-    override fun getClassDescriptor(name: Name) = context.components.deserializeClass(ClassId(packageFqName, name))
+    override fun getClassDescriptor(name: Name) = c.components.deserializeClass(ClassId(packageFqName, name))
 
     override fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
         for (className in classNames()) {

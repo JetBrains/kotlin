@@ -24,18 +24,18 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.types.*
 
 class DeserializedType(
-        context: DeserializationContext,
+        c: DeserializationContext,
         private val typeProto: ProtoBuf.Type
 ) : AbstractJetType(), LazyType {
-    private val typeDeserializer = context.typeDeserializer
+    private val typeDeserializer = c.typeDeserializer
 
-    private val constructor = context.components.storageManager.createLazyValue {
+    private val constructor = c.components.storageManager.createLazyValue {
         typeDeserializer.typeConstructor(typeProto)
     }
 
     private val arguments = typeDeserializer.typeArguments(typeProto.getArgumentList())
 
-    private val memberScope = context.components.storageManager.createLazyValue {
+    private val memberScope = c.components.storageManager.createLazyValue {
         computeMemberScope()
     }
 

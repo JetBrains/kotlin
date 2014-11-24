@@ -37,7 +37,7 @@ public class ClassDeserializer(private val components: DeserializationComponents
             components.createContext(fragments.single(), classData.getNameResolver())
         }
         else {
-            deserializeClass(classId.getOuterClassId())?.context ?: return null
+            deserializeClass(classId.getOuterClassId())?.c ?: return null
         }
 
         return DeserializedClassDescriptor(outerContext, classData.getClassProto(), classData.getNameResolver())
