@@ -40,8 +40,10 @@ public final class AnnotationsUtils {
     private AnnotationsUtils() {
     }
 
-    private static boolean hasAnnotation(@NotNull DeclarationDescriptor descriptor,
-                                         @NotNull PredefinedAnnotation annotation) {
+    public static boolean hasAnnotation(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull PredefinedAnnotation annotation
+    ) {
         return getAnnotationByName(descriptor, annotation) != null;
     }
 
@@ -95,7 +97,7 @@ public final class AnnotationsUtils {
         }
 
         for (DeclarationDescriptor descriptor : descriptors) {
-            for (PredefinedAnnotation annotation : PredefinedAnnotation.values()) {
+            for (PredefinedAnnotation annotation : PredefinedAnnotation.OBJECT$.getWITH_CUSTOM_NAME()) {
                 if (!hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
                     continue;
                 }

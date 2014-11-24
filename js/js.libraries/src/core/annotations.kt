@@ -19,6 +19,13 @@ package kotlin.js
 native
 public annotation class native(public val name: String = "")
 native
+public annotation class nativeGetter
+native
+public annotation class nativeSetter
+native
+public annotation class nativeInvoke
+
+native
 public annotation class library(public val name: String = "")
 native
 public annotation class enumerable()
