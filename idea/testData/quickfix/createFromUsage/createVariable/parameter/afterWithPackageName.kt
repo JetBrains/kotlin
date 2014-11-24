@@ -2,7 +2,6 @@
 
 package foo
 
-fun test(n: Int,
-         foo: Int) {
+fun test(n: Int, foo: Int) {
     val t: Int = foo
 }

@@ -1,18 +1,15 @@
 // "Add parameter to function 'f'" "true"
 trait O {
-    fun f(a: Int,
-          i: Int)
+    fun f(a: Int, i: Int)
 }
 
 trait OO : O {
-    override fun f(a: Int,
-                   i: Int) {
+    override fun f(a: Int, i: Int) {
     }
 }
 
 trait OOO : OO {
-    override fun f(a: Int,
-                   i: Int) {}
+    override fun f(a: Int, i: Int) {}
 }
 
 fun usage(o: O) {

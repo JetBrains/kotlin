@@ -125,7 +125,6 @@ public class JetChangeInfo implements ChangeInfo {
             JetParameterInfo parameterInfo = newParameters.get(i);
             if (i > 0) {
                 buffer.append(",");
-                buffer.append("\n");
                 buffer.append(indent);
             }
 

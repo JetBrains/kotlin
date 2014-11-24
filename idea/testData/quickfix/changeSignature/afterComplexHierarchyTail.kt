@@ -1,39 +1,32 @@
 // "Add parameter to function 'f'" "true"
 trait OA {
-    fun f(a: Int,
-          s: String)
+    fun f(a: Int, s: String)
 }
 
 trait OB {
-    fun f(a: Int,
-          s: String)
+    fun f(a: Int, s: String)
 }
 
 trait O : OA, OB {
-    override fun f(a: Int,
-                   s: String)
+    override fun f(a: Int, s: String)
 }
 
 trait OO : O {
-    override fun f(a: Int,
-                   s: String) {
+    override fun f(a: Int, s: String) {
     }
 }
 
 trait OOO : OO {
-    override fun f(a: Int,
-                   s: String) {}
+    override fun f(a: Int, s: String) {}
 }
 
 trait OOOA : OOO {
-    override fun f(a: Int,
-                   s: String) {
+    override fun f(a: Int, s: String) {
     }
 }
 
 trait OOOB : OOO {
-    override fun f(a: Int,
-                   s: String) {
+    override fun f(a: Int, s: String) {
     }
 }
 
