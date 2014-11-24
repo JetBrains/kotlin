@@ -17,20 +17,19 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
-import org.jetbrains.jet.codegen.context.CodegenContext;
-import org.jetbrains.jet.codegen.context.LocalLookup;
+import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -54,14 +53,12 @@ import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSynth
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class ClosureCodegen extends ParentCodegenAware {
-    private final PsiElement fun;
+public class ClosureCodegen extends MemberCodegen<JetElement> {
     private final FunctionDescriptor funDescriptor;
     private final ClassDescriptor classDescriptor;
     private final SamType samType;
     private final JetType superClassType;
     private final List<JetType> superInterfaceTypes;
-    private final CodegenContext context;
     private final FunctionGenerationStrategy strategy;
     private final CalculatedClosure closure;
     private final Type asmType;
@@ -69,28 +66,28 @@ public class ClosureCodegen extends ParentCodegenAware {
     private final KotlinSyntheticClass.Kind syntheticClassKind;
 
     private Method constructor;
+    private Type superClassAsmType;
 
     public ClosureCodegen(
             @NotNull GenerationState state,
-            @NotNull PsiElement fun,
+            @NotNull JetElement element,
             @NotNull FunctionDescriptor funDescriptor,
             @Nullable SamType samType,
-            @NotNull CodegenContext parentContext,
+            @NotNull ClassContext context,
             @NotNull KotlinSyntheticClass.Kind syntheticClassKind,
-            @NotNull LocalLookup localLookup,
             @NotNull FunctionGenerationStrategy strategy,
-            @Nullable MemberCodegen<?> parentCodegen
+            @Nullable MemberCodegen<?> parentCodegen,
+            @NotNull ClassBuilder classBuilder,
+            @NotNull Type asmType
     ) {
-        super(state, parentCodegen);
+        super(state, parentCodegen, context, element, classBuilder);
 
-        this.fun = fun;
         this.funDescriptor = funDescriptor;
         this.samType = samType;
-        this.context = parentContext.intoClosure(funDescriptor, localLookup, typeMapper);
         this.syntheticClassKind = syntheticClassKind;
         this.strategy = strategy;
 
-        this.classDescriptor = anonymousClassForFunction(bindingContext, funDescriptor);
+        this.classDescriptor = context.getContextDescriptor();
 
         if (samType == null) {
             this.superInterfaceTypes = new ArrayList<JetType>();
@@ -118,28 +115,19 @@ public class ClosureCodegen extends ParentCodegenAware {
         this.closure = bindingContext.get(CLOSURE, classDescriptor);
         assert closure != null : "Closure must be calculated for class: " + classDescriptor;
 
-        this.asmType = asmTypeForAnonymousClass(bindingContext, funDescriptor);
+        this.asmType = asmType;
 
         visibilityFlag = AsmUtil.getVisibilityAccessFlagForAnonymous(classDescriptor);
     }
 
-    public void gen() {
-        ClassBuilder cv = state.getFactory().newVisitor(OtherOrigin(fun, funDescriptor), asmType, fun.getContainingFile());
-
-        FunctionDescriptor erasedInterfaceFunction;
-        if (samType == null) {
-            erasedInterfaceFunction = getErasedInvokeFunction(funDescriptor);
-        }
-        else {
-            erasedInterfaceFunction = samType.getAbstractMethod().getOriginal();
-        }
-
+    @Override
+    protected void generateDeclaration() {
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
         if (samType != null) {
             typeMapper.writeFormalTypeParameters(samType.getType().getConstructor().getParameters(), sw);
         }
         sw.writeSuperclass();
-        Type superClassAsmType = typeMapper.mapSupertype(superClassType, sw);
+        superClassAsmType = typeMapper.mapSupertype(superClassType, sw);
         sw.writeSuperclassEnd();
         String[] superInterfaceAsmTypes = new String[superInterfaceTypes.size()];
         for (int i = 0; i < superInterfaceTypes.size(); i++) {
@@ -149,29 +137,39 @@ public class ClosureCodegen extends ParentCodegenAware {
             sw.writeInterfaceEnd();
         }
 
-        cv.defineClass(fun,
-                       V1_6,
-                       ACC_FINAL | ACC_SUPER | visibilityFlag,
-                       asmType.getInternalName(),
-                       sw.makeJavaGenericSignature(),
-                       superClassAsmType.getInternalName(),
-                       superInterfaceAsmTypes
+        v.defineClass(element,
+                      V1_6,
+                      ACC_FINAL | ACC_SUPER | visibilityFlag,
+                      asmType.getInternalName(),
+                      sw.makeJavaGenericSignature(),
+                      superClassAsmType.getInternalName(),
+                      superInterfaceAsmTypes
         );
-        cv.visitSource(fun.getContainingFile().getName(), null);
+        v.visitSource(element.getContainingFile().getName(), null);
 
-        writeKotlinSyntheticClassAnnotation(cv, syntheticClassKind);
+    }
+
+    @Override
+    protected void generateBody() {
+        FunctionDescriptor erasedInterfaceFunction;
+        if (samType == null) {
+            erasedInterfaceFunction = getErasedInvokeFunction(funDescriptor);
+        }
+        else {
+            erasedInterfaceFunction = samType.getAbstractMethod().getOriginal();
+        }
 
         JvmMethodSignature jvmMethodSignature =
                 typeMapper.mapSignature(funDescriptor).replaceName(erasedInterfaceFunction.getName().toString());
-        generateBridge(cv, typeMapper.mapSignature(erasedInterfaceFunction).getAsmMethod(), jvmMethodSignature.getAsmMethod());
+        generateBridge(typeMapper.mapSignature(erasedInterfaceFunction).getAsmMethod(), jvmMethodSignature.getAsmMethod());
 
-        FunctionCodegen fc = new FunctionCodegen(context, cv, state, getParentCodegen());
-        fc.generateMethod(OtherOrigin(fun, funDescriptor), jvmMethodSignature, funDescriptor, strategy);
+        functionCodegen.generateMethod(OtherOrigin(element, funDescriptor), jvmMethodSignature, funDescriptor, strategy);
 
         //TODO: rewrite cause ugly hack
         if (samType != null) {
             SimpleFunctionDescriptorImpl descriptorForBridges = SimpleFunctionDescriptorImpl
-                    .create(funDescriptor.getContainingDeclaration(), funDescriptor.getAnnotations(), erasedInterfaceFunction.getName(),
+                    .create(funDescriptor.getContainingDeclaration(), funDescriptor.getAnnotations(),
+                            erasedInterfaceFunction.getName(),
                             CallableMemberDescriptor.Kind.DECLARATION, funDescriptor.getSource());
 
             descriptorForBridges
@@ -180,27 +178,35 @@ public class ClosureCodegen extends ParentCodegenAware {
                                 erasedInterfaceFunction.getVisibility());
 
             descriptorForBridges.addOverriddenDescriptor(erasedInterfaceFunction);
-            fc.generateBridges(descriptorForBridges);
+            functionCodegen.generateBridges(descriptorForBridges);
         }
 
-        this.constructor = generateConstructor(cv, superClassAsmType);
+        this.constructor = generateConstructor(superClassAsmType);
 
         if (isConst(closure)) {
-            generateConstInstance(cv);
+            generateConstInstance();
         }
 
-        genClosureFields(closure, cv, typeMapper);
+        genClosureFields(closure, v, typeMapper);
 
-        fc.generateDefaultIfNeeded(context.intoFunction(funDescriptor),
-                                   typeMapper.mapSignature(funDescriptor),
-                                   funDescriptor,
-                                   context.getContextKind(),
-                                   DefaultParameterValueLoader.DEFAULT,
-                                   null);
+        functionCodegen.generateDefaultIfNeeded(context.intoFunction(funDescriptor),
+                                                typeMapper.mapSignature(funDescriptor),
+                                                funDescriptor,
+                                                context.getContextKind(),
+                                                DefaultParameterValueLoader.DEFAULT,
+                                                null);
+    }
 
+    @Override
+    protected void generateKotlinAnnotation() {
+        writeKotlinSyntheticClassAnnotation(v, syntheticClassKind);
+    }
 
-        AsmUtil.writeOuterClassAndEnclosingMethod(classDescriptor, funDescriptor, typeMapper, cv);
-        cv.done();
+    @Override
+    protected void done() {
+        AsmUtil.writeOuterClassAndEnclosingMethod(classDescriptor, funDescriptor, typeMapper, v);
+        v.done();
+        super.done();
     }
 
     @NotNull
@@ -224,11 +230,11 @@ public class ClosureCodegen extends ParentCodegenAware {
     }
 
 
-    private void generateConstInstance(@NotNull ClassBuilder cv) {
-        MethodVisitor mv = cv.newMethod(OtherOrigin(fun, funDescriptor), ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, ArrayUtil.EMPTY_STRING_ARRAY);
+    private void generateConstInstance() {
+        MethodVisitor mv = v.newMethod(OtherOrigin(element, funDescriptor), ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, ArrayUtil.EMPTY_STRING_ARRAY);
         InstructionAdapter iv = new InstructionAdapter(mv);
 
-        cv.newField(OtherOrigin(fun, funDescriptor), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD, asmType.getDescriptor(), null, null);
+        v.newField(OtherOrigin(element, funDescriptor), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD, asmType.getDescriptor(), null, null);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
@@ -237,15 +243,15 @@ public class ClosureCodegen extends ParentCodegenAware {
             iv.invokespecial(asmType.getInternalName(), "<init>", "()V", false);
             iv.putstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
             mv.visitInsn(RETURN);
-            FunctionCodegen.endVisit(mv, "<clinit>", fun);
+            FunctionCodegen.endVisit(mv, "<clinit>", element);
         }
     }
 
-    private void generateBridge(@NotNull ClassBuilder cv, @NotNull Method bridge, @NotNull Method delegate) {
+    private void generateBridge(@NotNull Method bridge, @NotNull Method delegate) {
         if (bridge.equals(delegate)) return;
 
         MethodVisitor mv =
-                cv.newMethod(OtherOrigin(fun, funDescriptor), ACC_PUBLIC | ACC_BRIDGE, bridge.getName(), bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
+                v.newMethod(OtherOrigin(element, funDescriptor), ACC_PUBLIC | ACC_BRIDGE, bridge.getName(), bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
 
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
@@ -274,17 +280,17 @@ public class ClosureCodegen extends ParentCodegenAware {
 
         iv.areturn(bridge.getReturnType());
 
-        FunctionCodegen.endVisit(mv, "bridge", fun);
+        FunctionCodegen.endVisit(mv, "bridge", element);
     }
 
     @NotNull
-    private Method generateConstructor(@NotNull ClassBuilder cv, @NotNull Type superClassAsmType) {
+    private Method generateConstructor(@NotNull Type superClassAsmType) {
         List<FieldInfo> args = calculateConstructorParameters(typeMapper, closure, asmType);
 
         Type[] argTypes = fieldListToTypeArray(args);
 
         Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
-        MethodVisitor mv = cv.newMethod(OtherOrigin(fun, funDescriptor), visibilityFlag, "<init>", constructor.getDescriptor(), null,
+        MethodVisitor mv = v.newMethod(OtherOrigin(element, funDescriptor), visibilityFlag, "<init>", constructor.getDescriptor(), null,
                                         ArrayUtil.EMPTY_STRING_ARRAY);
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
@@ -300,7 +306,7 @@ public class ClosureCodegen extends ParentCodegenAware {
 
             iv.visitInsn(RETURN);
 
-            FunctionCodegen.endVisit(iv, "constructor", fun);
+            FunctionCodegen.endVisit(iv, "constructor", element);
         }
         return constructor;
     }
@@ -352,11 +358,11 @@ public class ClosureCodegen extends ParentCodegenAware {
     }
 
     @NotNull
-    public static FunctionDescriptor getErasedInvokeFunction(@NotNull FunctionDescriptor funDescriptor) {
-        int arity = funDescriptor.getValueParameters().size();
-        ClassDescriptor funClass = funDescriptor.getExtensionReceiverParameter() == null
+    public static FunctionDescriptor getErasedInvokeFunction(@NotNull FunctionDescriptor elementDescriptor) {
+        int arity = elementDescriptor.getValueParameters().size();
+        ClassDescriptor elementClass = elementDescriptor.getExtensionReceiverParameter() == null
                                    ? KotlinBuiltIns.getInstance().getFunction(arity)
                                    : KotlinBuiltIns.getInstance().getExtensionFunction(arity);
-        return funClass.getDefaultType().getMemberScope().getFunctions(Name.identifier("invoke")).iterator().next();
+        return elementClass.getDefaultType().getMemberScope().getFunctions(Name.identifier("invoke")).iterator().next();
     }
 }

@@ -1387,26 +1387,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     private StackValue genClosure(
-            @NotNull PsiElement declaration,
+            @NotNull JetElement declaration,
             @NotNull FunctionDescriptor descriptor,
             @NotNull FunctionGenerationStrategy strategy,
             @Nullable SamType samType,
             @NotNull KotlinSyntheticClass.Kind kind
     ) {
-        boolean wereReifiedMarkers = parentCodegen.wereReifierMarkers();
-        parentCodegen.setWereReifierMarkers(false);
+        Type asmType = asmTypeForAnonymousClass(bindingContext, descriptor);
+        ClassBuilder cv = state.getFactory().newVisitor(OtherOrigin(declaration, descriptor), asmType, declaration.getContainingFile());
+        ClassContext closureContext = context.intoClosure(descriptor, this, typeMapper);
 
         ClosureCodegen closureCodegen = new ClosureCodegen(
-                state, declaration, descriptor, samType, context, kind, this,
-                strategy, parentCodegen
+                state, declaration, descriptor, samType, closureContext, kind,
+                strategy, parentCodegen, cv, asmType
         );
-        closureCodegen.gen();
 
-        if (parentCodegen.wereReifierMarkers()) {
+        closureCodegen.generate();
+
+        if (closureCodegen.wereReifierMarkers()) {
             ReifiedTypeInliner.putNeedClassReificationMarker(v);
-        }
-        if (wereReifiedMarkers) {
-            parentCodegen.setWereReifierMarkers(true);
         }
 
         return closureCodegen.putInstanceOnStack(this);

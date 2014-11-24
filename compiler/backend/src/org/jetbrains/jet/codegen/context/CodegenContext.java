@@ -187,13 +187,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public CodegenContext intoClosure(
+    public ClassContext intoClosure(
             @NotNull FunctionDescriptor funDescriptor,
             @NotNull LocalLookup localLookup,
             @NotNull JetTypeMapper typeMapper
     ) {
         ClassDescriptor classDescriptor = anonymousClassForFunction(typeMapper.getBindingContext(), funDescriptor);
-        return new ClosureContext(typeMapper, funDescriptor, classDescriptor, this, localLookup);
+        return new ClosureContext(typeMapper, classDescriptor, this, localLookup);
     }
 
     @Nullable

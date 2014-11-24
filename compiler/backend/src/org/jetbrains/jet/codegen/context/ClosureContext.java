@@ -21,42 +21,21 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
-
-class ClosureContext extends CodegenContext {
-    private final ClassDescriptor classDescriptor;
+class ClosureContext extends ClassContext {
 
     public ClosureContext(
             @NotNull JetTypeMapper typeMapper,
-            @NotNull FunctionDescriptor contextDescriptor,
             @NotNull ClassDescriptor classDescriptor,
             @Nullable CodegenContext parentContext,
             @Nullable LocalLookup localLookup
     ) {
         //noinspection SuspiciousMethodCalls
-        super(contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext,
-              typeMapper.getBindingContext().get(CLOSURE, classDescriptor), classDescriptor, localLookup);
-        this.classDescriptor = classDescriptor;
-
-        initOuterExpression(typeMapper, classDescriptor);
-    }
-
-    @NotNull
-    @Override
-    public DeclarationDescriptor getContextDescriptor() {
-        return classDescriptor;
-    }
-
-    @Override
-    public boolean isStatic() {
-        return false;
+        super(typeMapper, classDescriptor, OwnerKind.IMPLEMENTATION, parentContext, localLookup);
     }
 
     @Override
     public String toString() {
-        return "Closure: " + classDescriptor;
+        return "Closure: " + getContextDescriptor();
     }
 }
