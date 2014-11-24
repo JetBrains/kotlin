@@ -39,6 +39,10 @@ import org.jetbrains.jet.lang.types.JetType
 import kotlin.platform.platformStatic
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.jet.lang.types.isDynamic
+import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorCollector
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.BindingTrace
+import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorCollectors
 
 object DynamicCallableDescriptors {
 
@@ -132,3 +136,14 @@ fun DeclarationDescriptor.isDynamic(): Boolean {
     return dispatchReceiverParameter != null && dispatchReceiverParameter.getType().isDynamic()
 }
 
+class CollectorForDynamicReceivers<D: CallableDescriptor>(val delegate: CallableDescriptorCollector<D>) : CallableDescriptorCollector<D> by delegate {
+    override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D> {
+        return delegate.getExtensionsByName(scope, name, bindingTrace).filter {
+            it.getExtensionReceiverParameter()?.getType()?.isDynamic() ?: false
+        }
+    }
+}
+
+fun <D: CallableDescriptor> CallableDescriptorCollectors<D>.onlyDynamicReceivers(): CallableDescriptorCollectors<D> {
+    return CallableDescriptorCollectors(* this.map { CollectorForDynamicReceivers(it) }.copyToArray())
+}

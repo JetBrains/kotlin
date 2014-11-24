@@ -137,15 +137,24 @@ public class TaskPrioritizer {
     }
 
     private static <D extends CallableDescriptor, F extends D> void addCandidatesForExplicitReceiver(
+            @NotNull ReceiverValue explicitReceiver,
+            @NotNull Collection<ReceiverValue> implicitReceivers,
+            @NotNull TaskPrioritizerContext<D, F> c,
+            boolean isExplicit
+    ) {
+        addMembers(explicitReceiver, c, /*static=*/false, isExplicit);
+
+        addCandidatesForDynamicReceiver(explicitReceiver, implicitReceivers, c, isExplicit);
+
+        addExtensionCandidates(explicitReceiver, implicitReceivers, c, isExplicit);
+    }
+
+    private static <D extends CallableDescriptor, F extends D> void addExtensionCandidates(
             @NotNull final ReceiverValue explicitReceiver,
             @NotNull Collection<ReceiverValue> implicitReceivers,
             @NotNull final TaskPrioritizerContext<D, F> c,
             final boolean isExplicit
     ) {
-        addMembers(explicitReceiver, c, /*static=*/false, isExplicit);
-
-        addCandidatesForDynamicReceiver(explicitReceiver, c);
-
         for (final CallableDescriptorCollector<D> callableDescriptorCollector : c.callableDescriptorCollectors) {
             //member extensions
             for (ReceiverValue implicitReceiver : implicitReceivers) {
@@ -191,14 +200,21 @@ public class TaskPrioritizer {
     }
 
     private static <D extends CallableDescriptor, F extends D> void addCandidatesForDynamicReceiver(
-            @NotNull final ReceiverValue receiver,
-            @NotNull final TaskPrioritizerContext<D, F> c
+            @NotNull final ReceiverValue explicitReceiver,
+            @NotNull Collection<ReceiverValue> implicitReceivers,
+            @NotNull final TaskPrioritizerContext<D, F> c,
+            boolean isExplicit
     ) {
+        if (!TypesPackage.isDynamic(explicitReceiver.getType())) return;
+
+        TaskPrioritizerContext<D, F> onlyDynamicReceivers = c.replaceCollectors(TasksPackage.onlyDynamicReceivers(c.callableDescriptorCollectors));
+        addExtensionCandidates(explicitReceiver, implicitReceivers, onlyDynamicReceivers, isExplicit);
+
+
         c.result.addCandidates(
                 new Function0<Collection<? extends ResolutionCandidate<D>>>() {
                     @Override
                     public Collection<? extends ResolutionCandidate<D>> invoke() {
-                        if (!TypesPackage.isDynamic(receiver.getType())) return Collections.emptyList();
 
                         //noinspection unchecked
                         D dynamicDescriptor = (D) DynamicCallableDescriptors.createCallableDescriptorForDynamicCall(
@@ -211,7 +227,7 @@ public class TaskPrioritizer {
                                 c.context.call,
                                 dynamicDescriptor
                         );
-                        dynamicCandidate.setDispatchReceiver(receiver);
+                        dynamicCandidate.setDispatchReceiver(explicitReceiver);
                         dynamicCandidate.setExplicitReceiverKind(DISPATCH_RECEIVER);
 
                         return Collections.singletonList(dynamicCandidate);
@@ -473,5 +489,11 @@ public class TaskPrioritizer {
         private TaskPrioritizerContext<D, F> replaceScope(JetScope newScope) {
             return new TaskPrioritizerContext<D, F>(name, result, context, newScope, callableDescriptorCollectors);
         }
+
+        private TaskPrioritizerContext<D, F> replaceCollectors(CallableDescriptorCollectors<D> newCollectors) {
+            return new TaskPrioritizerContext<D, F>(name, result, context, scope, newCollectors);
+        }
+
+
     }
 }

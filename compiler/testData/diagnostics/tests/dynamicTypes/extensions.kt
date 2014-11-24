@@ -13,8 +13,8 @@ fun test(d: dynamic) {
     d.<!DEBUG_INFO_DYNAMIC!>onNullableAny<!>()
     d.<!DEBUG_INFO_DYNAMIC!>onString<!>()
 
-    d.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
-    d?.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
+    d.onDynamic()
+    d?.onDynamic()
 
     (d: String).onString()
     (d: Any).onAny()

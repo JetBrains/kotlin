@@ -17,9 +17,9 @@ fun test(d: dynamic) {
 
     d.<!DEBUG_INFO_DYNAMIC!>onStringVar<!> = 1
 
-    d.<!DEBUG_INFO_DYNAMIC!>onDynamicVar<!> = 1
+    d.onDynamicVar = 1
 
-    d?.<!DEBUG_INFO_DYNAMIC!>onDynamicVar<!> = 1
+    d?.onDynamicVar = 1
 
     (d: String).onStringVar
     (d: Any).onAnyVar

@@ -63,13 +63,13 @@ Internally, `dynamic` is represented as a flexible type `Nothing..Any?`, with th
 
 ## Resolution rules
 
-- If a receiver is `dynamic` a call is resolved as dynamic if no members match the signature (these are members of `Any`, unless we implement bounded `dynamic`)
+- If a receiver is `dynamic` a call is resolved as dynamic if no members (these are members of `Any`, unless we implement bounded `dynamic`)
+  and no extensions with dynamic receivers match the signature.
   - Motivation: otherwise, **any** extension to **any** type that simply happens to be in scope and match the name and arguments
     will be bound for a call with a `dynamic` receiver, i.e. there's no way to force a call to be dynamic, and in the case of a `*`-import
     the code may change its semantics just because somebody added some extension in another file.
-  - This means that an extension **can not** be called on a `dynamic` receiver. If needed, one can force a call to an extension by casting
-    teh receiver to a static type: `(d as Foo).bar()`
-  - This also means that an extension whose receiver type is `dynamic` can not be called on a `dynamic` variable without a cast
+  - This means that an extension to a normal, non-dynamic type **can not** be called on a `dynamic` receiver.
+    If needed, one can force a call to an extension by casting the receiver to a static type: `(d as Foo).bar()`
 
 ## Type Argument Inference
 

@@ -3782,6 +3782,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("extensionsToDynamic.kt")
+            public void testExtensionsToDynamic() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/extensionsToDynamic.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("implicitDynamicReceiver.kt")
             public void testImplicitDynamicReceiver() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/implicitDynamicReceiver.kt");
@@ -3815,6 +3821,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("overloading.kt")
             public void testOverloading() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/overloading.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("overloadingAmbiguity.kt")
+            public void testOverloadingAmbiguity() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/overloadingAmbiguity.kt");
                 doTest(fileName);
             }
 
