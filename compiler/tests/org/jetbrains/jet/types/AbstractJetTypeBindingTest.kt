@@ -80,7 +80,7 @@ abstract class AbstractJetTypeBindingTest : JetLiteFixture() {
             }
             println("typeParameter: ${argument.typeParameterDescriptor.render()}")
 
-            val projection = argument.typeProjection.getProjectionKind().toString().let {
+            val projection = argument.typeProjection.getProjectionKind().label.let {
                 if (it.isNotEmpty())
                     "$it "
                 else

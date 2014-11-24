@@ -267,7 +267,7 @@ public class CommonSupertypes {
 
         for (TypeProjection projection : typeProjections) {
             Variance projectionKind = projection.getProjectionKind();
-            if (projectionKind.allowsInPosition()) {
+            if (projectionKind.getAllowsInPosition()) {
                 if (ins != null) {
                     ins.add(projection.getType());
                 }
@@ -276,7 +276,7 @@ public class CommonSupertypes {
                 ins = null;
             }
 
-            if (projectionKind.allowsOutPosition()) {
+            if (projectionKind.getAllowsOutPosition()) {
                 if (outs != null) {
                     outs.add(projection.getType());
                 }
