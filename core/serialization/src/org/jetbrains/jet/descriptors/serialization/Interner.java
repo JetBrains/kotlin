@@ -18,21 +18,21 @@ package org.jetbrains.jet.descriptors.serialization;
 
 import gnu.trove.TObjectHashingStrategy;
 import gnu.trove.TObjectIntHashMap;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class Interner<T> {
     private final Interner<T> parent;
     private final int firstIndex;
     private final TObjectIntHashMap<T> interned;
-    private final List<T> all = new ArrayList<T>();
 
     public Interner(Interner<T> parent, @NotNull TObjectHashingStrategy<T> hashing) {
         this.parent = parent;
-        this.firstIndex = parent != null ? parent.all.size() + parent.firstIndex : 0;
+        this.firstIndex = parent != null ? parent.interned.size() + parent.firstIndex : 0;
         this.interned = new TObjectIntHashMap<T>(hashing);
     }
 
@@ -50,7 +50,7 @@ public final class Interner<T> {
     }
 
     private int find(@NotNull T obj) {
-        assert parent == null || parent.all.size() + parent.firstIndex == firstIndex :
+        assert parent == null || parent.interned.size() + parent.firstIndex == firstIndex :
                 "Parent changed in parallel with child: indexes will be wrong";
         if (parent != null) {
             int index = parent.find(obj);
@@ -68,12 +68,17 @@ public final class Interner<T> {
 
         index = firstIndex + interned.size();
         interned.put(obj, index);
-        all.add(obj);
         return index;
     }
 
+    @SuppressWarnings("unchecked")
     @NotNull
     public List<T> getAllInternedObjects() {
-        return all;
+        return KotlinPackage.toSortedListBy((T[]) interned.keys(), new Function1<T, Integer>() {
+            @Override
+            public Integer invoke(T key) {
+                return interned.get(key);
+            }
+        });
     }
 }
