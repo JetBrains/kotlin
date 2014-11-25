@@ -22,9 +22,9 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.*
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.utils.emptyOrSingletonList
 
 public class LazyJavaPackageFragmentProvider(
         outerContext: GlobalJavaResolverContext,
@@ -75,13 +75,12 @@ public class LazyJavaPackageFragmentProvider(
         )
     }
 
-    fun getPackageFragment(fqName: FqName) = packageFragments(fqName)
+    private fun getPackageFragment(fqName: FqName) = packageFragments(fqName)
 
-    override fun getPackageFragments(fqName: FqName) = getPackageFragment(fqName)?.let {listOf(it)}.orEmpty()
+    override fun getPackageFragments(fqName: FqName) = emptyOrSingletonList(getPackageFragment(fqName))
 
-    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) = getPackageFragment(fqName)?.getMemberScope()?.getSubPackages().orEmpty()
-
-    fun resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass) = c.deserializedDescriptorResolver.resolveClass(kotlinClass)
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) =
+            getPackageFragment(fqName)?.getMemberScope()?.getSubPackages().orEmpty()
 
     fun getClass(javaClass: JavaClass): ClassDescriptor? = c.javaClassResolver.resolveClass(javaClass)
 
