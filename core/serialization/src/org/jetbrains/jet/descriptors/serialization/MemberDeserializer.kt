@@ -55,7 +55,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         val local = c.childContext(property, proto.getTypeParameterList())
         property.setType(
                 local.typeDeserializer.type(proto.getReturnType()),
-                local.typeDeserializer.getOwnTypeParameters(),
+                local.typeDeserializer.ownTypeParameters,
                 getDispatchReceiverParameter(),
                 if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType()) else null
         )
@@ -131,7 +131,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         function.initialize(
                 if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType()) else null,
                 getDispatchReceiverParameter(),
-                local.typeDeserializer.getOwnTypeParameters(),
+                local.typeDeserializer.ownTypeParameters,
                 local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
                 local.typeDeserializer.type(proto.getReturnType()),
                 modality(Flags.MODALITY.get(proto.getFlags())),

@@ -48,7 +48,8 @@ public class TypeDeserializer(
         }
     }
 
-    fun getOwnTypeParameters(): List<TypeParameterDescriptor> = typeParameterDescriptors().values().toReadOnlyList()
+    val ownTypeParameters: List<TypeParameterDescriptor>
+            get() = typeParameterDescriptors().values().toReadOnlyList()
 
     fun type(proto: ProtoBuf.Type): JetType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {

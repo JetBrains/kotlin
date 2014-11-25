@@ -144,7 +144,7 @@ public class DeserializedClassDescriptor(
     private inner class DeserializedClassTypeConstructor : AbstractClassTypeConstructor() {
         private val supertypes = computeSuperTypes()
 
-        override fun getParameters() = c.typeDeserializer.getOwnTypeParameters()
+        override fun getParameters() = c.typeDeserializer.ownTypeParameters
 
         override fun getSupertypes(): Collection<JetType> {
             // We cannot have error supertypes because subclasses inherit error functions from them
