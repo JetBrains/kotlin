@@ -218,11 +218,11 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
                 }
 
                 for (resourceFolder in AndroidGradleWrapper.getRClassFolder(variant)) {
-                    javaSourceList add { resourceFolder }
+                    javaSourceList.add(resourceFolder)
                 }
-                javaSourceList add { variant.getGenerateBuildConfig()?.getSourceOutputDir() }
-                javaSourceList add { variant.getAidlCompile().getSourceOutputDir() }
-                javaSourceList add { variant.getRenderscriptCompile().getSourceOutputDir() }
+                javaSourceList.add(variant.getGenerateBuildConfig()?.getSourceOutputDir())
+                javaSourceList.add(variant.getAidlCompile().getSourceOutputDir())
+                javaSourceList.add(variant.getRenderscriptCompile().getSourceOutputDir())
 
                 if (variant is ApkVariant) {
                     for (flavourName in AndroidGradleWrapper.getProductFlavorsNames(variant)) {
