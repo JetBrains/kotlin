@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.types.lang
 
 import org.jetbrains.jet.descriptors.serialization.*
-import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationLoader
 import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
@@ -28,9 +28,7 @@ import org.jetbrains.jet.lang.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.resolve.name.ClassId
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.storage.StorageManager
-
 import java.io.DataInputStream
 import java.io.IOException
 import java.io.InputStream
@@ -44,17 +42,11 @@ class BuiltinsPackageFragment(storageManager: StorageManager, module: ModuleDesc
     public val provider: PackageFragmentProvider = BuiltinsPackageFragmentProvider()
 
     private val members: DeserializedPackageMemberScope = run {
-        val builtInsClassDataFinder = BuiltInsClassDataFinder()
-        val deserializationContext = DeserializationContext(storageManager,
-                                                            module,
-                                                            builtInsClassDataFinder,
-                                                            AnnotationLoader.UNSUPPORTED, // TODO: support annotations
-                                                            ConstantLoader.UNSUPPORTED,
-                                                            provider,
-                                                            FlexibleTypeCapabilitiesDeserializer.ThrowException,
-                                                            ClassDeserializer(storageManager, builtInsClassDataFinder),
-                                                            nameResolver)
-        DeserializedPackageMemberScope(this, loadPackage(), deserializationContext,  { readClassNames() })
+        val deserializationContext = DeserializationGlobalContext(
+                storageManager, module, BuiltInsClassDataFinder(), AnnotationLoader.UNSUPPORTED, // TODO: support annotations
+                ConstantLoader.UNSUPPORTED, provider, FlexibleTypeCapabilitiesDeserializer.ThrowException
+        ).withNameResolver(nameResolver)
+        DeserializedPackageMemberScope(this, loadPackage(), deserializationContext, { readClassNames() })
     }
 
     private fun loadPackage(): ProtoBuf.Package {

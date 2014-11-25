@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.descriptors.serialization.ClassData
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.jet.plugin.decompiler.isKotlinWithCompatibleAbiVersion
+import org.jetbrains.jet.descriptors.serialization.context.deserializeClass
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
@@ -53,7 +54,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), listOf(), PlatformToKotlinClassMap.EMPTY)
 
-    override fun resolveTopLevelClass(classId: ClassId) = deserializationContext.classDeserializer.deserializeClass(classId)
+    override fun resolveTopLevelClass(classId: ClassId) = deserializationContext.deserializeClass(classId)
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
         assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")
