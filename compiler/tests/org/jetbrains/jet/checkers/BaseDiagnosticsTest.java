@@ -79,8 +79,8 @@ public abstract class BaseDiagnosticsTest extends
     public static final boolean CHECK_LAZY_LOG_DEFAULT = "true".equals(System.getProperty("check.lazy.logs", "false"));
 
     @Override
-    protected TestModule createTestModule(String name) {
-        return new TestModule(name);
+    protected TestModule createTestModule(@NotNull String name, @Nullable String platform) {
+        return new TestModule(name, platform);
     }
 
     @Override
@@ -208,15 +208,22 @@ public abstract class BaseDiagnosticsTest extends
 
     protected static class TestModule implements Comparable<TestModule> {
         private final String name;
+        private final String platform;
         private final List<TestModule> dependencies = new ArrayList<TestModule>();
 
-        public TestModule(@NotNull String name) {
+        public TestModule(@NotNull String name, @Nullable String platform) {
             this.name = name;
+            this.platform = platform;
         }
 
         @NotNull
         public String getName() {
             return name;
+        }
+
+        @Nullable
+        public String getPlatform() {
+            return platform;
         }
 
         @NotNull

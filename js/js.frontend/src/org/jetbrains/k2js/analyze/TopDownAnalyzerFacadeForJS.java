@@ -63,9 +63,32 @@ public final class TopDownAnalyzerFacadeForJS {
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull Config config
     ) {
-        Project project = config.getProject();
+        BindingContext libraryContext = config.getLibraryContext();
+        BindingTrace trace = libraryContext == null
+                             ? new BindingTraceContext()
+                             : new DelegatingBindingTrace(libraryContext, "trace with preanalyzed library");
 
-        ModuleDescriptorImpl owner = createJsModule("<module>");
+        ModuleDescriptorImpl module = createJsModule("<module>");
+        module.addDependencyOnModule(module);
+        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        ModuleDescriptor libraryModule = config.getLibraryModule();
+        if (libraryModule != null) {
+            module.addDependencyOnModule((ModuleDescriptorImpl) libraryModule); // "import" analyzed library module
+        }
+        module.seal();
+
+        return analyzeFilesWithGivenTrace(files, trace, module, filesToAnalyzeCompletely, config);
+    }
+
+    @NotNull
+    public static AnalysisResult analyzeFilesWithGivenTrace(
+            @NotNull Collection<JetFile> files,
+            @NotNull BindingTrace trace,
+            @NotNull ModuleDescriptorImpl module,
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
+            @NotNull Config config
+    ) {
+        Project project = config.getProject();
 
         Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
 
@@ -73,25 +96,13 @@ public final class TopDownAnalyzerFacadeForJS {
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
                 globalContext.getStorageManager(), globalContext.getExceptionTracker(), completely, false, false);
 
-        owner.addDependencyOnModule(owner);
-        owner.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
-        ModuleDescriptor libraryModule = config.getLibraryModule();
-        if (libraryModule != null) {
-            owner.addDependencyOnModule((ModuleDescriptorImpl) libraryModule); // "import" analyzed library module
-        }
-        owner.seal();
-
-        BindingContext libraryContext = config.getLibraryContext();
-        BindingTrace trace = libraryContext == null
-                             ? new BindingTraceContext()
-                             : new DelegatingBindingTrace(libraryContext, "trace with preanalyzed library");
-        InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(project, topDownAnalysisParameters, trace, owner);
+        InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(project, topDownAnalysisParameters, trace, module);
         try {
-            Collection<JetFile> allFiles = libraryModule != null ?
+            Collection<JetFile> allFiles = config.getLibraryModule() != null ?
                                            files :
                                            Config.withJsLibAdded(files, config);
             injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, allFiles);
-            return AnalysisResult.success(trace.getBindingContext(), owner);
+            return AnalysisResult.success(trace.getBindingContext(), module);
         }
         finally {
             injector.destroy();
@@ -118,7 +129,7 @@ public final class TopDownAnalyzerFacadeForJS {
     }
 
     @NotNull
-    private static ModuleDescriptorImpl createJsModule(@NotNull String name) {
+    public static ModuleDescriptorImpl createJsModule(@NotNull String name) {
         return new ModuleDescriptorImpl(Name.special(name), DEFAULT_IMPORTS, PlatformToKotlinClassMap.EMPTY);
     }
 
