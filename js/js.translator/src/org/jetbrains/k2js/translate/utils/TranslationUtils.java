@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -53,7 +54,7 @@ public final class TranslationUtils {
     public static JsPropertyInitializer translateFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context) {
-        if (JsDescriptorUtils.isExtension(descriptor)) {
+        if (DescriptorUtils.isExtension(descriptor)) {
             return translateExtensionFunctionAsEcma5DataDescriptor(function, descriptor, context);
         }
         else {

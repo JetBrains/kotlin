@@ -39,6 +39,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isExtension;
 import static org.jetbrains.k2js.config.LibrarySourcesConfig.BUILTINS_JS_MODULE_NAME;
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
@@ -220,6 +221,7 @@ public final class StaticContext {
         return result;
     }
 
+    @NotNull
     public Config getConfig() {
         return config;
     }

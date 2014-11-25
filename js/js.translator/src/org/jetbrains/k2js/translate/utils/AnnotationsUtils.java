@@ -32,9 +32,6 @@ import org.jetbrains.k2js.PredefinedAnnotation;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isOverride;
-
 public final class AnnotationsUtils {
 
     private AnnotationsUtils() {
@@ -49,7 +46,7 @@ public final class AnnotationsUtils {
 
     @Nullable
     private static String getAnnotationStringParameter(@NotNull DeclarationDescriptor declarationDescriptor,
-                                                       @NotNull PredefinedAnnotation annotation) {
+            @NotNull PredefinedAnnotation annotation) {
         AnnotationDescriptor annotationDescriptor = getAnnotationByName(declarationDescriptor, annotation);
         assert annotationDescriptor != null;
         //TODO: this is a quick fix for unsupported default args problem
@@ -68,7 +65,7 @@ public final class AnnotationsUtils {
 
     @Nullable
     public static String getNameForAnnotatedObject(@NotNull DeclarationDescriptor declarationDescriptor,
-                                                   @NotNull PredefinedAnnotation annotation) {
+            @NotNull PredefinedAnnotation annotation) {
         if (!hasAnnotation(declarationDescriptor, annotation)) {
             return null;
         }
@@ -80,7 +77,7 @@ public final class AnnotationsUtils {
         List<DeclarationDescriptor> descriptors;
 
         if (declarationDescriptor instanceof CallableMemberDescriptor &&
-            isOverride((CallableMemberDescriptor) declarationDescriptor)) {
+            DescriptorUtils.isOverride((CallableMemberDescriptor) declarationDescriptor)) {
 
             Set<CallableMemberDescriptor> overriddenDeclarations =
                     DescriptorUtils.getAllOverriddenDeclarations((CallableMemberDescriptor) declarationDescriptor);
@@ -88,7 +85,7 @@ public final class AnnotationsUtils {
             descriptors = ContainerUtil.mapNotNull(overriddenDeclarations, new Function<CallableMemberDescriptor, DeclarationDescriptor>() {
                 @Override
                 public DeclarationDescriptor fun(CallableMemberDescriptor descriptor) {
-                    return isOverride(descriptor) ? null : descriptor;
+                    return DescriptorUtils.isOverride(descriptor) ? null : descriptor;
                 }
             });
         }
@@ -145,7 +142,7 @@ public final class AnnotationsUtils {
         if (getAnnotationByName(descriptor, fqn) != null) {
             return true;
         }
-        ClassDescriptor containingClass = getContainingClass(descriptor);
+        ClassDescriptor containingClass = DescriptorUtils.getContainingClass(descriptor);
         return containingClass != null && hasAnnotationOrInsideAnnotatedClass(containingClass, fqn);
     }
 }

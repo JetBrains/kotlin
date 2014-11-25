@@ -96,14 +96,6 @@ public final class JsDescriptorUtils {
         return containing;
     }
 
-    public static boolean isExtension(@NotNull CallableDescriptor descriptor) {
-        return (descriptor.getExtensionReceiverParameter() != null);
-    }
-
-    public static boolean isOverride(@NotNull CallableMemberDescriptor descriptor) {
-        return !descriptor.getOverriddenDescriptors().isEmpty();
-    }
-
     @NotNull
     public static ReceiverParameterDescriptor getReceiverParameterForReceiver(@NotNull ReceiverValue receiverParameter) {
         DeclarationDescriptor declarationDescriptor = getDeclarationDescriptorForReceiver(receiverParameter);
@@ -133,19 +125,6 @@ public final class JsDescriptorUtils {
 
         throw new UnsupportedOperationException("Unsupported declaration type: " + declarationDescriptor.getClass() +
                                                 ", declarationDescriptor = " + declarationDescriptor);
-    }
-
-    //TODO: maybe we have similar routine
-    @Nullable
-    public static ClassDescriptor getContainingClass(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containing = descriptor.getContainingDeclaration();
-        while (containing != null) {
-            if (containing instanceof ClassDescriptor && !isClassObject(containing)) {
-                return (ClassDescriptor) containing;
-            }
-            containing = containing.getContainingDeclaration();
-        }
-        return null;
     }
 
     @Nullable

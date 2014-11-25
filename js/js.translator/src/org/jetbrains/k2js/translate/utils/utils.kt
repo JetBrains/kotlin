@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.k2js.translate.context.Namer
 import org.jetbrains.k2js.translate.context.TranslationContext
 import org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 public val <T> ID: (T) -> T = { it }
 
@@ -43,7 +44,7 @@ public fun generateDelegateCall(
     val args = SmartList<JsExpression>()
     val functionScope = context.getScopeForDescriptor(fromDescriptor);
 
-    if (JsDescriptorUtils.isExtension(fromDescriptor)) {
+    if (DescriptorUtils.isExtension(fromDescriptor)) {
         val extensionFunctionReceiverName = functionScope.declareName(Namer.getReceiverParameterName())
         parameters.add(JsParameter(extensionFunctionReceiverName))
         args.add(JsNameRef(extensionFunctionReceiverName))

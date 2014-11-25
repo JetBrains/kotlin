@@ -129,6 +129,14 @@ public class DescriptorUtils {
         return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
     }
 
+    public static boolean isExtension(@NotNull CallableDescriptor descriptor) {
+        return (descriptor.getExtensionReceiverParameter() != null);
+    }
+
+    public static boolean isOverride(@NotNull CallableMemberDescriptor descriptor) {
+        return !descriptor.getOverriddenDescriptors().isEmpty();
+    }
+
     /**
      * @return true iff this is a top-level declaration or a class member with no expected "this" object (e.g. static members in Java,
      * values() and valueOf() methods of enum classes, etc.)
@@ -183,6 +191,18 @@ public class DescriptorUtils {
         ModuleDescriptor module = getParentOfType(descriptor, ModuleDescriptor.class, false);
         assert module != null : "Descriptor without a containing module: " + descriptor;
         return module;
+    }
+
+    @Nullable
+    public static ClassDescriptor getContainingClass(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containing = descriptor.getContainingDeclaration();
+        while (containing != null) {
+            if (containing instanceof ClassDescriptor && !isClassObject(containing)) {
+                return (ClassDescriptor) containing;
+            }
+            containing = containing.getContainingDeclaration();
+        }
+        return null;
     }
 
     public static boolean isAncestor(

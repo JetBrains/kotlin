@@ -31,7 +31,7 @@ import org.jetbrains.k2js.translate.utils.JsDescriptorUtils
 import org.jetbrains.k2js.translate.context.Namer.*
 import org.jetbrains.k2js.translate.utils.ast.*
 import org.jetbrains.k2js.translate.utils.TranslationUtils.*
-import org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isExtension
+import org.jetbrains.jet.lang.resolve.DescriptorUtils.isExtension
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 
 /**
@@ -64,7 +64,7 @@ public fun MutableList<JsPropertyInitializer>.addGetterAndSetter(
         generateSetter: () -> JsPropertyInitializer
 ) {
     val to: MutableList<JsPropertyInitializer>
-    if (!JsDescriptorUtils.isExtension(descriptor)) {
+    if (!isExtension(descriptor)) {
         to = SmartList<JsPropertyInitializer>()
         this.add(JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), JsObjectLiteral(to, true)))
     }

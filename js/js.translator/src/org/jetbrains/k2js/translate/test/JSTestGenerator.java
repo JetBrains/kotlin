@@ -23,11 +23,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.JetTestFunctionDetector;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
-import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public final class JSTestGenerator {
     private static void doGenerateTestCalls(@NotNull List<FunctionDescriptor> functionDescriptors,
             @NotNull TranslationContext context, @NotNull JSTester jsTester) {
         for (FunctionDescriptor functionDescriptor : functionDescriptors) {
-            ClassDescriptor classDescriptor = JsDescriptorUtils.getContainingClass(functionDescriptor);
+            ClassDescriptor classDescriptor = DescriptorUtils.getContainingClass(functionDescriptor);
             if (classDescriptor == null) {
                 return;
             }
