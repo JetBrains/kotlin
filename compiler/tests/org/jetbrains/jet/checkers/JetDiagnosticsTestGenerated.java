@@ -3836,6 +3836,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("reified.kt")
+            public void testReified() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/reified.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("smartCast.kt")
             public void testSmartCast() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dynamicTypes/smartCast.kt");

@@ -385,7 +385,7 @@ public interface Errors {
     DiagnosticFactory0<JetExpression> DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory1<PsiElement, TypeParameterDescriptor> TYPE_PARAMETER_AS_REIFIED = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<PsiElement, JetType> REIFIED_TYPE_NOTHING_SUBSTITUTION = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, JetType> REIFIED_TYPE_FORBIDDEN_SUBSTITUTION = DiagnosticFactory1.create(ERROR);
 
     // Type inference
 

@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypesPackage;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Map;
@@ -49,8 +50,8 @@ public class ReifiedTypeParameterSubstitutionCheck implements CallResolverExtens
                             Errors.TYPE_PARAMETER_AS_REIFIED.on(getCallElement(context), parameter)
                     );
                 }
-                else if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(argument)) {
-                    context.trace.report(Errors.REIFIED_TYPE_NOTHING_SUBSTITUTION.on(getCallElement(context), argument));
+                else if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(argument) || TypesPackage.isDynamic(argument)) {
+                    context.trace.report(Errors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION.on(getCallElement(context), argument));
                 }
             }
         }
