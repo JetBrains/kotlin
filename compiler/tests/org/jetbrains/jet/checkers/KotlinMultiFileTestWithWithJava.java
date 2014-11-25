@@ -17,6 +17,7 @@
 package org.jetbrains.jet.checkers;
 
 import com.google.common.io.Files;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,7 +75,12 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
         if (kotlinSourceRoot != null) {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, kotlinSourceRoot.getPath());
         }
-        return JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        return createEnvironment(getTestRootDisposable(), configuration);
+    }
+
+    @NotNull
+    protected JetCoreEnvironment createEnvironment(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
+        return JetCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     @Nullable

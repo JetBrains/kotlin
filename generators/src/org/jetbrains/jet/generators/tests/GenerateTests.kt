@@ -132,6 +132,7 @@ import org.jetbrains.jet.plugin.decompiler.textBuilder.AbstractDecompiledTextTes
 import org.jetbrains.jet.completion.AbstractMultiFileSmartCompletionTest
 import org.jetbrains.jet.completion.handlers.AbstractCompletionCharFilterTest
 import org.jetbrains.jet.resolve.AbstractPartialBodyResolveTest
+import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithJsStdLib
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -146,6 +147,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJetDiagnosticsTestWithStdLib>()) {
             model("diagnostics/testsWithStdLib")
+        }
+
+        testClass(javaClass<AbstractJetDiagnosticsTestWithJsStdLib>()) {
+            model("diagnostics/testsWithJsStdLib")
         }
 
         testClass(javaClass<AbstractResolveTest>()) {

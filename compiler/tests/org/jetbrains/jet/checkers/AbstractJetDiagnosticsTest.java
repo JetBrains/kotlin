@@ -145,7 +145,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
         StringBuilder actualText = new StringBuilder();
         for (TestFile testFile : testFiles) {
-            ok &= testFile.getActualText(moduleBindings.get(testFile.getModule()), actualText, groupedByModule.size() > 1);
+            ok &= testFile.getActualText(moduleBindings.get(testFile.getModule()), actualText, shouldSkipJvmSignatureDiagnostics(groupedByModule));
         }
 
         JetTestUtils.assertEqualsToFile(testDataFile, actualText.toString());
@@ -159,6 +159,10 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         if (exceptionFromLazyResolveLogValidation != null) {
             throw UtilsPackage.rethrow(exceptionFromLazyResolveLogValidation);
         }
+    }
+
+    public boolean shouldSkipJvmSignatureDiagnostics(Map<TestModule, List<TestFile>> groupedByModule) {
+        return groupedByModule.size() > 1;
     }
 
     @Nullable
@@ -261,8 +265,8 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         for (TestModule testModule : groupedByModule.keySet()) {
             ModuleDescriptorImpl module =
                     testModule == null ?
-                    TopDownAnalyzerFacadeForJVM.createSealedJavaModule() :
-                    createModule(testModule);
+                    createSealedModule() :
+                    createModule("<" + testModule.getName() + ">");
 
             modules.put(testModule, module);
         }
@@ -283,9 +287,13 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         return modules;
     }
 
-    protected ModuleDescriptorImpl createModule(TestModule testModule) {
-        String name = "<" + testModule.getName() + ">";
-        return TopDownAnalyzerFacadeForJVM.createJavaModule(name);
+    protected ModuleDescriptorImpl createModule(String moduleName) {
+        return TopDownAnalyzerFacadeForJVM.createJavaModule(moduleName);
+    }
+
+    @NotNull
+    protected ModuleDescriptorImpl createSealedModule() {
+        return TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
     }
 
     private static void checkAllResolvedCallsAreCompleted(@NotNull List<JetFile> jetFiles, @NotNull BindingContext bindingContext) {
