@@ -134,12 +134,11 @@ private fun generatorForTopDownAnalyzerForJs() =
             parameter(javaClass<DeclarationProviderFactory>())
 
             publicFields(
-                    javaClass<ResolveSession>(),
                     javaClass<LazyTopDownAnalyzer>()
             )
 
+            field(javaClass<ResolveSession>())
             field(javaClass<MutablePackageFragmentProvider>())
-
             field(javaClass<AdditionalCheckerProvider>(),
                   init = GivenExpression(javaClass<AdditionalCheckerProvider.Empty>().getCanonicalName() + ".INSTANCE$"))
         }
