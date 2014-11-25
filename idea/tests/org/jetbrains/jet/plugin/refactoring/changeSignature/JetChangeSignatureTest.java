@@ -16,16 +16,21 @@
 
 package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
+import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
 import com.intellij.refactoring.BaseRefactoringProcessor;
+import com.intellij.refactoring.changeSignature.ChangeSignatureProcessor;
+import com.intellij.refactoring.changeSignature.ParameterInfoImpl;
+import com.intellij.refactoring.changeSignature.ThrownExceptionInfo;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
+import com.intellij.util.VisibilityUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -38,7 +43,10 @@ import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.getChangeSignatureDialog;
@@ -339,13 +347,10 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     private void configureFiles() throws Exception {
         editors.clear();
 
-        configureByFile(getTestName(false) + "Before.kt");
-        editors.add(getEditor());
-
         indexLoop:
         for (int i = 0; ; i++) {
             for (String extension : EXTENSIONS) {
-                String extraFileName = getTestName(false) + "Before." + i + extension;
+                String extraFileName = getTestName(false) + "Before" + (i > 0 ? "." + i : "") + extension;
                 File extraFile = new File(getTestDataPath() + extraFileName);
                 if (extraFile.exists()) {
                     configureByFile(extraFileName);
@@ -385,9 +390,59 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         return dialog.evaluateChangeInfo();
     }
 
+    private class JavaRefactoringProvider {
+        @NotNull
+        String getNewName(@NotNull PsiMethod method) {
+            return method.getName();
+        }
+
+        @Nullable
+        PsiType getNewReturnType(@NotNull PsiMethod method) {
+            return method.getReturnType();
+        }
+
+        @NotNull
+        ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+            PsiParameter[] parameters = method.getParameterList().getParameters();
+            ParameterInfoImpl[] parameterInfos = new ParameterInfoImpl[parameters.length];
+            for (int i = 0; i < parameters.length; i++) {
+                PsiParameter parameter = parameters[i];
+                parameterInfos[i] = new ParameterInfoImpl(i, parameter.getName(), parameter.getType());
+            }
+            return parameterInfos;
+        }
+
+        @NotNull
+        final ChangeSignatureProcessor getProcessor(@NotNull PsiMethod method) {
+            return new ChangeSignatureProcessor(
+                    getProject(),
+                    method,
+                    false,
+                    VisibilityUtil.getVisibilityModifier(method.getModifierList()),
+                    getNewName(method),
+                    getNewReturnType(method),
+                    getNewParameters(method),
+                    new ThrownExceptionInfo[0]);
+        }
+    }
+
+    private void doJavaTest(JavaRefactoringProvider provider) throws Exception {
+        configureFiles();
+
+        PsiElement targetElement = TargetElementUtilBase.findTargetElement(getEditor(), TargetElementUtilBase.ELEMENT_NAME_ACCEPTED);
+        assertTrue("<caret> is not on method name", targetElement instanceof PsiMethod);
+
+        provider.getProcessor((PsiMethod)targetElement).run();
+
+        compareEditorsWithExpectedData();
+    }
+
     private void doTest(JetChangeInfo changeInfo) throws Exception {
         new JetChangeSignatureProcessor(getProject(), changeInfo, "Change signature").run();
+        compareEditorsWithExpectedData();
+    }
 
+    private void compareEditorsWithExpectedData() throws Exception {
         for (Editor editor : editors) {
             setActiveEditor(editor);
             checkResultByFile(getFile().getName().replace("Before.", "After."));
