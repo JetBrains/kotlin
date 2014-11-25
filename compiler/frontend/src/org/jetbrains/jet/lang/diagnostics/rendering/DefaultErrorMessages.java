@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.Extensions;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +37,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
-import java.util.ServiceLoader;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
@@ -44,6 +45,8 @@ import static org.jetbrains.jet.renderer.DescriptorRenderer.*;
 public class DefaultErrorMessages {
 
     public interface Extension {
+        ExtensionPointName<Extension> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.defaultErrorMessages");
+
         @NotNull
         DiagnosticFactoryToRendererMap getMap();
     }
@@ -52,7 +55,7 @@ public class DefaultErrorMessages {
     public static final List<DiagnosticFactoryToRendererMap> MAPS = ImmutableList.<DiagnosticFactoryToRendererMap>builder()
                     .addAll(
                             KotlinPackage.map(
-                                ServiceLoader.load(Extension.class, DefaultErrorMessages.class.getClassLoader()),
+                                Extensions.getExtensions(Extension.EP_NAME),
                                 new Function1<Extension, DiagnosticFactoryToRendererMap>() {
                                     @Override
                                     public DiagnosticFactoryToRendererMap invoke(Extension extension) {

@@ -106,14 +106,16 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
-    private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor,
-            @NotNull PredefinedAnnotation annotation) {
+    private static AnnotationDescriptor getAnnotationByName(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull PredefinedAnnotation annotation
+    ) {
         return getAnnotationByName(descriptor, annotation.getFqName());
     }
 
     @Nullable
-    private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor, @NotNull String fqn) {
-        return descriptor.getAnnotations().findAnnotation(new FqName(fqn));
+    private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor, @NotNull FqName fqName) {
+        return descriptor.getAnnotations().findAnnotation(fqName);
     }
 
     public static boolean isNativeObject(@NotNull DeclarationDescriptor descriptor) {
@@ -133,16 +135,18 @@ public final class AnnotationsUtils {
         return false;
     }
 
-    public static boolean hasAnnotationOrInsideAnnotatedClass(@NotNull DeclarationDescriptor descriptor,
-            @NotNull PredefinedAnnotation annotation) {
+    public static boolean hasAnnotationOrInsideAnnotatedClass(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull PredefinedAnnotation annotation
+    ) {
         return hasAnnotationOrInsideAnnotatedClass(descriptor, annotation.getFqName());
     }
 
-    private static boolean hasAnnotationOrInsideAnnotatedClass(@NotNull DeclarationDescriptor descriptor, @NotNull String fqn) {
-        if (getAnnotationByName(descriptor, fqn) != null) {
+    private static boolean hasAnnotationOrInsideAnnotatedClass(@NotNull DeclarationDescriptor descriptor, @NotNull FqName fqName) {
+        if (getAnnotationByName(descriptor, fqName) != null) {
             return true;
         }
         ClassDescriptor containingClass = DescriptorUtils.getContainingClass(descriptor);
-        return containingClass != null && hasAnnotationOrInsideAnnotatedClass(containingClass, fqn);
+        return containingClass != null && hasAnnotationOrInsideAnnotatedClass(containingClass, fqName);
     }
 }
