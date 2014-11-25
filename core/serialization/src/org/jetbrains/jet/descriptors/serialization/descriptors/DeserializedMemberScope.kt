@@ -45,11 +45,11 @@ public abstract class DeserializedMemberScope protected(
     }
 
     private val membersProtos =
-            c.components.storageManager.createLazyValue { groupByKey(filteredMemberProtos(membersList)) }
+            c.storageManager.createLazyValue { groupByKey(filteredMemberProtos(membersList)) }
     private val functions =
-            c.components.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
+            c.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
     private val properties =
-            c.components.storageManager.createMemoizedFunction<Name, Collection<VariableDescriptor>> { computeProperties(it) }
+            c.storageManager.createMemoizedFunction<Name, Collection<VariableDescriptor>> { computeProperties(it) }
 
     protected open fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> = allMemberProtos
 

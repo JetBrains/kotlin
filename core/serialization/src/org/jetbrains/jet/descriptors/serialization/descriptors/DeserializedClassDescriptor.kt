@@ -43,7 +43,7 @@ public class DeserializedClassDescriptor(
         private val classProto: ProtoBuf.Class,
         nameResolver: NameResolver
 ) : ClassDescriptor, AbstractClassDescriptor(
-        outerContext.components.storageManager,
+        outerContext.storageManager,
         nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName()
 ) {
     private val modality = serialization.modality(Flags.MODALITY.get(classProto.getFlags()))
@@ -62,14 +62,14 @@ public class DeserializedClassDescriptor(
     private val enumEntries = EnumEntryClassDescriptors()
 
     private val containingDeclaration = outerContext.containingDeclaration
-    private val primaryConstructor = c.components.storageManager.createNullableLazyValue { computePrimaryConstructor() }
-    private val classObjectDescriptor = c.components.storageManager.createNullableLazyValue { computeClassObjectDescriptor() }
+    private val primaryConstructor = c.storageManager.createNullableLazyValue { computePrimaryConstructor() }
+    private val classObjectDescriptor = c.storageManager.createNullableLazyValue { computeClassObjectDescriptor() }
 
     private val annotations =
             if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
                 Annotations.EMPTY
             }
-            else DeserializedAnnotations(c.components.storageManager) {
+            else DeserializedAnnotations(c.storageManager) {
                 c.components.annotationLoader.loadClassAnnotations(this, classProto)
             }
 
@@ -170,7 +170,7 @@ public class DeserializedClassDescriptor(
 
     private inner class DeserializedClassMemberScope : DeserializedMemberScope(c, classProto.getMemberList()) {
         private val classDescriptor: DeserializedClassDescriptor get() = this@DeserializedClassDescriptor
-        private val allDescriptors = c.components.storageManager.createLazyValue {
+        private val allDescriptors = c.storageManager.createLazyValue {
             computeDescriptors(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER)
         }
 
@@ -241,7 +241,7 @@ public class DeserializedClassDescriptor(
     private inner class NestedClassDescriptors {
         private val nestedClassNames = nestedClassNames()
 
-        val findNestedClass = c.components.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
+        val findNestedClass = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
             name ->
             if (name in nestedClassNames) {
                 c.components.deserializeClass(classId.createNestedClassId(name))
@@ -279,17 +279,17 @@ public class DeserializedClassDescriptor(
             return result
         }
 
-        val findEnumEntry = c.components.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
+        val findEnumEntry = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
             name ->
             if (name in enumEntryNames) {
                 EnumEntrySyntheticClassDescriptor.create(
-                        c.components.storageManager, this@DeserializedClassDescriptor, name, enumMemberNames, SourceElement.NO_SOURCE
+                        c.storageManager, this@DeserializedClassDescriptor, name, enumMemberNames, SourceElement.NO_SOURCE
                 )
             }
             else null
         }
 
-        private val enumMemberNames = c.components.storageManager.createLazyValue { computeEnumMemberNames() }
+        private val enumMemberNames = c.storageManager.createLazyValue { computeEnumMemberNames() }
 
         private fun computeEnumMemberNames(): Collection<Name> {
             // NOTE: order of enum entry members should be irrelevant

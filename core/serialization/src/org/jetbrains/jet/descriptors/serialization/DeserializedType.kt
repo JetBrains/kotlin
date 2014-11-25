@@ -29,13 +29,13 @@ class DeserializedType(
 ) : AbstractJetType(), LazyType {
     private val typeDeserializer = c.typeDeserializer
 
-    private val constructor = c.components.storageManager.createLazyValue {
+    private val constructor = c.storageManager.createLazyValue {
         typeDeserializer.typeConstructor(typeProto)
     }
 
     private val arguments = typeDeserializer.typeArguments(typeProto.getArgumentList())
 
-    private val memberScope = c.components.storageManager.createLazyValue {
+    private val memberScope = c.storageManager.createLazyValue {
         computeMemberScope()
     }
 

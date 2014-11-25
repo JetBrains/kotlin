@@ -31,11 +31,11 @@ public class TypeDeserializer(
         private val typeParameterProtos: List<ProtoBuf.TypeParameter>,
         private val debugName: String
 ) {
-    private val classDescriptors: (Int) -> ClassDescriptor? = c.components.storageManager.createMemoizedFunctionWithNullableValues {
+    private val classDescriptors: (Int) -> ClassDescriptor? = c.storageManager.createMemoizedFunctionWithNullableValues {
         fqNameIndex -> computeClassDescriptor(fqNameIndex)
     }
 
-    private val typeParameterDescriptors = c.components.storageManager.createLazyValue {
+    private val typeParameterDescriptors = c.storageManager.createLazyValue {
         if (typeParameterProtos.isEmpty()) {
             mapOf<Int, TypeParameterDescriptor>()
         }

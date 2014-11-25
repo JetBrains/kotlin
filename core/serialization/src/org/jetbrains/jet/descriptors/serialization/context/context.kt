@@ -53,6 +53,8 @@ public class DeserializationContext(
 
     val memberDeserializer = MemberDeserializer(this)
 
+    val storageManager: StorageManager get() = components.storageManager
+
     fun childContext(
             descriptor: DeclarationDescriptor,
             typeParameterProtos: List<ProtoBuf.TypeParameter>,

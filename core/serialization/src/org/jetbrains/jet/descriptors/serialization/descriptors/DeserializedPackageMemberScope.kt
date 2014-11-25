@@ -36,7 +36,7 @@ public open class DeserializedPackageMemberScope(
 ) : DeserializedMemberScope(components.createContext(packageDescriptor, nameResolver), proto.getMemberList()) {
 
     private val packageFqName = packageDescriptor.fqName
-    private val classNames = c.components.storageManager.createLazyValue(classNames)
+    private val classNames = c.storageManager.createLazyValue(classNames)
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = computeDescriptors(kindFilter, nameFilter)

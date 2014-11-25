@@ -112,7 +112,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
 
         if (Flags.HAS_CONSTANT.get(flags)) {
             property.setCompileTimeInitializer(
-                c.components.storageManager.createNullableLazyValue {
+                c.storageManager.createNullableLazyValue {
                     val container = c.containingDeclaration.asClassOrPackage()
                     c.components.constantLoader.loadPropertyConstant(container, proto, c.nameResolver, AnnotatedCallableKind.PROPERTY)
                 }
@@ -164,7 +164,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         if (!Flags.HAS_ANNOTATIONS.get(flags)) {
             return Annotations.EMPTY
         }
-        return DeserializedAnnotations(c.components.storageManager) {
+        return DeserializedAnnotations(c.storageManager) {
             c.components.annotationLoader.loadCallableAnnotations(
                     c.containingDeclaration.asClassOrPackage(), proto, c.nameResolver, kind
             )
@@ -196,7 +196,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         if (!Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags())) {
             return Annotations.EMPTY
         }
-        return DeserializedAnnotations(c.components.storageManager) {
+        return DeserializedAnnotations(c.storageManager) {
             c.components.annotationLoader.loadValueParameterAnnotations(classOrPackage, callable, c.nameResolver, kind, valueParameter)
         }
     }
