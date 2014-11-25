@@ -74,3 +74,7 @@ foo(listOf()) // can't determine T for listOf<T>()
 Discussion:
 - we could tweak inference so that it takes `dynamic` as a bound for all type variables whose containing type has a dynamic bound,
 but it's hard to be sure it's worth the while
+
+## Notes
+
+- dynamic types are not supported on the JVM back-end

@@ -1,0 +1,1 @@
+val foo: <!UNSUPPORTED!>dynamic<!> = 1

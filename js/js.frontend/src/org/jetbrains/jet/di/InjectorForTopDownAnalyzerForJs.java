@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.AdditionalCheckerProvider;
+import org.jetbrains.jet.lang.types.DynamicTypesAllowed;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -82,6 +83,7 @@ public class InjectorForTopDownAnalyzerForJs {
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final AdditionalCheckerProvider additionalCheckerProvider;
+    private final DynamicTypesAllowed dynamicTypesAllowed;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -138,6 +140,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(module);
         this.additionalCheckerProvider = org.jetbrains.k2js.resolve.KotlinJsDeclarationCheckerProvider.INSTANCE$;
+        this.dynamicTypesAllowed = new DynamicTypesAllowed();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -153,7 +156,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.lazinessToken = new LazinessToken();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken);
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, module, flexibleTypeCapabilitiesProvider, storageManager, lazinessToken, dynamicTypesAllowed);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.partialBodyResolveProvider = new PartialBodyResolveProvider();
         this.candidateResolver = new CandidateResolver();

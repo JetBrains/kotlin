@@ -35,6 +35,7 @@ import org.jetbrains.jet.context.LazinessToken
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil
 import org.jetbrains.jet.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.jet.lang.diagnostics.Errors
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -42,7 +43,8 @@ public class TypeResolver(
         private val moduleDescriptor: ModuleDescriptor,
         private val flexibleTypeCapabilitiesProvider: FlexibleTypeCapabilitiesProvider,
         private val storageManager: StorageManager,
-        private val lazinessToken: LazinessToken
+        private val lazinessToken: LazinessToken,
+        private val dynamicTypesSettings: DynamicTypesSettings
 ) {
 
     public open class FlexibleTypeCapabilitiesProvider {
@@ -218,6 +220,13 @@ public class TypeResolver(
                                      resolveType(c.noBareTypes(), returnTypeRef)
                                  else KotlinBuiltIns.getInstance().getUnitType()
                 result = type(KotlinBuiltIns.getInstance().getFunctionType(annotations, receiverType, parameterTypes, returnType))
+            }
+
+            override fun visitDynamicType(type: JetDynamicType) {
+                result = type(DynamicType)
+                if (!dynamicTypesSettings.dynamicTypesAllowed) {
+                    c.trace.report(UNSUPPORTED.on(type, "Dynamic types are not supported in this context"))
+                }
             }
 
             override fun visitJetElement(element: JetElement) {
