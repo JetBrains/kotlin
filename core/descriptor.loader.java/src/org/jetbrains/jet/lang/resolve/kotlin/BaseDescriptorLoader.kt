@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin
 
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.*;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
@@ -36,12 +36,22 @@ import org.jetbrains.jet.lang.resolve.kotlin.DescriptorLoadersStorage.MemberSign
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.getClassId
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinClassIdToJavaClassId
 import kotlin.platform.platformStatic
+import org.jetbrains.kotlin.util.sure
 
-public abstract class BaseDescriptorLoader protected(private val kotlinClassFinder: KotlinClassFinder, protected val errorReporter: ErrorReporter, protected val storage: DescriptorLoadersStorage) {
+public abstract class BaseDescriptorLoader protected(
+        private val kotlinClassFinder: KotlinClassFinder,
+        protected val errorReporter: ErrorReporter,
+        protected val storage: DescriptorLoadersStorage
+) {
 
-    protected fun findClassWithAnnotationsAndInitializers(container: ClassOrPackageFragmentDescriptor, proto: ProtoBuf.Callable, nameResolver: NameResolver, kind: AnnotatedCallableKind): KotlinJvmBinaryClass? {
+    protected fun findClassWithAnnotationsAndInitializers(
+            container: ClassOrPackageFragmentDescriptor,
+            proto: ProtoBuf.Callable,
+            nameResolver: NameResolver,
+            kind: AnnotatedCallableKind
+    ): KotlinJvmBinaryClass? {
         if (container is PackageFragmentDescriptor) {
-            return findPackagePartClass(container as PackageFragmentDescriptor, proto, nameResolver)
+            return findPackagePartClass(container, proto, nameResolver)
         }
         else if (isClassObject(container) && isStaticFieldInOuter(proto)) {
             // Backing fields of properties of a class object are generated in the outer class
@@ -49,12 +59,12 @@ public abstract class BaseDescriptorLoader protected(private val kotlinClassFind
         }
         else if (isTrait(container) && kind == AnnotatedCallableKind.PROPERTY) {
             val containingPackage = DescriptorUtils.getParentOfType<PackageFragmentDescriptor>(container, javaClass<PackageFragmentDescriptor>())
-            assert(containingPackage != null) { "Trait must have a package fragment among his parents: " + container }
+                    .sure("Trait must have a package fragment among his parents: " + container)
 
-            if (proto.hasExtension<Int>(JavaProtoBuf.implClassName)) {
-                val tImplName = nameResolver.getName(proto.getExtension<Int>(JavaProtoBuf.implClassName))
+            if (proto.hasExtension(implClassName)) {
+                val tImplName = nameResolver.getName(proto.getExtension(implClassName))
                 // TODO: store accurate name for nested traits
-                return kotlinClassFinder.findKotlinClass(ClassId(containingPackage!!.fqName, tImplName))
+                return kotlinClassFinder.findKotlinClass(ClassId(containingPackage.fqName, tImplName))
             }
             return null
         }
@@ -62,40 +72,44 @@ public abstract class BaseDescriptorLoader protected(private val kotlinClassFind
         return findKotlinClassByDescriptor(container)
     }
 
-    private fun findPackagePartClass(container: PackageFragmentDescriptor, proto: ProtoBuf.Callable, nameResolver: NameResolver): KotlinJvmBinaryClass? {
-        if (proto.hasExtension<Int>(JavaProtoBuf.implClassName)) {
+    private fun findPackagePartClass(
+            container: PackageFragmentDescriptor,
+            proto: ProtoBuf.Callable,
+            nameResolver: NameResolver
+    ): KotlinJvmBinaryClass? {
+        if (proto.hasExtension(implClassName)) {
             return kotlinClassFinder.findKotlinClass(ClassId(container.fqName, getPackagePartClassName(proto, nameResolver)))
         }
         return null
     }
 
     protected fun findKotlinClassByDescriptor(descriptor: ClassOrPackageFragmentDescriptor): KotlinJvmBinaryClass? {
-        if (descriptor is ClassDescriptor) {
-            return kotlinClassFinder.findKotlinClass(kotlinClassIdToJavaClassId(getClassId(descriptor as ClassDescriptor)))
-        }
-        else if (descriptor is PackageFragmentDescriptor) {
-            return kotlinClassFinder.findKotlinClass(getPackageClassId((descriptor as PackageFragmentDescriptor).fqName))
-        }
-        else {
-            throw IllegalStateException("Unrecognized descriptor: " + descriptor)
+        return when (descriptor) {
+            is ClassDescriptor -> kotlinClassFinder.findKotlinClass(kotlinClassIdToJavaClassId(getClassId(descriptor)))
+            is PackageFragmentDescriptor -> kotlinClassFinder.findKotlinClass(getPackageClassId((descriptor).fqName))
+            else -> throw IllegalStateException("Unrecognized descriptor: " + descriptor)
         }
     }
 
     class object {
-        platformStatic fun getCallableSignature(proto: ProtoBuf.Callable, nameResolver: NameResolver, kind: AnnotatedCallableKind): MemberSignature? {
+        platformStatic fun getCallableSignature(
+                proto: ProtoBuf.Callable,
+                nameResolver: NameResolver,
+                kind: AnnotatedCallableKind
+        ): MemberSignature? {
             val deserializer = SignatureDeserializer(nameResolver)
             when (kind) {
-                AnnotatedCallableKind.FUNCTION -> if (proto.hasExtension<JavaProtoBuf.JavaMethodSignature>(JavaProtoBuf.methodSignature)) {
-                    return deserializer.methodSignature(proto.getExtension<JavaProtoBuf.JavaMethodSignature>(JavaProtoBuf.methodSignature))
+                AnnotatedCallableKind.FUNCTION -> if (proto.hasExtension(methodSignature)) {
+                    return deserializer.methodSignature(proto.getExtension(methodSignature))
                 }
-                AnnotatedCallableKind.PROPERTY_GETTER -> if (proto.hasExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature)) {
-                    return deserializer.methodSignature(proto.getExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature).getGetter())
+                AnnotatedCallableKind.PROPERTY_GETTER -> if (proto.hasExtension(propertySignature)) {
+                    return deserializer.methodSignature(proto.getExtension(propertySignature).getGetter())
                 }
-                AnnotatedCallableKind.PROPERTY_SETTER -> if (proto.hasExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature)) {
-                    return deserializer.methodSignature(proto.getExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature).getSetter())
+                AnnotatedCallableKind.PROPERTY_SETTER -> if (proto.hasExtension(propertySignature)) {
+                    return deserializer.methodSignature(proto.getExtension(propertySignature).getSetter())
                 }
-                AnnotatedCallableKind.PROPERTY -> if (proto.hasExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature)) {
-                    val propertySignature = proto.getExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature)
+                AnnotatedCallableKind.PROPERTY -> if (proto.hasExtension(propertySignature)) {
+                    val propertySignature = proto.getExtension(propertySignature)
 
                     if (propertySignature.hasField()) {
                         val field = propertySignature.getField()
@@ -116,12 +130,12 @@ public abstract class BaseDescriptorLoader protected(private val kotlinClassFind
         }
 
         private fun getPackagePartClassName(proto: ProtoBuf.Callable, nameResolver: NameResolver): Name {
-            return nameResolver.getName(proto.getExtension<Int>(JavaProtoBuf.implClassName))
+            return nameResolver.getName(proto.getExtension(implClassName))
         }
 
         private fun isStaticFieldInOuter(proto: ProtoBuf.Callable): Boolean {
-            if (!proto.hasExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature)) return false
-            val propertySignature = proto.getExtension<JavaProtoBuf.JavaPropertySignature>(JavaProtoBuf.propertySignature)
+            if (!proto.hasExtension(propertySignature)) return false
+            val propertySignature = proto.getExtension(propertySignature)
             return propertySignature.hasField() && propertySignature.getField().getIsStaticInOuter()
         }
     }
