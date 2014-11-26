@@ -17,6 +17,7 @@
 package org.jetbrains.jet.asJava;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -38,7 +39,7 @@ public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
 
         extraConfiguration(configuration);
 
-        return JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
+        return JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     protected void extraConfiguration(@NotNull CompilerConfiguration configuration) {

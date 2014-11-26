@@ -21,6 +21,7 @@ import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 
 public class JetSimpleNameExpressionTest() : JetLiteFixture() {
     public fun testGetReceiverExpressionIdentifier() {
@@ -35,6 +36,6 @@ public class JetSimpleNameExpressionTest() : JetLiteFixture() {
         Assert.assertEquals(expected, expression.getOperationReference().getReceiverExpression()!!.getText())
     }
     override fun createEnvironment(): JetCoreEnvironment {
-        return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, CompilerConfiguration())
+        return JetCoreEnvironment.createForTests(getTestRootDisposable()!!, CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 }

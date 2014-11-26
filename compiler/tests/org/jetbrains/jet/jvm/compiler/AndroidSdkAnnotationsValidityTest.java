@@ -22,6 +22,7 @@ import com.intellij.openapi.Disposable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -39,7 +40,7 @@ public class AndroidSdkAnnotationsValidityTest extends AbstractSdkAnnotationsVal
     protected JetCoreEnvironment createEnvironment(Disposable parentDisposable) {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.ANDROID_API, JetTestUtils.getAnnotationsJar());
-        return JetCoreEnvironment.createForTests(parentDisposable, configuration);
+        return JetCoreEnvironment.createForTests(parentDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     @Override

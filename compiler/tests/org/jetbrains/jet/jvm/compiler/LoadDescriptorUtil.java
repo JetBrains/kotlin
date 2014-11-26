@@ -30,6 +30,7 @@ import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
@@ -89,7 +90,8 @@ public final class LoadDescriptorUtil {
                 javaRoot,
                 new File("compiler/tests") // for @ExpectLoadError annotation
         );
-        JetCoreEnvironment jetCoreEnvironment = JetCoreEnvironment.createForTests(disposable, configuration);
+        JetCoreEnvironment jetCoreEnvironment =
+                JetCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         InjectorForJavaDescriptorResolver injector =
                 InjectorForJavaDescriptorResolverUtil.create(jetCoreEnvironment.getProject(), trace, true);

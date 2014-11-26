@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmPlatformParameters
 import org.jetbrains.jet.analyzer.ModuleContent
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 
 public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     private var totalSize = 0
@@ -73,7 +74,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         val sourceRoots = srcDirs map { it.path }
         configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, sourceRoots)
 
-        val environment = JetCoreEnvironment.createForTests(disposable, configuration)
+        val environment = JetCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         val files = environment.getSourceFiles()
 

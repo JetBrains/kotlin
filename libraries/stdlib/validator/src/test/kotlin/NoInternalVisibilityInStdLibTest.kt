@@ -16,6 +16,7 @@
 
 import org.junit.Test
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.lang.resolve.name.FqName
@@ -113,7 +114,7 @@ class NoInternalVisibilityInStdLibTest {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, "../src/generated")
             configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots())
 
-            val environment = JetCoreEnvironment.createForProduction(it, configuration)
+            val environment = JetCoreEnvironment.createForProduction(it, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             val module = TopDownAnalyzerFacadeForJVM.createJavaModule("<module for validating std lib>")
             module.addDependencyOnModule(module)

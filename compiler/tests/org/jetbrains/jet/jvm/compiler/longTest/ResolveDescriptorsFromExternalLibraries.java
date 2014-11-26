@@ -30,6 +30,7 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.TimeUtils;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
@@ -156,13 +157,16 @@ public class ResolveDescriptorsFromExternalLibraries {
 
         JetCoreEnvironment jetCoreEnvironment;
         if (jar != null) {
-            jetCoreEnvironment = JetCoreEnvironment.createForTests(junk, JetTestUtils.compilerConfigurationForTests(
-                    ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), jar));
+            jetCoreEnvironment = JetCoreEnvironment.createForTests(
+                    junk,
+                    JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK,
+                                                               JetTestUtils.getAnnotationsJar(), jar),
+                    EnvironmentConfigFiles.JVM_CONFIG_FILES);
         }
         else {
             CompilerConfiguration configuration =
                     JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK);
-            jetCoreEnvironment = JetCoreEnvironment.createForTests(junk, configuration);
+            jetCoreEnvironment = JetCoreEnvironment.createForTests(junk, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
             if (!findRtJar().equals(jar)) {
                 throw new RuntimeException("rt.jar mismatch: " + jar + ", " + findRtJar());
             }

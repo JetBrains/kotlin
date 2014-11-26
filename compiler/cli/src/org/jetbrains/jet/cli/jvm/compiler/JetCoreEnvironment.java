@@ -81,14 +81,6 @@ public class JetCoreEnvironment {
     @NotNull
     public static JetCoreEnvironment createForProduction(
             @NotNull Disposable parentDisposable,
-            @NotNull CompilerConfiguration configuration
-    ) {
-        return createForProduction(parentDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
-    }
-
-    @NotNull
-    public static JetCoreEnvironment createForProduction(
-            @NotNull Disposable parentDisposable,
             @NotNull CompilerConfiguration configuration,
             @NotNull List<String> configFilePaths
     ) {
@@ -111,15 +103,6 @@ public class JetCoreEnvironment {
             ourProjectCount++;
         }
         return environment;
-    }
-
-    @TestOnly
-    @NotNull
-    public static JetCoreEnvironment createForTests(
-            @NotNull Disposable parentDisposable,
-            @NotNull CompilerConfiguration configuration
-    ) {
-        return createForTests(parentDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     @TestOnly

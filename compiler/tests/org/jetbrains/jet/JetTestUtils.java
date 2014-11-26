@@ -49,6 +49,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.jet.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
@@ -277,8 +278,10 @@ public class JetTestUtils {
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind
     ) {
-        return JetCoreEnvironment.createForTests(disposable, compilerConfigurationForTests(
-                configurationKind, jdkKind, getAnnotationsJar()));
+        return JetCoreEnvironment.createForTests(
+                disposable,
+                compilerConfigurationForTests(configurationKind, jdkKind, getAnnotationsJar()),
+                EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     public static File findMockJdkRtJar() {
