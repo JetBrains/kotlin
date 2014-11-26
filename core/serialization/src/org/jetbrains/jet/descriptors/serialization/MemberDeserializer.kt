@@ -113,7 +113,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         if (Flags.HAS_CONSTANT.get(flags)) {
             property.setCompileTimeInitializer(
                 c.storageManager.createNullableLazyValue {
-                    val container = c.containingDeclaration.asClassOrPackage()
+                    val container = c.containingDeclaration.asProtoContainer()
                     c.components.constantLoader.loadPropertyConstant(container, proto, c.nameResolver, AnnotatedCallableKind.PROPERTY)
                 }
             )
@@ -166,13 +166,13 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         }
         return DeserializedAnnotations(c.storageManager) {
             c.components.annotationLoader.loadCallableAnnotations(
-                    c.containingDeclaration.asClassOrPackage(), proto, c.nameResolver, kind
+                    c.containingDeclaration.asProtoContainer(), proto, c.nameResolver, kind
             )
         }
     }
 
     private fun valueParameters(callable: Callable, kind: AnnotatedCallableKind): List<ValueParameterDescriptor> {
-        val containerOfCallable = c.containingDeclaration.getContainingDeclaration().asClassOrPackage()
+        val containerOfCallable = c.containingDeclaration.getContainingDeclaration().asProtoContainer()
 
         return callable.getValueParameterList().withIndices().map { val (i, proto) = it
             ValueParameterDescriptorImpl(
@@ -188,7 +188,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     private fun getParameterAnnotations(
-            classOrPackage: ClassOrPackageFragmentDescriptor,
+            container: ProtoContainer,
             callable: Callable,
             kind: AnnotatedCallableKind,
             valueParameter: Callable.ValueParameter
@@ -197,11 +197,13 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             return Annotations.EMPTY
         }
         return DeserializedAnnotations(c.storageManager) {
-            c.components.annotationLoader.loadValueParameterAnnotations(classOrPackage, callable, c.nameResolver, kind, valueParameter)
+            c.components.annotationLoader.loadValueParameterAnnotations(container, callable, c.nameResolver, kind, valueParameter)
         }
     }
 
-    private fun DeclarationDescriptor.asClassOrPackage(): ClassOrPackageFragmentDescriptor =
-            this as? ClassOrPackageFragmentDescriptor
-            ?: error("Only members in classes or package fragments should be serialized: $this")
+    private fun DeclarationDescriptor.asProtoContainer(): ProtoContainer = when(this) {
+        is PackageFragmentDescriptor -> ProtoContainer(null, fqName)
+        is DeserializedClassDescriptor -> ProtoContainer(classProto, null)
+        else -> error("Only members in classes or package fragments should be serialized: $this")
+    }
 }

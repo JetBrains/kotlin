@@ -40,7 +40,7 @@ import org.jetbrains.jet.descriptors.serialization.NameResolver
 
 public class DeserializedClassDescriptor(
         outerContext: DeserializationContext,
-        private val classProto: ProtoBuf.Class,
+        val classProto: ProtoBuf.Class,
         nameResolver: NameResolver
 ) : ClassDescriptor, AbstractClassDescriptor(
         outerContext.storageManager,
@@ -70,7 +70,7 @@ public class DeserializedClassDescriptor(
                 Annotations.EMPTY
             }
             else DeserializedAnnotations(c.storageManager) {
-                c.components.annotationLoader.loadClassAnnotations(this, classProto, c.nameResolver)
+                c.components.annotationLoader.loadClassAnnotations(classProto, c.nameResolver)
             }
 
     override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclaration

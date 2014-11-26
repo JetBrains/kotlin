@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
-import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
 public interface ConstantLoader {
@@ -28,7 +27,7 @@ public interface ConstantLoader {
         @Nullable
         @Override
         public CompileTimeConstant<?> loadPropertyConstant(
-                @NotNull ClassOrPackageFragmentDescriptor container,
+                @NotNull ProtoContainer container,
                 @NotNull ProtoBuf.Callable proto,
                 @NotNull NameResolver nameResolver,
                 @NotNull AnnotatedCallableKind kind
@@ -39,7 +38,7 @@ public interface ConstantLoader {
 
     @Nullable
     CompileTimeConstant<?> loadPropertyConstant(
-            @NotNull ClassOrPackageFragmentDescriptor container,
+            @NotNull ProtoContainer container,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind
