@@ -29,7 +29,11 @@ public interface AnnotationLoader {
     AnnotationLoader UNSUPPORTED = new AnnotationLoader() {
         @NotNull
         @Override
-        public List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
+        public List<AnnotationDescriptor> loadClassAnnotations(
+                @NotNull ClassDescriptor descriptor,
+                @NotNull ProtoBuf.Class classProto,
+                @NotNull NameResolver nameResolver
+        ) {
             return notSupported();
         }
 
@@ -63,7 +67,11 @@ public interface AnnotationLoader {
     };
 
     @NotNull
-    List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto);
+    List<AnnotationDescriptor> loadClassAnnotations(
+            @NotNull ClassDescriptor descriptor,
+            @NotNull ProtoBuf.Class classProto,
+            @NotNull NameResolver nameResolver
+    );
 
     @NotNull
     List<AnnotationDescriptor> loadCallableAnnotations(
