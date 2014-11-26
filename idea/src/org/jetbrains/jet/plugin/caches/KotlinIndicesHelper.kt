@@ -46,34 +46,6 @@ public class KotlinIndicesHelper(
         private val moduleDescriptor: ModuleDescriptor,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean
 ) {
-    public fun getTopLevelObjects(nameFilter: (String) -> Boolean): Collection<ClassDescriptor> {
-        val allObjectNames = JetTopLevelObjectShortNameIndex.getInstance().getAllKeys(project).stream() +
-                JetFromJavaDescriptorHelper.getPossiblePackageDeclarationsNames(project, scope).stream()
-        return allObjectNames
-                .filter(nameFilter)
-                .toSet()
-                .flatMap { getTopLevelObjectsByName(it) }
-    }
-
-    private fun getTopLevelObjectsByName(name: String): Collection<ClassDescriptor> {
-        val result = hashSetOf<ClassDescriptor>()
-
-        val topObjects = JetTopLevelObjectShortNameIndex.getInstance().get(name, project, scope)
-        for (objectDeclaration in topObjects) {
-            val fqName = objectDeclaration.getFqName() ?: error("Local object declaration in JetTopLevelShortObjectNameIndex:${objectDeclaration.getText()}")
-            result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(moduleDescriptor, fqName, ResolveSessionUtils.SINGLETON_FILTER))
-        }
-
-        for (psiClass in JetFromJavaDescriptorHelper.getCompiledClassesForTopLevelObjects(project, scope)) {
-            val qualifiedName = psiClass.getQualifiedName()
-            if (qualifiedName != null) {
-                result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(moduleDescriptor, FqName(qualifiedName), ResolveSessionUtils.SINGLETON_FILTER))
-            }
-        }
-
-        return result.filter(visibilityFilter)
-    }
-
     public fun getTopLevelCallablesByName(name: String, context: JetExpression /*TODO: to be dropped*/): Collection<CallableDescriptor> {
         val jetScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return listOf()
 

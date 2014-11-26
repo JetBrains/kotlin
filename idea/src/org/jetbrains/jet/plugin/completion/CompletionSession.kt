@@ -134,9 +134,6 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected fun getKotlinTopLevelCallables(): Collection<DeclarationDescriptor>
             = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
 
-    protected fun getKotlinTopLevelObjects(): Collection<DeclarationDescriptor>
-            = indicesHelper.getTopLevelObjects({ prefixMatcher.prefixMatches(it) })
-
     protected fun getKotlinExtensions(): Collection<CallableDescriptor>
             = indicesHelper.getCallableExtensions({ prefixMatcher.prefixMatches(it) }, jetReference!!.expression)
 
