@@ -27,11 +27,14 @@ import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.testFramework.LightIdeaTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.SettingsConfigurator;
 
@@ -138,16 +141,23 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         String testFileName = expectedFileNameWithExtension.substring(0, expectedFileNameWithExtension.indexOf("."));
         String testFileExtension = expectedFileNameWithExtension.substring(expectedFileNameWithExtension.lastIndexOf("."));
         String originalFileText = FileUtil.loadFile(new File(testFileName + testFileExtension), true);
-        SettingsConfigurator configurator = JetFormatSettingsUtil.createConfigurator(originalFileText, JetFormatSettingsUtil.getSettings());
+        CodeStyleSettings codeStyleSettings = JetFormatSettingsUtil.getSettings();
 
+        Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
+        if (rightMargin != null) {
+            codeStyleSettings.setRightMargin(JetLanguage.INSTANCE, rightMargin);
+        }
+
+        SettingsConfigurator configurator = JetFormatSettingsUtil.createConfigurator(originalFileText, codeStyleSettings);
         if (!inverted) {
             configurator.configureSettings();
         }
         else {
             configurator.configureInvertedSettings();
         }
+
         doTextTest(originalFileText, new File(expectedFileNameWithExtension), testFileExtension);
 
-        JetFormatSettingsUtil.getSettings().clearCodeStyleSettings();
+        codeStyleSettings.clearCodeStyleSettings();
     }
 }

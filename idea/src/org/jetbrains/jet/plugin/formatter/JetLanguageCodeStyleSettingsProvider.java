@@ -38,9 +38,7 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
             case WRAPPING_AND_BRACES_SETTINGS:
                 return
                         "public class ThisIsASampleClass {\n" +
-                        "    private fun foo1(i1: Int,\n" +
-                        "                     i2: Int,\n" +
-                        "                     i3: Int) : Int {\n" +
+                        "    fun foo1(i1: Int, i2: Int, i3: Int) : Int {\n" +
                         "        when (i1) {\n" +
                         "            is Number -> 0\n" +
                         "            else -> 1\n" +
@@ -49,10 +47,7 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "    }\n" +
                         "    private fun foo2():Int {\n" +
                         "        try {" +
-                        "            return foo1(12,\n" +
-                        "                    13,\n" +
-                        "                    14\n" +
-                        "            )\n" +
+                        "            return foo1(12, 13, 14)\n" +
                         "        }" +
                         "        catch (e: Exception) {" +
                         "            return 0" +
@@ -160,7 +155,9 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "ELSE_ON_NEW_LINE",
                         "WHILE_ON_NEW_LINE",
                         "CATCH_ON_NEW_LINE",
-                        "FINALLY_ON_NEW_LINE"
+                        "FINALLY_ON_NEW_LINE",
+                        "CALL_PARAMETERS_WRAP",
+                        "METHOD_PARAMETERS_WRAP"
                 );
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements");
                 consumer.showCustomOption(JetCodeStyleSettings.class, "ALIGN_IN_COLUMNS_CASE_BRANCH", "Align in columns 'case' branches",

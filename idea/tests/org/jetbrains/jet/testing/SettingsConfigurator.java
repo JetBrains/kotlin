@@ -16,7 +16,13 @@
 
 package org.jetbrains.jet.testing;
 
+import com.intellij.lang.Language;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
+import kotlin.Pair;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -26,26 +32,49 @@ import java.util.Arrays;
 public class SettingsConfigurator {
     public static final String SET_TRUE_DIRECTIVE = "SET_TRUE:";
     public static final String SET_FALSE_DIRECTIVE = "SET_FALSE:";
+    public static final String SET_INT_DIRECTIVE = "SET_INT:";
 
     private final String[] settingsToTrue;
     private final String[] settingsToFalse;
+    private final Pair<String, Integer>[] settingsToIntValue;
     private final Object[] objects;
 
     public SettingsConfigurator(String fileText, Object... objects) {
         settingsToTrue = InTextDirectivesUtils.findArrayWithPrefixes(fileText, SET_TRUE_DIRECTIVE);
         settingsToFalse = InTextDirectivesUtils.findArrayWithPrefixes(fileText, SET_FALSE_DIRECTIVE);
+        //noinspection unchecked
+        settingsToIntValue = ContainerUtil.map2Array(
+                InTextDirectivesUtils.findArrayWithPrefixes(fileText, SET_INT_DIRECTIVE),
+                Pair.class,
+                new Function<String, Pair>() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public Pair fun(String s) {
+                        String[] tokens = s.split("=");
+                        return new Pair(tokens[0].trim(), Integer.valueOf(tokens[1].trim()));
+                    }
+                }
+        );
         this.objects = objects;
     }
 
-    public static void setBooleanSetting(String settingName, boolean value, Object... objects) {
+    public static void setSettingValue(String settingName, Object value, Class<?> valueType, Object... objects) {
         for (Object object : objects) {
-            if (setSettingWithField(settingName, object, value) || setSettingWithMethod(settingName, object, value)) {
+            if (setSettingWithField(settingName, object, value) || setSettingWithMethod(settingName, object, value, valueType)) {
                 return;
             }
         }
 
         throw new IllegalArgumentException(String.format(
                 "There's no property or method with name '%s' in given objects: %s", settingName, Arrays.toString(objects)));
+    }
+
+    public static void setBooleanSetting(String setting, Boolean value, Object... objects) {
+        setSettingValue(setting, value, boolean.class, objects);
+    }
+
+    public static void setIntSetting(String setting, Integer value, Object... objects) {
+        setSettingValue(setting, value, int.class, objects);
     }
 
     public void configureSettings() {
@@ -55,6 +84,10 @@ public class SettingsConfigurator {
 
         for (String falseSetting : settingsToFalse) {
             setBooleanSetting(falseSetting, false, objects);
+        }
+
+        for (Pair<String, Integer> setting : settingsToIntValue) {
+            setIntSetting(setting.getFirst(), setting.getSecond(), objects);
         }
     }
 
@@ -66,12 +99,16 @@ public class SettingsConfigurator {
         for (String falseSetting : settingsToFalse) {
             setBooleanSetting(falseSetting, true, objects);
         }
+
+        for (Pair<String, Integer> setting : settingsToIntValue) {
+            setIntSetting(setting.getFirst(), setting.getSecond(), objects);
+        }
     }
 
-    private static boolean setSettingWithField(String settingName, Object object, boolean value) {
+    private static boolean setSettingWithField(String settingName, Object object, Object value) {
         try {
             Field field = object.getClass().getDeclaredField(settingName);
-            field.setBoolean(object, value);
+            field.set(object, value);
             return true;
         }
         catch (IllegalAccessException e) {
@@ -84,9 +121,9 @@ public class SettingsConfigurator {
         return false;
     }
 
-    private static boolean setSettingWithMethod(String setterName, Object object, boolean value) {
+    private static boolean setSettingWithMethod(String setterName, Object object, Object value, Class<?> valueType) {
         try {
-            Method method = object.getClass().getMethod(setterName, boolean.class);
+            Method method = object.getClass().getMethod(setterName, valueType);
             method.invoke(object, value);
             return true;
         }

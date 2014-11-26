@@ -120,6 +120,7 @@ public class JetBlock extends AbstractBlock {
         List<Block> blocks = new ArrayList<Block>();
 
         NodeAlignmentStrategy childrenAlignmentStrategy = getChildrenAlignmentStrategy();
+        WrappingStrategy wrappingStrategy = getWrappingStrategy();
 
         for (ASTNode child = myNode.getFirstChildNode(); child != null; child = child.getTreeNext()) {
             IElementType childType = child.getElementType();
@@ -130,23 +131,28 @@ public class JetBlock extends AbstractBlock {
                 continue;
             }
 
-            blocks.add(buildSubBlock(child, childrenAlignmentStrategy));
+            blocks.add(buildSubBlock(child, childrenAlignmentStrategy, wrappingStrategy));
         }
 
         return Collections.unmodifiableList(blocks);
     }
 
     @NotNull
-    private Block buildSubBlock(@NotNull ASTNode child, NodeAlignmentStrategy alignmentStrategy) {
+    private Block buildSubBlock(
+            @NotNull ASTNode child,
+            NodeAlignmentStrategy alignmentStrategy,
+            @NotNull WrappingStrategy wrappingStrategy) {
+        Wrap wrap = wrappingStrategy.getWrap(child.getElementType());
+
         // Skip one sub-level for operators, so type of block node is an element type of operator
         if (child.getElementType() == OPERATION_REFERENCE) {
             ASTNode operationNode = child.getFirstChildNode();
             if (operationNode != null) {
-                return new JetBlock(operationNode, alignmentStrategy, createChildIndent(child), null, mySettings, mySpacingBuilder);
+                return new JetBlock(operationNode, alignmentStrategy, createChildIndent(child), wrap, mySettings, mySpacingBuilder);
             }
         }
 
-        return new JetBlock(child, alignmentStrategy, createChildIndent(child), null, mySettings, mySpacingBuilder);
+        return new JetBlock(child, alignmentStrategy, createChildIndent(child), wrap, mySettings, mySpacingBuilder);
     }
 
     private static ASTNode getPrevWithoutWhitespace(ASTNode node) {
@@ -223,6 +229,36 @@ public class JetBlock extends AbstractBlock {
     @Override
     public boolean isLeaf() {
         return myNode.getFirstChildNode() == null;
+    }
+
+    @NotNull
+    private static WrappingStrategy getWrappingStrategyForItemList(int wrapType, @NotNull final IElementType itemType) {
+        final Wrap itemWrap = Wrap.createWrap(wrapType, false);
+        return new WrappingStrategy() {
+            @Nullable
+            @Override
+            public Wrap getWrap(@NotNull IElementType childElementType) {
+                return childElementType == itemType ? itemWrap : null;
+            }
+        };
+    }
+
+    @NotNull
+    private WrappingStrategy getWrappingStrategy() {
+        CommonCodeStyleSettings commonSettings = mySettings.getCommonSettings(JetLanguage.INSTANCE);
+        IElementType elementType = myNode.getElementType();
+
+        if (elementType == VALUE_ARGUMENT_LIST) {
+            return getWrappingStrategyForItemList(commonSettings.CALL_PARAMETERS_WRAP, VALUE_ARGUMENT);
+        }
+        if (elementType == VALUE_PARAMETER_LIST) {
+            IElementType parentElementType = myNode.getTreeParent().getElementType();
+            if (parentElementType == FUN || parentElementType == CLASS) {
+                return getWrappingStrategyForItemList(commonSettings.METHOD_PARAMETERS_WRAP, VALUE_PARAMETER);
+            }
+        }
+
+        return WrappingStrategy.NoWrapping.INSTANCE$;
     }
 
     private NodeAlignmentStrategy getChildrenAlignmentStrategy() {
