@@ -56,13 +56,11 @@ public abstract class BaseDescriptorLoader protected(
             return findKotlinClassByDescriptor(container.getContainingDeclaration() as ClassOrPackageFragmentDescriptor)
         }
         else if (isTrait(container) && kind == AnnotatedCallableKind.PROPERTY) {
-            val containingPackage = DescriptorUtils.getParentOfType<PackageFragmentDescriptor>(container, javaClass<PackageFragmentDescriptor>())
-                    .sure("Trait must have a package fragment among his parents: " + container)
-
             if (proto.hasExtension(implClassName)) {
+                val packageFqName = getClassId(container as ClassDescriptor).getPackageFqName()
                 val tImplName = nameResolver.getName(proto.getExtension(implClassName))
                 // TODO: store accurate name for nested traits
-                return kotlinClassFinder.findKotlinClass(ClassId(containingPackage.fqName, tImplName))
+                return kotlinClassFinder.findKotlinClass(ClassId(packageFqName, tImplName))
             }
             return null
         }
