@@ -1015,10 +1015,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType compareToReturnType = typeInfo.getType();
         JetType type = null;
         if (compareToReturnType != null && !compareToReturnType.isError()) {
-            TypeConstructor constructor = compareToReturnType.getConstructor();
             KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-            TypeConstructor intTypeConstructor = builtIns.getInt().getTypeConstructor();
-            if (constructor.equals(intTypeConstructor)) {
+            if (JetTypeChecker.DEFAULT.equalTypes(builtIns.getIntType(), compareToReturnType)) {
                 type = builtIns.getBooleanType();
             }
             else {

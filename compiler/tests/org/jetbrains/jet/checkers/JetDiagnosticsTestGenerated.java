@@ -7493,6 +7493,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("compareToNullable.kt")
+            public void testCompareToNullable() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorsOverloading/compareToNullable.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("IteratorAmbiguity.kt")
             public void testIteratorAmbiguity() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorsOverloading/IteratorAmbiguity.kt");
