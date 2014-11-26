@@ -85,7 +85,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val messageCollector = MessageCollectorAdapter(context)
         // Workaround for Android Studio
-        if (!isJavaPluginEnabled(context)) {
+        if (!JavaBuilder.IS_ENABLED[context, true]) {
             messageCollector.report(INFO, "Kotlin JPS plugin is disabled", NO_LOCATION)
             return NOTHING_DONE
         }
@@ -430,16 +430,3 @@ private fun hasKotlinDirtyOrRemovedFiles(
 
     return chunk.getTargets().any { !KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it).isEmpty() }
 }
-
-private fun isJavaPluginEnabled(context: CompileContext): Boolean {
-    try {
-        // Using reflection for backward compatibility with IDEA 12
-        val javaPluginIsEnabledField = javaClass<JavaBuilder>().getDeclaredField("IS_ENABLED")
-        return if (Modifier.isPublic(javaPluginIsEnabledField.getModifiers())) JavaBuilder.IS_ENABLED[context, true] else true
-    }
-    catch (e: NoSuchFieldException) {
-        throw IllegalArgumentException("Cannot check if Java Jps Plugin is enabled", e)
-    }
-
-}
-
