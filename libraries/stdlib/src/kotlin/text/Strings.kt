@@ -67,6 +67,8 @@ public val String.indices: IntRange
 public val CharSequence.length: Int
     get() = length()
 
+public fun CharSequence.get(index: Int): Char = this.charAt(index)
+
 /**
  * Returns a subsequence specified by given set of indices.
  */

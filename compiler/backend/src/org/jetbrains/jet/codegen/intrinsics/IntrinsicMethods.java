@@ -113,7 +113,6 @@ public class IntrinsicMethods {
         declareIntrinsicFunction("Boolean", "not", 0, new Not());
 
         declareIntrinsicFunction("String", "plus", 1, new Concat());
-        declareIntrinsicFunction("CharSequence", "get", 1, new StringGetChar());
         declareIntrinsicFunction("String", "get", 1, new StringGetChar());
 
         declareIntrinsicFunction("Cloneable", "clone", 0, CLONE);

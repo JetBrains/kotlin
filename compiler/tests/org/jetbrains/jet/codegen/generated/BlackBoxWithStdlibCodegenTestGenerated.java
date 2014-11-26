@@ -2832,6 +2832,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("kt5389_stringBuilderGet.kt")
+        public void testKt5389_stringBuilderGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/strings/kt5389_stringBuilderGet.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("stringPlusOnlyWorksOnString.kt")
         public void testStringPlusOnlyWorksOnString() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/strings/stringPlusOnlyWorksOnString.kt");

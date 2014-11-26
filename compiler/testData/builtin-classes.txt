@@ -294,7 +294,7 @@ public final class CharRange : kotlin.Range<kotlin.Char>, kotlin.Progression<kot
 }
 
 public trait CharSequence {
-    public abstract fun get(/*0*/ index: kotlin.Int): kotlin.Char
+    public abstract fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
     public abstract fun length(): kotlin.Int
 }
 
@@ -1428,8 +1428,9 @@ public final class ShortRange : kotlin.Range<kotlin.Short>, kotlin.Progression<k
 
 public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence {
     /*primary*/ public constructor String()
+    public open override /*1*/ fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.String): kotlin.Int
-    public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
+    public final fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ fun length(): kotlin.Int
     public final fun plus(/*0*/ other: kotlin.Any?): kotlin.String
 }

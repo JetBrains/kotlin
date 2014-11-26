@@ -27,8 +27,6 @@ public fun String.split(regex: String, limit: Int): Array<String> = noImpl
 native public fun String.substring(beginIndex : Int) : String = noImpl
 native public fun String.substring(beginIndex : Int, endIndex : Int) : String = noImpl
 
-native public fun String.charAt(index : Int) : Char = noImpl
-
 native public fun String.concat(str : String) : String = noImpl
 
 native public fun String.match(regex : String) : Array<String> = noImpl

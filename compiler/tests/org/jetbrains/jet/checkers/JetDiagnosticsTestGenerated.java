@@ -6294,6 +6294,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt1730_implementCharSequence.kt")
+            public void testKt1730_implementCharSequence() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/kt1730_implementCharSequence.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt2152.kt")
             public void testKt2152() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/kt2152.kt");

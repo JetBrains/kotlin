@@ -17,7 +17,7 @@
 package kotlin
 
 public trait CharSequence {
-    public fun get(index: Int): Char
-
     public fun length(): Int
+
+    public fun charAt(index: Int): Char
 }

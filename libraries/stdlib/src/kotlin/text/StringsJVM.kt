@@ -75,8 +75,6 @@ public fun String(stringBuilder: java.lang.StringBuilder): String = java.lang.St
 
 public fun String.replaceFirst(regex: String, replacement: String): String = (this as java.lang.String).replaceFirst(regex, replacement)
 
-public fun String.charAt(index: Int): Char = (this as java.lang.String).charAt(index)
-
 public fun String.split(regex: String, limit: Int): Array<String> = (this as java.lang.String).split(regex, limit)
 
 public fun String.codePointAt(index: Int): Int = (this as java.lang.String).codePointAt(index)
@@ -123,8 +121,6 @@ public fun String.toLowerCase(locale: java.util.Locale): String = (this as java.
 
 public fun String.toUpperCase(locale: java.util.Locale): String = (this as java.lang.String).toUpperCase(locale)
 
-public fun CharSequence.charAt(index: Int): Char = (this as java.lang.CharSequence).charAt(index)
-
 public fun CharSequence.subSequence(start: Int, end: Int): CharSequence? = (this as java.lang.CharSequence).subSequence(start, end)
 
 public val CharSequence.size: Int
@@ -142,7 +138,6 @@ public fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
 
 public fun String.toCharList(): List<Char> = toCharArray().toList()
 
-public fun CharSequence.get(index: Int): Char = charAt(index)
 public fun CharSequence.get(start: Int, end: Int): CharSequence? = subSequence(start, end)
 
 public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)

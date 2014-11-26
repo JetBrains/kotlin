@@ -4473,7 +4473,7 @@ package java {
             public open fun append(/*0*/ p0: kotlin.String!): java.lang.AbstractStringBuilder!
             public open fun appendCodePoint(/*0*/ p0: kotlin.Int): java.lang.AbstractStringBuilder!
             public open fun capacity(): kotlin.Int
-            public open fun charAt(/*0*/ p0: kotlin.Int): kotlin.Char
+            public open override /*1*/ fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
             public open fun codePointAt(/*0*/ p0: kotlin.Int): kotlin.Int
             public open fun codePointBefore(/*0*/ p0: kotlin.Int): kotlin.Int
             public open fun codePointCount(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Int
@@ -7971,7 +7971,7 @@ package java {
             private final var hash: kotlin.Int
             private final var hash32: kotlin.Int
             private final val value: kotlin.CharArray!
-            public open fun charAt(/*0*/ p0: kotlin.Int): kotlin.Char
+            public open override /*1*/ fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
             public open fun codePointAt(/*0*/ p0: kotlin.Int): kotlin.Int
             public open fun codePointBefore(/*0*/ p0: kotlin.Int): kotlin.Int
             public open fun codePointCount(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Int
@@ -8084,7 +8084,7 @@ package java {
             public open override /*1*/ fun append(/*0*/ p0: kotlin.String!): java.lang.StringBuffer!
             public open override /*1*/ fun appendCodePoint(/*0*/ p0: kotlin.Int): java.lang.StringBuffer!
             public open override /*1*/ fun capacity(): kotlin.Int
-            public open override /*1*/ fun charAt(/*0*/ p0: kotlin.Int): kotlin.Char
+            public open override /*2*/ fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
             public open override /*1*/ fun codePointAt(/*0*/ p0: kotlin.Int): kotlin.Int
             public open override /*1*/ fun codePointBefore(/*0*/ p0: kotlin.Int): kotlin.Int
             public open override /*1*/ fun codePointCount(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Int
@@ -8155,7 +8155,7 @@ package java {
             public open override /*1*/ fun append(/*0*/ p0: kotlin.String!): java.lang.StringBuilder!
             public open override /*1*/ fun appendCodePoint(/*0*/ p0: kotlin.Int): java.lang.StringBuilder!
             public open override /*1*/ /*fake_override*/ fun capacity(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun charAt(/*0*/ p0: kotlin.Int): kotlin.Char
+            public open override /*2*/ /*fake_override*/ fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
             public open override /*1*/ /*fake_override*/ fun codePointAt(/*0*/ p0: kotlin.Int): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun codePointBefore(/*0*/ p0: kotlin.Int): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun codePointCount(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Int
