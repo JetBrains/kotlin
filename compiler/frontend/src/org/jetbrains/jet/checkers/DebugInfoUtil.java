@@ -23,17 +23,22 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
 import java.util.Map;
@@ -42,8 +47,9 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class DebugInfoUtil {
+    private static final TokenSet MAY_BE_UNRESOLVED = TokenSet.create(IN_KEYWORD, NOT_IN);
     private static final TokenSet EXCLUDED = TokenSet.create(
-            COLON, AS_KEYWORD, AS_SAFE, IS_KEYWORD, NOT_IS, OROR, ANDAND, EQ, EQEQEQ, EXCLEQEQEQ, ELVIS, EXCLEXCL, IN_KEYWORD, NOT_IN);
+            COLON, AS_KEYWORD, AS_SAFE, IS_KEYWORD, NOT_IS, OROR, ANDAND, EQ, EQEQEQ, EXCLEQEQEQ, ELVIS, EXCLEXCL);
 
     public abstract static class DebugInfoReporter {
 
@@ -57,7 +63,7 @@ public class DebugInfoUtil {
 
         public abstract void reportUnresolvedWithTarget(@NotNull JetReferenceExpression expression, @NotNull String target);
 
-        public void reportDynamicCall(@NotNull JetReferenceExpression expression) { }
+        public void reportDynamicCall(@NotNull JetElement element) { }
     }
 
     public static void markDebugAnnotations(
@@ -90,16 +96,50 @@ public class DebugInfoUtil {
         root.acceptChildren(new JetTreeVisitorVoid() {
 
             @Override
+            public void visitForExpression(@NotNull JetForExpression expression) {
+                JetExpression range = expression.getLoopRange();
+                if (reportIfDynamicCall(range, range, LOOP_RANGE_ITERATOR_RESOLVED_CALL) ||
+                    reportIfDynamicCall(range, range, LOOP_RANGE_HAS_NEXT_RESOLVED_CALL) ||
+                    reportIfDynamicCall(range, range, LOOP_RANGE_NEXT_RESOLVED_CALL)) {
+                    // for side-effect of the condition only
+                }
+                super.visitForExpression(expression);
+            }
+
+            @Override
+            public void visitMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration) {
+                for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+                    reportIfDynamicCall(entry, entry, COMPONENT_RESOLVED_CALL);
+                }
+                super.visitMultiDeclaration(multiDeclaration);
+            }
+
+            @Override
+            public void visitProperty(@NotNull JetProperty property) {
+                VariableDescriptor descriptor = bindingContext.get(VARIABLE, property);
+                if (descriptor instanceof PropertyDescriptor && property.getDelegate() != null) {
+                    PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+                    if (reportIfDynamicCall(property.getDelegate(), propertyDescriptor.getGetter(), DELEGATED_PROPERTY_RESOLVED_CALL)
+                        || reportIfDynamicCall(property.getDelegate(), propertyDescriptor.getSetter(), DELEGATED_PROPERTY_RESOLVED_CALL)
+                        || reportIfDynamicCall(property.getDelegate(), propertyDescriptor, DELEGATED_PROPERTY_PD_RESOLVED_CALL)) {
+                        // for side-effect of the condition only
+                    }
+                }
+                super.visitProperty(property);
+            }
+
+            @Override
             public void visitReferenceExpression(@NotNull JetReferenceExpression expression) {
                 super.visitReferenceExpression(expression);
                 if (!BindingContextUtils.isExpressionWithValidReference(expression, bindingContext)){
                     return;
                 }
+                IElementType referencedNameElementType = null;
                 if (expression instanceof JetSimpleNameExpression) {
                     JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) expression;
                     IElementType elementType = expression.getNode().getElementType();
                     if (elementType == JetNodeTypes.OPERATION_REFERENCE) {
-                        IElementType referencedNameElementType = nameExpression.getReferencedNameElementType();
+                        referencedNameElementType = nameExpression.getReferencedNameElementType();
                         if (EXCLUDED.contains(referencedNameElementType)) {
                             return;
                         }
@@ -117,9 +157,7 @@ public class DebugInfoUtil {
                 if (declarationDescriptor != null) {
                     target = declarationDescriptor.toString();
 
-                    if (TasksPackage.isDynamic(declarationDescriptor)) {
-                        debugInfoReporter.reportDynamicCall(expression);
-                    }
+                    reportIfDynamic(expression, declarationDescriptor, debugInfoReporter);
                 }
                 if (target == null) {
                     PsiElement labelTarget = bindingContext.get(LABEL_TARGET, expression);
@@ -139,6 +177,10 @@ public class DebugInfoUtil {
                     if (labelTargets != null) {
                         target = "[" + labelTargets.size() + " elements]";
                     }
+                }
+
+                if (MAY_BE_UNRESOLVED.contains(referencedNameElementType)) {
+                    return;
                 }
 
                 boolean resolved = target != null;
@@ -165,7 +207,22 @@ public class DebugInfoUtil {
                     debugInfoReporter.reportMissingUnresolved(expression);
                 }
             }
+
+            private <E extends JetElement, K, D extends CallableDescriptor> boolean reportIfDynamicCall(E element, K key, WritableSlice<K, ResolvedCall<D>> slice) {
+                ResolvedCall<D> resolvedCall = bindingContext.get(slice, key);
+                if (resolvedCall != null) {
+                    return reportIfDynamic(element, resolvedCall.getResultingDescriptor(), debugInfoReporter);
+                }
+                return false;
+            }
         });
     }
 
+    private static boolean reportIfDynamic(JetElement element, DeclarationDescriptor declarationDescriptor, DebugInfoReporter debugInfoReporter) {
+        if (TasksPackage.isDynamic(declarationDescriptor)) {
+            debugInfoReporter.reportDynamicCall(element);
+            return true;
+        }
+        return false;
+    }
 }

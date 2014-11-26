@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.AbstractDiagnosticWithParame
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererMap;
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -128,14 +129,14 @@ public class CheckerTestUtil {
             }
 
             @Override
-            public void reportDynamicCall(@NotNull JetReferenceExpression expression) {
+            public void reportDynamicCall(@NotNull JetElement element) {
                 if (markDynamicCalls) {
-                    newDiagnostic(expression, DebugInfoDiagnosticFactory.DYNAMIC);
+                    newDiagnostic(element, DebugInfoDiagnosticFactory.DYNAMIC);
                 }
             }
 
-            private void newDiagnostic(JetReferenceExpression expression, DebugInfoDiagnosticFactory factory) {
-                debugAnnotations.add(new DebugInfoDiagnostic(expression, factory));
+            private void newDiagnostic(JetElement element, DebugInfoDiagnosticFactory factory) {
+                debugAnnotations.add(new DebugInfoDiagnostic(element, factory));
             }
         });
         // this code is used in tests and in internal action 'copy current file as diagnostic test'
@@ -523,8 +524,8 @@ public class CheckerTestUtil {
     }
 
     public static class DebugInfoDiagnostic extends AbstractDiagnosticForTests {
-        public DebugInfoDiagnostic(@NotNull JetExpression reference, @NotNull DebugInfoDiagnosticFactory factory) {
-            super(reference, factory);
+        public DebugInfoDiagnostic(@NotNull JetElement element, @NotNull DebugInfoDiagnosticFactory factory) {
+            super(element, factory);
         }
     }
 
