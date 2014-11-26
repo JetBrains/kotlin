@@ -43,53 +43,75 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorC
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.BindingTrace
 import org.jetbrains.jet.lang.resolve.calls.tasks.collectors.CallableDescriptorCollectors
+import org.jetbrains.jet.lexer.JetToken
+import org.jetbrains.jet.lang.psi.JetOperationReferenceExpression
+import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
+import java.util.ArrayList
+import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl
+import org.jetbrains.jet.utils.Printer
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 
 object DynamicCallableDescriptors {
 
-    platformStatic fun createCallableDescriptorForDynamicCall(call: Call, owner: DeclarationDescriptor): CallableDescriptor? {
-        val callee = call.getCalleeExpression()
-        if (callee !is JetSimpleNameExpression) return null
-        val name = callee.getReferencedNameAsName()
+    platformStatic fun createDynamicDescriptorScope(call: Call, owner: DeclarationDescriptor) = object : JetScopeImpl() {
+        override fun getContainingDeclaration() = owner
 
-        return if (call.getValueArgumentList() == null && call.getValueArguments().isEmpty()) {
-            val propertyDescriptor = PropertyDescriptorImpl.create(
-                    owner,
-                    Annotations.EMPTY,
-                    Modality.FINAL,
-                    Visibilities.PUBLIC,
-                    true,
-                    name,
-                    CallableMemberDescriptor.Kind.DECLARATION,
-                    SourceElement.NO_SOURCE
-            )
-            propertyDescriptor.setType(
-                    DynamicType,
-                    createTypeParameters(propertyDescriptor, call),
-                    createDynamicDispatchReceiverParameter(propertyDescriptor),
-                    null: JetType?
-            )
+        override fun printScopeStructure(p: Printer) {
+            p.println(javaClass.getSimpleName(), ": dynamic candidates for " + call)
+        }
 
-            propertyDescriptor
+        override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+            return listOf(createDynamicFunction(owner, name, call))
         }
-        else {
-            val functionDescriptor = SimpleFunctionDescriptorImpl.create(
-                    owner,
-                    Annotations.EMPTY,
-                    name,
-                    CallableMemberDescriptor.Kind.DECLARATION,
-                    SourceElement.NO_SOURCE
-            )
-            functionDescriptor.initialize(
-                    null,
-                    createDynamicDispatchReceiverParameter(functionDescriptor),
-                    createTypeParameters(functionDescriptor, call),
-                    createValueParameters(functionDescriptor, call),
-                    DynamicType,
-                    Modality.FINAL,
-                    Visibilities.PUBLIC
-            )
-            functionDescriptor
+
+        override fun getProperties(name: Name): Collection<VariableDescriptor> {
+            return if (call.getValueArgumentList() == null && call.getValueArguments().isEmpty()) {
+                listOf(createDynamicProperty(owner, name, call))
+            }
+            else listOf()
         }
+    }
+
+    private fun createDynamicProperty(owner: DeclarationDescriptor, name: Name, call: Call): PropertyDescriptorImpl {
+        val propertyDescriptor = PropertyDescriptorImpl.create(
+                owner,
+                Annotations.EMPTY,
+                Modality.FINAL,
+                Visibilities.PUBLIC,
+                true,
+                name,
+                CallableMemberDescriptor.Kind.DECLARATION,
+                SourceElement.NO_SOURCE
+        )
+        propertyDescriptor.setType(
+                DynamicType,
+                createTypeParameters(propertyDescriptor, call),
+                createDynamicDispatchReceiverParameter(propertyDescriptor),
+                null: JetType?
+        )
+
+        return propertyDescriptor
+    }
+
+    private fun createDynamicFunction(owner: DeclarationDescriptor, name: Name, call: Call): SimpleFunctionDescriptorImpl {
+        val functionDescriptor = SimpleFunctionDescriptorImpl.create(
+                owner,
+                Annotations.EMPTY,
+                name,
+                CallableMemberDescriptor.Kind.DECLARATION,
+                SourceElement.NO_SOURCE
+        )
+        functionDescriptor.initialize(
+                null,
+                createDynamicDispatchReceiverParameter(functionDescriptor),
+                createTypeParameters(functionDescriptor, call),
+                createValueParameters(functionDescriptor, call),
+                DynamicType,
+                Modality.FINAL,
+                Visibilities.PUBLIC
+        )
+        return functionDescriptor
     }
 
     private fun createDynamicDispatchReceiverParameter(owner: CallableDescriptor): ReceiverParameterDescriptorImpl {

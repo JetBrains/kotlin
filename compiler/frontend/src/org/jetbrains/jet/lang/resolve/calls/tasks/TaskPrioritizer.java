@@ -20,6 +20,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import kotlin.Function0;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -43,8 +45,8 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.storage.StorageManager;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.isOrOverridesSynthesized;
@@ -122,7 +124,8 @@ public class TaskPrioritizer {
     ) {
         ProgressIndicatorProvider.checkCanceled();
 
-        boolean resolveInvoke = c.context.call.getDispatchReceiver().exists();
+        ReceiverValue dispatchReceiver = c.context.call.getDispatchReceiver();
+        boolean resolveInvoke = dispatchReceiver.exists() && !TypesPackage.isDynamic(dispatchReceiver.getType());
         if (resolveInvoke) {
             addCandidatesForInvoke(receiver, c);
             return;
@@ -210,27 +213,36 @@ public class TaskPrioritizer {
         TaskPrioritizerContext<D, F> onlyDynamicReceivers = c.replaceCollectors(TasksPackage.onlyDynamicReceivers(c.callableDescriptorCollectors));
         addExtensionCandidates(explicitReceiver, implicitReceivers, onlyDynamicReceivers, isExplicit);
 
-
         c.result.addCandidates(
                 new Function0<Collection<? extends ResolutionCandidate<D>>>() {
                     @Override
                     public Collection<? extends ResolutionCandidate<D>> invoke() {
 
-                        //noinspection unchecked
-                        D dynamicDescriptor = (D) DynamicCallableDescriptors.createCallableDescriptorForDynamicCall(
+                        JetScope dynamicScope = DynamicCallableDescriptors.createDynamicDescriptorScope(
                                 c.context.call,
                                 c.scope.getContainingDeclaration()
                         );
-                        if (dynamicDescriptor == null) return Collections.emptyList();
 
-                        ResolutionCandidate<D> dynamicCandidate = ResolutionCandidate.create(
-                                c.context.call,
-                                dynamicDescriptor
+                        Collection<D> dynamicDescriptors = new ArrayList<D>();
+                        for (CallableDescriptorCollector<D> collector : c.callableDescriptorCollectors) {
+                            dynamicDescriptors.addAll(collector.getNonExtensionsByName(dynamicScope, c.name, c.context.trace));
+                        }
+
+                        return KotlinPackage.map(
+                                dynamicDescriptors,
+                                new Function1<D, ResolutionCandidate<D>>() {
+                                    @Override
+                                    public ResolutionCandidate<D> invoke(D dynamicDescriptor) {
+                                        ResolutionCandidate<D> dynamicCandidate = ResolutionCandidate.create(
+                                                c.context.call,
+                                                dynamicDescriptor
+                                        );
+                                        dynamicCandidate.setDispatchReceiver(explicitReceiver);
+                                        dynamicCandidate.setExplicitReceiverKind(DISPATCH_RECEIVER);
+                                        return dynamicCandidate;
+                                    }
+                                }
                         );
-                        dynamicCandidate.setDispatchReceiver(explicitReceiver);
-                        dynamicCandidate.setExplicitReceiverKind(DISPATCH_RECEIVER);
-
-                        return Collections.singletonList(dynamicCandidate);
                     }
                 }
         );
