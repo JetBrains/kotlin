@@ -69,10 +69,9 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
                 val errorMessages =
                         buildResult
                                 .getMessages(BuildMessage.Kind.ERROR)
+                                .map { it.getMessageText() }
+                                .map { it.replaceAll("^[^:]+:\\d+:\\s+", "") }
                                 .joinToString("\n")
-                                .replace(File.separatorChar, '/')
-                                .replace("/" + workDirPath, "\$PROJECT") // Sometimes path is rendered as "/C:/foo/bar" on Windows
-                                .replace(workDirPath, "\$PROJECT")
                 return logger.log + "$COMPILATION_FAILED\n" + errorMessages + "\n"
             }
             else {

@@ -6,6 +6,6 @@ Compiling files:
 src/fun2.kt
 End of files
 COMPILATION FAILED
-Kotlin:ERROR:Platform declaration clash: The following declarations have the same JVM signature (function(Ljava/util/List;)V):
+Platform declaration clash: The following declarations have the same JVM signature (function(Ljava/util/List;)V):
     fun function(list: kotlin.List<kotlin.Any>): kotlin.Unit
     fun function(list: kotlin.List<kotlin.String>): kotlin.Unit
