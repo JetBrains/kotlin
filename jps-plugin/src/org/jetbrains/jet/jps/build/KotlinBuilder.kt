@@ -85,7 +85,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val messageCollector = MessageCollectorAdapter(context)
         // Workaround for Android Studio
-        if (!JavaBuilder.IS_ENABLED[context, true]) {
+        if (!JpsUtils.isJsKotlinModule(chunk.representativeTarget()) && !JavaBuilder.IS_ENABLED[context, true]) {
             messageCollector.report(INFO, "Kotlin JPS plugin is disabled", NO_LOCATION)
             return NOTHING_DONE
         }
