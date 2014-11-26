@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
-import org.jetbrains.k2js.test.config.LibrarySourcesConfigWithCaching;
+import org.jetbrains.k2js.config.LibrarySourcesConfigWithCaching;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.jetbrains.k2js.test.utils.JsTestUtils;
 import org.jetbrains.k2js.translate.context.Namer;

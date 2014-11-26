@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test.config;
+package org.jetbrains.k2js.config;
 
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.k2js.analyze.TopDownAnalyzerFacadeForJS;
-import org.jetbrains.k2js.config.Config;
-import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.config.LibrarySourcesConfig;
 
 import java.io.IOException;
 import java.util.Arrays;
