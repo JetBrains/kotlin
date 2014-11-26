@@ -146,7 +146,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         JetCoreEnvironment environment = JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
 
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createAnalyzeModule();
+        ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
 
         TopDownAnalysisParameters parameters = TopDownAnalysisParameters.create(
                 new LockBasedStorageManager(),

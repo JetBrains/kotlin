@@ -284,7 +284,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         for (TestModule testModule : groupedByModule.keySet()) {
             ModuleDescriptorImpl module =
                     testModule == null ?
-                    TopDownAnalyzerFacadeForJVM.createAnalyzeModule() :
+                    TopDownAnalyzerFacadeForJVM.createSealedJavaModule() :
                     createModule(testModule);
 
             modules.put(testModule, module);

@@ -168,7 +168,7 @@ public enum TopDownAnalyzerFacadeForJVM {
     }
 
     @NotNull
-    public static ModuleDescriptorImpl createAnalyzeModule() {
+    public static ModuleDescriptorImpl createSealedJavaModule() {
         ModuleDescriptorImpl module = createJavaModule("<shared-module>");
         module.addDependencyOnModule(module);
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
