@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test.config;
+package org.jetbrains.k2js.test.utils;
 
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
