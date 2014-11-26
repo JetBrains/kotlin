@@ -48,6 +48,7 @@ import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
+import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider.AdditionalFileScopeProvider;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -88,6 +89,7 @@ public class InjectorForLazyResolve {
     private final TaskPrioritizer taskPrioritizer;
     private final JetImportsFactory jetImportsFactory;
     private final ScopeProvider scopeProvider;
+    private final AdditionalFileScopeProvider additionalFileScopeProvider;
     private final ScriptBodyResolver scriptBodyResolver;
 
     public InjectorForLazyResolve(
@@ -130,6 +132,7 @@ public class InjectorForLazyResolve {
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
         this.jetImportsFactory = new JetImportsFactory();
         this.scopeProvider = new ScopeProvider(getResolveSession());
+        this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
         this.scriptBodyResolver = new ScriptBodyResolver();
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
@@ -191,6 +194,8 @@ public class InjectorForLazyResolve {
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 
         jetImportsFactory.setProject(project);
+
+        scopeProvider.setAdditionalFileScopesProvider(additionalFileScopeProvider);
 
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
 

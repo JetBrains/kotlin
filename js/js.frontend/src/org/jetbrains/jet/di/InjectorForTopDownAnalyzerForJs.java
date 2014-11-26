@@ -50,6 +50,7 @@ import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
+import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider.AdditionalFileScopeProvider;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.jet.lang.resolve.BodyResolver;
 import org.jetbrains.jet.lang.resolve.ControlFlowAnalyzer;
@@ -104,6 +105,7 @@ public class InjectorForTopDownAnalyzerForJs {
     private final TaskPrioritizer taskPrioritizer;
     private final JetImportsFactory jetImportsFactory;
     private final ScopeProvider scopeProvider;
+    private final AdditionalFileScopeProvider additionalFileScopeProvider;
     private final ScriptBodyResolver scriptBodyResolver;
     private final BodyResolver bodyResolver;
     private final ControlFlowAnalyzer controlFlowAnalyzer;
@@ -159,6 +161,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
         this.jetImportsFactory = new JetImportsFactory();
         this.scopeProvider = new ScopeProvider(getResolveSession());
+        this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.bodyResolver = new BodyResolver();
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
@@ -241,6 +244,8 @@ public class InjectorForTopDownAnalyzerForJs {
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 
         jetImportsFactory.setProject(project);
+
+        scopeProvider.setAdditionalFileScopesProvider(additionalFileScopeProvider);
 
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
 

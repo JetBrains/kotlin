@@ -29,7 +29,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.testFramework.LightVirtualFile;
-import kotlin.Function1;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.OutputFile;
@@ -46,7 +46,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
+import org.jetbrains.jet.di.InjectorForReplWithJava;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
@@ -56,6 +56,7 @@ import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -118,24 +119,26 @@ public class ReplInterpreter {
 
         scriptDeclarationFactory = new ScriptMutableDeclarationProviderFactory();
 
-        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
+        ScopeProvider.AdditionalFileScopeProvider scopeProvider = new ScopeProvider.AdditionalFileScopeProvider() {
+            @NotNull
+            @Override
+            public List<JetScope> scopes(@NotNull JetFile file) {
+                return lastLineScope != null ? new SmartList<JetScope>(lastLineScope) : Collections.<JetScope>emptyList();
+            }
+        };
+
+        InjectorForReplWithJava injector = new InjectorForReplWithJava(
                 project,
-                context,
+                topDownAnalysisParameters,
                 trace,
                 module,
                 scriptDeclarationFactory,
-                ProjectScope.getAllScope(project)
+                ProjectScope.getAllScope(project),
+                scopeProvider
         );
 
         this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
         this.topDownAnalyzer = injector.getLazyTopDownAnalyzer();
-
-        this.topDownAnalyzer.getCodeAnalyzer().getScopeProvider().setAdditionalFileScopesProvider(new Function1<JetFile, JetScope>() {
-            @Override
-            public JetScope invoke(JetFile file) {
-                return lastLineScope;
-            }
-        });
 
         module.initialize(new CompositePackageFragmentProvider(
                 Arrays.asList(
@@ -317,6 +320,7 @@ public class ReplInterpreter {
             return LineResult.successful(rv, returnType != null && KotlinBuiltIns.getInstance().isUnit(returnType));
         }
         catch (Throwable e) {
+            @SuppressWarnings("UseOfSystemOutOrSystemErr")
             PrintWriter writer = new PrintWriter(System.err);
             classLoader.dumpClasses(writer);
             writer.flush();

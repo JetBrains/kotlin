@@ -30,21 +30,36 @@ import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class ScopeProvider {
+    public static class AdditionalFileScopeProvider {
+        @NotNull
+        public List<JetScope> scopes(@NotNull JetFile file) {
+            return Collections.emptyList();
+        }
+    }
+
     private final ResolveSession resolveSession;
 
     private final MemoizedFunctionToNotNull<JetFile, LazyImportScope> explicitImportScopes;
 
     private final NotNullLazyValue<JetScope> defaultImportsScope;
-    private Function1<JetFile, JetScope> additionalScopesProvider;
+
+    @SuppressWarnings("ConstantConditions") @NotNull
+    private AdditionalFileScopeProvider additionalFileScopeProvider = null;
+
+    @Inject
+    public void setAdditionalFileScopesProvider(@NotNull AdditionalFileScopeProvider additionalFileScopeProvider) {
+        this.additionalFileScopeProvider = additionalFileScopeProvider;
+    }
 
     public ScopeProvider(@NotNull ResolveSession resolveSession) {
         this.resolveSession = resolveSession;
@@ -85,21 +100,10 @@ public class ScopeProvider {
         list.add(getFilePackageDescriptor(file).getMemberScope());
         list.add(JetModuleUtil.getSubpackagesOfRootScope(resolveSession.getModuleDescriptor()));
         list.add(explicitImportScopes.invoke(file));
-
-        if (additionalScopesProvider != null) {
-            JetScope additionalScope = additionalScopesProvider.invoke(file);
-            if (additionalScope != null) {
-                list.add(additionalScope);
-            }
-        }
-
+        list.addAll(additionalFileScopeProvider.scopes(file));
         list.add(defaultImportsScope.invoke());
 
         return list.toArray(new JetScope[list.size()]);
-    }
-
-    public void setAdditionalFileScopesProvider(@NotNull Function1<JetFile, JetScope> scopeProvider) {
-        this.additionalScopesProvider = scopeProvider;
     }
 
     @NotNull
