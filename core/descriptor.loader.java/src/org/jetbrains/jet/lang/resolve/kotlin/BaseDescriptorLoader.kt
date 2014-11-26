@@ -20,14 +20,12 @@ import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.*;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.name.ClassId;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait
@@ -78,7 +76,7 @@ public abstract class BaseDescriptorLoader protected(
             nameResolver: NameResolver
     ): KotlinJvmBinaryClass? {
         if (proto.hasExtension(implClassName)) {
-            return kotlinClassFinder.findKotlinClass(ClassId(container.fqName, getPackagePartClassName(proto, nameResolver)))
+            return kotlinClassFinder.findKotlinClass(ClassId(container.fqName, nameResolver.getName(proto.getExtension(implClassName))))
         }
         return null
     }
@@ -123,14 +121,6 @@ public abstract class BaseDescriptorLoader protected(
                 }
             }
             return null
-        }
-
-        platformStatic public fun getPackagePartClassName(deserializedCallableMember: DeserializedCallableMemberDescriptor): Name {
-            return getPackagePartClassName(deserializedCallableMember.proto, deserializedCallableMember.nameResolver)
-        }
-
-        private fun getPackagePartClassName(proto: ProtoBuf.Callable, nameResolver: NameResolver): Name {
-            return nameResolver.getName(proto.getExtension(implClassName))
         }
 
         private fun isStaticFieldInOuter(proto: ProtoBuf.Callable): Boolean {
