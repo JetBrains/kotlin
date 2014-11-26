@@ -2,9 +2,6 @@ package kotlin
 
 import java.io.StringReader
 import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
-import java.util.LinkedList
 import java.util.Locale
 import java.nio.charset.Charset
 
@@ -29,8 +26,6 @@ public fun String.trim(): String = (this as java.lang.String).trim()
 public fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()
 
 public fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
-
-public fun String.length(): Int = (this as java.lang.String).length()
 
 public fun String.toCharArray(): CharArray = (this as java.lang.String).toCharArray()
 
@@ -131,10 +126,6 @@ public fun String.toUpperCase(locale: java.util.Locale): String = (this as java.
 public fun CharSequence.charAt(index: Int): Char = (this as java.lang.CharSequence).charAt(index)
 
 public fun CharSequence.subSequence(start: Int, end: Int): CharSequence? = (this as java.lang.CharSequence).subSequence(start, end)
-
-public fun CharSequence.toString(): String? = (this as java.lang.CharSequence).toString()
-
-public fun CharSequence.length(): Int = (this as java.lang.CharSequence).length()
 
 public val CharSequence.size: Int
     get() = this.length

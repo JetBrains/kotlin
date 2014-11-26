@@ -3,7 +3,7 @@ package test
 public class Holder(var value: String = "") {
 
     public fun plusAssign(s: String?) {
-        if (value.length != 0) {
+        if (value.length() != 0) {
             value += " -> "
         }
         value += s

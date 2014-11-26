@@ -100,6 +100,7 @@ private val unaryOperations: HashMap<UnaryOperationKey<*>, Pair<Function1<Any?, 
     unaryOperation(SHORT, "toLong", { a -> a.toLong() }, emptyUnaryFun),
     unaryOperation(SHORT, "toShort", { a -> a.toShort() }, emptyUnaryFun),
     unaryOperation(SHORT, "toString", { a -> a.toString() }, emptyUnaryFun),
+    unaryOperation(STRING, "length", { a -> a.length() }, emptyUnaryFun),
     unaryOperation(STRING, "toString", { a -> a.toString() }, emptyUnaryFun)
 )
 

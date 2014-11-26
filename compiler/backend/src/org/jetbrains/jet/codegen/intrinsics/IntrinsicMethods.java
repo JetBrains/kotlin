@@ -130,9 +130,6 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(typeName + "Iterator", "next", 0, ITERATOR_NEXT);
         }
 
-        declareIntrinsicProperty("CharSequence", "length", new StringLength());
-        declareIntrinsicProperty("String", "length", new StringLength());
-
         declareArrayMethods();
     }
 
@@ -166,10 +163,6 @@ public class IntrinsicMethods {
         for (PrimitiveType type : PrimitiveType.values()) {
             declareIntrinsicFunction(type.getTypeName().asString(), methodName, 1, op);
         }
-    }
-
-    private void declareIntrinsicProperty(@NotNull String className, @NotNull String methodName, @NotNull IntrinsicMethod implementation) {
-        declareIntrinsicFunction(className, methodName, -1, implementation);
     }
 
     private void declareIntrinsicFunction(

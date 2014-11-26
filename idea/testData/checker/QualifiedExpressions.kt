@@ -1,12 +1,12 @@
 package qualified_expressions
 
-fun test(s: String?) {
-   val <warning>a</warning>: Int = <error>s?.length</error>
-   val b: Int? = s?.length
-   val <warning>c</warning>: Int = s?.length ?: -11
-   val <warning>d</warning>: Int = s?.length ?: <error>"empty"</error>
-   val e: String = <error>s?.length</error> ?: "empty"
-   val <warning>f</warning>: Int = s?.length ?: b ?: 1
+fun test(s: IntRange?) {
+   val <warning>a</warning>: Int = <error>s?.start</error>
+   val b: Int? = s?.start
+   val <warning>c</warning>: Int = s?.start ?: -11
+   val <warning>d</warning>: Int = s?.start ?: <error>"empty"</error>
+   val e: String = <error>s?.start</error> ?: "empty"
+   val <warning>f</warning>: Int = s?.end ?: b ?: 1
    val <warning>g</warning>: Boolean? = e.startsWith("s")//?.length
 }
 

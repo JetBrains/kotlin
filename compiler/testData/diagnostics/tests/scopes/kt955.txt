@@ -4507,7 +4507,7 @@ package java {
             public open fun insert(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.String!): java.lang.AbstractStringBuilder!
             public open fun lastIndexOf(/*0*/ p0: kotlin.String!): kotlin.Int
             public open fun lastIndexOf(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int): kotlin.Int
-            public open fun length(): kotlin.Int
+            public open override /*1*/ fun length(): kotlin.Int
             public open fun offsetByCodePoints(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Int
             public open fun replace(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.String!): java.lang.AbstractStringBuilder!
             public open fun reverse(): java.lang.AbstractStringBuilder!
@@ -8009,7 +8009,7 @@ package java {
             public open fun lastIndexOf(/*0*/ p0: kotlin.String!): kotlin.Int
             public open fun lastIndexOf(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int): kotlin.Int
             private open fun lastIndexOfSupplementary(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Int
-            public open fun length(): kotlin.Int
+            public open override /*1*/ fun length(): kotlin.Int
             public open fun matches(/*0*/ p0: kotlin.String!): kotlin.Boolean
             public open fun offsetByCodePoints(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Int
             public open fun regionMatches(/*0*/ p0: kotlin.Boolean, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.String!, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int): kotlin.Boolean
@@ -8118,7 +8118,7 @@ package java {
             public open override /*1*/ fun insert(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.String!): java.lang.StringBuffer!
             public open override /*1*/ fun lastIndexOf(/*0*/ p0: kotlin.String!): kotlin.Int
             public open override /*1*/ fun lastIndexOf(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int): kotlin.Int
-            public open override /*1*/ fun length(): kotlin.Int
+            public open override /*2*/ fun length(): kotlin.Int
             public open override /*1*/ fun offsetByCodePoints(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Int
             private open fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
             public open override /*1*/ fun replace(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.String!): java.lang.StringBuffer!
@@ -8189,7 +8189,7 @@ package java {
             public open override /*1*/ fun insert(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.String!): java.lang.StringBuilder!
             public open override /*1*/ fun lastIndexOf(/*0*/ p0: kotlin.String!): kotlin.Int
             public open override /*1*/ fun lastIndexOf(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun length(): kotlin.Int
+            public open override /*2*/ /*fake_override*/ fun length(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun offsetByCodePoints(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Int
             private open fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
             public open override /*1*/ fun replace(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.String!): java.lang.StringBuilder!

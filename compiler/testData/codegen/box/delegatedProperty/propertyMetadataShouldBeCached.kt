@@ -34,7 +34,7 @@ object StringHandler {
 fun box(): String {
     val a = A()
     a.foo = 42
-    a.foo = a.foo + baz.length
+    a.foo = a.foo + baz.length()
     a.foo = 239
     A.bar = baz + a.foo
     baz + A.bar

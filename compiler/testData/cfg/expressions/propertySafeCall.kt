@@ -1,3 +1,3 @@
- fun test(s: String?) {
-    s?.length
+fun test(s: IntProgression?) {
+    s?.start
 }

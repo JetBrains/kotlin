@@ -95,8 +95,8 @@ private fun mapJavaClassToKotlin(name: String): String {
         }
     }
     if (name[0] == '[') {
-        val element = (name as java.lang.String).substring(1)
-        return when (element[0]) {
+        val element = (name as java.lang.String).substring(1) as java.lang.String
+        return when (element.charAt(0)) {
             'Z' -> "kotlin.BooleanArray"
             'C' -> "kotlin.CharArray"
             'B' -> "kotlin.ByteArray"
@@ -105,8 +105,8 @@ private fun mapJavaClassToKotlin(name: String): String {
             'F' -> "kotlin.FloatArray"
             'J' -> "kotlin.LongArray"
             'D' -> "kotlin.DoubleArray"
-            'L' -> "kotlin.Array<${mapJavaClassToKotlin((element as java.lang.String).substring(1, element.length() - 1))}>"
-            else -> "kotlin.Array<${mapJavaClassToKotlin(element)}>"
+            'L' -> "kotlin.Array<${mapJavaClassToKotlin(element.substring(1, element.length() - 1))}>"
+            else -> "kotlin.Array<${mapJavaClassToKotlin(element as kotlin.String)}>"
         }
     }
     return name

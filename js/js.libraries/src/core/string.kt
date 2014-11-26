@@ -39,9 +39,6 @@ native("length")
 public val CharSequence.size: Int get() = noImpl
 
 library
-public fun CharSequence.length(): Int = noImpl
-
-library
 public fun CharSequence.isEmpty(): Boolean = noImpl
 
 /*
